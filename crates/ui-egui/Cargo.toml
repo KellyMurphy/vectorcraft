@@ -22,6 +22,7 @@ vectorcraft-plugins = { workspace = true }
 vectorcraft-pdf = { workspace = true }
 vectorcraft-cad = { workspace = true }
 vectorcraft-eps = { workspace = true }
+vectorcraft-embroidery = { workspace = true }
 vectorcraft-format = { workspace = true }
 egui = { workspace = true }
 egui_extras = { workspace = true }

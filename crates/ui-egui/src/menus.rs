@@ -170,6 +170,12 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
     ("shortcuts.import", "Import Keyboard Shortcuts…", "", "{path? | data?}"),
     ("view.outline", "Outline", "Cmd+Y", "{} toggle Outline/Preview"),
     ("view.pixelPreview", "Pixel Preview", "Cmd+Alt+Y", "{}"),
+    (
+        "view.stitchPreview",
+        "Stitch Preview",
+        "",
+        "{} toggle: draw the embroidery design's stitches (embroidery.stitches) over the art, on a fabric-coloured artboard",
+    ),
     ("view.trimView", "Trim View", "", "{} toggle: hide everything outside the artboards"),
     ("view.cornerWidget", "Hide Corner Widget", "", "{} toggle the live corner widgets"),
     ("view.snapToPixel", "Snap to Pixel", "", "{} toggle: drawing and moving land on whole pixels"),
@@ -918,6 +924,7 @@ pub fn run_ui_command(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<R
         }
         "view.outline" => flag(&mut app.ui.view.outline),
         "view.pixelPreview" => flag(&mut app.ui.view.pixel_preview),
+        "view.stitchPreview" => flag(&mut app.ui.view.stitch_preview),
         "view.trimView" => flag(&mut app.ui.view.trim_view),
         "view.cornerWidget" => flag(&mut app.ui.view.corner_widgets),
         // New View: the engine stores the current zoom, centre and rotation under the given name.
@@ -1396,6 +1403,7 @@ pub fn checked(app: &VectorcraftApp, id: &str, p: &Value) -> Option<bool> {
         }
         "view.outline" => v.outline,
         "view.pixelPreview" => v.pixel_preview,
+        "view.stitchPreview" => v.stitch_preview,
         "view.trimView" => v.trim_view,
         "view.snapToPixel" => v.snap_to_pixel,
         // Type on a Path effect of the selected path type.
@@ -2178,6 +2186,18 @@ pub fn menu_tree() -> Vec<(&'static str, Vec<Item>)> {
                     ],
                 ),
                 sub(
+                    "Embroidery",
+                    vec![
+                        cp("Running Stitch", "embroidery.set", json!({"type": "running"})),
+                        cp("Bean Stitch", "embroidery.set", json!({"type": "bean"})),
+                        cp("Satin Column", "embroidery.set", json!({"type": "satin"})),
+                        cp("Fill", "embroidery.set", json!({"type": "fill"})),
+                        cp("Manual Stitch", "embroidery.set", json!({"type": "manual"})),
+                        Sep,
+                        c("Remove Stitches", "embroidery.clear"),
+                    ],
+                ),
+                sub(
                     "Live Paint",
                     vec![
                         c("Make", "livePaint.make"),
@@ -2368,6 +2388,7 @@ pub fn menu_tree() -> Vec<(&'static str, Vec<Item>)> {
                 c("Outline", "view.outline"),
                 c("Overprint Preview", "view.overprintPreview"),
                 c("Pixel Preview", "view.pixelPreview"),
+                c("Stitch Preview", "view.stitchPreview"),
                 c("Trim View", "view.trimView"),
                 c("Presentation Mode", "view.presentation"),
                 sub(

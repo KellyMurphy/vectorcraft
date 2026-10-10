@@ -177,6 +177,9 @@ pub struct ViewFlags {
     pub gradient_annotator: bool,
     /// Type → Show Hidden Characters.
     pub hidden_chars: bool,
+    /// View → Stitch Preview: the embroidery design's stitches drawn over the art.
+    #[serde(default)]
+    pub stitch_preview: bool,
 }
 
 impl Default for ViewFlags {
@@ -199,6 +202,7 @@ impl Default for ViewFlags {
             text_threads: true,
             gradient_annotator: true,
             hidden_chars: false,
+            stitch_preview: false,
         }
     }
 }
@@ -347,6 +351,9 @@ pub struct UiState {
     /// dialog is open.
     #[serde(skip)]
     pub dialog_file: Option<std::sync::Arc<crate::dialogs::import_pdf::DialogFile>>,
+    /// Stitch Preview's plan and the document state it was made from.
+    #[serde(skip)]
+    pub stitch_cache: Option<(std::sync::Arc<vectorcraft_doc::Document>, std::sync::Arc<vectorcraft_embroidery::Plan>)>,
     /// The DXF Options chosen last (`document.exportDxf` options; null: never used).
     #[serde(default)]
     pub dxf_options: Value,
@@ -519,6 +526,7 @@ impl Default for UiState {
             svg_options: Value::Null,
             place_link: true,
             dialog_file: None,
+            stitch_cache: None,
             dxf_options: Value::Null,
             eps_options: Value::Null,
             dxf_import: Value::Null,

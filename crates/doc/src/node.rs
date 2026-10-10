@@ -496,6 +496,9 @@ pub struct Node {
     /// Object › Perspective: the perspective grid plane the object is attached to.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub perspective: Option<Box<crate::PerspectiveAttachment>>,
+    /// Embroidery: how the object is stitched (`None`: not stitched).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub stitch: Option<Box<crate::StitchSettings>>,
 }
 
 /// Opacity mask: the luminance of the mask art sets the object's opacity (white = opaque).
@@ -547,6 +550,7 @@ impl Node {
             slice: None,
             bbox_angle: 0.0,
             perspective: None,
+            stitch: None,
         }
     }
     pub fn path(id: NodeId, path: PathData, appearance: Appearance) -> Self {

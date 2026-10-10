@@ -3734,3 +3734,15 @@ axis	Both	Entrambi
 	Constrain	Vincola
 	Free Transform	Trasformazione libera
 	Perspective Distort	Distorsione prospettica
+
+# Object › Embroidery, View › Stitch Preview
+	Embroidery	Ricamo
+	Running Stitch	Punto filza
+	Bean Stitch	Punto triplo
+	Satin Column	Colonna satin
+	Manual Stitch	Punto manuale
+	Remove Stitches	Rimuovi punti
+	Stitch Preview	Anteprima punti
+	Stitch Settings	Impostazioni punto
+	Embroidery Info	Info ricamo
+	Embroidery Stitches	Punti del ricamo

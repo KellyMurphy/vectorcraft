@@ -1915,3 +1915,55 @@ proptest! {
         }
     }
 }
+
+// ---------- Embroidery (DST) ----------
+
+/// A small DST design from a session (a fill and a satin column), as `document.export` writes it.
+fn saved_dst() -> Vec<u8> {
+    let mut s = vectorcraft_engine::Session::new();
+    s.execute("file.new", &json!({"width": 200, "height": 200})).unwrap();
+    s.execute("shape.rectangle", &json!({"x": 10, "y": 10, "width": 60, "height": 40})).unwrap();
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    s.execute("shape.ellipse", &json!({"x": 80, "y": 80, "width": 60, "height": 60})).unwrap();
+    s.execute("embroidery.set", &json!({"type": "satin", "thread": "#0000ff"})).unwrap();
+    let r = s.execute("document.export", &json!({"format": "dst"})).unwrap();
+    vectorcraft_format::base64_decode(r["dataBase64"].as_str().unwrap()).unwrap()
+}
+
+/// Open `bytes` as a `.dst` file; whatever opens must report, render and export again.
+fn survive_dst(what: &str, bytes: &[u8]) -> Result<(), TestCaseError> {
+    let r = catch_quiet(|| {
+        let mut s = vectorcraft_engine::Session::new();
+        let p = json!({"name": "design.dst", "dataBase64": vectorcraft_format::base64_encode(bytes)});
+        if no_panic(s.execute("document.open", &p)).is_ok() {
+            let _ = no_panic(s.execute("embroidery.info", &json!({})));
+            let _ = no_panic(s.execute("embroidery.stitches", &json!({"limit": 1000})));
+            let _ = no_panic(s.execute("document.export", &json!({"format": "dst"})));
+            let _ = no_panic(s.execute("document.export", &json!({"format": "png"})));
+        }
+    });
+    r.map_err(|msg| TestCaseError::fail(format!("{what}: panicked: {msg}")))
+}
+
+proptest! {
+    #![proptest_config(config())]
+
+    #[test]
+    fn dst_garbage_never_panics(body in prop::collection::vec(any::<u8>(), 0..1500)) {
+        let mut b = b"LA:fuzz\rST:      1\r".to_vec();
+        b.resize(512, b' ');
+        b.extend(body);
+        survive_dst("dst garbage", &b)?;
+    }
+
+    #[test]
+    fn dst_mutated_designs_never_panic(cut in 0usize..4000, edits in prop::collection::vec((any::<prop::sample::Index>(), any::<u8>()), 0..24)) {
+        let mut b = saved_dst();
+        for (i, v) in edits {
+            let at = i.index(b.len());
+            b[at] = v;
+        }
+        b.truncate(cut.max(3));
+        survive_dst("mutated dst", &b)?;
+    }
+}

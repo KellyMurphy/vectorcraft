@@ -3734,3 +3734,15 @@ axis	Both	Ambos
 	Constrain	Restringir
 	Free Transform	Transformación libre
 	Perspective Distort	Distorsión de perspectiva
+
+# Object › Embroidery, View › Stitch Preview
+	Embroidery	Bordado
+	Running Stitch	Puntada recta
+	Bean Stitch	Puntada triple
+	Satin Column	Columna de satén
+	Manual Stitch	Puntada manual
+	Remove Stitches	Quitar puntadas
+	Stitch Preview	Vista previa de puntadas
+	Stitch Settings	Ajustes de puntada
+	Embroidery Info	Información de bordado
+	Embroidery Stitches	Puntadas de bordado

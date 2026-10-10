@@ -19,6 +19,7 @@ pub(crate) mod docsetup;
 mod draw2;
 mod edit;
 mod effectcmd;
+pub(crate) mod embroidery;
 pub mod expand;
 pub(crate) mod fileinfo;
 pub mod fileio;
@@ -273,6 +274,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(cut::specs());
         v.extend(halftone::specs());
         v.extend(perspgrid::specs());
+        v.extend(embroidery::specs());
         v
     })
 }

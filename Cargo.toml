@@ -34,6 +34,7 @@ vectorcraft-eps = { path = "crates/eps" }
 vectorcraft-metafile = { path = "crates/metafile" }
 vectorcraft-plugins = { path = "crates/plugins" }
 vectorcraft-affinity = { path = "crates/affinity" }
+vectorcraft-embroidery = { path = "crates/embroidery" }
 
 # foundation
 kurbo = { version = "0.13", features = ["serde"] }

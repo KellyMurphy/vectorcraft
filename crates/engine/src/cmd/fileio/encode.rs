@@ -417,6 +417,7 @@ fn encode_files(doc: &Document, f: &Format, p: &Value) -> Result<Encoded> {
         "txt" => super::text::encode(doc, p)?,
         "svg" | "svgz" => return super::svg::encode(doc, p, f.id == "svgz").map_err(|e| bad(C, e)),
         "dxf" => return super::dxf::encode(doc, p, use_artboards),
+        "dst" => return super::embroidery::encode(doc, p),
         // As Save As writes it (a PDF of every artboard carrying the native document).
         "ai" => {
             let mut q = p.clone();

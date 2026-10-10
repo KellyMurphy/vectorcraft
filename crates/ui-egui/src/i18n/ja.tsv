@@ -3726,3 +3726,15 @@ theme	Appearance	外観
 @msg	no user workspace `{from}`	ユーザーワークスペース `{from}` が見つかりません
 @msg	unknown workspace (one of {_1})	不明なワークスペースです ({_1} のいずれかを指定してください)
 @msg	workspace name can't be empty	ワークスペース名を入力してください
+
+# Object › Embroidery, View › Stitch Preview
+	Embroidery	刺繍
+	Running Stitch	ランニングステッチ
+	Bean Stitch	ビーンステッチ
+	Satin Column	サテンコラム
+	Manual Stitch	手動ステッチ
+	Remove Stitches	ステッチを削除
+	Stitch Preview	ステッチプレビュー
+	Stitch Settings	ステッチ設定
+	Embroidery Info	刺繍情報
+	Embroidery Stitches	刺繍のステッチ

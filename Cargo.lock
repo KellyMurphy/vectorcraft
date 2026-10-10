@@ -4451,6 +4451,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "vectorcraft-embroidery"
+version = "0.8.0"
+dependencies = [
+ "kurbo 0.13.1",
+ "proptest",
+ "serde",
+ "serde_json",
+ "vectorcraft-color",
+ "vectorcraft-doc",
+ "vectorcraft-geom",
+]
+
+[[package]]
 name = "vectorcraft-engine"
 version = "0.8.0"
 dependencies = [
@@ -4469,6 +4482,7 @@ dependencies = [
  "vectorcraft-cad",
  "vectorcraft-color",
  "vectorcraft-doc",
+ "vectorcraft-embroidery",
  "vectorcraft-eps",
  "vectorcraft-format",
  "vectorcraft-geom",
@@ -4745,6 +4759,7 @@ dependencies = [
  "vectorcraft-color",
  "vectorcraft-doc",
  "vectorcraft-effects",
+ "vectorcraft-embroidery",
  "vectorcraft-engine",
  "vectorcraft-eps",
  "vectorcraft-format",

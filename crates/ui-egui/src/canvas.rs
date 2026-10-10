@@ -349,6 +349,11 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     if app.ui.view.pixel_preview && v.zoom >= PIXEL_GRID_ZOOM && app.session.prefs.show_pixel_grid {
         grid(&painter, &xf, 1.0, 1, LineLook { color: PIXEL_GRID, dots: false });
     }
+    // View › Stitch Preview: the embroidery design on fabric over the art.
+    if app.ui.view.stitch_preview {
+        let plan = stitch_plan(&mut app.ui.stitch_cache, &doc);
+        draw_stitches(&painter, &xf, &doc, &plan);
+    }
     // Artboard edges and names.
     let active_ab = 0;
     for (i, ab) in doc.artboards.iter().enumerate() {
@@ -1718,6 +1723,54 @@ fn ime_output(app: &mut VectorcraftApp, ctx: &egui::Context, xf: &Xf) {
 /// shown as it is; the tools' other labels ("anchor", "path", Puppet Warp's warning) are ours.
 fn names_an_artboard(text: &str) -> bool {
     text.split_once(" - ").is_some_and(|(n, _)| n.len() >= 2 && n.bytes().all(|b| b.is_ascii_digit()))
+}
+
+/// Stitch Preview's fabric: undyed linen, mostly hiding the art under the stitches.
+const FABRIC: [u8; 4] = [236, 230, 214, 235];
+/// The thread width Stitch Preview draws, mm (a common 40-weight thread).
+const THREAD_MM: f64 = 0.35;
+
+/// Stitch Preview's plan of `doc`, made again only when the document changed.
+fn stitch_plan(
+    cache: &mut Option<(std::sync::Arc<vectorcraft_doc::Document>, std::sync::Arc<vectorcraft_embroidery::Plan>)>,
+    doc: &std::sync::Arc<vectorcraft_doc::Document>,
+) -> std::sync::Arc<vectorcraft_embroidery::Plan> {
+    if let Some((d, p)) = cache.as_ref()
+        && std::sync::Arc::ptr_eq(d, doc)
+    {
+        return p.clone();
+    }
+    let p = std::sync::Arc::new(vectorcraft_embroidery::plan(doc));
+    *cache = Some((doc.clone(), p.clone()));
+    p
+}
+
+/// The stitches of `plan` in their thread colours on fabric-coloured artboards, jumps as thin
+/// lines.
+fn draw_stitches(painter: &egui::Painter, xf: &Xf, doc: &vectorcraft_doc::Document, plan: &vectorcraft_embroidery::Plan) {
+    use vectorcraft_embroidery::{Cmd, PT_MM};
+    let [r, g, b, a] = FABRIC;
+    let fabric = Color32::from_rgba_unmultiplied(r, g, b, a);
+    for ab in &doc.artboards {
+        painter.add(Shape::convex_polygon(xf.quad(ab.rect), fabric, Stroke::NONE));
+    }
+    let at = |x: f64, y: f64| xf.to_screen(Point::new(x / PT_MM, y / PT_MM));
+    let width = ((THREAD_MM / PT_MM) * xf.zoom).clamp(0.5, 8.0) as f32;
+    for (thread, run) in plan.runs() {
+        let [r, g, b] = plan.threads.get(thread).copied().unwrap_or([0; 3]);
+        painter.add(Shape::line(run.iter().map(|p| at(p.x, p.y)).collect(), Stroke::new(width, Color32::from_rgb(r, g, b))));
+    }
+    let jump = Stroke::new(0.5, Color32::from_black_alpha(90));
+    let mut from = None;
+    for n in &plan.needles {
+        let p = at(n.x, n.y);
+        if n.cmd == Cmd::Jump
+            && let Some(f) = from
+        {
+            painter.line_segment([f, p], jump);
+        }
+        from = Some(p);
+    }
 }
 
 fn draw_overlays(p: &egui::Painter, xf: &Xf, overlays: &[Overlay], t: &Tokens, look: HandleLook) {

@@ -1,0 +1,20 @@
+[package]
+name = "vectorcraft-embroidery"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "VectorCraft embroidery: stitch generation from art, and the DST machine format"
+
+[lints]
+workspace = true
+
+[dependencies]
+vectorcraft-geom = { workspace = true }
+vectorcraft-color = { workspace = true }
+vectorcraft-doc = { workspace = true }
+kurbo = { workspace = true }
+serde = { workspace = true }
+
+[dev-dependencies]
+serde_json = { workspace = true }
+proptest = { workspace = true }
