@@ -601,3 +601,69 @@ fn dump_samples() {
     std::fs::write(dir.join("satin_corners.dst"), write_dst(&plan(&d), "satin corners")).unwrap();
     std::fs::write(dir.join("busy.dst"), write_dst(&plan(&busy_doc()), "busy")).unwrap();
 }
+
+/// Two lines `gap` pt apart in one thread, the first with `first`'s settings.
+fn two_lines(gap: f64, first: impl FnOnce(&mut StitchSettings), setup: EmbroiderySetup) -> Plan {
+    let mut d = doc_with(|d| {
+        let mut a = stitched(d, poly(&[(0.0, 0.0), (72.0, 0.0)], false), StitchKind::Running, [0; 3]);
+        first(a.stitch.as_mut().unwrap());
+        vec![a, stitched(d, poly(&[(72.0 + gap, 0.0), (144.0 + gap, 0.0)], false), StitchKind::Running, [0; 3])]
+    });
+    d.embroidery = setup;
+    plan(&d)
+}
+
+/// Trims before the end of the design.
+fn trims_between(p: &Plan) -> usize {
+    p.stats().trims - 1
+}
+
+#[test]
+fn jump_trim_length_is_the_documents() {
+    // A 5 mm jump (14.2 pt): trimmed at the default 3 mm, not at 10 mm, nor when never trimming.
+    let gap = 5.0 / PT_MM;
+    assert_eq!(trims_between(&two_lines(gap, |_| {}, EmbroiderySetup::default())), 1);
+    let ten = EmbroiderySetup { trim_jumps_over: Some(10.0), ..EmbroiderySetup::default() };
+    assert_eq!(trims_between(&two_lines(gap, |_| {}, ten)), 0);
+    let never = EmbroiderySetup { trim_jumps_over: None, ..EmbroiderySetup::default() };
+    let p = two_lines(gap, |_| {}, never);
+    assert_eq!((trims_between(&p), p.stats().jumps), (0, 2), "the jump to the start and the one between");
+}
+
+#[test]
+fn short_moves_are_sewn_up_to_the_documents_length() {
+    // 2 mm apart: jumped by default (moves up to 1 mm are sewn), sewn when moves up to 2.5 mm are.
+    let gap = 2.0 / PT_MM;
+    assert_eq!(two_lines(gap, |_| {}, EmbroiderySetup::default()).stats().jumps, 2);
+    let sew = EmbroiderySetup { stitch_moves_under: 2.5, ..EmbroiderySetup::default() };
+    assert_eq!(two_lines(gap, |_| {}, sew).stats().jumps, 1);
+}
+
+#[test]
+fn objects_can_force_trims_before_and_after() {
+    // Touching lines: no trim between them, unless one side asks.
+    assert_eq!(trims_between(&two_lines(0.0, |_| {}, EmbroiderySetup::default())), 0);
+    let after = two_lines(0.0, |s| s.trim_after = true, EmbroiderySetup::default());
+    assert_eq!(trims_between(&after), 1);
+    // The next object starts where the first ended: it goes down there and ties in again.
+    let n = &after.needles;
+    let i = n.iter().position(|n| n.cmd == Cmd::Trim).unwrap();
+    assert_eq!(n[i + 1].cmd, Cmd::Stitch);
+    assert_eq!((n[i + 1].x, n[i + 1].y), (n[i].x, n[i].y));
+    let before = two_lines(0.0, |_| {}, EmbroiderySetup::default());
+    assert_eq!(trims_between(&before), 0);
+    // Trim Before on the second object.
+    let mut d = doc_with(|d| {
+        let a = stitched(d, poly(&[(0.0, 0.0), (72.0, 0.0)], false), StitchKind::Running, [0; 3]);
+        let mut b = stitched(d, poly(&[(72.0, 0.0), (144.0, 0.0)], false), StitchKind::Running, [0; 3]);
+        b.stitch.as_mut().unwrap().trim_before = true;
+        vec![a, b]
+    });
+    assert_eq!(trims_between(&plan(&d)), 1);
+    // A thread change trims anyway: no second trim.
+    if let Some(n) = Arc::make_mut(&mut d.layers[0]).children_mut().and_then(|c| c.get_mut(1)) {
+        Arc::make_mut(n).stitch.as_mut().unwrap().thread = Some([9, 9, 9]);
+    }
+    let p = plan(&d);
+    assert_eq!((trims_between(&p), p.stats().color_changes), (1, 1));
+}

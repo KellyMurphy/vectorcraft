@@ -66,7 +66,7 @@ pub use appearance::{
 };
 pub use assets::ExportAsset;
 pub use corners::LiveCorners;
-pub use embroidery::{StitchKind, StitchSettings, Underlay};
+pub use embroidery::{EmbroiderySetup, StitchKind, StitchSettings, Underlay};
 pub use graph::{GraphKind, GraphSpec};
 pub use hit::{Hit, HitKind};
 pub use links::{LinkInfo, PlacementOptions};
@@ -610,6 +610,9 @@ pub struct Document {
     /// ([`Document::raster_effects_ppi`]).
     #[serde(default, skip_serializing_if = "skip::is_default")]
     pub raster_effects: RasterEffectsSettings,
+    /// Embroidery: how the needle travels between stitches (jumps, trims).
+    #[serde(default, skip_serializing_if = "skip::is_default")]
+    pub embroidery: EmbroiderySetup,
     /// The view (zoom, centre, rotation) the document was saved with; it reopens there. Written at
     /// save time only, so changing the view never marks the document modified.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -720,6 +723,7 @@ impl Document {
             print_setup: None,
             assets: vec![],
             puppet: None,
+            embroidery: EmbroiderySetup::default(),
         };
         let id = d.alloc_id();
         d.layers.push(Arc::new(Node::layer(id, "Layer 1", LayerColor::Preset(0))));

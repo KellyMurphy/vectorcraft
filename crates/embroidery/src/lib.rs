@@ -19,7 +19,7 @@ use std::sync::Arc;
 use kurbo::Point;
 use serde::Serialize;
 use vectorcraft_color::Paint;
-use vectorcraft_doc::{Document, Node, NodeKind, StitchKind, StitchSettings, Underlay};
+use vectorcraft_doc::{Document, EmbroiderySetup, Node, NodeKind, StitchKind, StitchSettings, Underlay};
 use vectorcraft_geom::{FillRule, PathData};
 
 pub use dst::{DstError, is_dst, read_dst, write_dst};
@@ -30,10 +30,6 @@ pub const PT_MM: f64 = 25.4 / 72.0;
 /// The most needle moves a plan holds: past it the rest of the design is left out (with a
 /// warning). Real designs have well under a million.
 pub const MAX_NEEDLES: usize = 2_000_000;
-/// Moves to the next stitch shorter than this are sewn; longer ones jump, mm.
-pub const JUMP_MIN: f64 = 1.0;
-/// Jumps longer than this cut the thread first, mm.
-pub const TRIM_MIN: f64 = 3.0;
 
 /// What the needle does at a [`Needle`].
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
@@ -153,11 +149,23 @@ struct Builder {
     full: bool,
     /// The run being sewn locks its thread ([`Builder::run`]).
     tie: bool,
+    /// Jumps longer than this trim first (`None`: never on length), mm.
+    trim_over: Option<f64>,
+    /// Moves up to this long are sewn rather than jumped, mm.
+    stitch_under: f64,
 }
 
 impl Builder {
-    fn new() -> Self {
-        Self { plan: Plan::default(), cur: None, thread: None, full: false, tie: true }
+    fn new(setup: &EmbroiderySetup) -> Self {
+        Self {
+            plan: Plan::default(),
+            cur: None,
+            thread: None,
+            full: false,
+            tie: true,
+            trim_over: setup.trim_over(),
+            stitch_under: setup.stitch_under(),
+        }
     }
 
     fn push(&mut self, p: Point, cmd: Cmd) -> bool {
@@ -221,13 +229,13 @@ impl Builder {
             self.thread = Some(thread);
         }
         match self.cur {
-            Some(c) if self.sewing() && c.distance(first) <= JUMP_MIN => {
+            Some(c) if self.sewing() && c.distance(first) <= self.stitch_under => {
                 if c.distance(first) > 1e-9 {
                     self.push(first, Cmd::Stitch);
                 }
             }
             Some(c) => {
-                if c.distance(first) > TRIM_MIN {
+                if self.trim_over.is_some_and(|t| c.distance(first) > t) {
                     self.tie = ending;
                     self.trim(c);
                 }
@@ -256,6 +264,17 @@ impl Builder {
         self.cur = Some(pts.last().copied().unwrap_or(first));
     }
 
+    /// Trim Before / Trim After: cut the thread where the needle is (locking it first), unless it
+    /// is cut already or a thread change before `next` (the thread to sew next) will cut it.
+    fn force_trim(&mut self, next: [u8; 3]) {
+        if let Some(c) = self.cur
+            && self.thread == Some(next)
+        {
+            // The tie-off is the last run's: none after manual stitches.
+            self.trim(c);
+        }
+    }
+
     fn finish(mut self) -> Plan {
         if let Some(c) = self.cur {
             self.trim(c);
@@ -277,7 +296,7 @@ fn tie_point(at: Point, toward: Point) -> Option<Point> {
 
 /// The stitch plan of `doc`'s visible stitched objects, in paint order.
 pub fn plan(doc: &Document) -> Plan {
-    let mut b = Builder::new();
+    let mut b = Builder::new(&doc.embroidery);
     let mut tally = Tally::default();
     for l in &doc.layers {
         walk(l, &mut b, &mut tally, false);
@@ -409,8 +428,17 @@ fn object(n: &Node, s: &StitchSettings, paths: &[&PathData], rule: FillRule, b: 
     }
     // Manual stitches are sewn exactly as drawn: no lock stitches added.
     let tie = s.kind != StitchKind::Manual;
+    if runs.iter().all(|r| r.is_empty()) {
+        return;
+    }
+    if s.trim_before {
+        b.force_trim(thread);
+    }
     for r in runs {
         b.run(thread, &r, tie);
+    }
+    if s.trim_after {
+        b.force_trim(thread);
     }
 }
 

@@ -3794,3 +3794,15 @@ axis	Both	Les deux
 	Fill Underlay	Sous-couche de remplissage
 	Brick	Brique
 	Tatami	Tatami
+
+# Embroidery panel: trims and travel
+	Trim:	Coupe :
+	Before	Avant
+	After	Après
+	Cut the thread before this object, however close it starts	Couper le fil avant cet objet, même s’il commence tout près
+	Cut the thread after this object	Couper le fil après cet objet
+	Travel	Déplacements
+	Trim Jumps Over:	Couper les sauts de plus de :
+	Sew Moves Under:	Coudre les déplacements de moins de :
+	Only thread changes and objects set to trim cut the thread.	Seuls les changements de fil et les objets réglés pour couper coupent le fil.
+	Embroidery Setup	Réglages de broderie

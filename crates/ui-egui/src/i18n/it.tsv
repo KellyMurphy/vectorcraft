@@ -3783,3 +3783,15 @@ axis	Both	Entrambi
 	Fill Underlay	Imbottitura di riempimento
 	Brick	Mattone
 	Tatami	Tatami
+
+# Embroidery panel: trims and travel
+	Trim:	Taglio:
+	Before	Prima
+	After	Dopo
+	Cut the thread before this object, however close it starts	Taglia il filo prima di questo oggetto, per quanto vicino inizi
+	Cut the thread after this object	Taglia il filo dopo questo oggetto
+	Travel	Spostamenti
+	Trim Jumps Over:	Taglia i salti oltre:
+	Sew Moves Under:	Cuci gli spostamenti sotto:
+	Only thread changes and objects set to trim cut the thread.	Tagliano il filo solo i cambi di filo e gli oggetti impostati per tagliare.
+	Embroidery Setup	Impostazioni ricamo

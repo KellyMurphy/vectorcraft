@@ -1001,6 +1001,13 @@ pub fn check3(ui: &mut Ui, label: &str, value: Option<bool>, enabled: bool) -> b
     check_row(ui, label, value, enabled).0
 }
 
+/// [`check3`] with a tooltip.
+pub fn check3_tip(ui: &mut Ui, label: &str, value: Option<bool>, enabled: bool, tip: &str) -> bool {
+    let (clicked, resp) = check_row(ui, label, value, enabled);
+    resp.on_hover_text(tip);
+    clicked
+}
+
 /// [`check3`], also returning the row's response (what a tooltip goes on: a widget around it never
 /// counts as hovered under the box).
 fn check_row(ui: &mut Ui, label: &str, value: Option<bool>, enabled: bool) -> (bool, Response) {

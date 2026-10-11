@@ -4,7 +4,7 @@
 //! see `fileio::embroidery`).
 
 use serde_json::{Value, json};
-use vectorcraft_doc::{Document, NodeId, NodeKind, StitchKind, StitchSettings, Underlay};
+use vectorcraft_doc::{Document, EmbroiderySetup, NodeId, NodeKind, StitchKind, StitchSettings, Underlay};
 use vectorcraft_embroidery::Plan;
 
 use super::overprint::edit_counted;
@@ -21,9 +21,18 @@ pub fn specs() -> Vec<CommandSpec> {
             "Stitch Settings",
             [],
             None,
-            "{type?: running|bean|satin|fill|manual (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag or fill row spacing, 0.1–5; 0.4), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column, 0.3–12; default the stroke width), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), pull?: mm (satin pull compensation, 0–3; 0), underlay?: none|center|edge|zigzag (satin) | none|fill (fill), stagger?: 2–8 (fill rows before the needle holes line up again; 3), passes?: 3|5|7|9 (bean; 3), ids?} stitch the paths and compound paths in ids or the selection (groups: those inside), as one undo step; null resets length, spacing, width, thread, pull, stagger or passes to the default → {changed}",
+            "{type?: running|bean|satin|fill|manual (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag or fill row spacing, 0.1–5; 0.4), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column, 0.3–12; default the stroke width), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), pull?: mm (satin pull compensation, 0–3; 0), underlay?: none|center|edge|zigzag (satin) | none|fill (fill), stagger?: 2–8 (fill rows before the needle holes line up again; 3), passes?: 3|5|7|9 (bean; 3), trimBefore?: bool, trimAfter?: bool (cut the thread before / after the object, however close the next stitch), ids?} stitch the paths and compound paths in ids or the selection (groups: those inside), as one undo step; null resets length, spacing, width, thread, pull, stagger or passes to the default → {changed}",
             has_doc,
             set
+        ),
+        cmd!(
+            "embroidery.setup",
+            "Embroidery Setup",
+            [],
+            None,
+            "{trimJumpsOver?: mm (0.5–100; 3) | null (never trim on length: only thread changes and objects' trimBefore/trimAfter cut the thread), stitchMovesUnder?: mm (0–5; 1: moves to the next stitch up to this long are sewn, longer ones jump)} the document's travel settings, as one undo step → {trimJumpsOver, stitchMovesUnder}",
+            has_doc,
+            setup
         ),
         cmd!(
             "embroidery.clear",
@@ -39,7 +48,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Embroidery Info",
             [],
             None,
-            "{ids?} → {design: {objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings}, selection: {stitched, unstitched, type, length, spacing, angle, width, thread, pull, underlay, stagger, passes} (each null when the stitched objects differ, or none is)}",
+            "{ids?} → {design: {objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings}, setup: {trimJumpsOver, stitchMovesUnder} (embroidery.setup), selection: {stitched, unstitched, type, length, spacing, angle, width, thread, pull, underlay, stagger, passes, trimBefore, trimAfter} (each null when the stitched objects differ, or none is)}",
             has_doc,
             info
         ),
@@ -103,6 +112,13 @@ struct Edits {
     underlay: Option<Underlay>,
     stagger: Option<Option<u8>>,
     passes: Option<Option<u8>>,
+    trim_before: Option<bool>,
+    trim_after: Option<bool>,
+}
+
+/// An optional true/false param.
+fn flag(p: &Value, key: &str) -> Result<Option<bool>> {
+    p.get(key).map(|v| v.as_bool().ok_or_else(|| bad(SET, format!("`{key}` must be true or false")))).transpose()
 }
 
 /// An optional whole-number param in `range` (odd only when `odd`): absent → leave it, `null` →
@@ -155,6 +171,8 @@ impl Edits {
             underlay,
             stagger: count(p, "stagger", StitchSettings::STAGGER, false)?,
             passes: count(p, "passes", StitchSettings::PASSES, true)?,
+            trim_before: flag(p, "trimBefore")?,
+            trim_after: flag(p, "trimAfter")?,
             length: measure(p, "length", StitchSettings::LENGTH)?,
             spacing: measure(p, "spacing", StitchSettings::SPACING)?,
             width: measure(p, "width", StitchSettings::WIDTH)?,
@@ -194,6 +212,12 @@ impl Edits {
         }
         if let Some(v) = self.passes {
             s.passes = v;
+        }
+        if let Some(v) = self.trim_before {
+            s.trim_before = v;
+        }
+        if let Some(v) = self.trim_after {
+            s.trim_after = v;
         }
         s
     }
@@ -237,6 +261,37 @@ fn set(s: &mut Session, p: &Value) -> Result<Value> {
         Ok(n)
     })?;
     Ok(json!({ "changed": changed }))
+}
+
+fn setup_json(e: &EmbroiderySetup) -> Value {
+    json!({ "trimJumpsOver": e.trim_over(), "stitchMovesUnder": e.stitch_under() })
+}
+
+fn setup(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.setup";
+    let mut new = s.doc()?.doc.embroidery.clone();
+    match p.get("trimJumpsOver") {
+        None => {}
+        Some(Value::Null) => new.trim_jumps_over = None,
+        Some(v) => match v.as_f64() {
+            Some(x) if EmbroiderySetup::TRIM.contains(&x) => new.trim_jumps_over = Some(x),
+            _ => return Err(bad(C, "`trimJumpsOver` must be a number from 0.5 to 100 (mm), or null (never trim on length)")),
+        },
+    }
+    if let Some(v) = p.get("stitchMovesUnder") {
+        match v.as_f64() {
+            Some(x) if EmbroiderySetup::STITCH_MOVES.contains(&x) => new.stitch_moves_under = x,
+            _ => return Err(bad(C, "`stitchMovesUnder` must be a number from 0 to 5 (mm)")),
+        }
+    }
+    if new != s.doc()?.doc.embroidery {
+        let e = new.clone();
+        edit_counted(s, "Embroidery Setup", |d| {
+            d.embroidery = e;
+            Ok(1)
+        })?;
+    }
+    Ok(setup_json(&new))
 }
 
 fn clear(s: &mut Session, p: &Value) -> Result<Value> {
@@ -298,8 +353,10 @@ fn info(s: &mut Session, p: &Value) -> Result<Value> {
         "underlay": same(all.iter().map(|s| s.underlay().id())),
         "stagger": same(all.iter().map(|s| s.stagger())),
         "passes": same(all.iter().map(|s| s.passes())),
+        "trimBefore": same(all.iter().map(|s| s.trim_before)),
+        "trimAfter": same(all.iter().map(|s| s.trim_after)),
     });
-    Ok(json!({ "design": design(doc, &plan), "selection": selection }))
+    Ok(json!({ "design": design(doc, &plan), "setup": setup_json(&doc.embroidery), "selection": selection }))
 }
 
 fn stitches(s: &mut Session, p: &Value) -> Result<Value> {

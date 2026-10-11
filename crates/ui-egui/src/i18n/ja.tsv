@@ -3775,3 +3775,15 @@ theme	Appearance	外観
 	Fill Underlay	フィルの下縫い
 	Brick	レンガ
 	Tatami	タタミ
+
+# Embroidery panel: trims and travel
+	Trim:	糸切り:
+	Before	前
+	After	後
+	Cut the thread before this object, however close it starts	近くても、このオブジェクトの前で糸を切ります
+	Cut the thread after this object	このオブジェクトの後で糸を切ります
+	Travel	移動
+	Trim Jumps Over:	この長さを超えるジャンプで糸切り:
+	Sew Moves Under:	この長さ未満の移動は縫う:
+	Only thread changes and objects set to trim cut the thread.	糸を切るのは糸の交換時と、糸切りを設定したオブジェクトだけです。
+	Embroidery Setup	刺繍の設定

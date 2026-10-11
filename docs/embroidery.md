@@ -38,7 +38,17 @@ images and symbols can't be stitched yet: outline the type first (Type › Creat
 opacity masks don't apply to stitches: a masked object is stitched whole, with a warning.
 
 Objects are sewn in paint order, bottom first. Between objects the needle jumps, and it trims the thread
-before a jump longer than 3 mm and before each colour change. Every run of stitches that starts after a jump,
+before a long jump and before each colour change. The **Travel** settings (the Embroidery panel, or
+`embroidery.setup`) belong to the document:
+
+- **Trim Jumps Over** (3 mm): a jump longer than this cuts the thread first. Turn it off to cut only at thread
+  changes and at objects set to trim.
+- **Sew Moves Under** (1 mm): a move to the next stitch up to this long is sewn as a stitch instead of jumped
+  (never longer than the trim length).
+
+Each object can also force a cut: **Trim Before** cuts the thread before it starts, however close it is to the
+stitch before; **Trim After** cuts it after the object ends. A thread change cuts anyway, so it never cuts
+twice. Every run of stitches that starts after a jump,
 trim or colour change goes down where the frame stopped and locks the thread with two tiny stitches (a
 tie-in); every trim is preceded by a tie-off. Manual stitches are sewn exactly as drawn, without ties.
 
@@ -51,8 +61,9 @@ A closed satin path starts halfway along its longest side, away from its corners
 
 | Command | Params |
 |---|---|
-| `embroidery.set` | `{type?: running\|bean\|satin\|fill\|manual, length?, spacing?, angle?, width?, thread?: "#rrggbb"\|[r,g,b], ids?}`. Lengths are in mm; `null` resets one to its default. |
+| `embroidery.set` | `{type?: running\|bean\|satin\|fill\|manual, length?, spacing?, angle?, width?, thread?: "#rrggbb"\|[r,g,b], pull?, underlay?, stagger?, passes?, trimBefore?, trimAfter?, ids?}`. Lengths are in mm; `null` resets one to its default. |
 | `embroidery.clear` | `{ids?}` |
+| `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm}`: the document's travel settings |
 | `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings |
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
 | `view.stitchPreview` | toggles Stitch Preview |

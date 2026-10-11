@@ -705,3 +705,15 @@
 	Width:	Šířka:
 	Angle:	Úhel:
 	Size:	Velikost:
+
+# Embroidery panel: trims and travel
+	Trim:	Ustřižení:
+	Before	Před
+	After	Po
+	Cut the thread before this object, however close it starts	Ustřihnout nit před tímto objektem, i když začíná blízko
+	Cut the thread after this object	Ustřihnout nit po tomto objektu
+	Travel	Přesuny
+	Trim Jumps Over:	Ustřihnout skoky delší než:
+	Sew Moves Under:	Prošít přesuny kratší než:
+	Only thread changes and objects set to trim cut the thread.	Nit se střihá jen při výměně nitě a u objektů s nastaveným ustřižením.
+	Embroidery Setup	Nastavení výšivky

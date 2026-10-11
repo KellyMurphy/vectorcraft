@@ -3781,3 +3781,15 @@ axis	Both	Оба
 	Fill Underlay	Подложка заливки
 	Brick	Кирпич
 	Tatami	Татами
+
+# Embroidery panel: trims and travel
+	Trim:	Обрезка:
+	Before	До
+	After	После
+	Cut the thread before this object, however close it starts	Обрезать нить перед этим объектом, как бы близко он ни начинался
+	Cut the thread after this object	Обрезать нить после этого объекта
+	Travel	Перемещения
+	Trim Jumps Over:	Обрезать прыжки длиннее:
+	Sew Moves Under:	Прошивать перемещения короче:
+	Only thread changes and objects set to trim cut the thread.	Нить обрезается только при смене нити и у объектов с обрезкой.
+	Embroidery Setup	Параметры вышивки

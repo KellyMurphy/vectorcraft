@@ -150,6 +150,51 @@ pub struct StitchSettings {
     /// Bean stitch: how many times each stitch is sewn (odd).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub passes: Option<u8>,
+    /// Cut the thread before the object starts, however close it is to the stitch before.
+    #[serde(default, skip_serializing_if = "crate::skip::is_default")]
+    pub trim_before: bool,
+    /// Cut the thread after the object ends.
+    #[serde(default, skip_serializing_if = "crate::skip::is_default")]
+    pub trim_after: bool,
+}
+
+/// The document's embroidery settings: how the needle travels between stitches
+/// ([`crate::Document::embroidery`]).
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct EmbroiderySetup {
+    /// Jumps longer than this cut the thread first, mm (`None`: only thread changes and objects'
+    /// own Trim Before / Trim After cut it).
+    pub trim_jumps_over: Option<f64>,
+    /// Moves to the next stitch up to this long are sewn as a stitch rather than jumped, mm.
+    pub stitch_moves_under: f64,
+}
+
+impl Default for EmbroiderySetup {
+    fn default() -> Self {
+        Self { trim_jumps_over: Some(Self::DEFAULT_TRIM), stitch_moves_under: Self::DEFAULT_STITCH_MOVES }
+    }
+}
+
+impl EmbroiderySetup {
+    pub const DEFAULT_TRIM: f64 = 3.0;
+    pub const DEFAULT_STITCH_MOVES: f64 = 1.0;
+    /// Allowed trim lengths, mm.
+    pub const TRIM: std::ops::RangeInclusive<f64> = 0.5..=100.0;
+    /// Allowed sewn-move lengths, mm (a sewn move is a stitch: at most a stitch long).
+    pub const STITCH_MOVES: std::ops::RangeInclusive<f64> = 0.0..=5.0;
+
+    /// The jump length past which the thread is cut, mm (`None`: never on length).
+    pub fn trim_over(&self) -> Option<f64> {
+        self.trim_jumps_over.filter(|v| v.is_finite()).map(|v| v.clamp(*Self::TRIM.start(), *Self::TRIM.end()))
+    }
+
+    /// The longest move sewn rather than jumped, mm (never past the trim length).
+    pub fn stitch_under(&self) -> f64 {
+        let v = if self.stitch_moves_under.is_finite() { self.stitch_moves_under } else { Self::DEFAULT_STITCH_MOVES };
+        let v = v.clamp(*Self::STITCH_MOVES.start(), *Self::STITCH_MOVES.end());
+        self.trim_over().map_or(v, |t| v.min(t))
+    }
 }
 
 impl StitchSettings {
@@ -262,6 +307,20 @@ mod tests {
         for u in Underlay::ALL {
             assert_eq!(Underlay::parse(u.id()), Some(u));
         }
+    }
+
+    #[test]
+    fn setup_defaults_round_trip_and_clamp() {
+        let s = EmbroiderySetup::default();
+        assert_eq!((s.trim_over(), s.stitch_under()), (Some(3.0), 1.0));
+        let never = EmbroiderySetup { trim_jumps_over: None, stitch_moves_under: 9.0 };
+        let back: EmbroiderySetup = serde_json::from_value(serde_json::to_value(&never).unwrap()).unwrap();
+        assert_eq!(back, never);
+        assert_eq!((never.trim_over(), never.stitch_under()), (None, 5.0));
+        let tight = EmbroiderySetup { trim_jumps_over: Some(0.6), stitch_moves_under: 2.0 };
+        assert_eq!(tight.stitch_under(), 0.6, "a sewn move is never longer than a trimmed jump");
+        let missing: EmbroiderySetup = serde_json::from_value(serde_json::json!({})).unwrap();
+        assert_eq!(missing, EmbroiderySetup::default());
     }
 
     #[test]

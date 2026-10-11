@@ -140,3 +140,34 @@ fn satin_fill_and_bean_parameters_are_set_and_checked() {
     s.execute("embroidery.set", &json!({"passes": null})).unwrap();
     assert_eq!(info(&mut s)["selection"]["passes"], 3);
 }
+
+#[test]
+fn setup_sets_the_documents_trim_and_jump_lengths() {
+    let mut s = session();
+    assert_eq!(info(&mut s)["setup"], json!({"trimJumpsOver": 3.0, "stitchMovesUnder": 1.0}));
+    let r = s.execute("embroidery.setup", &json!({"trimJumpsOver": 8, "stitchMovesUnder": 2})).unwrap();
+    assert_eq!(r, json!({"trimJumpsOver": 8.0, "stitchMovesUnder": 2.0}));
+    s.execute("embroidery.setup", &json!({"trimJumpsOver": null})).unwrap();
+    assert_eq!(info(&mut s)["setup"]["trimJumpsOver"], Value::Null);
+    for p in [json!({"trimJumpsOver": 0}), json!({"trimJumpsOver": "x"}), json!({"stitchMovesUnder": 9})] {
+        assert!(s.execute("embroidery.setup", &p).is_err(), "{p}");
+    }
+    // One undo step each; undo goes back to the defaults.
+    s.execute("edit.undo", &json!({})).unwrap();
+    s.execute("edit.undo", &json!({})).unwrap();
+    assert_eq!(info(&mut s)["setup"]["trimJumpsOver"], 3.0);
+    // Saved with the document.
+    s.execute("embroidery.setup", &json!({"trimJumpsOver": 12})).unwrap();
+    let saved = b64(&s.execute("document.export", &json!({"format": "vectorcraft"})).unwrap());
+    s.execute("document.open", &json!({"name": "x.vectorcraft", "dataBase64": vectorcraft_format::base64_encode(&saved)})).unwrap();
+    assert_eq!(info(&mut s)["setup"]["trimJumpsOver"], 12.0);
+}
+
+#[test]
+fn trim_before_and_after_are_set_per_object() {
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "running", "trimBefore": true, "trimAfter": true})).unwrap();
+    let sel = &info(&mut s)["selection"];
+    assert_eq!((sel["trimBefore"].clone(), sel["trimAfter"].clone()), (json!(true), json!(true)));
+    assert!(s.execute("embroidery.set", &json!({"trimAfter": "yes"})).is_err());
+}

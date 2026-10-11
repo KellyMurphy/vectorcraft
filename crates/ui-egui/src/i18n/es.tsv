@@ -3783,3 +3783,15 @@ axis	Both	Ambos
 	Fill Underlay	Base de relleno
 	Brick	Ladrillo
 	Tatami	Tatami
+
+# Embroidery panel: trims and travel
+	Trim:	Corte:
+	Before	Antes
+	After	Después
+	Cut the thread before this object, however close it starts	Cortar el hilo antes de este objeto, por cerca que empiece
+	Cut the thread after this object	Cortar el hilo después de este objeto
+	Travel	Desplazamientos
+	Trim Jumps Over:	Cortar saltos de más de:
+	Sew Moves Under:	Coser desplazamientos de menos de:
+	Only thread changes and objects set to trim cut the thread.	Solo los cambios de hilo y los objetos con corte cortan el hilo.
+	Embroidery Setup	Ajustes de bordado

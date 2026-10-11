@@ -2739,3 +2739,15 @@
 	Fill Underlay	Base de preenchimento
 	Brick	Tijolo
 	Tatami	Tatame
+
+# Embroidery panel: trims and travel
+	Trim:	Corte:
+	Before	Antes
+	After	Depois
+	Cut the thread before this object, however close it starts	Cortar a linha antes deste objeto, por mais perto que comece
+	Cut the thread after this object	Cortar a linha depois deste objeto
+	Travel	Deslocamentos
+	Trim Jumps Over:	Cortar saltos acima de:
+	Sew Moves Under:	Costurar deslocamentos abaixo de:
+	Only thread changes and objects set to trim cut the thread.	Só as trocas de linha e os objetos definidos para cortar cortam a linha.
+	Embroidery Setup	Configurações de bordado

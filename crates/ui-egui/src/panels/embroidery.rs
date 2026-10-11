@@ -6,7 +6,7 @@
 
 use egui::{Color32, Ui, vec2};
 use serde_json::{Value, json};
-use vectorcraft_doc::{NodeId, StitchKind, StitchSettings, Underlay};
+use vectorcraft_doc::{EmbroiderySetup, NodeId, StitchKind, StitchSettings, Underlay};
 
 use super::selection_len;
 use crate::VectorcraftApp;
@@ -107,6 +107,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         );
     } else if stitched > 0 && unstitched == 0 {
         thread_row(app, ui, sel);
+        trim_row(app, ui, sel);
         widgets::divider(ui);
         match kind {
             Some(k) => parameters(app, ui, k, sel),
@@ -118,7 +119,52 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         widgets::dim_label(ui, tl!("Some selected objects aren't stitched."));
     }
     widgets::divider(ui);
+    travel(app, ui, &info["setup"]);
+    widgets::divider(ui);
     design(app, ui, &info["design"]);
+}
+
+/// Trim Before / Trim After for the selected objects (blank where they differ).
+fn trim_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
+    widgets::label_row(ui, tl!("Trim:"), LABEL_W, |ui| {
+        for (label, key, tip) in [
+            (tl!("Before"), "trimBefore", tl!("Cut the thread before this object, however close it starts")),
+            (tl!("After"), "trimAfter", tl!("Cut the thread after this object")),
+        ] {
+            let v = sel[key].as_bool();
+            if widgets::check3_tip(ui, label, v, true, tip) {
+                set(app, json!({ key: v != Some(true) }));
+            }
+            ui.add_space(6.0);
+        }
+    });
+}
+
+/// The document's travel settings: when a jump trims, and how short a move is sewn.
+fn travel(app: &mut VectorcraftApp, ui: &mut Ui, setup: &Value) {
+    widgets::section_header(ui, tl!("Travel"));
+    let trim = setup["trimJumpsOver"].as_f64();
+    widgets::label_row(ui, tl!("Trim Jumps Over:"), LABEL_W, |ui| {
+        if widgets::check3(ui, "", Some(trim.is_some()), true) {
+            let v = if trim.is_some() { Value::Null } else { json!(EmbroiderySetup::DEFAULT_TRIM) };
+            app.run("embroidery.setup", json!({ "trimJumpsOver": v })).ok();
+        }
+        ui.add_enabled_ui(trim.is_some(), |ui| {
+            if let Some(v) = widgets::mixed_field(ui, ("emb", "trim"), trim, " mm", 1, FIELD_W) {
+                let r = EmbroiderySetup::TRIM;
+                app.run("embroidery.setup", json!({ "trimJumpsOver": v.clamp(*r.start(), *r.end()) })).ok();
+            }
+        });
+    });
+    widgets::label_row(ui, tl!("Sew Moves Under:"), LABEL_W, |ui| {
+        if let Some(v) = widgets::mixed_field(ui, ("emb", "sewMoves"), setup["stitchMovesUnder"].as_f64(), " mm", 1, FIELD_W) {
+            let r = EmbroiderySetup::STITCH_MOVES;
+            app.run("embroidery.setup", json!({ "stitchMovesUnder": v.clamp(*r.start(), *r.end()) })).ok();
+        }
+    });
+    if trim.is_none() {
+        widgets::dim_label(ui, tl!("Only thread changes and objects set to trim cut the thread."));
+    }
 }
 
 fn thread_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {

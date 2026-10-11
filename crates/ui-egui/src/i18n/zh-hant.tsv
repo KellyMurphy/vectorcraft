@@ -3239,3 +3239,15 @@ axis	Both	兩者
 	Fill Underlay	填色底襯
 	Brick	磚形
 	Tatami	榻榻米
+
+# Embroidery panel: trims and travel
+	Trim:	剪線:
+	Before	之前
+	After	之後
+	Cut the thread before this object, however close it starts	無論多近,都在此物件之前剪線
+	Cut the thread after this object	在此物件之後剪線
+	Travel	移動
+	Trim Jumps Over:	跳針超過此長度時剪線:
+	Sew Moves Under:	移動短於此長度時縫合:
+	Only thread changes and objects set to trim cut the thread.	只有換線和設定了剪線的物件才會剪線。
+	Embroidery Setup	刺繡設定
