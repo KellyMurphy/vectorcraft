@@ -3746,3 +3746,40 @@ axis	Both	Entrambi
 	Stitch Settings	Impostazioni punto
 	Embroidery Info	Info ricamo
 	Embroidery Stitches	Punti del ricamo
+
+# Embroidery panel
+	Density:	Densità:
+	Design	Disegno
+	Distance between rows: smaller is denser	Distanza tra le file: più piccola, più fitta
+	Distance between zigzags: smaller is denser	Distanza tra gli zigzag: più piccola, più fitta
+	Export DST…	Esporta DST…
+	How long each stitch is	Lunghezza di ogni punto
+	Not Stitched	Non ricamato
+	Nothing is stitched yet.	Ancora nulla di ricamato.
+	Object color	Colore dell'oggetto
+	Only paths and compound paths can be stitched.	Si possono ricamare solo tracciati e tracciati composti.
+	Passes:	Passate:
+	Pattern:	Motivo:
+	Pull Compensation:	Compensazione della trazione:
+	Select paths to stitch.	Seleziona dei tracciati da ricamare.
+	Sews the column this much wider, since the thread pulls the fabric in	Cuce la colonna più larga di tanto, perché il filo tira il tessuto
+	Some selected objects aren't stitched.	Alcuni oggetti selezionati non sono ricamati.
+	Stitch Length:	Lunghezza punto:
+	Stitch:	Punto:
+	Stitches:	Punti:
+	The needle goes down at every anchor point, as drawn.	L'ago scende su ogni punto di ancoraggio, come disegnato.
+	The selected objects use different stitches.	Gli oggetti selezionati usano punti diversi.
+	The stroke's color for stitches along the path, the fill's for fills	Il colore della traccia per i punti lungo il tracciato, quello del riempimento per i riempimenti
+	Thread:	Filo:
+	Threads:	Fili:
+	Trims / Jumps:	Tagli / salti:
+	Underlay:	Imbottitura:
+	Use Object Color	Usa colore oggetto
+	Use Stroke	Usa traccia
+	the stroke width	lo spessore della traccia
+	Center Walk	Passata centrale
+	Edge Walk	Passata sui bordi
+	Zigzag	Zigzag
+	Fill Underlay	Imbottitura di riempimento
+	Brick	Mattone
+	Tatami	Tatami

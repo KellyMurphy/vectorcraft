@@ -3746,3 +3746,40 @@ axis	Both	Ambos
 	Stitch Settings	Ajustes de puntada
 	Embroidery Info	Información de bordado
 	Embroidery Stitches	Puntadas de bordado
+
+# Embroidery panel
+	Density:	Densidad:
+	Design	Diseño
+	Distance between rows: smaller is denser	Distancia entre filas: menor es más denso
+	Distance between zigzags: smaller is denser	Distancia entre zigzags: menor es más denso
+	Export DST…	Exportar DST…
+	How long each stitch is	Longitud de cada puntada
+	Not Stitched	Sin bordar
+	Nothing is stitched yet.	Aún no hay nada bordado.
+	Object color	Color del objeto
+	Only paths and compound paths can be stitched.	Solo se pueden bordar trazados y trazados compuestos.
+	Passes:	Pasadas:
+	Pattern:	Patrón:
+	Pull Compensation:	Compensación de tirón:
+	Select paths to stitch.	Seleccione trazados para bordar.
+	Sews the column this much wider, since the thread pulls the fabric in	Cose la columna así de más ancha, porque el hilo frunce la tela
+	Some selected objects aren't stitched.	Algunos objetos seleccionados no están bordados.
+	Stitch Length:	Longitud de puntada:
+	Stitch:	Puntada:
+	Stitches:	Puntadas:
+	The needle goes down at every anchor point, as drawn.	La aguja baja en cada punto de ancla, tal como se dibujó.
+	The selected objects use different stitches.	Los objetos seleccionados usan puntadas distintas.
+	The stroke's color for stitches along the path, the fill's for fills	El color del trazo para las puntadas a lo largo del trazado; el del relleno para los rellenos
+	Thread:	Hilo:
+	Threads:	Hilos:
+	Trims / Jumps:	Cortes / saltos:
+	Underlay:	Base:
+	Use Object Color	Usar color del objeto
+	Use Stroke	Usar trazo
+	the stroke width	el grosor del trazo
+	Center Walk	Pespunte central
+	Edge Walk	Pespunte de bordes
+	Zigzag	Zigzag
+	Fill Underlay	Base de relleno
+	Brick	Ladrillo
+	Tatami	Tatami

@@ -3729,3 +3729,40 @@ axis	Both	Обидві
 	Stitch Settings	Параметри стібків
 	Embroidery Info	Відомості про вишивку
 	Embroidery Stitches	Стібки вишивки
+
+# Embroidery panel
+	Density:	Щільність:
+	Design	Дизайн
+	Distance between rows: smaller is denser	Відстань між рядами: що менша, то щільніше
+	Distance between zigzags: smaller is denser	Відстань між зигзагами: що менша, то щільніше
+	Export DST…	Експорт у DST…
+	How long each stitch is	Довжина кожного стібка
+	Not Stitched	Без вишивки
+	Nothing is stitched yet.	Поки нічого не вишито.
+	Object color	Колір об’єкта
+	Only paths and compound paths can be stitched.	Вишивати можна лише контури та складені контури.
+	Passes:	Проходи:
+	Pattern:	Візерунок:
+	Pull Compensation:	Компенсація стягування:
+	Select paths to stitch.	Виділіть контури для вишивки.
+	Sews the column this much wider, since the thread pulls the fabric in	Стовпчик шиється ширшим на цю величину, бо нитка стягує тканину
+	Some selected objects aren't stitched.	Деякі виділені об’єкти не вишиті.
+	Stitch Length:	Довжина стібка:
+	Stitch:	Стібок:
+	Stitches:	Стібки:
+	The needle goes down at every anchor point, as drawn.	Голка опускається в кожній опорній точці, як намальовано.
+	The selected objects use different stitches.	Виділені об’єкти мають різні стібки.
+	The stroke's color for stitches along the path, the fill's for fills	Колір обведення для стібків уздовж контуру, колір заливки для заливок
+	Thread:	Нитка:
+	Threads:	Нитки:
+	Trims / Jumps:	Обрізки / стрибки:
+	Underlay:	Підкладка:
+	Use Object Color	Колір об’єкта
+	Use Stroke	Використати обведення
+	the stroke width	товщина обведення
+	Center Walk	Центральна строчка
+	Edge Walk	Строчка по краях
+	Zigzag	Зигзаг
+	Fill Underlay	Підкладка заливки
+	Brick	Цегла
+	Tatami	Татамі

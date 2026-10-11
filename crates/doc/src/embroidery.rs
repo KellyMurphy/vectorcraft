@@ -63,6 +63,59 @@ impl StitchKind {
     }
 }
 
+/// Stitches sewn under the top stitches to hold the fabric and lift the top stitches.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum Underlay {
+    #[default]
+    None,
+    /// Satin: a running stitch along the centre line.
+    Center,
+    /// Satin: running stitches just inside both edges of the column.
+    Edge,
+    /// Satin: a sparse zigzag inside the column.
+    Zigzag,
+    /// Fill: sparse rows across the top rows.
+    Fill,
+}
+
+impl Underlay {
+    pub const ALL: [Underlay; 5] = [Self::None, Self::Center, Self::Edge, Self::Zigzag, Self::Fill];
+
+    pub fn id(self) -> &'static str {
+        match self {
+            Self::None => "none",
+            Self::Center => "center",
+            Self::Edge => "edge",
+            Self::Zigzag => "zigzag",
+            Self::Fill => "fill",
+        }
+    }
+
+    pub fn label(self) -> &'static str {
+        match self {
+            Self::None => "None",
+            Self::Center => "Center Walk",
+            Self::Edge => "Edge Walk",
+            Self::Zigzag => "Zigzag",
+            Self::Fill => "Fill Underlay",
+        }
+    }
+
+    pub fn parse(s: &str) -> Option<Self> {
+        Self::ALL.into_iter().find(|u| u.id().eq_ignore_ascii_case(s.trim()))
+    }
+
+    /// The underlays a stitch kind sews (the first is none).
+    pub fn for_kind(kind: StitchKind) -> &'static [Underlay] {
+        match kind {
+            StitchKind::Satin => &[Self::None, Self::Center, Self::Edge, Self::Zigzag],
+            StitchKind::Fill => &[Self::None, Self::Fill],
+            _ => &[Self::None],
+        }
+    }
+}
+
 /// An object's stitch settings. `None` fields take the kind's defaults.
 #[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -83,6 +136,20 @@ pub struct StitchSettings {
     /// Thread colour as sRGB (`None`: the object's stroke for path stitches, its fill for fills).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub thread: Option<[u8; 3]>,
+    /// Satin pull compensation, mm: how much wider the column is sewn than drawn, since the
+    /// thread pulls the fabric in.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pull: Option<f64>,
+    /// Underlay sewn first ([`Underlay::for_kind`] lists the ones each kind uses; others are
+    /// ignored).
+    #[serde(default, skip_serializing_if = "crate::skip::is_default")]
+    pub underlay: Underlay,
+    /// Fill pattern: rows before the needle holes line up again (2: brick, 3: tatami…).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub stagger: Option<u8>,
+    /// Bean stitch: how many times each stitch is sewn (odd).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub passes: Option<u8>,
 }
 
 impl StitchSettings {
@@ -94,6 +161,14 @@ impl StitchSettings {
     /// Allowed satin widths, mm.
     pub const WIDTH: std::ops::RangeInclusive<f64> = 0.3..=12.0;
     pub const DEFAULT_SPACING: f64 = 0.4;
+    /// Allowed pull compensation, mm.
+    pub const PULL: std::ops::RangeInclusive<f64> = 0.0..=3.0;
+    /// Allowed fill stagger, rows.
+    pub const STAGGER: std::ops::RangeInclusive<u8> = 2..=8;
+    pub const DEFAULT_STAGGER: u8 = 3;
+    /// Allowed bean passes (odd numbers in this range).
+    pub const PASSES: std::ops::RangeInclusive<u8> = 3..=9;
+    pub const DEFAULT_PASSES: u8 = 3;
     /// Satin width when the object has no stroke and no width is set, mm.
     pub const DEFAULT_WIDTH: f64 = 3.0;
 
@@ -115,6 +190,27 @@ impl StitchSettings {
     pub fn width(&self, stroke_mm: f64) -> f64 {
         let fallback = if stroke_mm.is_finite() && stroke_mm > 0.0 { stroke_mm } else { Self::DEFAULT_WIDTH };
         clamp(self.width, fallback, Self::WIDTH)
+    }
+
+    /// The pull compensation to sew with, mm.
+    pub fn pull(&self) -> f64 {
+        clamp(self.pull, 0.0, Self::PULL)
+    }
+
+    /// The fill stagger to sew with, rows.
+    pub fn stagger(&self) -> u8 {
+        self.stagger.unwrap_or(Self::DEFAULT_STAGGER).clamp(*Self::STAGGER.start(), *Self::STAGGER.end())
+    }
+
+    /// The bean passes to sew with (odd).
+    pub fn passes(&self) -> u8 {
+        let p = self.passes.unwrap_or(Self::DEFAULT_PASSES).clamp(*Self::PASSES.start(), *Self::PASSES.end());
+        if p % 2 == 0 { p - 1 } else { p }
+    }
+
+    /// The underlay to sew with: none when the kind doesn't use this one.
+    pub fn underlay(&self) -> Underlay {
+        if Underlay::for_kind(self.kind).contains(&self.underlay) { self.underlay } else { Underlay::None }
     }
 
     /// The fill angle in degrees (finite).
@@ -150,6 +246,22 @@ mod tests {
         assert_eq!(s.width(2.0), 0.3);
         assert_eq!(s.angle(), 0.0);
         assert_eq!(StitchSettings::default().width(f64::NAN), StitchSettings::DEFAULT_WIDTH);
+    }
+
+    #[test]
+    fn extra_settings_default_clamp_and_apply_by_kind() {
+        let mut s = StitchSettings::new(StitchKind::Satin);
+        assert_eq!((s.pull(), s.stagger(), s.passes(), s.underlay()), (0.0, 3, 3, Underlay::None));
+        s.underlay = Underlay::Zigzag;
+        s.pull = Some(9.0);
+        s.passes = Some(4);
+        s.stagger = Some(1);
+        assert_eq!((s.pull(), s.stagger(), s.passes(), s.underlay()), (3.0, 2, 3, Underlay::Zigzag));
+        s.kind = StitchKind::Fill;
+        assert_eq!(s.underlay(), Underlay::None, "zigzag is a satin underlay");
+        for u in Underlay::ALL {
+            assert_eq!(Underlay::parse(u.id()), Some(u));
+        }
     }
 
     #[test]

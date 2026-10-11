@@ -3757,3 +3757,40 @@ axis	Both	Les deux
 	Stitch Settings	Réglages des points
 	Embroidery Info	Infos broderie
 	Embroidery Stitches	Points de broderie
+
+# Embroidery panel
+	Density:	Densité :
+	Design	Motif
+	Distance between rows: smaller is denser	Écart entre les rangs : plus petit, plus dense
+	Distance between zigzags: smaller is denser	Écart entre les zigzags : plus petit, plus dense
+	Export DST…	Exporter en DST…
+	How long each stitch is	Longueur de chaque point
+	Not Stitched	Sans broderie
+	Nothing is stitched yet.	Rien n’est encore brodé.
+	Object color	Couleur de l’objet
+	Only paths and compound paths can be stitched.	Seuls les tracés et les tracés transparents peuvent être brodés.
+	Passes:	Passages :
+	Pattern:	Motif de remplissage :
+	Pull Compensation:	Compensation de traction :
+	Select paths to stitch.	Sélectionnez des tracés à broder.
+	Sews the column this much wider, since the thread pulls the fabric in	Coud la colonne plus large d’autant, car le fil resserre le tissu
+	Some selected objects aren't stitched.	Certains objets sélectionnés ne sont pas brodés.
+	Stitch Length:	Longueur de point :
+	Stitch:	Point :
+	Stitches:	Points :
+	The needle goes down at every anchor point, as drawn.	L’aiguille pique à chaque point d’ancrage, comme dessiné.
+	The selected objects use different stitches.	Les objets sélectionnés ont des points différents.
+	The stroke's color for stitches along the path, the fill's for fills	La couleur du contour pour les points le long du tracé, celle du fond pour les remplissages
+	Thread:	Fil :
+	Threads:	Fils :
+	Trims / Jumps:	Coupes / sauts :
+	Underlay:	Sous-couche :
+	Use Object Color	Utiliser la couleur de l’objet
+	Use Stroke	Utiliser le contour
+	the stroke width	l’épaisseur du contour
+	Center Walk	Piqûre centrale
+	Edge Walk	Piqûre des bords
+	Zigzag	Zigzag
+	Fill Underlay	Sous-couche de remplissage
+	Brick	Brique
+	Tatami	Tatami

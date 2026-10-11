@@ -664,3 +664,44 @@
 	Stitch Settings	Nastavení stehů
 	Embroidery Info	Informace o výšivce
 	Embroidery Stitches	Stehy výšivky
+
+# Embroidery panel
+	Density:	Hustota:
+	Design	Návrh
+	Distance between rows: smaller is denser	Vzdálenost řad: menší je hustší
+	Distance between zigzags: smaller is denser	Vzdálenost klikatek: menší je hustší
+	Export DST…	Exportovat DST…
+	How long each stitch is	Délka každého stehu
+	Not Stitched	Bez vyšívání
+	Nothing is stitched yet.	Zatím není nic vyšito.
+	Object color	Barva objektu
+	Only paths and compound paths can be stitched.	Vyšívat lze jen cesty a složené cesty.
+	Passes:	Průchody:
+	Pattern:	Vzorek:
+	Pull Compensation:	Kompenzace stažení:
+	Select paths to stitch.	Vyberte cesty k vyšití.
+	Sews the column this much wider, since the thread pulls the fabric in	Sloupek se šije o tolik širší, protože nit stahuje látku
+	Some selected objects aren't stitched.	Některé vybrané objekty nejsou vyšité.
+	Stitch Length:	Délka stehu:
+	Stitch:	Steh:
+	Stitches:	Stehy:
+	The needle goes down at every anchor point, as drawn.	Jehla se zapíchne v každém kotevním bodě, jak je nakresleno.
+	The selected objects use different stitches.	Vybrané objekty mají různé stehy.
+	The stroke's color for stitches along the path, the fill's for fills	Barva tahu pro stehy podél cesty, barva výplně pro výplně
+	Thread:	Nit:
+	Threads:	Nitě:
+	Trims / Jumps:	Ustřižení / skoky:
+	Underlay:	Podšití:
+	Use Object Color	Použít barvu objektu
+	Use Stroke	Použít tah
+	the stroke width	tloušťka tahu
+	None	Žádné
+	Center Walk	Středové podšití
+	Edge Walk	Okrajové podšití
+	Zigzag	Klikatka
+	Fill Underlay	Podšití výplně
+	Brick	Cihla
+	Tatami	Tatami
+	Width:	Šířka:
+	Angle:	Úhel:
+	Size:	Velikost:

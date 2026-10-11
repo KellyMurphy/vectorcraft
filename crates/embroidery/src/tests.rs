@@ -57,7 +57,7 @@ fn running_stitch_keeps_sharp_corners() {
 
 #[test]
 fn bean_stitch_sews_each_stitch_three_times() {
-    let r = generate::bean(&[Point::new(0.0, 0.0), Point::new(2.0, 0.0), Point::new(4.0, 0.0)]);
+    let r = generate::bean(&[Point::new(0.0, 0.0), Point::new(2.0, 0.0), Point::new(4.0, 0.0)], 3);
     assert_eq!(r.len(), 1 + 3 * 2);
     assert_eq!(r.last(), Some(&Point::new(4.0, 0.0)));
 }
@@ -79,7 +79,7 @@ fn satin_zigzags_across_the_column_width() {
 #[test]
 fn fill_covers_a_square_with_one_back_and_forth_run() {
     let sq = vec![Point::new(0.0, 0.0), Point::new(10.0, 0.0), Point::new(10.0, 10.0), Point::new(0.0, 10.0)];
-    let runs = generate::fill(&[sq], FillRule::NonZero, 0.0, 0.5, 3.0).unwrap();
+    let runs = generate::fill(&[sq], FillRule::NonZero, 0.0, 0.5, 3.0, 3).unwrap();
     assert_eq!(runs.len(), 1);
     let run = &runs[0];
     let ys: std::collections::BTreeSet<i64> = run.iter().map(|p| (p.y * 1000.0).round() as i64).collect();
@@ -97,7 +97,7 @@ fn fill_leaves_holes_and_splits_separate_parts() {
     // A frame (outer square, inner square the other way round): the rows split around the hole.
     let outer = vec![Point::new(0.0, 0.0), Point::new(30.0, 0.0), Point::new(30.0, 30.0), Point::new(0.0, 30.0)];
     let inner = vec![Point::new(10.0, 10.0), Point::new(10.0, 20.0), Point::new(20.0, 20.0), Point::new(20.0, 10.0)];
-    let runs = generate::fill(&[outer, inner], FillRule::NonZero, 0.0, 0.5, 3.0).unwrap();
+    let runs = generate::fill(&[outer, inner], FillRule::NonZero, 0.0, 0.5, 3.0, 3).unwrap();
     for p in runs.iter().flatten() {
         let in_hole = p.x > 10.0 + 1e-6 && p.x < 20.0 - 1e-6 && p.y > 10.0 + 1e-6 && p.y < 20.0 - 1e-6;
         assert!(!in_hole, "{p:?} in the hole");
@@ -108,7 +108,7 @@ fn fill_leaves_holes_and_splits_separate_parts() {
 #[test]
 fn fill_rows_follow_the_angle() {
     let sq = vec![Point::new(0.0, 0.0), Point::new(10.0, 0.0), Point::new(10.0, 10.0), Point::new(0.0, 10.0)];
-    let runs = generate::fill(&[sq], FillRule::NonZero, 90.0, 0.5, 3.0).unwrap();
+    let runs = generate::fill(&[sq], FillRule::NonZero, 90.0, 0.5, 3.0, 3).unwrap();
     // Vertical rows: most stitches move along y only.
     let run = &runs[0];
     let vertical = run.windows(2).filter(|w| (w[0].x - w[1].x).abs() < 1e-6).count();
@@ -118,7 +118,7 @@ fn fill_rows_follow_the_angle() {
 #[test]
 fn huge_fills_are_refused() {
     let sq = vec![Point::new(0.0, 0.0), Point::new(1e7, 0.0), Point::new(1e7, 1e7), Point::new(0.0, 1e7)];
-    assert!(generate::fill(&[sq], FillRule::NonZero, 0.0, 0.4, 3.0).is_err());
+    assert!(generate::fill(&[sq], FillRule::NonZero, 0.0, 0.4, 3.0, 3).is_err());
 }
 
 #[test]
@@ -291,7 +291,7 @@ proptest! {
         len in 1.0f64..8.0,
     ) {
         let poly: Vec<Point> = pts.iter().map(|&(x, y)| Point::new(x, y)).collect();
-        let runs = generate::fill(std::slice::from_ref(&poly), FillRule::EvenOdd, angle, spacing, len).unwrap();
+        let runs = generate::fill(std::slice::from_ref(&poly), FillRule::EvenOdd, angle, spacing, len, 3).unwrap();
         let (x0, x1) = poly.iter().fold((f64::INFINITY, f64::NEG_INFINITY), |(a, b), p| (a.min(p.x), b.max(p.x)));
         let (y0, y1) = poly.iter().fold((f64::INFINITY, f64::NEG_INFINITY), |(a, b), p| (a.min(p.y), b.max(p.y)));
         for p in runs.iter().flatten() {
@@ -320,4 +320,76 @@ proptest! {
         prop_assert!(((a[2] - a[0]) - (b[2] - b[0])).abs() <= 0.11);
         prop_assert!(((a[3] - a[1]) - (b[3] - b[1])).abs() <= 0.11);
     }
+}
+
+/// A one-object document stitched with `s` along `path`.
+fn plan_of(path: PathData, s: StitchSettings) -> Plan {
+    let d = doc_with(|d| {
+        let mut n = stitched(d, path, s.kind, [0; 3]);
+        n.stitch = Some(Box::new(s));
+        vec![n]
+    });
+    plan(&d)
+}
+
+#[test]
+fn bean_passes_repeat_each_stitch() {
+    let run = [Point::new(0.0, 0.0), Point::new(2.0, 0.0)];
+    assert_eq!(generate::bean(&run, 5).len(), 1 + 5);
+    let five = plan_of(poly(&[(0.0, 0.0), (72.0, 0.0)], false), StitchSettings { passes: Some(5), ..StitchSettings::new(StitchKind::Bean) });
+    let three = plan_of(poly(&[(0.0, 0.0), (72.0, 0.0)], false), StitchSettings::new(StitchKind::Bean));
+    assert!(five.stats().stitches > three.stats().stitches);
+}
+
+#[test]
+fn pull_compensation_widens_the_column() {
+    let line = poly(&[(0.0, 0.0), (72.0, 0.0)], false);
+    let base = StitchSettings { width: Some(4.0), ..StitchSettings::new(StitchKind::Satin) };
+    let pulled = StitchSettings { pull: Some(0.6), ..base.clone() };
+    let h = |p: &Plan| p.stats().bounds.map(|b| b[3] - b[1]).unwrap();
+    assert!((h(&plan_of(line.clone(), base)) - 4.0).abs() < 1e-6);
+    assert!((h(&plan_of(line, pulled)) - 4.6).abs() < 1e-6);
+}
+
+#[test]
+fn satin_underlays_stay_inside_and_join_the_top_stitches() {
+    let line = poly(&[(0.0, 0.0), (72.0, 0.0)], false);
+    for u in [Underlay::Center, Underlay::Edge, Underlay::Zigzag] {
+        let s = StitchSettings { width: Some(4.0), underlay: u, ..StitchSettings::new(StitchKind::Satin) };
+        let p = plan_of(line.clone(), s);
+        let st = p.stats();
+        // Underlay and column are sewn without a jump between them (only the jump to the start).
+        assert_eq!(st.jumps, 1, "{u:?}");
+        let runs = p.runs();
+        let under: Vec<Point> = runs[0].1.iter().take(10).copied().collect();
+        for q in &under {
+            assert!(q.y.abs() <= 2.0 - 0.4 + 1e-6, "{u:?}: {q:?} outside the underlay band");
+        }
+        assert!(st.stitches > plan_of(line.clone(), StitchSettings { width: Some(4.0), ..StitchSettings::new(StitchKind::Satin) }).stats().stitches);
+    }
+}
+
+#[test]
+fn fill_underlay_runs_across_the_top_rows() {
+    let sq = poly(&[(0.0, 0.0), (72.0, 0.0), (72.0, 72.0), (0.0, 72.0)], true);
+    let plain = plan_of(sq.clone(), StitchSettings::new(StitchKind::Fill));
+    let under = plan_of(sq, StitchSettings { underlay: Underlay::Fill, ..StitchSettings::new(StitchKind::Fill) });
+    assert!(under.stats().stitches > plain.stats().stitches);
+    // The first stitches (underlay) run vertically: rows at 90° to the 0° top rows.
+    let first = &under.runs()[0].1;
+    let vertical = first.windows(2).filter(|w| (w[0].x - w[1].x).abs() < 1e-6).count();
+    assert!(vertical * 2 > first.len());
+}
+
+#[test]
+fn stagger_changes_the_needle_pattern() {
+    let sq = vec![Point::new(0.0, 0.0), Point::new(20.0, 0.0), Point::new(20.0, 20.0), Point::new(0.0, 20.0)];
+    let xs = |stagger| -> std::collections::BTreeSet<i64> {
+        generate::fill(std::slice::from_ref(&sq), FillRule::NonZero, 0.0, 1.0, 4.0, stagger).unwrap()[0]
+            .iter()
+            .map(|p| (p.x * 100.0).round() as i64)
+            .collect()
+    };
+    // Inner needle columns: 4 mm apart shifted by 1/stagger of a stitch.
+    assert!(xs(2).len() < xs(4).len());
 }

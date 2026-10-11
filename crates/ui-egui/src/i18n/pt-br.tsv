@@ -2702,3 +2702,40 @@
 	Stitch Settings	Configurações de ponto
 	Embroidery Info	Informações do bordado
 	Embroidery Stitches	Pontos do bordado
+
+# Embroidery panel
+	Density:	Densidade:
+	Design	Desenho
+	Distance between rows: smaller is denser	Distância entre as fileiras: menor é mais denso
+	Distance between zigzags: smaller is denser	Distância entre os zigue-zagues: menor é mais denso
+	Export DST…	Exportar DST…
+	How long each stitch is	Comprimento de cada ponto
+	Not Stitched	Sem bordado
+	Nothing is stitched yet.	Nada bordado ainda.
+	Object color	Cor do objeto
+	Only paths and compound paths can be stitched.	Só é possível bordar demarcadores e demarcadores compostos.
+	Passes:	Passadas:
+	Pattern:	Padrão:
+	Pull Compensation:	Compensação de repuxo:
+	Select paths to stitch.	Selecione demarcadores para bordar.
+	Sews the column this much wider, since the thread pulls the fabric in	Costura a coluna mais larga nessa medida, pois a linha repuxa o tecido
+	Some selected objects aren't stitched.	Alguns objetos selecionados não estão bordados.
+	Stitch Length:	Comprimento do ponto:
+	Stitch:	Ponto:
+	Stitches:	Pontos:
+	The needle goes down at every anchor point, as drawn.	A agulha desce em cada ponto de ancoragem, como desenhado.
+	The selected objects use different stitches.	Os objetos selecionados usam pontos diferentes.
+	The stroke's color for stitches along the path, the fill's for fills	A cor do traçado para pontos ao longo do demarcador; a do preenchimento para preenchimentos
+	Thread:	Linha:
+	Threads:	Linhas:
+	Trims / Jumps:	Cortes / saltos:
+	Underlay:	Base:
+	Use Object Color	Usar cor do objeto
+	Use Stroke	Usar traçado
+	the stroke width	a espessura do traçado
+	Center Walk	Pesponto central
+	Edge Walk	Pesponto das bordas
+	Zigzag	Zigue-zague
+	Fill Underlay	Base de preenchimento
+	Brick	Tijolo
+	Tatami	Tatame

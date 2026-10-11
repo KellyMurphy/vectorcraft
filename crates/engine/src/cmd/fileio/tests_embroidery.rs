@@ -117,3 +117,25 @@ fn dst_is_listed_and_sniffed() {
     // By content, whatever the name.
     assert_eq!(load::detect("x.bin", &bytes).map(|f| f.id), Some("dst"));
 }
+
+#[test]
+fn satin_fill_and_bean_parameters_are_set_and_checked() {
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "satin", "pull": 0.4, "underlay": "zigzag"})).unwrap();
+    let sel = &info(&mut s)["selection"];
+    assert_eq!((sel["pull"].clone(), sel["underlay"].clone()), (json!(0.4), json!("zigzag")));
+    // A fill has no zigzag underlay; switching type keeps the setting but stops using it.
+    assert!(s.execute("embroidery.set", &json!({"type": "fill", "underlay": "zigzag"})).is_err());
+    s.execute("embroidery.set", &json!({"type": "fill", "stagger": 2})).unwrap();
+    let sel = &info(&mut s)["selection"];
+    assert_eq!((sel["underlay"].clone(), sel["stagger"].clone()), (json!("none"), json!(2)));
+    s.execute("embroidery.set", &json!({"underlay": "fill"})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["underlay"], "fill");
+    s.execute("embroidery.set", &json!({"type": "bean", "passes": 5})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["passes"], 5);
+    for p in [json!({"passes": 4}), json!({"stagger": 9}), json!({"pull": -1}), json!({"underlay": "wavy"})] {
+        assert!(s.execute("embroidery.set", &p).is_err(), "{p}");
+    }
+    s.execute("embroidery.set", &json!({"passes": null})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["passes"], 3);
+}

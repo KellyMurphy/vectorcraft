@@ -4,7 +4,7 @@
 //! see `fileio::embroidery`).
 
 use serde_json::{Value, json};
-use vectorcraft_doc::{Document, NodeId, NodeKind, StitchKind, StitchSettings};
+use vectorcraft_doc::{Document, NodeId, NodeKind, StitchKind, StitchSettings, Underlay};
 use vectorcraft_embroidery::Plan;
 
 use super::overprint::edit_counted;
@@ -21,7 +21,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Stitch Settings",
             [],
             None,
-            "{type?: running|bean|satin|fill|manual (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag or fill row spacing, 0.1–5; 0.4), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column, 0.3–12; default the stroke width), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), ids?} stitch the paths and compound paths in ids or the selection (groups: those inside), as one undo step; null resets length, spacing, width or thread to the default → {changed}",
+            "{type?: running|bean|satin|fill|manual (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag or fill row spacing, 0.1–5; 0.4), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column, 0.3–12; default the stroke width), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), pull?: mm (satin pull compensation, 0–3; 0), underlay?: none|center|edge|zigzag (satin) | none|fill (fill), stagger?: 2–8 (fill rows before the needle holes line up again; 3), passes?: 3|5|7|9 (bean; 3), ids?} stitch the paths and compound paths in ids or the selection (groups: those inside), as one undo step; null resets length, spacing, width, thread, pull, stagger or passes to the default → {changed}",
             has_doc,
             set
         ),
@@ -39,7 +39,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Embroidery Info",
             [],
             None,
-            "{ids?} → {design: {objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings}, selection: {stitched, unstitched, type, length, spacing, angle, width, thread} (each null when the stitched objects differ, or none is)}",
+            "{ids?} → {design: {objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings}, selection: {stitched, unstitched, type, length, spacing, angle, width, thread, pull, underlay, stagger, passes} (each null when the stitched objects differ, or none is)}",
             has_doc,
             info
         ),
@@ -99,6 +99,26 @@ struct Edits {
     width: Option<Option<f64>>,
     angle: Option<f64>,
     thread: Option<Option<[u8; 3]>>,
+    pull: Option<Option<f64>>,
+    underlay: Option<Underlay>,
+    stagger: Option<Option<u8>>,
+    passes: Option<Option<u8>>,
+}
+
+/// An optional whole-number param in `range` (odd only when `odd`): absent → leave it, `null` →
+/// the default.
+fn count(p: &Value, key: &str, range: std::ops::RangeInclusive<u8>, odd: bool) -> Result<Option<Option<u8>>> {
+    match p.get(key) {
+        None => Ok(None),
+        Some(Value::Null) => Ok(Some(None)),
+        Some(v) => match v.as_u64().and_then(|n| u8::try_from(n).ok()) {
+            Some(n) if range.contains(&n) && (!odd || n % 2 == 1) => Ok(Some(Some(n))),
+            _ => {
+                let what = if odd { "an odd whole number" } else { "a whole number" };
+                Err(bad(SET, format!("`{key}` must be {what} from {} to {}, or null", range.start(), range.end())))
+            }
+        },
+    }
 }
 
 impl Edits {
@@ -120,8 +140,21 @@ impl Edits {
             Some(Value::Null) => Some(None),
             Some(v) => Some(Some(parse_thread(v).ok_or_else(|| bad(SET, "`thread` must be \"#rrggbb\", [r, g, b] or null"))?)),
         };
+        let underlay = match p.get("underlay") {
+            None => None,
+            Some(Value::Null) => Some(Underlay::None),
+            Some(v) => Some(
+                v.as_str()
+                    .and_then(Underlay::parse)
+                    .ok_or_else(|| bad(SET, "`underlay` must be none, center, edge, zigzag (satin) or fill (fill)"))?,
+            ),
+        };
         Ok(Self {
             kind,
+            pull: measure(p, "pull", StitchSettings::PULL)?,
+            underlay,
+            stagger: count(p, "stagger", StitchSettings::STAGGER, false)?,
+            passes: count(p, "passes", StitchSettings::PASSES, true)?,
             length: measure(p, "length", StitchSettings::LENGTH)?,
             spacing: measure(p, "spacing", StitchSettings::SPACING)?,
             width: measure(p, "width", StitchSettings::WIDTH)?,
@@ -150,6 +183,18 @@ impl Edits {
         if let Some(v) = self.thread {
             s.thread = v;
         }
+        if let Some(v) = self.pull {
+            s.pull = v;
+        }
+        if let Some(v) = self.underlay {
+            s.underlay = v;
+        }
+        if let Some(v) = self.stagger {
+            s.stagger = v;
+        }
+        if let Some(v) = self.passes {
+            s.passes = v;
+        }
         s
     }
 }
@@ -169,6 +214,15 @@ fn set(s: &mut Session, p: &Value) -> Result<Value> {
     let ids = stitchable(s, &targets(s, p)?)?;
     if ids.is_empty() {
         return Err(bad(SET, "select paths or compound paths to stitch"));
+    }
+    // An underlay asked for must suit the stitch every target ends up with.
+    if let Some(u) = edits.underlay.filter(|u| *u != Underlay::None) {
+        let d = &s.doc()?.doc;
+        if let Some(k) =
+            ids.iter().map(|id| edits.apply(d.node(*id).and_then(|n| n.stitch.as_deref())).kind).find(|k| !Underlay::for_kind(*k).contains(&u))
+        {
+            return Err(bad(SET, format!("{} stitches have no {} underlay", k.id(), u.id())));
+        }
     }
     let changed = edit_counted(s, "Stitch Settings", |d| {
         let mut n = 0;
@@ -240,6 +294,10 @@ fn info(s: &mut Session, p: &Value) -> Result<Value> {
         "angle": same(all.iter().map(|s| s.angle())),
         "width": same(all.iter().map(|s| s.width)),
         "thread": same(all.iter().map(|s| s.thread.map(hex))),
+        "pull": same(all.iter().map(|s| s.pull())),
+        "underlay": same(all.iter().map(|s| s.underlay().id())),
+        "stagger": same(all.iter().map(|s| s.stagger())),
+        "passes": same(all.iter().map(|s| s.passes())),
     });
     Ok(json!({ "design": design(doc, &plan), "selection": selection }))
 }

@@ -3744,3 +3744,40 @@ axis	Both	Оба
 	Stitch Settings	Параметры стежков
 	Embroidery Info	Сведения о вышивке
 	Embroidery Stitches	Стежки вышивки
+
+# Embroidery panel
+	Density:	Плотность:
+	Design	Дизайн
+	Distance between rows: smaller is denser	Расстояние между рядами: чем меньше, тем плотнее
+	Distance between zigzags: smaller is denser	Расстояние между зигзагами: чем меньше, тем плотнее
+	Export DST…	Экспорт в DST…
+	How long each stitch is	Длина каждого стежка
+	Not Stitched	Без вышивки
+	Nothing is stitched yet.	Пока ничего не вышито.
+	Object color	Цвет объекта
+	Only paths and compound paths can be stitched.	Вышивать можно только контуры и составные контуры.
+	Passes:	Проходы:
+	Pattern:	Узор:
+	Pull Compensation:	Компенсация стягивания:
+	Select paths to stitch.	Выделите контуры для вышивки.
+	Sews the column this much wider, since the thread pulls the fabric in	Столбик шьётся шире на эту величину, так как нить стягивает ткань
+	Some selected objects aren't stitched.	Некоторые выделенные объекты не вышиты.
+	Stitch Length:	Длина стежка:
+	Stitch:	Стежок:
+	Stitches:	Стежки:
+	The needle goes down at every anchor point, as drawn.	Игла опускается в каждой опорной точке, как нарисовано.
+	The selected objects use different stitches.	У выделенных объектов разные стежки.
+	The stroke's color for stitches along the path, the fill's for fills	Цвет обводки для стежков вдоль контура, цвет заливки для заливок
+	Thread:	Нить:
+	Threads:	Нити:
+	Trims / Jumps:	Обрезки / прыжки:
+	Underlay:	Подложка:
+	Use Object Color	Цвет объекта
+	Use Stroke	Использовать обводку
+	the stroke width	толщина обводки
+	Center Walk	Центральная строчка
+	Edge Walk	Строчка по краям
+	Zigzag	Зигзаг
+	Fill Underlay	Подложка заливки
+	Brick	Кирпич
+	Tatami	Татами

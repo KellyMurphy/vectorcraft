@@ -12,10 +12,22 @@ Select paths or compound paths (or groups holding them) and choose **Object › 
 | Stitch | What it sews | Settings |
 |---|---|---|
 | Running Stitch | Single stitches along the path (outlines, details). Sharp corners keep a needle point. | `length` (2.5 mm) |
-| Bean Stitch | Running stitch sewn three times over each stitch: a bolder line. | `length` (2.5 mm) |
-| Satin Column | A zigzag centred on the path, as wide as the stroke (borders, lettering strokes). | `width` (the stroke width, else 3 mm), `spacing` (0.4 mm) |
-| Fill | Rows of staggered running stitches covering the shape (tatami). Holes and separate parts follow the fill rule. | `angle` (0°), `spacing` (0.4 mm), `length` (4 mm) |
+| Bean Stitch | Running stitch sewn several times over each stitch: a bolder line. | `length` (2.5 mm), `passes` (3, 5, 7 or 9; 3) |
+| Satin Column | A zigzag centred on the path, as wide as the stroke (borders, lettering strokes). | `width` (the stroke width, else 3 mm), `spacing` (density, 0.4 mm), `pull` (pull compensation, 0 mm), `underlay` (none, center, edge, zigzag) |
+| Fill | Rows of staggered running stitches covering the shape (tatami). Holes and separate parts follow the fill rule. | `angle` (0°), `spacing` (density, 0.4 mm), `length` (4 mm), `stagger` (pattern: 2 brick, 3–8 tatami; 3), `underlay` (none, fill) |
 | Manual Stitch | The needle goes down at every anchor, as drawn. Imported designs use it. | — |
+
+**Window › Embroidery** shows the same settings for the selection: the stitch type, the thread, and the
+selected type's parameters (Density is the spacing). Below them it shows the whole design (stitch count,
+size, trims and jumps, threads) with a Stitch Preview switch and **Export DST…**.
+
+**Underlay** is sewn before the top stitches to hold the fabric and lift the top stitches. For satin, it can be a
+**center walk** (a running stitch down the middle), an **edge walk** (just inside both edges) or a sparse
+**zigzag**. For fills, a **fill underlay** is a set of sparse rows at right angles to the top rows. **Pull
+compensation** sews a satin column wider than drawn, because the thread pulls the fabric in.
+
+The fill **pattern** sets how many rows the stitches take before their needle holes line up again: 2 makes a
+brick pattern, 3 to 8 make tatami patterns with longer diagonals.
 
 **Remove Stitches** takes the settings off. Settings are saved in the `.vectorcraft` file, and editing a
 path changes its stitches.
@@ -37,7 +49,8 @@ before a jump longer than 3 mm and before each colour change.
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
 | `view.stitchPreview` | toggles Stitch Preview |
 
-Allowed ranges: stitch length 0.3–12 mm, spacing 0.1–5 mm, satin width 0.3–12 mm.
+Allowed ranges: stitch length 0.3–12 mm, spacing 0.1–5 mm, satin width 0.3–12 mm, pull compensation 0–3 mm,
+stagger 2–8 rows, bean passes 3–9 (odd).
 
 ## DST files
 
@@ -53,10 +66,10 @@ split. A trim is written as three short jumps that return to where they started.
 
 ## What's next
 
-- **E3, quality:** underlay under satins and fills, pull compensation, fill routing that walks the edge
-  instead of jumping between parts, clean satin corners (today the zigzag bunches at sharp turns), satin
-  between two rails, tie-in and tie-off stitches, and an
-  Embroidery panel.
+- **E3, quality:** fill routing that walks the edge instead of jumping between parts, clean satin corners
+  (today the zigzag bunches at sharp turns), satin between two rails, tie-in and tie-off stitches, and fill
+  patterns beyond tatami (motif and embossed fills: they will join the Fill section's Pattern menu).
+  Underlay, pull compensation and the Embroidery panel are done.
 - **E4, breadth:** PES, JEF, EXP and VP3; hoop templates; auto-digitizing traced art.
 
 Clean-room note: no code from Ink/Stitch (GPL) or other digitizers is used. Formats come from public

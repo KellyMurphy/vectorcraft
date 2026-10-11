@@ -4,6 +4,7 @@
 //! the needle goes down first. Points are mm in document coordinates (y down).
 
 use kurbo::{Affine, BezPath, PathEl, Point, Vec2};
+use vectorcraft_doc::Underlay;
 use vectorcraft_geom::{FillRule, PathData};
 
 use crate::{MAX_NEEDLES, PT_MM};
@@ -119,52 +120,92 @@ pub fn running(line: &[Point], len: f64) -> Vec<Point> {
     resample(line, len, true)
 }
 
-/// Bean stitch: each running stitch sewn forward, back and forward again.
-pub fn bean(run: &[Point]) -> Vec<Point> {
+/// Bean stitch: each running stitch sewn `passes` times (odd: forward, back, forward…).
+pub fn bean(run: &[Point], passes: u8) -> Vec<Point> {
     let Some(&first) = run.first() else { return vec![] };
     let mut out = vec![first];
     for w in run.windows(2) {
-        out.extend([w[1], w[0], w[1]]);
+        out.push(w[1]);
+        for _ in 0..passes.saturating_sub(1) / 2 {
+            out.extend([w[0], w[1]]);
+        }
     }
     out
+}
+
+/// How far inside the column edge underlay runs, mm.
+const UNDERLAY_INSET: f64 = 0.4;
+/// Underlay stitch length, mm.
+const UNDERLAY_LEN: f64 = 2.0;
+/// Zigzag and fill underlay spacing, mm.
+const UNDERLAY_SPACING: f64 = 2.0;
+/// Fill underlay stitch length, mm.
+const UNDERLAY_FILL_LEN: f64 = 3.0;
+
+/// The unit normal (left of the direction of travel) at each point of `c`.
+fn normals(c: &[Point], closed: bool) -> Vec<Vec2> {
+    let n = c.len();
+    (0..n)
+        .map(|i| {
+            let (prev, next) = if closed {
+                // The last point repeats the first: its neighbours wrap around past it.
+                (if i == 0 { n.saturating_sub(2) } else { i - 1 }, if i + 1 >= n { 1.min(n - 1) } else { i + 1 })
+            } else {
+                (i.saturating_sub(1), (i + 1).min(n - 1))
+            };
+            let t = match (c.get(next), c.get(prev)) {
+                (Some(&a), Some(&b)) => a - b,
+                _ => Vec2::ZERO,
+            };
+            let l = t.hypot();
+            if l > 0.0 { Vec2::new(-t.y / l, t.x / l) } else { Vec2::new(0.0, 1.0) }
+        })
+        .collect()
 }
 
 /// Satin column: a zigzag `width` mm wide centred on `line`, a zig every `spacing` mm.
 pub fn satin(line: &[Point], closed: bool, width: f64, spacing: f64) -> Vec<Point> {
     let c = resample(line, spacing, false);
-    let n = c.len();
-    if n < 2 {
+    if c.len() < 2 {
         return c;
     }
     let half = width / 2.0;
-    let tangent = |i: usize| -> Vec2 {
-        let (prev, next) = if closed {
-            // The last point repeats the first: its neighbours wrap around past it.
-            let prev = if i == 0 { n.saturating_sub(2) } else { i - 1 };
-            let next = if i + 1 >= n { 1.min(n - 1) } else { i + 1 };
-            (prev, next)
-        } else {
-            (i.saturating_sub(1), (i + 1).min(n - 1))
-        };
-        let t = c[next] - c[prev];
-        let l = t.hypot();
-        if l > 0.0 { t / l } else { Vec2::new(1.0, 0.0) }
-    };
-    (0..n)
-        .map(|i| {
-            let t = tangent(i);
-            let normal = Vec2::new(-t.y, t.x);
-            let side = if i % 2 == 0 { half } else { -half };
-            c[i] + normal * side
-        })
-        .collect()
+    c.iter().zip(normals(&c, closed)).enumerate().map(|(i, (p, n))| *p + n * if i % 2 == 0 { half } else { -half }).collect()
+}
+
+/// The underlay of a satin column `width` mm wide along `line`, and whether it ends where the
+/// line ends (so the top stitches go back the other way).
+pub fn satin_underlay(line: &[Point], closed: bool, width: f64, kind: Underlay) -> (Vec<Point>, bool) {
+    let inner = width - 2.0 * UNDERLAY_INSET;
+    match kind {
+        Underlay::Center => (running(line, UNDERLAY_LEN), true),
+        // Too narrow for two edges: down the middle.
+        Underlay::Edge | Underlay::Zigzag if inner < 0.5 => (running(line, UNDERLAY_LEN), true),
+        Underlay::Edge => {
+            let c = resample(line, UNDERLAY_LEN, true);
+            let n = normals(&c, closed);
+            let half = inner / 2.0;
+            let mut out: Vec<Point> = c.iter().zip(&n).map(|(p, n)| *p + *n * half).collect();
+            out.extend(c.iter().zip(&n).rev().map(|(p, n)| *p - *n * half));
+            (out, false)
+        }
+        Underlay::Zigzag => (satin(line, closed, inner, UNDERLAY_SPACING), true),
+        Underlay::None | Underlay::Fill => (vec![], false),
+    }
+}
+
+/// A fill's underlay: sparse rows across the top rows' `angle`.
+pub fn fill_underlay(polys: &[Vec<Point>], rule: FillRule, angle: f64) -> Result<Vec<Vec<Point>>, String> {
+    fill(polys, rule, angle + 90.0, UNDERLAY_SPACING, UNDERLAY_FILL_LEN, 2)
 }
 
 /// Tatami fill: rows `spacing` mm apart at `angle` degrees (counter-clockwise on the page) across
 /// the area of the closed `polys` (filled by `rule`), each row running stitches up to `len` mm
-/// long, staggered row to row so the needle holes don't line up. Rows that touch are sewn as one
+/// long, staggered row to row so the needle holes line up again only every `stagger` rows (2: a
+/// brick pattern, 3: tatami…). Rows that touch are sewn as one
 /// run, back and forth; separate parts of the shape become separate runs.
-pub fn fill(polys: &[Vec<Point>], rule: FillRule, angle: f64, spacing: f64, len: f64) -> Result<Vec<Vec<Point>>, String> {
+pub fn fill(polys: &[Vec<Point>], rule: FillRule, angle: f64, spacing: f64, len: f64, stagger: u8) -> Result<Vec<Vec<Point>>, String> {
+    let stagger = usize::from(stagger.max(1));
     if !(spacing.is_finite() && len.is_finite()) || spacing <= 0.0 || len <= 0.0 {
         return Ok(vec![]);
     }
@@ -206,7 +247,7 @@ pub fn fill(polys: &[Vec<Point>], rule: FillRule, angle: f64, spacing: f64, len:
                     *u = true;
                 }
                 let (from, to) = if forward { (a, b) } else { (b, a) };
-                row(&mut run, row_y(r), from, to, len, r);
+                row(&mut run, row_y(r), from, to, len, (r % stagger) as f64 / stagger as f64);
                 // The next row starts at the end nearest this row's end; a join longer than two
                 // stitches would cross outside the shape (round a hole or notch): a new run instead.
                 let next = spans.get(r + 1).and_then(|s| {
@@ -273,11 +314,11 @@ fn sew(run: &mut Vec<Point>, p: Point, len: f64) {
 }
 
 /// One fill row from `from` to `to` at `y`, joined to `run` (whose end is where the needle is),
-/// in stitches no longer than `len`: the row's inner needle points sit on a grid shifted a third
-/// of a stitch each row.
-fn row(run: &mut Vec<Point>, y: f64, from: f64, to: f64, len: f64, r: usize) {
+/// in stitches no longer than `len`: the row's inner needle points sit on a grid shifted by
+/// `shift` of a stitch.
+fn row(run: &mut Vec<Point>, y: f64, from: f64, to: f64, len: f64, shift: f64) {
     sew(run, Point::new(from, y), len);
-    let offset = (r % 3) as f64 * len / 3.0;
+    let offset = shift * len;
     let margin = (len * 0.25).max(0.3);
     let (lo, hi) = (from.min(to), from.max(to));
     let first = ((lo + margin - offset) / len).ceil();

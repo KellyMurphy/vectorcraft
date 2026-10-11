@@ -3202,3 +3202,40 @@ axis	Both	兩者
 	Stitch Settings	針跡設定
 	Embroidery Info	刺繡資訊
 	Embroidery Stitches	刺繡針跡
+
+# Embroidery panel
+	Density:	密度:
+	Design	設計
+	Distance between rows: smaller is denser	行距:越小越密
+	Distance between zigzags: smaller is denser	鋸齒間距:越小越密
+	Export DST…	轉存 DST…
+	How long each stitch is	每針的長度
+	Not Stitched	無針跡
+	Nothing is stitched yet.	尚無針跡。
+	Object color	物件顏色
+	Only paths and compound paths can be stitched.	只有路徑和複合路徑可以刺繡。
+	Passes:	遍數:
+	Pattern:	圖樣:
+	Pull Compensation:	拉力補償:
+	Select paths to stitch.	選取要刺繡的路徑。
+	Sews the column this much wider, since the thread pulls the fabric in	線會把布料拉緊,所以柱面縫得比畫的寬這麼多
+	Some selected objects aren't stitched.	部分選取的物件沒有針跡。
+	Stitch Length:	針距:
+	Stitch:	針跡:
+	Stitches:	針數:
+	The needle goes down at every anchor point, as drawn.	依繪製的樣子,在每個錨點落針。
+	The selected objects use different stitches.	所選物件的針跡不同。
+	The stroke's color for stitches along the path, the fill's for fills	沿路徑的針跡用筆畫顏色,填色用填色
+	Thread:	線:
+	Threads:	線:
+	Trims / Jumps:	剪線 / 跳針:
+	Underlay:	底襯:
+	Use Object Color	使用物件顏色
+	Use Stroke	使用筆畫
+	the stroke width	筆畫寬度
+	Center Walk	中心底襯
+	Edge Walk	邊緣底襯
+	Zigzag	鋸齒
+	Fill Underlay	填色底襯
+	Brick	磚形
+	Tatami	榻榻米

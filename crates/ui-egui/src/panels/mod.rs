@@ -16,6 +16,7 @@ pub mod color_guide;
 pub mod color_themes;
 pub mod css_properties;
 pub mod doc_info;
+pub mod embroidery;
 pub mod flattener_preview;
 pub mod glyphs;
 pub mod gradient;
@@ -127,6 +128,7 @@ pub fn show_icon_panel(app: &mut VectorcraftApp, ui: &mut Ui, id: &str) {
         "tabs" => tabs::show(app, ui),
         flattener_preview::ID => flattener_preview::show(app, ui),
         "attributes" => attributes::show(app, ui),
+        embroidery::ID => embroidery::show(app, ui),
         "colorThemes" => color_themes::show(app, ui),
         links::ID => links::show(app, ui),
         asset_export::ID => asset_export::show(app, ui),

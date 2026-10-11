@@ -19,7 +19,7 @@ use std::sync::Arc;
 use kurbo::Point;
 use serde::Serialize;
 use vectorcraft_color::Paint;
-use vectorcraft_doc::{Document, Node, NodeKind, StitchKind, StitchSettings};
+use vectorcraft_doc::{Document, Node, NodeKind, StitchKind, StitchSettings, Underlay};
 use vectorcraft_geom::{FillRule, PathData};
 
 pub use dst::{DstError, is_dst, read_dst, write_dst};
@@ -283,30 +283,45 @@ fn thread_of(n: &Node, s: &StitchSettings) -> [u8; 3] {
 
 fn object(n: &Node, s: &StitchSettings, paths: &[&PathData], rule: FillRule, b: &mut Builder) {
     let thread = thread_of(n, s);
-    let runs: Vec<Vec<Point>> = match s.kind {
-        StitchKind::Manual => paths.iter().flat_map(|p| generate::manual(p)).collect(),
-        kind => {
-            let lines: Vec<(Vec<Point>, bool)> = paths.iter().flat_map(|p| generate::polylines(p)).collect();
-            match kind {
-                StitchKind::Fill => {
-                    let polys: Vec<Vec<Point>> = lines.into_iter().map(|(l, _)| l).collect();
-                    match generate::fill(&polys, rule, s.angle(), s.spacing(), s.length()) {
-                        Ok(r) => r,
-                        Err(e) => {
-                            b.plan.warnings.push(e);
-                            return;
-                        }
+    let mut runs: Vec<Vec<Point>> = vec![];
+    if s.kind == StitchKind::Manual {
+        runs.extend(paths.iter().flat_map(|p| generate::manual(p)));
+    } else {
+        let lines: Vec<(Vec<Point>, bool)> = paths.iter().flat_map(|p| generate::polylines(p)).collect();
+        match s.kind {
+            StitchKind::Fill => {
+                let polys: Vec<Vec<Point>> = lines.into_iter().map(|(l, _)| l).collect();
+                let under = match s.underlay() {
+                    Underlay::Fill => generate::fill_underlay(&polys, rule, s.angle()),
+                    _ => Ok(vec![]),
+                };
+                match under.and_then(|u| Ok((u, generate::fill(&polys, rule, s.angle(), s.spacing(), s.length(), s.stagger())?))) {
+                    Ok((u, top)) => runs.extend(u.into_iter().chain(top)),
+                    Err(e) => {
+                        b.plan.warnings.push(e);
+                        return;
                     }
                 }
-                StitchKind::Satin => {
-                    let w = s.width(n.appearance.stroke_width() * PT_MM);
-                    lines.iter().map(|(l, closed)| generate::satin(l, *closed, w, s.spacing())).collect()
-                }
-                StitchKind::Bean => lines.iter().map(|(l, _)| generate::bean(&generate::running(l, s.length()))).collect(),
-                _ => lines.iter().map(|(l, _)| generate::running(l, s.length())).collect(),
             }
+            StitchKind::Satin => {
+                let w = s.width(n.appearance.stroke_width() * PT_MM) + s.pull();
+                for (l, closed) in &lines {
+                    let (under, back) = generate::satin_underlay(l, *closed, w, s.underlay());
+                    // After an underlay that ends at the far end, the column is sewn back.
+                    let top = if back {
+                        let rev: Vec<Point> = l.iter().rev().copied().collect();
+                        generate::satin(&rev, *closed, w, s.spacing())
+                    } else {
+                        generate::satin(l, *closed, w, s.spacing())
+                    };
+                    // One run: the move from the underlay to the column stays inside the column.
+                    runs.push(under.into_iter().chain(top).collect());
+                }
+            }
+            StitchKind::Bean => runs.extend(lines.iter().map(|(l, _)| generate::bean(&generate::running(l, s.length()), s.passes()))),
+            _ => runs.extend(lines.iter().map(|(l, _)| generate::running(l, s.length()))),
         }
-    };
+    }
     for r in runs {
         b.run(thread, &r);
     }

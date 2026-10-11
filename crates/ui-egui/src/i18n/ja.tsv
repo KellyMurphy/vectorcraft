@@ -3738,3 +3738,40 @@ theme	Appearance	外観
 	Stitch Settings	ステッチ設定
 	Embroidery Info	刺繍情報
 	Embroidery Stitches	刺繍のステッチ
+
+# Embroidery panel
+	Density:	密度:
+	Design	デザイン
+	Distance between rows: smaller is denser	列の間隔:小さいほど密になります
+	Distance between zigzags: smaller is denser	ジグザグの間隔:小さいほど密になります
+	Export DST…	DST を書き出し…
+	How long each stitch is	1 針の長さ
+	Not Stitched	ステッチなし
+	Nothing is stitched yet.	まだステッチがありません。
+	Object color	オブジェクトのカラー
+	Only paths and compound paths can be stitched.	ステッチできるのはパスと複合パスだけです。
+	Passes:	回数:
+	Pattern:	パターン:
+	Pull Compensation:	引き補正:
+	Select paths to stitch.	ステッチするパスを選択してください。
+	Sews the column this much wider, since the thread pulls the fabric in	糸が布を引き寄せるため、コラムをこの分だけ広く縫います
+	Some selected objects aren't stitched.	ステッチのないオブジェクトが選択されています。
+	Stitch Length:	針目の長さ:
+	Stitch:	ステッチ:
+	Stitches:	針数:
+	The needle goes down at every anchor point, as drawn.	描いたとおり、各アンカーポイントで針を落とします。
+	The selected objects use different stitches.	選択したオブジェクトのステッチが異なります。
+	The stroke's color for stitches along the path, the fill's for fills	パスに沿うステッチは線のカラー、フィルは塗りのカラー
+	Thread:	糸:
+	Threads:	糸:
+	Trims / Jumps:	糸切り / ジャンプ:
+	Underlay:	下縫い:
+	Use Object Color	オブジェクトのカラーを使用
+	Use Stroke	線幅を使用
+	the stroke width	線幅
+	Center Walk	中央の下縫い
+	Edge Walk	縁の下縫い
+	Zigzag	ジグザグ
+	Fill Underlay	フィルの下縫い
+	Brick	レンガ
+	Tatami	タタミ

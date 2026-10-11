@@ -3424,3 +3424,40 @@ axis	Both	两者
 	Stitch Settings	针迹设置
 	Embroidery Info	刺绣信息
 	Embroidery Stitches	刺绣针迹
+
+# Embroidery panel
+	Density:	密度:
+	Design	设计
+	Distance between rows: smaller is denser	行距:越小越密
+	Distance between zigzags: smaller is denser	锯齿间距:越小越密
+	Export DST…	导出 DST…
+	How long each stitch is	每针的长度
+	Not Stitched	无针迹
+	Nothing is stitched yet.	尚无针迹。
+	Object color	对象颜色
+	Only paths and compound paths can be stitched.	只有路径和复合路径可以刺绣。
+	Passes:	遍数:
+	Pattern:	图案:
+	Pull Compensation:	拉力补偿:
+	Select paths to stitch.	选择要刺绣的路径。
+	Sews the column this much wider, since the thread pulls the fabric in	线会把布料拉紧,所以柱面缝得比画的宽这么多
+	Some selected objects aren't stitched.	部分选中对象没有针迹。
+	Stitch Length:	针距:
+	Stitch:	针迹:
+	Stitches:	针数:
+	The needle goes down at every anchor point, as drawn.	按绘制的样子,在每个锚点落针。
+	The selected objects use different stitches.	所选对象的针迹不同。
+	The stroke's color for stitches along the path, the fill's for fills	沿路径的针迹用描边颜色,填充用填色
+	Thread:	线:
+	Threads:	线:
+	Trims / Jumps:	剪线 / 跳针:
+	Underlay:	底衬:
+	Use Object Color	使用对象颜色
+	Use Stroke	使用描边
+	the stroke width	描边宽度
+	Center Walk	中心底衬
+	Edge Walk	边缘底衬
+	Zigzag	锯齿
+	Fill Underlay	填充底衬
+	Brick	砖形
+	Tatami	榻榻米
