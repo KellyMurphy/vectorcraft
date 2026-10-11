@@ -33,11 +33,19 @@ brick pattern, 3 to 8 make tatami patterns with longer diagonals.
 path changes its stitches.
 
 The thread colour is the stroke's colour for path stitches and the fill's for fills, unless `thread` is set.
-Hidden objects, guides and clipping paths are not stitched. Type, images and symbols can't be stitched
-yet: outline the type first (Type › Create Outlines).
+Hidden objects, guides, clipping paths, template layers and non-printing layers are not stitched. Type,
+images and symbols can't be stitched yet: outline the type first (Type › Create Outlines). Clipping and
+opacity masks don't apply to stitches: a masked object is stitched whole, with a warning.
 
 Objects are sewn in paint order, bottom first. Between objects the needle jumps, and it trims the thread
-before a jump longer than 3 mm and before each colour change.
+before a jump longer than 3 mm and before each colour change. Every run of stitches that starts after a jump,
+trim or colour change goes down where the frame stopped and locks the thread with two tiny stitches (a
+tie-in); every trim is preceded by a tie-off. Manual stitches are sewn exactly as drawn, without ties.
+
+At a sharp corner a satin column fans round the turn: the inner side holds at the corner's inner miter point
+while the outer side sweeps round, so the stitches neither pile up inside the turn nor leave a gap outside it.
+A closed satin path starts halfway along its longest side, away from its corners. No stitch is longer than
+12 mm: wider satins (with pull compensation) are sewn at 12 mm.
 
 ### Commands
 
@@ -59,6 +67,10 @@ middle, where the machine starts. Opening a `.dst` file creates one manual-stitc
 stitches, grouped by colour block. DST stores no thread colours, so each block gets a distinct colour;
 recolour the paths' strokes, or set `thread`, before sewing.
 
+DST files VectorCraft writes have been checked against an independent reader,
+[pyembroidery](https://github.com/EmbroidePy/pyembroidery) (used as a test tool only; none of its code is in
+VectorCraft): the stitch, jump, trim and colour-change counts and the design size agree.
+
 The format is implemented from public descriptions of it
 ([edutechwiki: Embroidery format DST](https://edutechwiki.unige.ch/en/Embroidery_format_DST)): a
 512-byte text header, then 3-byte records that each move the needle up to 12.1 mm. Longer moves are
@@ -66,10 +78,10 @@ split. A trim is written as three short jumps that return to where they started.
 
 ## What's next
 
-- **E3, quality:** fill routing that walks the edge instead of jumping between parts, clean satin corners
-  (today the zigzag bunches at sharp turns), satin between two rails, tie-in and tie-off stitches, and fill
-  patterns beyond tatami (motif and embossed fills: they will join the Fill section's Pattern menu).
-  Underlay, pull compensation and the Embroidery panel are done.
+- **E3, quality:** fill routing that travels along the edge between parts instead of jumping, satin between
+  two rails, and fill patterns beyond tatami (motif and embossed fills: they will join the Fill section's
+  Pattern menu). Underlay, pull compensation, tie-ins and tie-offs, satin corners and the Embroidery panel
+  are done.
 - **E4, breadth:** PES, JEF, EXP and VP3; hoop templates; auto-digitizing traced art.
 
 Clean-room note: no code from Ink/Stitch (GPL) or other digitizers is used. Formats come from public

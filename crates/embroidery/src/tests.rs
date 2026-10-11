@@ -393,3 +393,211 @@ fn stagger_changes_the_needle_pattern() {
     // Inner needle columns: 4 mm apart shifted by 1/stagger of a stitch.
     assert!(xs(2).len() < xs(4).len());
 }
+
+/// A multi-object design touching every kind of travel: close runs, far jumps, colour changes.
+fn busy_doc() -> Document {
+    doc_with(|d| {
+        let mut fill = stitched(d, poly(&[(0.0, 0.0), (90.0, 0.0), (90.0, 60.0), (0.0, 60.0)], true), StitchKind::Fill, [200, 0, 0]);
+        fill.stitch.as_mut().unwrap().underlay = Underlay::Fill;
+        vec![
+            fill,
+            stitched(d, poly(&[(120.0, 0.0), (200.0, 40.0)], false), StitchKind::Satin, [0, 0, 200]),
+            stitched(d, poly(&[(120.0, 80.0), (200.0, 80.0)], false), StitchKind::Bean, [0, 0, 200]),
+            stitched(d, poly(&[(0.0, 120.0), (60.0, 160.0), (0.0, 200.0)], true), StitchKind::Running, [0, 150, 0]),
+        ]
+    })
+}
+
+#[test]
+fn every_run_is_anchored_after_jumps_trims_and_colour_changes() {
+    let p = plan(&busy_doc());
+    let n = &p.needles;
+    for i in 1..n.len() {
+        if n[i].cmd == Cmd::Stitch && n[i - 1].cmd != Cmd::Stitch {
+            // The needle goes down where the frame stopped, before moving.
+            assert_eq!((n[i].x, n[i].y), (n[i - 1].x, n[i - 1].y), "needle {i} sews from an unanchored point");
+        }
+    }
+}
+
+#[test]
+fn trims_follow_tie_offs_and_runs_start_with_tie_ins() {
+    let p = plan(&busy_doc());
+    let n = &p.needles;
+    let mut trims = 0;
+    for i in 0..n.len() {
+        if n[i].cmd == Cmd::Trim && i >= 4 {
+            trims += 1;
+            let tie = &n[i - 4..i];
+            assert!(tie.iter().all(|t| t.cmd == Cmd::Stitch));
+            // Back and forth over a short stitch, ending where the thread is cut.
+            assert!((tie[0].x - tie[1].x).hypot(tie[0].y - tie[1].y) <= TIE_MM_TEST + 1e-9);
+            assert_eq!((tie[3].x, tie[3].y), (n[i].x, n[i].y));
+        }
+        if n[i].cmd == Cmd::Jump && n.get(i + 1).is_some_and(|m| m.cmd == Cmd::Stitch) {
+            let ties = &n[i + 1..(i + 6).min(n.len())];
+            assert_eq!(ties.len(), 5, "an anchor and four lock stitches");
+            assert_eq!((ties[0].x, ties[0].y), (ties[2].x, ties[2].y));
+            assert_eq!((ties[0].x, ties[0].y), (ties[4].x, ties[4].y));
+        }
+    }
+    assert!(trims >= 3);
+}
+
+const TIE_MM_TEST: f64 = 0.6;
+
+#[test]
+fn manual_stitches_get_no_lock_stitches() {
+    let mut s = StitchSettings::new(StitchKind::Manual);
+    s.thread = Some([0; 3]);
+    let p = plan_of(poly(&[(0.0, 0.0), (10.0, 0.0), (20.0, 0.0)], false), s);
+    let stitches: Vec<&Needle> = p.needles.iter().filter(|n| n.cmd == Cmd::Stitch).collect();
+    // The anchor, then the two anchors after it; the trim at the end has no tie-off before it.
+    assert_eq!(stitches.len(), 3);
+}
+
+proptest! {
+    #![proptest_config(ProptestConfig::with_cases(64))]
+
+    /// Whatever the paths, every stitch after a non-stitch is anchored, and none is longer than
+    /// the longest stitch any setting allows.
+    #[test]
+    fn plans_are_anchored_and_stitches_bounded(
+        lines in proptest::collection::vec(proptest::collection::vec((0.0f64..300.0, 0.0f64..300.0), 2..8), 1..5),
+        kind in 0usize..4,
+        wide in any::<bool>(),
+    ) {
+        let kinds = [StitchKind::Running, StitchKind::Bean, StitchKind::Satin, StitchKind::Fill];
+        let d = doc_with(|d| lines.iter().enumerate().map(|(i, l)| {
+            let mut n = stitched(d, poly(l, kinds[kind] == StitchKind::Fill), kinds[kind], [(i * 60) as u8, 0, 0]);
+            if wide {
+                // The widest satin with the most pull compensation.
+                let s = n.stitch.as_mut().unwrap();
+                s.width = Some(12.0);
+                s.pull = Some(3.0);
+                s.length = Some(12.0);
+            }
+            n
+        }).collect());
+        let p = plan(&d);
+        let n = &p.needles;
+        for i in 1..n.len() {
+            if n[i].cmd == Cmd::Stitch {
+                if n[i - 1].cmd != Cmd::Stitch {
+                    prop_assert_eq!((n[i].x, n[i].y), (n[i - 1].x, n[i - 1].y));
+                } else {
+                    let len = (n[i].x - n[i - 1].x).hypot(n[i].y - n[i - 1].y);
+                    prop_assert!(len <= 12.1, "stitch {len} mm: DST moves at most 12.1 mm");
+                }
+            }
+        }
+    }
+}
+
+#[test]
+fn template_and_non_printing_layers_are_not_sewn() {
+    for edit in [|c: &mut bool, _: &mut bool| *c = true, |_: &mut bool, p: &mut bool| *p = false] {
+        let mut d = doc_with(|d| vec![stitched(d, poly(&[(0.0, 0.0), (72.0, 0.0)], false), StitchKind::Running, [0; 3])]);
+        if let vectorcraft_doc::NodeKind::Layer { template, printable, .. } = &mut Arc::make_mut(&mut d.layers[0]).kind {
+            edit(template, printable);
+        }
+        assert!(plan(&d).needles.is_empty());
+    }
+}
+
+#[test]
+fn masked_objects_are_stitched_with_a_warning() {
+    let d = doc_with(|d| {
+        let line = stitched(d, poly(&[(0.0, 0.0), (72.0, 0.0)], false), StitchKind::Running, [0; 3]);
+        let clip = Node::path(d.alloc_id(), poly(&[(0.0, 0.0), (10.0, 0.0), (10.0, 10.0)], true), Appearance::default());
+        let mut g = Node::group(d.alloc_id(), vec![Arc::new(clip), Arc::new(line)]);
+        if let vectorcraft_doc::NodeKind::Group { clip, .. } = &mut g.kind {
+            *clip = true;
+        }
+        vec![g]
+    });
+    let p = plan(&d);
+    assert!(p.stats().stitches > 0);
+    assert!(p.warnings.iter().any(|w| w.contains("mask")), "{:?}", p.warnings);
+}
+
+proptest! {
+    #![proptest_config(ProptestConfig::with_cases(128))]
+
+    /// Fill stitches never leave the shape: every stitch's middle is inside it (joins between
+    /// rows of concave shapes included).
+    #[test]
+    fn fill_stitches_stay_inside_concave_shapes(
+        pts in proptest::collection::vec((0.0f64..60.0, 0.0f64..60.0), 3..10),
+        angle in 0.0f64..180.0,
+    ) {
+        // A star-shaped polygon (angles sorted around the centre): concave, never self-crossing.
+        let mut pts: Vec<Point> = pts.iter().map(|&(x, y)| Point::new(x, y)).collect();
+        let c = Point::new(30.0, 30.0);
+        pts.sort_by(|a, b| (a.y - c.y).atan2(a.x - c.x).total_cmp(&(b.y - c.y).atan2(b.x - c.x)));
+        let runs = generate::fill(std::slice::from_ref(&pts), FillRule::NonZero, angle, 0.5, 3.0, 3).unwrap();
+        let polys = [pts.clone()];
+        for r in &runs {
+            for w in r.windows(2) {
+                let mid = w[0].lerp(w[1], 0.5);
+                prop_assert!(generate::tests_inside(&polys, mid), "{:?}–{:?} leaves the shape", w[0], w[1]);
+            }
+        }
+    }
+}
+
+/// Distance from `p` to the polyline `line`.
+fn to_line(p: Point, line: &[Point]) -> f64 {
+    line.windows(2)
+        .map(|w| {
+            let (a, b) = (w[0], w[1]);
+            let ab = b - a;
+            let t = ((p - a).dot(ab) / ab.hypot2()).clamp(0.0, 1.0);
+            p.distance(a + ab * t)
+        })
+        .fold(f64::INFINITY, f64::min)
+}
+
+#[test]
+fn satin_corners_stay_in_the_column_and_fan_round() {
+    for (pts, closed) in [
+        (vec![Point::new(0.0, 0.0), Point::new(20.0, 0.0), Point::new(20.0, 20.0), Point::new(0.0, 20.0)], true),
+        (vec![Point::new(0.0, 0.0), Point::new(20.0, 0.0), Point::new(5.0, 8.0)], false),
+    ] {
+        let mut line = pts.clone();
+        if closed {
+            line.push(pts[0]);
+        }
+        let z = generate::satin(&line, closed, 4.0, 0.4);
+        for p in &z {
+            // Every needle point is within the column: a half-width from the line, or at a corner's
+            // miter point (√2 half-widths at a right angle, at most 3 at a hairpin).
+            assert!(to_line(*p, &line) <= 2.0 * 3.0 + 1e-6, "{p:?} outside the column");
+        }
+        // Around each corner the outer edge is covered: consecutive outer points are close.
+        for w in z.windows(3) {
+            assert!(w[0].distance(w[2]) <= 2.0, "a gap between {:?} and {:?}", w[0], w[2]);
+        }
+    }
+}
+
+/// `EMB_DUMP=folder cargo test -p vectorcraft-embroidery dump_samples -- --ignored` writes sample
+/// designs as DST for checking in other embroidery software.
+#[test]
+#[ignore]
+fn dump_samples() {
+    let Some(dir) = std::env::var_os("EMB_DUMP") else { return };
+    let dir = std::path::PathBuf::from(dir);
+    let sq = poly(&[(0.0, 0.0), (100.0, 0.0), (100.0, 100.0), (0.0, 100.0)], true);
+    let zig = poly(&[(0.0, 150.0), (60.0, 130.0), (20.0, 200.0), (100.0, 180.0)], false);
+    let d = doc_with(|d| {
+        let mut a = stitched(d, sq.clone(), StitchKind::Satin, [20, 50, 90]);
+        a.stitch.as_mut().unwrap().width = Some(5.0);
+        a.stitch.as_mut().unwrap().underlay = Underlay::Edge;
+        let mut b = stitched(d, zig.clone(), StitchKind::Satin, [200, 30, 30]);
+        b.stitch.as_mut().unwrap().width = Some(3.0);
+        vec![a, b]
+    });
+    std::fs::write(dir.join("satin_corners.dst"), write_dst(&plan(&d), "satin corners")).unwrap();
+    std::fs::write(dir.join("busy.dst"), write_dst(&plan(&busy_doc()), "busy")).unwrap();
+}

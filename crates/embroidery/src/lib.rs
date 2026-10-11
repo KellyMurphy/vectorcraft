@@ -122,7 +122,10 @@ impl Plan {
                     if run.is_empty() {
                         run.push(cur.unwrap_or(p));
                     }
-                    run.push(p);
+                    // A stitch in place (the needle going down where it jumped to) adds no point.
+                    if run.last() != Some(&p) {
+                        run.push(p);
+                    }
                     cur = Some(p);
                 }
                 Cmd::Jump => {
@@ -148,11 +151,13 @@ struct Builder {
     cur: Option<Point>,
     thread: Option<[u8; 3]>,
     full: bool,
+    /// The run being sewn locks its thread ([`Builder::run`]).
+    tie: bool,
 }
 
 impl Builder {
     fn new() -> Self {
-        Self { plan: Plan::default(), cur: None, thread: None, full: false }
+        Self { plan: Plan::default(), cur: None, thread: None, full: false, tie: true }
     }
 
     fn push(&mut self, p: Point, cmd: Cmd) -> bool {
@@ -167,36 +172,80 @@ impl Builder {
         true
     }
 
+    /// Whether the needle last sewed (rather than jumped, trimmed, changed thread or started).
+    fn sewing(&self) -> bool {
+        self.plan.needles.last().is_some_and(|n| n.cmd == Cmd::Stitch)
+    }
+
+    /// Lock the thread before a trim: tiny stitches back along the last stitch and forward again.
+    fn tie_off(&mut self) {
+        let mut sewn = self.plan.needles.iter().rev().take_while(|n| n.cmd == Cmd::Stitch).map(|n| Point::new(n.x, n.y));
+        let Some(end) = sewn.next() else { return };
+        let Some(before) = sewn.find(|p| p.distance(end) > 0.05) else { return };
+        let Some(back) = tie_point(end, before) else { return };
+        for p in [back, end, back, end] {
+            self.push(p, Cmd::Stitch);
+        }
+    }
+
+    /// Cut the thread where the needle is, locking it first.
+    fn trim(&mut self, at: Point) {
+        if self.sewing() {
+            if self.tie {
+                self.tie_off();
+            }
+            self.push(at, Cmd::Trim);
+        }
+    }
+
     /// Sew `pts` in `thread`: change thread if needed, travel to the first point (a stitch when
-    /// close, else a jump, trimming first when far), then stitch the rest.
-    fn run(&mut self, thread: [u8; 3], pts: &[Point]) {
-        let Some((first, rest)) = pts.split_first() else { return };
+    /// close, else a jump, trimming first when far), then stitch the rest. A run that starts
+    /// after a jump, trim or thread change goes down at its first point and locks the thread
+    /// with tiny stitches when `tie` (a jump moves the frame without sewing, so the thread isn't
+    /// held there).
+    fn run(&mut self, thread: [u8; 3], pts: &[Point], tie: bool) {
+        let Some((&first, rest)) = pts.split_first() else { return };
         if self.full {
             return;
         }
+        // Ties belong to the run before a trim, and to this one after its start.
+        let ending = self.tie;
         if self.thread != Some(thread) {
             if self.thread.is_some() {
-                let at = self.cur.unwrap_or(*first);
-                self.push(at, Cmd::Trim);
+                let at = self.cur.unwrap_or(first);
+                self.tie = ending;
+                self.trim(at);
                 self.push(at, Cmd::ColorChange);
             }
             self.plan.threads.push(thread);
             self.thread = Some(thread);
         }
         match self.cur {
-            Some(c) if c.distance(*first) <= JUMP_MIN => {
-                if c.distance(*first) > 1e-9 {
-                    self.push(*first, Cmd::Stitch);
+            Some(c) if self.sewing() && c.distance(first) <= JUMP_MIN => {
+                if c.distance(first) > 1e-9 {
+                    self.push(first, Cmd::Stitch);
                 }
             }
             Some(c) => {
-                if c.distance(*first) > TRIM_MIN && self.plan.needles.last().is_some_and(|n| n.cmd == Cmd::Stitch) {
-                    self.push(c, Cmd::Trim);
+                if c.distance(first) > TRIM_MIN {
+                    self.tie = ending;
+                    self.trim(c);
                 }
-                self.push(*first, Cmd::Jump);
+                if c.distance(first) > 1e-9 {
+                    self.push(first, Cmd::Jump);
+                }
             }
             None => {
-                self.push(*first, Cmd::Jump);
+                self.push(first, Cmd::Jump);
+            }
+        }
+        self.tie = tie;
+        if !self.sewing() {
+            self.push(first, Cmd::Stitch);
+            if let Some(ahead) = rest.iter().find_map(|p| tie_point(first, *p)).filter(|_| tie) {
+                for p in [ahead, first, ahead, first] {
+                    self.push(p, Cmd::Stitch);
+                }
             }
         }
         for p in rest {
@@ -204,31 +253,44 @@ impl Builder {
                 break;
             }
         }
-        self.cur = Some(pts.last().copied().unwrap_or(*first));
+        self.cur = Some(pts.last().copied().unwrap_or(first));
     }
 
     fn finish(mut self) -> Plan {
         if let Some(c) = self.cur {
-            if self.plan.needles.last().is_some_and(|n| n.cmd == Cmd::Stitch) {
-                self.push(c, Cmd::Trim);
-            }
+            self.trim(c);
             self.push(c, Cmd::End);
         }
         self.plan
     }
 }
 
+/// How long the lock stitches of a tie-in or tie-off are, mm.
+const TIE_MM: f64 = 0.6;
+
+/// The point a tie stitch reaches from `at` toward `toward`: [`TIE_MM`] along, at most half way;
+/// none when the two points coincide.
+fn tie_point(at: Point, toward: Point) -> Option<Point> {
+    let d = at.distance(toward);
+    (d > 0.05 && d.is_finite()).then(|| at.lerp(toward, (TIE_MM / d).min(0.5)))
+}
+
 /// The stitch plan of `doc`'s visible stitched objects, in paint order.
 pub fn plan(doc: &Document) -> Plan {
     let mut b = Builder::new();
-    let mut skipped = 0;
+    let mut tally = Tally::default();
     for l in &doc.layers {
-        walk(l, &mut b, &mut skipped);
+        walk(l, &mut b, &mut tally, false);
     }
     let mut plan = b.finish();
-    if skipped > 0 {
-        let what = if skipped == 1 { "object" } else { "objects" };
-        plan.warnings.push(format!("{skipped} stitched {what} can't be stitched yet (only paths and compound paths are): left out"));
+    let what = |n: usize| if n == 1 { "object" } else { "objects" };
+    if tally.skipped > 0 {
+        let n = tally.skipped;
+        plan.warnings.push(format!("{n} stitched {} can't be stitched yet (only paths and compound paths are): left out", what(n)));
+    }
+    if tally.clipped > 0 {
+        let n = tally.clipped;
+        plan.warnings.push(format!("{n} stitched {} under a clipping or opacity mask are stitched whole: masks don't apply to stitches", what(n)));
     }
     plan
 }
@@ -240,24 +302,45 @@ pub fn has_stitches(doc: &Document) -> bool {
     any
 }
 
-fn walk(n: &Arc<Node>, b: &mut Builder, skipped: &mut usize) {
-    if !n.visible {
+/// What the walk counts for its warnings.
+#[derive(Default)]
+struct Tally {
+    /// Stitched objects of kinds that can't be stitched.
+    skipped: usize,
+    /// Stitched objects under a clipping mask or opacity mask, stitched whole.
+    clipped: usize,
+}
+
+fn walk(n: &Arc<Node>, b: &mut Builder, tally: &mut Tally, masked: bool) {
+    // Hidden art isn't sewn, and neither are template layers (art to trace over) nor layers that
+    // don't print.
+    let off = matches!(n.kind, NodeKind::Layer { template: true, .. } | NodeKind::Layer { printable: false, .. });
+    if !n.visible || off {
         return;
     }
+    let masked = masked || n.mask.is_some() || matches!(n.kind, NodeKind::Group { clip: true, .. } | NodeKind::Layer { clip: true, .. });
     if let Some(s) = n.stitch.as_deref() {
-        match &n.kind {
-            NodeKind::Path { path, rule, guide: false, clipping: false, .. } => object(n, s, &[path], *rule, b),
+        let stitched = match &n.kind {
+            NodeKind::Path { path, rule, guide: false, clipping: false, .. } => {
+                object(n, s, &[path], *rule, b);
+                true
+            }
             NodeKind::Compound { children, rule } => {
                 let paths: Vec<&PathData> = children.iter().filter_map(|c| c.path_data()).collect();
                 object(n, s, &paths, *rule, b);
+                true
             }
-            NodeKind::Path { .. } => {}
-            _ => *skipped += 1,
-        }
+            NodeKind::Path { .. } => false,
+            _ => {
+                tally.skipped += 1;
+                false
+            }
+        };
+        tally.clipped += usize::from(stitched && masked);
     }
     if let Some(children) = n.children() {
         for c in children {
-            walk(c, b, skipped);
+            walk(c, b, tally, masked);
         }
     }
 }
@@ -304,7 +387,9 @@ fn object(n: &Node, s: &StitchSettings, paths: &[&PathData], rule: FillRule, b: 
                 }
             }
             StitchKind::Satin => {
-                let w = s.width(n.appearance.stroke_width() * PT_MM) + s.pull();
+                // Capped: a wider stitch can't be sewn in one move (DST: 12.1 mm), and splitting it would put
+                // a needle hole in the middle of the column.
+                let w = (s.width(n.appearance.stroke_width() * PT_MM) + s.pull()).min(*StitchSettings::WIDTH.end());
                 for (l, closed) in &lines {
                     let (under, back) = generate::satin_underlay(l, *closed, w, s.underlay());
                     // After an underlay that ends at the far end, the column is sewn back.
@@ -322,8 +407,10 @@ fn object(n: &Node, s: &StitchSettings, paths: &[&PathData], rule: FillRule, b: 
             _ => runs.extend(lines.iter().map(|(l, _)| generate::running(l, s.length()))),
         }
     }
+    // Manual stitches are sewn exactly as drawn: no lock stitches added.
+    let tie = s.kind != StitchKind::Manual;
     for r in runs {
-        b.run(thread, &r);
+        b.run(thread, &r, tie);
     }
 }
 

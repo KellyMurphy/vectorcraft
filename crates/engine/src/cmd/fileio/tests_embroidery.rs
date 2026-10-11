@@ -75,8 +75,9 @@ fn stitches_lists_runs_in_mm() {
     let runs = r["runs"].as_array().unwrap();
     assert_eq!(runs.len(), 1);
     let pts = runs[0]["points"].as_array().unwrap();
-    // A closed 4 × 35.3 mm outline at 3 mm stitches.
-    assert!(pts.len() >= 47 && pts.len() <= 50, "{}", pts.len());
+    // A closed 4 × 35.3 mm outline at 3 mm stitches (47–50 points), plus the tie-in and tie-off
+    // (4 lock stitches each).
+    assert!(pts.len() >= 47 + 8 && pts.len() <= 50 + 8, "{}", pts.len());
     assert_eq!(r["truncated"], false);
     let few = s.execute("embroidery.stitches", &json!({"limit": 5})).unwrap();
     assert_eq!(few["truncated"], true);
