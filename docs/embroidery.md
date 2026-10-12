@@ -11,6 +11,7 @@ Select paths or compound paths (or groups holding them) and choose **Object › 
 
 | Stitch | What it sews | Settings |
 |---|---|---|
+| Auto | Picks per shape (per letter, for type) by how wide its strokes are: under **Bean Outline Under** (1 mm) a bean stitch round the outline, over **Fill Over** (7 mm) a tatami fill with fill underlay and a satin border, in between a satin shape with a centre-walk underlay. The stroke width is twice the shape's area over its perimeter. | `thinUnder` (1 mm), `wideOver` (7 mm), `spacing`, `pull`, `border` (for filled shapes; 2 mm) |
 | Running Stitch | Single stitches along the path (outlines, details). Sharp corners keep a needle point. | `length` (2.5 mm) |
 | Bean Stitch | Running stitch sewn several times over each stitch: a bolder line. | `length` (2.5 mm), `passes` (3, 5, 7 or 9; 3) |
 | Satin Column | A zigzag centred on the path, as wide as the stroke (borders, lettering strokes). | `width` (the stroke width, else 3 mm), `spacing` (density, 0.4 mm), `pull` (pull compensation, 0 mm), `underlay` (none, center, edge, zigzag) |
@@ -35,8 +36,17 @@ brick pattern, 3 to 8 make tatami patterns with longer diagonals.
 path changes its stitches.
 
 The thread colour is the stroke's colour for path stitches and the fill's for fills, unless `thread` is set.
-Hidden objects, guides, clipping paths, template layers and non-printing layers are not stitched. Type,
-images and symbols can't be stitched yet: outline the type first (Type › Create Outlines). Clipping and
+Hidden objects, guides, clipping paths, template layers and non-printing layers are not stitched. Images and
+symbols can't be stitched.
+
+### Type
+
+Type objects are stitched as they are: no need to create outlines first, and editing the text, font or size
+changes the stitches. Each letter is sewn on its own with the object's settings (then underlines and
+strikethroughs), in the thread of its characters' colour, so multicoloured type changes thread. **Auto** suits
+lettering: small type gets a bean outline, most lettering satin that follows each letter's strokes, and large
+display type a fill with a satin border. Parts of a letter that have no strokes (the dot of an i, a full stop)
+are filled. Clipping and
 opacity masks don't apply to stitches: a masked object is stitched whole, with a warning.
 
 Objects are sewn in paint order, bottom first. Between objects the needle jumps, and it trims the thread
@@ -63,7 +73,7 @@ A closed satin path starts halfway along its longest side, away from its corners
 
 | Command | Params |
 |---|---|
-| `embroidery.set` | `{type?: running\|bean\|satin\|zigzag\|satinShape\|fill\|manual, length?, spacing?, angle?, width?, thread?: "#rrggbb"\|[r,g,b], pull?, underlay?, stagger?, passes?, trimBefore?, trimAfter?, ids?}`. Lengths are in mm; `null` resets one to its default. |
+| `embroidery.set` | `{type?: auto\|running\|bean\|satin\|zigzag\|satinShape\|fill\|manual, length?, spacing?, angle?, width?, thread?: "#rrggbb"\|[r,g,b], pull?, underlay?, stagger?, passes?, trimBefore?, trimAfter?, ids?}`. Lengths are in mm; `null` resets one to its default. |
 | `embroidery.clear` | `{ids?}` |
 | `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm}`: the document's travel settings |
 | `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings |
@@ -80,7 +90,7 @@ the edge is measured, and the pixels are thinned to a one-pixel skeleton. The sk
 between their ends and junctions; short spurs that thinning leaves at corners are pruned, strokes are
 smoothed, and stroke ends are extended to the shape's tips. Each zig of the satin is cast across its stroke to
 the shape's edges, at most twice the stroke's half-width, so junctions don't send a stitch down a crossing
-stroke. Known limits: serifs are covered only partly (they are too short to be strokes of their own), and
+stroke. Parts of the shape no stroke runs through (round dots) are filled. Known limits: serifs are covered only partly (they are too short to be strokes of their own), and
 crossings (an &, an 8) are sewn twice where strokes overlap. Strokes wider than about 7 mm make long,
 loose satin stitches: fill those shapes instead.
 

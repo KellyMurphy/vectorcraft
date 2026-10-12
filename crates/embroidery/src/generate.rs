@@ -339,6 +339,25 @@ fn column(line: &[Point], closed: bool, width: f64, spacing: f64, fan: bool) -> 
         .collect()
 }
 
+/// Fills for the parts of a shape no stroke runs through (the dot of an i, a full stop: round
+/// parts satin can't follow). A part is an outline not inside another (those are its holes).
+fn uncovered_parts(polys: &[Vec<Point>], rule: FillRule, strokes: &[crate::skeleton::Stroke]) -> Vec<Vec<Point>> {
+    let within = |p: &Vec<Point>, q: Point| inside(std::slice::from_ref(p), FillRule::EvenOdd, q);
+    let mut out = vec![];
+    for (i, p) in polys.iter().enumerate() {
+        let Some(&first) = p.first() else { continue };
+        let hole = polys.iter().enumerate().any(|(j, q)| j != i && within(q, first));
+        if hole {
+            continue;
+        }
+        let covered = strokes.iter().flat_map(|s| s.points.iter()).any(|&q| within(p, q));
+        if !covered && let Ok(f) = fill(std::slice::from_ref(p), rule, 45.0, StitchSettings::DEFAULT_SPACING, 3.0, StitchSettings::DEFAULT_STAGGER) {
+            out.extend(f);
+        }
+    }
+    out
+}
+
 /// A fill's satin border: a satin column `width` mm wide along the closed outline `poly`,
 /// centred on its edge, at satin density.
 pub fn border(poly: &[Point], width: f64) -> Vec<Point> {
@@ -578,6 +597,9 @@ fn resample_with(line: &[Point], values: &[f64], step: f64) -> (Vec<Point>, Vec<
 pub fn satin_shape(polys: &[Vec<Point>], rule: FillRule, spacing: f64, pull: f64, underlay: bool) -> Vec<Vec<Point>> {
     let mut strokes = crate::skeleton::strokes(polys, rule);
     let mut out = vec![];
+    if !strokes.is_empty() {
+        out.extend(uncovered_parts(polys, rule, &strokes));
+    }
     let mut at: Option<Point> = None;
     while !strokes.is_empty() {
         // The stroke with an end nearest the needle, turned to start there.

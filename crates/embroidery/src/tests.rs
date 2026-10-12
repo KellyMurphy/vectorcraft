@@ -912,3 +912,23 @@ fn every_stitch_kind_sews_type() {
         assert!(p.needles.iter().all(|n| n.x.is_finite() && n.y.is_finite()));
     }
 }
+
+#[test]
+fn satin_shape_fills_parts_without_strokes() {
+    // An "i": a bar (stroke) and a round-ish dot above it (no stroke): the dot is filled.
+    let stem = vec![Point::new(0.0, 6.0), Point::new(2.0, 6.0), Point::new(2.0, 20.0), Point::new(0.0, 20.0)];
+    let dot: Vec<Point> = (0..16)
+        .map(|k| {
+            let a = k as f64 * std::f64::consts::TAU / 16.0;
+            Point::new(1.0 + 1.2 * a.cos(), 2.0 + 1.2 * a.sin())
+        })
+        .collect();
+    let runs = generate::satin_shape(&[stem, dot], FillRule::NonZero, 0.4, 0.0, false);
+    assert!(runs.iter().flatten().any(|p| p.y < 3.5), "the dot is sewn");
+    // A ring's hole is not a part: nothing is sewn inside it.
+    let outer = vec![Point::new(0.0, 0.0), Point::new(20.0, 0.0), Point::new(20.0, 20.0), Point::new(0.0, 20.0)];
+    let inner: Vec<Point> =
+        vec![Point::new(4.0, 4.0), Point::new(16.0, 4.0), Point::new(16.0, 16.0), Point::new(4.0, 16.0)].into_iter().rev().collect();
+    let runs = generate::satin_shape(&[outer, inner], FillRule::NonZero, 0.4, 0.0, false);
+    assert!(!runs.iter().flatten().any(|p| p.x > 5.0 && p.x < 15.0 && p.y > 5.0 && p.y < 15.0));
+}
