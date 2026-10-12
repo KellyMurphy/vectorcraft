@@ -820,3 +820,22 @@ fn a_satin_shape_with_no_strokes_is_filled_with_a_warning() {
     assert!(p.stats().stitches > 100);
     assert!(p.warnings.iter().any(|w| w.contains("filled instead")), "{:?}", p.warnings);
 }
+
+#[test]
+fn a_fill_border_is_a_satin_over_the_edges_sewn_last() {
+    let sq = poly(&[(0.0, 0.0), (100.0, 0.0), (100.0, 100.0), (0.0, 100.0)], true);
+    let plain = plan_of(sq.clone(), StitchSettings::new(StitchKind::Fill));
+    let bordered = plan_of(sq, StitchSettings { border: Some(2.0), ..StitchSettings::new(StitchKind::Fill) });
+    assert!(bordered.stats().stitches > plain.stats().stitches + 300);
+    // Centred on the edge: the design grows by half the border each side.
+    let (a, b) = (plain.stats().bounds.unwrap(), bordered.stats().bounds.unwrap());
+    assert!(((b[2] - b[0]) - (a[2] - a[0]) - 2.0).abs() < 0.2, "{a:?} {b:?}");
+    // The last run is the border: every point within 1 mm of the square's outline.
+    let side = mm(100.0);
+    let runs = bordered.runs();
+    let last = &runs.last().unwrap().1;
+    for p in last.iter().skip(5) {
+        let d = p.x.abs().min((p.x - side).abs()).min(p.y.abs()).min((p.y - side).abs());
+        assert!(d <= 1.0 + 1e-6, "{p:?}");
+    }
+}

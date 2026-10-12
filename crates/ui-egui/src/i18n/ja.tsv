@@ -3796,3 +3796,7 @@ theme	Appearance	外観
 # Embroidery: satin shape
 	Satin Shape	サテン(形状)
 	Satin follows the shape's strokes from edge to edge.	サテンが形状のストロークに沿って端から端まで縫います。
+
+# Embroidery: fill border
+	Border:	縁取り:
+	A satin border sewn over the shape's edges, after the fill	フィルの後、形状の縁にサテンの縁取りを縫います

@@ -3815,3 +3815,7 @@ axis	Both	Les deux
 # Embroidery: satin shape
 	Satin Shape	Satin de forme
 	Satin follows the shape's strokes from edge to edge.	Le satin suit les traits de la forme, d’un bord à l’autre.
+
+# Embroidery: fill border
+	Border:	Bordure :
+	A satin border sewn over the shape's edges, after the fill	Une bordure satin cousue sur les bords de la forme, après le remplissage

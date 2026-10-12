@@ -399,7 +399,13 @@ fn object(n: &Node, s: &StitchSettings, paths: &[&PathData], rule: FillRule, b: 
                     _ => Ok(vec![]),
                 };
                 match under.and_then(|u| Ok((u, generate::fill(&polys, rule, s.angle(), s.spacing(), s.length(), s.stagger())?))) {
-                    Ok((u, top)) => runs.extend(u.into_iter().chain(top)),
+                    Ok((u, top)) => {
+                        runs.extend(u.into_iter().chain(top));
+                        // The border: a satin over each edge, sewn last so it covers the rows' ends.
+                        if let Some(w) = s.border() {
+                            runs.extend(polys.iter().map(|p| generate::border(p, w)));
+                        }
+                    }
                     Err(e) => {
                         b.plan.warnings.push(e);
                         return;

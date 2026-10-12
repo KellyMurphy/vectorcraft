@@ -250,6 +250,7 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
                 }
             });
             underlay_row(app, ui, kind, sel);
+            border_row(app, ui, sel);
         }
         StitchKind::SatinShape => {
             widgets::section_header(ui, tl!("Satin Shape"));
@@ -277,6 +278,22 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
             widgets::dim_label(ui, tl!("The needle goes down at every anchor point, as drawn."));
         }
     }
+}
+
+/// Fill › Border: a satin over the shape's edges (off, or its width).
+fn border_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
+    let border = sel["border"].as_f64();
+    widgets::label_row(ui, tl!("Border:"), LABEL_W, |ui| {
+        if widgets::check3_tip(ui, "", Some(border.is_some()), true, tl!("A satin border sewn over the shape's edges, after the fill")) {
+            set(app, json!({"border": if border.is_some() { Value::Null } else { json!(2.0) }}));
+        }
+        ui.add_enabled_ui(border.is_some(), |ui| {
+            if let Some(v) = widgets::mixed_field(ui, ("emb", "border"), border, " mm", 1, FIELD_W) {
+                let r = StitchSettings::BORDER;
+                set(app, json!({"border": v.clamp(*r.start(), *r.end())}));
+            }
+        });
+    });
 }
 
 /// An underlay's name, translated.

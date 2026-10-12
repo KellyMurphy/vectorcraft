@@ -4,7 +4,7 @@
 //! the needle goes down first. Points are mm in document coordinates (y down).
 
 use kurbo::{Affine, BezPath, PathEl, Point, Vec2};
-use vectorcraft_doc::Underlay;
+use vectorcraft_doc::{StitchSettings, Underlay};
 use vectorcraft_geom::{FillRule, PathData};
 
 use crate::{MAX_NEEDLES, PT_MM};
@@ -337,6 +337,18 @@ fn column(line: &[Point], closed: bool, width: f64, spacing: f64, fan: bool) -> 
             pinned.unwrap_or(z.side(left, half))
         })
         .collect()
+}
+
+/// A fill's satin border: a satin column `width` mm wide along the closed outline `poly`,
+/// centred on its edge, at satin density.
+pub fn border(poly: &[Point], width: f64) -> Vec<Point> {
+    let mut ring = poly.to_vec();
+    if let (Some(&f), Some(&l)) = (ring.first(), ring.last())
+        && f.distance(l) > 1e-9
+    {
+        ring.push(f);
+    }
+    satin(&ring, true, width, StitchSettings::DEFAULT_SPACING)
 }
 
 /// Zigzag stitch: an open zigzag `width` mm wide along `line`, its points `spacing` mm apart,

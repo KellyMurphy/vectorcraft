@@ -161,6 +161,9 @@ pub struct StitchSettings {
     /// Bean stitch: how many times each stitch is sewn (odd).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub passes: Option<u8>,
+    /// Fill: a satin border this wide (mm) sewn over the shape's edges after the fill.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub border: Option<f64>,
     /// Cut the thread before the object starts, however close it is to the stitch before.
     #[serde(default, skip_serializing_if = "crate::skip::is_default")]
     pub trim_before: bool,
@@ -217,6 +220,8 @@ impl StitchSettings {
     /// Allowed satin widths, mm.
     pub const WIDTH: std::ops::RangeInclusive<f64> = 0.3..=12.0;
     pub const DEFAULT_SPACING: f64 = 0.4;
+    /// Allowed fill border widths, mm.
+    pub const BORDER: std::ops::RangeInclusive<f64> = 0.5..=6.0;
     /// Allowed pull compensation, mm.
     pub const PULL: std::ops::RangeInclusive<f64> = 0.0..=3.0;
     /// Allowed fill stagger, rows.
@@ -252,6 +257,11 @@ impl StitchSettings {
         let stroke = stroke_mm.is_finite() && stroke_mm > 0.0 && self.kind != StitchKind::Zigzag;
         let fallback = if stroke { stroke_mm } else { Self::DEFAULT_WIDTH };
         clamp(self.width, fallback, Self::WIDTH)
+    }
+
+    /// The fill border width to sew, mm (none: no border).
+    pub fn border(&self) -> Option<f64> {
+        self.border.filter(|b| b.is_finite()).map(|b| b.clamp(*Self::BORDER.start(), *Self::BORDER.end()))
     }
 
     /// The pull compensation to sew with, mm.

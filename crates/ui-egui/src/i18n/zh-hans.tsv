@@ -3482,3 +3482,7 @@ axis	Both	两者
 # Embroidery: satin shape
 	Satin Shape	形状缎面
 	Satin follows the shape's strokes from edge to edge.	缎面沿形状的笔画从一边缝到另一边。
+
+# Embroidery: fill border
+	Border:	边框:
+	A satin border sewn over the shape's edges, after the fill	填充之后,沿形状边缘缝一圈缎面边框

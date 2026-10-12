@@ -2760,3 +2760,7 @@
 # Embroidery: satin shape
 	Satin Shape	Cetim de forma
 	Satin follows the shape's strokes from edge to edge.	O cetim segue os traços da forma de borda a borda.
+
+# Embroidery: fill border
+	Border:	Borda:
+	A satin border sewn over the shape's edges, after the fill	Uma borda de cetim costurada sobre as bordas da forma, depois do preenchimento

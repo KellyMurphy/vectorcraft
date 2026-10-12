@@ -3787,3 +3787,7 @@ axis	Both	Обидві
 # Embroidery: satin shape
 	Satin Shape	Атлас за формою
 	Satin follows the shape's strokes from edge to edge.	Атласна гладь іде штрихами форми від краю до краю.
+
+# Embroidery: fill border
+	Border:	Облямівка:
+	A satin border sewn over the shape's edges, after the fill	Атласна облямівка по краях форми, після заливки

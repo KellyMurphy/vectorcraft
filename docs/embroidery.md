@@ -16,7 +16,7 @@ Select paths or compound paths (or groups holding them) and choose **Object › 
 | Satin Column | A zigzag centred on the path, as wide as the stroke (borders, lettering strokes). | `width` (the stroke width, else 3 mm), `spacing` (density, 0.4 mm), `pull` (pull compensation, 0 mm), `underlay` (none, center, edge, zigzag) |
 | Zigzag Stitch | An open zigzag along the path, swinging side to side (decorative lines, appliqué edges). Corners fan like a satin's. | `width` (3 mm; not the stroke), `spacing` (between points, 2 mm) |
 | Satin Shape | Satin that follows a closed shape's strokes from edge to edge, curving with them (lettering, outlined type, swashes). The shape's centre lines are found automatically; each zig reaches the shape's edges either side, so thick and thin strokes keep their contrast. | `spacing` (density, 0.4 mm), `pull` (0 mm), `underlay` (none, center) |
-| Fill | Rows of staggered running stitches covering the shape (tatami). Holes and separate parts follow the fill rule. | `angle` (0°), `spacing` (density, 0.4 mm), `length` (4 mm), `stagger` (pattern: 2 brick, 3–8 tatami; 3), `underlay` (none, fill) |
+| Fill | Rows of staggered running stitches covering the shape (tatami). Holes and separate parts follow the fill rule. | `angle` (0°), `spacing` (density, 0.4 mm), `length` (4 mm), `stagger` (pattern: 2 brick, 3–8 tatami; 3), `underlay` (none, fill), `border` (a satin border over the edges, 0.5–6 mm; none) |
 | Manual Stitch | The needle goes down at every anchor, as drawn. Imported designs use it. | — |
 
 **Window › Embroidery** shows the same settings for the selection: the stitch type, the thread, and the

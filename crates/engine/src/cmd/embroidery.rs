@@ -21,7 +21,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Stitch Settings",
             [],
             None,
-            "{type?: running|bean|satin|zigzag|satinShape|fill|manual (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag, satin shape, zigzag stitch or fill row spacing, 0.1–10; satin and fill 0.4, zigzag 2), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column or zigzag, 0.3–12; satin: the stroke width, zigzag: 3), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), pull?: mm (satin and satin shape pull compensation, 0–3; 0), underlay?: none|center|edge|zigzag (satin) | none|center (satin shape) | none|fill (fill), stagger?: 2–8 (fill rows before the needle holes line up again; 3), passes?: 3|5|7|9 (bean; 3), trimBefore?: bool, trimAfter?: bool (cut the thread before / after the object, however close the next stitch), ids?} stitch the paths and compound paths in ids or the selection (groups: those inside), as one undo step; null resets length, spacing, width, thread, pull, stagger or passes to the default → {changed}",
+            "{type?: running|bean|satin|zigzag|satinShape|fill|manual (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag, satin shape, zigzag stitch or fill row spacing, 0.1–10; satin and fill 0.4, zigzag 2), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column or zigzag, 0.3–12; satin: the stroke width, zigzag: 3), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), pull?: mm (satin and satin shape pull compensation, 0–3; 0), underlay?: none|center|edge|zigzag (satin) | none|center (satin shape) | none|fill (fill), stagger?: 2–8 (fill rows before the needle holes line up again; 3), passes?: 3|5|7|9 (bean; 3), border?: mm (fill: a satin border over the edges, 0.5–6) | null (none), trimBefore?: bool, trimAfter?: bool (cut the thread before / after the object, however close the next stitch), ids?} stitch the paths and compound paths in ids or the selection (groups: those inside), as one undo step; null resets length, spacing, width, thread, pull, stagger or passes to the default → {changed}",
             has_doc,
             set
         ),
@@ -48,7 +48,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Embroidery Info",
             [],
             None,
-            "{ids?} → {design: {objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings}, setup: {trimJumpsOver, stitchMovesUnder} (embroidery.setup), selection: {stitched, unstitched, type, length, spacing, angle, width, thread, pull, underlay, stagger, passes, trimBefore, trimAfter} (each null when the stitched objects differ, or none is)}",
+            "{ids?} → {design: {objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings}, setup: {trimJumpsOver, stitchMovesUnder} (embroidery.setup), selection: {stitched, unstitched, type, length, spacing, angle, width, thread, pull, underlay, stagger, passes, border, trimBefore, trimAfter} (each null when the stitched objects differ, or none is)}",
             has_doc,
             info
         ),
@@ -114,6 +114,7 @@ struct Edits {
     passes: Option<Option<u8>>,
     trim_before: Option<bool>,
     trim_after: Option<bool>,
+    border: Option<Option<f64>>,
 }
 
 /// An optional true/false param.
@@ -170,6 +171,7 @@ impl Edits {
             stagger: count(p, "stagger", StitchSettings::STAGGER, false)?,
             passes: count(p, "passes", StitchSettings::PASSES, true)?,
             trim_before: flag(p, "trimBefore")?,
+            border: measure(p, "border", StitchSettings::BORDER)?,
             trim_after: flag(p, "trimAfter")?,
             length: measure(p, "length", StitchSettings::LENGTH)?,
             spacing: measure(p, "spacing", StitchSettings::SPACING)?,
@@ -210,6 +212,9 @@ impl Edits {
         }
         if let Some(v) = self.passes {
             s.passes = v;
+        }
+        if let Some(v) = self.border {
+            s.border = v;
         }
         if let Some(v) = self.trim_before {
             s.trim_before = v;
@@ -351,6 +356,7 @@ fn info(s: &mut Session, p: &Value) -> Result<Value> {
         "underlay": same(all.iter().map(|s| s.underlay().id())),
         "stagger": same(all.iter().map(|s| s.stagger())),
         "passes": same(all.iter().map(|s| s.passes())),
+        "border": same(all.iter().map(|s| s.border())),
         "trimBefore": same(all.iter().map(|s| s.trim_before)),
         "trimAfter": same(all.iter().map(|s| s.trim_after)),
     });

@@ -199,3 +199,13 @@ fn satin_shape_is_set_and_exported() {
     let bytes = b64(&s.execute("document.export", &json!({"format": "dst"})).unwrap());
     assert!(vectorcraft_embroidery::read_dst(&bytes).unwrap().stats().stitches > 100);
 }
+
+#[test]
+fn fill_border_is_set_and_cleared() {
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "fill", "border": 2.5})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["border"], 2.5);
+    assert!(s.execute("embroidery.set", &json!({"border": 9})).is_err());
+    s.execute("embroidery.set", &json!({"border": null})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["border"], Value::Null);
+}

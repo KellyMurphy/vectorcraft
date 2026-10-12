@@ -727,3 +727,7 @@
 # Embroidery: satin shape
 	Satin Shape	Saténový tvar
 	Satin follows the shape's strokes from edge to edge.	Satén sleduje tahy tvaru od okraje k okraji.
+
+# Embroidery: fill border
+	Border:	Lem:
+	A satin border sewn over the shape's edges, after the fill	Saténový lem přes okraje tvaru, po výplni
