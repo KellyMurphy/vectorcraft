@@ -3757,7 +3757,6 @@ axis	Both	Ambos
 	Not Stitched	Sin bordar
 	Nothing is stitched yet.	Aún no hay nada bordado.
 	Object color	Color del objeto
-	Only paths and compound paths can be stitched.	Solo se pueden bordar trazados y trazados compuestos.
 	Passes:	Pasadas:
 	Pattern:	Patrón:
 	Pull Compensation:	Compensación de tirón:
@@ -3815,3 +3814,4 @@ axis	Both	Ambos
 	Fill Over:	Relleno por encima de:
 	Thinner strokes get a bean stitch round their outline	Los trazos más finos llevan una puntada triple en su contorno
 	Wider strokes are filled, with a satin border; strokes in between get satin	Los trazos más anchos se rellenan con borde de satén; los intermedios, con satén
+	Only paths, compound paths and type can be stitched.	Solo se pueden bordar trazados, trazados compuestos y texto.

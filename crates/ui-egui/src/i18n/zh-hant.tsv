@@ -3213,7 +3213,6 @@ axis	Both	兩者
 	Not Stitched	無針跡
 	Nothing is stitched yet.	尚無針跡。
 	Object color	物件顏色
-	Only paths and compound paths can be stitched.	只有路徑和複合路徑可以刺繡。
 	Passes:	遍數:
 	Pattern:	圖樣:
 	Pull Compensation:	拉力補償:
@@ -3271,3 +3270,4 @@ axis	Both	兩者
 	Fill Over:	填充下限:
 	Thinner strokes get a bean stitch round their outline	更細的筆畫沿輪廓縫豆形針
 	Wider strokes are filled, with a satin border; strokes in between get satin	更寬的筆畫用填充加緞面邊框;介於兩者之間的用緞面
+	Only paths, compound paths and type can be stitched.	只有路徑、複合路徑和文字可以刺繡。

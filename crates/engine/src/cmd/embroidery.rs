@@ -21,7 +21,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Stitch Settings",
             [],
             None,
-            "{type?: auto|running|bean|satin|zigzag|satinShape|fill|manual (auto: by stroke width, thinUnder?: mm (0.2–3; 1) → bean outline, wideOver?: mm (2–12; 7) → fill with a satin border, else satin shape) (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag, satin shape, zigzag stitch or fill row spacing, 0.1–10; satin and fill 0.4, zigzag 2), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column or zigzag, 0.3–12; satin: the stroke width, zigzag: 3), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), pull?: mm (satin and satin shape pull compensation, 0–3; 0), underlay?: none|center|edge|zigzag (satin) | none|center (satin shape) | none|fill (fill), stagger?: 2–8 (fill rows before the needle holes line up again; 3), passes?: 3|5|7|9 (bean; 3), border?: mm (fill: a satin border over the edges, 0.5–6) | null (none), trimBefore?: bool, trimAfter?: bool (cut the thread before / after the object, however close the next stitch), ids?} stitch the paths and compound paths in ids or the selection (groups: those inside), as one undo step; null resets length, spacing, width, thread, pull, stagger or passes to the default → {changed}",
+            "{type?: auto|running|bean|satin|zigzag|satinShape|fill|manual (auto: by stroke width, thinUnder?: mm (0.2–3; 1) → bean outline, wideOver?: mm (2–12; 7) → fill with a satin border, else satin shape) (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag, satin shape, zigzag stitch or fill row spacing, 0.1–10; satin and fill 0.4, zigzag 2), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column or zigzag, 0.3–12; satin: the stroke width, zigzag: 3), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), pull?: mm (satin and satin shape pull compensation, 0–3; 0), underlay?: none|center|edge|zigzag (satin) | none|center (satin shape) | none|fill (fill), stagger?: 2–8 (fill rows before the needle holes line up again; 3), passes?: 3|5|7|9 (bean; 3), border?: mm (fill: a satin border over the edges, 0.5–6) | null (none), trimBefore?: bool, trimAfter?: bool (cut the thread before / after the object, however close the next stitch), ids?} stitch the paths, compound paths and type objects in ids or the selection (groups: those inside; type is sewn letter by letter, each letter in its characters' colour: use auto for lettering), as one undo step; null resets length, spacing, width, thread, pull, stagger or passes to the default → {changed}",
             has_doc,
             set
         ),
@@ -236,13 +236,15 @@ impl Edits {
     }
 }
 
-/// The paths and compound paths `ids` stand for (groups and layers: those inside; not the paths
-/// inside a compound path, which stitches as one), guides left out.
+/// The paths, compound paths and type objects `ids` stand for (groups and layers: those inside;
+/// not the paths inside a compound path, which stitches as one), guides left out.
 fn stitchable(s: &Session, ids: &[NodeId]) -> Result<Vec<NodeId>> {
     let d = &s.doc()?.doc;
     Ok(leaf_targets(s, ids)?
         .into_iter()
-        .filter(|id| matches!(d.node(*id).map(|n| &n.kind), Some(NodeKind::Path { guide: false, .. } | NodeKind::Compound { .. })))
+        .filter(|id| {
+            matches!(d.node(*id).map(|n| &n.kind), Some(NodeKind::Path { guide: false, .. } | NodeKind::Compound { .. } | NodeKind::Text(_)))
+        })
         .collect())
 }
 
@@ -250,7 +252,7 @@ fn set(s: &mut Session, p: &Value) -> Result<Value> {
     let edits = Edits::parse(p)?;
     let ids = stitchable(s, &targets(s, p)?)?;
     if ids.is_empty() {
-        return Err(bad(SET, "select paths or compound paths to stitch"));
+        return Err(bad(SET, "select paths, compound paths or type to stitch"));
     }
     // An underlay asked for must suit the stitch every target ends up with.
     if let Some(u) = edits.underlay.filter(|u| *u != Underlay::None) {

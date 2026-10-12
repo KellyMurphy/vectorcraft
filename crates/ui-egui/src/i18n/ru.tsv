@@ -3755,7 +3755,6 @@ axis	Both	Оба
 	Not Stitched	Без вышивки
 	Nothing is stitched yet.	Пока ничего не вышито.
 	Object color	Цвет объекта
-	Only paths and compound paths can be stitched.	Вышивать можно только контуры и составные контуры.
 	Passes:	Проходы:
 	Pattern:	Узор:
 	Pull Compensation:	Компенсация стягивания:
@@ -3813,3 +3812,4 @@ axis	Both	Оба
 	Fill Over:	Заливка шире:
 	Thinner strokes get a bean stitch round their outline	Более тонкие штрихи получают тройную строчку по контуру
 	Wider strokes are filled, with a satin border; strokes in between get satin	Более широкие штрихи заливаются с атласной каймой; промежуточные — атласом
+	Only paths, compound paths and type can be stitched.	Вышивать можно только контуры, составные контуры и текст.

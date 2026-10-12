@@ -3768,7 +3768,6 @@ axis	Both	Les deux
 	Not Stitched	Sans broderie
 	Nothing is stitched yet.	Rien n’est encore brodé.
 	Object color	Couleur de l’objet
-	Only paths and compound paths can be stitched.	Seuls les tracés et les tracés transparents peuvent être brodés.
 	Passes:	Passages :
 	Pattern:	Motif de remplissage :
 	Pull Compensation:	Compensation de traction :
@@ -3826,3 +3825,4 @@ axis	Both	Les deux
 	Fill Over:	Remplissage au-delà de :
 	Thinner strokes get a bean stitch round their outline	Les traits plus fins reçoivent un point triple sur leur contour
 	Wider strokes are filled, with a satin border; strokes in between get satin	Les traits plus larges sont remplis avec une bordure satin ; entre les deux, du satin
+	Only paths, compound paths and type can be stitched.	Seuls les tracés, les tracés transparents et le texte peuvent être brodés.

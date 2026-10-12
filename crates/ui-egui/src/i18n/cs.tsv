@@ -675,7 +675,6 @@
 	Not Stitched	Bez vyšívání
 	Nothing is stitched yet.	Zatím není nic vyšito.
 	Object color	Barva objektu
-	Only paths and compound paths can be stitched.	Vyšívat lze jen cesty a složené cesty.
 	Passes:	Průchody:
 	Pattern:	Vzorek:
 	Pull Compensation:	Kompenzace stažení:
@@ -739,3 +738,4 @@
 	Fill Over:	Výplň nad:
 	Thinner strokes get a bean stitch round their outline	Tenčí tahy dostanou trojitý steh po obrysu
 	Wider strokes are filled, with a satin border; strokes in between get satin	Širší tahy se vyplní se saténovým lemem; mezi tím satén
+	Only paths, compound paths and type can be stitched.	Vyšívat lze jen cesty, složené cesty a text.

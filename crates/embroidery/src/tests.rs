@@ -868,3 +868,47 @@ fn auto_objects_sew_what_they_pick() {
     assert!(bar.stats().stitches > 100 && sq.stats().stitches > bar.stats().stitches);
     assert!(sq.warnings.is_empty() && bar.warnings.is_empty(), "{:?} {:?}", sq.warnings, bar.warnings);
 }
+
+/// A document with one line of type, `text` at `size` pt in `color`, stitched with `s`.
+fn type_doc(text: &str, size: f64, s: StitchSettings) -> Document {
+    doc_with(|d| {
+        let style = vectorcraft_doc::CharStyle { size, ..Default::default() };
+        let t = vectorcraft_doc::TextObject::point(Point::new(10.0, 100.0), text, style);
+        let mut n = Node::new(d.alloc_id(), vectorcraft_doc::NodeKind::Text(Box::new(t)));
+        n.stitch = Some(Box::new(s));
+        vec![n]
+    })
+}
+
+/// Whether the default type face lays out (fonts may not be built in).
+fn type_lays_out() -> bool {
+    let t = vectorcraft_doc::TextObject::point(Point::ZERO, "H", vectorcraft_doc::CharStyle::default());
+    !vectorcraft_text::layout(vectorcraft_text::FontDb::global(), &t).glyphs.iter().all(|g| g.outline.elements().is_empty())
+}
+
+#[test]
+fn type_is_sewn_letter_by_letter() {
+    if !type_lays_out() {
+        return;
+    }
+    let p = plan(&type_doc("HI", 72.0, StitchSettings::new(StitchKind::Auto)));
+    assert!(p.warnings.is_empty(), "{:?}", p.warnings);
+    assert!(p.stats().stitches > 200);
+    // Two letters: sewn as (at least) two runs, the I after the H.
+    let runs = p.runs();
+    assert!(runs.len() >= 2);
+    let b = p.stats().bounds.unwrap();
+    assert!(b[2] - b[0] > 10.0 && b[3] - b[1] > 8.0, "{b:?}");
+}
+
+#[test]
+fn every_stitch_kind_sews_type() {
+    if !type_lays_out() {
+        return;
+    }
+    for k in StitchKind::ALL {
+        let p = plan(&type_doc("a", 48.0, StitchSettings::new(k)));
+        assert!(p.stats().stitches > 10, "{k:?}");
+        assert!(p.needles.iter().all(|n| n.x.is_finite() && n.y.is_finite()));
+    }
+}

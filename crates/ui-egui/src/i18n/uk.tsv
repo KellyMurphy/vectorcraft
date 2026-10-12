@@ -3740,7 +3740,6 @@ axis	Both	Обидві
 	Not Stitched	Без вишивки
 	Nothing is stitched yet.	Поки нічого не вишито.
 	Object color	Колір об’єкта
-	Only paths and compound paths can be stitched.	Вишивати можна лише контури та складені контури.
 	Passes:	Проходи:
 	Pattern:	Візерунок:
 	Pull Compensation:	Компенсація стягування:
@@ -3798,3 +3797,4 @@ axis	Both	Обидві
 	Fill Over:	Заливка, ширші за:
 	Thinner strokes get a bean stitch round their outline	Тонші штрихи отримують потрійну строчку по контуру
 	Wider strokes are filled, with a satin border; strokes in between get satin	Ширші штрихи заливаються з атласною облямівкою; проміжні — атласом
+	Only paths, compound paths and type can be stitched.	Вишивати можна лише контури, складені контури та текст.

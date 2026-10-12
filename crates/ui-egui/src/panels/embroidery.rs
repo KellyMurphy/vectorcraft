@@ -103,7 +103,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     if !any {
         widgets::dim_label(
             ui,
-            if selection_len(app) == 0 { tl!("Select paths to stitch.") } else { tl!("Only paths and compound paths can be stitched.") },
+            if selection_len(app) == 0 { tl!("Select paths to stitch.") } else { tl!("Only paths, compound paths and type can be stitched.") },
         );
     } else if stitched > 0 && unstitched == 0 {
         thread_row(app, ui, sel);

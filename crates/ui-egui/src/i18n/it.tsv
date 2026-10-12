@@ -3757,7 +3757,6 @@ axis	Both	Entrambi
 	Not Stitched	Non ricamato
 	Nothing is stitched yet.	Ancora nulla di ricamato.
 	Object color	Colore dell'oggetto
-	Only paths and compound paths can be stitched.	Si possono ricamare solo tracciati e tracciati composti.
 	Passes:	Passate:
 	Pattern:	Motivo:
 	Pull Compensation:	Compensazione della trazione:
@@ -3815,3 +3814,4 @@ axis	Both	Entrambi
 	Fill Over:	Riempimento oltre:
 	Thinner strokes get a bean stitch round their outline	I tratti più sottili ricevono un punto triplo sul contorno
 	Wider strokes are filled, with a satin border; strokes in between get satin	I tratti più larghi sono riempiti con un bordo satin; quelli intermedi in satin
+	Only paths, compound paths and type can be stitched.	Si possono ricamare solo tracciati, tracciati composti e testo.

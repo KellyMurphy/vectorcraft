@@ -209,3 +209,18 @@ fn fill_border_is_set_and_cleared() {
     s.execute("embroidery.set", &json!({"border": null})).unwrap();
     assert_eq!(info(&mut s)["selection"]["border"], Value::Null);
 }
+
+#[test]
+fn type_can_be_stitched() {
+    let mut s = session();
+    s.execute("select.none", &json!({})).unwrap();
+    s.execute("text.create", &json!({"x": 10, "y": 300, "text": "Hi"})).unwrap();
+    s.execute("embroidery.set", &json!({"type": "auto"})).unwrap();
+    let i = info(&mut s);
+    assert_eq!(i["selection"]["type"], "auto");
+    assert_eq!(i["design"]["objects"], 1);
+    // With fonts built in, the letters are sewn; without them, nothing is (and no error).
+    if !vectorcraft_text::CRAFT_FONTS.is_empty() {
+        assert!(i["design"]["stitches"].as_u64().unwrap() > 50, "{i}");
+    }
+}

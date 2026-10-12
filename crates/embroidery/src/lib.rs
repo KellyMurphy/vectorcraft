@@ -306,7 +306,7 @@ pub fn plan(doc: &Document) -> Plan {
     let what = |n: usize| if n == 1 { "object" } else { "objects" };
     if tally.skipped > 0 {
         let n = tally.skipped;
-        plan.warnings.push(format!("{n} stitched {} can't be stitched yet (only paths and compound paths are): left out", what(n)));
+        plan.warnings.push(format!("{n} stitched {} can't be stitched yet (only paths, compound paths and type are): left out", what(n)));
     }
     if tally.clipped > 0 {
         let n = tally.clipped;
@@ -348,6 +348,10 @@ fn walk(n: &Arc<Node>, b: &mut Builder, tally: &mut Tally, masked: bool) {
             NodeKind::Compound { children, rule } => {
                 let paths: Vec<&PathData> = children.iter().filter_map(|c| c.path_data()).collect();
                 object(n, s, &paths, *rule, b);
+                true
+            }
+            NodeKind::Text(t) => {
+                text(t, s, b);
                 true
             }
             NodeKind::Path { .. } => false,
@@ -421,6 +425,24 @@ pub fn auto_settings(s: &StitchSettings, width: f64) -> StitchSettings {
         t.length = None;
     }
     t
+}
+
+/// Sew a type object letter by letter (its glyphs as laid out, then its underlines and
+/// strikethroughs), each in the thread of its characters' colour. Inline graphics are left out.
+fn text(t: &vectorcraft_doc::TextObject, s: &StitchSettings, b: &mut Builder) {
+    let db = vectorcraft_text::FontDb::global();
+    let lay = vectorcraft_text::layout(db, t);
+    let style = |run: usize| t.runs.get(run).map(|r| r.style.clone()).unwrap_or_else(|| t.first_style());
+    let glyphs = lay.glyphs.iter().enumerate().filter(|(gi, _)| !lay.inlines.iter().any(|i| i.glyph == *gi)).map(|(_, g)| (g.run, g.outline.clone()));
+    let bars = vectorcraft_text::decorations(&lay, db, t);
+    for (run, outline) in glyphs.chain(bars) {
+        let path = PathData::from_bezpath(&outline).transformed(t.xf);
+        if path.is_empty() {
+            continue;
+        }
+        let a = style(run).appearance();
+        sew(s, thread_of(&a, s), a.stroke_width() * PT_MM, &[&path], FillRule::NonZero, b);
+    }
 }
 
 /// Sew `paths` with `s` in `thread` (`stroke_mm`: the stroke's width, for satins).

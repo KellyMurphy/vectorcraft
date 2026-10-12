@@ -2713,7 +2713,6 @@
 	Not Stitched	Sem bordado
 	Nothing is stitched yet.	Nada bordado ainda.
 	Object color	Cor do objeto
-	Only paths and compound paths can be stitched.	Só é possível bordar demarcadores e demarcadores compostos.
 	Passes:	Passadas:
 	Pattern:	Padrão:
 	Pull Compensation:	Compensação de repuxo:
@@ -2771,3 +2770,4 @@
 	Fill Over:	Preenchimento acima de:
 	Thinner strokes get a bean stitch round their outline	Traços mais finos recebem ponto triplo no contorno
 	Wider strokes are filled, with a satin border; strokes in between get satin	Traços mais largos são preenchidos com borda de cetim; os intermediários, com cetim
+	Only paths, compound paths and type can be stitched.	Só é possível bordar demarcadores, demarcadores compostos e texto.
