@@ -3806,3 +3806,8 @@ axis	Both	Les deux
 	Sew Moves Under:	Coudre les déplacements de moins de :
 	Only thread changes and objects set to trim cut the thread.	Seuls les changements de fil et les objets réglés pour couper coupent le fil.
 	Embroidery Setup	Réglages de broderie
+
+# Embroidery: zigzag stitch
+	Zigzag Stitch	Point zigzag
+	How wide the zigzag swings	Largeur du zigzag
+	Distance between the points of the zigzag	Écart entre les pointes du zigzag

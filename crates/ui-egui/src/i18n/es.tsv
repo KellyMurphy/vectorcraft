@@ -3795,3 +3795,8 @@ axis	Both	Ambos
 	Sew Moves Under:	Coser desplazamientos de menos de:
 	Only thread changes and objects set to trim cut the thread.	Solo los cambios de hilo y los objetos con corte cortan el hilo.
 	Embroidery Setup	Ajustes de bordado
+
+# Embroidery: zigzag stitch
+	Zigzag Stitch	Puntada zigzag
+	How wide the zigzag swings	Anchura del zigzag
+	Distance between the points of the zigzag	Distancia entre los picos del zigzag

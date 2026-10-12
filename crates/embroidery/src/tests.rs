@@ -600,6 +600,14 @@ fn dump_samples() {
     });
     std::fs::write(dir.join("satin_corners.dst"), write_dst(&plan(&d), "satin corners")).unwrap();
     std::fs::write(dir.join("busy.dst"), write_dst(&plan(&busy_doc()), "busy")).unwrap();
+    let zz = doc_with(|d| {
+        let wave = poly(&[(0.0, 0.0), (80.0, 0.0), (120.0, 40.0), (200.0, 40.0)], false);
+        let mut a = stitched(d, wave, StitchKind::Zigzag, [30, 120, 60]);
+        a.stitch.as_mut().unwrap().width = Some(4.0);
+        let ring = poly(&[(20.0, 80.0), (100.0, 80.0), (100.0, 140.0), (20.0, 140.0)], true);
+        vec![a, stitched(d, ring, StitchKind::Zigzag, [150, 40, 160])]
+    });
+    std::fs::write(dir.join("zigzag.dst"), write_dst(&plan(&zz), "zigzag")).unwrap();
 }
 
 /// Two lines `gap` pt apart in one thread, the first with `first`'s settings.
@@ -666,4 +674,32 @@ fn objects_can_force_trims_before_and_after() {
     }
     let p = plan(&d);
     assert_eq!((trims_between(&p), p.stats().color_changes), (1, 1));
+}
+
+#[test]
+fn zigzag_swings_across_its_width_at_its_spacing() {
+    let line = [Point::new(0.0, 0.0), Point::new(20.0, 0.0)];
+    let z = generate::zigzag(&line, false, 3.0, 2.0);
+    assert_eq!(z.len(), 11, "a point every 2 mm along 20 mm");
+    for (i, p) in z.iter().enumerate() {
+        assert!((p.y.abs() - 1.5).abs() < 1e-9);
+        assert!((p.x - 2.0 * i as f64).abs() < 1e-9);
+    }
+    // A wide zigzag with long spacing is narrowed so its diagonals can be sewn.
+    let wide = generate::zigzag(&line, false, 12.0, 8.0);
+    for w in wide.windows(2) {
+        assert!(w[0].distance(w[1]) <= 12.0 + 1e-9);
+    }
+}
+
+#[test]
+fn zigzag_defaults_ignore_the_stroke() {
+    let mut s = StitchSettings::new(StitchKind::Zigzag);
+    assert_eq!((s.width(10.0), s.spacing()), (StitchSettings::DEFAULT_WIDTH, 2.0));
+    s.kind = StitchKind::Satin;
+    assert_eq!((s.width(10.0), s.spacing()), (10.0, 0.4));
+    // A 1 pt line stitched as a zigzag is 3 mm wide.
+    let p = plan_of(poly(&[(0.0, 0.0), (72.0, 0.0)], false), StitchSettings::new(StitchKind::Zigzag));
+    let b = p.stats().bounds.unwrap();
+    assert!((b[3] - b[1] - 3.0).abs() < 1e-6, "{b:?}");
 }

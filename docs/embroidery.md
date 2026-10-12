@@ -14,6 +14,7 @@ Select paths or compound paths (or groups holding them) and choose **Object › 
 | Running Stitch | Single stitches along the path (outlines, details). Sharp corners keep a needle point. | `length` (2.5 mm) |
 | Bean Stitch | Running stitch sewn several times over each stitch: a bolder line. | `length` (2.5 mm), `passes` (3, 5, 7 or 9; 3) |
 | Satin Column | A zigzag centred on the path, as wide as the stroke (borders, lettering strokes). | `width` (the stroke width, else 3 mm), `spacing` (density, 0.4 mm), `pull` (pull compensation, 0 mm), `underlay` (none, center, edge, zigzag) |
+| Zigzag Stitch | An open zigzag along the path, swinging side to side (decorative lines, appliqué edges). Corners fan like a satin's. | `width` (3 mm; not the stroke), `spacing` (between points, 2 mm) |
 | Fill | Rows of staggered running stitches covering the shape (tatami). Holes and separate parts follow the fill rule. | `angle` (0°), `spacing` (density, 0.4 mm), `length` (4 mm), `stagger` (pattern: 2 brick, 3–8 tatami; 3), `underlay` (none, fill) |
 | Manual Stitch | The needle goes down at every anchor, as drawn. Imported designs use it. | — |
 
@@ -61,14 +62,14 @@ A closed satin path starts halfway along its longest side, away from its corners
 
 | Command | Params |
 |---|---|
-| `embroidery.set` | `{type?: running\|bean\|satin\|fill\|manual, length?, spacing?, angle?, width?, thread?: "#rrggbb"\|[r,g,b], pull?, underlay?, stagger?, passes?, trimBefore?, trimAfter?, ids?}`. Lengths are in mm; `null` resets one to its default. |
+| `embroidery.set` | `{type?: running\|bean\|satin\|zigzag\|fill\|manual, length?, spacing?, angle?, width?, thread?: "#rrggbb"\|[r,g,b], pull?, underlay?, stagger?, passes?, trimBefore?, trimAfter?, ids?}`. Lengths are in mm; `null` resets one to its default. |
 | `embroidery.clear` | `{ids?}` |
 | `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm}`: the document's travel settings |
 | `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings |
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
 | `view.stitchPreview` | toggles Stitch Preview |
 
-Allowed ranges: stitch length 0.3–12 mm, spacing 0.1–5 mm, satin width 0.3–12 mm, pull compensation 0–3 mm,
+Allowed ranges: stitch length 0.3–12 mm, spacing 0.1–10 mm, satin width 0.3–12 mm, pull compensation 0–3 mm,
 stagger 2–8 rows, bean passes 3–9 (odd).
 
 ## DST files

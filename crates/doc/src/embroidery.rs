@@ -16,6 +16,9 @@ pub enum StitchKind {
     Bean,
     /// A zigzag column centred on the path, as wide as the stroke (or [`StitchSettings::width`]).
     Satin,
+    /// An open zigzag along the path: points [`StitchSettings::spacing`] apart, alternating
+    /// side to side across [`StitchSettings::width`] (decorative lines, appliqué edges).
+    Zigzag,
     /// Parallel rows of staggered running stitches covering the shape (tatami fill).
     Fill,
     /// The needle goes down at every anchor, as drawn (imported designs).
@@ -23,7 +26,7 @@ pub enum StitchKind {
 }
 
 impl StitchKind {
-    pub const ALL: [StitchKind; 5] = [Self::Running, Self::Bean, Self::Satin, Self::Fill, Self::Manual];
+    pub const ALL: [StitchKind; 6] = [Self::Running, Self::Bean, Self::Satin, Self::Zigzag, Self::Fill, Self::Manual];
 
     pub fn id(self) -> &'static str {
         match self {
@@ -31,6 +34,7 @@ impl StitchKind {
             Self::Bean => "bean",
             Self::Satin => "satin",
             Self::Fill => "fill",
+            Self::Zigzag => "zigzag",
             Self::Manual => "manual",
         }
     }
@@ -41,6 +45,7 @@ impl StitchKind {
             Self::Bean => "Bean Stitch",
             Self::Satin => "Satin Column",
             Self::Fill => "Fill",
+            Self::Zigzag => "Zigzag Stitch",
             Self::Manual => "Manual Stitch",
         }
     }
@@ -202,7 +207,7 @@ impl StitchSettings {
     /// stitch snags (and DST can't move further than 12.1 mm in one record).
     pub const LENGTH: std::ops::RangeInclusive<f64> = 0.3..=12.0;
     /// Allowed satin and fill spacing, mm.
-    pub const SPACING: std::ops::RangeInclusive<f64> = 0.1..=5.0;
+    pub const SPACING: std::ops::RangeInclusive<f64> = 0.1..=10.0;
     /// Allowed satin widths, mm.
     pub const WIDTH: std::ops::RangeInclusive<f64> = 0.3..=12.0;
     pub const DEFAULT_SPACING: f64 = 0.4;
@@ -216,6 +221,8 @@ impl StitchSettings {
     pub const DEFAULT_PASSES: u8 = 3;
     /// Satin width when the object has no stroke and no width is set, mm.
     pub const DEFAULT_WIDTH: f64 = 3.0;
+    /// Zigzag stitch spacing when none is set, mm.
+    pub const DEFAULT_ZIGZAG_SPACING: f64 = 2.0;
 
     pub fn new(kind: StitchKind) -> Self {
         Self { kind, ..Self::default() }
@@ -226,14 +233,18 @@ impl StitchSettings {
         clamp(self.length, self.kind.default_length(), Self::LENGTH)
     }
 
-    /// The satin or fill spacing to sew with, mm (always within [`Self::SPACING`]).
+    /// The satin, zigzag or fill spacing to sew with, mm (always within [`Self::SPACING`]).
     pub fn spacing(&self) -> f64 {
-        clamp(self.spacing, Self::DEFAULT_SPACING, Self::SPACING)
+        let fallback = if self.kind == StitchKind::Zigzag { Self::DEFAULT_ZIGZAG_SPACING } else { Self::DEFAULT_SPACING };
+        clamp(self.spacing, fallback, Self::SPACING)
     }
 
-    /// The satin width, mm, given the stroke width in mm (always within [`Self::WIDTH`]).
+    /// The satin or zigzag width, mm, given the stroke width in mm (always within
+    /// [`Self::WIDTH`]). A satin defaults to the stroke width; a zigzag, drawn on thin lines,
+    /// to [`Self::DEFAULT_WIDTH`].
     pub fn width(&self, stroke_mm: f64) -> f64 {
-        let fallback = if stroke_mm.is_finite() && stroke_mm > 0.0 { stroke_mm } else { Self::DEFAULT_WIDTH };
+        let stroke = stroke_mm.is_finite() && stroke_mm > 0.0 && self.kind != StitchKind::Zigzag;
+        let fallback = if stroke { stroke_mm } else { Self::DEFAULT_WIDTH };
         clamp(self.width, fallback, Self::WIDTH)
     }
 
@@ -287,7 +298,7 @@ mod tests {
     fn values_are_clamped_and_finite() {
         let s = StitchSettings { length: Some(f64::NAN), spacing: Some(100.0), width: Some(0.0), angle: f64::INFINITY, ..Default::default() };
         assert_eq!(s.length(), 2.5);
-        assert_eq!(s.spacing(), 5.0);
+        assert_eq!(s.spacing(), 10.0);
         assert_eq!(s.width(2.0), 0.3);
         assert_eq!(s.angle(), 0.0);
         assert_eq!(StitchSettings::default().width(f64::NAN), StitchSettings::DEFAULT_WIDTH);

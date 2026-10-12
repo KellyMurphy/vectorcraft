@@ -261,6 +261,13 @@ fn pieces(line: &[Point], closed: bool) -> (Vec<Vec<Point>>, bool) {
 /// corner the inner side's needle points stop at the inner miter point and the column fans
 /// round it, so the stitches neither pile up inside the turn nor leave a gap outside it.
 pub fn satin(line: &[Point], closed: bool, width: f64, spacing: f64) -> Vec<Point> {
+    column(line, closed, width, spacing, true)
+}
+
+/// A zigzag `width` mm wide along `line`, a point every `spacing` mm, its inner side held at
+/// each sharp corner's inner miter point. With `fan`, the outer side sweeps round the corner in
+/// steps (a dense satin); without, one point at the outer miter turns it (an open zigzag).
+fn column(line: &[Point], closed: bool, width: f64, spacing: f64, fan: bool) -> Vec<Point> {
     let half = width / 2.0;
     let line = reseam(line, closed);
     let (pieces, ring) = pieces(&line, closed);
@@ -288,6 +295,17 @@ pub fn satin(line: &[Point], closed: bool, width: f64, spacing: f64) -> Vec<Poin
         // The fan: the outer side sweeps round the corner while the inner side holds the miter.
         let turn = n_in.dot(n_out).clamp(-1.0, 1.0).acos();
         let steps = ((turn * half / spacing).ceil() as usize).clamp(1, 64);
+        if !fan {
+            // One zig across the corner: the outer miter opposite the inner one.
+            let bis = n_in + n_out;
+            let n = if bis.hypot() > 1e-9 { bis / bis.hypot() } else { n_in };
+            let mut z = Zig::new(v, n, None);
+            z.pin(left_inside, miter);
+            z.pin(!left_inside, v + (v - miter));
+            zigs.push(z);
+            corners.push(Corner { piece: k, miter, t_in, t_out, left_inside });
+            continue;
+        }
         for j in 0..=steps {
             let n = n_in.lerp(n_out, j as f64 / steps as f64);
             let n = if n.hypot() > 1e-9 { n / n.hypot() } else { n_in };
@@ -319,6 +337,14 @@ pub fn satin(line: &[Point], closed: bool, width: f64, spacing: f64) -> Vec<Poin
             pinned.unwrap_or(z.side(left, half))
         })
         .collect()
+}
+
+/// Zigzag stitch: an open zigzag `width` mm wide along `line`, its points `spacing` mm apart,
+/// fanning round sharp corners like a satin. The width is narrowed where it would make a
+/// diagonal stitch longer than can be sewn.
+pub fn zigzag(line: &[Point], closed: bool, width: f64, spacing: f64) -> Vec<Point> {
+    let width = width.min((MAX_STITCH * MAX_STITCH - spacing * spacing).max(0.0).sqrt());
+    column(line, closed, width, spacing, false)
 }
 
 /// The underlay of a satin column `width` mm wide along `line`, and whether it ends where the

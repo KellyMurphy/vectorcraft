@@ -2751,3 +2751,8 @@
 	Sew Moves Under:	Costurar deslocamentos abaixo de:
 	Only thread changes and objects set to trim cut the thread.	Só as trocas de linha e os objetos definidos para cortar cortam a linha.
 	Embroidery Setup	Configurações de bordado
+
+# Embroidery: zigzag stitch
+	Zigzag Stitch	Ponto zigue-zague
+	How wide the zigzag swings	Largura do zigue-zague
+	Distance between the points of the zigzag	Distância entre as pontas do zigue-zague

@@ -21,7 +21,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Stitch Settings",
             [],
             None,
-            "{type?: running|bean|satin|fill|manual (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag or fill row spacing, 0.1–5; 0.4), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column, 0.3–12; default the stroke width), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), pull?: mm (satin pull compensation, 0–3; 0), underlay?: none|center|edge|zigzag (satin) | none|fill (fill), stagger?: 2–8 (fill rows before the needle holes line up again; 3), passes?: 3|5|7|9 (bean; 3), trimBefore?: bool, trimAfter?: bool (cut the thread before / after the object, however close the next stitch), ids?} stitch the paths and compound paths in ids or the selection (groups: those inside), as one undo step; null resets length, spacing, width, thread, pull, stagger or passes to the default → {changed}",
+            "{type?: running|bean|satin|zigzag|fill|manual (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag, zigzag stitch or fill row spacing, 0.1–10; satin and fill 0.4, zigzag 2), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column or zigzag, 0.3–12; satin: the stroke width, zigzag: 3), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), pull?: mm (satin pull compensation, 0–3; 0), underlay?: none|center|edge|zigzag (satin) | none|fill (fill), stagger?: 2–8 (fill rows before the needle holes line up again; 3), passes?: 3|5|7|9 (bean; 3), trimBefore?: bool, trimAfter?: bool (cut the thread before / after the object, however close the next stitch), ids?} stitch the paths and compound paths in ids or the selection (groups: those inside), as one undo step; null resets length, spacing, width, thread, pull, stagger or passes to the default → {changed}",
             has_doc,
             set
         ),
@@ -144,7 +144,7 @@ impl Edits {
             Some(v) => Some(
                 v.as_str()
                     .and_then(StitchKind::parse)
-                    .ok_or_else(|| bad(SET, "`type` must be running, bean, satin, fill or manual (embroidery.clear removes stitches)"))?,
+                    .ok_or_else(|| bad(SET, "`type` must be running, bean, satin, zigzag, fill or manual (embroidery.clear removes stitches)"))?,
             ),
         };
         let angle = match p.get("angle") {

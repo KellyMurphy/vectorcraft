@@ -3793,3 +3793,8 @@ axis	Both	Оба
 	Sew Moves Under:	Прошивать перемещения короче:
 	Only thread changes and objects set to trim cut the thread.	Нить обрезается только при смене нити и у объектов с обрезкой.
 	Embroidery Setup	Параметры вышивки
+
+# Embroidery: zigzag stitch
+	Zigzag Stitch	Зигзаг
+	How wide the zigzag swings	Ширина зигзага
+	Distance between the points of the zigzag	Расстояние между вершинами зигзага

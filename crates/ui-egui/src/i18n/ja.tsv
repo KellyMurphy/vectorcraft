@@ -3787,3 +3787,8 @@ theme	Appearance	外観
 	Sew Moves Under:	この長さ未満の移動は縫う:
 	Only thread changes and objects set to trim cut the thread.	糸を切るのは糸の交換時と、糸切りを設定したオブジェクトだけです。
 	Embroidery Setup	刺繍の設定
+
+# Embroidery: zigzag stitch
+	Zigzag Stitch	ジグザグステッチ
+	How wide the zigzag swings	ジグザグの振り幅
+	Distance between the points of the zigzag	ジグザグの頂点の間隔

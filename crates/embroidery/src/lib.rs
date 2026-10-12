@@ -422,6 +422,10 @@ fn object(n: &Node, s: &StitchSettings, paths: &[&PathData], rule: FillRule, b: 
                     runs.push(under.into_iter().chain(top).collect());
                 }
             }
+            StitchKind::Zigzag => {
+                let w = s.width(n.appearance.stroke_width() * PT_MM);
+                runs.extend(lines.iter().map(|(l, closed)| generate::zigzag(l, *closed, w, s.spacing())));
+            }
             StitchKind::Bean => runs.extend(lines.iter().map(|(l, _)| generate::bean(&generate::running(l, s.length()), s.passes()))),
             _ => runs.extend(lines.iter().map(|(l, _)| generate::running(l, s.length()))),
         }

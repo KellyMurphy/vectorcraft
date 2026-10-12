@@ -171,3 +171,14 @@ fn trim_before_and_after_are_set_per_object() {
     assert_eq!((sel["trimBefore"].clone(), sel["trimAfter"].clone()), (json!(true), json!(true)));
     assert!(s.execute("embroidery.set", &json!({"trimAfter": "yes"})).is_err());
 }
+
+#[test]
+fn zigzag_stitch_is_set_and_exported() {
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "zigzag", "width": 4, "spacing": 1.5})).unwrap();
+    let sel = &info(&mut s)["selection"];
+    assert_eq!((sel["type"].clone(), sel["width"].clone(), sel["spacing"].clone()), (json!("zigzag"), json!(4.0), json!(1.5)));
+    assert!(s.execute("embroidery.set", &json!({"underlay": "zigzag"})).is_err(), "a zigzag stitch has no underlay");
+    let bytes = b64(&s.execute("document.export", &json!({"format": "dst"})).unwrap());
+    assert!(vectorcraft_embroidery::read_dst(&bytes).unwrap().stats().stitches > 50);
+}

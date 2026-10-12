@@ -251,6 +251,13 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
             });
             underlay_row(app, ui, kind, sel);
         }
+        StitchKind::Zigzag => {
+            widgets::section_header(ui, tl!("Zigzag Stitch"));
+            // Unset, a zigzag is 3 mm wide (it doesn't follow the stroke, drawn thin).
+            let width = Some(num("width").unwrap_or(StitchSettings::DEFAULT_WIDTH));
+            mm(app, ui, tl!("Width:"), "width", width, StitchSettings::WIDTH, tl!("How wide the zigzag swings"));
+            mm(app, ui, tl!("Spacing:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between the points of the zigzag"));
+        }
         StitchKind::Manual => {
             widgets::dim_label(ui, tl!("The needle goes down at every anchor point, as drawn."));
         }

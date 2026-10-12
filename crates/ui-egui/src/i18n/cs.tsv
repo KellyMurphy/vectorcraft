@@ -717,3 +717,9 @@
 	Sew Moves Under:	Prošít přesuny kratší než:
 	Only thread changes and objects set to trim cut the thread.	Nit se střihá jen při výměně nitě a u objektů s nastaveným ustřižením.
 	Embroidery Setup	Nastavení výšivky
+
+# Embroidery: zigzag stitch
+	Zigzag Stitch	Klikatý steh
+	Spacing:	Rozestup:
+	How wide the zigzag swings	Šířka klikatky
+	Distance between the points of the zigzag	Vzdálenost mezi hroty klikatky
