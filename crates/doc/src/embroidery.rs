@@ -26,10 +26,14 @@ pub enum StitchKind {
     Fill,
     /// The needle goes down at every anchor, as drawn (imported designs).
     Manual,
+    /// Chosen by the shape's stroke width ([`StitchSettings::thin_under`],
+    /// [`StitchSettings::wide_over`]): thin → bean outline, medium → satin shape, wide → fill
+    /// with a satin border (lettering: per letter).
+    Auto,
 }
 
 impl StitchKind {
-    pub const ALL: [StitchKind; 7] = [Self::Running, Self::Bean, Self::Satin, Self::Zigzag, Self::SatinShape, Self::Fill, Self::Manual];
+    pub const ALL: [StitchKind; 8] = [Self::Auto, Self::Running, Self::Bean, Self::Satin, Self::Zigzag, Self::SatinShape, Self::Fill, Self::Manual];
 
     pub fn id(self) -> &'static str {
         match self {
@@ -40,6 +44,7 @@ impl StitchKind {
             Self::Zigzag => "zigzag",
             Self::SatinShape => "satinShape",
             Self::Manual => "manual",
+            Self::Auto => "auto",
         }
     }
 
@@ -52,6 +57,7 @@ impl StitchKind {
             Self::Zigzag => "Zigzag Stitch",
             Self::SatinShape => "Satin Shape",
             Self::Manual => "Manual Stitch",
+            Self::Auto => "Auto",
         }
     }
 
@@ -61,7 +67,7 @@ impl StitchKind {
 
     /// Stitches along the path (rather than covering its area): the thread defaults to the stroke.
     pub fn follows_path(self) -> bool {
-        !matches!(self, Self::Fill | Self::SatinShape)
+        !matches!(self, Self::Fill | Self::SatinShape | Self::Auto)
     }
 
     /// The default stitch length, mm.
@@ -161,6 +167,12 @@ pub struct StitchSettings {
     /// Bean stitch: how many times each stitch is sewn (odd).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub passes: Option<u8>,
+    /// Auto: shapes whose strokes are thinner than this (mm) get a bean outline.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub thin_under: Option<f64>,
+    /// Auto: shapes whose strokes are wider than this (mm) are filled, with a satin border.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub wide_over: Option<f64>,
     /// Fill: a satin border this wide (mm) sewn over the shape's edges after the fill.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub border: Option<f64>,
@@ -220,6 +232,13 @@ impl StitchSettings {
     /// Allowed satin widths, mm.
     pub const WIDTH: std::ops::RangeInclusive<f64> = 0.3..=12.0;
     pub const DEFAULT_SPACING: f64 = 0.4;
+    /// Allowed Auto thresholds, mm.
+    pub const THIN: std::ops::RangeInclusive<f64> = 0.2..=3.0;
+    pub const WIDE: std::ops::RangeInclusive<f64> = 2.0..=12.0;
+    pub const DEFAULT_THIN: f64 = 1.0;
+    pub const DEFAULT_WIDE: f64 = 7.0;
+    /// The border Auto gives wide shapes when none is set, mm.
+    pub const DEFAULT_BORDER: f64 = 2.0;
     /// Allowed fill border widths, mm.
     pub const BORDER: std::ops::RangeInclusive<f64> = 0.5..=6.0;
     /// Allowed pull compensation, mm.
@@ -257,6 +276,12 @@ impl StitchSettings {
         let stroke = stroke_mm.is_finite() && stroke_mm > 0.0 && self.kind != StitchKind::Zigzag;
         let fallback = if stroke { stroke_mm } else { Self::DEFAULT_WIDTH };
         clamp(self.width, fallback, Self::WIDTH)
+    }
+
+    /// Auto's thresholds, mm: (thin under, wide over), the wide one never below the thin one.
+    pub fn auto_thresholds(&self) -> (f64, f64) {
+        let thin = clamp(self.thin_under, Self::DEFAULT_THIN, Self::THIN);
+        (thin, clamp(self.wide_over, Self::DEFAULT_WIDE, Self::WIDE).max(thin))
     }
 
     /// The fill border width to sew, mm (none: no border).

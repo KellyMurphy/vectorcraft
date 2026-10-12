@@ -3808,3 +3808,10 @@ axis	Both	Ambos
 # Embroidery: fill border
 	Border:	Borde:
 	A satin border sewn over the shape's edges, after the fill	Un borde de satén cosido sobre los bordes de la forma, después del relleno
+
+# Embroidery: auto
+	Each shape (or letter) is stitched by how wide its strokes are.	Cada forma (o letra) se borda según el ancho de sus trazos.
+	Bean Outline Under:	Contorno triple por debajo de:
+	Fill Over:	Relleno por encima de:
+	Thinner strokes get a bean stitch round their outline	Los trazos más finos llevan una puntada triple en su contorno
+	Wider strokes are filled, with a satin border; strokes in between get satin	Los trazos más anchos se rellenan con borde de satén; los intermedios, con satén

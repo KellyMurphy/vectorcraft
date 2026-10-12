@@ -21,7 +21,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Stitch Settings",
             [],
             None,
-            "{type?: running|bean|satin|zigzag|satinShape|fill|manual (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag, satin shape, zigzag stitch or fill row spacing, 0.1–10; satin and fill 0.4, zigzag 2), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column or zigzag, 0.3–12; satin: the stroke width, zigzag: 3), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), pull?: mm (satin and satin shape pull compensation, 0–3; 0), underlay?: none|center|edge|zigzag (satin) | none|center (satin shape) | none|fill (fill), stagger?: 2–8 (fill rows before the needle holes line up again; 3), passes?: 3|5|7|9 (bean; 3), border?: mm (fill: a satin border over the edges, 0.5–6) | null (none), trimBefore?: bool, trimAfter?: bool (cut the thread before / after the object, however close the next stitch), ids?} stitch the paths and compound paths in ids or the selection (groups: those inside), as one undo step; null resets length, spacing, width, thread, pull, stagger or passes to the default → {changed}",
+            "{type?: auto|running|bean|satin|zigzag|satinShape|fill|manual (auto: by stroke width, thinUnder?: mm (0.2–3; 1) → bean outline, wideOver?: mm (2–12; 7) → fill with a satin border, else satin shape) (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag, satin shape, zigzag stitch or fill row spacing, 0.1–10; satin and fill 0.4, zigzag 2), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column or zigzag, 0.3–12; satin: the stroke width, zigzag: 3), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), pull?: mm (satin and satin shape pull compensation, 0–3; 0), underlay?: none|center|edge|zigzag (satin) | none|center (satin shape) | none|fill (fill), stagger?: 2–8 (fill rows before the needle holes line up again; 3), passes?: 3|5|7|9 (bean; 3), border?: mm (fill: a satin border over the edges, 0.5–6) | null (none), trimBefore?: bool, trimAfter?: bool (cut the thread before / after the object, however close the next stitch), ids?} stitch the paths and compound paths in ids or the selection (groups: those inside), as one undo step; null resets length, spacing, width, thread, pull, stagger or passes to the default → {changed}",
             has_doc,
             set
         ),
@@ -48,7 +48,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Embroidery Info",
             [],
             None,
-            "{ids?} → {design: {objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings}, setup: {trimJumpsOver, stitchMovesUnder} (embroidery.setup), selection: {stitched, unstitched, type, length, spacing, angle, width, thread, pull, underlay, stagger, passes, border, trimBefore, trimAfter} (each null when the stitched objects differ, or none is)}",
+            "{ids?} → {design: {objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings}, setup: {trimJumpsOver, stitchMovesUnder} (embroidery.setup), selection: {stitched, unstitched, type, length, spacing, angle, width, thread, pull, underlay, stagger, passes, border, thinUnder, wideOver, trimBefore, trimAfter} (each null when the stitched objects differ, or none is)}",
             has_doc,
             info
         ),
@@ -115,6 +115,8 @@ struct Edits {
     trim_before: Option<bool>,
     trim_after: Option<bool>,
     border: Option<Option<f64>>,
+    thin_under: Option<Option<f64>>,
+    wide_over: Option<Option<f64>>,
 }
 
 /// An optional true/false param.
@@ -143,7 +145,7 @@ impl Edits {
         let kind = match p.get("type") {
             None | Some(Value::Null) => None,
             Some(v) => Some(v.as_str().and_then(StitchKind::parse).ok_or_else(|| {
-                bad(SET, "`type` must be running, bean, satin, zigzag, satinShape, fill or manual (embroidery.clear removes stitches)")
+                bad(SET, "`type` must be auto, running, bean, satin, zigzag, satinShape, fill or manual (embroidery.clear removes stitches)")
             })?),
         };
         let angle = match p.get("angle") {
@@ -172,6 +174,8 @@ impl Edits {
             passes: count(p, "passes", StitchSettings::PASSES, true)?,
             trim_before: flag(p, "trimBefore")?,
             border: measure(p, "border", StitchSettings::BORDER)?,
+            thin_under: measure(p, "thinUnder", StitchSettings::THIN)?,
+            wide_over: measure(p, "wideOver", StitchSettings::WIDE)?,
             trim_after: flag(p, "trimAfter")?,
             length: measure(p, "length", StitchSettings::LENGTH)?,
             spacing: measure(p, "spacing", StitchSettings::SPACING)?,
@@ -215,6 +219,12 @@ impl Edits {
         }
         if let Some(v) = self.border {
             s.border = v;
+        }
+        if let Some(v) = self.thin_under {
+            s.thin_under = v;
+        }
+        if let Some(v) = self.wide_over {
+            s.wide_over = v;
         }
         if let Some(v) = self.trim_before {
             s.trim_before = v;
@@ -357,6 +367,8 @@ fn info(s: &mut Session, p: &Value) -> Result<Value> {
         "stagger": same(all.iter().map(|s| s.stagger())),
         "passes": same(all.iter().map(|s| s.passes())),
         "border": same(all.iter().map(|s| s.border())),
+        "thinUnder": same(all.iter().map(|s| s.auto_thresholds().0)),
+        "wideOver": same(all.iter().map(|s| s.auto_thresholds().1)),
         "trimBefore": same(all.iter().map(|s| s.trim_before)),
         "trimAfter": same(all.iter().map(|s| s.trim_after)),
     });

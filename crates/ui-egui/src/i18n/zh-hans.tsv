@@ -3486,3 +3486,10 @@ axis	Both	两者
 # Embroidery: fill border
 	Border:	边框:
 	A satin border sewn over the shape's edges, after the fill	填充之后,沿形状边缘缝一圈缎面边框
+
+# Embroidery: auto
+	Each shape (or letter) is stitched by how wide its strokes are.	每个形状(或字母)按笔画宽度选择针法。
+	Bean Outline Under:	豆形针轮廓上限:
+	Fill Over:	填充下限:
+	Thinner strokes get a bean stitch round their outline	更细的笔画沿轮廓缝豆形针
+	Wider strokes are filled, with a satin border; strokes in between get satin	更宽的笔画用填充加缎面边框;介于两者之间的用缎面

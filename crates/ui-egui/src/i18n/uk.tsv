@@ -3791,3 +3791,10 @@ axis	Both	Обидві
 # Embroidery: fill border
 	Border:	Облямівка:
 	A satin border sewn over the shape's edges, after the fill	Атласна облямівка по краях форми, після заливки
+
+# Embroidery: auto
+	Each shape (or letter) is stitched by how wide its strokes are.	Кожна форма (або літера) вишивається за шириною своїх штрихів.
+	Bean Outline Under:	Потрійний контур, тонші за:
+	Fill Over:	Заливка, ширші за:
+	Thinner strokes get a bean stitch round their outline	Тонші штрихи отримують потрійну строчку по контуру
+	Wider strokes are filled, with a satin border; strokes in between get satin	Ширші штрихи заливаються з атласною облямівкою; проміжні — атласом

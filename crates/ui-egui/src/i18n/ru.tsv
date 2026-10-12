@@ -3806,3 +3806,10 @@ axis	Both	Оба
 # Embroidery: fill border
 	Border:	Кайма:
 	A satin border sewn over the shape's edges, after the fill	Атласная кайма по краям формы, после заливки
+
+# Embroidery: auto
+	Each shape (or letter) is stitched by how wide its strokes are.	Каждая форма (или буква) вышивается по ширине своих штрихов.
+	Bean Outline Under:	Тройной контур тоньше:
+	Fill Over:	Заливка шире:
+	Thinner strokes get a bean stitch round their outline	Более тонкие штрихи получают тройную строчку по контуру
+	Wider strokes are filled, with a satin border; strokes in between get satin	Более широкие штрихи заливаются с атласной каймой; промежуточные — атласом

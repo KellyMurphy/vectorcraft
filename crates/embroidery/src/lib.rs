@@ -20,7 +20,7 @@ use std::sync::Arc;
 use kurbo::Point;
 use serde::Serialize;
 use vectorcraft_color::Paint;
-use vectorcraft_doc::{Document, EmbroiderySetup, Node, NodeKind, StitchKind, StitchSettings, Underlay};
+use vectorcraft_doc::{Appearance, Document, EmbroiderySetup, Node, NodeKind, StitchKind, StitchSettings, Underlay};
 use vectorcraft_geom::{FillRule, PathData};
 
 pub use dst::{DstError, is_dst, read_dst, write_dst};
@@ -377,15 +377,60 @@ fn solid(p: &Paint) -> Option<[u8; 3]> {
 }
 
 /// The thread `n` sews with.
-fn thread_of(n: &Node, s: &StitchSettings) -> [u8; 3] {
-    let fill = || solid(&n.appearance.fill_paint());
-    let stroke = || solid(&n.appearance.stroke_paint());
+fn thread_of(a: &Appearance, s: &StitchSettings) -> [u8; 3] {
+    let fill = || solid(&a.fill_paint());
+    let stroke = || solid(&a.stroke_paint());
     let paint = if s.kind.follows_path() { stroke().or_else(fill) } else { fill().or_else(stroke) };
     s.thread.or(paint).unwrap_or([0, 0, 0])
 }
 
 fn object(n: &Node, s: &StitchSettings, paths: &[&PathData], rule: FillRule, b: &mut Builder) {
-    let thread = thread_of(n, s);
+    sew(s, thread_of(&n.appearance, s), n.appearance.stroke_width() * PT_MM, paths, rule, b);
+}
+
+/// The typical stroke width of the closed shape `polys`, mm: twice its area over its perimeter
+/// (exact for a long even stroke; for lettering, the average of its thick and thin strokes).
+pub fn stroke_width(polys: &[Vec<Point>]) -> f64 {
+    let mut area = 0.0;
+    let mut perimeter = 0.0;
+    for p in polys {
+        let n = p.len();
+        for k in 0..n {
+            let (Some(a), Some(b)) = (p.get(k), p.get((k + 1) % n)) else { continue };
+            area += a.x * b.y - b.x * a.y;
+            perimeter += a.distance(*b);
+        }
+    }
+    if perimeter > 0.0 { (area / 2.0).abs() * 2.0 / perimeter } else { 0.0 }
+}
+
+/// Auto's choice for a shape `width` mm wide in its strokes: the settings it is sewn with.
+pub fn auto_settings(s: &StitchSettings, width: f64) -> StitchSettings {
+    let (thin, wide) = s.auto_thresholds();
+    let mut t = s.clone();
+    if width < thin {
+        t.kind = StitchKind::Bean;
+        t.length = None;
+    } else if width <= wide {
+        t.kind = StitchKind::SatinShape;
+        t.underlay = Underlay::Center;
+    } else {
+        t.kind = StitchKind::Fill;
+        t.underlay = Underlay::Fill;
+        t.border = Some(s.border().unwrap_or(StitchSettings::DEFAULT_BORDER));
+        t.length = None;
+    }
+    t
+}
+
+/// Sew `paths` with `s` in `thread` (`stroke_mm`: the stroke's width, for satins).
+fn sew(s: &StitchSettings, thread: [u8; 3], stroke_mm: f64, paths: &[&PathData], rule: FillRule, b: &mut Builder) {
+    if s.kind == StitchKind::Auto {
+        let polys: Vec<Vec<Point>> = paths.iter().flat_map(|p| generate::polylines(p)).map(|(l, _)| l).collect();
+        let t = auto_settings(s, stroke_width(&polys));
+        sew(&t, thread, stroke_mm, paths, rule, b);
+        return;
+    }
     let mut runs: Vec<Vec<Point>> = vec![];
     if s.kind == StitchKind::Manual {
         runs.extend(paths.iter().flat_map(|p| generate::manual(p)));
@@ -415,7 +460,7 @@ fn object(n: &Node, s: &StitchSettings, paths: &[&PathData], rule: FillRule, b: 
             StitchKind::Satin => {
                 // Capped: a wider stitch can't be sewn in one move (DST: 12.1 mm), and splitting it would put
                 // a needle hole in the middle of the column.
-                let w = (s.width(n.appearance.stroke_width() * PT_MM) + s.pull()).min(*StitchSettings::WIDTH.end());
+                let w = (s.width(stroke_mm) + s.pull()).min(*StitchSettings::WIDTH.end());
                 for (l, closed) in &lines {
                     let (under, back) = generate::satin_underlay(l, *closed, w, s.underlay());
                     // After an underlay that ends at the far end, the column is sewn back.
@@ -454,7 +499,7 @@ fn object(n: &Node, s: &StitchSettings, paths: &[&PathData], rule: FillRule, b: 
                 }
             }
             StitchKind::Zigzag => {
-                let w = s.width(n.appearance.stroke_width() * PT_MM);
+                let w = s.width(stroke_mm);
                 runs.extend(lines.iter().map(|(l, closed)| generate::zigzag(l, *closed, w, s.spacing())));
             }
             StitchKind::Bean => runs.extend(lines.iter().map(|(l, _)| generate::bean(&generate::running(l, s.length()), s.passes()))),

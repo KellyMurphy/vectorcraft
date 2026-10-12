@@ -3800,3 +3800,10 @@ theme	Appearance	外観
 # Embroidery: fill border
 	Border:	縁取り:
 	A satin border sewn over the shape's edges, after the fill	フィルの後、形状の縁にサテンの縁取りを縫います
+
+# Embroidery: auto
+	Each shape (or letter) is stitched by how wide its strokes are.	各形状(または文字)をストロークの太さに応じて縫います。
+	Bean Outline Under:	ビーン輪郭の上限:
+	Fill Over:	フィルの下限:
+	Thinner strokes get a bean stitch round their outline	これより細いストロークは輪郭をビーンステッチで縫います
+	Wider strokes are filled, with a satin border; strokes in between get satin	これより太いストロークはフィルとサテンの縁取り、その間はサテンで縫います

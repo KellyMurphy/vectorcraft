@@ -2188,6 +2188,8 @@ pub fn menu_tree() -> Vec<(&'static str, Vec<Item>)> {
                 sub(
                     "Embroidery",
                     vec![
+                        cp("Auto", "embroidery.set", json!({"type": "auto"})),
+                        Sep,
                         cp("Running Stitch", "embroidery.set", json!({"type": "running"})),
                         cp("Bean Stitch", "embroidery.set", json!({"type": "bean"})),
                         cp("Satin Column", "embroidery.set", json!({"type": "satin"})),

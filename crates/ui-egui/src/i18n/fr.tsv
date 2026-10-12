@@ -3819,3 +3819,10 @@ axis	Both	Les deux
 # Embroidery: fill border
 	Border:	Bordure :
 	A satin border sewn over the shape's edges, after the fill	Une bordure satin cousue sur les bords de la forme, après le remplissage
+
+# Embroidery: auto
+	Each shape (or letter) is stitched by how wide its strokes are.	Chaque forme (ou lettre) est brodée selon la largeur de ses traits.
+	Bean Outline Under:	Contour triple sous :
+	Fill Over:	Remplissage au-delà de :
+	Thinner strokes get a bean stitch round their outline	Les traits plus fins reçoivent un point triple sur leur contour
+	Wider strokes are filled, with a satin border; strokes in between get satin	Les traits plus larges sont remplis avec une bordure satin ; entre les deux, du satin

@@ -839,3 +839,32 @@ fn a_fill_border_is_a_satin_over_the_edges_sewn_last() {
         assert!(d <= 1.0 + 1e-6, "{p:?}");
     }
 }
+
+#[test]
+fn stroke_width_is_twice_area_over_perimeter() {
+    let bar = vec![Point::new(0.0, 0.0), Point::new(100.0, 0.0), Point::new(100.0, 4.0), Point::new(0.0, 4.0)];
+    assert!((stroke_width(&[bar]) - 3.85).abs() < 0.01, "a 4 mm bar: {}", stroke_width(&[]));
+    assert_eq!(stroke_width(&[]), 0.0);
+}
+
+#[test]
+fn auto_picks_by_stroke_width() {
+    let s = StitchSettings::new(StitchKind::Auto);
+    assert_eq!(auto_settings(&s, 0.5).kind, StitchKind::Bean);
+    let mid = auto_settings(&s, 3.0);
+    assert_eq!((mid.kind, mid.underlay), (StitchKind::SatinShape, Underlay::Center));
+    let wide = auto_settings(&s, 9.0);
+    assert_eq!((wide.kind, wide.underlay, wide.border), (StitchKind::Fill, Underlay::Fill, Some(2.0)));
+    let tuned = StitchSettings { thin_under: Some(2.0), wide_over: Some(10.0), ..s };
+    assert_eq!(auto_settings(&tuned, 1.5).kind, StitchKind::Bean);
+    assert_eq!(auto_settings(&tuned, 9.0).kind, StitchKind::SatinShape);
+}
+
+#[test]
+fn auto_objects_sew_what_they_pick() {
+    // A 2 mm-wide bar (5.7 pt): satin; a 30 mm square: fill with a border.
+    let bar = plan_of(poly(&[(0.0, 0.0), (200.0, 0.0), (200.0, 5.7), (0.0, 5.7)], true), StitchSettings::new(StitchKind::Auto));
+    let sq = plan_of(poly(&[(0.0, 0.0), (85.0, 0.0), (85.0, 85.0), (0.0, 85.0)], true), StitchSettings::new(StitchKind::Auto));
+    assert!(bar.stats().stitches > 100 && sq.stats().stitches > bar.stats().stitches);
+    assert!(sq.warnings.is_empty() && bar.warnings.is_empty(), "{:?} {:?}", sq.warnings, bar.warnings);
+}

@@ -731,3 +731,11 @@
 # Embroidery: fill border
 	Border:	Lem:
 	A satin border sewn over the shape's edges, after the fill	Saténový lem přes okraje tvaru, po výplni
+
+# Embroidery: auto
+	Auto	Auto
+	Each shape (or letter) is stitched by how wide its strokes are.	Každý tvar (nebo písmeno) se vyšije podle šířky svých tahů.
+	Bean Outline Under:	Trojitý obrys pod:
+	Fill Over:	Výplň nad:
+	Thinner strokes get a bean stitch round their outline	Tenčí tahy dostanou trojitý steh po obrysu
+	Wider strokes are filled, with a satin border; strokes in between get satin	Širší tahy se vyplní se saténovým lemem; mezi tím satén

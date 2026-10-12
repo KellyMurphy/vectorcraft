@@ -252,6 +252,38 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
             underlay_row(app, ui, kind, sel);
             border_row(app, ui, sel);
         }
+        StitchKind::Auto => {
+            widgets::section_header(ui, tl!("Auto"));
+            widgets::dim_label(ui, tl!("Each shape (or letter) is stitched by how wide its strokes are."));
+            mm(
+                app,
+                ui,
+                tl!("Bean Outline Under:"),
+                "thinUnder",
+                num("thinUnder"),
+                StitchSettings::THIN,
+                tl!("Thinner strokes get a bean stitch round their outline"),
+            );
+            mm(
+                app,
+                ui,
+                tl!("Fill Over:"),
+                "wideOver",
+                num("wideOver"),
+                StitchSettings::WIDE,
+                tl!("Wider strokes are filled, with a satin border; strokes in between get satin"),
+            );
+            mm(app, ui, tl!("Density:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between zigzags: smaller is denser"));
+            mm(
+                app,
+                ui,
+                tl!("Pull Compensation:"),
+                "pull",
+                num("pull"),
+                StitchSettings::PULL,
+                tl!("Sews the column this much wider, since the thread pulls the fabric in"),
+            );
+        }
         StitchKind::SatinShape => {
             widgets::section_header(ui, tl!("Satin Shape"));
             widgets::dim_label(ui, tl!("Satin follows the shape's strokes from edge to edge."));
