@@ -19,6 +19,9 @@ pub enum StitchKind {
     /// An open zigzag along the path: points [`StitchSettings::spacing`] apart, alternating
     /// side to side across [`StitchSettings::width`] (decorative lines, appliqué edges).
     Zigzag,
+    /// Satin following a closed shape's strokes, from edge to edge (lettering, outlined type).
+    #[serde(rename = "satinShape")]
+    SatinShape,
     /// Parallel rows of staggered running stitches covering the shape (tatami fill).
     Fill,
     /// The needle goes down at every anchor, as drawn (imported designs).
@@ -26,7 +29,7 @@ pub enum StitchKind {
 }
 
 impl StitchKind {
-    pub const ALL: [StitchKind; 6] = [Self::Running, Self::Bean, Self::Satin, Self::Zigzag, Self::Fill, Self::Manual];
+    pub const ALL: [StitchKind; 7] = [Self::Running, Self::Bean, Self::Satin, Self::Zigzag, Self::SatinShape, Self::Fill, Self::Manual];
 
     pub fn id(self) -> &'static str {
         match self {
@@ -35,6 +38,7 @@ impl StitchKind {
             Self::Satin => "satin",
             Self::Fill => "fill",
             Self::Zigzag => "zigzag",
+            Self::SatinShape => "satinShape",
             Self::Manual => "manual",
         }
     }
@@ -46,6 +50,7 @@ impl StitchKind {
             Self::Satin => "Satin Column",
             Self::Fill => "Fill",
             Self::Zigzag => "Zigzag Stitch",
+            Self::SatinShape => "Satin Shape",
             Self::Manual => "Manual Stitch",
         }
     }
@@ -56,7 +61,7 @@ impl StitchKind {
 
     /// Stitches along the path (rather than covering its area): the thread defaults to the stroke.
     pub fn follows_path(self) -> bool {
-        self != Self::Fill
+        !matches!(self, Self::Fill | Self::SatinShape)
     }
 
     /// The default stitch length, mm.
@@ -116,6 +121,7 @@ impl Underlay {
         match kind {
             StitchKind::Satin => &[Self::None, Self::Center, Self::Edge, Self::Zigzag],
             StitchKind::Fill => &[Self::None, Self::Fill],
+            StitchKind::SatinShape => &[Self::None, Self::Center],
             _ => &[Self::None],
         }
     }

@@ -703,3 +703,120 @@ fn zigzag_defaults_ignore_the_stroke() {
     let b = p.stats().bounds.unwrap();
     assert!((b[3] - b[1] - 3.0).abs() < 1e-6, "{b:?}");
 }
+
+/// The satin of a shape stays on it: every needle point within `slack` mm of the shape.
+fn on_shape(polys: &[Vec<Point>], pts: &[Point], slack: f64) -> bool {
+    pts.iter().all(|p| {
+        generate::tests_inside(polys, *p)
+            || [(slack, 0.0), (-slack, 0.0), (0.0, slack), (0.0, -slack)]
+                .iter()
+                .any(|&(dx, dy)| generate::tests_inside(polys, Point::new(p.x + dx, p.y + dy)))
+    })
+}
+
+#[test]
+fn satin_shape_spans_a_bar_edge_to_edge() {
+    let bar = vec![Point::new(0.0, 0.0), Point::new(30.0, 0.0), Point::new(30.0, 4.0), Point::new(0.0, 4.0)];
+    let runs = generate::satin_shape(std::slice::from_ref(&bar), FillRule::NonZero, 0.4, 0.0, false);
+    assert_eq!(runs.len(), 1);
+    let r = &runs[0];
+    // Points alternate between the two long edges, across the whole bar.
+    let edge = r.iter().filter(|p| p.y.abs() < 0.2 || (p.y - 4.0).abs() < 0.2).count();
+    assert!(edge * 10 >= r.len() * 9, "{edge} of {} on the edges", r.len());
+    assert!(r.iter().any(|p| p.x < 1.0) && r.iter().any(|p| p.x > 29.0));
+    assert!(on_shape(&[bar], r, 0.25));
+}
+
+#[test]
+fn satin_shape_covers_an_l_and_a_ring_without_leaving_them() {
+    let l = vec![
+        Point::new(0.0, 0.0),
+        Point::new(4.0, 0.0),
+        Point::new(4.0, 20.0),
+        Point::new(16.0, 20.0),
+        Point::new(16.0, 24.0),
+        Point::new(0.0, 24.0),
+    ];
+    let outer = vec![Point::new(30.0, 0.0), Point::new(50.0, 0.0), Point::new(50.0, 20.0), Point::new(30.0, 20.0)];
+    let inner: Vec<Point> =
+        vec![Point::new(34.0, 4.0), Point::new(46.0, 4.0), Point::new(46.0, 16.0), Point::new(34.0, 16.0)].into_iter().rev().collect();
+    for (polys, under) in [(vec![l], false), (vec![outer, inner], true)] {
+        let runs = generate::satin_shape(&polys, FillRule::NonZero, 0.4, 0.0, under);
+        assert!(!runs.is_empty());
+        for r in &runs {
+            assert!(on_shape(&polys, r, 0.3), "a needle point leaves the shape");
+            for w in r.windows(2) {
+                assert!(w[0].distance(w[1]) <= 12.0 + 1e-9);
+            }
+        }
+    }
+}
+
+/// `EMB_DUMP=folder cargo test -p vectorcraft-embroidery dump_letters -- --ignored` writes
+/// satin-shape lettering in installed fonts as DST (skipped for fonts that aren't installed).
+#[test]
+#[ignore]
+fn dump_letters() {
+    let Some(dir) = std::env::var_os("EMB_DUMP") else { return };
+    let dir = std::path::PathBuf::from(dir);
+    let mut needles = vec![];
+    for (i, (family, size)) in [("Arial", 90.0), ("Times New Roman", 90.0), ("Arial", 40.0)].iter().enumerate() {
+        let style = vectorcraft_doc::CharStyle { font_family: family.to_string(), size: *size, ..Default::default() };
+        let t = vectorcraft_doc::TextObject::point(Point::new(0.0, 100.0 * (i + 1) as f64), "Rag&8e", style);
+        let lay = vectorcraft_text::layout(vectorcraft_text::FontDb::global(), &t);
+        let mut b = super::Builder::new(&EmbroiderySetup::default());
+        for g in &lay.glyphs {
+            let path = PathData::from_bezpath(&g.outline).transformed(t.xf);
+            let polys: Vec<Vec<Point>> = generate::polylines(&path).into_iter().map(|(l, _)| l).collect();
+            for r in generate::satin_shape(&polys, FillRule::NonZero, 0.4, 0.2, true) {
+                b.run([0, 0, 0], &r, true);
+            }
+        }
+        needles.push(b.finish());
+    }
+    for (i, p) in needles.iter().enumerate() {
+        std::fs::write(dir.join(format!("letters{i}.dst")), write_dst(p, "letters")).unwrap();
+    }
+}
+
+#[test]
+fn satin_shape_objects_take_their_fill_colour_and_cover_the_shape() {
+    let d = doc_with(|d| {
+        let mut n = Node::path(
+            d.alloc_id(),
+            poly(&[(0.0, 0.0), (100.0, 0.0), (100.0, 12.0), (0.0, 12.0)], true),
+            Appearance::basic(Paint::solid(Color::rgb8(10, 120, 30)), Paint::None, 0.0),
+        );
+        n.stitch = Some(Box::new(StitchSettings { underlay: Underlay::Center, ..StitchSettings::new(StitchKind::SatinShape) }));
+        vec![n]
+    });
+    let p = plan(&d);
+    assert_eq!(p.threads, vec![[10, 120, 30]]);
+    let b = p.stats().bounds.unwrap();
+    // 100 × 12 pt: 35.3 × 4.2 mm, covered edge to edge.
+    assert!(b[2] - b[0] > 34.0 && (b[3] - b[1] - mm(12.0)).abs() < 0.3, "{b:?}");
+}
+
+proptest! {
+    #![proptest_config(ProptestConfig::with_cases(48))]
+
+    /// Any polygon (self-crossing included): satin shape never panics, and its points are finite
+    /// and its stitches sewable.
+    #[test]
+    fn satin_shape_survives_any_polygon(pts in proptest::collection::vec((-30.0f64..30.0, -30.0f64..30.0), 0..12), spacing in 0.2f64..2.0) {
+        let poly: Vec<Point> = pts.iter().map(|&(x, y)| Point::new(x, y)).collect();
+        for r in generate::satin_shape(&[poly], FillRule::EvenOdd, spacing, 0.3, true) {
+            prop_assert!(r.iter().all(|p| p.is_finite()));
+            for w in r.windows(2) {
+                prop_assert!(w[0].distance(w[1]) <= 12.0 + 1e-6, "{} mm", w[0].distance(w[1]));
+            }
+        }
+    }
+}
+
+#[test]
+fn a_satin_shape_with_no_strokes_is_filled_with_a_warning() {
+    let p = plan_of(poly(&[(0.0, 0.0), (100.0, 0.0), (100.0, 100.0), (0.0, 100.0)], true), StitchSettings::new(StitchKind::SatinShape));
+    assert!(p.stats().stitches > 100);
+    assert!(p.warnings.iter().any(|w| w.contains("filled instead")), "{:?}", p.warnings);
+}

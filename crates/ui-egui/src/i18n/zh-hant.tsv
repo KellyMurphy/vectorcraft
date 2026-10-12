@@ -3256,3 +3256,7 @@ axis	Both	兩者
 	Zigzag Stitch	鋸齒針
 	How wide the zigzag swings	鋸齒擺動的寬度
 	Distance between the points of the zigzag	鋸齒各點之間的距離
+
+# Embroidery: satin shape
+	Satin Shape	形狀緞面
+	Satin follows the shape's strokes from edge to edge.	緞面沿形狀的筆畫從一邊縫到另一邊。

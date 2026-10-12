@@ -182,3 +182,20 @@ fn zigzag_stitch_is_set_and_exported() {
     let bytes = b64(&s.execute("document.export", &json!({"format": "dst"})).unwrap());
     assert!(vectorcraft_embroidery::read_dst(&bytes).unwrap().stats().stitches > 50);
 }
+
+#[test]
+fn satin_shape_is_set_and_exported() {
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "satinShape", "underlay": "center", "pull": 0.2})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["type"], "satinShape");
+    assert!(s.execute("embroidery.set", &json!({"underlay": "zigzag"})).is_err(), "satin shape underlay is a center walk");
+    // The test square is a blob, not a letter: it is filled instead, and the design says so.
+    let d = &info(&mut s)["design"];
+    assert!(d["stitches"].as_u64().unwrap() > 100);
+    assert!(d["warnings"].to_string().contains("filled instead"), "{d}");
+    // A bar is satin-stitched along its length.
+    s.execute("shape.rectangle", &json!({"x": 10, "y": 150, "width": 200, "height": 12})).unwrap();
+    s.execute("embroidery.set", &json!({"type": "satinShape"})).unwrap();
+    let bytes = b64(&s.execute("document.export", &json!({"format": "dst"})).unwrap());
+    assert!(vectorcraft_embroidery::read_dst(&bytes).unwrap().stats().stitches > 100);
+}

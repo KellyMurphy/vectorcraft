@@ -3811,3 +3811,7 @@ axis	Both	Les deux
 	Zigzag Stitch	Point zigzag
 	How wide the zigzag swings	Largeur du zigzag
 	Distance between the points of the zigzag	Écart entre les pointes du zigzag
+
+# Embroidery: satin shape
+	Satin Shape	Satin de forme
+	Satin follows the shape's strokes from edge to edge.	Le satin suit les traits de la forme, d’un bord à l’autre.

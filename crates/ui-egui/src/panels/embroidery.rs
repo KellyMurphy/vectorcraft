@@ -251,6 +251,21 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
             });
             underlay_row(app, ui, kind, sel);
         }
+        StitchKind::SatinShape => {
+            widgets::section_header(ui, tl!("Satin Shape"));
+            widgets::dim_label(ui, tl!("Satin follows the shape's strokes from edge to edge."));
+            mm(app, ui, tl!("Density:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between zigzags: smaller is denser"));
+            mm(
+                app,
+                ui,
+                tl!("Pull Compensation:"),
+                "pull",
+                num("pull"),
+                StitchSettings::PULL,
+                tl!("Sews the column this much wider, since the thread pulls the fabric in"),
+            );
+            underlay_row(app, ui, kind, sel);
+        }
         StitchKind::Zigzag => {
             widgets::section_header(ui, tl!("Zigzag Stitch"));
             // Unset, a zigzag is 3 mm wide (it doesn't follow the stroke, drawn thin).

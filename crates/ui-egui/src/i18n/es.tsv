@@ -3800,3 +3800,7 @@ axis	Both	Ambos
 	Zigzag Stitch	Puntada zigzag
 	How wide the zigzag swings	Anchura del zigzag
 	Distance between the points of the zigzag	Distancia entre los picos del zigzag
+
+# Embroidery: satin shape
+	Satin Shape	Satén de forma
+	Satin follows the shape's strokes from edge to edge.	El satén sigue los trazos de la forma de borde a borde.

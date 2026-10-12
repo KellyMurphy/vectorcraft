@@ -2756,3 +2756,7 @@
 	Zigzag Stitch	Ponto zigue-zague
 	How wide the zigzag swings	Largura do zigue-zague
 	Distance between the points of the zigzag	Distância entre as pontas do zigue-zague
+
+# Embroidery: satin shape
+	Satin Shape	Cetim de forma
+	Satin follows the shape's strokes from edge to edge.	O cetim segue os traços da forma de borda a borda.

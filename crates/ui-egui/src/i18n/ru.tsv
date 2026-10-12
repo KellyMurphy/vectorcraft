@@ -3798,3 +3798,7 @@ axis	Both	Оба
 	Zigzag Stitch	Зигзаг
 	How wide the zigzag swings	Ширина зигзага
 	Distance between the points of the zigzag	Расстояние между вершинами зигзага
+
+# Embroidery: satin shape
+	Satin Shape	Атлас по форме
+	Satin follows the shape's strokes from edge to edge.	Атласная гладь идёт по штрихам формы от края до края.

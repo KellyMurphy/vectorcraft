@@ -3792,3 +3792,7 @@ theme	Appearance	外観
 	Zigzag Stitch	ジグザグステッチ
 	How wide the zigzag swings	ジグザグの振り幅
 	Distance between the points of the zigzag	ジグザグの頂点の間隔
+
+# Embroidery: satin shape
+	Satin Shape	サテン(形状)
+	Satin follows the shape's strokes from edge to edge.	サテンが形状のストロークに沿って端から端まで縫います。

@@ -723,3 +723,7 @@
 	Spacing:	Rozestup:
 	How wide the zigzag swings	Šířka klikatky
 	Distance between the points of the zigzag	Vzdálenost mezi hroty klikatky
+
+# Embroidery: satin shape
+	Satin Shape	Saténový tvar
+	Satin follows the shape's strokes from edge to edge.	Satén sleduje tahy tvaru od okraje k okraji.

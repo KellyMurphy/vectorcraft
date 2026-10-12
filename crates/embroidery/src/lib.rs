@@ -13,6 +13,7 @@
 mod dst;
 pub mod generate;
 mod import;
+pub mod skeleton;
 
 use std::sync::Arc;
 
@@ -420,6 +421,30 @@ fn object(n: &Node, s: &StitchSettings, paths: &[&PathData], rule: FillRule, b: 
                     };
                     // One run: the move from the underlay to the column stays inside the column.
                     runs.push(under.into_iter().chain(top).collect());
+                }
+            }
+            StitchKind::SatinShape => {
+                let polys: Vec<Vec<Point>> = lines.into_iter().map(|(l, _)| l).collect();
+                let satin = generate::satin_shape(&polys, rule, s.spacing(), s.pull(), s.underlay() == Underlay::Center);
+                if satin.is_empty() && !polys.is_empty() {
+                    // No strokes to follow (a blob, not a letter): fill it instead.
+                    match generate::fill(
+                        &polys,
+                        rule,
+                        45.0,
+                        StitchSettings::DEFAULT_SPACING,
+                        StitchKind::Fill.default_length(),
+                        StitchSettings::DEFAULT_STAGGER,
+                    ) {
+                        Ok(f) if !f.is_empty() => {
+                            b.plan.warnings.push("a satin shape has no strokes to follow (it is too round or wide): filled instead".into());
+                            runs.extend(f);
+                        }
+                        Ok(_) => {}
+                        Err(e) => b.plan.warnings.push(e),
+                    }
+                } else {
+                    runs.extend(satin);
                 }
             }
             StitchKind::Zigzag => {
