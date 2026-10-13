@@ -149,6 +149,13 @@ split. A trim is written as three short jumps that return to where they started.
     - **Using them:** embroidery fonts appear in the type controls; type set in one is sewn from its letters.
       Like other fonts they live in [craft-fonts](https://github.com/storytold/craft-fonts), not in this
       repository, each with its licence.
+  - **Motif extraction:** open a DST design, select a region of its stitches, and find the pattern that
+    repeats there: the two offsets at which the stitches line up with a shifted copy of themselves, found by
+    comparing the region with shifted versions of itself, then adjustable by hand. One tile is extracted as
+    stitch objects, its edges trimmed to join seamlessly with its neighbours, and saved as a **pattern file**:
+    an open, documented format (like the embroidery fonts: self-contained, with author and licence). Saved
+    patterns appear in the Fill section's Pattern menu (the motif fills) and tile across any shape. Only
+    designs the user has the right to reuse should be extracted from; the pattern records where it came from.
   - **Embroidery for agents (MCP):** the commands already work over MCP (`run_command`, `export` with
     `dst`, `open_file`), but agents aren't told about them. Mention embroidery in the server's instructions;
     give the commands their Object › Embroidery menu path in the command list; an `embroidery` prompt that
