@@ -156,6 +156,14 @@ split. A trim is written as three short jumps that return to where they started.
     an open, documented format (like the embroidery fonts: self-contained, with author and licence). Saved
     patterns appear in the Fill section's Pattern menu (the motif fills) and tile across any shape. Only
     designs the user has the right to reuse should be extracted from; the pattern records where it came from.
+  - **Border patterns:** the same for borders, which repeat in one direction. Select a stretch of a DST border,
+    find its one repeat offset, extract a segment that joins end to end seamlessly, and save it as a border
+    pattern file (same open format family). A **Pattern Border** stitch sews it along any path, like a pattern
+    brush: the motif repeats along the path and bends with its curves, its length adjusted slightly so a
+    whole number of repeats fits each stretch between corners; at a sharp corner a corner motif goes in when
+    the pattern has one, else the run ends and starts again cleanly. Settings: the pattern, width (scales the
+    motif) and flip. A few starter border patterns are generated in code (waves, scallops, chains), so the
+    feature works before any are extracted.
   - **Embroidery for agents (MCP):** the commands already work over MCP (`run_command`, `export` with
     `dst`, `open_file`), but agents aren't told about them. Mention embroidery in the server's instructions;
     give the commands their Object › Embroidery menu path in the command list; an `embroidery` prompt that
