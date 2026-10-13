@@ -135,12 +135,17 @@ split. A trim is written as three short jumps that return to where they started.
 - **E5, future sprints:**
   - **Embroidery fonts:** lettering digitized for embroidery (satin columns laid out by hand per letter), for
     crisp small type and heavy display type where Auto falls back to fill today. Three parts:
-    - **An open font format**, documented here and versioned, that anyone can read and write. Each letter is
+    - **An open font format**, documented here and versioned, that anyone can read and write. Decided: a
+      self-contained file, not data embedded in a regular font (modifying fonts breaks most licences, and
+      font tools strip unknown tables) and not an extension that depends on an installed font (it breaks when
+      that font changes, can't be shared without it, and copies its outlines). It may record the font it was
+      digitized from, as information only. Each letter is
       stored as stitch objects (shapes with their stitch settings), not needle points, so letters scale and
       their stitches are generated at each size; with the font's metrics (baseline, cap height, x-height,
       advances), kerning pairs, recommended size range, and author and licence information.
-    - **A font editor:** a document with one artboard per letter, digitized with the ordinary tools and stitch
-      types, metrics and kerning set on it, a live sample line to test words, saved straight to the format.
+    - **A font editor:** a document with one artboard per letter (a new font can start from an installed
+      font's outlines on a template layer, as a tracing guide that isn't saved in the font), digitized with
+      the ordinary tools and stitch types, metrics and kerning set on it, a live sample line to test words, saved straight to the format.
     - **Using them:** embroidery fonts appear in the type controls; type set in one is sewn from its letters.
       Like other fonts they live in [craft-fonts](https://github.com/storytold/craft-fonts), not in this
       repository, each with its licence.
