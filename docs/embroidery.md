@@ -174,6 +174,13 @@ split. A trim is written as three short jumps that return to where they started.
     objects in sewing order: a **placement line** (running stitch showing where the fabric goes, then a stop),
     a **tack-down** (running or zigzag holding the fabric, then a stop to trim it) and a **satin cover** over the
     raw edge.
+    - **Cut files for the appliqué fabric:** export the pieces' placement outlines (optionally grown by an
+      allowance so the fabric reaches under the tack-down) for a fabric cutter. The pieces are **nested**: packed
+      into the smallest area without overlapping, a set gap apart (e.g. 3 mm), rotated or flipped where the fabric
+      allows, within the cutter's mat (12 × 12 in, 12 × 24 in…), continuing on further mats when they don't fit.
+      Formats: SVG and DXF (both written already), which Brother CanvasWorkspace, Cricut Design Space and
+      Silhouette Studio read; Brother's own FCM for ScanNCut machines only from a public specification (the
+      clean-room rule), else through CanvasWorkspace from SVG.
 
 Clean-room note: no code from Ink/Stitch (GPL) or other digitizers is used. Formats come from public
 documentation, cited above.
