@@ -1061,3 +1061,25 @@ fn satin_quality_tells_strokes_from_heavy_bowls() {
     let flat: usize = p.runs().iter().map(|(_, r)| r.windows(2).filter(|w| (w[0].y - w[1].y).abs() < 1e-6).count()).sum();
     assert!(flat > 100, "{flat}");
 }
+
+#[test]
+fn satin_shape_covers_a_sharp_turn_to_its_outer_corner() {
+    // A V of 2 mm strokes with a flat foot, like a w's point: the satin reaches the foot.
+    let v = vec![
+        Point::new(0.0, 0.0),
+        Point::new(2.2, 0.0),
+        Point::new(6.0, 13.0),
+        Point::new(9.8, 0.0),
+        Point::new(12.0, 0.0),
+        Point::new(7.3, 16.0),
+        Point::new(4.7, 16.0),
+    ];
+    let runs = generate::satin_shape(std::slice::from_ref(&v), FillRule::NonZero, 0.4, 0.0, false);
+    let pts: Vec<Point> = runs.into_iter().flatten().collect();
+    assert!(pts.iter().any(|p| p.y > 15.5), "nothing sewn down to the foot");
+    // Both foot corners are reached (within 1 mm).
+    for corner in [Point::new(7.3, 16.0), Point::new(4.7, 16.0)] {
+        assert!(pts.iter().any(|p| p.distance(corner) < 1.0), "{corner:?} left bare");
+    }
+    assert!(on_shape(&[v], &pts, 0.3));
+}

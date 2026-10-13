@@ -148,6 +148,12 @@ const UNDERLAY_INSET: f64 = 0.4;
 const UNDERLAY_LEN: f64 = 2.0;
 /// Zigzag and fill underlay spacing, mm.
 const UNDERLAY_SPACING: f64 = 2.0;
+/// A satin shape's zig as made: its centre, direction, the stroke's half-width there, whether it
+/// is at a corner, and its two needle points.
+type Made = (Point, Vec2, f64, bool, (Point, Point));
+
+/// A satin shape's stroke turning more than this (radians) over a few zigs is at a corner.
+const CORNER_TURN: f64 = 0.44;
 /// Needle points on one side of a satin closer than this (mm) are crowded: every other one is
 /// shortened.
 const SHORT_GAP: f64 = 0.25;
@@ -621,7 +627,7 @@ pub struct SatinQuality {
 impl SatinQuality {
     /// Satin that leaves out or crowds this much looks wrong: fill the shape instead.
     pub fn poor(&self) -> bool {
-        self.skipped > 0.2 || self.crowded > 0.25 || self.fanned > 0.2 || self.skipped + self.crowded + self.fanned > 0.28
+        self.skipped > 0.2 || self.crowded > 0.2 || self.fanned > 0.2 || self.skipped + self.crowded + self.fanned > 0.28
     }
 }
 
@@ -677,13 +683,29 @@ pub fn satin_shape_checked(polys: &[Vec<Point>], rule: FillRule, spacing: f64, p
             }
         }
         let total = along.last().copied().unwrap_or(0.0);
+        // Where the stroke turns sharply (a w's points), the centre line cuts the corner: the zigs
+        // there stay square to it and their outer side reaches further, out to the corner.
+        let corner: Vec<bool> = (0..base.len())
+            .map(|k| {
+                // Over about one and a half half-widths either side: the centre line rounds a
+                // corner over about the stroke's width.
+                let w = ((1.5 * r.get(k).copied().unwrap_or(0.0) / spacing).round() as usize).clamp(3, 40);
+                let a = base.get(k.saturating_sub(w)).copied().unwrap_or(Vec2::ZERO);
+                let b = base.get((k + w).min(base.len().saturating_sub(1))).copied().unwrap_or(Vec2::ZERO);
+                a.dot(b).clamp(-1.0, 1.0).acos() > CORNER_TURN
+            })
+            .collect();
         // Each zig crosses the stroke where it is narrowest: the normal turned up to 35° either
         // way, the angle smoothed along the stroke so neighbouring stitches lie alike.
         let turns: Vec<f64> = c
             .iter()
             .zip(&base)
             .zip(&r)
-            .map(|((p, n), r)| {
+            .zip(&corner)
+            .map(|(((p, n), r), &corner)| {
+                if corner {
+                    return 0.0;
+                }
                 let cap = (2.0 * r).clamp(0.3, MAX_STITCH / 2.0);
                 (-5..=5)
                     .map(|k| k as f64 * 7.0_f64.to_radians())
@@ -707,31 +729,81 @@ pub fn satin_shape_checked(polys: &[Vec<Point>], rule: FillRule, spacing: f64, p
                 if w.is_empty() { 0.0 } else { w.iter().sum::<f64>() / w.len() as f64 }
             })
             .collect();
-        let mut zig: Vec<(Point, Point)> = vec![];
+        // One zig at `p` across direction `d`: its two needle points, or none where satin can't
+        // span (no edge near on a side: inside a junction, which other strokes cover, or a blob).
+        // Out to the edge each side, but not past twice the stroke's half-width `r` there (at a
+        // junction the edge across may be far down another stroke); at a sharp turn the outer
+        // side may reach twice as far, out to the corner, and if the ray misses the inside (it
+        // runs up a stroke past the notch) the nearest edge point there is taken, as a miter.
+        let make = |p: Point, d: Vec2, r: f64, at_corner: bool| -> Option<(Point, Point)> {
+            let cap = (2.0 * r).clamp(0.3, MAX_STITCH / 2.0);
+            let reach = if at_corner { (2.0 * cap).min(MAX_STITCH / 2.0) } else { cap };
+            let side = |dir: Vec2| -> Option<(Point, f64)> {
+                match crate::skeleton::cast(polys, p, dir, reach) {
+                    Some(t) => Some((p + dir * t, t)),
+                    None if at_corner => crate::skeleton::nearest(polys, p, dir, cap).map(|q| (q, q.distance(p))),
+                    None => None,
+                }
+            };
+            let ((mut lp, ld), (mut rp, rd)) = (side(d)?, side(-d)?);
+            if ld.min(rd) > cap {
+                return None;
+            }
+            // Pull compensation widens the stitch at both ends; the diagonal to the next zig
+            // must be sewable too.
+            let across = lp - rp;
+            let len = across.hypot();
+            if len > 1e-9 {
+                let u = across / len;
+                lp += u * (pull / 2.0);
+                rp -= u * (pull / 2.0);
+                let most = (MAX_STITCH - spacing).max(0.3);
+                if len + pull > most {
+                    let mid = lp.midpoint(rp);
+                    let k = most / (len + pull);
+                    (lp, rp) = (mid + (lp - mid) * k, mid + (rp - mid) * k);
+                }
+            }
+            Some((lp, rp))
+        };
+        let mut made: Vec<Made> = vec![];
         for (k, (((p, n), r), t)) in c.iter().zip(&base).zip(&r).zip(&turns).enumerate() {
             let s_at = along.get(k).copied().unwrap_or(0.0);
             if s_at < trim.0 || s_at > total - trim.1 {
                 continue;
             }
             let d = Vec2::new(n.x * t.cos() - n.y * t.sin(), n.x * t.sin() + n.y * t.cos());
-            // Out to the edge each side, but not past twice the stroke's half-width there (at a
-            // junction the edge across may be far down another stroke).
-            let cap = (2.0 * r).clamp(0.3, MAX_STITCH / 2.0);
+            let at_corner = corner.get(k).copied().unwrap_or(false);
             positions += 1;
-            // No edge near on a side: the zig is inside a junction (other strokes cover it) or a
-            // blob satin can't span. Left out.
-            let (Some(left), Some(right)) = (crate::skeleton::cast(polys, *p, d, cap), crate::skeleton::cast(polys, *p, -d, cap)) else {
-                skipped += 1;
-                continue;
-            };
-            let (mut left, mut right) = (left + pull / 2.0, right + pull / 2.0);
-            // The diagonal to the next zig must be sewable too.
-            let most = (MAX_STITCH - spacing).max(0.3);
-            let span = left + right;
-            if span > most {
-                (left, right) = (left * most / span, right * most / span);
+            match make(*p, d, *r, at_corner) {
+                Some(z) => made.push((*p, d, *r, at_corner, z)),
+                None => skipped += 1,
             }
-            zig.push((*p + d * left, *p - d * right));
+        }
+        // Round a curve the outer side's needle points spread apart: more zigs go in between,
+        // their direction swept from one to the next, until neither side gaps (a fan).
+        let mut zig: Vec<(Point, Point)> = vec![];
+        for (i, &(p, d, r, at_corner, z)) in made.iter().enumerate() {
+            if let Some(&(q, e, rq, cq, zq)) = made.get(i + 1) {
+                zig.push(z);
+                let gap = z.0.distance(zq.0).max(z.1.distance(zq.1));
+                if gap > 1.5 * spacing && p.distance(q) < 2.0 * spacing {
+                    let extra = ((gap / spacing).ceil() as usize).saturating_sub(1).min(64);
+                    for m in 1..=extra {
+                        let f = m as f64 / (extra + 1) as f64;
+                        let dir = d.lerp(e, f);
+                        let len = dir.hypot();
+                        if len < 1e-9 {
+                            continue;
+                        }
+                        if let Some(z) = make(p.lerp(q, f), dir / len, r + (rq - r) * f, at_corner || cq) {
+                            zig.push(z);
+                        }
+                    }
+                }
+            } else {
+                zig.push(z);
+            }
         }
         for w in zig.windows(2) {
             let (dl, dr) = (w[0].0.distance(w[1].0), w[0].1.distance(w[1].1));

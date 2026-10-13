@@ -98,8 +98,11 @@ between their ends and junctions; short spurs that thinning leaves at corners ar
 smoothed, and stroke ends are extended to the shape's tips. Each zig of the satin crosses its stroke where it is narrowest (the
 normal turned up to 35° either way, smoothed along the stroke), reaching the shape's edges at most twice
 the stroke's half-width away; a zig with no edge that near on one side is inside a junction and is left
-out. Where strokes meet, the two longest pass through and the others start at their edge. On a tight curve,
-every other needle point on the crowded side stops halfway (short stitches). Parts of the shape no stroke runs through (round dots) are filled. Known limits: serifs are covered only partly (they are too short to be strokes of their own), and
+out. Where strokes meet, the two longest pass through and the others start at their edge. Where the stroke turns sharply (a w's points),
+the satin fans round the corner: its outer side reaches out to the corner, its inner side holds at the notch,
+and extra zigs go in wherever the needle points on either side would spread more than one and a half
+spacings apart. On a tight curve, every other needle point on the crowded side stops halfway (short
+stitches). Parts of the shape no stroke runs through (round dots) are filled. Known limits: serifs are covered only partly (they are too short to be strokes of their own), and
 crossings (an &, an 8) are sewn twice where strokes overlap. Strokes wider than about 7 mm make long,
 loose satin stitches: fill those shapes instead.
 

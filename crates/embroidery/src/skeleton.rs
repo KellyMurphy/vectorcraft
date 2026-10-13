@@ -455,6 +455,27 @@ pub fn cast(polys: &[Vec<Point>], o: Point, d: Vec2, max: f64) -> Option<f64> {
     best
 }
 
+/// The nearest point of the shape's edge to `o` on the side `d` points to (ahead of `o`), within
+/// `max`.
+pub fn nearest(polys: &[Vec<Point>], o: Point, d: Vec2, max: f64) -> Option<Point> {
+    let mut best: Option<(f64, Point)> = None;
+    for poly in polys {
+        let n = poly.len();
+        for k in 0..n {
+            let (Some(&a), Some(&b)) = (poly.get(k), poly.get((k + 1) % n)) else { continue };
+            let e = b - a;
+            let l2 = e.hypot2();
+            let t = if l2 > 0.0 { ((o - a).dot(e) / l2).clamp(0.0, 1.0) } else { 0.0 };
+            let q = a + e * t;
+            let dist = q.distance(o);
+            if (q - o).dot(d) > 1e-9 && dist <= max && best.is_none_or(|(bd, _)| dist < bd) {
+                best = Some((dist, q));
+            }
+        }
+    }
+    best.map(|(_, q)| q)
+}
+
 /// The strokes of the shape `polys` (mm, filled by `rule`).
 pub fn strokes(polys: &[Vec<Point>], rule: FillRule) -> Vec<Stroke> {
     let Some(mut g) = rasterize(polys, rule) else { return vec![] };
