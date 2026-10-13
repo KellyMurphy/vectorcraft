@@ -128,7 +128,17 @@ split. A trim is written as three short jumps that return to where they started.
   two rails, and fill patterns beyond tatami (motif and embossed fills: they will join the Fill section's
   Pattern menu). Underlay, pull compensation, tie-ins and tie-offs, satin corners and the Embroidery panel
   are done.
+- **Next (high priority): stitch order.** Set the order objects are sewn in, independent of their paint order:
+  a reorderable list in the Embroidery panel and commands to move objects earlier or later, so thread changes,
+  layering and travel can be planned.
 - **E4, breadth:** PES, JEF, EXP and VP3; hoop templates; auto-digitizing traced art.
+- **E5, future sprints:**
+  - **Embroidery fonts:** lettering digitized for embroidery (satin columns laid out by hand per letter), for
+    crisp small type and heavy display type where Auto falls back to fill today.
+  - **Appliqué from a shape:** one command turns a closed shape into the appliqué sequence, as separate
+    objects in sewing order: a **placement line** (running stitch showing where the fabric goes, then a stop),
+    a **tack-down** (running or zigzag holding the fabric, then a stop to trim it) and a **satin cover** over the
+    raw edge.
 
 Clean-room note: no code from Ink/Stitch (GPL) or other digitizers is used. Formats come from public
 documentation, cited above.
