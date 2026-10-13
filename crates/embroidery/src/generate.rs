@@ -148,6 +148,9 @@ const UNDERLAY_INSET: f64 = 0.4;
 const UNDERLAY_LEN: f64 = 2.0;
 /// Zigzag and fill underlay spacing, mm.
 const UNDERLAY_SPACING: f64 = 2.0;
+/// Needle points on one side of a satin closer than this (mm) are crowded: every other one is
+/// shortened.
+const SHORT_GAP: f64 = 0.25;
 /// Fill underlay stitch length, mm.
 const UNDERLAY_FILL_LEN: f64 = 3.0;
 
@@ -203,6 +206,8 @@ impl Zig {
 struct Corner {
     /// The pieces before and after it.
     piece: usize,
+    /// The corner point.
+    at: Point,
     miter: Point,
     t_in: Vec2,
     t_out: Vec2,
@@ -303,7 +308,7 @@ fn column(line: &[Point], closed: bool, width: f64, spacing: f64, fan: bool) -> 
             z.pin(left_inside, miter);
             z.pin(!left_inside, v + (v - miter));
             zigs.push(z);
-            corners.push(Corner { piece: k, miter, t_in, t_out, left_inside });
+            corners.push(Corner { piece: k, at: v, miter, t_in, t_out, left_inside });
             continue;
         }
         for j in 0..=steps {
@@ -313,11 +318,13 @@ fn column(line: &[Point], closed: bool, width: f64, spacing: f64, fan: bool) -> 
             z.pin(left_inside, miter);
             zigs.push(z);
         }
-        corners.push(Corner { piece: k, miter, t_in, t_out, left_inside });
+        corners.push(Corner { piece: k, at: v, miter, t_in, t_out, left_inside });
     }
-    // Inner points that would cross past a corner's miter point land on it instead.
+    // Inner points near a corner that would cross past its miter point land on it instead (a
+    // curving piece's far points can lie "past" it too: only those within reach of the corner).
     for c in &corners {
-        for z in zigs.iter_mut() {
+        let near = c.miter.distance(c.at) + 2.0 * half + spacing;
+        for z in zigs.iter_mut().filter(|z| z.centre.distance(c.at) <= near) {
             let inner = z.side(c.left_inside, half);
             let past = match z.piece {
                 Some(p) if p == c.piece => (inner - c.miter).dot(c.t_in) > 0.0,
@@ -595,6 +602,33 @@ fn resample_with(line: &[Point], values: &[f64], step: f64) -> (Vec<Point>, Vec<
 /// running stitch down its middle and the satin comes back over it. Strokes are sewn nearest
 /// first; one run each.
 pub fn satin_shape(polys: &[Vec<Point>], rule: FillRule, spacing: f64, pull: f64, underlay: bool) -> Vec<Vec<Point>> {
+    satin_shape_checked(polys, rule, spacing, pull, underlay).0
+}
+
+/// How well a satin shape suits its shape (0–1 each; lower is better).
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct SatinQuality {
+    /// Of the zig positions along the strokes, those with no edge near on one side (inside a
+    /// junction or a blob, where satin can't span the shape): left out.
+    pub skipped: f64,
+    /// Of the needle points, those crowding the one before on their side (a tight inner curve).
+    pub crowded: f64,
+    /// Of the zigs, those fanning: the needle points on one side three times further apart than
+    /// on the other (a stroke wide for the curve it turns, round a small counter).
+    pub fanned: f64,
+}
+
+impl SatinQuality {
+    /// Satin that leaves out or crowds this much looks wrong: fill the shape instead.
+    pub fn poor(&self) -> bool {
+        self.skipped > 0.2 || self.crowded > 0.25 || self.fanned > 0.2 || self.skipped + self.crowded + self.fanned > 0.28
+    }
+}
+
+/// [`satin_shape`] and how well it suits the shape.
+pub fn satin_shape_checked(polys: &[Vec<Point>], rule: FillRule, spacing: f64, pull: f64, underlay: bool) -> (Vec<Vec<Point>>, SatinQuality) {
+    let (mut positions, mut skipped, mut points, mut crowded) = (0usize, 0usize, 0usize, 0usize);
+    let (mut zigs, mut fanned) = (0usize, 0usize);
     let mut strokes = crate::skeleton::strokes(polys, rule);
     let mut out = vec![];
     if !strokes.is_empty() {
@@ -620,22 +654,76 @@ pub fn satin_shape(polys: &[Vec<Point>], rule: FillRule, spacing: f64, pull: f64
             s.points.reverse();
             s.radius.reverse();
         }
+        if flip {
+            s.trim = (s.trim.1, s.trim.0);
+        }
         let closed = s.points.len() > 3 && s.points.first() == s.points.last();
         let mut run = vec![];
-        let (line, radius) = if underlay {
+        let (line, radius, trim) = if underlay {
             run.extend(running(&s.points, UNDERLAY_LEN));
-            (s.points.iter().rev().copied().collect::<Vec<_>>(), s.radius.iter().rev().copied().collect::<Vec<_>>())
+            (s.points.iter().rev().copied().collect::<Vec<_>>(), s.radius.iter().rev().copied().collect::<Vec<_>>(), (s.trim.1, s.trim.0))
         } else {
-            (s.points.clone(), s.radius.clone())
+            (s.points.clone(), s.radius.clone(), s.trim)
         };
         let (c, r) = resample_with(&line, &radius, spacing);
-        let n = normals(&c, closed);
-        for (k, ((p, n), r)) in c.iter().zip(&n).zip(&r).enumerate() {
+        let base = normals(&c, closed);
+        // Distance along the line, to leave out the trimmed ends.
+        let mut along = vec![0.0; c.len()];
+        for k in 1..c.len() {
+            if let (Some(&p), Some(&q), Some(&prev)) = (c.get(k - 1), c.get(k), along.get(k - 1))
+                && let Some(a) = along.get_mut(k)
+            {
+                *a = prev + p.distance(q);
+            }
+        }
+        let total = along.last().copied().unwrap_or(0.0);
+        // Each zig crosses the stroke where it is narrowest: the normal turned up to 35° either
+        // way, the angle smoothed along the stroke so neighbouring stitches lie alike.
+        let turns: Vec<f64> = c
+            .iter()
+            .zip(&base)
+            .zip(&r)
+            .map(|((p, n), r)| {
+                let cap = (2.0 * r).clamp(0.3, MAX_STITCH / 2.0);
+                (-5..=5)
+                    .map(|k| k as f64 * 7.0_f64.to_radians())
+                    .filter_map(|t| {
+                        let d = Vec2::new(n.x * t.cos() - n.y * t.sin(), n.x * t.sin() + n.y * t.cos());
+                        let a = crate::skeleton::cast(polys, *p, d, cap)?;
+                        let b = crate::skeleton::cast(polys, *p, -d, cap)?;
+                        // Much narrower than the stroke is wide: that crossing cuts the stroke's
+                        // end (or a corner), not across it.
+                        (a + b >= 1.2 * r || t == 0.0).then_some((a + b + t.abs() * 0.05, t))
+                    })
+                    .min_by(|x, y| x.0.total_cmp(&y.0))
+                    .map_or(0.0, |(_, t)| t)
+            })
+            .collect();
+        let turns: Vec<f64> = (0..turns.len())
+            .map(|k| {
+                let lo = k.saturating_sub(2);
+                let hi = (k + 2).min(turns.len().saturating_sub(1));
+                let w = turns.get(lo..=hi).unwrap_or_default();
+                if w.is_empty() { 0.0 } else { w.iter().sum::<f64>() / w.len() as f64 }
+            })
+            .collect();
+        let mut zig: Vec<(Point, Point)> = vec![];
+        for (k, (((p, n), r), t)) in c.iter().zip(&base).zip(&r).zip(&turns).enumerate() {
+            let s_at = along.get(k).copied().unwrap_or(0.0);
+            if s_at < trim.0 || s_at > total - trim.1 {
+                continue;
+            }
+            let d = Vec2::new(n.x * t.cos() - n.y * t.sin(), n.x * t.sin() + n.y * t.cos());
             // Out to the edge each side, but not past twice the stroke's half-width there (at a
             // junction the edge across may be far down another stroke).
             let cap = (2.0 * r).clamp(0.3, MAX_STITCH / 2.0);
-            let left = crate::skeleton::cast(polys, *p, *n, cap).unwrap_or(*r);
-            let right = crate::skeleton::cast(polys, *p, -*n, cap).unwrap_or(*r);
+            positions += 1;
+            // No edge near on a side: the zig is inside a junction (other strokes cover it) or a
+            // blob satin can't span. Left out.
+            let (Some(left), Some(right)) = (crate::skeleton::cast(polys, *p, d, cap), crate::skeleton::cast(polys, *p, -d, cap)) else {
+                skipped += 1;
+                continue;
+            };
             let (mut left, mut right) = (left + pull / 2.0, right + pull / 2.0);
             // The diagonal to the next zig must be sewable too.
             let most = (MAX_STITCH - spacing).max(0.3);
@@ -643,7 +731,28 @@ pub fn satin_shape(polys: &[Vec<Point>], rule: FillRule, spacing: f64, pull: f64
             if span > most {
                 (left, right) = (left * most / span, right * most / span);
             }
-            run.push(if k % 2 == 0 { *p + *n * left } else { *p - *n * right });
+            zig.push((*p + d * left, *p - d * right));
+        }
+        for w in zig.windows(2) {
+            let (dl, dr) = (w[0].0.distance(w[1].0), w[0].1.distance(w[1].1));
+            let (lo, hi) = (dl.min(dr), dl.max(dr));
+            zigs += 1;
+            fanned += usize::from(hi > 2.0 * spacing && hi > 3.0 * lo);
+        }
+        // Short stitches: on a tight curve a side's needle points crowd together; every other
+        // one stops halfway, so the holes don't pile up in one spot.
+        let mut last = [None::<Point>; 2];
+        for (k, (l, rt)) in zig.iter().enumerate() {
+            let side = k % 2;
+            let (end, other) = if side == 0 { (*l, *rt) } else { (*rt, *l) };
+            let crowd = last.get(side).copied().flatten().is_some_and(|q| q.distance(end) < SHORT_GAP);
+            points += 1;
+            crowded += usize::from(crowd);
+            let point = if crowd { end.lerp(other, 0.4) } else { end };
+            if !crowd && let Some(slot) = last.get_mut(side) {
+                *slot = Some(end);
+            }
+            run.push(point);
         }
         if let Some(&end) = run.last() {
             at = Some(end);
@@ -652,7 +761,8 @@ pub fn satin_shape(polys: &[Vec<Point>], rule: FillRule, spacing: f64, pull: f64
             out.push(split_long(&run));
         }
     }
-    out
+    let frac = |n: usize, of: usize| if of == 0 { 0.0 } else { n as f64 / of as f64 };
+    (out, SatinQuality { skipped: frac(skipped, positions), crowded: frac(crowded, points), fanned: frac(fanned, zigs) })
 }
 
 /// `run` with any stitch longer than [`MAX_STITCH`] split into equal shorter ones (a tight curve

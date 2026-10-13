@@ -24,6 +24,9 @@ const SPUR: f64 = 1.6;
 pub struct Stroke {
     pub points: Vec<Point>,
     pub radius: Vec<f64>,
+    /// How far (mm) from its start and end the stroke runs inside another stroke: it joins a
+    /// junction that two longer strokes pass through, so its satin starts at their edge.
+    pub trim: (f64, f64),
 }
 
 /// A binary raster of the shape with its distance transform.
@@ -503,14 +506,43 @@ pub fn strokes(polys: &[Vec<Point>], rule: FillRule) -> Vec<Stroke> {
         }
         (paths, degree) = trace(&g);
     }
+    let paths: Vec<Path> = paths.into_iter().filter(|p| p.px.len() >= 2).collect();
+    // At each junction the two longest strokes pass through; the others are trimmed back by the
+    // junction's half-width (where they would only sew over the strokes passing through).
+    let mut trims = vec![(0.0, 0.0); paths.len()];
+    for node in 0..degree.len() {
+        if degree.get(node).copied().unwrap_or(0) < 3 {
+            continue;
+        }
+        let mut ends: Vec<(usize, bool, usize)> = vec![];
+        for (i, p) in paths.iter().enumerate() {
+            if let Some((a, b)) = p.ends {
+                if a == node {
+                    ends.push((i, true, p.px.len()));
+                }
+                if b == node {
+                    ends.push((i, false, p.px.len()));
+                }
+            }
+        }
+        ends.sort_by_key(|e| std::cmp::Reverse(e.2));
+        for &(i, at_start, _) in ends.iter().skip(2) {
+            let Some(p) = paths.get(i) else { continue };
+            let at = if at_start { p.px.first() } else { p.px.last() };
+            let r = at.map_or(0.0, |&q| radius_at(&g, q));
+            if let Some(t) = trims.get_mut(i) {
+                if at_start { t.0 = r } else { t.1 = r }
+            }
+        }
+    }
     paths
         .into_iter()
-        .filter(|p| p.px.len() >= 2)
-        .map(|p| {
+        .zip(trims)
+        .map(|(p, trim)| {
             let pts: Vec<Point> = p.px.iter().map(|&(x, y)| g.mm(x, y)).collect();
             let radius: Vec<f64> = p.px.iter().map(|&q| radius_at(&g, q)).collect();
             let closed = p.ends.is_none();
-            let mut s = Stroke { points: smooth(&pts, closed, 3), radius };
+            let mut s = Stroke { points: smooth(&pts, closed, 3), radius, trim };
             if let Some((a, b)) = p.ends {
                 // Thinning stops a stroke short of a tip: reach out to the edge.
                 if degree.get(b) == Some(&1) {

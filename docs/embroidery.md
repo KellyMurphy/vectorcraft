@@ -46,7 +46,14 @@ changes the stitches. Each letter is sewn on its own with the object's settings 
 strikethroughs), in the thread of its characters' colour, so multicoloured type changes thread. **Auto** suits
 lettering: small type gets a bean outline, most lettering satin that follows each letter's strokes, and large
 display type a fill with a satin border. Parts of a letter that have no strokes (the dot of an i, a full stop)
-are filled. Clipping and
+are filled.
+
+Auto checks each letter's satin before using it. Satin suits a letter when its stitches can span the strokes
+edge to edge without fanning round tight curves or crowding their needle points: heavy type round small
+counters (Impact, Arial Black) fails that check, and so do strokes that merge into wide wedges (Impact's w).
+A letter that fails is filled with a satin border instead. Auto decides for the whole type object, so its
+letters look alike: when a quarter or more of them fail, they are all filled; otherwise only the ones that
+fail are. Heavy display type therefore comes out as fill with satin borders, regular-weight type as satin. Clipping and
 opacity masks don't apply to stitches: a masked object is stitched whole, with a warning.
 
 Objects are sewn in paint order, bottom first. Between objects the needle jumps, and it trims the thread
@@ -88,9 +95,11 @@ stagger 2–8 rows, bean passes 3–9 (odd).
 The shape is rasterized finely (up to 700 pixels a side, never coarser than needed), each pixel's distance to
 the edge is measured, and the pixels are thinned to a one-pixel skeleton. The skeleton is traced into strokes
 between their ends and junctions; short spurs that thinning leaves at corners are pruned, strokes are
-smoothed, and stroke ends are extended to the shape's tips. Each zig of the satin is cast across its stroke to
-the shape's edges, at most twice the stroke's half-width, so junctions don't send a stitch down a crossing
-stroke. Parts of the shape no stroke runs through (round dots) are filled. Known limits: serifs are covered only partly (they are too short to be strokes of their own), and
+smoothed, and stroke ends are extended to the shape's tips. Each zig of the satin crosses its stroke where it is narrowest (the
+normal turned up to 35° either way, smoothed along the stroke), reaching the shape's edges at most twice
+the stroke's half-width away; a zig with no edge that near on one side is inside a junction and is left
+out. Where strokes meet, the two longest pass through and the others start at their edge. On a tight curve,
+every other needle point on the crowded side stops halfway (short stitches). Parts of the shape no stroke runs through (round dots) are filled. Known limits: serifs are covered only partly (they are too short to be strokes of their own), and
 crossings (an &, an 8) are sewn twice where strokes overlap. Strokes wider than about 7 mm make long,
 loose satin stitches: fill those shapes instead.
 

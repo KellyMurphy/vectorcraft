@@ -435,22 +435,68 @@ fn text(t: &vectorcraft_doc::TextObject, s: &StitchSettings, b: &mut Builder) {
     let style = |run: usize| t.runs.get(run).map(|r| r.style.clone()).unwrap_or_else(|| t.first_style());
     let glyphs = lay.glyphs.iter().enumerate().filter(|(gi, _)| !lay.inlines.iter().any(|i| i.glyph == *gi)).map(|(_, g)| (g.run, g.outline.clone()));
     let bars = vectorcraft_text::decorations(&lay, db, t);
-    for (run, outline) in glyphs.chain(bars) {
-        let path = PathData::from_bezpath(&outline).transformed(t.xf);
-        if path.is_empty() {
-            continue;
+    let parts: Vec<(usize, PathData)> =
+        glyphs.chain(bars).map(|(run, outline)| (run, PathData::from_bezpath(&outline).transformed(t.xf))).filter(|(_, p)| !p.is_empty()).collect();
+    if s.kind != StitchKind::Auto {
+        for (run, path) in &parts {
+            let a = style(*run).appearance();
+            sew(s, thread_of(&a, s), a.stroke_width() * PT_MM, &[path], FillRule::NonZero, b);
         }
-        let a = style(run).appearance();
-        sew(s, thread_of(&a, s), a.stroke_width() * PT_MM, &[&path], FillRule::NonZero, b);
+        return;
     }
+    // Auto decides for the whole object, so its letters look alike: when a quarter or more of
+    // those that would be satin can't take it (heavy type), they are all filled.
+    let mut choices: Vec<Choice> = parts.iter().map(|(_, p)| auto_choice(s, &[p], FillRule::NonZero)).collect();
+    let tried = choices.iter().filter(|c| c.tried_satin()).count();
+    let poor = choices.iter().filter(|c| matches!(c, Choice::Sew(_, true))).count();
+    if tried > 0 && poor * 4 >= tried {
+        for c in choices.iter_mut().filter(|c| c.tried_satin()) {
+            *c = Choice::Sew(auto_settings(s, f64::INFINITY), true);
+        }
+    }
+    for ((run, path), choice) in parts.iter().zip(choices) {
+        let a = style(*run).appearance();
+        let thread = thread_of(&a, s);
+        match choice {
+            Choice::Satin(t, runs) => emit(&t, thread, runs, b),
+            Choice::Sew(t, _) => sew(&t, thread, a.stroke_width() * PT_MM, &[path], FillRule::NonZero, b),
+        }
+    }
+}
+
+/// What Auto sews a shape with.
+enum Choice {
+    /// Satin that suits it: its settings and runs.
+    Satin(StitchSettings, Vec<Vec<Point>>),
+    /// Sewn with these settings; `true` when satin was tried and didn't suit the shape.
+    Sew(StitchSettings, bool),
+}
+
+impl Choice {
+    fn tried_satin(&self) -> bool {
+        matches!(self, Choice::Satin(..) | Choice::Sew(_, true))
+    }
+}
+
+/// Auto's choice for `paths`: by stroke width, satin only where it suits the shape (a stroke too
+/// wide for the curve it turns, or merging into a blob, is filled instead).
+fn auto_choice(s: &StitchSettings, paths: &[&PathData], rule: FillRule) -> Choice {
+    let polys: Vec<Vec<Point>> = paths.iter().flat_map(|p| generate::polylines(p)).map(|(l, _)| l).collect();
+    let t = auto_settings(s, stroke_width(&polys));
+    if t.kind != StitchKind::SatinShape {
+        return Choice::Sew(t, false);
+    }
+    let (runs, q) = generate::satin_shape_checked(&polys, rule, t.spacing(), t.pull(), true);
+    if !q.poor() && !runs.is_empty() { Choice::Satin(t, runs) } else { Choice::Sew(auto_settings(s, f64::INFINITY), true) }
 }
 
 /// Sew `paths` with `s` in `thread` (`stroke_mm`: the stroke's width, for satins).
 fn sew(s: &StitchSettings, thread: [u8; 3], stroke_mm: f64, paths: &[&PathData], rule: FillRule, b: &mut Builder) {
     if s.kind == StitchKind::Auto {
-        let polys: Vec<Vec<Point>> = paths.iter().flat_map(|p| generate::polylines(p)).map(|(l, _)| l).collect();
-        let t = auto_settings(s, stroke_width(&polys));
-        sew(&t, thread, stroke_mm, paths, rule, b);
+        match auto_choice(s, paths, rule) {
+            Choice::Satin(t, runs) => emit(&t, thread, runs, b),
+            Choice::Sew(t, _) => sew(&t, thread, stroke_mm, paths, rule, b),
+        }
         return;
     }
     let mut runs: Vec<Vec<Point>> = vec![];
@@ -528,6 +574,11 @@ fn sew(s: &StitchSettings, thread: [u8; 3], stroke_mm: f64, paths: &[&PathData],
             _ => runs.extend(lines.iter().map(|(l, _)| generate::running(l, s.length()))),
         }
     }
+    emit(s, thread, runs, b);
+}
+
+/// Sew an object's `runs`, cutting the thread before or after it as `s` asks.
+fn emit(s: &StitchSettings, thread: [u8; 3], runs: Vec<Vec<Point>>, b: &mut Builder) {
     // Manual stitches are sewn exactly as drawn: no lock stitches added.
     let tie = s.kind != StitchKind::Manual;
     if runs.iter().all(|r| r.is_empty()) {

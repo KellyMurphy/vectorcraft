@@ -932,3 +932,132 @@ fn satin_shape_fills_parts_without_strokes() {
     let runs = generate::satin_shape(&[outer, inner], FillRule::NonZero, 0.4, 0.0, false);
     assert!(!runs.iter().flatten().any(|p| p.x > 5.0 && p.x < 15.0 && p.y > 5.0 && p.y < 15.0));
 }
+
+/// `EMB_DUMP=folder EMB_TEXT=… EMB_FONT=… EMB_SIZE=pt EMB_KIND=auto cargo test -p
+/// vectorcraft-embroidery dump_type -- --ignored`: one line of type through the whole plan, as DST.
+#[test]
+#[ignore]
+fn dump_type() {
+    let Some(dir) = std::env::var_os("EMB_DUMP") else { return };
+    let var = |k: &str, d: &str| std::env::var(k).unwrap_or_else(|_| d.to_string());
+    let text = var("EMB_TEXT", "hello world");
+    let size: f64 = var("EMB_SIZE", "72").parse().unwrap();
+    let kind = StitchKind::parse(&var("EMB_KIND", "auto")).unwrap();
+    let style = vectorcraft_doc::CharStyle { font_family: var("EMB_FONT", "Impact"), size, ..Default::default() };
+    let d = doc_with(|d| {
+        let t = vectorcraft_doc::TextObject::point(Point::new(10.0, 100.0), &text, style);
+        let mut n = Node::new(d.alloc_id(), vectorcraft_doc::NodeKind::Text(Box::new(t)));
+        n.stitch = Some(Box::new(StitchSettings::new(kind)));
+        vec![n]
+    });
+    let p = plan(&d);
+    println!("stitches {} warnings {:?}", p.stats().stitches, p.warnings);
+    std::fs::write(std::path::PathBuf::from(dir).join("type.dst"), write_dst(&p, "type")).unwrap();
+}
+
+/// `EMB_DUMP=folder EMB_TEXT=e EMB_FONT=Impact cargo test -p vectorcraft-embroidery dump_glyph_debug -- --ignored`:
+/// the first glyph's outline, strokes and satin as JSON, for plotting.
+#[test]
+#[ignore]
+fn dump_glyph_debug() {
+    let Some(dir) = std::env::var_os("EMB_DUMP") else { return };
+    let var = |k: &str, d: &str| std::env::var(k).unwrap_or_else(|_| d.to_string());
+    let style = vectorcraft_doc::CharStyle { font_family: var("EMB_FONT", "Impact"), size: 72.0, ..Default::default() };
+    let t = vectorcraft_doc::TextObject::point(Point::new(10.0, 100.0), &var("EMB_TEXT", "e"), style);
+    let lay = vectorcraft_text::layout(vectorcraft_text::FontDb::global(), &t);
+    let g = lay.glyphs.first().unwrap();
+    let path = PathData::from_bezpath(&g.outline).transformed(t.xf);
+    let polys: Vec<Vec<Point>> = generate::polylines(&path).into_iter().map(|(l, _)| l).collect();
+    let strokes = crate::skeleton::strokes(&polys, FillRule::NonZero);
+    let satin = generate::satin_shape(&polys, FillRule::NonZero, 0.4, 0.0, false);
+    let pts = |v: &[Point]| v.iter().map(|p| [p.x, p.y]).collect::<Vec<_>>();
+    let j = serde_json::json!({
+        "width": stroke_width(&polys),
+        "polys": polys.iter().map(|p| pts(p)).collect::<Vec<_>>(),
+        "strokes": strokes.iter().map(|s| serde_json::json!({"points": pts(&s.points), "radius": s.radius})).collect::<Vec<_>>(),
+        "satin": satin.iter().map(|r| pts(r)).collect::<Vec<_>>(),
+    });
+    std::fs::write(std::path::PathBuf::from(dir).join(format!("glyph_{}.json", var("EMB_TEXT", "e"))), j.to_string()).unwrap();
+}
+
+/// `EMB_FONT=… EMB_TEXT=… cargo test -p vectorcraft-embroidery report_satin_quality -- --ignored --nocapture`:
+/// each glyph's satin quality and stroke width.
+#[test]
+#[ignore]
+fn report_satin_quality() {
+    let var = |k: &str, d: &str| std::env::var(k).unwrap_or_else(|_| d.to_string());
+    for family in var("EMB_FONT", "Impact,Arial,Times New Roman,Arial Black").split(',') {
+        let style =
+            vectorcraft_doc::CharStyle { font_family: family.to_string(), size: var("EMB_SIZE", "72").parse().unwrap(), ..Default::default() };
+        let text = var("EMB_TEXT", "hello world ABGRSW&8");
+        let t = vectorcraft_doc::TextObject::point(Point::new(10.0, 100.0), &text, style);
+        let lay = vectorcraft_text::layout(vectorcraft_text::FontDb::global(), &t);
+        let mut line = String::new();
+        for g in &lay.glyphs {
+            let ch = text.get(g.byte..).and_then(|s| s.chars().next()).unwrap_or('?');
+            let path = PathData::from_bezpath(&g.outline).transformed(t.xf);
+            let polys: Vec<Vec<Point>> = generate::polylines(&path).into_iter().map(|(l, _)| l).collect();
+            if polys.is_empty() {
+                continue;
+            }
+            let (_, q) = generate::satin_shape_checked(&polys, FillRule::NonZero, 0.4, 0.0, false);
+            line += &format!("{ch}:{:.0}/{:.0}/{:.0}{} ", q.skipped * 100.0, q.crowded * 100.0, q.fanned * 100.0, if q.poor() { "*" } else { "" });
+        }
+        println!("{family:16} {line}");
+    }
+}
+
+/// A "D": a half circle closed by a straight side (curves between two corners).
+fn d_shape(r: f64) -> Vec<Point> {
+    let mut v: Vec<Point> = (0..=24)
+        .map(|k| {
+            let a = -std::f64::consts::FRAC_PI_2 + std::f64::consts::PI * k as f64 / 24.0;
+            Point::new(r * a.cos(), r * a.sin())
+        })
+        .collect();
+    v.push(Point::new(0.0, r));
+    v
+}
+
+#[test]
+fn borders_on_curves_between_corners_keep_short_stitches() {
+    for w in [1.0, 2.0, 4.0] {
+        let b = generate::border(&d_shape(10.0), w);
+        for s in b.windows(2) {
+            assert!(s[0].distance(s[1]) <= w * 2.5 + 0.5, "{w} mm border: a {} mm stitch", s[0].distance(s[1]));
+        }
+    }
+}
+
+#[test]
+fn satin_quality_tells_strokes_from_heavy_bowls() {
+    let bar = vec![Point::new(0.0, 0.0), Point::new(40.0, 0.0), Point::new(40.0, 3.0), Point::new(0.0, 3.0)];
+    let (_, q) = generate::satin_shape_checked(&[bar], FillRule::NonZero, 0.4, 0.0, false);
+    assert!(!q.poor(), "{q:?}");
+    // A heavy ring round a tiny counter (heavy type's o): satin fans: poor.
+    let ring = |r: f64| {
+        (0..48)
+            .map(|k| {
+                let a = k as f64 * std::f64::consts::TAU / 48.0;
+                Point::new(r * a.cos(), r * a.sin())
+            })
+            .collect::<Vec<_>>()
+    };
+    let inner: Vec<Point> = ring(0.8).into_iter().rev().collect();
+    let (_, q) = generate::satin_shape_checked(&[ring(6.0), inner], FillRule::NonZero, 0.4, 0.0, false);
+    assert!(q.poor(), "{q:?}");
+    // Auto fills it rather than sew a poor satin.
+    let path = PathData::new(vec![
+        SubPath { anchors: ring(6.0 / PT_MM).into_iter().map(Anchor::corner).collect(), closed: true },
+        SubPath { anchors: ring(0.8 / PT_MM).into_iter().rev().map(Anchor::corner).collect(), closed: true },
+    ]);
+    let d = doc_with(|d| {
+        let mut n = Node::path(d.alloc_id(), path, Appearance::basic(Paint::solid(Color::rgb8(0, 0, 0)), Paint::None, 0.0));
+        n.stitch = Some(Box::new(StitchSettings { wide_over: Some(12.0), ..StitchSettings::new(StitchKind::Auto) }));
+        vec![n]
+    });
+    let p = plan(&d);
+    // Filled (rows at 0°: many horizontal stitches), not satin.
+    let flat: usize = p.runs().iter().map(|(_, r)| r.windows(2).filter(|w| (w[0].y - w[1].y).abs() < 1e-6).count()).sum();
+    assert!(flat > 100, "{flat}");
+}
