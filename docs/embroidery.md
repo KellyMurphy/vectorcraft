@@ -134,7 +134,16 @@ split. A trim is written as three short jumps that return to where they started.
 - **E4, breadth:** PES, JEF, EXP and VP3; hoop templates; auto-digitizing traced art.
 - **E5, future sprints:**
   - **Embroidery fonts:** lettering digitized for embroidery (satin columns laid out by hand per letter), for
-    crisp small type and heavy display type where Auto falls back to fill today.
+    crisp small type and heavy display type where Auto falls back to fill today. Three parts:
+    - **An open font format**, documented here and versioned, that anyone can read and write. Each letter is
+      stored as stitch objects (shapes with their stitch settings), not needle points, so letters scale and
+      their stitches are generated at each size; with the font's metrics (baseline, cap height, x-height,
+      advances), kerning pairs, recommended size range, and author and licence information.
+    - **A font editor:** a document with one artboard per letter, digitized with the ordinary tools and stitch
+      types, metrics and kerning set on it, a live sample line to test words, saved straight to the format.
+    - **Using them:** embroidery fonts appear in the type controls; type set in one is sewn from its letters.
+      Like other fonts they live in [craft-fonts](https://github.com/storytold/craft-fonts), not in this
+      repository, each with its licence.
   - **Appliqué from a shape:** one command turns a closed shape into the appliqué sequence, as separate
     objects in sewing order: a **placement line** (running stitch showing where the fabric goes, then a stop),
     a **tack-down** (running or zigzag holding the fabric, then a stop to trim it) and a **satin cover** over the
