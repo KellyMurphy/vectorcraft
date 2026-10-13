@@ -149,6 +149,12 @@ split. A trim is written as three short jumps that return to where they started.
     - **Using them:** embroidery fonts appear in the type controls; type set in one is sewn from its letters.
       Like other fonts they live in [craft-fonts](https://github.com/storytold/craft-fonts), not in this
       repository, each with its licence.
+  - **Embroidery for agents (MCP):** the commands already work over MCP (`run_command`, `export` with
+    `dst`, `open_file`), but agents aren't told about them. Mention embroidery in the server's instructions;
+    give the commands their Object › Embroidery menu path in the command list; an `embroidery` prompt that
+    walks through digitizing a selection and exporting it; this guide served as an MCP resource
+    (`vectorcraft://guide/embroidery`), including that embroidery lengths are in mm; an embroidery section in
+    [mcp.md](mcp.md); and stitches drawn into `render_preview`, so agents can see the result.
   - **Appliqué from a shape:** one command turns a closed shape into the appliqué sequence, as separate
     objects in sewing order: a **placement line** (running stitch showing where the fabric goes, then a stop),
     a **tack-down** (running or zigzag holding the fabric, then a stop to trim it) and a **satin cover** over the
