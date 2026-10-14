@@ -614,6 +614,26 @@ fn dump_samples() {
         vec![a, stitched(d, ring, StitchKind::Zigzag, [150, 40, 160])]
     });
     std::fs::write(dir.join("zigzag.dst"), write_dst(&plan(&zz), "zigzag")).unwrap();
+    // A leaf: two curved rails meeting at the tips, a rung across the middle; and a swelling stroke.
+    let curve = |sag: f64| {
+        (0..=40)
+            .map(|k| {
+                let t = k as f64 / 40.0;
+                (t * 200.0, 60.0 - sag * (std::f64::consts::PI * t).sin())
+            })
+            .collect::<Vec<_>>()
+    };
+    let leaf = PathData::new(vec![
+        SubPath { anchors: curve(40.0).into_iter().map(|(x, y)| Anchor::corner(Point::new(x, y))).collect(), closed: false },
+        SubPath { anchors: curve(-20.0).into_iter().map(|(x, y)| Anchor::corner(Point::new(x, y))).collect(), closed: false },
+        SubPath { anchors: vec![Anchor::corner(Point::new(80.0, 0.0)), Anchor::corner(Point::new(120.0, 120.0))], closed: false },
+    ]);
+    let d = doc_with(|d| {
+        let mut n = Node::path(d.alloc_id(), leaf, Appearance::basic(Paint::None, Paint::solid(Color::rgb8(40, 120, 40)), 1.0));
+        n.stitch = Some(Box::new(StitchSettings { rails: true, underlay: Underlay::Center, ..StitchSettings::new(StitchKind::Satin) }));
+        vec![n]
+    });
+    std::fs::write(dir.join("rails.dst"), write_dst(&plan(&d), "rails")).unwrap();
 }
 
 /// Two lines `gap` pt apart in one thread, the first with `first`'s settings.
@@ -1089,4 +1109,33 @@ fn satin_shape_covers_a_sharp_turn_to_its_outer_corner() {
         assert!(pts.iter().any(|p| p.distance(corner) < 1.0), "{corner:?} left bare");
     }
     assert!(on_shape(&[v], &pts, 0.3));
+}
+
+/// One object of two subpaths: lines from (0, 0) to (100, 0) pt and (0, 11.34) to (100, 11.34) pt
+/// (4 mm apart).
+fn two_rails(rails: bool) -> Plan {
+    let path = PathData::new(vec![
+        SubPath { anchors: vec![Anchor::corner(Point::new(0.0, 0.0)), Anchor::corner(Point::new(100.0, 0.0))], closed: false },
+        SubPath { anchors: vec![Anchor::corner(Point::new(0.0, 4.0 / PT_MM)), Anchor::corner(Point::new(100.0, 4.0 / PT_MM))], closed: false },
+    ]);
+    plan_of(path, StitchSettings { rails, ..StitchSettings::new(StitchKind::Satin) })
+}
+
+#[test]
+fn between_rails_the_satin_spans_from_one_path_to_the_other() {
+    let p = two_rails(true);
+    let b = p.stats().bounds.unwrap();
+    assert!((b[3] - b[1] - 4.0).abs() < 0.05, "{b:?}");
+    assert!(p.warnings.is_empty());
+    // Without the setting each path is a satin centre line of its own (the 1 pt stroke: narrow).
+    let q = two_rails(false);
+    let b = q.stats().bounds.unwrap();
+    assert!(b[3] - b[1] > 4.0 && b[3] - b[1] < 5.0, "{b:?}");
+}
+
+#[test]
+fn rails_on_a_single_path_warn_and_sew_along_it() {
+    let p = plan_of(poly(&[(0.0, 0.0), (100.0, 0.0)], false), StitchSettings { rails: true, ..StitchSettings::new(StitchKind::Satin) });
+    assert!(p.stats().stitches > 50);
+    assert!(p.warnings.iter().any(|w| w.contains("Between Rails")), "{:?}", p.warnings);
 }

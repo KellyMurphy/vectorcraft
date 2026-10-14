@@ -13,6 +13,7 @@
 mod dst;
 pub mod generate;
 mod import;
+pub mod rails;
 pub mod skeleton;
 
 use std::sync::Arc;
@@ -529,7 +530,24 @@ fn sew(s: &StitchSettings, thread: [u8; 3], stroke_mm: f64, paths: &[&PathData],
                 // Capped: a wider stitch can't be sewn in one move (DST: 12.1 mm), and splitting it would put
                 // a needle hole in the middle of the column.
                 let w = (s.width(stroke_mm) + s.pull()).min(*StitchSettings::WIDTH.end());
-                for (l, closed) in &lines {
+                // Between Rails: the object's two longest subpaths are the column's edges (any
+                // others crossing both are rungs), the column as wide as they are apart.
+                let rails = if s.rails { rails::find(&lines) } else { None };
+                if s.rails && rails.is_none() {
+                    b.plan
+                        .warnings
+                        .push("a satin set Between Rails needs two subpaths, both open or both closed: sewn along its paths instead".into());
+                }
+                if let Some(r) = &rails {
+                    let (run, narrowed) = r.satin(s.spacing(), s.pull(), s.underlay());
+                    if narrowed {
+                        b.plan.warnings.push(
+                            "a satin between rails is wider than a stitch can span (12 mm) in places: narrowed there (fill areas that wide)".into(),
+                        );
+                    }
+                    runs.push(run);
+                }
+                for (l, closed) in lines.iter().filter(|_| rails.is_none()) {
                     let (under, back) = generate::satin_underlay(l, *closed, w, s.underlay());
                     // After an underlay that ends at the far end, the column is sewn back.
                     let top = if back {

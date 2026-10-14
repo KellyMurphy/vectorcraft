@@ -176,6 +176,10 @@ pub struct StitchSettings {
     /// Fill: a satin border this wide (mm) sewn over the shape's edges after the fill.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub border: Option<f64>,
+    /// Satin: the object's two longest subpaths are the column's edges (rails), the column as wide
+    /// as they are apart; other subpaths crossing both are rungs, setting the stitch direction.
+    #[serde(default, skip_serializing_if = "crate::skip::is_default")]
+    pub rails: bool,
     /// Cut the thread before the object starts, however close it is to the stitch before.
     #[serde(default, skip_serializing_if = "crate::skip::is_default")]
     pub trim_before: bool,

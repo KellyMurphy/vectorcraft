@@ -3815,3 +3815,7 @@ axis	Both	Entrambi
 	Thinner strokes get a bean stitch round their outline	I tratti più sottili ricevono un punto triplo sul contorno
 	Wider strokes are filled, with a satin border; strokes in between get satin	I tratti più larghi sono riempiti con un bordo satin; quelli intermedi in satin
 	Only paths, compound paths and type can be stitched.	Si possono ricamare solo tracciati, tracciati composti e testo.
+
+# Embroidery: satin rails
+	Between Rails	Tra binari
+	The object's two paths are the column's edges; lines crossing both set the stitch direction	I due tracciati dell'oggetto sono i bordi della colonna; le linee che li attraversano fissano la direzione dei punti

@@ -371,6 +371,26 @@ fn uncovered_parts(polys: &[Vec<Point>], rule: FillRule, strokes: &[crate::skele
     out
 }
 
+/// A satin's needle points from its zigs (each a pair across the column), alternating sides,
+/// with short stitches: on a tight curve a side's needle points crowd together, and every other
+/// one stops partway, so the holes don't pile up in one spot. Also how many points were crowded.
+pub(crate) fn short_stitches(zig: &[(Point, Point)]) -> (Vec<Point>, usize) {
+    let mut last = [None::<Point>; 2];
+    let mut crowded = 0;
+    let mut out = Vec::with_capacity(zig.len());
+    for (k, (l, rt)) in zig.iter().enumerate() {
+        let side = k % 2;
+        let (end, other) = if side == 0 { (*l, *rt) } else { (*rt, *l) };
+        let crowd = last.get(side).copied().flatten().is_some_and(|q| q.distance(end) < SHORT_GAP);
+        crowded += usize::from(crowd);
+        out.push(if crowd { end.lerp(other, 0.4) } else { end });
+        if !crowd && let Some(slot) = last.get_mut(side) {
+            *slot = Some(end);
+        }
+    }
+    (out, crowded)
+}
+
 /// A fill's satin border: a satin column `width` mm wide along the closed outline `poly`,
 /// centred on its edge, at satin density.
 pub fn border(poly: &[Point], width: f64) -> Vec<Point> {
@@ -963,21 +983,10 @@ pub fn satin_shape_checked(polys: &[Vec<Point>], rule: FillRule, spacing: f64, p
             zigs += 1;
             fanned += usize::from(hi > 2.0 * spacing && hi > 3.0 * lo);
         }
-        // Short stitches: on a tight curve a side's needle points crowd together; every other
-        // one stops halfway, so the holes don't pile up in one spot.
-        let mut last = [None::<Point>; 2];
-        for (k, (l, rt)) in zig.iter().enumerate() {
-            let side = k % 2;
-            let (end, other) = if side == 0 { (*l, *rt) } else { (*rt, *l) };
-            let crowd = last.get(side).copied().flatten().is_some_and(|q| q.distance(end) < SHORT_GAP);
-            points += 1;
-            crowded += usize::from(crowd);
-            let point = if crowd { end.lerp(other, 0.4) } else { end };
-            if !crowd && let Some(slot) = last.get_mut(side) {
-                *slot = Some(end);
-            }
-            run.push(point);
-        }
+        let (pts, crowd) = short_stitches(&zig);
+        points += pts.len();
+        crowded += crowd;
+        run.extend(pts);
         if let Some(&end) = run.last() {
             at = Some(end);
         }
@@ -991,7 +1000,7 @@ pub fn satin_shape_checked(polys: &[Vec<Point>], rule: FillRule, spacing: f64, p
 
 /// `run` with any stitch longer than [`MAX_STITCH`] split into equal shorter ones (a tight curve
 /// can swing a zig further than its width).
-fn split_long(run: &[Point]) -> Vec<Point> {
+pub(crate) fn split_long(run: &[Point]) -> Vec<Point> {
     let mut out: Vec<Point> = Vec::with_capacity(run.len());
     for &p in run {
         if let Some(&last) = out.last() {

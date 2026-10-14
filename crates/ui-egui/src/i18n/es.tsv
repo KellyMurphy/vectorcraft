@@ -3815,3 +3815,7 @@ axis	Both	Ambos
 	Thinner strokes get a bean stitch round their outline	Los trazos más finos llevan una puntada triple en su contorno
 	Wider strokes are filled, with a satin border; strokes in between get satin	Los trazos más anchos se rellenan con borde de satén; los intermedios, con satén
 	Only paths, compound paths and type can be stitched.	Solo se pueden bordar trazados, trazados compuestos y texto.
+
+# Embroidery: satin rails
+	Between Rails	Entre rieles
+	The object's two paths are the column's edges; lines crossing both set the stitch direction	Los dos trazados del objeto son los bordes de la columna; las líneas que cruzan ambos fijan la dirección de las puntadas

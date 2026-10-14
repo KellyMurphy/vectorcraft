@@ -3271,3 +3271,7 @@ axis	Both	兩者
 	Thinner strokes get a bean stitch round their outline	更細的筆畫沿輪廓縫豆形針
 	Wider strokes are filled, with a satin border; strokes in between get satin	更寬的筆畫用填充加緞面邊框;介於兩者之間的用緞面
 	Only paths, compound paths and type can be stitched.	只有路徑、複合路徑和文字可以刺繡。
+
+# Embroidery: satin rails
+	Between Rails	兩軌之間
+	The object's two paths are the column's edges; lines crossing both set the stitch direction	物件的兩條路徑是柱的兩邊;橫跨兩者的線決定針跡方向

@@ -3493,3 +3493,7 @@ axis	Both	两者
 	Thinner strokes get a bean stitch round their outline	更细的笔画沿轮廓缝豆形针
 	Wider strokes are filled, with a satin border; strokes in between get satin	更宽的笔画用填充加缎面边框;介于两者之间的用缎面
 	Only paths, compound paths and type can be stitched.	只有路径、复合路径和文字可以刺绣。
+
+# Embroidery: satin rails
+	Between Rails	两轨之间
+	The object's two paths are the column's edges; lines crossing both set the stitch direction	对象的两条路径是柱的两边;横跨两者的线决定针迹方向

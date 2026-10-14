@@ -224,3 +224,11 @@ fn type_can_be_stitched() {
         assert!(i["design"]["stitches"].as_u64().unwrap() > 50, "{i}");
     }
 }
+
+#[test]
+fn rails_are_set_per_object() {
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "satin", "rails": true})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["rails"], true);
+    assert!(s.execute("embroidery.set", &json!({"rails": 1})).is_err());
+}

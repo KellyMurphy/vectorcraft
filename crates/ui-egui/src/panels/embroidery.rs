@@ -207,18 +207,33 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
         }
         StitchKind::Satin => {
             widgets::section_header(ui, tl!("Satin Column"));
-            widgets::label_row(ui, tl!("Width:"), LABEL_W, |ui| {
-                let width = sel["width"].as_f64();
-                if let Some(v) = widgets::mixed_field(ui, ("emb", "width"), width, " mm", 2, FIELD_W) {
-                    let r = StitchSettings::WIDTH;
-                    set(app, json!({"width": v.clamp(*r.start(), *r.end())}));
-                }
-                if width.is_none() {
-                    widgets::dim_label(ui, tl!("the stroke width"));
-                } else if widgets::flat_button(ui, tl!("Use Stroke"), 80.0).clicked() {
-                    set(app, json!({"width": null}));
+            let rails = sel["rails"].as_bool();
+            ui.horizontal(|ui| {
+                ui.add_space(LABEL_W + 8.0);
+                if widgets::check3_tip(
+                    ui,
+                    tl!("Between Rails"),
+                    rails,
+                    true,
+                    tl!("The object's two paths are the column's edges; lines crossing both set the stitch direction"),
+                ) {
+                    set(app, json!({"rails": rails != Some(true)}));
                 }
             });
+            if rails != Some(true) {
+                widgets::label_row(ui, tl!("Width:"), LABEL_W, |ui| {
+                    let width = sel["width"].as_f64();
+                    if let Some(v) = widgets::mixed_field(ui, ("emb", "width"), width, " mm", 2, FIELD_W) {
+                        let r = StitchSettings::WIDTH;
+                        set(app, json!({"width": v.clamp(*r.start(), *r.end())}));
+                    }
+                    if width.is_none() {
+                        widgets::dim_label(ui, tl!("the stroke width"));
+                    } else if widgets::flat_button(ui, tl!("Use Stroke"), 80.0).clicked() {
+                        set(app, json!({"width": null}));
+                    }
+                });
+            }
             mm(app, ui, tl!("Density:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between zigzags: smaller is denser"));
             mm(
                 app,

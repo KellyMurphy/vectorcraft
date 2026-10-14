@@ -3798,3 +3798,7 @@ axis	Both	Обидві
 	Thinner strokes get a bean stitch round their outline	Тонші штрихи отримують потрійну строчку по контуру
 	Wider strokes are filled, with a satin border; strokes in between get satin	Ширші штрихи заливаються з атласною облямівкою; проміжні — атласом
 	Only paths, compound paths and type can be stitched.	Вишивати можна лише контури, складені контури та текст.
+
+# Embroidery: satin rails
+	Between Rails	Між напрямними
+	The object's two paths are the column's edges; lines crossing both set the stitch direction	Два контури об’єкта — краї стовпчика; лінії, що перетинають обидва, задають напрямок стібків

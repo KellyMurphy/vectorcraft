@@ -14,7 +14,7 @@ Select paths or compound paths (or groups holding them) and choose **Object › 
 | Auto | Picks per shape (per letter, for type) by how wide its strokes are: under **Bean Outline Under** (1 mm) a bean stitch round the outline, over **Fill Over** (7 mm) a tatami fill with fill underlay and a satin border, in between a satin shape with a centre-walk underlay. The stroke width is twice the shape's area over its perimeter. | `thinUnder` (1 mm), `wideOver` (7 mm), `spacing`, `pull`, `border` (for filled shapes; 2 mm) |
 | Running Stitch | Single stitches along the path (outlines, details). Sharp corners keep a needle point. | `length` (2.5 mm) |
 | Bean Stitch | Running stitch sewn several times over each stitch: a bolder line. | `length` (2.5 mm), `passes` (3, 5, 7 or 9; 3) |
-| Satin Column | A zigzag centred on the path, as wide as the stroke (borders, lettering strokes). | `width` (the stroke width, else 3 mm), `spacing` (density, 0.4 mm), `pull` (pull compensation, 0 mm), `underlay` (none, center, edge, zigzag) |
+| Satin Column | A zigzag centred on the path, as wide as the stroke (borders, lettering strokes). **Between Rails**: the object's two longest subpaths are the column's edges and the satin spans between them, as wide as they are apart (columns that swell and taper); other subpaths crossing both are rungs, each setting the stitch direction where it crosses. Draw the two edges, join them (Object › Compound Path) and tick Between Rails. | `width` (the stroke width, else 3 mm), `spacing` (density, 0.4 mm), `pull` (pull compensation, 0 mm), `underlay` (none, center, edge, zigzag), `rails` (off) |
 | Zigzag Stitch | An open zigzag along the path, swinging side to side (decorative lines, appliqué edges). Corners fan like a satin's. | `width` (3 mm; not the stroke), `spacing` (between points, 2 mm) |
 | Satin Shape | Satin that follows a closed shape's strokes from edge to edge, curving with them (lettering, outlined type, swashes). The shape's centre lines are found automatically; each zig reaches the shape's edges either side, so thick and thin strokes keep their contrast. | `spacing` (density, 0.4 mm), `pull` (0 mm), `underlay` (none, center) |
 | Fill | Rows of staggered running stitches covering the shape (tatami). Holes and separate parts follow the fill rule. | `angle` (0°), `spacing` (density, 0.4 mm), `length` (4 mm), `stagger` (pattern: 2 brick, 3–8 tatami; 3), `underlay` (none, fill), `border` (a satin border over the edges, 0.5–6 mm; none) |
@@ -129,9 +129,9 @@ split. A trim is written as three short jumps that return to where they started.
 
 ## What's next
 
-- **E3, quality:** satin between two rails, and fill patterns beyond tatami (motif and embossed fills: they will join the Fill section's
-  Pattern menu). Underlay, pull compensation, tie-ins and tie-offs, satin corners, fill routing and the
-  Embroidery panel are done.
+- **E3, quality:** and fill patterns beyond tatami (motif and embossed fills: they will join the Fill section's
+  Pattern menu). Underlay, pull compensation, tie-ins and tie-offs, satin corners, fill routing, satin between rails
+  and the Embroidery panel are done.
 - **Next (high priority): stitch order.** Set the order objects are sewn in, independent of their paint order:
   a reorderable list in the Embroidery panel and commands to move objects earlier or later, so thread changes,
   layering and travel can be planned.

@@ -3807,3 +3807,7 @@ theme	Appearance	外観
 	Thinner strokes get a bean stitch round their outline	これより細いストロークは輪郭をビーンステッチで縫います
 	Wider strokes are filled, with a satin border; strokes in between get satin	これより太いストロークはフィルとサテンの縁取り、その間はサテンで縫います
 	Only paths, compound paths and type can be stitched.	ステッチできるのはパス、複合パス、テキストだけです。
+
+# Embroidery: satin rails
+	Between Rails	レール間
+	The object's two paths are the column's edges; lines crossing both set the stitch direction	オブジェクトの2本のパスがコラムの両端になり、両方を横切る線がステッチの向きを決めます
