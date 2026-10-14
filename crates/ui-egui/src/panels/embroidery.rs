@@ -33,7 +33,10 @@ fn info(app: &mut VectorcraftApp, ctx: &egui::Context) -> Value {
     {
         return v;
     }
-    let v = app.session.execute("embroidery.info", &json!({})).unwrap_or(Value::Null);
+    let mut v = app.session.execute("embroidery.info", &json!({})).unwrap_or(Value::Null);
+    if let (Some(o), Ok(order)) = (v.as_object_mut(), app.session.execute("embroidery.order", &json!({}))) {
+        o.insert("sewOrder".into(), order);
+    }
     ctx.data_mut(|d| d.insert_temp(id, (key, v.clone())));
     v
 }
@@ -119,9 +122,111 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         widgets::dim_label(ui, tl!("Some selected objects aren't stitched."));
     }
     widgets::divider(ui);
+    sew_order(app, ui, &info["sewOrder"]);
+    widgets::divider(ui);
     travel(app, ui, &info["setup"]);
     widgets::divider(ui);
     design(app, ui, &info["design"]);
+}
+
+/// A row of the sewing order dragged in the list: its index.
+#[derive(Clone, Copy)]
+struct OrderDrag(usize);
+
+/// The sewing order: the stitched objects as they are sewn (click selects, drag reorders), and
+/// buttons to move the selection, group by thread or go back to paint order.
+fn sew_order(app: &mut VectorcraftApp, ui: &mut Ui, order: &Value) {
+    let t = crate::theme::Tokens::get(ui.ctx());
+    widgets::section_header(ui, tl!("Sew Order"));
+    let rows: Vec<&Value> = order["order"].as_array().map(|a| a.iter().collect()).unwrap_or_default();
+    if rows.is_empty() {
+        widgets::dim_label(ui, tl!("Nothing is stitched yet."));
+        return;
+    }
+    let selected: Vec<u64> = app.session.active().map(|d| d.selection.objects.iter().map(|i| i.0).collect()).unwrap_or_default();
+    let ids: Vec<u64> = rows.iter().filter_map(|r| r["id"].as_u64()).collect();
+    let mut moved: Option<(usize, usize)> = None;
+    let mut select: Option<u64> = None;
+    egui::ScrollArea::vertical().id_salt("emb-order").max_height(168.0).show(ui, |ui| {
+        for (i, r) in rows.iter().enumerate() {
+            let id = r["id"].as_u64().unwrap_or(0);
+            let (rect, resp) = ui.allocate_exact_size(vec2(ui.available_width(), 22.0), egui::Sense::click_and_drag());
+            if resp.drag_started() {
+                egui::DragAndDrop::set_payload(ui.ctx(), OrderDrag(i));
+            }
+            if selected.contains(&id) {
+                ui.painter().rect_filled(rect, 0.0, t.row_selected);
+            } else if resp.hovered() {
+                ui.painter().rect_filled(rect, 0.0, t.hover);
+            }
+            // Where a dragged row would go: a line above this one.
+            if resp.dnd_hover_payload::<OrderDrag>().is_some() {
+                ui.painter().hline(rect.x_range(), rect.top(), egui::Stroke::new(2.0, t.accent));
+            }
+            if let Some(from) = resp.dnd_release_payload::<OrderDrag>() {
+                moved = Some((from.0, i));
+            }
+            let font = egui::FontId::proportional(12.0);
+            ui.painter().text(rect.left_center() + vec2(4.0, 0.0), egui::Align2::LEFT_CENTER, format!("{}", i + 1), font.clone(), t.text_dim);
+            if let Some(c) = r["thread"].as_str().and_then(rgb) {
+                let chip = egui::Rect::from_center_size(rect.left_center() + vec2(32.0, 0.0), vec2(12.0, 12.0));
+                ui.painter().rect_filled(chip, 2.0, Color32::from_rgb(c[0], c[1], c[2]));
+            }
+            ui.painter().text(
+                rect.left_center() + vec2(44.0, 0.0),
+                egui::Align2::LEFT_CENTER,
+                r["name"].as_str().unwrap_or(""),
+                font.clone(),
+                t.text,
+            );
+            let stitch = r["stitch"].as_str().and_then(StitchKind::parse).map_or("", |k| tl!(k.label()));
+            ui.painter().text(rect.right_center() - vec2(4.0, 0.0), egui::Align2::RIGHT_CENTER, stitch, font, t.text_dim);
+            if resp.clicked() {
+                select = Some(id);
+            }
+        }
+    });
+    if let Some(id) = select {
+        app.run("select.set", json!({"ids": [id]})).ok();
+    }
+    if let Some((from, to)) = moved.filter(|(f, t)| f != t) {
+        let mut new = ids.clone();
+        if from < new.len() {
+            let id = new.remove(from);
+            new.insert(to.min(new.len()), id);
+            app.run("embroidery.reorder", json!({"order": new})).ok();
+        }
+    }
+    let any = ids.iter().any(|i| selected.contains(i));
+    ui.horizontal(|ui| {
+        for (icon, tip, to) in [
+            ("dc-al-top", tl!("Sew First"), "first"),
+            ("dc-arrow-up", tl!("Sew Earlier"), "earlier"),
+            ("dc-arrow-down", tl!("Sew Later"), "later"),
+            ("dc-al-bottom", tl!("Sew Last"), "last"),
+        ] {
+            if widgets::icon_button_enabled(ui, icon, tip, false, any, 22.0).clicked() {
+                app.run("embroidery.reorder", json!({ "to": to })).ok();
+            }
+        }
+        ui.add_space(6.0);
+        if widgets::flat_button(ui, tl!("By Thread"), 70.0)
+            .on_hover_text(tl!("Group the sewing order by thread colour, for fewer thread changes"))
+            .clicked()
+        {
+            app.run("embroidery.sortByThread", json!({})).ok();
+        }
+        let custom = order["custom"].as_bool().unwrap_or(false);
+        if ui
+            .add_enabled_ui(custom, |ui| widgets::flat_button(ui, tl!("Paint Order"), 76.0))
+            .inner
+            .on_hover_text(tl!("Sew the objects in paint order again"))
+            .clicked()
+        {
+            app.run("embroidery.resetOrder", json!({})).ok();
+        }
+    });
+    widgets::dim_label(ui, tl!("Objects sewn later lie on top."));
 }
 
 /// Trim Before / Trim After for the selected objects (blank where they differ).

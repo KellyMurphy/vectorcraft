@@ -67,7 +67,19 @@ and travels between them instead of jumping: by a straight run of stitches where
 (the rows sewn next cover it), else along the outline (up to 40 mm), stepping off and back on in straight
 lines inside the shape. Only where neither works does the needle jump (and trim).
 
-Objects are sewn in paint order, bottom first. Between objects the needle jumps, and it trims the thread
+### Sew order
+
+Objects are sewn in paint order, bottom first, until you change it: the Embroidery panel's **Sew Order** lists
+the stitched objects as they are sewn (with their threads and stitches). Click one to select it; drag it up
+or down the list, or use **Sew First**, **Sew Earlier**, **Sew Later** and **Sew Last** on the selection.
+**By Thread** groups the order by thread colour (colours in the order they first come, each keeping its
+objects' order), so each thread is sewn once; **Paint Order** goes back. The order is saved with the
+document; objects added later are sewn after the ones in it, and deleted ones drop out. Whatever is sewn
+later lies on top on the fabric, so Stitch Preview and the exported design follow the sewing order, not the
+paint order. Commands: `embroidery.order`, `embroidery.reorder {to: first|earlier|later|last, ids?}` or
+`{order: [ids]}`, `embroidery.sortByThread`, `embroidery.resetOrder`.
+
+Objects are sewn one after another. Between objects the needle jumps, and it trims the thread
 before a long jump and before each colour change. The **Travel** settings (the Embroidery panel, or
 `embroidery.setup`) belong to the document:
 
@@ -137,9 +149,6 @@ split. A trim is written as three short jumps that return to where they started.
 
 - **E3, quality: done.** Underlay, pull compensation, tie-ins and tie-offs, satin corners, fill routing, satin
   between rails, carved motif fills and the Embroidery panel.
-- **Next (high priority): stitch order.** Set the order objects are sewn in, independent of their paint order:
-  a reorderable list in the Embroidery panel and commands to move objects earlier or later, so thread changes,
-  layering and travel can be planned.
 - **E4, breadth:** PES, JEF, EXP and VP3; hoop templates; auto-digitizing traced art.
 - **E5, future sprints:**
   - **Embroidery fonts:** lettering digitized for embroidery (satin columns laid out by hand per letter), for

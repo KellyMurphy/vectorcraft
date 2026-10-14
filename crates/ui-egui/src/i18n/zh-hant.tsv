@@ -3285,3 +3285,18 @@ axis	Both	兩者
 	Motif	圖樣
 	Motif Size:	圖樣大小:
 	How large one repeat of the motif is	圖樣一次重複的大小
+
+# Embroidery: sew order
+	Sew Order	縫製順序
+	Sew First	最先縫
+	Sew Earlier	提前縫
+	Sew Later	延後縫
+	Sew Last	最後縫
+	By Thread	依線色
+	Group the sewing order by thread colour, for fewer thread changes	依線的顏色歸組縫製順序,減少換線
+	Paint Order	繪製順序
+	Sew the objects in paint order again	重新依繪製順序縫製
+	Objects sewn later lie on top.	後縫的物件在上面。
+	Sew by Thread	依線色縫製
+	Sew in Paint Order	依繪製順序縫製
+	Change Sew Order	變更縫製順序

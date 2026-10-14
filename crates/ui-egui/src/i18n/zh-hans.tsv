@@ -3507,3 +3507,18 @@ axis	Both	两者
 	Motif	图案
 	Motif Size:	图案大小:
 	How large one repeat of the motif is	图案一次重复的大小
+
+# Embroidery: sew order
+	Sew Order	缝制顺序
+	Sew First	最先缝
+	Sew Earlier	提前缝
+	Sew Later	推后缝
+	Sew Last	最后缝
+	By Thread	按线色
+	Group the sewing order by thread colour, for fewer thread changes	按线的颜色归组缝制顺序,减少换线
+	Paint Order	绘制顺序
+	Sew the objects in paint order again	重新按绘制顺序缝制
+	Objects sewn later lie on top.	后缝的对象在上面。
+	Sew by Thread	按线色缝制
+	Sew in Paint Order	按绘制顺序缝制
+	Change Sew Order	更改缝制顺序

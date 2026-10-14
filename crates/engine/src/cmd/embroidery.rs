@@ -35,6 +35,42 @@ pub fn specs() -> Vec<CommandSpec> {
             setup
         ),
         cmd!(
+            query "embroidery.order",
+            "Sew Order",
+            [],
+            None,
+            "{} the stitched objects in the order they are sewn → {order: [{id, name, stitch: type id, thread: \"#rrggbb\"}], custom: bool (false: paint order)}. Whatever is sewn later lies on top on the fabric",
+            has_doc,
+            order
+        ),
+        cmd!(
+            "embroidery.reorder",
+            "Change Sew Order",
+            [],
+            None,
+            "{to: first|earlier|later|last, ids?} move the stitched objects in ids or the selection (groups: those inside) in the sewing order, or {order: [ids]} set it (those first, in that order; the others after, in paint order); one undo step → {order: [ids]}",
+            has_doc,
+            reorder
+        ),
+        cmd!(
+            "embroidery.sortByThread",
+            "Sew by Thread",
+            [],
+            None,
+            "{} group the sewing order by thread colour (colours in the order they first come, each keeping its objects' order), so each thread is sewn once where layering allows; one undo step → {order: [ids], colorChanges}",
+            has_doc,
+            sort_by_thread
+        ),
+        cmd!(
+            "embroidery.resetOrder",
+            "Sew in Paint Order",
+            [],
+            None,
+            "{} sew the objects in paint order again (bottom first); one undo step → {order: [ids]}",
+            has_doc,
+            reset_order
+        ),
+        cmd!(
             "embroidery.clear",
             "Remove Stitches",
             [],
@@ -331,6 +367,131 @@ fn setup(s: &mut Session, p: &Value) -> Result<Value> {
         })?;
     }
     Ok(setup_json(&new))
+}
+
+/// An object's name for the sewing order: its own, else what it is.
+fn object_name(n: &vectorcraft_doc::Node) -> String {
+    if let Some(name) = n.name.as_deref().filter(|s| !s.is_empty()) {
+        return name.to_string();
+    }
+    match &n.kind {
+        NodeKind::Text(t) => {
+            let text: String = t.plain_text().chars().take(24).collect();
+            format!("\u{201c}{}\u{201d}", text.trim())
+        }
+        NodeKind::Compound { .. } => "Compound Path".into(),
+        _ => "Path".into(),
+    }
+}
+
+/// The ids of the objects `doc` sews, in sewing order.
+fn sewn_ids(doc: &Document) -> Vec<NodeId> {
+    vectorcraft_embroidery::sew_order(doc).iter().map(|n| n.id).collect()
+}
+
+fn order(s: &mut Session, _: &Value) -> Result<Value> {
+    let doc = &s.doc()?.doc;
+    let list: Vec<Value> = vectorcraft_embroidery::sew_order(doc)
+        .into_iter()
+        .map(|n| {
+            json!({
+                "id": n.id.0,
+                "name": object_name(n),
+                "stitch": n.stitch.as_deref().map(|s| s.kind.id()),
+                "thread": hex(vectorcraft_embroidery::thread_of_node(n)),
+            })
+        })
+        .collect();
+    Ok(json!({ "order": list, "custom": !doc.embroidery.order.is_empty() }))
+}
+
+/// Set the sewing order to `ids` (one undo step), returning it.
+fn set_order(s: &mut Session, label: &str, ids: Vec<NodeId>) -> Result<Value> {
+    let changed = s.doc()?.doc.embroidery.order != ids;
+    if changed {
+        let ids = ids.clone();
+        edit_counted(s, label, |d| {
+            d.embroidery.order = ids;
+            Ok(1)
+        })?;
+    }
+    Ok(json!({ "order": ids.iter().map(|i| i.0).collect::<Vec<_>>() }))
+}
+
+fn reorder(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.reorder";
+    let current = sewn_ids(&s.doc()?.doc);
+    if let Some(list) = p.get("order") {
+        let ids: Vec<NodeId> = list
+            .as_array()
+            .ok_or_else(|| bad(C, "`order` must be a list of object ids"))?
+            .iter()
+            .map(|v| v.as_u64().map(NodeId).ok_or_else(|| bad(C, "`order` must be a list of object ids")))
+            .collect::<Result<_>>()?;
+        if let Some(id) = ids.iter().find(|id| !current.contains(id)) {
+            return Err(bad(C, format!("object {} isn't a stitched object", id.0)));
+        }
+        let mut new: Vec<NodeId> = vec![];
+        for id in ids {
+            if !new.contains(&id) {
+                new.push(id);
+            }
+        }
+        let rest: Vec<NodeId> = current.iter().filter(|id| !new.contains(id)).copied().collect();
+        new.extend(rest);
+        return set_order(s, "Change Sew Order", new);
+    }
+    let to = str_param(p, "to").ok_or_else(|| bad(C, "give `to` (first, earlier, later, last) or `order`"))?;
+    let picked: Vec<NodeId> = stitchable(s, &targets(s, p)?)?.into_iter().filter(|id| current.contains(id)).collect();
+    if picked.is_empty() {
+        return Err(bad(C, "select stitched objects to move in the sewing order"));
+    }
+    let is = |id: &NodeId| picked.contains(id);
+    let mut new = current.clone();
+    match to {
+        "first" => new = current.iter().filter(|i| is(i)).chain(current.iter().filter(|i| !is(i))).copied().collect(),
+        "last" => new = current.iter().filter(|i| !is(i)).chain(current.iter().filter(|i| is(i))).copied().collect(),
+        // One place each, a block of moved objects keeping together.
+        "earlier" => {
+            for k in 1..new.len() {
+                if new.get(k).is_some_and(is) && new.get(k - 1).is_some_and(|i| !is(i)) {
+                    new.swap(k, k - 1);
+                }
+            }
+        }
+        "later" => {
+            for k in (0..new.len().saturating_sub(1)).rev() {
+                if new.get(k).is_some_and(is) && new.get(k + 1).is_some_and(|i| !is(i)) {
+                    new.swap(k, k + 1);
+                }
+            }
+        }
+        _ => return Err(bad(C, "`to` must be first, earlier, later or last")),
+    }
+    set_order(s, "Change Sew Order", new)
+}
+
+fn sort_by_thread(s: &mut Session, _: &Value) -> Result<Value> {
+    let doc = &s.doc()?.doc;
+    let sewn: Vec<(NodeId, [u8; 3])> =
+        vectorcraft_embroidery::sew_order(doc).into_iter().map(|n| (n.id, vectorcraft_embroidery::thread_of_node(n))).collect();
+    let mut threads: Vec<[u8; 3]> = vec![];
+    for (_, t) in &sewn {
+        if !threads.contains(t) {
+            threads.push(*t);
+        }
+    }
+    let new: Vec<NodeId> = threads.iter().flat_map(|t| sewn.iter().filter(move |(_, u)| u == t).map(|(id, _)| *id)).collect();
+    let mut r = set_order(s, "Sew by Thread", new)?;
+    r["colorChanges"] = json!(threads.len().saturating_sub(1));
+    Ok(r)
+}
+
+fn reset_order(s: &mut Session, _: &Value) -> Result<Value> {
+    let r = set_order(s, "Sew in Paint Order", vec![])?;
+    Ok(
+        json!({ "order": sewn_ids(&s.doc()?.doc).iter().map(|i| i.0).collect::<Vec<_>>(), "custom": r["order"].as_array().is_some_and(|a| !a.is_empty()) }),
+    )
 }
 
 fn clear(s: &mut Session, p: &Value) -> Result<Value> {

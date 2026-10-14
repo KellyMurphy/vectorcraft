@@ -3840,3 +3840,18 @@ axis	Both	Les deux
 	Motif	Motif
 	Motif Size:	Taille du motif :
 	How large one repeat of the motif is	La taille d’une répétition du motif
+
+# Embroidery: sew order
+	Sew Order	Ordre de couture
+	Sew First	Coudre en premier
+	Sew Earlier	Coudre plus tôt
+	Sew Later	Coudre plus tard
+	Sew Last	Coudre en dernier
+	By Thread	Par fil
+	Group the sewing order by thread colour, for fewer thread changes	Regrouper l’ordre de couture par couleur de fil, pour moins de changements de fil
+	Paint Order	Ordre de superposition
+	Sew the objects in paint order again	Coudre à nouveau les objets dans l’ordre de superposition
+	Objects sewn later lie on top.	Les objets cousus plus tard sont au-dessus.
+	Sew by Thread	Coudre par fil
+	Sew in Paint Order	Coudre dans l’ordre de superposition
+	Change Sew Order	Modifier l’ordre de couture

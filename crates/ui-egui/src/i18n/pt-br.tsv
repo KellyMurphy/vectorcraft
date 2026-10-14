@@ -2785,3 +2785,18 @@
 	Motif	Motivo
 	Motif Size:	Tamanho do motivo:
 	How large one repeat of the motif is	O tamanho de uma repetição do motivo
+
+# Embroidery: sew order
+	Sew Order	Ordem de costura
+	Sew First	Costurar primeiro
+	Sew Earlier	Costurar antes
+	Sew Later	Costurar depois
+	Sew Last	Costurar por último
+	By Thread	Por linha
+	Group the sewing order by thread colour, for fewer thread changes	Agrupar a ordem de costura por cor de linha, para menos trocas de linha
+	Paint Order	Ordem de empilhamento
+	Sew the objects in paint order again	Costurar de novo os objetos na ordem de empilhamento
+	Objects sewn later lie on top.	Objetos costurados depois ficam por cima.
+	Sew by Thread	Costurar por linha
+	Sew in Paint Order	Costurar na ordem de empilhamento
+	Change Sew Order	Alterar ordem de costura

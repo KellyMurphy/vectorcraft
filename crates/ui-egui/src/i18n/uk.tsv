@@ -3812,3 +3812,18 @@ axis	Both	Обидві
 	Motif	Мотив
 	Motif Size:	Розмір мотиву:
 	How large one repeat of the motif is	Розмір одного повтору мотиву
+
+# Embroidery: sew order
+	Sew Order	Порядок вишивки
+	Sew First	Вишити першим
+	Sew Earlier	Вишити раніше
+	Sew Later	Вишити пізніше
+	Sew Last	Вишити останнім
+	By Thread	За ниткою
+	Group the sewing order by thread colour, for fewer thread changes	Згрупувати порядок вишивки за кольором нитки, щоб рідше змінювати нитку
+	Paint Order	Порядок шарів
+	Sew the objects in paint order again	Знову вишивати об’єкти в порядку шарів
+	Objects sewn later lie on top.	Об’єкти, вишиті пізніше, лежать зверху.
+	Sew by Thread	Вишивати за ниткою
+	Sew in Paint Order	Вишивати в порядку шарів
+	Change Sew Order	Змінити порядок вишивки

@@ -753,3 +753,18 @@
 	Motif	Motiv
 	Motif Size:	Velikost motivu:
 	How large one repeat of the motif is	Velikost jednoho opakování motivu
+
+# Embroidery: sew order
+	Sew Order	Pořadí šití
+	Sew First	Šít jako první
+	Sew Earlier	Šít dříve
+	Sew Later	Šít později
+	Sew Last	Šít jako poslední
+	By Thread	Podle nitě
+	Group the sewing order by thread colour, for fewer thread changes	Seskupit pořadí šití podle barvy nitě, pro méně výměn nitě
+	Paint Order	Pořadí vrstev
+	Sew the objects in paint order again	Šít objekty znovu v pořadí vrstev
+	Objects sewn later lie on top.	Objekty šité později leží navrchu.
+	Sew by Thread	Šít podle nitě
+	Sew in Paint Order	Šít v pořadí vrstev
+	Change Sew Order	Změnit pořadí šití

@@ -301,8 +301,8 @@ fn tie_point(at: Point, toward: Point) -> Option<Point> {
 pub fn plan(doc: &Document) -> Plan {
     let mut b = Builder::new(&doc.embroidery);
     let mut tally = Tally::default();
-    for l in &doc.layers {
-        walk(l, &mut b, &mut tally, false);
+    for n in ordered(doc, &mut tally) {
+        sew_node(n, &mut b);
     }
     let mut plan = b.finish();
     let what = |n: usize| if n == 1 { "object" } else { "objects" };
@@ -324,6 +324,34 @@ pub fn has_stitches(doc: &Document) -> bool {
     any
 }
 
+/// The objects `doc` sews, in the order it sews them: those in the document's sewing order
+/// ([`EmbroiderySetup::order`]) first, in that order, then the others in paint order.
+pub fn sew_order(doc: &Document) -> Vec<&Node> {
+    ordered(doc, &mut Tally::default())
+}
+
+fn ordered<'a>(doc: &'a Document, tally: &mut Tally) -> Vec<&'a Node> {
+    let mut items: Vec<&Node> = vec![];
+    for l in &doc.layers {
+        collect(l, &mut items, tally, false);
+    }
+    let order = &doc.embroidery.order;
+    if order.is_empty() {
+        return items;
+    }
+    // Listed ones first (each once, in list order), then the rest as painted.
+    let mut out: Vec<&Node> = vec![];
+    for id in order {
+        if let Some(&n) = items.iter().find(|n| n.id == *id)
+            && !out.iter().any(|o| o.id == n.id)
+        {
+            out.push(n);
+        }
+    }
+    out.extend(items.into_iter().filter(|n| !order.contains(&n.id)));
+    out
+}
+
 /// What the walk counts for its warnings.
 #[derive(Default)]
 struct Tally {
@@ -333,7 +361,8 @@ struct Tally {
     clipped: usize,
 }
 
-fn walk(n: &Arc<Node>, b: &mut Builder, tally: &mut Tally, masked: bool) {
+/// The objects under `n` that are sewn, in paint order.
+fn collect<'a>(n: &'a Arc<Node>, items: &mut Vec<&'a Node>, tally: &mut Tally, masked: bool) {
     // Hidden art isn't sewn, and neither are template layers (art to trace over) nor layers that
     // don't print.
     let off = matches!(n.kind, NodeKind::Layer { template: true, .. } | NodeKind::Layer { printable: false, .. });
@@ -341,33 +370,47 @@ fn walk(n: &Arc<Node>, b: &mut Builder, tally: &mut Tally, masked: bool) {
         return;
     }
     let masked = masked || n.mask.is_some() || matches!(n.kind, NodeKind::Group { clip: true, .. } | NodeKind::Layer { clip: true, .. });
-    if let Some(s) = n.stitch.as_deref() {
-        let stitched = match &n.kind {
-            NodeKind::Path { path, rule, guide: false, clipping: false, .. } => {
-                object(n, s, &[path], *rule, b);
-                true
-            }
-            NodeKind::Compound { children, rule } => {
-                let paths: Vec<&PathData> = children.iter().filter_map(|c| c.path_data()).collect();
-                object(n, s, &paths, *rule, b);
-                true
-            }
-            NodeKind::Text(t) => {
-                text(t, s, b);
-                true
-            }
+    if n.stitch.is_some() {
+        let sewn = match &n.kind {
+            NodeKind::Path { guide: false, clipping: false, .. } | NodeKind::Compound { .. } | NodeKind::Text(_) => true,
             NodeKind::Path { .. } => false,
             _ => {
                 tally.skipped += 1;
                 false
             }
         };
-        tally.clipped += usize::from(stitched && masked);
+        if sewn {
+            items.push(n);
+            tally.clipped += usize::from(masked);
+        }
     }
     if let Some(children) = n.children() {
         for c in children {
-            walk(c, b, tally, masked);
+            collect(c, items, tally, masked);
         }
+    }
+}
+
+/// Sew one stitched object.
+fn sew_node(n: &Node, b: &mut Builder) {
+    let Some(s) = n.stitch.as_deref() else { return };
+    match &n.kind {
+        NodeKind::Path { path, rule, .. } => object(n, s, &[path], *rule, b),
+        NodeKind::Compound { children, rule } => {
+            let paths: Vec<&PathData> = children.iter().filter_map(|c| c.path_data()).collect();
+            object(n, s, &paths, *rule, b);
+        }
+        NodeKind::Text(t) => text(t, s, b),
+        _ => {}
+    }
+}
+
+/// The thread an object is sewn in (type: its first characters' colour).
+pub fn thread_of_node(n: &Node) -> [u8; 3] {
+    let Some(s) = n.stitch.as_deref() else { return [0; 3] };
+    match &n.kind {
+        NodeKind::Text(t) => thread_of(&t.first_style().appearance(), s),
+        _ => thread_of(&n.appearance, s),
     }
 }
 

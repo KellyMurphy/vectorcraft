@@ -244,3 +244,80 @@ fn carved_motifs_are_set_and_checked() {
     s.execute("embroidery.set", &json!({"motif": null})).unwrap();
     assert_eq!(info(&mut s)["selection"]["motif"], Value::Null);
 }
+
+/// Three stitched rectangles (red, blue, red) left to right; their ids.
+fn three(s: &mut Session) -> Vec<u64> {
+    s.execute("file.new", &json!({"width": 400, "height": 200})).unwrap();
+    let mut ids = vec![];
+    for (x, c) in [(10, "#ff0000"), (110, "#0000ff"), (210, "#ff0000")] {
+        s.execute("select.none", &json!({})).unwrap();
+        s.execute("paint.setFill", &json!({"color": c})).unwrap();
+        let r = s.execute("shape.rectangle", &json!({"x": x, "y": 10, "width": 60, "height": 60})).unwrap();
+        s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+        ids.push(r["id"].as_u64().unwrap());
+    }
+    ids
+}
+
+fn order_ids(s: &mut Session) -> Vec<u64> {
+    s.execute("embroidery.order", &json!({})).unwrap()["order"].as_array().unwrap().iter().map(|o| o["id"].as_u64().unwrap()).collect()
+}
+
+#[test]
+fn objects_are_sewn_in_paint_order_until_reordered() {
+    let mut s = Session::new();
+    let ids = three(&mut s);
+    let o = s.execute("embroidery.order", &json!({})).unwrap();
+    assert_eq!(order_ids(&mut s), ids);
+    assert_eq!(o["custom"], false);
+    assert_eq!(o["order"][1]["thread"], "#0000ff");
+    // Move the last one first.
+    s.execute("embroidery.reorder", &json!({"to": "first", "ids": [ids[2]]})).unwrap();
+    assert_eq!(order_ids(&mut s), vec![ids[2], ids[0], ids[1]]);
+    s.execute("embroidery.reorder", &json!({"to": "later", "ids": [ids[2]]})).unwrap();
+    assert_eq!(order_ids(&mut s), vec![ids[0], ids[2], ids[1]]);
+    s.execute("embroidery.reorder", &json!({"to": "last", "ids": [ids[0]]})).unwrap();
+    assert_eq!(order_ids(&mut s), vec![ids[2], ids[1], ids[0]]);
+    s.execute("embroidery.reorder", &json!({"to": "earlier", "ids": [ids[0]]})).unwrap();
+    assert_eq!(order_ids(&mut s), vec![ids[2], ids[0], ids[1]]);
+    // Undo steps back one move at a time.
+    s.execute("edit.undo", &json!({})).unwrap();
+    assert_eq!(order_ids(&mut s), vec![ids[2], ids[1], ids[0]]);
+    // Paint order again.
+    s.execute("embroidery.resetOrder", &json!({})).unwrap();
+    assert_eq!(order_ids(&mut s), ids);
+}
+
+#[test]
+fn the_sewing_order_drives_the_design_and_is_saved() {
+    let mut s = Session::new();
+    let ids = three(&mut s);
+    assert_eq!(info(&mut s)["design"]["colorChanges"], 2, "red, blue, red");
+    let r = s.execute("embroidery.sortByThread", &json!({})).unwrap();
+    assert_eq!(r["colorChanges"], 1);
+    assert_eq!(order_ids(&mut s), vec![ids[0], ids[2], ids[1]]);
+    assert_eq!(info(&mut s)["design"]["colorChanges"], 1, "both reds, then blue");
+    let saved = b64(&s.execute("document.export", &json!({"format": "vectorcraft"})).unwrap());
+    s.execute("document.open", &json!({"name": "x.vectorcraft", "dataBase64": vectorcraft_format::base64_encode(&saved)})).unwrap();
+    assert_eq!(order_ids(&mut s), vec![ids[0], ids[2], ids[1]]);
+}
+
+#[test]
+fn an_explicit_order_lists_some_and_the_rest_follow() {
+    let mut s = Session::new();
+    let ids = three(&mut s);
+    s.execute("embroidery.reorder", &json!({"order": [ids[1]]})).unwrap();
+    assert_eq!(order_ids(&mut s), vec![ids[1], ids[0], ids[2]]);
+    // A new object sews last; a deleted one drops out.
+    s.execute("select.none", &json!({})).unwrap();
+    let r = s.execute("shape.rectangle", &json!({"x": 300, "y": 100, "width": 40, "height": 40})).unwrap();
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    let new = r["id"].as_u64().unwrap();
+    assert_eq!(order_ids(&mut s), vec![ids[1], ids[0], ids[2], new]);
+    s.execute("edit.clear", &json!({"ids": [ids[1]]})).unwrap();
+    assert_eq!(order_ids(&mut s), vec![ids[0], ids[2], new]);
+    // Bad requests.
+    assert!(s.execute("embroidery.reorder", &json!({"order": [99999]})).is_err());
+    assert!(s.execute("embroidery.reorder", &json!({"to": "sideways", "ids": [ids[0]]})).is_err());
+    assert!(s.execute("embroidery.reorder", &json!({})).is_err());
+}

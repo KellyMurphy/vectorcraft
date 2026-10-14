@@ -3821,3 +3821,18 @@ theme	Appearance	外観
 	Motif	モチーフ
 	Motif Size:	モチーフのサイズ:
 	How large one repeat of the motif is	モチーフの1回の繰り返しの大きさ
+
+# Embroidery: sew order
+	Sew Order	縫製順
+	Sew First	最初に縫う
+	Sew Earlier	前に縫う
+	Sew Later	後に縫う
+	Sew Last	最後に縫う
+	By Thread	糸ごと
+	Group the sewing order by thread colour, for fewer thread changes	糸の色ごとに縫製順をまとめ、糸替えを減らします
+	Paint Order	重ね順
+	Sew the objects in paint order again	重ね順で縫い直します
+	Objects sewn later lie on top.	後から縫うものが上になります。
+	Sew by Thread	糸ごとに縫う
+	Sew in Paint Order	重ね順で縫う
+	Change Sew Order	縫製順を変更

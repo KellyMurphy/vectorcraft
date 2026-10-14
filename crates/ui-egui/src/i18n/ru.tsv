@@ -3827,3 +3827,18 @@ axis	Both	Оба
 	Motif	Мотив
 	Motif Size:	Размер мотива:
 	How large one repeat of the motif is	Размер одного повтора мотива
+
+# Embroidery: sew order
+	Sew Order	Порядок вышивки
+	Sew First	Вышить первым
+	Sew Earlier	Вышить раньше
+	Sew Later	Вышить позже
+	Sew Last	Вышить последним
+	By Thread	По нити
+	Group the sewing order by thread colour, for fewer thread changes	Сгруппировать порядок вышивки по цвету нити, чтобы реже менять нить
+	Paint Order	Порядок слоёв
+	Sew the objects in paint order again	Снова вышивать объекты в порядке слоёв
+	Objects sewn later lie on top.	Объекты, вышитые позже, лежат сверху.
+	Sew by Thread	Вышивать по нити
+	Sew in Paint Order	Вышивать в порядке слоёв
+	Change Sew Order	Изменить порядок вышивки

@@ -205,11 +205,15 @@ pub struct EmbroiderySetup {
     pub trim_jumps_over: Option<f64>,
     /// Moves to the next stitch up to this long are sewn as a stitch rather than jumped, mm.
     pub stitch_moves_under: f64,
+    /// The order objects are sewn in: these first, in this order, then any other stitched objects
+    /// in paint order (empty: paint order). Ids of objects no longer there are ignored.
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub order: Vec<crate::NodeId>,
 }
 
 impl Default for EmbroiderySetup {
     fn default() -> Self {
-        Self { trim_jumps_over: Some(Self::DEFAULT_TRIM), stitch_moves_under: Self::DEFAULT_STITCH_MOVES }
+        Self { trim_jumps_over: Some(Self::DEFAULT_TRIM), stitch_moves_under: Self::DEFAULT_STITCH_MOVES, order: vec![] }
     }
 }
 
@@ -384,11 +388,11 @@ mod tests {
     fn setup_defaults_round_trip_and_clamp() {
         let s = EmbroiderySetup::default();
         assert_eq!((s.trim_over(), s.stitch_under()), (Some(3.0), 1.0));
-        let never = EmbroiderySetup { trim_jumps_over: None, stitch_moves_under: 9.0 };
+        let never = EmbroiderySetup { trim_jumps_over: None, stitch_moves_under: 9.0, order: vec![crate::NodeId(7)] };
         let back: EmbroiderySetup = serde_json::from_value(serde_json::to_value(&never).unwrap()).unwrap();
         assert_eq!(back, never);
         assert_eq!((never.trim_over(), never.stitch_under()), (None, 5.0));
-        let tight = EmbroiderySetup { trim_jumps_over: Some(0.6), stitch_moves_under: 2.0 };
+        let tight = EmbroiderySetup { trim_jumps_over: Some(0.6), stitch_moves_under: 2.0, order: vec![] };
         assert_eq!(tight.stitch_under(), 0.6, "a sewn move is never longer than a trimmed jump");
         let missing: EmbroiderySetup = serde_json::from_value(serde_json::json!({})).unwrap();
         assert_eq!(missing, EmbroiderySetup::default());
