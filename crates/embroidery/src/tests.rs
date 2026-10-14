@@ -102,7 +102,13 @@ fn fill_leaves_holes_and_splits_separate_parts() {
         let in_hole = p.x > 10.0 + 1e-6 && p.x < 20.0 - 1e-6 && p.y > 10.0 + 1e-6 && p.y < 20.0 - 1e-6;
         assert!(!in_hole, "{p:?} in the hole");
     }
-    assert!(runs.len() >= 2);
+    // The parts either side of the hole are joined by travel round it: one run, no jump.
+    assert_eq!(runs.len(), 1);
+    for w in runs[0].windows(2) {
+        let mid = w[0].lerp(w[1], 0.5);
+        let in_hole = mid.x > 10.0 + 1e-6 && mid.x < 20.0 - 1e-6 && mid.y > 10.0 + 1e-6 && mid.y < 20.0 - 1e-6;
+        assert!(!in_hole, "travel {:?}–{:?} crosses the hole", w[0], w[1]);
+    }
 }
 
 #[test]
@@ -951,7 +957,8 @@ fn dump_type() {
         vec![n]
     });
     let p = plan(&d);
-    println!("stitches {} warnings {:?}", p.stats().stitches, p.warnings);
+    let st = p.stats();
+    println!("stitches {} trims {} jumps {} warnings {:?}", st.stitches, st.trims, st.jumps, p.warnings);
     std::fs::write(std::path::PathBuf::from(dir).join("type.dst"), write_dst(&p, "type")).unwrap();
 }
 

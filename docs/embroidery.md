@@ -56,6 +56,11 @@ letters look alike: when a quarter or more of them fail, they are all filled; ot
 fail are. Heavy display type therefore comes out as fill with satin borders, regular-weight type as satin. Clipping and
 opacity masks don't apply to stitches: a masked object is stitched whole, with a warning.
 
+A fill whose rows fall into separate parts (round a hole, between a letter's strokes) sews them nearest first
+and travels between them instead of jumping: by a straight run of stitches where that stays inside the shape
+(the rows sewn next cover it), else along the outline (up to 40 mm), stepping off and back on in straight
+lines inside the shape. Only where neither works does the needle jump (and trim).
+
 Objects are sewn in paint order, bottom first. Between objects the needle jumps, and it trims the thread
 before a long jump and before each colour change. The **Travel** settings (the Embroidery panel, or
 `embroidery.setup`) belong to the document:
@@ -124,10 +129,9 @@ split. A trim is written as three short jumps that return to where they started.
 
 ## What's next
 
-- **E3, quality:** fill routing that travels along the edge between parts instead of jumping, satin between
-  two rails, and fill patterns beyond tatami (motif and embossed fills: they will join the Fill section's
-  Pattern menu). Underlay, pull compensation, tie-ins and tie-offs, satin corners and the Embroidery panel
-  are done.
+- **E3, quality:** satin between two rails, and fill patterns beyond tatami (motif and embossed fills: they will join the Fill section's
+  Pattern menu). Underlay, pull compensation, tie-ins and tie-offs, satin corners, fill routing and the
+  Embroidery panel are done.
 - **Next (high priority): stitch order.** Set the order objects are sewn in, independent of their paint order:
   a reorderable list in the Embroidery panel and commands to move objects earlier or later, so thread changes,
   layering and travel can be planned.

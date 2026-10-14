@@ -431,6 +431,7 @@ pub fn fill(polys: &[Vec<Point>], rule: FillRule, angle: f64, spacing: f64, len:
     // Turn the shape so the rows run along x (y down: page counter-clockwise is a negative turn).
     let rot = Affine::rotate(angle.to_radians());
     let inv = rot.inverse();
+    let shape = polys;
     let polys: Vec<Vec<Point>> = polys.iter().map(|p| p.iter().map(|q| rot * *q).collect()).collect();
     let (mut y0, mut y1, mut x0, mut x1) = (f64::INFINITY, f64::NEG_INFINITY, f64::INFINITY, f64::NEG_INFINITY);
     for p in polys.iter().flatten() {
@@ -489,7 +490,158 @@ pub fn fill(polys: &[Vec<Point>], rule: FillRule, angle: f64, spacing: f64, len:
             out.push(run.into_iter().map(|p| inv * p).collect());
         }
     }
-    Ok(out)
+    Ok(route(shape, rule, out, len))
+}
+
+/// The longest walk along a fill's outline between two of its parts, mm: further, the needle
+/// jumps (and trims) instead.
+const WALK_MAX: f64 = 40.0;
+/// Travel stitch length, mm.
+const TRAVEL_LEN: f64 = 2.0;
+
+/// The point of ring `only` (any ring when none) of the outline `polys` nearest `p`: (ring,
+/// distance along the ring from its first point, distance from `p`).
+fn on_outline(polys: &[Vec<Point>], p: Point, only: Option<usize>) -> Option<(usize, f64, f64)> {
+    let mut best: Option<(f64, usize, f64)> = None;
+    for (r, ring) in polys.iter().enumerate().filter(|(r, _)| only.is_none_or(|o| o == *r)) {
+        let n = ring.len();
+        let mut along = 0.0;
+        for k in 0..n {
+            let (Some(&a), Some(&b)) = (ring.get(k), ring.get((k + 1) % n)) else { continue };
+            let e = b - a;
+            let l2 = e.hypot2();
+            let t = if l2 > 0.0 { ((p - a).dot(e) / l2).clamp(0.0, 1.0) } else { 0.0 };
+            let d = p.distance(a + e * t);
+            if best.is_none_or(|(bd, _, _)| d < bd) {
+                best = Some((d, r, along + t * l2.sqrt()));
+            }
+            along += l2.sqrt();
+        }
+    }
+    best.map(|(d, r, s)| (r, s, d))
+}
+
+/// The outline of ring `ring` from distance `from` to `to` along it, the shorter way round.
+fn walk(polys: &[Vec<Point>], ring: usize, from: f64, to: f64) -> Option<Vec<Point>> {
+    let poly = polys.get(ring)?;
+    let n = poly.len();
+    let lens: Vec<f64> = (0..n).map(|k| poly.get(k).zip(poly.get((k + 1) % n)).map_or(0.0, |(a, b)| a.distance(*b))).collect();
+    let total: f64 = lens.iter().sum();
+    if total <= 0.0 {
+        return None;
+    }
+    let forward = (to - from).rem_euclid(total);
+    let (dist, dir) = if forward <= total - forward { (forward, 1.0) } else { (total - forward, -1.0) };
+    // Points at distance `s` along the ring.
+    let at = |s: f64| -> Option<Point> {
+        let mut s = s.rem_euclid(total);
+        for k in 0..n {
+            let l = lens.get(k).copied().unwrap_or(0.0);
+            if s <= l || k == n - 1 {
+                let (a, b) = (*poly.get(k)?, *poly.get((k + 1) % n)?);
+                return Some(if l > 0.0 { a.lerp(b, (s / l).min(1.0)) } else { a });
+            }
+            s -= l;
+        }
+        None
+    };
+    // Step along, keeping the ring's corners.
+    let mut out = vec![at(from)?];
+    let mut s = 0.0;
+    let mut cum = vec![0.0];
+    for l in &lens {
+        cum.push(cum.last().copied().unwrap_or(0.0) + l);
+    }
+    let mut corners: Vec<f64> = cum
+        .iter()
+        .map(|c| if dir > 0.0 { (c - from).rem_euclid(total) } else { (from - c).rem_euclid(total) })
+        .filter(|d| *d > 1e-9 && *d < dist)
+        .collect();
+    corners.sort_by(f64::total_cmp);
+    for d in corners {
+        if d > s {
+            out.push(at(from + dir * d)?);
+            s = d;
+        }
+    }
+    out.push(at(from + dir * dist)?);
+    Some(out)
+}
+
+/// Join a fill's separate parts (`lanes`, each sewn without a jump) into as few runs as can be:
+/// nearest part next (sewn backward when its far end is nearer), reached by a straight run of
+/// stitches when that stays inside the shape (the rows sewn next cover it), else by a walk along
+/// the outline when both ends lie on the same outline and the walk is short. Otherwise the part
+/// starts a run of its own (the needle jumps there).
+fn route(polys: &[Vec<Point>], rule: FillRule, lanes: Vec<Vec<Point>>, len: f64) -> Vec<Vec<Point>> {
+    let mut lanes: Vec<Vec<Point>> = lanes.into_iter().filter(|l| l.len() > 1).collect();
+    let mut out: Vec<Vec<Point>> = vec![];
+    let travel_len = TRAVEL_LEN.min(len);
+    while !lanes.is_empty() {
+        let at = out.last().and_then(|r| r.last()).copied();
+        // The nearest part, by either end.
+        let pick = lanes
+            .iter()
+            .enumerate()
+            .flat_map(|(i, l)| {
+                let d = |p: Option<&Point>| match (at, p) {
+                    (Some(a), Some(p)) => a.distance(*p),
+                    _ => 0.0,
+                };
+                [(i, false, d(l.first())), (i, true, d(l.last()))]
+            })
+            .min_by(|a, b| a.2.total_cmp(&b.2));
+        let Some((i, backward, _)) = pick else { break };
+        let mut lane = lanes.remove(i);
+        if backward {
+            lane.reverse();
+        }
+        let (Some(from), Some(&to)) = (at, lane.first()) else {
+            out.push(lane);
+            continue;
+        };
+        // Checked every 0.3 mm: a narrow notch mustn't slip between the checks.
+        let checks = ((from.distance(to) / 0.3).ceil() as usize).clamp(2, 4000);
+        let inside_line = (1..checks).all(|k| inside(polys, rule, from.lerp(to, k as f64 / checks as f64)));
+        let path = if from.distance(to) < 1e-9 || inside_line {
+            Some(vec![from, to])
+        } else {
+            // Along one of the outlines: straight to it, along it, straight off it, each straight
+            // leg inside the shape; the shortest such way.
+            let straight = |a: Point, b: Point| {
+                let n = ((a.distance(b) / 0.3).ceil() as usize).clamp(1, 4000);
+                (1..n).all(|k| inside(polys, rule, a.lerp(b, k as f64 / n as f64)))
+            };
+            let length = |w: &[Point]| w.windows(2).map(|p| p[0].distance(p[1])).sum::<f64>();
+            (0..polys.len())
+                .filter_map(|ring| {
+                    let (_, sa, _) = on_outline(polys, from, Some(ring))?;
+                    let (_, sb, _) = on_outline(polys, to, Some(ring))?;
+                    let mut w = walk(polys, ring, sa, sb)?;
+                    let (&on, &off) = (w.first()?, w.last()?);
+                    if !straight(from, on) || !straight(off, to) {
+                        return None;
+                    }
+                    w.insert(0, from);
+                    w.push(to);
+                    Some(w)
+                })
+                .filter(|w| length(w) <= WALK_MAX)
+                .min_by(|a, b| length(a).total_cmp(&length(b)))
+        };
+        match (path, out.last_mut()) {
+            (Some(p), Some(run)) => {
+                // The travel as running stitches along it (its corners kept, no stitch longer than
+                // the travel length), then the part.
+                for q in p.into_iter().skip(1) {
+                    sew(run, q, travel_len);
+                }
+                run.extend(lane.into_iter().skip(1));
+            }
+            _ => out.push(lane),
+        }
+    }
+    out
 }
 
 /// Is `p` inside the area `polys` fill (or within 0.05 mm of its edge)?
