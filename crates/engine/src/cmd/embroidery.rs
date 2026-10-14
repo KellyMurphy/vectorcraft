@@ -21,7 +21,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Stitch Settings",
             [],
             None,
-            "{type?: auto|running|bean|satin|zigzag|satinShape|fill|manual (auto: by stroke width, thinUnder?: mm (0.2–3; 1) → bean outline, wideOver?: mm (2–12; 7) → fill with a satin border, else satin shape) (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag, satin shape, zigzag stitch or fill row spacing, 0.1–10; satin and fill 0.4, zigzag 2), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column or zigzag, 0.3–12; satin: the stroke width, zigzag: 3), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), pull?: mm (satin and satin shape pull compensation, 0–3; 0), underlay?: none|center|edge|zigzag (satin) | none|center (satin shape) | none|fill (fill), stagger?: 2–8 (fill rows before the needle holes line up again; 3), passes?: 3|5|7|9 (bean; 3), border?: mm (fill: a satin border over the edges, 0.5–6) | null (none), trimBefore?: bool, trimAfter?: bool (cut the thread before / after the object, however close the next stitch), rails?: bool (satin: between the object's two longest subpaths as its edges, other subpaths crossing both as rungs setting the stitch direction), ids?} stitch the paths, compound paths and type objects in ids or the selection (groups: those inside; type is sewn letter by letter, each letter in its characters' colour: use auto for lettering), as one undo step; null resets length, spacing, width, thread, pull, stagger or passes to the default → {changed}",
+            "{type?: auto|running|bean|satin|zigzag|satinShape|fill|manual (auto: by stroke width, thinUnder?: mm (0.2–3; 1) → bean outline, wideOver?: mm (2–12; 7) → fill with a satin border, else satin shape) (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag, satin shape, zigzag stitch or fill row spacing, 0.1–10; satin and fill 0.4, zigzag 2), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column or zigzag, 0.3–12; satin: the stroke width, zigzag: 3), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), pull?: mm (satin and satin shape pull compensation, 0–3; 0), underlay?: none|center|edge|zigzag (satin) | none|center (satin shape) | none|fill (fill), stagger?: 2–8 (fill rows before the needle holes line up again; 3), passes?: 3|5|7|9 (bean; 3), border?: mm (fill: a satin border over the edges, 0.5–6) | null (none), motif?: diamonds|waves|circles|scales|herringbone | null (fill: a motif carved into the fill, its needle points on the motif's lines), motifSize?: mm (3–60; 10), trimBefore?: bool, trimAfter?: bool (cut the thread before / after the object, however close the next stitch), rails?: bool (satin: between the object's two longest subpaths as its edges, other subpaths crossing both as rungs setting the stitch direction), ids?} stitch the paths, compound paths and type objects in ids or the selection (groups: those inside; type is sewn letter by letter, each letter in its characters' colour: use auto for lettering), as one undo step; null resets length, spacing, width, thread, pull, stagger or passes to the default → {changed}",
             has_doc,
             set
         ),
@@ -48,7 +48,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Embroidery Info",
             [],
             None,
-            "{ids?} → {design: {objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings}, setup: {trimJumpsOver, stitchMovesUnder} (embroidery.setup), selection: {stitched, unstitched, type, length, spacing, angle, width, thread, pull, underlay, stagger, passes, border, thinUnder, wideOver, rails, trimBefore, trimAfter} (each null when the stitched objects differ, or none is)}",
+            "{ids?} → {design: {objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings}, setup: {trimJumpsOver, stitchMovesUnder} (embroidery.setup), selection: {stitched, unstitched, type, length, spacing, angle, width, thread, pull, underlay, stagger, passes, border, motif, motifSize, thinUnder, wideOver, rails, trimBefore, trimAfter} (each null when the stitched objects differ, or none is)}",
             has_doc,
             info
         ),
@@ -115,6 +115,8 @@ struct Edits {
     trim_before: Option<bool>,
     trim_after: Option<bool>,
     rails: Option<bool>,
+    motif: Option<Option<String>>,
+    motif_size: Option<Option<f64>>,
     border: Option<Option<f64>>,
     thin_under: Option<Option<f64>>,
     wide_over: Option<Option<f64>>,
@@ -179,6 +181,17 @@ impl Edits {
             wide_over: measure(p, "wideOver", StitchSettings::WIDE)?,
             trim_after: flag(p, "trimAfter")?,
             rails: flag(p, "rails")?,
+            motif: match p.get("motif") {
+                None => None,
+                Some(Value::Null) => Some(None),
+                Some(v) => {
+                    let id = v.as_str().map(str::to_ascii_lowercase).filter(|id| vectorcraft_embroidery::motifs::MOTIFS.contains(&id.as_str()));
+                    Some(Some(
+                        id.ok_or_else(|| bad(SET, format!("`motif` must be one of {} or null", vectorcraft_embroidery::motifs::MOTIFS.join(", "))))?,
+                    ))
+                }
+            },
+            motif_size: measure(p, "motifSize", StitchSettings::MOTIF_SIZE)?,
             length: measure(p, "length", StitchSettings::LENGTH)?,
             spacing: measure(p, "spacing", StitchSettings::SPACING)?,
             width: measure(p, "width", StitchSettings::WIDTH)?,
@@ -230,6 +243,12 @@ impl Edits {
         }
         if let Some(v) = self.rails {
             s.rails = v;
+        }
+        if let Some(v) = &self.motif {
+            s.motif.clone_from(v);
+        }
+        if let Some(v) = self.motif_size {
+            s.motif_size = v;
         }
         if let Some(v) = self.trim_before {
             s.trim_before = v;
@@ -377,6 +396,8 @@ fn info(s: &mut Session, p: &Value) -> Result<Value> {
         "thinUnder": same(all.iter().map(|s| s.auto_thresholds().0)),
         "wideOver": same(all.iter().map(|s| s.auto_thresholds().1)),
         "rails": same(all.iter().map(|s| s.rails)),
+        "motif": same(all.iter().map(|s| s.motif.clone())),
+        "motifSize": same(all.iter().map(|s| s.motif_size())),
         "trimBefore": same(all.iter().map(|s| s.trim_before)),
         "trimAfter": same(all.iter().map(|s| s.trim_after)),
     });

@@ -3802,3 +3802,13 @@ axis	Both	Обидві
 # Embroidery: satin rails
 	Between Rails	Між напрямними
 	The object's two paths are the column's edges; lines crossing both set the stitch direction	Два контури об’єкта — краї стовпчика; лінії, що перетинають обидва, задають напрямок стібків
+
+# Embroidery: carved motifs
+	Diamonds	Ромби
+	Waves	Хвилі
+	Circles	Кола
+	Scales	Луска
+	Herringbone	Ялинка
+	Motif	Мотив
+	Motif Size:	Розмір мотиву:
+	How large one repeat of the motif is	Розмір одного повтору мотиву

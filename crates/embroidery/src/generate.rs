@@ -444,6 +444,21 @@ pub fn fill_underlay(polys: &[Vec<Point>], rule: FillRule, angle: f64) -> Result
 /// brick pattern, 3: tatami…). Rows that touch are sewn as one
 /// run, back and forth; separate parts of the shape become separate runs.
 pub fn fill(polys: &[Vec<Point>], rule: FillRule, angle: f64, spacing: f64, len: f64, stagger: u8) -> Result<Vec<Vec<Point>>, String> {
+    fill_carved(polys, rule, angle, spacing, len, stagger, &[])
+}
+
+/// [`fill`] carved with the motif segments `carve` (mm, page space; see [`crate::motifs`]): where
+/// a motif line crosses a row the needle goes down on it, and the row's own needle points too
+/// near it are left out, so the motif shows as a line of needle holes (an embossed pattern).
+pub fn fill_carved(
+    polys: &[Vec<Point>],
+    rule: FillRule,
+    angle: f64,
+    spacing: f64,
+    len: f64,
+    stagger: u8,
+    carve: &[(Point, Point)],
+) -> Result<Vec<Vec<Point>>, String> {
     let stagger = usize::from(stagger.max(1));
     if !(spacing.is_finite() && len.is_finite()) || spacing <= 0.0 || len <= 0.0 {
         return Ok(vec![]);
@@ -475,6 +490,27 @@ pub fn fill(polys: &[Vec<Point>], rule: FillRule, angle: f64, spacing: f64, len:
         y += spacing;
     }
     let row_y = |r: usize| y0 + spacing / 2.0 + r as f64 * spacing;
+    // Where the motif crosses each row (x, in row space), found per row from the rows each
+    // segment spans.
+    let mut marks: Vec<Vec<f64>> = vec![vec![]; spans.len()];
+    for &(a, b) in carve {
+        let (a, b) = (rot * a, rot * b);
+        if !(a.is_finite() && b.is_finite()) || (a.y - b.y).abs() < 1e-12 {
+            continue;
+        }
+        let (lo, hi) = (a.y.min(b.y), a.y.max(b.y));
+        let first = ((lo - y0 - spacing / 2.0) / spacing).ceil().max(0.0) as usize;
+        let last = ((hi - y0 - spacing / 2.0) / spacing).floor();
+        if last < 0.0 {
+            continue;
+        }
+        for r in first..=(last as usize).min(spans.len().saturating_sub(1)) {
+            let y = row_y(r);
+            if let Some(m) = marks.get_mut(r) {
+                m.push(a.x + (y - a.y) * (b.x - a.x) / (b.y - a.y));
+            }
+        }
+    }
     // Lanes: from the first unsewn span, take the overlapping span of each next row.
     let mut used: Vec<Vec<bool>> = spans.iter().map(|r| vec![false; r.len()]).collect();
     let mut out = vec![];
@@ -487,7 +523,7 @@ pub fn fill(polys: &[Vec<Point>], rule: FillRule, angle: f64, spacing: f64, len:
                     *u = true;
                 }
                 let (from, to) = if forward { (a, b) } else { (b, a) };
-                row(&mut run, row_y(r), from, to, len, (r % stagger) as f64 / stagger as f64);
+                row(&mut run, row_y(r), from, to, len, (r % stagger) as f64 / stagger as f64, marks.get(r).map_or(&[][..], Vec::as_slice));
                 // The next row starts at the end nearest this row's end; a join longer than two
                 // stitches would cross outside the shape (round a hole or notch): a new run instead.
                 let next = spans.get(r + 1).and_then(|s| {
@@ -710,34 +746,57 @@ fn sew(run: &mut Vec<Point>, p: Point, len: f64) {
             run.push(last.lerp(p, k as f64 / steps as f64));
         }
     }
-    run.push(p);
+    // Already there (a walk reaching a corner it stands on): no stitch.
+    if run.last().is_none_or(|l| l.distance(p) > 1e-9) {
+        run.push(p);
+    }
 }
 
 /// One fill row from `from` to `to` at `y`, joined to `run` (whose end is where the needle is),
 /// in stitches no longer than `len`: the row's inner needle points sit on a grid shifted by
-/// `shift` of a stitch.
-fn row(run: &mut Vec<Point>, y: f64, from: f64, to: f64, len: f64, shift: f64) {
+/// `shift` of a stitch, and on the motif `marks` (x where a carving line crosses the row), the
+/// grid points near a mark left out.
+fn row(run: &mut Vec<Point>, y: f64, from: f64, to: f64, len: f64, shift: f64, marks: &[f64]) {
     sew(run, Point::new(from, y), len);
     let offset = shift * len;
     let margin = (len * 0.25).max(0.3);
+    let gap = (len * 0.3).clamp(0.3, 0.8);
     let (lo, hi) = (from.min(to), from.max(to));
+    let marks: Vec<f64> = marks.iter().copied().filter(|m| *m > lo + margin && *m < hi - margin).collect();
     let first = ((lo + margin - offset) / len).ceil();
     let last = ((hi - margin - offset) / len).floor();
-    if last >= first {
-        let mut grid: Vec<f64> = (first as i64..=last as i64).map(|k| k as f64 * len + offset).collect();
-        if to < from {
-            grid.reverse();
-        }
-        for x in grid {
-            sew(run, Point::new(x, y), len);
-        }
+    let mut points: Vec<f64> = if last >= first {
+        (first as i64..=last as i64).map(|k| k as f64 * len + offset).filter(|x| marks.iter().all(|m| (x - m).abs() >= gap)).collect()
+    } else {
+        vec![]
+    };
+    points.extend(marks);
+    points.sort_by(f64::total_cmp);
+    if to < from {
+        points.reverse();
+    }
+    for x in points {
+        sew(run, Point::new(x, y), len);
     }
     sew(run, Point::new(to, y), len);
 }
 
 #[cfg(test)]
 pub(crate) fn tests_inside(polys: &[Vec<Point>], p: Point) -> bool {
-    // On the edge counts as inside: probe a hair either side.
+    // On the outline counts as inside (corners included, however sharp).
+    let on_edge = polys.iter().any(|poly| {
+        let n = poly.len();
+        (0..n).any(|k| {
+            let (a, b) = (poly[k], poly[(k + 1) % n]);
+            let e = b - a;
+            let t = if e.hypot2() > 0.0 { ((p - a).dot(e) / e.hypot2()).clamp(0.0, 1.0) } else { 0.0 };
+            p.distance(a + e * t) < 0.05
+        })
+    });
+    if on_edge {
+        return true;
+    }
+    // Else probe a hair either side.
     [(0.0, 0.0), (0.0, 0.05), (0.0, -0.05), (0.05, 0.0), (-0.05, 0.0)]
         .iter()
         .any(|&(dx, dy)| inside(polys, FillRule::NonZero, Point::new(p.x + dx, p.y + dy)))

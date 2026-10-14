@@ -17,7 +17,7 @@ Select paths or compound paths (or groups holding them) and choose **Object › 
 | Satin Column | A zigzag centred on the path, as wide as the stroke (borders, lettering strokes). **Between Rails**: the object's two longest subpaths are the column's edges and the satin spans between them, as wide as they are apart (columns that swell and taper); other subpaths crossing both are rungs, each setting the stitch direction where it crosses. Draw the two edges, join them (Object › Compound Path) and tick Between Rails. | `width` (the stroke width, else 3 mm), `spacing` (density, 0.4 mm), `pull` (pull compensation, 0 mm), `underlay` (none, center, edge, zigzag), `rails` (off) |
 | Zigzag Stitch | An open zigzag along the path, swinging side to side (decorative lines, appliqué edges). Corners fan like a satin's. | `width` (3 mm; not the stroke), `spacing` (between points, 2 mm) |
 | Satin Shape | Satin that follows a closed shape's strokes from edge to edge, curving with them (lettering, outlined type, swashes). The shape's centre lines are found automatically; each zig reaches the shape's edges either side, so thick and thin strokes keep their contrast. | `spacing` (density, 0.4 mm), `pull` (0 mm), `underlay` (none, center) |
-| Fill | Rows of staggered running stitches covering the shape (tatami). Holes and separate parts follow the fill rule. | `angle` (0°), `spacing` (density, 0.4 mm), `length` (4 mm), `stagger` (pattern: 2 brick, 3–8 tatami; 3), `underlay` (none, fill), `border` (a satin border over the edges, 0.5–6 mm; none) |
+| Fill | Rows of staggered running stitches covering the shape (tatami). Holes and separate parts follow the fill rule. | `angle` (0°), `spacing` (density, 0.4 mm), `length` (4 mm), `stagger` (pattern: 2 brick, 3–8 tatami; 3), `motif` (a carved pattern: diamonds, waves, circles, scales, herringbone; none) and `motifSize` (its repeat, 3–60 mm; 10), `underlay` (none, fill), `border` (a satin border over the edges, 0.5–6 mm; none) |
 | Manual Stitch | The needle goes down at every anchor, as drawn. Imported designs use it. | — |
 
 **Window › Embroidery** shows the same settings for the selection: the stitch type, the thread, and the
@@ -30,7 +30,13 @@ size, trims and jumps, threads) with a Stitch Preview switch and **Export DST…
 compensation** sews a satin column wider than drawn, because the thread pulls the fabric in.
 
 The fill **pattern** sets how many rows the stitches take before their needle holes line up again: 2 makes a
-brick pattern, 3 to 8 make tatami patterns with longer diagonals.
+brick pattern, 3 to 8 make tatami patterns with longer diagonals. The same menu has **carved motifs**
+(Diamonds, Waves, Circles, Scales, Herringbone): the motif repeats across the fill, every Motif Size, and
+where its lines cross a row the needle goes down on them (the row's own needle points near them are left
+out), so the motif shows in the fill as lines of needle holes, an embossed pattern, while the fill stays
+one even layer. The motifs are drawn in code. A motif line running nearly along the rows crosses few of
+them, so it shows faintly (the tops of the circles at a 0° fill): turn the fill's angle to change which parts
+show strongest.
 
 **Remove Stitches** takes the settings off. Settings are saved in the `.vectorcraft` file, and editing a
 path changes its stitches.
@@ -129,9 +135,8 @@ split. A trim is written as three short jumps that return to where they started.
 
 ## What's next
 
-- **E3, quality:** and fill patterns beyond tatami (motif and embossed fills: they will join the Fill section's
-  Pattern menu). Underlay, pull compensation, tie-ins and tie-offs, satin corners, fill routing, satin between rails
-  and the Embroidery panel are done.
+- **E3, quality: done.** Underlay, pull compensation, tie-ins and tie-offs, satin corners, fill routing, satin
+  between rails, carved motif fills and the Embroidery panel.
 - **Next (high priority): stitch order.** Set the order objects are sewn in, independent of their paint order:
   a reorderable list in the Embroidery panel and commands to move objects earlier or later, so thread changes,
   layering and travel can be planned.

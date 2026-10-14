@@ -2775,3 +2775,13 @@
 # Embroidery: satin rails
 	Between Rails	Entre trilhos
 	The object's two paths are the column's edges; lines crossing both set the stitch direction	Os dois demarcadores do objeto são as bordas da coluna; linhas que cruzam ambos definem a direção dos pontos
+
+# Embroidery: carved motifs
+	Diamonds	Losangos
+	Waves	Ondas
+	Circles	Círculos
+	Scales	Escamas
+	Herringbone	Espinha de peixe
+	Motif	Motivo
+	Motif Size:	Tamanho do motivo:
+	How large one repeat of the motif is	O tamanho de uma repetição do motivo

@@ -164,6 +164,13 @@ pub struct StitchSettings {
     /// Fill pattern: rows before the needle holes line up again (2: brick, 3: tatami…).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub stagger: Option<u8>,
+    /// Fill: a motif carved into the fill (see `vectorcraft_embroidery::motifs`: diamonds,
+    /// waves, circles, scales, herringbone), its needle points falling on the motif's lines.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub motif: Option<String>,
+    /// The carved motif's repeat, mm ([`StitchSettings::DEFAULT_MOTIF_SIZE`]).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub motif_size: Option<f64>,
     /// Bean stitch: how many times each stitch is sewn (odd).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub passes: Option<u8>,
@@ -243,6 +250,9 @@ impl StitchSettings {
     pub const DEFAULT_WIDE: f64 = 7.0;
     /// The border Auto gives wide shapes when none is set, mm.
     pub const DEFAULT_BORDER: f64 = 2.0;
+    /// Allowed carved motif repeats, mm.
+    pub const MOTIF_SIZE: std::ops::RangeInclusive<f64> = 3.0..=60.0;
+    pub const DEFAULT_MOTIF_SIZE: f64 = 10.0;
     /// Allowed fill border widths, mm.
     pub const BORDER: std::ops::RangeInclusive<f64> = 0.5..=6.0;
     /// Allowed pull compensation, mm.
@@ -286,6 +296,11 @@ impl StitchSettings {
     pub fn auto_thresholds(&self) -> (f64, f64) {
         let thin = clamp(self.thin_under, Self::DEFAULT_THIN, Self::THIN);
         (thin, clamp(self.wide_over, Self::DEFAULT_WIDE, Self::WIDE).max(thin))
+    }
+
+    /// The carved motif's repeat to sew with, mm.
+    pub fn motif_size(&self) -> f64 {
+        clamp(self.motif_size, Self::DEFAULT_MOTIF_SIZE, Self::MOTIF_SIZE)
     }
 
     /// The fill border width to sew, mm (none: no border).

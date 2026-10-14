@@ -13,6 +13,7 @@
 mod dst;
 pub mod generate;
 mod import;
+pub mod motifs;
 pub mod rails;
 pub mod skeleton;
 
@@ -512,7 +513,26 @@ fn sew(s: &StitchSettings, thread: [u8; 3], stroke_mm: f64, paths: &[&PathData],
                     Underlay::Fill => generate::fill_underlay(&polys, rule, s.angle()),
                     _ => Ok(vec![]),
                 };
-                match under.and_then(|u| Ok((u, generate::fill(&polys, rule, s.angle(), s.spacing(), s.length(), s.stagger())?))) {
+                // A carved motif over the shape's box (none when unknown or too fine to carve).
+                let carve = match s.motif.as_deref() {
+                    Some(id) => {
+                        let (mut lo, mut hi) = (Point::new(f64::INFINITY, f64::INFINITY), Point::new(f64::NEG_INFINITY, f64::NEG_INFINITY));
+                        for p in polys.iter().flatten() {
+                            lo = Point::new(lo.x.min(p.x), lo.y.min(p.y));
+                            hi = Point::new(hi.x.max(p.x), hi.y.max(p.y));
+                        }
+                        let segs = motifs::tiled(id, s.motif_size(), lo, hi);
+                        if segs.is_none() {
+                            b.plan
+                                .warnings
+                                .push(format!("the motif `{id}` can't be carved here (unknown, or too small for so large a fill): plain fill"));
+                        }
+                        segs.unwrap_or_default()
+                    }
+                    None => vec![],
+                };
+                let top = generate::fill_carved(&polys, rule, s.angle(), s.spacing(), s.length(), s.stagger(), &carve);
+                match under.and_then(|u| Ok((u, top?))) {
                     Ok((u, top)) => {
                         runs.extend(u.into_iter().chain(top));
                         // The border: a satin over each edge, sewn last so it covers the rows' ends.

@@ -3817,3 +3817,13 @@ axis	Both	Оба
 # Embroidery: satin rails
 	Between Rails	Между направляющими
 	The object's two paths are the column's edges; lines crossing both set the stitch direction	Два контура объекта — края столбика; линии, пересекающие оба, задают направление стежков
+
+# Embroidery: carved motifs
+	Diamonds	Ромбы
+	Waves	Волны
+	Circles	Круги
+	Scales	Чешуя
+	Herringbone	Ёлочка
+	Motif	Мотив
+	Motif Size:	Размер мотива:
+	How large one repeat of the motif is	Размер одного повтора мотива

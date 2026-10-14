@@ -743,3 +743,13 @@
 # Embroidery: satin rails
 	Between Rails	Mezi kolejnicemi
 	The object's two paths are the column's edges; lines crossing both set the stitch direction	Dvě cesty objektu jsou okraje sloupku; čáry protínající obě určují směr stehů
+
+# Embroidery: carved motifs
+	Diamonds	Kosočtverce
+	Waves	Vlny
+	Circles	Kruhy
+	Scales	Šupiny
+	Herringbone	Rybí kost
+	Motif	Motiv
+	Motif Size:	Velikost motivu:
+	How large one repeat of the motif is	Velikost jednoho opakování motivu

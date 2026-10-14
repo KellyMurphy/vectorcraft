@@ -3811,3 +3811,13 @@ theme	Appearance	外観
 # Embroidery: satin rails
 	Between Rails	レール間
 	The object's two paths are the column's edges; lines crossing both set the stitch direction	オブジェクトの2本のパスがコラムの両端になり、両方を横切る線がステッチの向きを決めます
+
+# Embroidery: carved motifs
+	Diamonds	ダイヤ
+	Waves	波
+	Circles	円
+	Scales	うろこ
+	Herringbone	ヘリンボーン
+	Motif	モチーフ
+	Motif Size:	モチーフのサイズ:
+	How large one repeat of the motif is	モチーフの1回の繰り返しの大きさ

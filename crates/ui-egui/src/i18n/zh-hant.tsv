@@ -3275,3 +3275,13 @@ axis	Both	兩者
 # Embroidery: satin rails
 	Between Rails	兩軌之間
 	The object's two paths are the column's edges; lines crossing both set the stitch direction	物件的兩條路徑是柱的兩邊;橫跨兩者的線決定針跡方向
+
+# Embroidery: carved motifs
+	Diamonds	菱形
+	Waves	波浪
+	Circles	圓圈
+	Scales	魚鱗
+	Herringbone	人字紋
+	Motif	圖樣
+	Motif Size:	圖樣大小:
+	How large one repeat of the motif is	圖樣一次重複的大小

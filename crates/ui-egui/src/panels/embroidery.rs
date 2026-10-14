@@ -256,14 +256,40 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
             mm(app, ui, tl!("Density:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between rows: smaller is denser"));
             mm(app, ui, tl!("Stitch Length:"), "length", num("length"), StitchSettings::LENGTH, tl!("How long each stitch is"));
             widgets::label_row(ui, tl!("Pattern:"), LABEL_W, |ui| {
+                // Brick and tatami patterns, then the carved motifs.
                 let rows: Vec<u8> = StitchSettings::STAGGER.collect();
-                let names: Vec<String> = rows.iter().map(|r| pattern_label(*r)).collect();
+                let mut names: Vec<String> = rows.iter().map(|r| pattern_label(*r)).collect();
+                names.extend(vectorcraft_embroidery::motifs::MOTIFS.iter().map(|m| motif_label(m).to_string()));
                 let labels: Vec<&str> = names.iter().map(String::as_str).collect();
-                let cur = sel["stagger"].as_u64().and_then(|s| u8::try_from(s).ok()).map(pattern_label).unwrap_or_default();
-                if let Some(n) = widgets::dropdown_names(ui, "emb-pattern", &cur, &labels, 150.0).and_then(|i| rows.get(i)) {
-                    set(app, json!({"stagger": n}));
+                let cur = match sel["motif"].as_str() {
+                    Some(m) => motif_label(m).to_string(),
+                    None if sel["motif"].is_null() && sel["stitched"].as_u64().is_some() => {
+                        sel["stagger"].as_u64().and_then(|s| u8::try_from(s).ok()).map(pattern_label).unwrap_or_default()
+                    }
+                    None => String::new(),
+                };
+                if let Some(i) = widgets::dropdown_names(ui, "emb-pattern", &cur, &labels, 150.0) {
+                    match rows.get(i) {
+                        Some(n) => set(app, json!({"stagger": n, "motif": null})),
+                        None => {
+                            if let Some(m) = vectorcraft_embroidery::motifs::MOTIFS.get(i - rows.len()) {
+                                set(app, json!({"motif": m}));
+                            }
+                        }
+                    }
                 }
             });
+            if sel["motif"].is_string() {
+                mm(
+                    app,
+                    ui,
+                    tl!("Motif Size:"),
+                    "motifSize",
+                    num("motifSize"),
+                    StitchSettings::MOTIF_SIZE,
+                    tl!("How large one repeat of the motif is"),
+                );
+            }
             underlay_row(app, ui, kind, sel);
             border_row(app, ui, sel);
         }
@@ -341,6 +367,18 @@ fn border_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
             }
         });
     });
+}
+
+/// A carved motif's name, translated.
+fn motif_label(id: &str) -> &'static str {
+    match id {
+        "diamonds" => tl!("Diamonds"),
+        "waves" => tl!("Waves"),
+        "circles" => tl!("Circles"),
+        "scales" => tl!("Scales"),
+        "herringbone" => tl!("Herringbone"),
+        _ => tl!("Motif"),
+    }
 }
 
 /// An underlay's name, translated.

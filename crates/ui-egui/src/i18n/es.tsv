@@ -3819,3 +3819,13 @@ axis	Both	Ambos
 # Embroidery: satin rails
 	Between Rails	Entre rieles
 	The object's two paths are the column's edges; lines crossing both set the stitch direction	Los dos trazados del objeto son los bordes de la columna; las líneas que cruzan ambos fijan la dirección de las puntadas
+
+# Embroidery: carved motifs
+	Diamonds	Rombos
+	Waves	Ondas
+	Circles	Círculos
+	Scales	Escamas
+	Herringbone	Espiga
+	Motif	Motivo
+	Motif Size:	Tamaño del motivo:
+	How large one repeat of the motif is	El tamaño de una repetición del motivo

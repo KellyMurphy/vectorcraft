@@ -634,6 +634,30 @@ fn dump_samples() {
         vec![n]
     });
     std::fs::write(dir.join("rails.dst"), write_dst(&plan(&d), "rails")).unwrap();
+    // One 30 mm square per carved motif.
+    let d = doc_with(|d| {
+        crate::motifs::MOTIFS
+            .iter()
+            .enumerate()
+            .map(|(i, m)| {
+                let x = i as f64 * 100.0;
+                let mut n = Node::path(
+                    d.alloc_id(),
+                    poly(&[(x, 0.0), (x + 85.0, 0.0), (x + 85.0, 85.0), (x, 85.0)], true),
+                    Appearance::basic(Paint::solid(Color::rgb8(30, 60, 140)), Paint::None, 0.0),
+                );
+                n.stitch = Some(Box::new(StitchSettings {
+                    motif: Some((*m).to_string()),
+                    motif_size: Some(10.0),
+                    spacing: Some(0.5),
+                    length: Some(4.0),
+                    ..StitchSettings::new(StitchKind::Fill)
+                }));
+                n
+            })
+            .collect()
+    });
+    std::fs::write(dir.join("motifs.dst"), write_dst(&plan(&d), "motifs")).unwrap();
 }
 
 /// Two lines `gap` pt apart in one thread, the first with `first`'s settings.
@@ -1138,4 +1162,57 @@ fn rails_on_a_single_path_warn_and_sew_along_it() {
     let p = plan_of(poly(&[(0.0, 0.0), (100.0, 0.0)], false), StitchSettings { rails: true, ..StitchSettings::new(StitchKind::Satin) });
     assert!(p.stats().stitches > 50);
     assert!(p.warnings.iter().any(|w| w.contains("Between Rails")), "{:?}", p.warnings);
+}
+
+#[test]
+fn fill_travel_on_a_sharp_corner_stays_on_the_outline() {
+    // Found by the concave-shape property test: travel walks through this quadrilateral's sharp
+    // corner, which must count as on the shape, without a zero-length stitch there.
+    let quad: Vec<Point> = [(0.858, 30.715), (43.499, 34.446), (57.380, 37.802), (54.374, 40.836)].iter().map(|&(x, y)| Point::new(x, y)).collect();
+    let runs = generate::fill(std::slice::from_ref(&quad), FillRule::NonZero, 0.0, 0.5, 3.0, 3).unwrap();
+    for r in &runs {
+        for w in r.windows(2) {
+            assert!(w[0].distance(w[1]) > 1e-9, "a zero-length stitch at {:?}", w[0]);
+            assert!(generate::tests_inside(std::slice::from_ref(&quad), w[0].lerp(w[1], 0.5)));
+        }
+    }
+}
+
+#[test]
+fn a_carved_motif_puts_needle_points_on_its_lines() {
+    let sq = poly(&[(0.0, 0.0), (113.4, 0.0), (113.4, 113.4), (0.0, 113.4)], true);
+    let plain = plan_of(sq.clone(), StitchSettings { length: Some(4.0), ..StitchSettings::new(StitchKind::Fill) });
+    let carved = plan_of(
+        sq,
+        StitchSettings { length: Some(4.0), motif: Some("diamonds".into()), motif_size: Some(10.0), ..StitchSettings::new(StitchKind::Fill) },
+    );
+    assert!(carved.warnings.is_empty(), "{:?}", carved.warnings);
+    // Needle points lie on the diamond lines (|x mod 10 - 5| + |y mod 10 - 5| = 5 for the
+    // diamond centred in each 10 mm tile): far more of them than in the plain fill.
+    let on_lines = |p: &Plan| {
+        p.needles
+            .iter()
+            .filter(|n| {
+                let (x, y) = (n.x.rem_euclid(10.0), n.y.rem_euclid(10.0));
+                ((x - 5.0).abs() + (y - 5.0).abs() - 5.0).abs() < 0.05
+            })
+            .count()
+    };
+    assert!(on_lines(&carved) > 3 * on_lines(&plain).max(1), "{} vs {}", on_lines(&carved), on_lines(&plain));
+    // And stitches stay sewable and inside.
+    for (_, r) in carved.runs() {
+        for w in r.windows(2) {
+            assert!(w[0].distance(w[1]) <= 4.0 + 1e-6);
+        }
+    }
+}
+
+#[test]
+fn an_unknown_motif_falls_back_to_a_plain_fill_with_a_warning() {
+    let p = plan_of(
+        poly(&[(0.0, 0.0), (60.0, 0.0), (60.0, 60.0), (0.0, 60.0)], true),
+        StitchSettings { motif: Some("stars".into()), ..StitchSettings::new(StitchKind::Fill) },
+    );
+    assert!(p.stats().stitches > 100);
+    assert!(p.warnings.iter().any(|w| w.contains("motif")));
 }

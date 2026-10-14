@@ -232,3 +232,15 @@ fn rails_are_set_per_object() {
     assert_eq!(info(&mut s)["selection"]["rails"], true);
     assert!(s.execute("embroidery.set", &json!({"rails": 1})).is_err());
 }
+
+#[test]
+fn carved_motifs_are_set_and_checked() {
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "fill", "motif": "Waves", "motifSize": 12})).unwrap();
+    let sel = &info(&mut s)["selection"];
+    assert_eq!((sel["motif"].clone(), sel["motifSize"].clone()), (json!("waves"), json!(12.0)));
+    assert!(s.execute("embroidery.set", &json!({"motif": "stars"})).is_err());
+    assert!(s.execute("embroidery.set", &json!({"motifSize": 1})).is_err());
+    s.execute("embroidery.set", &json!({"motif": null})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["motif"], Value::Null);
+}
