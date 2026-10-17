@@ -3754,7 +3754,6 @@ axis	Both	Оба
 	Distance between zigzags: smaller is denser	Расстояние между зигзагами: чем меньше, тем плотнее
 	Export DST…	Экспорт в DST…
 	How long each stitch is	Длина каждого стежка
-	Not Stitched	Без вышивки
 	Nothing is stitched yet.	Пока ничего не вышито.
 	Object color	Цвет объекта
 	Passes:	Проходы:
@@ -3762,7 +3761,6 @@ axis	Both	Оба
 	Pull Compensation:	Компенсация стягивания:
 	Select paths to stitch.	Выделите контуры для вышивки.
 	Sews the column this much wider, since the thread pulls the fabric in	Столбик шьётся шире на эту величину, так как нить стягивает ткань
-	Some selected objects aren't stitched.	Некоторые выделенные объекты не вышиты.
 	Stitch Length:	Длина стежка:
 	Stitch:	Стежок:
 	Stitches:	Стежки:
@@ -3850,8 +3848,6 @@ axis	Both	Оба
 	By Thread	По нити
 	Group the sewing order by thread colour, for fewer thread changes	Сгруппировать порядок вышивки по цвету нити, чтобы реже менять нить
 	Paint Order	Порядок слоёв
-	Sew the objects in paint order again	Снова вышивать объекты в порядке слоёв
-	Objects sewn later lie on top.	Объекты, вышитые позже, лежат сверху.
 	Sew by Thread	Вышивать по нити
 	Sew in Paint Order	Вышивать в порядке слоёв
 	Change Sew Order	Изменить порядок вышивки
@@ -3860,6 +3856,32 @@ axis	Both	Оба
 	Save Border Pattern…	Сохранить узорную кайму…
 	Remove Border Pattern	Удалить узорную кайму
 	Render Stitch Preview	Отрисовать предпросмотр стежков
+	Choose a stitch to sew the selection with.	Выберите стежок, которым вышить выделение.
+	Drag a row to move it. Objects sewn later lie on top.	Перетащите строку, чтобы переместить её. Объекты, вышитые позже, лежат сверху.
+	First object	Первый объект
+	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Задайте контурам стежки на панели «Вышивка»; они вышиваются в этом порядке.
+	How the needle holes line up from row to row, or a motif carved into the fill	Как проколы выстраиваются от ряда к ряду, или мотив, вырезанный в заливке
+	Last object	Последний объект
+	Next object	Следующий объект
+	Open a document to see its sewing order.	Откройте документ, чтобы увидеть порядок вышивки.
+	Previous object	Предыдущий объект
+	Sew Order…	Порядок вышивки…
+	Sew in paint order again (bottom first)	Снова вышивать в порядке рисования (снизу)
+	Some selected objects aren't stitched: choose a stitch for all of them.	У части выделенных объектов нет стежка: выберите стежок для всех.
+	Step through the design as it is sewn, and change the order	Пройти по дизайну в порядке вышивки и изменить порядок
+	Step through the sewing	Пройти по вышивке
+	Stitch	Стежок
+	The selection is no longer stitched	Выделение больше не вышивается
+	Thread	Нить
+	Picks a stitch for each shape (each letter) by how wide its strokes are.	Подбирает стежок для каждой фигуры (каждой буквы) по ширине её штрихов.
+	Single stitches along the path: outlines and details.	Одиночные стежки вдоль контура: обводки и детали.
+	Each stitch sewn three times: a bolder line.	Каждый стежок прошит трижды: более жирная линия.
+	A dense zigzag column along the path, as wide as the stroke.	Плотный зигзагообразный столбик вдоль контура, шириной с обводку.
+	An open zigzag along the path: decorative lines, appliqué edges.	Открытый зигзаг вдоль контура: декоративные линии, края аппликаций.
+	Satin that follows a shape's strokes from edge to edge: lettering.	Гладь, следующая штрихам фигуры от края до края: надписи.
+	Rows of stitches covering the shape, with a pattern.	Ряды стежков, покрывающие фигуру, с узором.
+	A border pattern repeated along the path.	Узорная кайма, повторяемая вдоль контура.
+	The needle goes down at every anchor, as drawn.	Игла опускается в каждой опорной точке, как нарисовано.
 	Check	Проверка
 	No problems found.	Проблем не найдено.
 	Only the first 30 are listed.	Показаны только первые 30.

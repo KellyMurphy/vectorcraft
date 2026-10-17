@@ -1735,8 +1735,15 @@ use vectorcraft_embroidery::preview::{FABRIC, JUMP_ALPHA, JUMP_WIDTH_PT, THREAD_
 #[derive(Clone, Debug)]
 pub struct StitchMemo {
     doc: std::sync::Arc<vectorcraft_doc::Document>,
-    plan: std::sync::Arc<vectorcraft_embroidery::Plan>,
-    findings: std::sync::Arc<Vec<vectorcraft_embroidery::check::Finding>>,
+    pub(crate) plan: std::sync::Arc<vectorcraft_embroidery::Plan>,
+    pub(crate) findings: std::sync::Arc<Vec<vectorcraft_embroidery::check::Finding>>,
+}
+
+/// The active document's stitch plan and findings, as Stitch Preview has them (made now if the
+/// document changed since), for panels that draw the design.
+pub(crate) fn stitch_memo(app: &mut VectorcraftApp) -> Option<StitchMemo> {
+    let doc = app.session.active()?.doc.clone();
+    Some(stitch_plan(&app.session, &mut app.ui.stitch_cache, &doc).clone())
 }
 
 fn stitch_plan<'a>(

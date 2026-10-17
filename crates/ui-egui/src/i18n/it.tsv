@@ -3756,7 +3756,6 @@ axis	Both	Entrambi
 	Distance between zigzags: smaller is denser	Distanza tra gli zigzag: più piccola, più fitta
 	Export DST…	Esporta DST…
 	How long each stitch is	Lunghezza di ogni punto
-	Not Stitched	Non ricamato
 	Nothing is stitched yet.	Ancora nulla di ricamato.
 	Object color	Colore dell'oggetto
 	Passes:	Passate:
@@ -3764,7 +3763,6 @@ axis	Both	Entrambi
 	Pull Compensation:	Compensazione della trazione:
 	Select paths to stitch.	Seleziona dei tracciati da ricamare.
 	Sews the column this much wider, since the thread pulls the fabric in	Cuce la colonna più larga di tanto, perché il filo tira il tessuto
-	Some selected objects aren't stitched.	Alcuni oggetti selezionati non sono ricamati.
 	Stitch Length:	Lunghezza punto:
 	Stitch:	Punto:
 	Stitches:	Punti:
@@ -3852,8 +3850,6 @@ axis	Both	Entrambi
 	By Thread	Per filo
 	Group the sewing order by thread colour, for fewer thread changes	Raggruppa l'ordine di cucitura per colore del filo, per meno cambi di filo
 	Paint Order	Ordine di sovrapposizione
-	Sew the objects in paint order again	Cuci di nuovo gli oggetti in ordine di sovrapposizione
-	Objects sewn later lie on top.	Gli oggetti cuciti dopo stanno sopra.
 	Sew by Thread	Cuci per filo
 	Sew in Paint Order	Cuci in ordine di sovrapposizione
 	Change Sew Order	Cambia ordine di cucitura
@@ -3862,6 +3858,32 @@ axis	Both	Entrambi
 	Save Border Pattern…	Salva bordo a motivo…
 	Remove Border Pattern	Rimuovi bordo a motivo
 	Render Stitch Preview	Esegui rendering anteprima punti
+	Choose a stitch to sew the selection with.	Scegli un punto con cui ricamare la selezione.
+	Drag a row to move it. Objects sewn later lie on top.	Trascina una riga per spostarla. Gli oggetti ricamati dopo stanno sopra.
+	First object	Primo oggetto
+	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Assegna punti ai tracciati nel pannello Ricamo; vengono ricamati in questo ordine.
+	How the needle holes line up from row to row, or a motif carved into the fill	Come si allineano i fori dell’ago da una fila all’altra, o un motivo inciso nel riempimento
+	Last object	Ultimo oggetto
+	Next object	Oggetto successivo
+	Open a document to see its sewing order.	Apri un documento per vedere il suo ordine di cucitura.
+	Previous object	Oggetto precedente
+	Sew Order…	Ordine di cucitura…
+	Sew in paint order again (bottom first)	Ricama di nuovo nell’ordine di disegno (dal basso)
+	Some selected objects aren't stitched: choose a stitch for all of them.	Alcuni oggetti selezionati non hanno un punto: scegline uno per tutti.
+	Step through the design as it is sewn, and change the order	Scorri il disegno come viene ricamato e cambia l’ordine
+	Step through the sewing	Scorri il ricamo
+	Stitch	Punto
+	The selection is no longer stitched	La selezione non è più ricamata
+	Thread	Filo
+	Picks a stitch for each shape (each letter) by how wide its strokes are.	Sceglie un punto per ogni forma (ogni lettera) in base alla larghezza dei suoi tratti.
+	Single stitches along the path: outlines and details.	Punti singoli lungo il tracciato: contorni e dettagli.
+	Each stitch sewn three times: a bolder line.	Ogni punto cucito tre volte: una linea più marcata.
+	A dense zigzag column along the path, as wide as the stroke.	Una colonna fitta a zigzag lungo il tracciato, larga quanto la traccia.
+	An open zigzag along the path: decorative lines, appliqué edges.	Uno zigzag aperto lungo il tracciato: linee decorative, bordi di applicazioni.
+	Satin that follows a shape's strokes from edge to edge: lettering.	Satin che segue i tratti di una forma da bordo a bordo: lettering.
+	Rows of stitches covering the shape, with a pattern.	File di punti che coprono la forma, con un motivo.
+	A border pattern repeated along the path.	Un bordo a motivo ripetuto lungo il tracciato.
+	The needle goes down at every anchor, as drawn.	L’ago scende su ogni punto di ancoraggio, come disegnato.
 	Check	Controllo
 	No problems found.	Nessun problema trovato.
 	Only the first 30 are listed.	Sono elencati solo i primi 30.

@@ -3432,7 +3432,6 @@ axis	Both	两者
 	Distance between zigzags: smaller is denser	锯齿间距:越小越密
 	Export DST…	导出 DST…
 	How long each stitch is	每针的长度
-	Not Stitched	无针迹
 	Nothing is stitched yet.	尚无针迹。
 	Object color	对象颜色
 	Passes:	遍数:
@@ -3440,7 +3439,6 @@ axis	Both	两者
 	Pull Compensation:	拉力补偿:
 	Select paths to stitch.	选择要刺绣的路径。
 	Sews the column this much wider, since the thread pulls the fabric in	线会把布料拉紧,所以柱面缝得比画的宽这么多
-	Some selected objects aren't stitched.	部分选中对象没有针迹。
 	Stitch Length:	针距:
 	Stitch:	针迹:
 	Stitches:	针数:
@@ -3528,8 +3526,6 @@ axis	Both	两者
 	By Thread	按线色
 	Group the sewing order by thread colour, for fewer thread changes	按线的颜色归组缝制顺序,减少换线
 	Paint Order	绘制顺序
-	Sew the objects in paint order again	重新按绘制顺序缝制
-	Objects sewn later lie on top.	后缝的对象在上面。
 	Sew by Thread	按线色缝制
 	Sew in Paint Order	按绘制顺序缝制
 	Change Sew Order	更改缝制顺序
@@ -3538,6 +3534,32 @@ axis	Both	两者
 	Save Border Pattern…	存储图案边框…
 	Remove Border Pattern	删除图案边框
 	Render Stitch Preview	渲染针迹预览
+	Choose a stitch to sew the selection with.	选择一种针迹来缝制所选内容。
+	Drag a row to move it. Objects sewn later lie on top.	拖动一行可移动它。后缝的对象在上层。
+	First object	第一个对象
+	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	在“刺绣”面板中为路径设置针迹；它们按此顺序缝制。
+	How the needle holes line up from row to row, or a motif carved into the fill	针孔逐行如何对齐，或刻入填充的图案
+	Last object	最后一个对象
+	Next object	下一个对象
+	Open a document to see its sewing order.	打开文档以查看其缝制顺序。
+	Previous object	上一个对象
+	Sew Order…	缝制顺序…
+	Sew in paint order again (bottom first)	重新按绘制顺序（自下而上）缝制
+	Some selected objects aren't stitched: choose a stitch for all of them.	部分所选对象没有针迹：请为全部对象选择一种针迹。
+	Step through the design as it is sewn, and change the order	按缝制顺序逐步查看设计并更改顺序
+	Step through the sewing	逐步查看缝制
+	Stitch	针迹
+	The selection is no longer stitched	所选内容不再缝制
+	Thread	线
+	Picks a stitch for each shape (each letter) by how wide its strokes are.	按线条宽度为每个形状（每个字母）选择针迹。
+	Single stitches along the path: outlines and details.	沿路径的单针：轮廓和细节。
+	Each stitch sewn three times: a bolder line.	每针缝三次：更粗的线条。
+	A dense zigzag column along the path, as wide as the stroke.	沿路径的密集锯齿柱，与描边同宽。
+	An open zigzag along the path: decorative lines, appliqué edges.	沿路径的开放锯齿：装饰线、贴布边缘。
+	Satin that follows a shape's strokes from edge to edge: lettering.	沿形状线条从一边到另一边的缎纹：文字。
+	Rows of stitches covering the shape, with a pattern.	覆盖形状的成排针迹，带有图案。
+	A border pattern repeated along the path.	沿路径重复的图案边框。
+	The needle goes down at every anchor, as drawn.	按绘制在每个锚点落针。
 	Check	检查
 	No problems found.	未发现问题。
 	Only the first 30 are listed.	仅列出前 30 项。

@@ -21,9 +21,12 @@ Select paths or compound paths (or groups holding them) and choose **Object › 
 | Pattern Border | A border pattern repeated end to end along the path, bending with its curves (decorative borders, frames). See [Pattern borders](#pattern-borders). | `pattern` (waves, scallops, chain, diamonds; waves), `width` (the band, 1–40 mm; the pattern's own, 6 mm), `flip` (off), `length` (1.5 mm), `spacing` (satin parts, 0.4 mm) |
 | Manual Stitch | The needle goes down at every anchor, as drawn. Imported designs use it. | — |
 
-**Window › Embroidery** shows the same settings for the selection: the stitch type, the thread, and the
-selected type's parameters (Density is the spacing). Below them it shows the whole design (stitch count,
-size, trims and jumps, threads) with a Stitch Preview switch and **Export DST…**.
+**Window › Embroidery** shows the same for the selection: the stitch, chosen from a grid of stitched
+pictures (each drawn by the real generator, with a line saying what it does), the thread and trims, and the
+stitch's own settings (Density is the spacing). Fill patterns and border patterns are picked from pictures
+too, so Tatami 4 and Tatami 7 can be told apart before sewing. Below them the panel shows the whole design
+(stitch count, size, trims and jumps, threads) with a Stitch Preview switch, **Export DST…**, a button to
+the Sew Order panel, and the design checker's findings.
 
 **Underlay** is sewn before the top stitches to hold the fabric and lift the top stitches. For satin, it can be a
 **center walk** (a running stitch down the middle), an **edge walk** (just inside both edges) or a sparse
@@ -109,9 +112,12 @@ lines inside the shape. Only where neither works does the needle jump (and trim)
 
 ### Sew order
 
-Objects are sewn in paint order, bottom first, until you change it: the Embroidery panel's **Sew Order** lists
-the stitched objects as they are sewn (with their threads and stitches). Click one to select it; drag it up
-or down the list, or use **Sew First**, **Sew Earlier**, **Sew Later** and **Sew Last** on the selection.
+Objects are sewn in paint order, bottom first, until you change it. **Window › Sew Order** is the panel for
+it: a preview of the fabric with the design sewn up to any step (sewn objects in their threads, the current
+one bright, the rest still faint), a scrub bar and step buttons to go through the sewing, and the list of
+stitched objects as they are sewn, each with a picture of its stitches, its thread and stitch. Click one to
+select it (the preview steps to it); drag it up or down the list, or use **Sew First**, **Sew Earlier**,
+**Sew Later** and **Sew Last** on the selection.
 **By Thread** groups the order by thread colour (colours in the order they first come, each keeping its
 objects' order), so each thread is sewn once; **Paint Order** goes back. The order is saved with the
 document; objects added later are sewn after the ones in it, and deleted ones drop out. Whatever is sewn
@@ -120,7 +126,7 @@ paint order. Commands: `embroidery.order`, `embroidery.reorder {to: first|earlie
 `{order: [ids]}`, `embroidery.sortByThread`, `embroidery.resetOrder`.
 
 Objects are sewn one after another. Between objects the needle jumps, and it trims the thread
-before a long jump and before each colour change. The **Travel** settings (the Embroidery panel, or
+before a long jump and before each colour change. The **Travel** settings (the Sew Order panel, or
 `embroidery.setup`) belong to the document:
 
 - **Trim Jumps Over** (3 mm): a jump longer than this cuts the thread first. Turn it off to cut only at thread

@@ -2514,6 +2514,7 @@ pub fn menu_tree() -> Vec<(&'static str, Vec<Item>)> {
                 panel("CSS Properties", crate::panels::css_properties::ID),
                 panel("Document Info", "docInfo"),
                 panel("Embroidery", crate::panels::embroidery::ID),
+                panel("Sew Order", crate::panels::sew_order::ID),
                 panel("Flattener Preview", crate::panels::flattener_preview::ID),
                 panel("Gradient", "gradient"),
                 panel("Graphic Styles", "graphicStyles"),
@@ -3473,6 +3474,8 @@ pub fn menu_strings() -> std::collections::BTreeSet<String> {
     out.extend(crate::state::all_panels().map(|(_, label)| label.to_string()));
     // The embroidery settings' labels and tooltips (the Embroidery panel's generic rows).
     out.extend(vectorcraft_embroidery::params::PARAMS.iter().flat_map(|p| [p.label, p.help]).map(str::to_string));
+    // The stitch types' descriptions (the Embroidery panel's picker).
+    out.extend(vectorcraft_doc::StitchKind::ALL.iter().map(|k| crate::panels::embroidery::kind_blurb(*k).to_string()));
     // The design checker's rules (the Embroidery panel's Check list).
     out.extend(vectorcraft_embroidery::check::RULES.iter().flat_map(|r| [r.label, r.help]).map(str::to_string));
     out.extend(vectorcraft_tools::catalog::all_tools().map(|t| t.label.to_string()));

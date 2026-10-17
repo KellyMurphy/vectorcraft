@@ -36,6 +36,8 @@ pub mod pathfinder;
 pub mod pattern_options;
 pub mod properties;
 pub mod separations;
+pub mod sew_order;
+pub mod stitch_art;
 pub mod stroke;
 pub mod swatches;
 pub mod symbols;
@@ -129,6 +131,7 @@ pub fn show_icon_panel(app: &mut VectorcraftApp, ui: &mut Ui, id: &str) {
         flattener_preview::ID => flattener_preview::show(app, ui),
         "attributes" => attributes::show(app, ui),
         embroidery::ID => embroidery::show(app, ui),
+        sew_order::ID => sew_order::show(app, ui),
         "colorThemes" => color_themes::show(app, ui),
         links::ID => links::show(app, ui),
         asset_export::ID => asset_export::show(app, ui),

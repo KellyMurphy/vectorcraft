@@ -135,6 +135,7 @@ pub const ICON_PANELS: &[(&str, &str, &str)] = &[
     (crate::panels::flattener_preview::ID, "Flattener Preview", "eye"),
     ("attributes", "Attributes", "settings"),
     (crate::panels::embroidery::ID, "Embroidery", "spline"),
+    (crate::panels::sew_order::ID, "Sew Order", "dc-list-view"),
     ("colorThemes", "Color Themes", "sun"),
     (crate::panels::links::ID, "Links", "link"),
     (crate::panels::asset_export::ID, "Asset Export", "share-2"),

@@ -672,7 +672,6 @@
 	Distance between zigzags: smaller is denser	Vzdálenost klikatek: menší je hustší
 	Export DST…	Exportovat DST…
 	How long each stitch is	Délka každého stehu
-	Not Stitched	Bez vyšívání
 	Nothing is stitched yet.	Zatím není nic vyšito.
 	Object color	Barva objektu
 	Passes:	Průchody:
@@ -680,7 +679,6 @@
 	Pull Compensation:	Kompenzace stažení:
 	Select paths to stitch.	Vyberte cesty k vyšití.
 	Sews the column this much wider, since the thread pulls the fabric in	Sloupek se šije o tolik širší, protože nit stahuje látku
-	Some selected objects aren't stitched.	Některé vybrané objekty nejsou vyšité.
 	Stitch Length:	Délka stehu:
 	Stitch:	Steh:
 	Stitches:	Stehy:
@@ -774,8 +772,6 @@
 	By Thread	Podle nitě
 	Group the sewing order by thread colour, for fewer thread changes	Seskupit pořadí šití podle barvy nitě, pro méně výměn nitě
 	Paint Order	Pořadí vrstev
-	Sew the objects in paint order again	Šít objekty znovu v pořadí vrstev
-	Objects sewn later lie on top.	Objekty šité později leží navrchu.
 	Sew by Thread	Šít podle nitě
 	Sew in Paint Order	Šít v pořadí vrstev
 	Change Sew Order	Změnit pořadí šití
@@ -784,6 +780,32 @@
 	Save Border Pattern…	Uložit vzorový okraj…
 	Remove Border Pattern	Odstranit vzorový okraj
 	Render Stitch Preview	Vykreslit náhled stehů
+	Choose a stitch to sew the selection with.	Vyberte steh, kterým se výběr vyšije.
+	Drag a row to move it. Objects sewn later lie on top.	Přetažením řádku ho přesunete. Objekty vyšité později leží navrchu.
+	First object	První objekt
+	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Nastavte cestám stehy v panelu Výšivka; vyšívají se v tomto pořadí.
+	How the needle holes line up from row to row, or a motif carved into the fill	Jak se vpichy řadí z řady na řadu, nebo motiv vyrytý do výplně
+	Last object	Poslední objekt
+	Next object	Další objekt
+	Open a document to see its sewing order.	Otevřete dokument a uvidíte jeho pořadí vyšívání.
+	Previous object	Předchozí objekt
+	Sew Order…	Pořadí vyšívání…
+	Sew in paint order again (bottom first)	Znovu vyšívat v pořadí kreslení (odspodu)
+	Some selected objects aren't stitched: choose a stitch for all of them.	Některé vybrané objekty nemají steh: vyberte steh pro všechny.
+	Step through the design as it is sewn, and change the order	Projděte návrh tak, jak se vyšívá, a změňte pořadí
+	Step through the sewing	Procházení vyšívání
+	Stitch	Steh
+	The selection is no longer stitched	Výběr se už nevyšívá
+	Thread	Nit
+	Picks a stitch for each shape (each letter) by how wide its strokes are.	Vybere steh pro každý tvar (každé písmeno) podle šířky jeho tahů.
+	Single stitches along the path: outlines and details.	Jednotlivé stehy podél cesty: obrysy a detaily.
+	Each stitch sewn three times: a bolder line.	Každý steh prošitý třikrát: výraznější linka.
+	A dense zigzag column along the path, as wide as the stroke.	Hustý cikcakový sloupec podél cesty, široký jako tah.
+	An open zigzag along the path: decorative lines, appliqué edges.	Otevřený cikcak podél cesty: ozdobné linky, okraje aplikací.
+	Satin that follows a shape's strokes from edge to edge: lettering.	Satén sledující tahy tvaru od okraje k okraji: písmo.
+	Rows of stitches covering the shape, with a pattern.	Řady stehů pokrývající tvar, se vzorem.
+	A border pattern repeated along the path.	Vzorový okraj opakovaný podél cesty.
+	The needle goes down at every anchor, as drawn.	Jehla se vpíchne v každém kotevním bodu, jak je nakresleno.
 	Check	Kontrola
 	No problems found.	Nenalezeny žádné problémy.
 	Only the first 30 are listed.	Zobrazeno je jen prvních 30.

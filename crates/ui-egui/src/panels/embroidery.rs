@@ -1,15 +1,16 @@
-//! Embroidery panel (Window › Embroidery): the selected objects' stitch type, thread and the
-//! parameters of that type (satin density, width, pull compensation and underlay; fill angle,
-//! density, stitch length, pattern and underlay; bean passes), then the whole design's numbers
-//! with Stitch Preview and Export DST. Reads `embroidery.info`, acts through `embroidery.set` and
-//! `embroidery.clear`.
+//! Embroidery panel (Window › Embroidery): the selected objects' stitch, chosen from a grid of
+//! stitched pictures, their thread and trims, and the stitch's own settings (fill patterns and
+//! border patterns picked from pictures too); then the design's numbers with Stitch Preview and
+//! Export DST, and the design checker's findings. The sewing order has a panel of its own
+//! (`sew_order`). Reads `embroidery.info`, acts through `embroidery.set` and `embroidery.clear`.
 
-use egui::{Color32, Ui, vec2};
+use egui::{Color32, Rect, Sense, Stroke, Ui, vec2};
 use serde_json::{Value, json};
-use vectorcraft_doc::{EmbroiderySetup, NodeId, StitchKind, StitchSettings, Underlay};
+use vectorcraft_doc::{NodeId, StitchKind, StitchSettings, Underlay};
 
-use super::selection_len;
+use super::{selection_len, stitch_art};
 use crate::VectorcraftApp;
+use crate::theme::Tokens;
 use crate::widgets;
 
 pub const ID: &str = "embroidery";
@@ -34,9 +35,6 @@ fn info(app: &mut VectorcraftApp, ctx: &egui::Context) -> Value {
         return v;
     }
     let mut v = app.session.execute("embroidery.info", &json!({})).unwrap_or(Value::Null);
-    if let (Some(o), Ok(order)) = (v.as_object_mut(), app.session.execute("embroidery.order", &json!({}))) {
-        o.insert("sewOrder".into(), order);
-    }
     if let (Some(o), Ok(check)) = (v.as_object_mut(), app.session.execute("embroidery.check", &json!({}))) {
         o.insert("check".into(), check);
     }
@@ -86,65 +84,170 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let any = stitched + unstitched > 0;
     let kind = sel["type"].as_str().and_then(StitchKind::parse).filter(|_| unstitched == 0);
 
-    // Stitch type.
-    widgets::label_row(ui, tl!("Stitch:"), LABEL_W, |ui| {
-        ui.add_enabled_ui(any, |ui| {
-            let mut labels = vec![tl!("Not Stitched")];
-            labels.extend(StitchKind::ALL.iter().map(|k| tl!(k.label())));
-            let current = match (kind, stitched, unstitched) {
-                (Some(k), _, _) => tl!(k.label()),
-                (None, 0, _) => tl!("Not Stitched"),
-                _ => "",
-            };
-            match widgets::dropdown(ui, "emb-kind", current, &labels, 150.0) {
-                Some(0) => {
-                    app.run("embroidery.clear", json!({})).ok();
-                }
-                Some(i) => {
-                    if let Some(k) = StitchKind::ALL.get(i - 1) {
-                        set(app, json!({"type": k.id()}));
-                    }
-                }
-                None => {}
-            }
-        });
-    });
+    widgets::section_header(ui, tl!("Stitch"));
     if !any {
         widgets::dim_label(
             ui,
             if selection_len(app) == 0 { tl!("Select paths to stitch.") } else { tl!("Only paths, compound paths and type can be stitched.") },
         );
-    } else if stitched > 0 && unstitched == 0 {
-        thread_row(app, ui, sel);
-        trim_row(app, ui, sel);
-        widgets::divider(ui);
+    } else {
+        stitch_picker(app, ui, kind);
         match kind {
-            Some(k) => parameters(app, ui, k, sel),
+            Some(k) => {
+                widgets::dim_label(ui, tl!(kind_blurb(k)));
+            }
             None if sel["type"] == json!("unknown") => {
                 widgets::dim_label(
                     ui,
                     tl!("These stitch settings are from a newer VectorCraft: kept as they are, but not sewn. Choose a stitch to replace them."),
                 );
             }
+            None if stitched == 0 => {
+                widgets::dim_label(ui, tl!("Choose a stitch to sew the selection with."));
+            }
+            None if unstitched > 0 => {
+                widgets::dim_label(ui, tl!("Some selected objects aren't stitched: choose a stitch for all of them."));
+            }
             None => {
                 widgets::dim_label(ui, tl!("The selected objects use different stitches."));
             }
         }
-    } else if stitched > 0 {
-        widgets::dim_label(ui, tl!("Some selected objects aren't stitched."));
+        if stitched > 0 && widgets::flat_button(ui, tl!("Remove Stitches"), 110.0).on_hover_text(tl!("The selection is no longer stitched")).clicked()
+        {
+            app.run("embroidery.clear", json!({})).ok();
+        }
+    }
+    if stitched > 0 && unstitched == 0 {
+        widgets::divider(ui);
+        widgets::section_header(ui, tl!("Thread"));
+        thread_row(app, ui, sel);
+        trim_row(app, ui, sel);
+        if let Some(k) = kind {
+            widgets::divider(ui);
+            parameters(app, ui, k, sel);
+        }
     }
     // Manual stitches (an opened design), maybe with a shape over the stretch to take.
     if sel["type"] == json!(StitchKind::Manual.id()) {
         extract_row(app, ui);
     }
     widgets::divider(ui);
-    sew_order(app, ui, &info["sewOrder"]);
-    widgets::divider(ui);
-    travel(app, ui, &info["setup"]);
-    widgets::divider(ui);
     design(app, ui, &info["design"]);
     widgets::divider(ui);
     checks(app, ui, &info["check"]);
+}
+
+/// What each stitch type does, in a line (the picker's hint).
+pub(crate) fn kind_blurb(k: StitchKind) -> &'static str {
+    match k {
+        StitchKind::Auto => "Picks a stitch for each shape (each letter) by how wide its strokes are.",
+        StitchKind::Running => "Single stitches along the path: outlines and details.",
+        StitchKind::Bean => "Each stitch sewn three times: a bolder line.",
+        StitchKind::Satin => "A dense zigzag column along the path, as wide as the stroke.",
+        StitchKind::Zigzag => "An open zigzag along the path: decorative lines, appliqué edges.",
+        StitchKind::SatinShape => "Satin that follows a shape's strokes from edge to edge: lettering.",
+        StitchKind::Fill => "Rows of stitches covering the shape, with a pattern.",
+        StitchKind::PatternBorder => "A border pattern repeated along the path.",
+        StitchKind::Manual => "The needle goes down at every anchor, as drawn.",
+    }
+}
+
+/// The stitch types as a grid of stitched pictures; the selection's is outlined.
+fn stitch_picker(app: &mut VectorcraftApp, ui: &mut Ui, current: Option<StitchKind>) {
+    let cols = 3;
+    let gap = 4.0;
+    let tile_w = ((ui.available_width() - gap * (cols as f32 - 1.0)) / cols as f32).floor().max(60.0);
+    let size = vec2(tile_w, 58.0);
+    ui.scope(|ui| {
+        ui.spacing_mut().item_spacing = vec2(gap, gap);
+        for row in StitchKind::ALL.chunks(cols) {
+            ui.horizontal(|ui| {
+                for k in row {
+                    let thumb = stitch_art::kind(ui.ctx(), *k);
+                    let r = stitch_art::tile(ui, k.id(), size, &thumb, tl!(k.label()), current == Some(*k), false).on_hover_text(tl!(kind_blurb(*k)));
+                    if r.clicked() && current != Some(*k) {
+                        set(app, json!({"type": k.id()}));
+                    }
+                }
+            });
+        }
+    });
+}
+
+/// A picker button showing `thumb` and `label`, opening a grid of `entries` (label, picture) on
+/// click; the chosen entry's index. `dots` draws needle points (fill patterns).
+fn picture_picker(
+    ui: &mut Ui,
+    id: &str,
+    label: &str,
+    thumb: Option<&stitch_art::Thumb>,
+    entries: &[(String, stitch_art::Thumb)],
+    selected: Option<usize>,
+    dots: bool,
+) -> Option<usize> {
+    let t = Tokens::get(ui.ctx());
+    let (rect, resp) = ui.allocate_exact_size(vec2(170.0, 36.0), Sense::click());
+    let resp = resp.on_hover_cursor(egui::CursorIcon::PointingHand);
+    ui.painter().rect_filled(rect, 3.0, t.input);
+    ui.painter().rect_stroke(rect, 3.0, Stroke::new(1.0, t.input_border), egui::StrokeKind::Inside);
+    let pic = Rect::from_min_size(rect.min, vec2(56.0, rect.height()));
+    if let Some(th) = thumb {
+        stitch_art::draw(ui.painter(), pic, th, t.text, dots.then_some(t.text_dim));
+    }
+    ui.painter().text(pic.right_center() + vec2(6.0, 0.0), egui::Align2::LEFT_CENTER, label, egui::FontId::proportional(12.0), t.text);
+    let arrow = Rect::from_center_size(rect.right_center() - vec2(10.0, 0.0), vec2(8.0, 5.0));
+    ui.painter().add(egui::Shape::convex_polygon(vec![arrow.left_top(), arrow.right_top(), arrow.center_bottom()], t.text_dim, Stroke::NONE));
+    let cols = 3;
+    let size = vec2(96.0, 72.0);
+    egui::Popup::menu(&resp)
+        .id(egui::Id::new(("picture-picker", id)))
+        .show(|ui| {
+            ui.set_min_width(size.x * cols as f32 + 12.0);
+            ui.spacing_mut().item_spacing = vec2(4.0, 4.0);
+            let mut chosen = None;
+            for (r, row) in entries.chunks(cols).enumerate() {
+                ui.horizontal(|ui| {
+                    for (c, (name, th)) in row.iter().enumerate() {
+                        let i = r * cols + c;
+                        if stitch_art::tile(ui, (id, i), size, th, name, selected == Some(i), dots).clicked() {
+                            chosen = Some(i);
+                        }
+                    }
+                });
+            }
+            chosen
+        })
+        .and_then(|r| r.inner)
+}
+
+/// Fill › Pattern: brick, the tatami patterns and the carved motifs, each as a picture.
+fn fill_pattern_picker(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
+    let rows: Vec<u8> = StitchSettings::STAGGER.collect();
+    let ctx = ui.ctx().clone();
+    let mut entries: Vec<(String, stitch_art::Thumb)> = rows.iter().map(|r| (pattern_label(*r), stitch_art::fill_pattern(&ctx, *r, None))).collect();
+    entries.extend(vectorcraft_embroidery::motifs::MOTIFS.iter().map(|m| (motif_label(m).to_string(), stitch_art::fill_pattern(&ctx, 3, Some(m)))));
+    let selected = match sel["motif"].as_str() {
+        Some(m) => vectorcraft_embroidery::motifs::MOTIFS.iter().position(|x| *x == m).map(|i| i + rows.len()),
+        None if sel["motif"].is_null() => sel["stagger"].as_u64().and_then(|s| u8::try_from(s).ok()).and_then(|s| rows.iter().position(|r| *r == s)),
+        None => None,
+    };
+    ui.scope(|ui| {
+        widgets::label_row(ui, tl!("Pattern:"), LABEL_W, |ui| {
+            let (label, thumb) = selected.and_then(|i| entries.get(i)).map(|(l, th)| (l.clone(), Some(th))).unwrap_or_default();
+            if let Some(i) = picture_picker(ui, "fill-pattern", &label, thumb, &entries, selected, true) {
+                match rows.get(i) {
+                    Some(n) => set(app, json!({"stagger": n, "motif": null})),
+                    None => {
+                        if let Some(m) = vectorcraft_embroidery::motifs::MOTIFS.get(i - rows.len()) {
+                            set(app, json!({"motif": m}));
+                        }
+                    }
+                }
+            }
+        })
+    })
+    .response
+    .on_hover_text(tl!("How the needle holes line up from row to row, or a motif carved into the fill"));
 }
 
 /// The most findings the Check list shows.
@@ -189,107 +292,6 @@ fn checks(app: &mut VectorcraftApp, ui: &mut Ui, check: &Value) {
     }
 }
 
-/// A row of the sewing order dragged in the list: its index.
-#[derive(Clone, Copy)]
-struct OrderDrag(usize);
-
-/// The sewing order: the stitched objects as they are sewn (click selects, drag reorders), and
-/// buttons to move the selection, group by thread or go back to paint order.
-fn sew_order(app: &mut VectorcraftApp, ui: &mut Ui, order: &Value) {
-    let t = crate::theme::Tokens::get(ui.ctx());
-    widgets::section_header(ui, tl!("Sew Order"));
-    let rows: Vec<&Value> = order["order"].as_array().map(|a| a.iter().collect()).unwrap_or_default();
-    if rows.is_empty() {
-        widgets::dim_label(ui, tl!("Nothing is stitched yet."));
-        return;
-    }
-    let selected: Vec<u64> = app.session.active().map(|d| d.selection.objects.iter().map(|i| i.0).collect()).unwrap_or_default();
-    let ids: Vec<u64> = rows.iter().filter_map(|r| r["id"].as_u64()).collect();
-    let mut moved: Option<(usize, usize)> = None;
-    let mut select: Option<u64> = None;
-    egui::ScrollArea::vertical().id_salt("emb-order").max_height(168.0).show(ui, |ui| {
-        for (i, r) in rows.iter().enumerate() {
-            let id = r["id"].as_u64().unwrap_or(0);
-            let (rect, resp) = ui.allocate_exact_size(vec2(ui.available_width(), 22.0), egui::Sense::click_and_drag());
-            if resp.drag_started() {
-                egui::DragAndDrop::set_payload(ui.ctx(), OrderDrag(i));
-            }
-            if selected.contains(&id) {
-                ui.painter().rect_filled(rect, 0.0, t.row_selected);
-            } else if resp.hovered() {
-                ui.painter().rect_filled(rect, 0.0, t.hover);
-            }
-            // Where a dragged row would go: a line above this one.
-            if resp.dnd_hover_payload::<OrderDrag>().is_some() {
-                ui.painter().hline(rect.x_range(), rect.top(), egui::Stroke::new(2.0, t.accent));
-            }
-            if let Some(from) = resp.dnd_release_payload::<OrderDrag>() {
-                moved = Some((from.0, i));
-            }
-            let font = egui::FontId::proportional(12.0);
-            ui.painter().text(rect.left_center() + vec2(4.0, 0.0), egui::Align2::LEFT_CENTER, format!("{}", i + 1), font.clone(), t.text_dim);
-            if let Some(c) = r["thread"].as_str().and_then(rgb) {
-                let chip = egui::Rect::from_center_size(rect.left_center() + vec2(32.0, 0.0), vec2(12.0, 12.0));
-                ui.painter().rect_filled(chip, 2.0, Color32::from_rgb(c[0], c[1], c[2]));
-            }
-            ui.painter().text(
-                rect.left_center() + vec2(44.0, 0.0),
-                egui::Align2::LEFT_CENTER,
-                r["name"].as_str().unwrap_or(""),
-                font.clone(),
-                t.text,
-            );
-            let stitch = r["stitch"].as_str().and_then(StitchKind::parse).map_or("", |k| tl!(k.label()));
-            ui.painter().text(rect.right_center() - vec2(4.0, 0.0), egui::Align2::RIGHT_CENTER, stitch, font, t.text_dim);
-            if resp.clicked() {
-                select = Some(id);
-            }
-        }
-    });
-    if let Some(id) = select {
-        app.run("select.set", json!({"ids": [id]})).ok();
-    }
-    if let Some((from, to)) = moved.filter(|(f, t)| f != t) {
-        let mut new = ids.clone();
-        if from < new.len() {
-            let id = new.remove(from);
-            new.insert(to.min(new.len()), id);
-            app.run("embroidery.reorder", json!({"order": new})).ok();
-        }
-    }
-    let any = ids.iter().any(|i| selected.contains(i));
-    ui.horizontal(|ui| {
-        for (icon, tip, to) in [
-            ("dc-al-top", tl!("Sew First"), "first"),
-            ("dc-arrow-up", tl!("Sew Earlier"), "earlier"),
-            ("dc-arrow-down", tl!("Sew Later"), "later"),
-            ("dc-al-bottom", tl!("Sew Last"), "last"),
-        ] {
-            if widgets::icon_button_enabled(ui, icon, tip, false, any, 22.0).clicked() {
-                app.run("embroidery.reorder", json!({ "to": to })).ok();
-            }
-        }
-        ui.add_space(6.0);
-        if widgets::flat_button(ui, tl!("By Thread"), 70.0)
-            .on_hover_text(tl!("Group the sewing order by thread colour, for fewer thread changes"))
-            .clicked()
-        {
-            app.run("embroidery.sortByThread", json!({})).ok();
-        }
-        let custom = order["custom"].as_bool().unwrap_or(false);
-        if ui
-            .add_enabled_ui(custom, |ui| widgets::flat_button(ui, tl!("Paint Order"), 76.0))
-            .inner
-            .on_hover_text(tl!("Sew the objects in paint order again"))
-            .clicked()
-        {
-            app.run("embroidery.resetOrder", json!({})).ok();
-        }
-    });
-    widgets::dim_label(ui, tl!("Objects sewn later lie on top."));
-}
-
-/// Trim Before / Trim After for the selected objects (blank where they differ).
 fn trim_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
     widgets::label_row(ui, tl!("Trim:"), LABEL_W, |ui| {
         for (label, key, tip) in [
@@ -303,33 +305,6 @@ fn trim_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
             ui.add_space(6.0);
         }
     });
-}
-
-/// The document's travel settings: when a jump trims, and how short a move is sewn.
-fn travel(app: &mut VectorcraftApp, ui: &mut Ui, setup: &Value) {
-    widgets::section_header(ui, tl!("Travel"));
-    let trim = setup["trimJumpsOver"].as_f64();
-    widgets::label_row(ui, tl!("Trim Jumps Over:"), LABEL_W, |ui| {
-        if widgets::check3(ui, "", Some(trim.is_some()), true) {
-            let v = if trim.is_some() { Value::Null } else { json!(EmbroiderySetup::DEFAULT_TRIM) };
-            app.run("embroidery.setup", json!({ "trimJumpsOver": v })).ok();
-        }
-        ui.add_enabled_ui(trim.is_some(), |ui| {
-            if let Some(v) = widgets::mixed_field(ui, ("emb", "trim"), trim, " mm", 1, FIELD_W) {
-                let r = EmbroiderySetup::TRIM;
-                app.run("embroidery.setup", json!({ "trimJumpsOver": v.clamp(*r.start(), *r.end()) })).ok();
-            }
-        });
-    });
-    widgets::label_row(ui, tl!("Sew Moves Under:"), LABEL_W, |ui| {
-        if let Some(v) = widgets::mixed_field(ui, ("emb", "sewMoves"), setup["stitchMovesUnder"].as_f64(), " mm", 1, FIELD_W) {
-            let r = EmbroiderySetup::STITCH_MOVES;
-            app.run("embroidery.setup", json!({ "stitchMovesUnder": v.clamp(*r.start(), *r.end()) })).ok();
-        }
-    });
-    if trim.is_none() {
-        widgets::dim_label(ui, tl!("Only thread changes and objects set to trim cut the thread."));
-    }
 }
 
 fn thread_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
@@ -420,30 +395,7 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
             });
             mm(app, ui, tl!("Density:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between rows: smaller is denser"));
             mm(app, ui, tl!("Stitch Length:"), "length", num("length"), StitchSettings::LENGTH, tl!("How long each stitch is"));
-            widgets::label_row(ui, tl!("Pattern:"), LABEL_W, |ui| {
-                // Brick and tatami patterns, then the carved motifs.
-                let rows: Vec<u8> = StitchSettings::STAGGER.collect();
-                let mut names: Vec<String> = rows.iter().map(|r| pattern_label(*r)).collect();
-                names.extend(vectorcraft_embroidery::motifs::MOTIFS.iter().map(|m| motif_label(m).to_string()));
-                let labels: Vec<&str> = names.iter().map(String::as_str).collect();
-                let cur = match sel["motif"].as_str() {
-                    Some(m) => motif_label(m).to_string(),
-                    None if sel["motif"].is_null() && sel["stitched"].as_u64().is_some() => {
-                        sel["stagger"].as_u64().and_then(|s| u8::try_from(s).ok()).map(pattern_label).unwrap_or_default()
-                    }
-                    None => String::new(),
-                };
-                if let Some(i) = widgets::dropdown_names(ui, "emb-pattern", &cur, &labels, 150.0) {
-                    match rows.get(i) {
-                        Some(n) => set(app, json!({"stagger": n, "motif": null})),
-                        None => {
-                            if let Some(m) = vectorcraft_embroidery::motifs::MOTIFS.get(i - rows.len()) {
-                                set(app, json!({"motif": m}));
-                            }
-                        }
-                    }
-                }
-            });
+            fill_pattern_picker(app, ui, sel);
             if sel["motif"].is_string() {
                 mm(
                     app,
@@ -526,11 +478,22 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
                 if p["builtin"] == json!(true) { border_label(id).to_string() } else { p["name"].as_str().unwrap_or(id).to_string() }
             };
             let current = list.iter().find(|p| p["id"].as_str() == pattern).copied();
+            // Each pattern sewn along a line, the document's from its own data, the starters
+            // from theirs.
+            let own: Vec<vectorcraft_doc::BorderPattern> = app.session.active().map(|d| d.doc.embroidery.patterns.clone()).unwrap_or_default();
+            let ctx = ui.ctx().clone();
+            let entries: Vec<(String, stitch_art::Thumb)> = list
+                .iter()
+                .map(|p| {
+                    let id = p["id"].as_str().unwrap_or_default();
+                    let data = own.iter().find(|q| q.id == id).cloned().or_else(|| vectorcraft_embroidery::borders::builtin(id));
+                    (name(p), data.map(|d| stitch_art::border(&ctx, &d)).unwrap_or_default())
+                })
+                .collect();
+            let selected = list.iter().position(|p| p["id"].as_str() == pattern);
             widgets::label_row(ui, tl!("Pattern:"), LABEL_W, |ui| {
-                let names: Vec<String> = list.iter().map(|p| name(p)).collect();
-                let labels: Vec<&str> = names.iter().map(String::as_str).collect();
-                let cur = current.map(name).unwrap_or_default();
-                if let Some(i) = widgets::dropdown_names(ui, "emb-border-pattern", &cur, &labels, 150.0)
+                let (label, thumb) = selected.and_then(|i| entries.get(i)).map(|(l, th)| (l.clone(), Some(th))).unwrap_or_default();
+                if let Some(i) = picture_picker(ui, "border-pattern", &label, thumb, &entries, selected, false)
                     && let Some(id) = list.get(i).and_then(|p| p["id"].as_str())
                 {
                     set(app, json!({"pattern": id}));
@@ -819,6 +782,11 @@ fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
             app.run("file.exportAs", json!({"format": "dst"})).ok();
         }
     });
+    ui.add_space(2.0);
+    if widgets::flat_button(ui, tl!("Sew Order…"), 96.0).on_hover_text(tl!("Step through the design as it is sewn, and change the order")).clicked()
+    {
+        app.run("window.panel", json!({"panel": super::sew_order::ID})).ok();
+    }
 }
 
 #[cfg(test)]

@@ -2710,7 +2710,6 @@
 	Distance between zigzags: smaller is denser	Distância entre os zigue-zagues: menor é mais denso
 	Export DST…	Exportar DST…
 	How long each stitch is	Comprimento de cada ponto
-	Not Stitched	Sem bordado
 	Nothing is stitched yet.	Nada bordado ainda.
 	Object color	Cor do objeto
 	Passes:	Passadas:
@@ -2718,7 +2717,6 @@
 	Pull Compensation:	Compensação de repuxo:
 	Select paths to stitch.	Selecione demarcadores para bordar.
 	Sews the column this much wider, since the thread pulls the fabric in	Costura a coluna mais larga nessa medida, pois a linha repuxa o tecido
-	Some selected objects aren't stitched.	Alguns objetos selecionados não estão bordados.
 	Stitch Length:	Comprimento do ponto:
 	Stitch:	Ponto:
 	Stitches:	Pontos:
@@ -2806,8 +2804,6 @@
 	By Thread	Por linha
 	Group the sewing order by thread colour, for fewer thread changes	Agrupar a ordem de costura por cor de linha, para menos trocas de linha
 	Paint Order	Ordem de empilhamento
-	Sew the objects in paint order again	Costurar de novo os objetos na ordem de empilhamento
-	Objects sewn later lie on top.	Objetos costurados depois ficam por cima.
 	Sew by Thread	Costurar por linha
 	Sew in Paint Order	Costurar na ordem de empilhamento
 	Change Sew Order	Alterar ordem de costura
@@ -2816,6 +2812,32 @@
 	Save Border Pattern…	Salvar borda de padrão…
 	Remove Border Pattern	Remover borda de padrão
 	Render Stitch Preview	Renderizar visualização de pontos
+	Choose a stitch to sew the selection with.	Escolha um ponto para bordar a seleção.
+	Drag a row to move it. Objects sewn later lie on top.	Arraste uma linha para movê-la. Objetos bordados depois ficam por cima.
+	First object	Primeiro objeto
+	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Dê pontos aos traçados no painel Bordado; eles são bordados nesta ordem.
+	How the needle holes line up from row to row, or a motif carved into the fill	Como os furos da agulha se alinham de fileira em fileira, ou um motivo entalhado no preenchimento
+	Last object	Último objeto
+	Next object	Próximo objeto
+	Open a document to see its sewing order.	Abra um documento para ver sua ordem de costura.
+	Previous object	Objeto anterior
+	Sew Order…	Ordem de costura…
+	Sew in paint order again (bottom first)	Bordar de novo na ordem de pintura (de baixo)
+	Some selected objects aren't stitched: choose a stitch for all of them.	Alguns objetos selecionados não têm ponto: escolha um para todos.
+	Step through the design as it is sewn, and change the order	Percorra o design como ele é bordado e mude a ordem
+	Step through the sewing	Percorrer o bordado
+	Stitch	Ponto
+	The selection is no longer stitched	A seleção não é mais bordada
+	Thread	Linha
+	Picks a stitch for each shape (each letter) by how wide its strokes are.	Escolhe um ponto para cada forma (cada letra) pela largura dos seus traços.
+	Single stitches along the path: outlines and details.	Pontos simples ao longo do traçado: contornos e detalhes.
+	Each stitch sewn three times: a bolder line.	Cada ponto costurado três vezes: uma linha mais grossa.
+	A dense zigzag column along the path, as wide as the stroke.	Uma coluna densa em zigue-zague ao longo do traçado, tão larga quanto o traço.
+	An open zigzag along the path: decorative lines, appliqué edges.	Um zigue-zague aberto ao longo do traçado: linhas decorativas, bordas de aplique.
+	Satin that follows a shape's strokes from edge to edge: lettering.	Cetim que segue os traços de uma forma de borda a borda: letreiramento.
+	Rows of stitches covering the shape, with a pattern.	Fileiras de pontos cobrindo a forma, com um padrão.
+	A border pattern repeated along the path.	Uma borda de padrão repetida ao longo do traçado.
+	The needle goes down at every anchor, as drawn.	A agulha desce em cada ponto de ancoragem, como desenhado.
 	Check	Verificação
 	No problems found.	Nenhum problema encontrado.
 	Only the first 30 are listed.	Apenas os 30 primeiros são listados.

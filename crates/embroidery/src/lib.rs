@@ -139,6 +139,46 @@ impl Plan {
         s
     }
 
+    /// The runs of stitches within `needles[range]` (an object's span, [`PlannedObject::needles`]),
+    /// each starting at the point the needle sews from.
+    pub fn runs_in(&self, range: std::ops::Range<usize>) -> Vec<Vec<Point>> {
+        let mut out: Vec<Vec<Point>> = vec![];
+        // Where the needle was before the span: the point the first stitch is sewn from.
+        let mut cur: Option<Point> = range.start.checked_sub(1).and_then(|i| self.needles.get(i)).map(|n| Point::new(n.x, n.y));
+        let mut run: Vec<Point> = vec![];
+        for n in self.needles.get(range).unwrap_or_default() {
+            let p = Point::new(n.x, n.y);
+            match n.cmd {
+                Cmd::Stitch => {
+                    if run.is_empty() {
+                        run.push(cur.unwrap_or(p));
+                    }
+                    if run.last() != Some(&p) {
+                        run.push(p);
+                    }
+                    cur = Some(p);
+                }
+                Cmd::Jump => {
+                    if run.len() > 1 {
+                        out.push(std::mem::take(&mut run));
+                    }
+                    run.clear();
+                    cur = Some(p);
+                }
+                _ => {
+                    if run.len() > 1 {
+                        out.push(std::mem::take(&mut run));
+                    }
+                    run.clear();
+                }
+            }
+        }
+        if run.len() > 1 {
+            out.push(run);
+        }
+        out
+    }
+
     /// Each run of stitches (what the needle sews between jumps, trims and colour changes), with
     /// the index of its thread. A run starts at the point the needle sews from.
     pub fn runs(&self) -> Vec<(usize, Vec<Point>)> {

@@ -3748,7 +3748,6 @@ theme	Appearance	外観
 	Distance between zigzags: smaller is denser	ジグザグの間隔:小さいほど密になります
 	Export DST…	DST を書き出し…
 	How long each stitch is	1 針の長さ
-	Not Stitched	ステッチなし
 	Nothing is stitched yet.	まだステッチがありません。
 	Object color	オブジェクトのカラー
 	Passes:	回数:
@@ -3756,7 +3755,6 @@ theme	Appearance	外観
 	Pull Compensation:	引き補正:
 	Select paths to stitch.	ステッチするパスを選択してください。
 	Sews the column this much wider, since the thread pulls the fabric in	糸が布を引き寄せるため、コラムをこの分だけ広く縫います
-	Some selected objects aren't stitched.	ステッチのないオブジェクトが選択されています。
 	Stitch Length:	針目の長さ:
 	Stitch:	ステッチ:
 	Stitches:	針数:
@@ -3844,8 +3842,6 @@ theme	Appearance	外観
 	By Thread	糸ごと
 	Group the sewing order by thread colour, for fewer thread changes	糸の色ごとに縫製順をまとめ、糸替えを減らします
 	Paint Order	重ね順
-	Sew the objects in paint order again	重ね順で縫い直します
-	Objects sewn later lie on top.	後から縫うものが上になります。
 	Sew by Thread	糸ごとに縫う
 	Sew in Paint Order	重ね順で縫う
 	Change Sew Order	縫製順を変更
@@ -3854,6 +3850,32 @@ theme	Appearance	外観
 	Save Border Pattern…	パターンボーダーを保存…
 	Remove Border Pattern	パターンボーダーを削除
 	Render Stitch Preview	ステッチプレビューを描画
+	Choose a stitch to sew the selection with.	選択範囲を縫うステッチを選んでください。
+	Drag a row to move it. Objects sewn later lie on top.	行をドラッグして移動します。後に縫うオブジェクトが上になります。
+	First object	最初のオブジェクト
+	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	刺しゅうパネルでパスにステッチ設定を付けると、この順序で縫われます。
+	How the needle holes line up from row to row, or a motif carved into the fill	針穴が行ごとにどう並ぶか、または塗りに彫り込むモチーフ
+	Last object	最後のオブジェクト
+	Next object	次のオブジェクト
+	Open a document to see its sewing order.	ドキュメントを開くと縫製順が表示されます。
+	Previous object	前のオブジェクト
+	Sew Order…	縫製順…
+	Sew in paint order again (bottom first)	重ね順（下から）で縫い直す
+	Some selected objects aren't stitched: choose a stitch for all of them.	選択したオブジェクトの一部にステッチがありません。すべてにステッチを選んでください。
+	Step through the design as it is sewn, and change the order	縫われる順にデザインをたどり、順序を変更します
+	Step through the sewing	縫製をたどる
+	Stitch	ステッチ
+	The selection is no longer stitched	選択範囲は縫われなくなりました
+	Thread	糸
+	Picks a stitch for each shape (each letter) by how wide its strokes are.	各シェイプ（各文字）の線の太さに応じてステッチを選びます。
+	Single stitches along the path: outlines and details.	パスに沿った単一のステッチ：輪郭や細部に。
+	Each stitch sewn three times: a bolder line.	各ステッチを3回縫う：太い線に。
+	A dense zigzag column along the path, as wide as the stroke.	パスに沿った密なジグザグのコラム。線と同じ幅。
+	An open zigzag along the path: decorative lines, appliqué edges.	パスに沿った開いたジグザグ：装飾線やアップリケの縁に。
+	Satin that follows a shape's strokes from edge to edge: lettering.	シェイプの線を端から端までたどるサテン：レタリングに。
+	Rows of stitches covering the shape, with a pattern.	シェイプを覆うステッチの列。パターン付き。
+	A border pattern repeated along the path.	パスに沿って繰り返すパターンボーダー。
+	The needle goes down at every anchor, as drawn.	描いたとおり、すべてのアンカーで針が下ります。
 	Check	チェック
 	No problems found.	問題は見つかりませんでした。
 	Only the first 30 are listed.	最初の 30 件のみ表示しています。

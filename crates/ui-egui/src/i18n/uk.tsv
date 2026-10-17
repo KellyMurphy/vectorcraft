@@ -3739,7 +3739,6 @@ axis	Both	Обидві
 	Distance between zigzags: smaller is denser	Відстань між зигзагами: що менша, то щільніше
 	Export DST…	Експорт у DST…
 	How long each stitch is	Довжина кожного стібка
-	Not Stitched	Без вишивки
 	Nothing is stitched yet.	Поки нічого не вишито.
 	Object color	Колір об’єкта
 	Passes:	Проходи:
@@ -3747,7 +3746,6 @@ axis	Both	Обидві
 	Pull Compensation:	Компенсація стягування:
 	Select paths to stitch.	Виділіть контури для вишивки.
 	Sews the column this much wider, since the thread pulls the fabric in	Стовпчик шиється ширшим на цю величину, бо нитка стягує тканину
-	Some selected objects aren't stitched.	Деякі виділені об’єкти не вишиті.
 	Stitch Length:	Довжина стібка:
 	Stitch:	Стібок:
 	Stitches:	Стібки:
@@ -3835,8 +3833,6 @@ axis	Both	Обидві
 	By Thread	За ниткою
 	Group the sewing order by thread colour, for fewer thread changes	Згрупувати порядок вишивки за кольором нитки, щоб рідше змінювати нитку
 	Paint Order	Порядок шарів
-	Sew the objects in paint order again	Знову вишивати об’єкти в порядку шарів
-	Objects sewn later lie on top.	Об’єкти, вишиті пізніше, лежать зверху.
 	Sew by Thread	Вишивати за ниткою
 	Sew in Paint Order	Вишивати в порядку шарів
 	Change Sew Order	Змінити порядок вишивки
@@ -3845,6 +3841,32 @@ axis	Both	Обидві
 	Save Border Pattern…	Зберегти візерункову облямівку…
 	Remove Border Pattern	Вилучити візерункову облямівку
 	Render Stitch Preview	Відобразити попередній перегляд стібків
+	Choose a stitch to sew the selection with.	Виберіть стібок, яким вишити виділення.
+	Drag a row to move it. Objects sewn later lie on top.	Перетягніть рядок, щоб перемістити його. Об’єкти, вишиті пізніше, лежать зверху.
+	First object	Перший об’єкт
+	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Задайте контурам стібки на панелі «Вишивка»; вони вишиваються в цьому порядку.
+	How the needle holes line up from row to row, or a motif carved into the fill	Як проколи вишиковуються від ряду до ряду, або мотив, вирізаний у заливці
+	Last object	Останній об’єкт
+	Next object	Наступний об’єкт
+	Open a document to see its sewing order.	Відкрийте документ, щоб побачити порядок вишивання.
+	Previous object	Попередній об’єкт
+	Sew Order…	Порядок вишивання…
+	Sew in paint order again (bottom first)	Знову вишивати в порядку малювання (знизу)
+	Some selected objects aren't stitched: choose a stitch for all of them.	Частина виділених об’єктів не має стібка: виберіть стібок для всіх.
+	Step through the design as it is sewn, and change the order	Пройти дизайн у порядку вишивання та змінити порядок
+	Step through the sewing	Пройти вишивання
+	Stitch	Стібок
+	The selection is no longer stitched	Виділення більше не вишивається
+	Thread	Нитка
+	Picks a stitch for each shape (each letter) by how wide its strokes are.	Добирає стібок для кожної фігури (кожної літери) за шириною її штрихів.
+	Single stitches along the path: outlines and details.	Поодинокі стібки вздовж контуру: обведення та деталі.
+	Each stitch sewn three times: a bolder line.	Кожен стібок прошито тричі: жирніша лінія.
+	A dense zigzag column along the path, as wide as the stroke.	Щільний зигзагоподібний стовпчик уздовж контуру, завширшки з обведення.
+	An open zigzag along the path: decorative lines, appliqué edges.	Відкритий зигзаг уздовж контуру: декоративні лінії, краї аплікацій.
+	Satin that follows a shape's strokes from edge to edge: lettering.	Гладь, що йде за штрихами фігури від краю до краю: написи.
+	Rows of stitches covering the shape, with a pattern.	Ряди стібків, що вкривають фігуру, з візерунком.
+	A border pattern repeated along the path.	Візерункова облямівка, повторювана вздовж контуру.
+	The needle goes down at every anchor, as drawn.	Голка опускається в кожній опорній точці, як намальовано.
 	Check	Перевірка
 	No problems found.	Проблем не знайдено.
 	Only the first 30 are listed.	Показано лише перші 30.

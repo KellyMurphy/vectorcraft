@@ -3767,7 +3767,6 @@ axis	Both	Les deux
 	Distance between zigzags: smaller is denser	Écart entre les zigzags : plus petit, plus dense
 	Export DST…	Exporter en DST…
 	How long each stitch is	Longueur de chaque point
-	Not Stitched	Sans broderie
 	Nothing is stitched yet.	Rien n’est encore brodé.
 	Object color	Couleur de l’objet
 	Passes:	Passages :
@@ -3775,7 +3774,6 @@ axis	Both	Les deux
 	Pull Compensation:	Compensation de traction :
 	Select paths to stitch.	Sélectionnez des tracés à broder.
 	Sews the column this much wider, since the thread pulls the fabric in	Coud la colonne plus large d’autant, car le fil resserre le tissu
-	Some selected objects aren't stitched.	Certains objets sélectionnés ne sont pas brodés.
 	Stitch Length:	Longueur de point :
 	Stitch:	Point :
 	Stitches:	Points :
@@ -3863,8 +3861,6 @@ axis	Both	Les deux
 	By Thread	Par fil
 	Group the sewing order by thread colour, for fewer thread changes	Regrouper l’ordre de couture par couleur de fil, pour moins de changements de fil
 	Paint Order	Ordre de superposition
-	Sew the objects in paint order again	Coudre à nouveau les objets dans l’ordre de superposition
-	Objects sewn later lie on top.	Les objets cousus plus tard sont au-dessus.
 	Sew by Thread	Coudre par fil
 	Sew in Paint Order	Coudre dans l’ordre de superposition
 	Change Sew Order	Modifier l’ordre de couture
@@ -3873,6 +3869,32 @@ axis	Both	Les deux
 	Save Border Pattern…	Enregistrer la bordure à motif…
 	Remove Border Pattern	Supprimer la bordure à motif
 	Render Stitch Preview	Rendu de l’aperçu des points
+	Choose a stitch to sew the selection with.	Choisissez un point pour broder la sélection.
+	Drag a row to move it. Objects sewn later lie on top.	Faites glisser une ligne pour la déplacer. Les objets brodés après sont au-dessus.
+	First object	Premier objet
+	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Donnez des points aux tracés dans le panneau Broderie ; ils sont brodés dans cet ordre.
+	How the needle holes line up from row to row, or a motif carved into the fill	Comment les piqûres s’alignent d’un rang à l’autre, ou un motif gravé dans le remplissage
+	Last object	Dernier objet
+	Next object	Objet suivant
+	Open a document to see its sewing order.	Ouvrez un document pour voir son ordre de couture.
+	Previous object	Objet précédent
+	Sew Order…	Ordre de couture…
+	Sew in paint order again (bottom first)	Broder à nouveau dans l’ordre de dessin (du bas)
+	Some selected objects aren't stitched: choose a stitch for all of them.	Certains objets sélectionnés n’ont pas de point : choisissez-en un pour tous.
+	Step through the design as it is sewn, and change the order	Parcourir le dessin tel qu’il est brodé, et changer l’ordre
+	Step through the sewing	Parcourir la broderie
+	Stitch	Point
+	The selection is no longer stitched	La sélection n’est plus brodée
+	Thread	Fil
+	Picks a stitch for each shape (each letter) by how wide its strokes are.	Choisit un point pour chaque forme (chaque lettre) selon la largeur de ses traits.
+	Single stitches along the path: outlines and details.	Points simples le long du tracé : contours et détails.
+	Each stitch sewn three times: a bolder line.	Chaque point cousu trois fois : une ligne plus marquée.
+	A dense zigzag column along the path, as wide as the stroke.	Une colonne dense en zigzag le long du tracé, aussi large que le contour.
+	An open zigzag along the path: decorative lines, appliqué edges.	Un zigzag ouvert le long du tracé : lignes décoratives, bords d’appliqué.
+	Satin that follows a shape's strokes from edge to edge: lettering.	Un satin qui suit les traits d’une forme d’un bord à l’autre : lettrage.
+	Rows of stitches covering the shape, with a pattern.	Des rangs de points couvrant la forme, avec un motif.
+	A border pattern repeated along the path.	Une bordure à motif répétée le long du tracé.
+	The needle goes down at every anchor, as drawn.	L’aiguille pique à chaque point d’ancrage, tel que dessiné.
 	Check	Vérification
 	No problems found.	Aucun problème trouvé.
 	Only the first 30 are listed.	Seuls les 30 premiers sont listés.
