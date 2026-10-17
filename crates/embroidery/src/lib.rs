@@ -442,7 +442,7 @@ pub fn plan_cached(doc: &Document, cache: &mut StitchCache) -> Plan {
 /// Whether any object in `doc` carries stitch settings.
 pub fn has_stitches(doc: &Document) -> bool {
     let mut any = false;
-    doc.walk(|n| any |= n.stitch.is_some());
+    doc.walk(|n| any |= n.extras().stitch.is_some());
     any
 }
 
@@ -495,11 +495,11 @@ fn collect<'a>(n: &'a Arc<Node>, items: &mut Vec<&'a Arc<Node>>, tally: &mut Tal
     if !n.visible || off {
         return;
     }
-    let masked = masked || n.mask.is_some() || matches!(n.kind, NodeKind::Group { clip: true, .. } | NodeKind::Layer { clip: true, .. });
-    if n.stitch.as_deref().is_some_and(|s| s.unknown.is_some()) {
+    let masked = masked || n.extras().mask.is_some() || matches!(n.kind, NodeKind::Group { clip: true, .. } | NodeKind::Layer { clip: true, .. });
+    if n.extras().stitch.as_deref().is_some_and(|s| s.unknown.is_some()) {
         tally.newer += 1;
         tally.ids.push((n.id, LeftOut::Newer));
-    } else if n.stitch.is_some() {
+    } else if n.extras().stitch.is_some() {
         let sewn = match &n.kind {
             NodeKind::Path { guide: false, clipping: false, .. } | NodeKind::Compound { .. } | NodeKind::Text(_) => true,
             NodeKind::Path { .. } => false,
@@ -526,7 +526,7 @@ fn collect<'a>(n: &'a Arc<Node>, items: &mut Vec<&'a Arc<Node>>, tally: &mut Tal
 
 /// Sew one stitched object.
 fn sew_node(n: &Node, b: &mut Sewer) {
-    let Some(s) = n.stitch.as_deref() else { return };
+    let Some(s) = n.extras().stitch.as_deref() else { return };
     match &n.kind {
         NodeKind::Path { path, rule, .. } => object(n, s, &[path], *rule, b),
         NodeKind::Compound { children, rule } => {
@@ -540,7 +540,7 @@ fn sew_node(n: &Node, b: &mut Sewer) {
 
 /// The thread an object is sewn in (type: its first characters' colour).
 pub fn thread_of_node(n: &Node) -> [u8; 3] {
-    let Some(s) = n.stitch.as_deref() else { return [0; 3] };
+    let Some(s) = n.extras().stitch.as_deref() else { return [0; 3] };
     match &n.kind {
         NodeKind::Text(t) => thread_of(&t.first_style().appearance(), s),
         _ => thread_of(&n.appearance, s),

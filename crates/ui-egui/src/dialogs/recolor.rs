@@ -4,7 +4,9 @@
 //! Assign tab: Colors (Auto, or a count: similar colours merge into rows), Preserve White, Black and
 //! Grays, the rows (click to select, Shift or Cmd/Ctrl-click to add; a row's arrow excludes or
 //! includes it; the hex field edits its new colour), Merge and Separate, Randomize order or
-//! saturation and brightness, Reset, the Method and Limit to Library. Edit tab: a hue and
+//! saturation and brightness, Reset, the Method and Limit to Library (its folder button imports a
+//! library file and limits to it; a library's colours apply as its swatches: a spot colour stays a
+//! spot colour, and joins the document's swatches). Edit tab: a hue and
 //! saturation wheel with a marker per new colour (drag one; with linked handles they all turn and
 //! scale together), a brightness slider and the harmony rules. The preset menu sets up a 1, 2 or 3
 //! colour job or a library. Opened on a colour group (Edit or Apply Color Group), OK also rewrites
@@ -443,9 +445,24 @@ fn assign_tab(app: &mut VectorcraftApp, ui: &mut Ui, d: &mut Dialog, rows: &mut 
         let cur = d.str("limitTo");
         let at = keys.iter().position(|k| *k == cur).unwrap_or(0);
         let current = shown.get(at).copied().unwrap_or_default();
-        if let Some(k) = widgets::dropdown_names(ui, "recolor-library", current, &shown, 180.0).and_then(|i| keys.get(i)) {
-            d.fields.insert("limitTo".into(), json!(k));
-        }
+        ui.horizontal(|ui| {
+            if let Some(k) = widgets::dropdown_names(ui, "recolor-library", current, &shown, 180.0).and_then(|i| keys.get(i)) {
+                d.fields.insert("limitTo".into(), json!(k));
+            }
+            // Import a library (.ase, .acb, .gpl, .vcswatches or a document's swatches) and limit to it.
+            if app.services.pick_open.is_some() && widgets::icon_button(ui, "folder-open", tl!("Other Library…"), false, 24.0).clicked() {
+                let r = crate::picks::in_dialog(app, d, |app, d| {
+                    let pick = crate::FilePick { filters: vectorcraft_engine::cmd::fileio::open_filters().collect(), ..Default::default() };
+                    let Some(path) = crate::picks::open(app, &pick) else { return Ok(()) };
+                    let r = app.run("swatch.library.load", json!({ "path": path }))?;
+                    d.fields.insert("limitTo".into(), r["library"].clone());
+                    Ok(())
+                });
+                if let Err(e) = r {
+                    app.status(e);
+                }
+            }
+        });
         ui.end_row();
     });
     changed
@@ -520,6 +537,9 @@ fn move_color(rows: &mut [Value], i: usize, hsb: [f32; 3], linked: bool) {
     }
 }
 
+/// The rows when a drag on the Edit tab's wheel started.
+const DRAG: &str = "__drag";
+
 /// The Edit tab. Returns true when the rows changed.
 fn edit_tab(ui: &mut Ui, d: &mut Dialog, rows: &mut [Value]) -> bool {
     let t = Tokens::get(ui.ctx());
@@ -552,9 +572,25 @@ fn edit_tab(ui: &mut Ui, d: &mut Dialog, rows: &mut [Value]) -> bool {
     if let Some(k) = w.pressed {
         d.fields.insert("__sel".into(), json!([active[k]]));
     }
-    if let Some((k, hsb)) = w.moved {
-        move_color(rows, active[k], hsb, linked);
-        changed = true;
+    // A drag (of a marker or the brightness slider) moves the rows as they were when it started:
+    // a new colour read back from its model (CMYK through the colour profile) isn't exactly the
+    // colour written, so building on last frame's rows drifted the linked colours (#1733).
+    if let Some((k, set)) = w.moved {
+        let start = match d.fields.get(DRAG).and_then(Value::as_array) {
+            Some(s) if s.len() == rows.len() => s.clone(),
+            _ => rows.to_vec(),
+        };
+        // What the control didn't set comes from the start too, not from last frame's colour.
+        if let Some(old) = start.get(active[k]).and_then(to_color).map(|c| c.to_hsb()) {
+            let hsb = [0, 1, 2].map(|n| set[n].unwrap_or(old[n]));
+            rows.clone_from_slice(&start);
+            move_color(rows, active[k], hsb, linked);
+            changed = true;
+        }
+        d.fields.insert(DRAG.into(), Value::Array(start));
+    }
+    if !ui.input(|i| i.pointer.any_down()) {
+        d.fields.remove(DRAG);
     }
     ui.add_space(6.0);
     // The new colours: click one to make it the base colour.

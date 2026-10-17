@@ -82,7 +82,7 @@ mod tests {
             }),
             Appearance::basic(Paint::None, Paint::solid(Color::rgb8(200, 0, 0)), 1.0),
         );
-        n.stitch = Some(Box::new(StitchSettings::new(StitchKind::Running)));
+        n.extras_mut().stitch = Some(Box::new(StitchSettings::new(StitchKind::Running)));
         let mut m = n.clone();
         m.id = d.alloc_id();
         if let NodeKind::Path { path, .. } = &mut m.kind {

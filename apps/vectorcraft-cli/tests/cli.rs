@@ -7,10 +7,18 @@ use serde_json::{Value, json};
 
 const BIN: &str = env!("CARGO_BIN_EXE_vectorcraft-cli");
 
+/// Returns the path of `name` in `vectorcraft-cli-test-<pid>` in the temp folder. The first call removes
+/// that folder and creates it again empty.
 fn tmp(name: &str) -> std::path::PathBuf {
-    let dir = std::env::temp_dir().join(format!("vectorcraft-cli-test-{}", std::process::id()));
+    static DIR: std::sync::OnceLock<std::path::PathBuf> = std::sync::OnceLock::new();
+    DIR.get_or_init(|| empty_dir(std::env::temp_dir().join(format!("vectorcraft-cli-test-{}", std::process::id())))).join(name)
+}
+
+/// Removes `dir` and everything in it, creates it again empty and returns it.
+fn empty_dir(dir: std::path::PathBuf) -> std::path::PathBuf {
+    let _ = std::fs::remove_dir_all(&dir);
     std::fs::create_dir_all(&dir).unwrap();
-    dir.join(name)
+    dir
 }
 
 #[test]
@@ -81,6 +89,102 @@ fn mcp_headless_over_stdio() {
     assert_eq!(replies[0]["result"]["serverInfo"]["name"], "vectorcraft");
     assert_eq!(replies[2]["result"]["isError"], false);
     assert_eq!(replies[3]["result"]["content"][0]["type"], "image");
+}
+
+/// `mcp --automation-read-root` / `--automation-write-root` (#832): the flags are checked before the
+/// server starts, and the process then reads and writes only inside its roots.
+#[test]
+fn mcp_automation_roots() {
+    automation_roots(&tmp("roots"));
+}
+
+/// A run that has the process id of an earlier run finds that run's files and links in its folder.
+/// `empty_dir`, which `tmp` uses, removes them, so the run can make them again instead of failing
+/// with "File exists".
+#[test]
+fn mcp_automation_roots_in_a_folder_an_earlier_run_left() {
+    let dir = tmp("earlier-run");
+    automation_roots(&dir.join("roots"));
+    automation_roots(&empty_dir(dir).join("roots"));
+}
+
+fn automation_roots(base: &std::path::Path) {
+    for d in ["in", "out", "outside"] {
+        std::fs::create_dir_all(base.join(d)).unwrap();
+    }
+    let svg = r#"<svg xmlns="http://www.w3.org/2000/svg" width="40" height="30"><rect width="20" height="10"/></svg>"#;
+    std::fs::write(base.join("in/a.svg"), svg).unwrap();
+    std::fs::write(base.join("outside/b.svg"), svg).unwrap();
+    std::fs::write(base.join("outside/victim.png"), b"keep this file").unwrap();
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::symlink;
+        symlink(base.join("outside/b.svg"), base.join("in/escape.svg")).unwrap();
+        symlink(base.join("outside"), base.join("out/escape")).unwrap();
+        symlink(base.join("outside/victim.png"), base.join("out/victim.png")).unwrap();
+        symlink(base.join("outside/missing.png"), base.join("out/dangling.png")).unwrap();
+    }
+    let dir = |d: &str| base.join(d).to_string_lossy().into_owned();
+    let fails = |args: &[&str], why: &str| {
+        let out = Command::new(BIN).args(args).stdin(Stdio::null()).output().unwrap();
+        let err = String::from_utf8_lossy(&out.stderr);
+        assert!(!out.status.success() && err.contains(why), "{args:?}: {err}");
+    };
+    fails(&["mcp", "--automation-read-root", &dir("missing")], "cannot open the automation read root");
+    fails(&["mcp", "--automation-read-root", &dir("in"), "--automation-read-root", &dir("out")], "given twice");
+    fails(&["mcp", "--automation-write-root"], "needs a folder");
+    fails(&["mcp", "--connect", "127.0.0.1:1", &format!("--automation-write-root={}", dir("out"))], "a running app enforces its own roots");
+
+    let mut child = Command::new(BIN)
+        .args(["mcp", "--automation-read-root", &dir("in"), &format!("--automation-write-root={}", dir("out"))])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::null())
+        .spawn()
+        .unwrap();
+    let call = |id: u64, name: &str, args: Value| json!({"jsonrpc":"2.0","id":id,"method":"tools/call","params":{"name":name,"arguments":args}});
+    let file = |d: &str, f: &str| base.join(d).join(f).to_string_lossy().into_owned();
+    let mut calls = vec![
+        call(1, "open_file", json!({"path": file("in", "a.svg")})),
+        call(2, "open_file", json!({"path": file("outside", "b.svg")})),
+        call(3, "export", json!({"path": file("out", "a.png")})),
+        call(4, "export", json!({"path": file("in", "a.png")})),
+        call(5, "save_file", json!({"path": file("outside", "a.vectorcraft")})),
+        call(6, "open_file", json!({"path": file("in", "../outside/b.svg")})),
+        call(7, "export", json!({"path": file("out", "../outside/traversal.png")})),
+    ];
+    let mut expected_errors = vec![false, true, false, true, true, true, true];
+    #[cfg(unix)]
+    {
+        calls.extend([
+            call(8, "open_file", json!({"path": file("in", "escape.svg")})),
+            call(9, "export", json!({"path": file("out", "escape/escaped.png")})),
+            call(10, "export", json!({"path": file("out", "victim.png")})),
+            call(11, "export", json!({"path": file("out", "dangling.png")})),
+        ]);
+        expected_errors.extend([true; 4]);
+    }
+    // An access error is per request: the server continues and can still save inside its root.
+    calls.push(call(12, "save_file", json!({"path": file("out", "allowed.vectorcraft")})));
+    expected_errors.push(false);
+    {
+        let mut stdin = child.stdin.take().unwrap();
+        for m in calls {
+            writeln!(stdin, "{m}").unwrap();
+        }
+    }
+    let out = child.wait_with_output().unwrap();
+    assert!(out.status.success());
+    let replies: Vec<Value> = String::from_utf8(out.stdout).unwrap().lines().map(|l| serde_json::from_str(l).unwrap()).collect();
+    let errors: Vec<bool> = replies.iter().map(|r| r["result"]["isError"] == true).collect();
+    assert_eq!(errors, expected_errors, "{replies:?}");
+    assert!(replies[1]["result"]["content"][0]["text"].as_str().unwrap().contains("outside the read root"));
+    assert!(base.join("out/a.png").is_file() && !base.join("in/a.png").exists() && !base.join("outside/a.vectorcraft").exists());
+    assert!(base.join("out/allowed.vectorcraft").is_file());
+    for denied in ["traversal.png", "escaped.png", "missing.png"] {
+        assert!(!base.join("outside").join(denied).exists(), "{denied}");
+    }
+    assert_eq!(std::fs::read(base.join("outside/victim.png")).unwrap(), b"keep this file");
 }
 
 /// End-to-end protocol sweep over stdio against the compiled binary. The in-process
@@ -249,4 +353,116 @@ fn closed_stdout_ends_quietly() {
     let out = child.wait_with_output().unwrap();
     let err = String::from_utf8_lossy(&out.stderr);
     assert!(out.status.success() && !err.contains("panicked"), "{:?}: {err}", out.status);
+}
+
+/// #1005: `run` whose reader has gone (`vectorcraft-cli run … | true`) ends quietly with status 0,
+/// and its later steps still run; a failing step still fails.
+#[test]
+fn run_with_a_closed_stdout_ends_quietly_and_finishes_the_batch() {
+    let svg = tmp("closed-run.svg");
+    let _ = std::fs::remove_file(&svg);
+    let rect = r#"{"x":1,"y":1,"width":5,"height":5}"#;
+    let args = ["run", "--cmd", "document.json", "--cmd", "shape.rectangle", "--params", rect, "--export", svg.to_str().unwrap()];
+    let mut child = Command::new(BIN).args(args).stdout(Stdio::piped()).stderr(Stdio::piped()).spawn().unwrap();
+    drop(child.stdout.take());
+    let out = child.wait_with_output().unwrap();
+    let err = String::from_utf8_lossy(&out.stderr);
+    assert!(out.status.success() && err.is_empty(), "{:?}: {err}", out.status);
+    assert!(svg.is_file(), "the export after the closed reader still ran");
+    let out = Command::new(BIN).args(["run", "--cmd", "not-a-command"]).stdout(Stdio::null()).output().unwrap();
+    assert!(!out.status.success());
+}
+
+/// A fresh settings folder for one test (`VECTORCRAFT_CONFIG_DIR`), so no run reads or writes the
+/// developer's real profile.
+fn config_dir(name: &str) -> std::path::PathBuf {
+    let dir = tmp(&format!("config-{name}"));
+    let _ = std::fs::remove_dir_all(&dir);
+    dir
+}
+
+/// One `vectorcraft-cli run` with `steps` ((command, params)) against the settings folder `config`;
+/// the result of each step.
+fn run_in(config: &std::path::Path, steps: &[(&str, Value)]) -> Vec<Value> {
+    let mut cmd = Command::new(BIN);
+    cmd.arg("run").env("VECTORCRAFT_CONFIG_DIR", config).env_remove("VECTORCRAFT_NO_PREFS");
+    for (id, params) in steps {
+        cmd.args(["--cmd", id, "--params", &params.to_string()]);
+    }
+    let out = cmd.output().unwrap();
+    assert!(out.status.success(), "{}", String::from_utf8_lossy(&out.stderr));
+    String::from_utf8(out.stdout).unwrap().lines().map(|l| serde_json::from_str::<Value>(l).unwrap()["result"].clone()).collect()
+}
+
+/// An ICC file of an RGB profile named `name` (a built-in one with its description replaced by a
+/// name of the same length).
+fn icc_file_named(path: &std::path::Path, name: &str) {
+    let builtin = "Display P3";
+    assert_eq!(builtin.len(), name.len());
+    let utf16 = |s: &str| s.encode_utf16().flat_map(u16::to_be_bytes).collect::<Vec<u8>>();
+    let mut bytes = vectorcraft_color::cms::icc_bytes(builtin).unwrap().to_vec();
+    let (from, to) = (utf16(builtin), utf16(name));
+    let at = bytes.windows(from.len()).position(|w| w == from).expect("the description in the profile");
+    bytes[at..at + to.len()].copy_from_slice(&to);
+    std::fs::write(path, bytes).unwrap();
+}
+
+fn profile_names(settings: &Value) -> Vec<&str> {
+    settings["profiles"].as_array().unwrap().iter().map(|p| p["name"].as_str().unwrap()).collect()
+}
+
+/// #2168, #2174: the PDF presets saved and the ICC profiles loaded in one headless run are there in
+/// the next run, and gone again once deleted.
+#[test]
+fn saved_pdf_presets_and_loaded_profiles_survive_a_restart() {
+    let config = config_dir("restart");
+    let icc = tmp("studio-p3.icc");
+    icc_file_named(&icc, "StudioRGB3");
+    let r = run_in(
+        &config,
+        &[
+            ("pdf.preset.save", json!({"name": "Press", "description": "for the printer"})),
+            ("color.loadProfile", json!({"path": icc.to_str().unwrap()})),
+        ],
+    );
+    assert_eq!(r[1]["name"], "StudioRGB3");
+
+    let r = run_in(&config, &[("pdf.preset.list", json!({})), ("edit.colorSettings", json!({}))]);
+    let presets: Vec<&str> =
+        r[0]["presets"].as_array().unwrap().iter().filter(|p| p["builtIn"] == false).map(|p| p["name"].as_str().unwrap()).collect();
+    assert_eq!(presets, ["Press"]);
+    assert_eq!(r[0]["presets"].as_array().unwrap().iter().find(|p| p["name"] == "Press").unwrap()["description"], "for the printer");
+    assert!(profile_names(&r[1]).contains(&"StudioRGB3"), "{:?}", profile_names(&r[1]));
+    // The profile works as a working space, and the file it came from can go.
+    std::fs::remove_file(&icc).unwrap();
+    let steps = [
+        ("edit.colorSettings", json!({"rgb": "StudioRGB3"})),
+        ("pdf.preset.delete", json!({"name": "Press"})),
+        ("edit.colorSettings", json!({"rgb": vectorcraft_color::cms::SRGB})),
+        ("color.removeProfile", json!({"name": "StudioRGB3"})),
+    ];
+    let r = run_in(&config, &steps);
+    assert_eq!(r[0]["rgb"], "StudioRGB3");
+    assert_eq!(r[3]["removed"], "StudioRGB3");
+
+    let r = run_in(&config, &[("pdf.preset.list", json!({})), ("edit.colorSettings", json!({}))]);
+    assert!(r[0]["presets"].as_array().unwrap().iter().all(|p| p["builtIn"] == true));
+    assert!(!profile_names(&r[1]).contains(&"StudioRGB3"));
+}
+
+/// Runs without preferences (`VECTORCRAFT_NO_PREFS`) keep what they save for the run only, and
+/// leave nothing in the settings folder.
+#[test]
+fn runs_without_preferences_remember_nothing() {
+    let config = config_dir("noprefs");
+    let out = Command::new(BIN)
+        .args(["run", "--cmd", "pdf.preset.save", "--params", r#"{"name":"Press"}"#])
+        .env("VECTORCRAFT_CONFIG_DIR", &config)
+        .env("VECTORCRAFT_NO_PREFS", "1")
+        .output()
+        .unwrap();
+    assert!(out.status.success(), "{}", String::from_utf8_lossy(&out.stderr));
+    assert!(!config.exists(), "nothing written");
+    let r = run_in(&config, &[("pdf.preset.list", json!({}))]);
+    assert!(r[0]["presets"].as_array().unwrap().iter().all(|p| p["builtIn"] == true));
 }

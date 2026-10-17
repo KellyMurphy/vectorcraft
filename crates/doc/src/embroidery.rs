@@ -589,7 +589,7 @@ mod tests {
     #[test]
     fn settings_from_a_newer_version_load_and_save_unchanged() {
         let n: crate::Node = serde_json::from_value(newer_node()).expect("a newer stitch kind doesn't fail the node");
-        let s = n.stitch.as_deref().unwrap();
+        let s = n.extras().stitch.as_deref().unwrap();
         assert!(s.unknown.is_some());
         assert_eq!(s.kind_id(), "unknown");
         let back = serde_json::to_value(&n).unwrap();

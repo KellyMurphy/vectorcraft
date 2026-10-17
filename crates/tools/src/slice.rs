@@ -43,7 +43,7 @@ fn snap(cx: &ToolContext, p: Point) -> (Point, Vec<Overlay>) {
         cx.doc
             .guides
             .iter()
-            .filter(|g| g.vertical == vertical && (g.pos - v).abs() <= tol && cx.doc.guide_passes(g, p, tol))
+            .filter(|g| g.vertical == vertical && (g.pos - v).abs() <= tol && cx.doc.guide_shown(g) && cx.doc.guide_passes(g, p, tol))
             .min_by(|a, b| (a.pos - v).abs().total_cmp(&(b.pos - v).abs()))
     };
     if let Some(g) = nearest(true, p.x) {
@@ -313,6 +313,7 @@ impl Tool for SliceSelectionTool {
             Some(Handle::TopRight | Handle::BottomLeft) => Cursor::ResizeNeSw,
             None => Cursor::SliceSelect,
         }
+        .turned(cx.view_angle())
     }
 
     fn deactivate(&mut self, _cx: &ToolContext) -> Vec<Action> {
@@ -413,6 +414,10 @@ mod tests {
         t.pointer(&c, &ev(PointerKind::Up, 350.0, 350.0));
         // A corner handle of the selected user slice resizes it.
         assert_eq!(t.cursor(&c, Point::new(60.0, 40.0), Mods::default()), Cursor::ResizeNwSe);
+        // In a view turned 90° its cursor turns with the view.
+        let mut turned = cx(&d, &sel, &p);
+        turned.screen = turned_view(90.0);
+        assert_eq!(t.cursor(&turned, Point::new(60.0, 40.0), Mods::default()), Cursor::ResizeNeSw);
         assert!(t.pointer(&c, &ev(PointerKind::Down, 60.0, 40.0)).is_empty());
         let r = t.pointer(&c, &ev(PointerKind::Drag, 80.0, 50.0));
         assert_eq!(r[0], Action::Begin("Resize Slice".into()));

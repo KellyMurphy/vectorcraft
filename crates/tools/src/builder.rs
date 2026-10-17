@@ -105,7 +105,7 @@ pub fn leaf_shapes<'a>(n: &'a Node, out: &mut Vec<&'a Node>) {
     if !n.visible {
         return;
     }
-    if n.shaper.is_some() {
+    if n.extras().shaper.is_some() {
         for c in n.children().into_iter().flatten().skip(1) {
             leaf_shapes(c, out);
         }
@@ -705,7 +705,7 @@ impl Tool for LivePaintBucketTool {
     }
 
     fn cursor(&self, _cx: &ToolContext, _p: Point, _m: Mods) -> Cursor {
-        Cursor::Crosshair
+        Cursor::LivePaintBucket
     }
 }
 

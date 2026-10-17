@@ -215,6 +215,7 @@ impl Tool for CropImageTool {
             None if r.contains(p) => Cursor::Move,
             None => Cursor::Arrow,
         }
+        .turned(cx.view_angle())
     }
 
     /// `rect`: the box as `[x, y, width, height]` once it's been dragged or set (until then it's
@@ -232,9 +233,15 @@ impl Tool for CropImageTool {
         if key != "rect" {
             return;
         }
-        let n: Vec<f64> = value.as_array().map(|v| v.iter().filter_map(Value::as_f64).filter(|n| n.is_finite()).collect()).unwrap_or_default();
-        self.rect = match n.as_slice() {
-            [x, y, w, h] => Some((None, Rect::new(*x, *y, x + w, y + h))),
+        // Invalid components must discard the whole box, not silently shift the
+        // coordinates by dropping a non-numeric entry.
+        let numbers = value
+            .as_array()
+            .filter(|a| a.len() == 4)
+            .and_then(|a| a.iter().map(Value::as_f64).collect::<Option<Vec<_>>>())
+            .filter(|a| a.iter().all(|n| n.is_finite()));
+        self.rect = match numbers.as_deref() {
+            Some([x, y, w, h]) => Some((None, Rect::new(*x, *y, x + w, y + h))),
             _ => None,
         };
     }
@@ -251,7 +258,7 @@ mod tests {
     use vectorcraft_geom::Affine;
 
     use super::*;
-    use crate::testutil::{cx, paint};
+    use crate::testutil::{cx, paint, turned_view};
 
     /// A 500 × 500 document (one artboard) with a 100 × 50 px image drawn at twice that size from
     /// `at`, selected.
@@ -267,7 +274,7 @@ mod tests {
             link: None,
             placement: Default::default(),
         };
-        d.insert(Some(l), 0, Node::new(id, NodeKind::Image(im))).unwrap();
+        d.insert(Some(l), 0, Node::new(id, NodeKind::Image(Box::new(im)))).unwrap();
         let mut s = Selection::default();
         s.add(id);
         (d, s)
@@ -317,6 +324,18 @@ mod tests {
         assert!(crop_rect(&t.key(&cx, ToolKey::Enter, Mods::default())).is_none(), "the whole image: nothing to cut");
     }
 
+    /// In a view turned 90° the handles' cursors turn with the view.
+    #[test]
+    fn handle_cursors_turn_with_the_view() {
+        let (d, s) = doc_with_image((50.0, 60.0));
+        let p = paint();
+        let mut c = cx(&d, &s, &p);
+        c.screen = turned_view(90.0);
+        let t = CropImageTool::default();
+        assert_eq!(t.cursor(&c, Point::new(50.0, 60.0), Mods::default()), Cursor::ResizeNeSw, "top-left");
+        assert_eq!(t.cursor(&c, Point::new(150.0, 60.0), Mods::default()), Cursor::ResizeH, "top-middle");
+    }
+
     #[test]
     fn the_box_starts_on_the_part_over_the_artboard_and_escape_cancels() {
         // 200 × 100 from (-50, 100): its left 50 pt hang off the artboard.
@@ -334,6 +353,17 @@ mod tests {
         let none = Selection::default();
         let cx = crate::testutil::cx(&d, &none, &p);
         assert!(t.overlays(&cx).is_empty() && !t.claims_key(&cx, ToolKey::Enter));
+    }
+
+    #[test]
+    fn crop_box_option_requires_exactly_four_finite_numeric_values() {
+        let mut tool = CropImageTool::default();
+        for invalid in [json!([10, "ignored", 20, 30, 40]), json!([10, 20, 30, null, 40]), json!([10, 20, 30, 40, 50]), json!("not a rectangle")] {
+            tool.set_option("rect", &invalid);
+            assert!(tool.options().get("rect").is_none(), "invalid box should reset crop: {invalid}");
+        }
+        tool.set_option("rect", &json!([10, 20, 30, 40]));
+        assert_eq!(tool.options()["rect"], json!([10.0, 20.0, 30.0, 40.0]));
     }
 
     #[test]

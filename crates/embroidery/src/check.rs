@@ -218,7 +218,7 @@ mod tests {
         let d = doc_with(|d| {
             // A wide satin (10 mm: long stitches), a fine line, and an empty path.
             let mut wide = stitched(d, poly(&[(0.0, 0.0), (200.0, 0.0)], false), StitchKind::Satin, [200, 0, 0]);
-            wide.stitch.as_mut().unwrap().width = Some(10.0);
+            wide.extras_mut().stitch.as_mut().unwrap().width = Some(10.0);
             let fine = stitched(d, poly(&[(0.0, 100.0), (200.0, 100.0)], false), StitchKind::Running, [0, 0, 200]);
             let empty = stitched(d, poly(&[(0.0, 200.0)], false), StitchKind::Running, [0, 0, 200]);
             vec![wide, fine, empty]

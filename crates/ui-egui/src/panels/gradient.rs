@@ -82,6 +82,23 @@ pub(crate) fn dropped_link(app: &VectorcraftApp, params: &Value) -> Option<(Stri
     Some((base, tint))
 }
 
+/// Recolor the selected stop of the gradient behind the active proxy with `c`, as dropping the
+/// paint of `params` on the stop does (fully opaque, linked by [`dropped_link`]), or the selected
+/// point of a freeform gradient; the stop or point stays selected. Returns false, and changes
+/// nothing, when the active paint is not a gradient or no stop or point is selected.
+pub(crate) fn recolor_selected(app: &mut VectorcraftApp, c: Color, params: &Value) -> bool {
+    let Paint::Gradient(g) = active_paint(app) else { return false };
+    if g.gradient.kind == GradientKind::Freeform {
+        let Some(i) = app.session.selected_freeform_point().filter(|i| *i < shown_points(&g).points.len()) else { return false };
+        edit_point(app, "paint.freeform.setPoint", json!({ "index": i, "color": super::color_json(&c) }));
+        return true;
+    }
+    let Some(i) = app.session.selected_stop().filter(|i| *i < g.gradient.stops.len()) else { return false };
+    let (v, i) = drop_color(&g.gradient, Some(i), 0.0, c, dropped_link(app, params));
+    set_stops(app, &v, Some(i), Live::Released);
+    true
+}
+
 /// The stops after dragging stop `i` of `origin` to `offset`: moved, or with `copy` (Alt) a copy
 /// left there, or the colours swapped with stop `over` when the copy is dropped on it. Returns
 /// the stops and the stop to select.
@@ -94,6 +111,43 @@ fn dragged_stops(origin: &[GradientStop], i: usize, offset: f32, copy: bool, ove
 }
 
 // ---------- shared edits ----------
+
+/// The Type row: Linear, Radial and Freeform for the paint behind the active proxy (one of them
+/// lit when it is a gradient). The Gradient panel's and the Properties panel's.
+pub(crate) fn type_row(app: &mut VectorcraftApp, ui: &mut Ui) {
+    let kind = current(app).map(|g| g.gradient.kind);
+    ui.horizontal(|ui| {
+        widgets::dim_label(ui, tl!("Type:"));
+        for (k, icon, tip) in [
+            (GradientKind::Linear, "dc-grad-linear", tl!("Linear Gradient")),
+            (GradientKind::Radial, "dc-grad-radial", tl!("Radial Gradient")),
+            (GradientKind::Freeform, "dc-grad-freeform", tl!("Freeform Gradient")),
+        ] {
+            if widgets::icon_button(ui, icon, tip, kind == Some(k), 24.0).clicked() {
+                edit(app, json!({"kind": k.label().to_lowercase()}), Live::Released);
+            }
+        }
+    });
+}
+
+/// Set how the Gradient tool adds the points of the freeform gradient behind the active proxy.
+fn set_draw_mode(app: &mut VectorcraftApp, mode: FreeformMode) {
+    edit(app, json!({ "mode": mode.label().to_lowercase() }), Live::Released);
+}
+
+/// The Properties panel's Draw row for a freeform gradient: Points and Lines as radio buttons.
+pub(crate) fn draw_radios(app: &mut VectorcraftApp, ui: &mut Ui) {
+    let Some(g) = current(app).filter(|g| g.gradient.kind == GradientKind::Freeform) else { return };
+    let mode = shown_points(&g).mode;
+    ui.horizontal(|ui| {
+        widgets::dim_label(ui, tl!("Draw:"));
+        for (m, label) in [(FreeformMode::Points, tl!("Points")), (FreeformMode::Lines, tl!("Lines"))] {
+            if widgets::radio(ui, label, mode == m, true) && mode != m {
+                set_draw_mode(app, m);
+            }
+        }
+    });
+}
 
 /// The gradient behind the active proxy.
 fn current(app: &VectorcraftApp) -> Option<GradientPaint> {
@@ -128,14 +182,14 @@ fn save_to_swatches(app: &mut VectorcraftApp, g: &GradientPaint) {
 }
 
 /// The document's gradient swatches (groups included): name and gradient.
-fn gradient_swatches(app: &VectorcraftApp) -> Vec<(String, Gradient)> {
+fn gradient_swatches(app: &VectorcraftApp) -> Vec<(String, GradientPaint)> {
     let Some(st) = app.session.active() else { return vec![] };
     let d = &st.doc;
     d.swatches
         .iter()
         .chain(d.swatch_groups.iter().flat_map(|g| g.swatches.iter()))
         .filter_map(|s| match &s.paint {
-            Paint::Gradient(g) => Some((s.name.clone(), g.gradient.clone())),
+            Paint::Gradient(g) => Some((s.name.clone(), (**g).clone())),
             _ => None,
         })
         .collect()
@@ -184,18 +238,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         }
         ui.add_space(4.0);
         ui.vertical(|ui| {
-            ui.horizontal(|ui| {
-                widgets::dim_label(ui, tl!("Type:"));
-                for (k, icon, tip) in [
-                    (GradientKind::Linear, "dc-grad-linear", tl!("Linear Gradient")),
-                    (GradientKind::Radial, "dc-grad-radial", tl!("Radial Gradient")),
-                    (GradientKind::Freeform, "dc-grad-freeform", tl!("Freeform Gradient")),
-                ] {
-                    if widgets::icon_button(ui, icon, tip, is_grad && kind == k, 24.0).clicked() {
-                        edit(app, json!({"kind": k.label().to_lowercase()}), Live::Released);
-                    }
-                }
-            });
+            type_row(app, ui);
             if widgets::flat_button(ui, tl!("Edit Gradient"), 96.0).clicked() {
                 app.select_tool("gradient");
             }
@@ -297,7 +340,7 @@ fn freeform_section(app: &mut VectorcraftApp, ui: &mut Ui, g: &GradientPaint) {
             (FreeformMode::Lines, "spline", tl!("Lines: clicks add points joined by a line")),
         ] {
             if widgets::icon_button(ui, icon, tip, mode == m, 24.0).clicked() && mode != m {
-                edit(app, json!({ "mode": m.label().to_lowercase() }), Live::Released);
+                set_draw_mode(app, m);
             }
         }
     });
@@ -344,7 +387,7 @@ fn freeform_section(app: &mut VectorcraftApp, ui: &mut Ui, g: &GradientPaint) {
 fn thumbnail(app: &mut VectorcraftApp, ui: &mut Ui, g: &GradientPaint, is_grad: bool) {
     let t = Tokens::get(ui.ctx());
     let (r, resp) = ui.allocate_exact_size(vec2(40.0, 40.0), Sense::click_and_drag());
-    widgets::gradient_chip(ui, r, &g.gradient);
+    widgets::gradient_chip(ui, r, g);
     ui.painter().rect_stroke(r, 0.0, Stroke::new(1.0, t.border), StrokeKind::Inside);
     let resp = resp.on_hover_text(tl!("Gradient Fill: click to apply, drag onto art"));
     if resp.clicked() && !is_grad {
@@ -964,7 +1007,7 @@ mod tests {
         drop(&mut p, &mut app, last);
         assert_eq!(hexes(&app), ["#ffffff", "#ff0000", "#ff0000"]);
         // A spot swatch tile dropped on a stop links it: editing the swatch recolours the stop.
-        app.run("swatch.new", json!({"name": "Ink", "color": "#cc0066", "spot": true, "focus": false})).unwrap();
+        app.run("swatch.new", json!({"name": "Ink", "color": "#cc0066", "spot": true})).unwrap();
         let ink = app.session.doc().unwrap().doc.swatch("Ink").unwrap().paint.clone();
         egui::DragAndDrop::set_payload(&p.ctx, PanelDrag::Paint { paint: ink, params: json!({"swatch": "Ink"}), rows: None });
         p.frame(&mut app, vec![Event::PointerMoved(a)], Modifiers::NONE);

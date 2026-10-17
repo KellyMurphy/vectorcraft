@@ -41,6 +41,7 @@ pub const TABLE: &[(&str, Class)] = &[
     ("trace", Class::Layer(2)),
     ("text", Class::Layer(2)),
     ("effects", Class::Layer(2)),
+    ("three-d", Class::Layer(2)),
     ("render", Class::Layer(3)),
     ("svg", Class::Layer(3)),
     ("pdf", Class::Layer(3)),
@@ -62,6 +63,7 @@ pub const TABLE: &[(&str, Class)] = &[
     ("plugins", Class::Layer(2)),
     ("affinity", Class::Standalone),
     ("embroidery", Class::Layer(2)),
+    ("scriptcheck", Class::Standalone),
 ];
 
 /// Explicit orderings *within* a layer (earlier may be used by later).
@@ -78,7 +80,12 @@ pub const INTRA_LAYER_ORDER: &[&[&str]] = &[
     &["text", "embroidery"],
     &["render", "eps"],
     &["metafile", "eps"],
+    // Non-native art in Illustrator editing data is a PDF, drawn by the PDF importer.
+    &["pdf", "eps"],
     &["plugins", "effects"],
+    &["three-d", "effects"],
+    // Inflate cuts its surface's grid cells to the shape with Pathfinder's booleans.
+    &["pathops", "three-d"],
 ];
 
 fn intra_layer_allowed(from: &str, to: &str) -> bool {
@@ -91,7 +98,7 @@ fn intra_layer_allowed(from: &str, to: &str) -> bool {
 
 /// External crates that constitute a UI toolkit / windowing dependency.
 /// Entries ending in `*` are prefixes.
-pub const UI_CRATES: &[&str] = &["egui", "eframe", "winit", "egui_kittest", "rfd", "bevy*"];
+pub const UI_CRATES: &[&str] = &["egui", "eframe", "winit", "egui_kittest", "craft-ui", "rfd", "bevy*"];
 
 /// First layer allowed to use UI crates.
 pub const UI_MIN_LAYER: u8 = 6;
@@ -304,11 +311,12 @@ mod tests {
 
     #[test]
     fn ui_crates_below_l6_flagged() {
-        for dep in ["egui", "eframe", "winit", "egui_kittest", "rfd", "bevy_ecs", "bevy"] {
+        for dep in ["egui", "eframe", "winit", "egui_kittest", "craft-ui", "rfd", "bevy_ecs", "bevy"] {
             let v = check(&[c("vectorcraft-engine", &[(dep, Normal, false)])]);
             assert!(matches!(v[..], [Violation::UiBelowL6 { layer: 5, .. }]), "{dep}");
         }
         assert!(check(&[c("vectorcraft-engine", &[("egui_extras_not", Normal, false)])]).is_empty());
+        assert!(check(&[c("vectorcraft-ui-egui", &[("craft-ui", Normal, false)])]).is_empty());
         assert!(check(&[c("vectorcraft-mcp", &[("winit", Normal, false)])]).is_empty());
     }
 

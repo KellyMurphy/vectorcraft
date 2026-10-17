@@ -252,6 +252,51 @@ impl SubPath {
             _ => a,
         }
     }
+    /// Bend segment `seg` so its point at `t` moves by `dv`: both inner control points move by
+    /// dv / 3t(1-t), since B(t) moves by 3t(1-t) times that. A smooth anchor stays smooth: its other
+    /// handle turns with the moved one. False when there is no such segment.
+    pub fn bend_segment(&mut self, seg: usize, t: f64, dv: kurbo::Vec2) -> bool {
+        let n = self.anchors.len();
+        if seg >= self.segment_count() || n == 0 {
+            return false;
+        }
+        let v = dv / (3.0 * t * (1.0 - t));
+        if let Some(a) = self.anchors.get_mut(seg % n) {
+            a.set_handle(true, a.h_out + v, false);
+        }
+        if let Some(b) = self.anchors.get_mut((seg + 1) % n) {
+            b.set_handle(false, b.h_in + v, false);
+        }
+        true
+    }
+    /// Bend segment `seg` as a Shift-drag does: both of its handles stand at right angles to the
+    /// line between its anchors, on the same side and at the same length, so that its point at `t`
+    /// lies as far from that line as the old point at `t` moved by `dv` does. A smooth anchor stays
+    /// smooth, as with [`Self::bend_segment`]. A segment whose anchors coincide bends as
+    /// [`Self::bend_segment`] bends it. False when there is no such segment.
+    pub fn bend_segment_perpendicular(&mut self, seg: usize, t: f64, dv: kurbo::Vec2) -> bool {
+        let n = self.anchors.len();
+        if seg >= self.segment_count() || n == 0 {
+            return false;
+        }
+        let c = self.segment(seg);
+        let chord = c.p3 - c.p0;
+        let len = chord.hypot();
+        if len <= EPS {
+            return self.bend_segment(seg, t, dv);
+        }
+        let normal = kurbo::Vec2::new(-chord.y, chord.x) / len;
+        // Handles of length l along the normal put the point at t 3t(1-t)·l from the line.
+        let v = normal * ((c.eval(t) + dv - c.p0).dot(normal) / (3.0 * t * (1.0 - t)));
+        if let Some(a) = self.anchors.get_mut(seg % n) {
+            a.set_handle(true, a.p + v, false);
+        }
+        if let Some(b) = self.anchors.get_mut((seg + 1) % n) {
+            b.set_handle(false, b.p + v, false);
+        }
+        true
+    }
+
     /// Split segment `seg` at parameter `t`, inserting a new anchor. Returns the new anchor index.
     pub fn insert_anchor(&mut self, seg: usize, t: f64) -> usize {
         let n = self.anchors.len();

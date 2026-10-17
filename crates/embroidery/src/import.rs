@@ -45,7 +45,7 @@ pub fn to_document(plan: &Plan, title: &str) -> Document {
             PathData::single(SubPath { anchors, closed: false }),
             Appearance::basic(Paint::None, paint, THREAD_MM / PT_MM),
         );
-        n.stitch = Some(Box::new(StitchSettings { thread: Some(rgb), ..StitchSettings::new(StitchKind::Manual) }));
+        n.extras_mut().stitch = Some(Box::new(StitchSettings { thread: Some(rgb), ..StitchSettings::new(StitchKind::Manual) }));
         match groups.last_mut() {
             Some((t, v)) if *t == thread => v.push(Arc::new(n)),
             _ => groups.push((thread, vec![Arc::new(n)])),

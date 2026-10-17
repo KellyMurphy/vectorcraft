@@ -23,7 +23,7 @@ pub(crate) fn doc_with(f: impl FnOnce(&mut Document) -> Vec<Node>) -> Document {
 
 pub(crate) fn stitched(d: &mut Document, path: PathData, kind: StitchKind, stroke: [u8; 3]) -> Node {
     let mut n = Node::path(d.alloc_id(), path, Appearance::basic(Paint::None, Paint::solid(Color::rgb8(stroke[0], stroke[1], stroke[2])), 1.0));
-    n.stitch = Some(Box::new(StitchSettings::new(kind)));
+    n.extras_mut().stitch = Some(Box::new(StitchSettings::new(kind)));
     n
 }
 
@@ -155,7 +155,7 @@ fn hidden_and_unstitched_objects_are_left_out_and_other_kinds_warned() {
         hidden.visible = false;
         let plain = Node::path(d.alloc_id(), poly(&[(0.0, 0.0), (72.0, 0.0)], false), Appearance::default_art());
         let mut group = Node::group(d.alloc_id(), vec![]);
-        group.stitch = Some(Box::new(StitchSettings::default()));
+        group.extras_mut().stitch = Some(Box::new(StitchSettings::default()));
         vec![hidden, plain, group]
     });
     let p = plan(&d);
@@ -173,9 +173,9 @@ fn thread_comes_from_settings_then_stroke_or_fill() {
             poly(&[(0.0, 0.0), (72.0, 0.0), (72.0, 72.0)], true),
             Appearance::basic(Paint::solid(Color::rgb8(0, 255, 0)), Paint::solid(Color::rgb8(9, 9, 9)), 1.0),
         );
-        fill.stitch = Some(Box::new(StitchSettings::new(StitchKind::Fill)));
+        fill.extras_mut().stitch = Some(Box::new(StitchSettings::new(StitchKind::Fill)));
         let mut over = stitched(d, poly(&[(0.0, 0.0), (72.0, 0.0)], false), StitchKind::Running, [1, 1, 1]);
-        over.stitch.as_mut().unwrap().thread = Some([7, 8, 9]);
+        over.extras_mut().stitch.as_mut().unwrap().thread = Some([7, 8, 9]);
         vec![fill, over]
     });
     assert_eq!(plan(&d).threads, vec![[0, 255, 0], [7, 8, 9]]);
@@ -209,7 +209,7 @@ fn dst_writes_a_512_byte_header_and_ends_with_an_end_record() {
 fn dst_round_trips_a_design() {
     let d = doc_with(|d| {
         let mut sq = stitched(d, poly(&[(0.0, 0.0), (100.0, 0.0), (100.0, 100.0), (0.0, 100.0)], true), StitchKind::Fill, [0; 3]);
-        sq.appearance = Appearance::basic(Paint::solid(Color::rgb8(200, 0, 0)), Paint::None, 0.0);
+        sq.appearance = Appearance::basic(Paint::solid(Color::rgb8(200, 0, 0)), Paint::None, 0.0).into();
         vec![sq, stitched(d, poly(&[(0.0, 150.0), (300.0, 150.0)], false), StitchKind::Satin, [0, 0, 200])]
     });
     let p = plan(&d);
@@ -332,7 +332,7 @@ proptest! {
 fn plan_of(path: PathData, s: StitchSettings) -> Plan {
     let d = doc_with(|d| {
         let mut n = stitched(d, path, s.kind, [0; 3]);
-        n.stitch = Some(Box::new(s));
+        n.extras_mut().stitch = Some(Box::new(s));
         vec![n]
     });
     plan(&d)
@@ -404,7 +404,7 @@ fn stagger_changes_the_needle_pattern() {
 fn busy_doc() -> Document {
     doc_with(|d| {
         let mut fill = stitched(d, poly(&[(0.0, 0.0), (90.0, 0.0), (90.0, 60.0), (0.0, 60.0)], true), StitchKind::Fill, [200, 0, 0]);
-        fill.stitch.as_mut().unwrap().underlay = Underlay::Fill;
+        fill.extras_mut().stitch.as_mut().unwrap().underlay = Underlay::Fill;
         vec![
             fill,
             stitched(d, poly(&[(120.0, 0.0), (200.0, 40.0)], false), StitchKind::Satin, [0, 0, 200]),
@@ -478,7 +478,8 @@ proptest! {
             let mut n = stitched(d, poly(l, kinds[kind] == StitchKind::Fill), kinds[kind], [(i * 60) as u8, 0, 0]);
             if wide {
                 // The widest satin with the most pull compensation.
-                let s = n.stitch.as_mut().unwrap();
+                let mut e = n.extras_mut();
+                let s = e.stitch.as_mut().unwrap();
                 s.width = Some(12.0);
                 s.pull = Some(3.0);
                 s.length = Some(12.0);
@@ -598,10 +599,10 @@ fn dump_samples() {
     let zig = poly(&[(0.0, 150.0), (60.0, 130.0), (20.0, 200.0), (100.0, 180.0)], false);
     let d = doc_with(|d| {
         let mut a = stitched(d, sq.clone(), StitchKind::Satin, [20, 50, 90]);
-        a.stitch.as_mut().unwrap().width = Some(5.0);
-        a.stitch.as_mut().unwrap().underlay = Underlay::Edge;
+        a.extras_mut().stitch.as_mut().unwrap().width = Some(5.0);
+        a.extras_mut().stitch.as_mut().unwrap().underlay = Underlay::Edge;
         let mut b = stitched(d, zig.clone(), StitchKind::Satin, [200, 30, 30]);
-        b.stitch.as_mut().unwrap().width = Some(3.0);
+        b.extras_mut().stitch.as_mut().unwrap().width = Some(3.0);
         vec![a, b]
     });
     std::fs::write(dir.join("satin_corners.dst"), write_dst(&plan(&d), "satin corners")).unwrap();
@@ -609,7 +610,7 @@ fn dump_samples() {
     let zz = doc_with(|d| {
         let wave = poly(&[(0.0, 0.0), (80.0, 0.0), (120.0, 40.0), (200.0, 40.0)], false);
         let mut a = stitched(d, wave, StitchKind::Zigzag, [30, 120, 60]);
-        a.stitch.as_mut().unwrap().width = Some(4.0);
+        a.extras_mut().stitch.as_mut().unwrap().width = Some(4.0);
         let ring = poly(&[(20.0, 80.0), (100.0, 80.0), (100.0, 140.0), (20.0, 140.0)], true);
         vec![a, stitched(d, ring, StitchKind::Zigzag, [150, 40, 160])]
     });
@@ -630,7 +631,7 @@ fn dump_samples() {
     ]);
     let d = doc_with(|d| {
         let mut n = Node::path(d.alloc_id(), leaf, Appearance::basic(Paint::None, Paint::solid(Color::rgb8(40, 120, 40)), 1.0));
-        n.stitch = Some(Box::new(StitchSettings { rails: true, underlay: Underlay::Center, ..StitchSettings::new(StitchKind::Satin) }));
+        n.extras_mut().stitch = Some(Box::new(StitchSettings { rails: true, underlay: Underlay::Center, ..StitchSettings::new(StitchKind::Satin) }));
         vec![n]
     });
     std::fs::write(dir.join("rails.dst"), write_dst(&plan(&d), "rails")).unwrap();
@@ -646,7 +647,7 @@ fn dump_samples() {
                     poly(&[(x, 0.0), (x + 85.0, 0.0), (x + 85.0, 85.0), (x, 85.0)], true),
                     Appearance::basic(Paint::solid(Color::rgb8(30, 60, 140)), Paint::None, 0.0),
                 );
-                n.stitch = Some(Box::new(StitchSettings {
+                n.extras_mut().stitch = Some(Box::new(StitchSettings {
                     motif: Some((*m).to_string()),
                     motif_size: Some(10.0),
                     spacing: Some(0.5),
@@ -680,7 +681,7 @@ fn dump_samples() {
                 .collect();
             for path in [rect, poly(&s, false), poly(&circle, true)] {
                 let mut n = stitched(d, path, StitchKind::PatternBorder, palette_color(i));
-                n.stitch.as_mut().unwrap().pattern = Some((*id).to_string());
+                n.extras_mut().stitch.as_mut().unwrap().pattern = Some((*id).to_string());
                 out.push(n);
             }
         }
@@ -696,7 +697,7 @@ fn settings_from_a_newer_version_are_kept_but_not_sewn() {
     let d = doc_with(|d| {
         let a = stitched(d, poly(&[(0.0, 0.0), (72.0, 0.0)], false), StitchKind::Running, [0; 3]);
         let mut b = stitched(d, poly(&[(0.0, 50.0), (72.0, 50.0)], false), StitchKind::Running, [0; 3]);
-        b.stitch.as_mut().unwrap().unknown = Some(Box::new(serde_json::json!({"kind": "crossStitch"})));
+        b.extras_mut().stitch.as_mut().unwrap().unknown = Some(Box::new(serde_json::json!({"kind": "crossStitch"})));
         vec![a, b]
     });
     let p = plan(&d);
@@ -719,7 +720,7 @@ fn the_cache_sews_again_only_what_changed() {
     let layer = Arc::make_mut(&mut d.layers[0]);
     let kids = layer.children_mut().unwrap();
     let n = Arc::make_mut(&mut kids[0]);
-    n.stitch.as_mut().unwrap().spacing = Some(0.8);
+    n.extras_mut().stitch.as_mut().unwrap().spacing = Some(0.8);
     let after = plan_cached(&d, &mut cache);
     assert_eq!((cache.reused, cache.sewn), (objects - 1, 1));
     assert_eq!(after, plan(&d), "the cached plan is the plan");
@@ -734,7 +735,7 @@ fn the_cache_sews_again_only_what_changed() {
 fn two_lines(gap: f64, first: impl FnOnce(&mut StitchSettings), setup: EmbroiderySetup) -> Plan {
     let mut d = doc_with(|d| {
         let mut a = stitched(d, poly(&[(0.0, 0.0), (72.0, 0.0)], false), StitchKind::Running, [0; 3]);
-        first(a.stitch.as_mut().unwrap());
+        first(a.extras_mut().stitch.as_mut().unwrap());
         vec![a, stitched(d, poly(&[(72.0 + gap, 0.0), (144.0 + gap, 0.0)], false), StitchKind::Running, [0; 3])]
     });
     d.embroidery = setup;
@@ -784,13 +785,13 @@ fn objects_can_force_trims_before_and_after() {
     let mut d = doc_with(|d| {
         let a = stitched(d, poly(&[(0.0, 0.0), (72.0, 0.0)], false), StitchKind::Running, [0; 3]);
         let mut b = stitched(d, poly(&[(72.0, 0.0), (144.0, 0.0)], false), StitchKind::Running, [0; 3]);
-        b.stitch.as_mut().unwrap().trim_before = true;
+        b.extras_mut().stitch.as_mut().unwrap().trim_before = true;
         vec![a, b]
     });
     assert_eq!(trims_between(&plan(&d)), 1);
     // A thread change trims anyway: no second trim.
     if let Some(n) = Arc::make_mut(&mut d.layers[0]).children_mut().and_then(|c| c.get_mut(1)) {
-        Arc::make_mut(n).stitch.as_mut().unwrap().thread = Some([9, 9, 9]);
+        Arc::make_mut(n).extras_mut().stitch.as_mut().unwrap().thread = Some([9, 9, 9]);
     }
     let p = plan(&d);
     assert_eq!((trims_between(&p), p.stats().color_changes), (1, 1));
@@ -907,7 +908,7 @@ fn satin_shape_objects_take_their_fill_colour_and_cover_the_shape() {
             poly(&[(0.0, 0.0), (100.0, 0.0), (100.0, 12.0), (0.0, 12.0)], true),
             Appearance::basic(Paint::solid(Color::rgb8(10, 120, 30)), Paint::None, 0.0),
         );
-        n.stitch = Some(Box::new(StitchSettings { underlay: Underlay::Center, ..StitchSettings::new(StitchKind::SatinShape) }));
+        n.extras_mut().stitch = Some(Box::new(StitchSettings { underlay: Underlay::Center, ..StitchSettings::new(StitchKind::SatinShape) }));
         vec![n]
     });
     let p = plan(&d);
@@ -995,7 +996,7 @@ fn type_doc(text: &str, size: f64, s: StitchSettings) -> Document {
         let style = vectorcraft_doc::CharStyle { size, ..Default::default() };
         let t = vectorcraft_doc::TextObject::point(Point::new(10.0, 100.0), text, style);
         let mut n = Node::new(d.alloc_id(), vectorcraft_doc::NodeKind::Text(Box::new(t)));
-        n.stitch = Some(Box::new(s));
+        n.extras_mut().stitch = Some(Box::new(s));
         vec![n]
     })
 }
@@ -1067,7 +1068,7 @@ fn dump_type() {
     let d = doc_with(|d| {
         let t = vectorcraft_doc::TextObject::point(Point::new(10.0, 100.0), &text, style);
         let mut n = Node::new(d.alloc_id(), vectorcraft_doc::NodeKind::Text(Box::new(t)));
-        n.stitch = Some(Box::new(StitchSettings::new(kind)));
+        n.extras_mut().stitch = Some(Box::new(StitchSettings::new(kind)));
         vec![n]
     });
     let p = plan(&d);
@@ -1174,7 +1175,7 @@ fn satin_quality_tells_strokes_from_heavy_bowls() {
     ]);
     let d = doc_with(|d| {
         let mut n = Node::path(d.alloc_id(), path, Appearance::basic(Paint::solid(Color::rgb8(0, 0, 0)), Paint::None, 0.0));
-        n.stitch = Some(Box::new(StitchSettings { wide_over: Some(12.0), ..StitchSettings::new(StitchKind::Auto) }));
+        n.extras_mut().stitch = Some(Box::new(StitchSettings { wide_over: Some(12.0), ..StitchSettings::new(StitchKind::Auto) }));
         vec![n]
     });
     let p = plan(&d);

@@ -49,7 +49,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Change Sew Order",
             ["Window", "Embroidery"],
             None,
-            "{to: first|earlier|later|last, ids?} move the stitched objects in ids or the selection (groups: those inside) in the sewing order, or {order: [ids]} set it (those first, in that order; the others after, in paint order); one undo step → {order: [ids]}",
+            "{to: first|earlier|later|last, ids?} or {order: [ids]} move the stitched objects in ids or the selection (groups: those inside) in the sewing order (to), or set the order (those first, in that order; the others after, in paint order); one undo step → {order: [ids]}",
             has_doc,
             reorder
         ),
@@ -257,7 +257,7 @@ fn set(s: &mut Session, p: &Value) -> Result<Value> {
     {
         let d = &s.doc()?.doc;
         for id in &ids {
-            edits.suits(&edits.apply(d.node(*id).and_then(|n| n.stitch.as_deref())))?;
+            edits.suits(&edits.apply(d.node(*id).and_then(|n| n.extras().stitch.as_deref())))?;
         }
     }
     if let Some(id) = edits.pattern() {
@@ -271,9 +271,9 @@ fn set(s: &mut Session, p: &Value) -> Result<Value> {
         let mut n = 0;
         for id in &ids {
             let Some(node) = d.node_mut(*id) else { continue };
-            let new = edits.apply(node.stitch.as_deref());
-            if node.stitch.as_deref() != Some(&new) {
-                node.stitch = Some(Box::new(new));
+            let new = edits.apply(node.extras().stitch.as_deref());
+            if node.extras().stitch.as_deref() != Some(&new) {
+                node.extras_mut().stitch = Some(Box::new(new));
                 n += 1;
             }
         }
@@ -316,7 +316,7 @@ fn setup(s: &mut Session, p: &Value) -> Result<Value> {
 /// How many objects of `doc` sew pattern `id`.
 fn pattern_users(doc: &Document, id: &str) -> usize {
     let mut n = 0;
-    doc.walk(|node| n += usize::from(node.stitch.as_deref().is_some_and(|s| s.kind == StitchKind::PatternBorder && s.pattern() == id)));
+    doc.walk(|node| n += usize::from(node.extras().stitch.as_deref().is_some_and(|s| s.kind == StitchKind::PatternBorder && s.pattern() == id)));
     n
 }
 
@@ -406,7 +406,7 @@ fn extract_border_pattern(s: &mut Session, p: &Value) -> Result<Value> {
     for id in &ids {
         let Some(n) = doc.node(*id) else { continue };
         let Some(path) = n.path_data() else { continue };
-        if n.stitch.as_deref().is_some_and(|t| t.kind == StitchKind::Manual) {
+        if n.extras().stitch.as_deref().is_some_and(|t| t.kind == StitchKind::Manual) {
             runs.extend(generate::manual(path));
         } else {
             region.extend(generate::polylines(path).into_iter().filter(|(_, closed)| *closed).map(|(l, _)| l));
@@ -505,7 +505,7 @@ fn order(s: &mut Session, _: &Value) -> Result<Value> {
             json!({
                 "id": n.id.0,
                 "name": object_name(n),
-                "stitch": n.stitch.as_deref().map(StitchSettings::kind_id),
+                "stitch": n.extras().stitch.as_deref().map(StitchSettings::kind_id),
                 "thread": hex(vectorcraft_embroidery::thread_of_node(n)),
             })
         })
@@ -608,7 +608,7 @@ fn clear(s: &mut Session, p: &Value) -> Result<Value> {
         let mut n = 0;
         for id in &ids {
             if let Some(node) = d.node_mut(*id)
-                && node.stitch.take().is_some()
+                && node.extras_mut().stitch.take().is_some()
             {
                 n += 1;
             }
@@ -628,7 +628,7 @@ fn same<T: PartialEq + serde::Serialize>(mut it: impl Iterator<Item = T>) -> Val
 pub(crate) fn design(doc: &Document, plan: &Plan) -> Value {
     let st = plan.stats();
     let mut objects = 0;
-    doc.walk(|n| objects += usize::from(n.stitch.is_some()));
+    doc.walk(|n| objects += usize::from(n.extras().stitch.is_some()));
     let (w, h) = st.bounds.map(|b| (b[2] - b[0], b[3] - b[1])).unwrap_or((0.0, 0.0));
     json!({
         "objects": objects,
@@ -647,7 +647,7 @@ fn info(s: &mut Session, p: &Value) -> Result<Value> {
     let ids = stitchable(s, &targets(s, p)?)?;
     let doc = &s.doc()?.doc;
     let plan = s.stitch_plan(doc);
-    let all: Vec<&StitchSettings> = ids.iter().filter_map(|id| doc.node(*id)?.stitch.as_deref()).collect();
+    let all: Vec<&StitchSettings> = ids.iter().filter_map(|id| doc.node(*id)?.extras().stitch.as_deref()).collect();
     let mut selection = json!({ "stitched": all.len(), "unstitched": ids.len() - all.len() });
     for param in params::PARAMS {
         selection[param.key] = same(all.iter().map(|s| (param.get)(s)));
