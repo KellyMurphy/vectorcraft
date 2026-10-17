@@ -153,7 +153,16 @@ A closed satin path starts halfway along its longest side, away from its corners
 | `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm}`: the document's travel settings |
 | `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings |
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
+| `embroidery.preview` | `{scale?, artboard?}` → the artboard as Stitch Preview shows it, as a PNG (`pngBase64`); MCP's `render_preview {stitches: true}` uses it |
+| `embroidery.order` | → the stitched objects in sewing order |
+| `embroidery.reorder` | `{to: first\|earlier\|later\|last, ids?}` or `{order: [ids]}`: change the sewing order |
+| `embroidery.sortByThread` | group the sewing order by thread colour |
+| `embroidery.resetOrder` | sew in paint order again |
 | `view.stitchPreview` | toggles Stitch Preview |
+
+Agents reach all of these over MCP (`run_command`), with the `embroidery` prompt, this guide as the
+resource `vectorcraft://guide/embroidery`, the file format specifications as `vectorcraft://spec/…`, and
+`render_preview {stitches: true}` to see the design. See [mcp.md](mcp.md#embroidery).
 
 Allowed ranges: stitch length 0.3–12 mm, spacing 0.1–10 mm, satin and zigzag width 0.3–12 mm, pattern border width 1–40 mm, pull compensation 0–3 mm,
 stagger 2–8 rows, bean passes 3–9 (odd).

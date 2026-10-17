@@ -28,7 +28,10 @@ Every menu action is a command: find it with command_list and run it with comman
 the selection, and most commands act on the selection (or on explicit `ids`). prompts/list has ready-made \
 workflows, completion/complete finishes a command id, a format, an effect or a swatch name, and \
 vectorcraft://object/{id}, vectorcraft://command/{id}, vectorcraft://effect/{id} and \
-vectorcraft://swatch/{name} read one thing at a time instead of the whole document.";
+vectorcraft://swatch/{name} read one thing at a time instead of the whole document. \
+Embroidery: give paths and type stitch settings with embroidery.set (lengths in mm, not points), check \
+the design with embroidery.info and see it with render_preview {stitches: true}, then export {format: \
+\"dst\"}; the `embroidery` prompt walks through it and vectorcraft://guide/embroidery is the full guide.";
 
 /// An MCP server bound to one backend.
 pub struct Server {
@@ -207,6 +210,9 @@ impl Server {
             "resources/templates/list" => Ok(resources::templates()),
             "resources/read" => {
                 let uri = params.get("uri").and_then(Value::as_str).ok_or((INVALID_PARAMS, "missing `uri`".to_string()))?;
+                if let Some(doc) = resources::text(uri) {
+                    return Ok(json!({"contents": [{"uri": uri, "mimeType": doc.mime, "text": doc.text}]}));
+                }
                 let v = resources::read(self.backend.as_mut(), uri).map_err(|e| match e {
                     resources::ReadError::NotFound(uri) => (RESOURCE_NOT_FOUND, format!("resource not found: {uri}")),
                     resources::ReadError::Invalid(why) => (INVALID_PARAMS, why),

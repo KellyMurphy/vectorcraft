@@ -16,6 +16,7 @@ pub mod extract;
 pub mod generate;
 mod import;
 pub mod motifs;
+pub mod preview;
 pub mod rails;
 pub mod skeleton;
 

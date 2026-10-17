@@ -3853,5 +3853,6 @@ theme	Appearance	外観
 	Load Border Pattern…	パターンボーダーを読み込み…
 	Save Border Pattern…	パターンボーダーを保存…
 	Remove Border Pattern	パターンボーダーを削除
+	Render Stitch Preview	ステッチプレビューを描画
 	Extract Border Pattern	パターンボーダーを抽出
 	Select a straight stretch of a border with two or more repeats, or a shape drawn over it too.	繰り返しが2回以上あるボーダーの直線部分を選択します。その上に描いたシェイプも一緒に選択できます。

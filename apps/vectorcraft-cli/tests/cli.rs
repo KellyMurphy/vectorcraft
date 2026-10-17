@@ -137,7 +137,12 @@ fn mcp_protocol_over_stdio() {
     assert!(r["result"]["completion"]["values"].as_array().is_some_and(|v| v.contains(&json!("svg"))), "{r}");
 
     send(&mut stdin, json!({"jsonrpc":"2.0","id":5,"method":"resources/list","params":{}}));
-    assert!(recv(&mut lines, &mut notes, 5)["result"]["resources"].as_array().is_some_and(|v| v.len() == 3));
+    // The fixed resources, then the guides and specifications (the embroidery guide among them).
+    let r = recv(&mut lines, &mut notes, 5);
+    let uris: Vec<&str> = r["result"]["resources"].as_array().unwrap().iter().filter_map(|v| v["uri"].as_str()).collect();
+    for uri in ["vectorcraft://document", "vectorcraft://document/json", "vectorcraft://commands", "vectorcraft://guide/embroidery"] {
+        assert!(uris.contains(&uri), "{uri} in {uris:?}");
+    }
     send(&mut stdin, json!({"jsonrpc":"2.0","id":6,"method":"resources/templates/list","params":{}}));
     assert!(recv(&mut lines, &mut notes, 6)["result"]["resourceTemplates"].as_array().is_some_and(|v| v.len() >= 4));
 

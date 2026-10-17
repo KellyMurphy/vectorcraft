@@ -19,7 +19,7 @@ pub fn specs() -> Vec<CommandSpec> {
         cmd!(
             "embroidery.set",
             "Stitch Settings",
-            [],
+            ["Object", "Embroidery"],
             None,
             "{type?: auto|running|bean|satin|zigzag|satinShape|fill|patternBorder|manual (patternBorder: a border pattern repeated along the path, bending with its curves, a whole number of repeats between corners; auto: by stroke width, thinUnder?: mm (0.2–3; 1) → bean outline, wideOver?: mm (2–12; 7) → fill with a satin border, else satin shape) (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag, satin shape, zigzag stitch or fill row spacing, 0.1–10; satin and fill 0.4, zigzag 2), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column or zigzag, 0.3–12; satin: the stroke width, zigzag: 3; pattern border: the band, 1–40, default the pattern's own), pattern?: a border pattern id: waves|scallops|chain|diamonds or one loaded into the document (embroidery.borderPatterns) | null (pattern border: the pattern; waves), flip?: bool (pattern border: mirrored across the path), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), pull?: mm (satin and satin shape pull compensation, 0–3; 0), underlay?: none|center|edge|zigzag (satin) | none|center (satin shape) | none|fill (fill), stagger?: 2–8 (fill rows before the needle holes line up again; 3), passes?: 3|5|7|9 (bean; 3), border?: mm (fill: a satin border over the edges, 0.5–6) | null (none), motif?: diamonds|waves|circles|scales|herringbone | null (fill: a motif carved into the fill, its needle points on the motif's lines), motifSize?: mm (3–60; 10), trimBefore?: bool, trimAfter?: bool (cut the thread before / after the object, however close the next stitch), rails?: bool (satin: between the object's two longest subpaths as its edges, other subpaths crossing both as rungs setting the stitch direction), ids?} stitch the paths, compound paths and type objects in ids or the selection (groups: those inside; type is sewn letter by letter, each letter in its characters' colour: use auto for lettering), as one undo step; null resets length, spacing, width, thread, pull, stagger or passes to the default → {changed}",
             has_doc,
@@ -28,7 +28,7 @@ pub fn specs() -> Vec<CommandSpec> {
         cmd!(
             "embroidery.setup",
             "Embroidery Setup",
-            [],
+            ["Window", "Embroidery"],
             None,
             "{trimJumpsOver?: mm (0.5–100; 3) | null (never trim on length: only thread changes and objects' trimBefore/trimAfter cut the thread), stitchMovesUnder?: mm (0–5; 1: moves to the next stitch up to this long are sewn, longer ones jump)} the document's travel settings, as one undo step → {trimJumpsOver, stitchMovesUnder}",
             has_doc,
@@ -37,7 +37,7 @@ pub fn specs() -> Vec<CommandSpec> {
         cmd!(
             query "embroidery.order",
             "Sew Order",
-            [],
+            ["Window", "Embroidery"],
             None,
             "{} the stitched objects in the order they are sewn → {order: [{id, name, stitch: type id, thread: \"#rrggbb\"}], custom: bool (false: paint order)}. Whatever is sewn later lies on top on the fabric",
             has_doc,
@@ -46,7 +46,7 @@ pub fn specs() -> Vec<CommandSpec> {
         cmd!(
             "embroidery.reorder",
             "Change Sew Order",
-            [],
+            ["Window", "Embroidery"],
             None,
             "{to: first|earlier|later|last, ids?} move the stitched objects in ids or the selection (groups: those inside) in the sewing order, or {order: [ids]} set it (those first, in that order; the others after, in paint order); one undo step → {order: [ids]}",
             has_doc,
@@ -55,7 +55,7 @@ pub fn specs() -> Vec<CommandSpec> {
         cmd!(
             "embroidery.sortByThread",
             "Sew by Thread",
-            [],
+            ["Window", "Embroidery"],
             None,
             "{} group the sewing order by thread colour (colours in the order they first come, each keeping its objects' order), so each thread is sewn once where layering allows; one undo step → {order: [ids], colorChanges}",
             has_doc,
@@ -64,7 +64,7 @@ pub fn specs() -> Vec<CommandSpec> {
         cmd!(
             "embroidery.resetOrder",
             "Sew in Paint Order",
-            [],
+            ["Window", "Embroidery"],
             None,
             "{} sew the objects in paint order again (bottom first); one undo step → {order: [ids]}",
             has_doc,
@@ -73,7 +73,7 @@ pub fn specs() -> Vec<CommandSpec> {
         cmd!(
             query "embroidery.borderPatterns",
             "Border Patterns",
-            [],
+            ["Window", "Embroidery"],
             None,
             "{} the border patterns pattern borders can sew: the document's own (loaded from .vcborder files) then the starters → {patterns: [{id, name, builtin, width, length (mm, the pattern's own size), corner: has a corner motif, satin: has satin parts (sewn at the object's spacing), author, license, source, description, used: objects sewing with it}]}",
             has_doc,
@@ -82,7 +82,7 @@ pub fn specs() -> Vec<CommandSpec> {
         cmd!(
             "embroidery.loadBorderPattern",
             "Load Border Pattern…",
-            [],
+            ["Window", "Embroidery"],
             None,
             "{path? | data?: the file's text} load a .vcborder border pattern file into the document (kept in it, so the document sews the same anywhere), as one undo step. Its id is the file's (else made from its name); one already taken by a different pattern gets a number (rope-2…), and a pattern the document (or the starters) already has is not added again → {id, name, added}",
             has_doc,
@@ -91,7 +91,7 @@ pub fn specs() -> Vec<CommandSpec> {
         cmd!(
             "embroidery.extractBorderPattern",
             "Extract Border Pattern",
-            [],
+            ["Window", "Embroidery"],
             None,
             "{ids?, name?, period?: mm (skip the search for the repeat's length), author?, license?, source? (default: the document's title)} find the repeat of a stitched border in the selected manual-stitch paths (an opened DST design; with a closed unstitched path selected too, only the stitches inside it: draw one over the stretch to take) and add one repeat, joining end to end, to the document's border patterns (save it with embroidery.saveBorderPattern), as one undo step. Pick a straight stretch with two or more repeats → {id, name, period: the repeat's length, mm, width: mm, stitches: needle points a repeat, repeats: whole repeats found, error: mm the repeats differ from the pattern on average}",
             has_doc,
@@ -100,7 +100,7 @@ pub fn specs() -> Vec<CommandSpec> {
         cmd!(
             "embroidery.saveBorderPattern",
             "Save Border Pattern…",
-            [],
+            ["Window", "Embroidery"],
             None,
             "{pattern: id (the document's or a starter), path?} write a border pattern as a .vcborder file (JSON; specified in docs/formats/vcborder.md) → {path}, or without path {data: the file's text}",
             has_doc,
@@ -109,7 +109,7 @@ pub fn specs() -> Vec<CommandSpec> {
         cmd!(
             "embroidery.removeBorderPattern",
             "Remove Border Pattern",
-            [],
+            ["Window", "Embroidery"],
             None,
             "{pattern: id} remove one of the document's border patterns, as one undo step (not one objects still sew with; starters can't be removed) → {removed: id}",
             has_doc,
@@ -118,7 +118,7 @@ pub fn specs() -> Vec<CommandSpec> {
         cmd!(
             "embroidery.clear",
             "Remove Stitches",
-            [],
+            ["Object", "Embroidery"],
             None,
             "{ids?} the objects in ids or the selection (groups: those inside) are no longer stitched, as one undo step → {changed}",
             has_doc,
@@ -127,16 +127,25 @@ pub fn specs() -> Vec<CommandSpec> {
         cmd!(
             query "embroidery.info",
             "Embroidery Info",
-            [],
+            ["Window", "Embroidery"],
             None,
             "{ids?} → {design: {objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings}, setup: {trimJumpsOver, stitchMovesUnder} (embroidery.setup), selection: {stitched, unstitched, type, length, spacing, angle, width, thread, pull, underlay, stagger, passes, border, motif, motifSize, pattern, flip, thinUnder, wideOver, rails, trimBefore, trimAfter} (each null when the stitched objects differ, or none is)}",
             has_doc,
             info
         ),
         cmd!(
+            query "embroidery.preview",
+            "Render Stitch Preview",
+            ["View"],
+            None,
+            "{scale?: pixels per point (0.01-16; 1), artboard?: index (0)} the artboard as Stitch Preview shows it, as a PNG: the stitches in their thread colours on fabric over the art, jumps as thin lines; the document is not changed → {width, height, pngBase64}",
+            has_doc,
+            preview
+        ),
+        cmd!(
             query "embroidery.stitches",
             "Embroidery Stitches",
-            [],
+            ["Window", "Embroidery"],
             None,
             "{limit?: 500000 (most points)} the design's stitches as the machine sews them → {threads: [\"#rrggbb\"], runs: [{thread, points: [[x, y], …]}] (mm, document coordinates, y down; a run is sewn without a jump or trim), jumps: [[x0, y0, x1, y1]], truncated}",
             has_doc,
@@ -796,6 +805,28 @@ fn info(s: &mut Session, p: &Value) -> Result<Value> {
         "trimAfter": same(all.iter().map(|s| s.trim_after)),
     });
     Ok(json!({ "design": design(doc, &plan), "setup": setup_json(&doc.embroidery), "selection": selection }))
+}
+
+fn preview(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.preview";
+    let scale = match p.get("scale") {
+        None | Some(Value::Null) => 1.0,
+        Some(v) => {
+            v.as_f64().filter(|x| x.is_finite() && (0.01..=16.0).contains(x)).ok_or_else(|| bad(C, "`scale` must be a number from 0.01 to 16"))?
+        }
+    };
+    let doc = &s.doc()?.doc;
+    let index = match p.get("artboard") {
+        None | Some(Value::Null) => 0,
+        Some(v) => v.as_u64().and_then(|i| usize::try_from(i).ok()).ok_or_else(|| bad(C, "`artboard` must be an artboard index"))?,
+    };
+    let rect = doc.artboards.get(index).map(|a| a.rect).ok_or_else(|| bad(C, format!("no artboard {index}")))?;
+    vectorcraft_render::raster_size(rect, scale).map_err(|e| bad(C, e))?;
+    let plan = vectorcraft_embroidery::plan(doc);
+    let shown = vectorcraft_embroidery::preview::document(doc, &plan);
+    let img = vectorcraft_render::Renderer::new().render_region(&shown, rect, scale, true);
+    let png = img.to_png().map_err(|e| bad(C, e))?;
+    Ok(json!({"width": img.width, "height": img.height, "pngBase64": vectorcraft_format::base64_encode(&png)}))
 }
 
 fn stitches(s: &mut Session, p: &Value) -> Result<Value> {

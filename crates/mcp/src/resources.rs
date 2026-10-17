@@ -19,6 +19,74 @@ pub const DOC_JSON_URI: &str = "vectorcraft://document/json";
 /// The live command catalog, including enabled state.
 pub const COMMANDS_URI: &str = "vectorcraft://commands";
 
+/// A document served as it is written in `docs/` (guides and file format specifications).
+pub struct TextDoc {
+    pub uri: &'static str,
+    pub name: &'static str,
+    pub title: &'static str,
+    pub description: &'static str,
+    pub mime: &'static str,
+    pub text: &'static str,
+}
+
+/// Every guide and specification, in `resources/list` order. Each file in `docs/formats/` is
+/// listed here (tested), so a new file format is readable by agents from the day it lands.
+pub static TEXT_DOCS: &[TextDoc] = &[
+    TextDoc {
+        uri: "vectorcraft://guide/embroidery",
+        name: "guide-embroidery",
+        title: "Embroidery guide",
+        description: "How VectorCraft digitizes art for machine embroidery: stitch types and their settings (lengths in mm), type, sew order, travel, border patterns, DST files and every embroidery command",
+        mime: "text/markdown",
+        text: include_str!("../../../docs/embroidery.md"),
+    },
+    TextDoc {
+        uri: "vectorcraft://spec/formats",
+        name: "spec-formats",
+        title: "File format specifications (index)",
+        description: "VectorCraft's own open file formats and what they have in common",
+        mime: "text/markdown",
+        text: include_str!("../../../docs/formats/README.md"),
+    },
+    TextDoc {
+        uri: "vectorcraft://spec/vcborder",
+        name: "spec-vcborder",
+        title: "Border pattern file (.vcborder) specification",
+        description: "The open JSON format for embroidery border patterns: fields, the pattern's space, parts, corners and limits",
+        mime: "text/markdown",
+        text: include_str!("../../../docs/formats/vcborder.md"),
+    },
+    TextDoc {
+        uri: "vectorcraft://spec/vcborder.schema.json",
+        name: "spec-vcborder-schema",
+        title: "Border pattern file JSON Schema",
+        description: "JSON Schema (draft 2020-12) for .vcborder files",
+        mime: "application/schema+json",
+        text: include_str!("../../../docs/formats/vcborder.schema.json"),
+    },
+    TextDoc {
+        uri: "vectorcraft://spec/vectorcraft-embroidery",
+        name: "spec-vectorcraft-embroidery",
+        title: "Embroidery data in documents (specification)",
+        description: "Stitch settings on objects and the document's embroidery setup inside .vectorcraft files: every kind, default and range",
+        mime: "text/markdown",
+        text: include_str!("../../../docs/formats/vectorcraft-embroidery.md"),
+    },
+    TextDoc {
+        uri: "vectorcraft://spec/vectorcraft-embroidery.schema.json",
+        name: "spec-vectorcraft-embroidery-schema",
+        title: "Embroidery data JSON Schema",
+        description: "JSON Schema (draft 2020-12) for stitch settings and the embroidery setup",
+        mime: "application/schema+json",
+        text: include_str!("../../../docs/formats/vectorcraft-embroidery.schema.json"),
+    },
+];
+
+/// The guide or specification at `uri`, if it is one.
+pub fn text(uri: &str) -> Option<&'static TextDoc> {
+    TEXT_DOCS.iter().find(|d| d.uri == uri)
+}
+
 /// Why a resource could not be read. The distinction matters: the server turns it into `-32002`
 /// (no such resource) or `-32602` (bad URI), and guessing from the message text would not hold.
 #[derive(Debug)]
@@ -79,11 +147,13 @@ pub static TEMPLATES: &[Template] = &[
 
 /// `resources/list`.
 pub fn list() -> Value {
-    json!({"resources": [
-        {"uri": DOC_URI, "name": "document", "title": "Active document (summary)", "description": "Layer tree, artboards, selection and history of the active document (document.inspect)", "mimeType": "application/json"},
-        {"uri": DOC_JSON_URI, "name": "document-json", "title": "Active document (full model)", "description": "The complete document model as JSON (document.json)", "mimeType": "application/json"},
-        {"uri": COMMANDS_URI, "name": "commands", "title": "Command catalog", "description": "Command ids, labels, parameter descriptions and current enabled state", "mimeType": "application/json"},
-    ]})
+    let mut list = vec![
+        json!({"uri": DOC_URI, "name": "document", "title": "Active document (summary)", "description": "Layer tree, artboards, selection and history of the active document (document.inspect)", "mimeType": "application/json"}),
+        json!({"uri": DOC_JSON_URI, "name": "document-json", "title": "Active document (full model)", "description": "The complete document model as JSON (document.json)", "mimeType": "application/json"}),
+        json!({"uri": COMMANDS_URI, "name": "commands", "title": "Command catalog", "description": "Command ids, labels, parameter descriptions and current enabled state", "mimeType": "application/json"}),
+    ];
+    list.extend(TEXT_DOCS.iter().map(|d| json!({"uri": d.uri, "name": d.name, "title": d.title, "description": d.description, "mimeType": d.mime})));
+    json!({ "resources": list })
 }
 
 /// `resources/templates/list`.
@@ -231,7 +301,11 @@ mod tests {
     #[test]
     fn lists_are_well_formed() {
         let l = list();
-        assert_eq!(l["resources"].as_array().map(Vec::len), Some(3));
+        assert_eq!(
+            l["resources"].as_array().map(Vec::len),
+            Some(3 + TEXT_DOCS.len()),
+            "the document, its JSON, the commands, and the guides and specs"
+        );
         let t = templates();
         let items = t["resourceTemplates"].as_array().expect("templates");
         assert_eq!(items.len(), TEMPLATES.len());

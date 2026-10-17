@@ -53,7 +53,7 @@ This does not add streaming or input requests — see [Not implemented](#not-imp
 
 ### Prompts
 
-`prompts/list` offers five workflows; `prompts/get` returns one templated user message with its
+`prompts/list` offers six workflows; `prompts/get` returns one templated user message with its
 arguments filled in. A missing required argument is `-32602`.
 
 | Prompt | Arguments (required first) |
@@ -62,6 +62,7 @@ arguments filled in. A missing required argument is `-32602`.
 | `icon-set` | `subject`, `count`, `detail` |
 | `recolor` | `palette`, `method` |
 | `trace-and-style` | `path`, `preset`, `effect` |
+| `embroidery` | `subject`, `stitch`, `size`, `path` |
 | `export-set` | `formats`, `directory`, `scale` |
 
 ```sh
@@ -72,7 +73,8 @@ echo '{"jsonrpc":"2.0","id":1,"method":"prompts/get","params":{"name":"poster","
 ### Resource templates
 
 `vectorcraft://document` (summary), `vectorcraft://document/json` (the whole model), and
-`vectorcraft://commands` (the live command catalog with enabled state) are the fixed resources. The templates read one thing at a time, which matters on a real document: the full model
+`vectorcraft://commands` (the live command catalog with enabled state) are the fixed resources, with the
+guides and file format specifications (see [Resources](#resources)). The templates read one thing at a time, which matters on a real document: the full model
 is thousands of lines an agent pays for again on every change.
 
 | `uriTemplate` | Reads |
@@ -169,7 +171,7 @@ The older names below remain listed because existing workflows use them.
 | `command_run` | `id`, optional `params`; runs the command through the existing backend |
 | `command_batch` | `steps: [{id, params?}]`, optional `stop_on_error` (default true); returns `completed`, `failed`, `results: [{ok, result\|error}]`. Each edit has its own undo step; failures set `isError` |
 | `doc_inspect` | Optional `depth`, `childLimit`; same summary as `inspect_document` |
-| `render_preview` | Optional `max_side` (1–4096, default 1024); inline PNG of the first artboard without editing it. Artboards too large to render within the allocation bound return a tool error |
+| `render_preview` | Optional `max_side` (1–4096, default 1024) and `stitches` (draw the embroidery design over the art, as Stitch Preview does); inline PNG of the first artboard without editing it. Artboards too large to render within the allocation bound return a tool error |
 | `ui_inspect`, `ui_screenshot` | Connected desktop state/window capture; tool errors in headless mode |
 
 Every tool declares read-only, destructive, idempotent and open-world hints. File-writing
@@ -339,6 +341,34 @@ document uses are written, and document keys written by a newer version are kept
 |---|---|
 | `vectorcraft://document` | `document.inspect` summary (JSON) |
 | `vectorcraft://document/json` | The complete document model (JSON) |
+| `vectorcraft://commands` | The command catalog (JSON) |
+| `vectorcraft://guide/embroidery` | The embroidery guide, `docs/embroidery.md` (Markdown) |
+| `vectorcraft://spec/formats` | The index of VectorCraft's own file formats (Markdown) |
+| `vectorcraft://spec/vcborder`, `vectorcraft://spec/vcborder.schema.json` | The border pattern file's specification and JSON Schema |
+| `vectorcraft://spec/vectorcraft-embroidery`, `vectorcraft://spec/vectorcraft-embroidery.schema.json` | The embroidery data in documents: specification and JSON Schema |
+
+Guides and specifications are served exactly as they are in `docs/`. Every file in `docs/formats/` is
+served (a test fails when one isn't).
+
+## Embroidery
+
+Everything in the [embroidery guide](embroidery.md) works over MCP:
+
+- The server's instructions mention it, and `vectorcraft://guide/embroidery` serves the guide. **Embroidery
+  lengths are millimetres**, not points.
+- `run_command embroidery.set {type, …}` stitches the selection; `embroidery.info` reports the design (stitch
+  count, size in mm, jumps, trims, threads, warnings) and the selection's settings. Every embroidery command
+  has a menu path (Object › Embroidery, Window › Embroidery, View) so `command_list {filter: "embroidery"}`
+  finds them all.
+- `render_preview {stitches: true}` draws the design as Stitch Preview shows it: stitches in their thread
+  colours on fabric over the art (engine command `embroidery.preview`, so it works headless too).
+- `export {format: "dst"}` writes the machine file; `open_file` on a `.dst` opens a design as manual stitches.
+- The `embroidery` prompt walks through digitizing, checking, ordering and exporting.
+
+The embroidery tests (`crates/mcp/src/tests_embroidery.rs`) keep this true as features land: every
+`embroidery.*` command needs a menu path, a parameter description and a row in the guide; every stitch type
+must be in the prompt, `embroidery.set` and the guide; every stitch setting in `embroidery.set` and
+`embroidery.info`; every format specification served as a resource.
 
 ## Examples
 

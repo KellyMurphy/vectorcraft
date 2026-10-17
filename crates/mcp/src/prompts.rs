@@ -116,6 +116,9 @@ pub struct PromptDef {
     pub text: &'static str,
 }
 
+/// Stitch types (`embroidery.set`'s `type`), a closed set kept in step with the engine (tested).
+pub(crate) const STITCH_TYPES: &[&str] = &["auto", "running", "bean", "satin", "zigzag", "satinShape", "fill", "patternBorder", "manual"];
+
 /// Recolour methods (`recolor.apply`'s `method`), written here because they are a closed set.
 const RECOLOR_METHODS: &[&str] = &["exact", "preserveTints", "scaleTints", "tintsShades", "hueShift"];
 
@@ -311,6 +314,61 @@ Method:
 5. screenshot, then remove the placed image if it is still underneath.
 
 The trace is real geometry: every traced shape stays selectable and editable.",
+    },
+    PromptDef {
+        name: "embroidery",
+        title: "Digitize for embroidery",
+        description: "Turn art or lettering into a machine embroidery design: stitch types, sewing order and travel, checked with a stitch preview, exported as DST.",
+        arguments: &[
+            PromptArg {
+                name: "subject",
+                description: "What to stitch: the selection, or what to draw first",
+                required: false,
+                default: "the current selection",
+                values: Values::Fixed(NONE),
+            },
+            PromptArg {
+                name: "stitch",
+                description: "The stitch type to start from",
+                required: false,
+                default: "auto",
+                values: Values::Fixed(STITCH_TYPES),
+            },
+            PromptArg { name: "size", description: "The finished design's size", required: false, default: "as drawn", values: Values::Fixed(NONE) },
+            PromptArg {
+                name: "path",
+                description: "Where to write the DST file",
+                required: false,
+                default: "design.dst in the current directory",
+                values: Values::Fixed(NONE),
+            },
+        ],
+        text: "\
+Digitize {subject} in VectorCraft for machine embroidery, starting from the {stitch} stitch,
+at {size}, and export it to {path}.
+
+Embroidery lengths (stitch length, spacing, widths) are millimetres, not points. Read
+vectorcraft://guide/embroidery for every stitch type and setting.
+
+Method:
+1. Make the art: draw_shape, draw_path or add_text (type is stitched live, letter by letter),
+   or open_file a DST to start from an existing design. Scale it to {size} with transform.
+2. run_command embroidery.set {type: {stitch}} on the selection. auto picks per shape (per
+   letter for type): bean outline for thin strokes, satin shape in between, fill with a satin
+   border for wide shapes. Tune the type's settings (length, spacing, width, angle, underlay,
+   pull, pattern…; embroidery.set's parameter description lists them all with their ranges).
+3. run_command embroidery.info: stitch count, size in mm, jumps, trims, threads and warnings.
+   Fix every warning before going on.
+4. render_preview {stitches: true} to see the stitches in their thread colours on fabric.
+   Look for gaps, long satin stitches and objects that crowd each other.
+5. Order the sewing: embroidery.order shows it; embroidery.sortByThread sews each colour
+   once; embroidery.reorder moves objects (what is sewn later lies on top). Set the travel
+   with embroidery.setup (trim jumps over, sew moves under).
+6. export {path: \"{path}\", format: \"dst\"}. DST keeps no colours: list the thread
+   colours in order from embroidery.info for the operator.
+
+Every change is one undo step, and the art stays editable: changing a path changes its
+stitches.",
     },
     PromptDef {
         name: "export-set",

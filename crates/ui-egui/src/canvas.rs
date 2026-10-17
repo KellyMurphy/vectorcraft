@@ -1725,10 +1725,9 @@ fn names_an_artboard(text: &str) -> bool {
     text.split_once(" - ").is_some_and(|(n, _)| n.len() >= 2 && n.bytes().all(|b| b.is_ascii_digit()))
 }
 
-/// Stitch Preview's fabric: undyed linen, mostly hiding the art under the stitches.
-const FABRIC: [u8; 4] = [236, 230, 214, 235];
-/// The thread width Stitch Preview draws, mm (a common 40-weight thread).
-const THREAD_MM: f64 = 0.35;
+// Stitch Preview's fabric (undyed linen, mostly hiding the art under the stitches) and thread
+// width (a common 40-weight thread), shared with the rendered preview (`embroidery.preview`).
+use vectorcraft_embroidery::preview::{FABRIC, JUMP_ALPHA, JUMP_WIDTH_PT, THREAD_MM};
 
 /// Stitch Preview's plan of `doc`, made again only when the document changed.
 fn stitch_plan(
@@ -1760,7 +1759,7 @@ fn draw_stitches(painter: &egui::Painter, xf: &Xf, doc: &vectorcraft_doc::Docume
         let [r, g, b] = plan.threads.get(thread).copied().unwrap_or([0; 3]);
         painter.add(Shape::line(run.iter().map(|p| at(p.x, p.y)).collect(), Stroke::new(width, Color32::from_rgb(r, g, b))));
     }
-    let jump = Stroke::new(0.5, Color32::from_black_alpha(90));
+    let jump = Stroke::new(JUMP_WIDTH_PT as f32, Color32::from_black_alpha(JUMP_ALPHA));
     let mut from = None;
     for n in &plan.needles {
         let p = at(n.x, n.y);

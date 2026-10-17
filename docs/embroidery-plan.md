@@ -14,6 +14,13 @@ control and production output, built as new code from public documentation. The 
 - **Every step ships whole:** command(s) with params docs, panel UI, translations, `docs/embroidery.md`, tests,
   fuzzing for any new input, and a spec in `docs/formats/` for any new file format (with a schema and a drift
   test). One task id per commit; `cargo xtask ci` green.
+- **Every step is MCP-ready** when it lands, so agents can use and test it: its commands have a menu path
+  and a full parameter description and appear in the guide's command table (served as
+  `vectorcraft://guide/embroidery`); a new stitch type is in the `embroidery` prompt; a new setting is
+  described by `embroidery.set` and reported by `embroidery.info`; a new file format's spec is served as a
+  `vectorcraft://spec/…` resource; anything visual can be seen with `render_preview {stitches: true}` (extend
+  `embroidery.preview` when a step adds something Stitch Preview shows). `crates/mcp/src/tests_embroidery.rs`
+  fails until each holds; extend it with each step's own MCP round trip.
 - **Gates need fabric.** Stitch quality is only proven by sewing. Each phase ends with a sew-out the user does
   on a real machine (see [Sew-out gates](#sew-out-gates)). Work on the next phase may start, but features aren't
   called done until their gate passes.
@@ -90,9 +97,9 @@ means hand-editing the command parser, the info query, the panel, the docs table
 Also in flight, finishing E5:
 
 - **E5.5** Border pattern extraction (built; awaiting its in-app check and commit).
-- **E5.6** Embroidery for agents (MCP): menu paths for the commands, server instructions, an `embroidery`
-  prompt, this guide as a resource, stitches in `render_preview`. Small, and it lets agents help test
-  everything that follows.
+- **E5.6** Embroidery for agents (MCP): **done**. Menu paths for every command, server instructions, the
+  `embroidery` prompt, the guide and format specs as resources, `render_preview {stitches: true}`
+  (`embroidery.preview`), and the MCP-readiness tests.
 
 ## Phase 1: production-ready digitizing (P0) — E7
 
@@ -168,6 +175,6 @@ code), renders compared by eye, and the independent reader for each machine form
 
 ## Order of work
 
-E5.5 commit → E5.6 MCP → E6.1–E6.6 → E7 (E7.1–E7.3 first, as the quality basics; E7.12 formats can run in
+E5.5 and E5.6 done → E6.1–E6.6 → E7 (E7.1–E7.3 first, as the quality basics; E7.12 formats can run in
 parallel) → G1 → E8 → G2 → E9 → G3. `ROADMAP.md`'s E row and `docs/embroidery.md` are updated as each step
 lands.

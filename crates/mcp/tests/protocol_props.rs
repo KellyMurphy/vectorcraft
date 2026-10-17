@@ -168,17 +168,27 @@ fn framing_never_panics_on_malformed_messages() {
 }
 
 #[test]
-fn resources_are_json() {
+fn resources_are_what_they_say() {
     let mut s = server();
     let uri = doc_uri_json(&mut s);
     let v = rpc(&mut s, 1, "resources/read", json!({"uri": uri}));
     let d: Document = serde_json::from_str(v["result"]["contents"][0]["text"].as_str().unwrap()).unwrap();
     check_document(&d).unwrap();
     let list = rpc(&mut s, 2, "resources/list", json!({}));
+    // Each resource is what it says it is: JSON (and JSON Schemas) parse; guides and specs are
+    // Markdown with something in them.
     for r in list["result"]["resources"].as_array().unwrap() {
         let v = rpc(&mut s, 3, "resources/read", json!({"uri": r["uri"]}));
-        let text = v["result"]["contents"][0]["text"].as_str().unwrap();
-        serde_json::from_str::<Value>(text).unwrap();
+        let content = &v["result"]["contents"][0];
+        assert_eq!(content["mimeType"], r["mimeType"], "{r}");
+        let text = content["text"].as_str().unwrap();
+        match r["mimeType"].as_str().unwrap() {
+            "application/json" | "application/schema+json" => {
+                serde_json::from_str::<Value>(text).unwrap();
+            }
+            "text/markdown" => assert!(text.starts_with("# ") && text.len() > 200, "{r}"),
+            other => panic!("unexpected resource type {other}"),
+        }
     }
 }
 

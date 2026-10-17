@@ -113,8 +113,8 @@ pub fn tool_definitions() -> Vec<Value> {
         tool(
             "render_preview",
             "Render a preview",
-            "Render the first artboard as inline PNG without changing the document. max_side defaults to 1024, limited to 1..4096.",
-            obj(json!({"max_side":{"type":"integer","minimum":1,"maximum":4096}}), &[]),
+            "Render the first artboard as inline PNG without changing the document. max_side defaults to 1024, limited to 1..4096. stitches: true draws the embroidery design as Stitch Preview shows it (stitches in their thread colours on fabric over the art).",
+            obj(json!({"max_side":{"type":"integer","minimum":1,"maximum":4096},"stitches":{"type":"boolean"}}), &[]),
             true,
         ),
         tool("ui_inspect", "Inspect the interface", "Inspect the connected desktop interface; returns a tool error in headless mode.", empty(), true),
@@ -329,7 +329,7 @@ pub fn tool_definitions() -> Vec<Value> {
         tool(
             "export",
             "Export",
-            "Export the active document with the engine's document.export (the same bytes in the app and headless), in any format of the `format` enum: vectors (svg/svgz with the artboard as viewBox, eps, dxf, emf, wmf), pdf (one page per artboard: all, or `artboard` / `range`), rasters (one rendered artboard: png, jpg, webp, gif, png8 as an indexed .png, tiff, bmp, tga, psd with its layers), txt (the stories, back to front), vectorcraft or template (a native copy or template; the document keeps its path). run_command document.formats lists each format's options. `selection: true` exports only the selected objects, cropped to their bounds. Template layers are left out; live effects are kept (geometry baked, SVG filters for shadows/glows/blur). Without `path` the bytes come back as dataBase64.",
+            "Export the active document with the engine's document.export (the same bytes in the app and headless), in any format of the `format` enum: vectors (svg/svgz with the artboard as viewBox, eps, dxf, emf, wmf), pdf (one page per artboard: all, or `artboard` / `range`), rasters (one rendered artboard: png, jpg, webp, gif, png8 as an indexed .png, tiff, bmp, tga, psd with its layers), txt (the stories, back to front), dst (machine embroidery: the stitched objects' stitches, in mm; see vectorcraft://guide/embroidery), vectorcraft or template (a native copy or template; the document keeps its path). run_command document.formats lists each format's options. `selection: true` exports only the selected objects, cropped to their bounds. Template layers are left out; live effects are kept (geometry baked, SVG filters for shadows/glows/blur). Without `path` the bytes come back as dataBase64.",
             obj(
                 json!({
                     "format": {"type": "string", "enum": FORMATS.iter().filter(|f| f.write).map(|f| f.id).collect::<Vec<_>>(), "description": "Default: from the path's extension"},
@@ -951,7 +951,15 @@ fn render_preview(b: &mut dyn Backend, a: &Args) -> Result<ToolResult, String> {
     if width.max(height) * scale > 4096.0 {
         return Err("artboard is too large for a bounded preview".into());
     }
-    let r = b.call("ui.render", json!({"scale":scale}))?;
+    let stitches = match a.get("stitches") {
+        None | Some(Value::Null) => false,
+        Some(v) => v.as_bool().ok_or("`stitches` must be true or false")?,
+    };
+    let r = if stitches {
+        b.call("engine.execute", json!({"command": "embroidery.preview", "params": {"scale": scale}}))?
+    } else {
+        b.call("ui.render", json!({"scale":scale}))?
+    };
     let encoded = r.get("pngBase64").and_then(Value::as_str).ok_or("renderer returned no image")?;
     let png = vectorcraft_format::base64_decode(encoded).ok_or("renderer returned bad base64")?;
     let img = image::load_from_memory_with_format(&png, image::ImageFormat::Png).map_err(|e| format!("read preview: {e}"))?;
