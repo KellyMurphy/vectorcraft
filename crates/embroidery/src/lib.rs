@@ -15,6 +15,7 @@ mod dst;
 pub mod extract;
 pub mod generate;
 mod import;
+pub mod kinds;
 pub mod motifs;
 pub mod params;
 pub mod preview;
@@ -562,137 +563,9 @@ fn sew(s: &StitchSettings, thread: [u8; 3], stroke_mm: f64, paths: &[&PathData],
         }
         return;
     }
-    let mut runs: Vec<Vec<Point>> = vec![];
-    if s.kind == StitchKind::Manual {
-        runs.extend(paths.iter().flat_map(|p| generate::manual(p)));
-    } else {
-        let lines: Vec<(Vec<Point>, bool)> = paths.iter().flat_map(|p| generate::polylines(p)).collect();
-        match s.kind {
-            StitchKind::Fill => {
-                let polys: Vec<Vec<Point>> = lines.into_iter().map(|(l, _)| l).collect();
-                let under = match s.underlay() {
-                    Underlay::Fill => generate::fill_underlay(&polys, rule, s.angle()),
-                    _ => Ok(vec![]),
-                };
-                // A carved motif over the shape's box (none when unknown or too fine to carve).
-                let carve = match s.motif.as_deref() {
-                    Some(id) => {
-                        let (mut lo, mut hi) = (Point::new(f64::INFINITY, f64::INFINITY), Point::new(f64::NEG_INFINITY, f64::NEG_INFINITY));
-                        for p in polys.iter().flatten() {
-                            lo = Point::new(lo.x.min(p.x), lo.y.min(p.y));
-                            hi = Point::new(hi.x.max(p.x), hi.y.max(p.y));
-                        }
-                        let segs = motifs::tiled(id, s.motif_size(), lo, hi);
-                        if segs.is_none() {
-                            b.plan
-                                .warnings
-                                .push(format!("the motif `{id}` can't be carved here (unknown, or too small for so large a fill): plain fill"));
-                        }
-                        segs.unwrap_or_default()
-                    }
-                    None => vec![],
-                };
-                let top = generate::fill_carved(&polys, rule, s.angle(), s.spacing(), s.length(), s.stagger(), &carve);
-                match under.and_then(|u| Ok((u, top?))) {
-                    Ok((u, top)) => {
-                        runs.extend(u.into_iter().chain(top));
-                        // The border: a satin over each edge, sewn last so it covers the rows' ends.
-                        if let Some(w) = s.border() {
-                            runs.extend(polys.iter().map(|p| generate::border(p, w)));
-                        }
-                    }
-                    Err(e) => {
-                        b.plan.warnings.push(e);
-                        return;
-                    }
-                }
-            }
-            StitchKind::Satin => {
-                // Capped: a wider stitch can't be sewn in one move (DST: 12.1 mm), and splitting it would put
-                // a needle hole in the middle of the column.
-                let w = (s.width(stroke_mm) + s.pull()).min(*StitchSettings::WIDTH.end());
-                // Between Rails: the object's two longest subpaths are the column's edges (any
-                // others crossing both are rungs), the column as wide as they are apart.
-                let rails = if s.rails { rails::find(&lines) } else { None };
-                if s.rails && rails.is_none() {
-                    b.plan
-                        .warnings
-                        .push("a satin set Between Rails needs two subpaths, both open or both closed: sewn along its paths instead".into());
-                }
-                if let Some(r) = &rails {
-                    let (run, narrowed) = r.satin(s.spacing(), s.pull(), s.underlay());
-                    if narrowed {
-                        b.plan.warnings.push(
-                            "a satin between rails is wider than a stitch can span (12 mm) in places: narrowed there (fill areas that wide)".into(),
-                        );
-                    }
-                    runs.push(run);
-                }
-                for (l, closed) in lines.iter().filter(|_| rails.is_none()) {
-                    let (under, back) = generate::satin_underlay(l, *closed, w, s.underlay());
-                    // After an underlay that ends at the far end, the column is sewn back.
-                    let top = if back {
-                        let rev: Vec<Point> = l.iter().rev().copied().collect();
-                        generate::satin(&rev, *closed, w, s.spacing())
-                    } else {
-                        generate::satin(l, *closed, w, s.spacing())
-                    };
-                    // One run: the move from the underlay to the column stays inside the column.
-                    runs.push(under.into_iter().chain(top).collect());
-                }
-            }
-            StitchKind::SatinShape => {
-                let polys: Vec<Vec<Point>> = lines.into_iter().map(|(l, _)| l).collect();
-                let satin = generate::satin_shape(&polys, rule, s.spacing(), s.pull(), s.underlay() == Underlay::Center);
-                if satin.is_empty() && !polys.is_empty() {
-                    // No strokes to follow (a blob, not a letter): fill it instead.
-                    match generate::fill(
-                        &polys,
-                        rule,
-                        45.0,
-                        StitchSettings::DEFAULT_SPACING,
-                        StitchKind::Fill.default_length(),
-                        StitchSettings::DEFAULT_STAGGER,
-                    ) {
-                        Ok(f) if !f.is_empty() => {
-                            b.plan.warnings.push("a satin shape has no strokes to follow (it is too round or wide): filled instead".into());
-                            runs.extend(f);
-                        }
-                        Ok(_) => {}
-                        Err(e) => b.plan.warnings.push(e),
-                    }
-                } else {
-                    runs.extend(satin);
-                }
-            }
-            StitchKind::Zigzag => {
-                let w = s.width(stroke_mm);
-                runs.extend(lines.iter().map(|(l, closed)| generate::zigzag(l, *closed, w, s.spacing())));
-            }
-            StitchKind::PatternBorder => {
-                let id = s.pattern();
-                let Some(pattern) = borders::find(&b.patterns, id) else {
-                    let newer = b.patterns.iter().any(|p| p.id == id && p.unknown.is_some());
-                    b.plan.warnings.push(if newer {
-                        format!("the border pattern `{id}` is from a newer VectorCraft that this version can't read: not sewn")
-                    } else {
-                        format!("there is no border pattern `{id}`: not sewn")
-                    });
-                    return;
-                };
-                let w = s.pattern_width(pattern.width);
-                for (l, closed) in &lines {
-                    match borders::sew(&pattern, l, *closed, w, s.flip, s.length(), s.spacing()) {
-                        Ok(r) => runs.extend(r),
-                        Err(e) => b.plan.warnings.push(e),
-                    }
-                }
-            }
-            StitchKind::Bean => runs.extend(lines.iter().map(|(l, _)| generate::bean(&generate::running(l, s.length()), s.passes()))),
-            _ => runs.extend(lines.iter().map(|(l, _)| generate::running(l, s.length()))),
-        }
-    }
-    emit(s, thread, runs, b);
+    let out = kinds::sew(&kinds::Input { settings: s, stroke_mm, paths, rule, patterns: &b.patterns });
+    b.plan.warnings.extend(out.warnings);
+    emit(s, thread, out.runs, b);
 }
 
 /// Sew an object's `runs`, cutting the thread before or after it as `s` asks.

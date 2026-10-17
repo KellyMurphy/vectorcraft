@@ -89,7 +89,7 @@ means hand-editing the command parser, the info query, the panel, the docs table
 |---|---|---|---|
 | **E6.1** Forward-compatible stitch data (**done**) | An unknown `kind`, `underlay` or part stitch in a document is kept as written and sewn as nothing (with a warning), instead of making the whole document fail to load. Spec updated. | Every later step adds kinds; older builds must keep opening newer documents. | S |
 | **E6.2** Parameter table (**done**) | One table describes each stitch parameter (key, type, unit, range, default per kind, which kinds use it, label, tooltip). Command parsing, `embroidery.info`, the panel's rows, the docs table and the schema drift test are driven from it. | Phases 1–3 add 40+ parameters; one place to add each. | M |
-| **E6.3** One module per stitch kind | Split the big `sew()` match into a module per kind (generate, defaults, quality checks), registered in one list. | New fills become a file each, testable alone. | M |
+| **E6.3** One module per stitch kind (**done**) | Split the big `sew()` match into a module per kind (generate, defaults, quality checks), registered in one list. | New fills become a file each, testable alone. | M |
 | **E6.4** Stitch cache and budgets | Cache each object's stitches by geometry and settings, so editing one object re-sews only it. Add an embroidery case to `vectorcraft-cli perf` (a 300-object design with lettering), with a budget. | Contour fills, auto-digitize and the live checker are too slow without it. | M |
 | **E6.5** Design checker framework | Findings with severity, object id and location. Shown as a list in the panel (click to select), as marks on the canvas, and as `embroidery.check`; a summary before export. | Phase 1's checker rules plug into it, and so does every later feature's own check. | M |
 | **E6.6** Sew-out kit | `embroidery.testSheet` makes calibration designs: satin widths 1–10 mm, densities, pull compensation steps, fill angles, underlays, lettering sizes 4–20 mm, each labelled. A short form records what the user saw (pass/fail and notes per swatch), saved with the plan. | Turns the fabric gates into a repeatable routine. | S |
@@ -114,6 +114,18 @@ Also in flight, finishing E5:
    row for each type it applies to; translations for its label and tooltip. Tests name anything
    missing (`format_specs`, `tests_embroidery`, the i18n tests).
 5. A row of its own in the panel (`own_rows`) when the generic one isn't good enough.
+
+### Adding a stitch type (after E6.3)
+
+1. The variant on `StitchKind` (`crates/doc/src/embroidery.rs`): its id, label, `ALL`, and whether it
+   follows the path.
+2. A module in `crates/embroidery/src/kinds/` with `sew(&Input) -> Output` (runs of needle points, and
+   warnings about the art), listed in `kinds::sew`; shared geometry goes in `generate.rs`. Its tests next
+   to it; `kinds::tests` checks every type sews a plain shape cleanly.
+3. The settings it uses: `kinds` lists in `params.rs` (and new settings as in the checklist above).
+4. The Object › Embroidery menu item, the panel's section (`own_rows`), the guide's table row, the
+   spec's kinds table and schema enum, the MCP prompt's stitch list, translations. Tests name each one
+   that is missing.
 
 ## Phase 1: production-ready digitizing (P0) — E7
 
