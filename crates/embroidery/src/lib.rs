@@ -22,12 +22,13 @@ pub mod preview;
 pub mod rails;
 pub mod skeleton;
 
+use std::collections::HashMap;
 use std::sync::Arc;
 
 use kurbo::Point;
 use serde::Serialize;
 use vectorcraft_color::Paint;
-use vectorcraft_doc::{Appearance, Document, EmbroiderySetup, Node, NodeKind, StitchKind, StitchSettings, Underlay};
+use vectorcraft_doc::{Appearance, Document, EmbroiderySetup, Node, NodeId, NodeKind, StitchKind, StitchSettings, Underlay};
 use vectorcraft_geom::{FillRule, PathData};
 
 pub use dst::{DstError, is_dst, read_dst, write_dst};
@@ -161,8 +162,6 @@ struct Builder {
     trim_over: Option<f64>,
     /// Moves up to this long are sewn rather than jumped, mm.
     stitch_under: f64,
-    /// The document's own border patterns ([`EmbroiderySetup::patterns`]).
-    patterns: Vec<vectorcraft_doc::BorderPattern>,
 }
 
 impl Builder {
@@ -175,7 +174,6 @@ impl Builder {
             tie: true,
             trim_over: setup.trim_over(),
             stitch_under: setup.stitch_under(),
-            patterns: setup.patterns.clone(),
         }
     }
 
@@ -277,6 +275,22 @@ impl Builder {
 
     /// Trim Before / Trim After: cut the thread where the needle is (locking it first), unless it
     /// is cut already or a thread change before `next` (the thread to sew next) will cut it.
+    /// Sew one object: its warnings, then its pieces.
+    fn apply(&mut self, sewn: &Sewn) {
+        self.plan.warnings.extend(sewn.warnings.iter().cloned());
+        for p in &sewn.pieces {
+            if p.trim_before {
+                self.force_trim(p.thread);
+            }
+            for r in &p.runs {
+                self.run(p.thread, r, p.tie);
+            }
+            if p.trim_after {
+                self.force_trim(p.thread);
+            }
+        }
+    }
+
     fn force_trim(&mut self, next: [u8; 3]) {
         if let Some(c) = self.cur
             && self.thread == Some(next)
@@ -305,13 +319,27 @@ fn tie_point(at: Point, toward: Point) -> Option<Point> {
     (d > 0.05 && d.is_finite()).then(|| at.lerp(toward, (TIE_MM / d).min(0.5)))
 }
 
-/// The stitch plan of `doc`'s visible stitched objects, in paint order.
+/// The stitch plan of `doc`'s visible stitched objects, in sewing order.
 pub fn plan(doc: &Document) -> Plan {
+    plan_cached(doc, &mut StitchCache::default())
+}
+
+/// [`plan`], sewing again only the objects `cache` doesn't hold as they are now.
+pub fn plan_cached(doc: &Document, cache: &mut StitchCache) -> Plan {
+    if cache.patterns != doc.embroidery.patterns {
+        cache.entries.clear();
+        cache.patterns.clone_from(&doc.embroidery.patterns);
+    }
+    (cache.reused, cache.sewn) = (0, 0);
     let mut b = Builder::new(&doc.embroidery);
     let mut tally = Tally::default();
+    // Only the objects sewn now are kept for the next plan.
+    let mut next = HashMap::new();
     for n in ordered(doc, &mut tally) {
-        sew_node(n, &mut b);
+        let sewn = cache.get(n, &mut next);
+        b.apply(&sewn);
     }
+    cache.entries = next;
     let mut plan = b.finish();
     let what = |n: usize| if n == 1 { "object" } else { "objects" };
     if tally.skipped > 0 {
@@ -342,11 +370,11 @@ pub fn has_stitches(doc: &Document) -> bool {
 /// The objects `doc` sews, in the order it sews them: those in the document's sewing order
 /// ([`EmbroiderySetup::order`]) first, in that order, then the others in paint order.
 pub fn sew_order(doc: &Document) -> Vec<&Node> {
-    ordered(doc, &mut Tally::default())
+    ordered(doc, &mut Tally::default()).into_iter().map(|n| n.as_ref()).collect()
 }
 
-fn ordered<'a>(doc: &'a Document, tally: &mut Tally) -> Vec<&'a Node> {
-    let mut items: Vec<&Node> = vec![];
+fn ordered<'a>(doc: &'a Document, tally: &mut Tally) -> Vec<&'a Arc<Node>> {
+    let mut items: Vec<&Arc<Node>> = vec![];
     for l in &doc.layers {
         collect(l, &mut items, tally, false);
     }
@@ -355,7 +383,7 @@ fn ordered<'a>(doc: &'a Document, tally: &mut Tally) -> Vec<&'a Node> {
         return items;
     }
     // Listed ones first (each once, in list order), then the rest as painted.
-    let mut out: Vec<&Node> = vec![];
+    let mut out: Vec<&Arc<Node>> = vec![];
     for id in order {
         if let Some(&n) = items.iter().find(|n| n.id == *id)
             && !out.iter().any(|o| o.id == n.id)
@@ -379,7 +407,7 @@ struct Tally {
 }
 
 /// The objects under `n` that are sewn, in paint order.
-fn collect<'a>(n: &'a Arc<Node>, items: &mut Vec<&'a Node>, tally: &mut Tally, masked: bool) {
+fn collect<'a>(n: &'a Arc<Node>, items: &mut Vec<&'a Arc<Node>>, tally: &mut Tally, masked: bool) {
     // Hidden art isn't sewn, and neither are template layers (art to trace over) nor layers that
     // don't print.
     let off = matches!(n.kind, NodeKind::Layer { template: true, .. } | NodeKind::Layer { printable: false, .. });
@@ -411,7 +439,7 @@ fn collect<'a>(n: &'a Arc<Node>, items: &mut Vec<&'a Node>, tally: &mut Tally, m
 }
 
 /// Sew one stitched object.
-fn sew_node(n: &Node, b: &mut Builder) {
+fn sew_node(n: &Node, b: &mut Sewer) {
     let Some(s) = n.stitch.as_deref() else { return };
     match &n.kind {
         NodeKind::Path { path, rule, .. } => object(n, s, &[path], *rule, b),
@@ -452,7 +480,7 @@ fn thread_of(a: &Appearance, s: &StitchSettings) -> [u8; 3] {
     s.thread.or(paint).unwrap_or([0, 0, 0])
 }
 
-fn object(n: &Node, s: &StitchSettings, paths: &[&PathData], rule: FillRule, b: &mut Builder) {
+fn object(n: &Node, s: &StitchSettings, paths: &[&PathData], rule: FillRule, b: &mut Sewer) {
     sew(s, thread_of(&n.appearance, s), n.appearance.stroke_width() * PT_MM, paths, rule, b);
 }
 
@@ -493,7 +521,7 @@ pub fn auto_settings(s: &StitchSettings, width: f64) -> StitchSettings {
 
 /// Sew a type object letter by letter (its glyphs as laid out, then its underlines and
 /// strikethroughs), each in the thread of its characters' colour. Inline graphics are left out.
-fn text(t: &vectorcraft_doc::TextObject, s: &StitchSettings, b: &mut Builder) {
+fn text(t: &vectorcraft_doc::TextObject, s: &StitchSettings, b: &mut Sewer) {
     let db = vectorcraft_text::FontDb::global();
     let lay = vectorcraft_text::layout(db, t);
     let style = |run: usize| t.runs.get(run).map(|r| r.style.clone()).unwrap_or_else(|| t.first_style());
@@ -555,7 +583,7 @@ fn auto_choice(s: &StitchSettings, paths: &[&PathData], rule: FillRule) -> Choic
 }
 
 /// Sew `paths` with `s` in `thread` (`stroke_mm`: the stroke's width, for satins).
-fn sew(s: &StitchSettings, thread: [u8; 3], stroke_mm: f64, paths: &[&PathData], rule: FillRule, b: &mut Builder) {
+fn sew(s: &StitchSettings, thread: [u8; 3], stroke_mm: f64, paths: &[&PathData], rule: FillRule, b: &mut Sewer) {
     if s.kind == StitchKind::Auto {
         match auto_choice(s, paths, rule) {
             Choice::Satin(t, runs) => emit(&t, thread, runs, b),
@@ -563,26 +591,77 @@ fn sew(s: &StitchSettings, thread: [u8; 3], stroke_mm: f64, paths: &[&PathData],
         }
         return;
     }
-    let out = kinds::sew(&kinds::Input { settings: s, stroke_mm, paths, rule, patterns: &b.patterns });
-    b.plan.warnings.extend(out.warnings);
+    let out = kinds::sew(&kinds::Input { settings: s, stroke_mm, paths, rule, patterns: b.patterns });
+    b.out.warnings.extend(out.warnings);
     emit(s, thread, out.runs, b);
 }
 
-/// Sew an object's `runs`, cutting the thread before or after it as `s` asks.
-fn emit(s: &StitchSettings, thread: [u8; 3], runs: Vec<Vec<Point>>, b: &mut Builder) {
-    // Manual stitches are sewn exactly as drawn: no lock stitches added.
-    let tie = s.kind != StitchKind::Manual;
+/// An object's `runs` in `thread`, cutting the thread before or after it as `s` asks.
+fn emit(s: &StitchSettings, thread: [u8; 3], runs: Vec<Vec<Point>>, b: &mut Sewer) {
     if runs.iter().all(|r| r.is_empty()) {
         return;
     }
-    if s.trim_before {
-        b.force_trim(thread);
-    }
-    for r in runs {
-        b.run(thread, &r, tie);
-    }
-    if s.trim_after {
-        b.force_trim(thread);
+    // Manual stitches are sewn exactly as drawn: no lock stitches added.
+    let tie = s.kind != StitchKind::Manual;
+    b.out.pieces.push(Piece { thread, runs, tie, trim_before: s.trim_before, trim_after: s.trim_after });
+}
+
+/// One object's stitches: pieces in sewing order and warnings about its art. What
+/// [`StitchCache`] keeps for each object.
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct Sewn {
+    pieces: Vec<Piece>,
+    warnings: Vec<String>,
+}
+
+/// Runs in one thread, with how they are locked and cut.
+#[derive(Clone, Debug, PartialEq)]
+struct Piece {
+    thread: [u8; 3],
+    runs: Vec<Vec<Point>>,
+    /// Lock the thread at each run's start and before each trim (not for manual stitches).
+    tie: bool,
+    trim_before: bool,
+    trim_after: bool,
+}
+
+/// Sews one object into a [`Sewn`].
+struct Sewer<'a> {
+    /// The document's own border patterns ([`EmbroiderySetup::patterns`]).
+    patterns: &'a [vectorcraft_doc::BorderPattern],
+    out: Sewn,
+}
+
+/// The stitches of objects already sewn, kept between plans so a plan sews again only what
+/// changed. An object counts as unchanged when it is the very same node: documents share the nodes
+/// an edit doesn't touch, and since an entry holds its node, editing one copies it rather than
+/// changing it in place. A change to the document's border patterns empties the cache.
+#[derive(Default)]
+pub struct StitchCache {
+    entries: HashMap<NodeId, (Arc<Node>, Arc<Sewn>)>,
+    patterns: Vec<vectorcraft_doc::BorderPattern>,
+    /// Objects the last plan took from the cache and sewed again.
+    pub reused: usize,
+    pub sewn: usize,
+}
+
+impl StitchCache {
+    /// `n`'s stitches: kept ones when `n` is the node they were sewn from, else sewn now.
+    fn get(&mut self, n: &Arc<Node>, next: &mut HashMap<NodeId, (Arc<Node>, Arc<Sewn>)>) -> Arc<Sewn> {
+        let sewn = match self.entries.get(&n.id) {
+            Some((node, sewn)) if Arc::ptr_eq(node, n) => {
+                self.reused += 1;
+                sewn.clone()
+            }
+            _ => {
+                self.sewn += 1;
+                let mut b = Sewer { patterns: &self.patterns, out: Sewn::default() };
+                sew_node(n, &mut b);
+                Arc::new(b.out)
+            }
+        };
+        next.insert(n.id, (n.clone(), sewn.clone()));
+        sewn
     }
 }
 

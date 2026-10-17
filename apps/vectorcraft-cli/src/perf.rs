@@ -11,6 +11,10 @@ use vectorcraft_doc::{Appearance, Document, Node, hit};
 use vectorcraft_geom::{Affine, Point, Rect, shapes};
 use vectorcraft_render::{RenderOptions, Renderer};
 
+/// Budgets for the embroidery rows, ms.
+const EMBROIDERY_PLAN_MS: f64 = 2000.0;
+const EMBROIDERY_EDIT_MS: f64 = 50.0;
+
 /// Deterministic xorshift in 0..1.
 struct Rng(u64);
 impl Rng {
@@ -46,6 +50,102 @@ pub fn synthetic(n: usize) -> Result<Document, String> {
         d.insert(l, usize::MAX, node).map_err(|e| format!("building the synthetic document: {e}"))?;
     }
     Ok(d)
+}
+
+/// `n` stitched objects in a grid, sized like real embroidery: fills (20–40 mm squares, fill
+/// underlay and a border), satin columns, zigzags, satin shapes, running and bean lines, and
+/// pattern borders round rectangles.
+pub fn embroidery_design(n: usize) -> Result<Document, String> {
+    use vectorcraft_doc::{StitchKind, StitchSettings, Underlay};
+    const MM: f64 = 72.0 / 25.4;
+    let mut d = Document::new(3000.0, 2400.0);
+    let l = d.layers.first().map(|l| l.id);
+    let mut r = Rng(9);
+    let cols = 30;
+    for i in 0..n {
+        let (x, y) = (20.0 + (i % cols) as f64 * 95.0, 20.0 + (i / cols) as f64 * 95.0);
+        let s = (20.0 + r.next() * 20.0) * MM;
+        let c = Color::rgb(r.next() as f32, r.next() as f32, r.next() as f32);
+        let id = d.alloc_id();
+        let line = |a: Point, b: Point| {
+            vectorcraft_geom::PathData::single(vectorcraft_geom::SubPath {
+                anchors: vec![vectorcraft_geom::Anchor::corner(a), vectorcraft_geom::Anchor::corner(b)],
+                closed: false,
+            })
+        };
+        let (mut node, mut st) = match i % 7 {
+            0 => (Node::path(id, shapes::rectangle(Rect::new(x, y, x + s, y + s)), Appearance::basic(Paint::solid(c), Paint::None, 0.0)), {
+                let mut st = StitchSettings::new(StitchKind::Fill);
+                st.underlay = Underlay::Fill;
+                st.border = Some(1.5);
+                st
+            }),
+            1 => (
+                Node::path(id, line(Point::new(x, y), Point::new(x + s, y + s * 0.6)), Appearance::basic(Paint::None, Paint::solid(c), 3.0 * MM)),
+                StitchSettings::new(StitchKind::Satin),
+            ),
+            2 => (
+                Node::path(id, line(Point::new(x, y), Point::new(x + s, y + 20.0)), Appearance::basic(Paint::None, Paint::solid(c), 1.0)),
+                StitchSettings::new(StitchKind::Zigzag),
+            ),
+            3 => (
+                Node::path(id, shapes::rectangle(Rect::new(x, y, x + s, y + 4.0 * MM)), Appearance::basic(Paint::solid(c), Paint::None, 0.0)),
+                StitchSettings::new(StitchKind::SatinShape),
+            ),
+            4 => (
+                Node::path(id, shapes::ellipse(Rect::new(x, y, x + s, y + s * 0.7)), Appearance::basic(Paint::None, Paint::solid(c), 1.0)),
+                StitchSettings::new(StitchKind::Running),
+            ),
+            5 => (
+                Node::path(
+                    id,
+                    shapes::star(Point::new(x + s / 2.0, y + s / 2.0), s / 2.0, s / 4.0, 5, 0.0),
+                    Appearance::basic(Paint::None, Paint::solid(c), 1.0),
+                ),
+                StitchSettings::new(StitchKind::Bean),
+            ),
+            _ => (Node::path(id, shapes::rectangle(Rect::new(x, y, x + s, y + s * 0.7)), Appearance::basic(Paint::None, Paint::solid(c), 1.0)), {
+                let mut st = StitchSettings::new(StitchKind::PatternBorder);
+                st.pattern = Some(["waves", "scallops", "chain", "diamonds"][i / 7 % 4].into());
+                st
+            }),
+        };
+        st.thread = None;
+        node.stitch = Some(Box::new(st));
+        d.insert(l, usize::MAX, node).map_err(|e| format!("building the embroidery design: {e}"))?;
+    }
+    Ok(d)
+}
+
+/// The two embroidery rows: a whole plan of `n` objects with nothing kept, and a plan after editing
+/// one object with the others kept (what the panel and Stitch Preview pay per edit).
+fn embroidery_rows(n: usize) -> Result<(f64, f64), String> {
+    let design = embroidery_design(n)?;
+    let cold = median_ms(3, || {
+        let s = vectorcraft_engine::Session::new();
+        drop(s.stitch_plan(&design));
+    });
+    let s = vectorcraft_engine::Session::new();
+    let mut doc = design.clone();
+    let check = s.stitch_plan(&doc);
+    if check.stats().stitches == 0 {
+        return Err("the embroidery design made no stitches".into());
+    }
+    let ids: Vec<vectorcraft_doc::NodeId> =
+        doc.layers.first().and_then(|l| l.children()).map(|c| c.iter().map(|n| n.id).collect()).unwrap_or_default();
+    let mut k = 0;
+    let edit = median_ms(9, || {
+        // A different object each time: its density changes, so it is sewn again.
+        k += 1;
+        if let Some(id) = ids.get(k * 37 % ids.len().max(1)).copied()
+            && let Some(n) = doc.node_mut(id)
+            && let Some(st) = n.stitch.as_deref_mut()
+        {
+            st.spacing = Some(0.4 + (k % 5) as f64 * 0.05);
+        }
+        drop(s.stitch_plan(&doc));
+    });
+    Ok((cold, edit))
 }
 
 fn median_ms(runs: usize, mut f: impl FnMut()) -> f64 {
@@ -197,6 +297,14 @@ pub fn run(args: &[String]) -> Result<(), String> {
     });
     rows.push(("handle drag, 5,000-anchor path (per move)", handle, 8.0));
     rows.push(("segment drag, 5,000-anchor path (per move)", segment, 8.0));
+
+    // Embroidery: 300 stitched objects.
+    let (cold, edit) = embroidery_rows(300).unwrap_or_else(|e| {
+        failed = Some(e);
+        (0.0, 0.0)
+    });
+    rows.push(("embroidery: plan, 300 objects", cold, EMBROIDERY_PLAN_MS));
+    rows.push(("embroidery: re-plan after one edit", edit, EMBROIDERY_EDIT_MS));
     if let Some(e) = failed {
         return Err(e);
     }

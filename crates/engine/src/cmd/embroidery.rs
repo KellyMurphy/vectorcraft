@@ -637,7 +637,7 @@ pub(crate) fn design(doc: &Document, plan: &Plan) -> Value {
 fn info(s: &mut Session, p: &Value) -> Result<Value> {
     let ids = stitchable(s, &targets(s, p)?)?;
     let doc = &s.doc()?.doc;
-    let plan = vectorcraft_embroidery::plan(doc);
+    let plan = s.stitch_plan(doc);
     let all: Vec<&StitchSettings> = ids.iter().filter_map(|id| doc.node(*id)?.stitch.as_deref()).collect();
     let mut selection = json!({ "stitched": all.len(), "unstitched": ids.len() - all.len() });
     for param in params::PARAMS {
@@ -661,7 +661,7 @@ fn preview(s: &mut Session, p: &Value) -> Result<Value> {
     };
     let rect = doc.artboards.get(index).map(|a| a.rect).ok_or_else(|| bad(C, format!("no artboard {index}")))?;
     vectorcraft_render::raster_size(rect, scale).map_err(|e| bad(C, e))?;
-    let plan = vectorcraft_embroidery::plan(doc);
+    let plan = s.stitch_plan(doc);
     let shown = vectorcraft_embroidery::preview::document(doc, &plan);
     let img = vectorcraft_render::Renderer::new().render_region(&shown, rect, scale, true);
     let png = img.to_png().map_err(|e| bad(C, e))?;
@@ -670,7 +670,7 @@ fn preview(s: &mut Session, p: &Value) -> Result<Value> {
 
 fn stitches(s: &mut Session, p: &Value) -> Result<Value> {
     let limit = p.get("limit").and_then(Value::as_u64).map_or(STITCHES_LIMIT, |l| usize::try_from(l).unwrap_or(usize::MAX).min(STITCHES_LIMIT));
-    let plan = vectorcraft_embroidery::plan(&s.doc()?.doc);
+    let plan = s.stitch_plan(&s.doc()?.doc);
     let mut left = limit;
     let mut truncated = false;
     let mut runs = vec![];

@@ -777,6 +777,8 @@ impl Default for Prefs {
 }
 
 pub struct Session {
+    /// Objects' stitches kept between stitch plans (see [`Session::stitch_plan`]).
+    stitch_cache: std::sync::Mutex<vectorcraft_embroidery::StitchCache>,
     docs: Vec<DocState>,
     active: Option<usize>,
     pub prefs: Prefs,
@@ -913,7 +915,22 @@ impl Session {
             liquify_stroke: None,
             plane_widget_press: false,
             ruler_guide: None,
+            stitch_cache: Default::default(),
         }
+    }
+
+    /// The stitch plan of `doc`, sewing again only the objects that changed since the last plan
+    /// (the Embroidery panel, Stitch Preview and the embroidery commands share it).
+    pub fn stitch_plan(&self, doc: &vectorcraft_doc::Document) -> vectorcraft_embroidery::Plan {
+        let mut cache = self.stitch_cache.lock().unwrap_or_else(|poisoned| {
+            // A plan panicked (the engine's guard caught it): its entries can't be trusted, so
+            // start the cache again rather than plan without one from now on.
+            self.stitch_cache.clear_poison();
+            let mut cache = poisoned.into_inner();
+            *cache = Default::default();
+            cache
+        });
+        vectorcraft_embroidery::plan_cached(doc, &mut cache)
     }
 
     pub fn documents(&self) -> &[DocState] {

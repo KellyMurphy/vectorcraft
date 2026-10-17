@@ -94,8 +94,10 @@ USAGE:
       (warm), multithreaded and single-threaded.
 
   vectorcraft-cli perf [--paths N]
-      Check the performance budgets (render, pan, hit test, save/load, SVG, Pathfinder) on a
-      synthetic N-path document (default 50000). Exits non-zero if a budget is exceeded.
+      Check the performance budgets (render, pan, hit test, save/load, SVG, Pathfinder, path
+      editing) on a synthetic N-path document (default 50000), and embroidery planning on a
+      synthetic 300-object design (whole, and after one edit). Exits non-zero if a budget is
+      exceeded.
 ";
 
 /// The usage text plus the formats `document.open` reads and `document.export` writes.

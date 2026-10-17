@@ -704,6 +704,32 @@ fn settings_from_a_newer_version_are_kept_but_not_sewn() {
     assert!(p.warnings.iter().any(|w| w.contains("newer VectorCraft")), "{:?}", p.warnings);
 }
 
+#[test]
+fn the_cache_sews_again_only_what_changed() {
+    let mut d = busy_doc();
+    let mut cache = StitchCache::default();
+    let first = plan_cached(&d, &mut cache);
+    assert_eq!(first, plan(&d));
+    let objects = cache.sewn;
+    assert!(objects >= 3 && cache.reused == 0, "{objects}");
+    // Nothing changed: everything is reused, and the plan is the same.
+    assert_eq!(plan_cached(&d, &mut cache), first);
+    assert_eq!((cache.reused, cache.sewn), (objects, 0));
+    // Edit one object (the document shares the others): only it is sewn again.
+    let layer = Arc::make_mut(&mut d.layers[0]);
+    let kids = layer.children_mut().unwrap();
+    let n = Arc::make_mut(&mut kids[0]);
+    n.stitch.as_mut().unwrap().spacing = Some(0.8);
+    let after = plan_cached(&d, &mut cache);
+    assert_eq!((cache.reused, cache.sewn), (objects - 1, 1));
+    assert_eq!(after, plan(&d), "the cached plan is the plan");
+    assert_ne!(after, first);
+    // A change to the border patterns sews everything again.
+    d.embroidery.patterns.push(crate::borders::builtin("waves").unwrap());
+    plan_cached(&d, &mut cache);
+    assert_eq!((cache.reused, cache.sewn), (0, objects));
+}
+
 /// Two lines `gap` pt apart in one thread, the first with `first`'s settings.
 fn two_lines(gap: f64, first: impl FnOnce(&mut StitchSettings), setup: EmbroiderySetup) -> Plan {
     let mut d = doc_with(|d| {

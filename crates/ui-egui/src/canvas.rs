@@ -351,7 +351,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     }
     // View › Stitch Preview: the embroidery design on fabric over the art.
     if app.ui.view.stitch_preview {
-        let plan = stitch_plan(&mut app.ui.stitch_cache, &doc);
+        let plan = stitch_plan(&app.session, &mut app.ui.stitch_cache, &doc);
         draw_stitches(&painter, &xf, &doc, &plan);
     }
     // Artboard edges and names.
@@ -1731,6 +1731,7 @@ use vectorcraft_embroidery::preview::{FABRIC, JUMP_ALPHA, JUMP_WIDTH_PT, THREAD_
 
 /// Stitch Preview's plan of `doc`, made again only when the document changed.
 fn stitch_plan(
+    session: &vectorcraft_engine::Session,
     cache: &mut Option<(std::sync::Arc<vectorcraft_doc::Document>, std::sync::Arc<vectorcraft_embroidery::Plan>)>,
     doc: &std::sync::Arc<vectorcraft_doc::Document>,
 ) -> std::sync::Arc<vectorcraft_embroidery::Plan> {
@@ -1739,7 +1740,7 @@ fn stitch_plan(
     {
         return p.clone();
     }
-    let p = std::sync::Arc::new(vectorcraft_embroidery::plan(doc));
+    let p = std::sync::Arc::new(session.stitch_plan(doc));
     *cache = Some((doc.clone(), p.clone()));
     p
 }

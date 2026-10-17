@@ -96,7 +96,16 @@ pub fn border(pts: &[Point], name: &str, period: Option<f64>) -> Result<Extracte
                     (or give the repeat's length)"
             .into());
     };
-    Ok(finish(f, name))
+    let e = finish(f, name);
+    // What was found must be a pattern that can be sewn and saved (scattered stitches can look
+    // like a "repeat" metres across).
+    crate::borders::check(&e.pattern).map_err(|_| {
+        format!(
+            "what repeats here is {:.0} × {:.0} mm, too large to be a border pattern: select a stretch of one border",
+            e.pattern.length, e.pattern.width
+        )
+    })?;
+    Ok(e)
 }
 
 /// A repeat found: its needle points in border space (x along from its start, y across, right of
