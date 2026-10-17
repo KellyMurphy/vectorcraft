@@ -237,5 +237,125 @@ split. A trim is written as three short jumps that return to where they started.
       Silhouette Studio read; Brother's own FCM for ScanNCut machines only from a public specification (the
       clean-room rule), else through CanvasWorkspace from SVG.
 
+## Development plan for future steps
+
+This section folds the research notes from the embroidery feature review into the working plan for VectorCraft.
+It keeps the product focus on what matters most: turning vector artwork into a clean, machine-friendly design
+that sews reliably on real fabric.
+
+### Scope and priorities
+
+The catalog reviewed in the research phase includes 62 features across drawing, stitch types, lettering,
+quality and output. They are organized into priority tiers:
+
+- **P0 (must have):** the minimum features to digitize and export a typical design.
+- **P1 (expected):** the features used by serious hobbyists and small shops.
+- **P2 (differentiators):** advanced production, specialty techniques and automation.
+
+The immediate goal is to build the features that form the “digitizing core”: object editing, stitch quality,
+underlay and compensation, travel control, lettering, thread handling and export formats.
+
+### Where the project is strongest, and where the gaps are
+
+VectorCraft is strongest in fills, where the tatami and engraving pattern libraries already cover the core of
+many pattern-based workflows. The largest gaps are:
+
+- **Lettering:** automatic font conversion, kerning, monograms and text-on-path
+- **Underlay and compensation:** automatic underlay types, axis-specific push/pull compensation, fabric profiles
+- **Sequencing:** trims, ties, branching, travel under fills and start/stop control
+- **Output:** more machine formats, worksheets, thread charts, stitch player and realistic previews
+- **Extensibility:** pattern folders for motifs, fonts, palettes and hoops
+
+This is careful scope control: the team should not chase more advanced feature areas until the basic production
+workflow is robust and consistent.
+
+### Phase 1: core production readiness (P0)
+
+Phase 1 is the most important block. It covers the features needed before VectorCraft can produce high-quality
+embroidery from real artwork without hand-fixing the result. The plan is to treat these as gates:
+
+- **Object and stitch editing**
+  - Bezier editing, boolean path operations, vector import and object-level stitch settings
+  - Manual stitch placement, run and bean styles, fill generation and border generation
+- **Quality and sewing behavior**
+  - Automatic underlay, pull and push compensation, trim and tie handling, jump control, corner handling
+  - Satin column support with sensible corner rules and reliable spacing
+  - Fill row ordering and routing that avoid gaps, hidden overlaps and excessive jumps
+- **Lettering basics**
+  - Embroidery-type tools for small text and heavy display text, with the current Auto fallback preserved
+  - Metrics and kerning groundwork for later font integration
+- **Output and production**
+  - DST export, thread assignment, colour sequencing, design inspection and export checks against independent readers
+  - Printable production worksheets and thread information for real shops
+
+This phase should also include a design checker that flags bad shapes, long stitches and risky geometry before
+export.
+
+### Phase 2: productive design workflow (P1)
+
+Phase 2 turns the core workflow into a usable digitizing environment rather than just a stitch generator. This is
+where the software gets closer to the commercial workflow expected by larger hobbyist and small-business users.
+
+Priority items:
+
+- **Advanced stitch types and fills**
+  - Satin border tools, guided and curved fills, meander and stipple fills
+  - Motif fills and programmable carving patterns
+  - Contour, circular, spiral and radial fills
+- **Lettering and text production**
+  - TrueType/OpenType-to-stitch conversion, text-on-path, monograms and small-lettering fonts
+  - Font creation tools and a versioned embroidery font format
+- **Automation and sequencing**
+  - Branching and auto-sequencing, density advisers, fabric profiles and small-stitch filtering
+  - Auto-digitize from bitmap art and click-to-fill / click-to-outline workflows
+- **Extensibility**
+  - Pattern folders for motifs, fonts, palettes and hoop definitions
+  - A content model similar to the existing stitch-pattern folders, so users can share work without vendor lock-in
+
+The pattern-folder approach is already a strong fit for VectorCraft, and it is the best place to extend the product
+without building one-off bespoke features.
+
+### Phase 3: advanced production and differentiation (P2)
+
+Phase 3 is where VectorCraft can build a distinctive toolchain beyond the basics. This is not required for a
+functional embroidery app, but it is where tooling becomes a professional-grade platform.
+
+Priority items:
+
+- Specialty fills: fractal, fur, cascade, wave, cross-stitch, ripple stitch and tartan fills
+- Realistic previews: thread-shaded views, fabric mockups and production estimators
+- Appliqué workflows with placement, tack-down, cover stitches and cutter export
+- Machine-transfer and cloud workflows, design libraries and extensions
+- Machine-format support beyond DST: PES, EXP, JEF, VP3 and others as usage demands
+
+This phase should only begin after the production-quality basics are solid and the app proves its digitizing core on
+real fabric.
+
+### Recommended milestone sequence
+
+The roadmap should be built in three stages, with each later phase gated behind the previous one:
+
+1. **E3 / E4 gate:** production-ready stitch generation and export quality
+2. **Phase 1 delivery:** the 18 P0 features needed to digitize, letter and export a design that sews well
+3. **Phase 2 extension:** pattern libraries, font systems, automation and production workflow
+4. **Phase 3 differentiation:** specialty techniques, realistic previews, extensions and advanced output
+
+The key design rule is simple: do not add new fill families or advanced automation while the basic underlay,
+compensation and trim behavior is still weak. A fill with no underlay, compensation or trimming will not sew cleanly.
+
+### Open research note
+
+At the research stage, there is a remaining open question: whether VectorCraft shares code with the existing
+mcpembroidery server. If it does, several P0 items are a port rather than brand-new work, and the roadmap should
+be adjusted to reflect the reuse opportunity.
+
+### Sources used for this plan
+
+- Ink/Stitch feature set and stitch library
+- Wilcom EmbroideryStudio 2026 feature list
+- Tajima DG/ML by Pulse product lines
+- Pulse, Hatch, Embrilliance, Brother and BERNINA product references
+- pyembroidery reference for file I/O and machine-format coverage
+
 Clean-room note: no code from Ink/Stitch (GPL) or other digitizers is used. Formats come from public
 documentation, cited above.
