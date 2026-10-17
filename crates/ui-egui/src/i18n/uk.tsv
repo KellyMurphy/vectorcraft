@@ -3812,6 +3812,14 @@ axis	Both	Обидві
 	Motif	Мотив
 	Motif Size:	Розмір мотиву:
 	How large one repeat of the motif is	Розмір одного повтору мотиву
+	Pattern Border	Візерункова облямівка
+	The pattern repeats along the path, a whole number of times between corners.	Візерунок повторюється вздовж контуру, цілу кількість разів між кутами.
+	Scallops	Фестони
+	Chain	Ланцюжок
+	the pattern's size	розмір візерунка
+	Pattern Size	Розмір візерунка
+	How wide the border is: the pattern scales with it	Ширина облямівки: візерунок масштабується разом із нею
+	Mirror the pattern across the path	Віддзеркалити візерунок на інший бік контуру
 
 # Embroidery: sew order
 	Sew Order	Порядок вишивки

@@ -3840,6 +3840,14 @@ axis	Both	Les deux
 	Motif	Motif
 	Motif Size:	Taille du motif :
 	How large one repeat of the motif is	La taille d’une répétition du motif
+	Pattern Border	Bordure à motif
+	The pattern repeats along the path, a whole number of times between corners.	Le motif se répète le long du tracé, un nombre entier de fois entre les angles.
+	Scallops	Festons
+	Chain	Chaînette
+	the pattern's size	la taille du motif
+	Pattern Size	Taille du motif
+	How wide the border is: the pattern scales with it	La largeur de la bordure : le motif suit son échelle
+	Mirror the pattern across the path	Refléter le motif de l’autre côté du tracé
 
 # Embroidery: sew order
 	Sew Order	Ordre de couture

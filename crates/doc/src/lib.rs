@@ -66,7 +66,7 @@ pub use appearance::{
 };
 pub use assets::ExportAsset;
 pub use corners::LiveCorners;
-pub use embroidery::{EmbroiderySetup, StitchKind, StitchSettings, Underlay};
+pub use embroidery::{BorderPattern, EmbroiderySetup, PartStitch, PatternPart, StitchKind, StitchSettings, Underlay};
 pub use graph::{GraphKind, GraphSpec};
 pub use hit::{Hit, HitKind};
 pub use links::{LinkInfo, PlacementOptions};

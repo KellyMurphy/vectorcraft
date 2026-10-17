@@ -3829,6 +3829,14 @@ axis	Both	Entrambi
 	Motif	Motivo
 	Motif Size:	Dimensione motivo:
 	How large one repeat of the motif is	La dimensione di una ripetizione del motivo
+	Pattern Border	Bordo a motivo
+	The pattern repeats along the path, a whole number of times between corners.	Il motivo si ripete lungo il tracciato, un numero intero di volte tra gli angoli.
+	Scallops	Smerli
+	Chain	Catenella
+	the pattern's size	la dimensione del motivo
+	Pattern Size	Dimensione motivo
+	How wide the border is: the pattern scales with it	La larghezza del bordo: il motivo si ridimensiona con essa
+	Mirror the pattern across the path	Rifletti il motivo dall’altro lato del tracciato
 
 # Embroidery: sew order
 	Sew Order	Ordine di cucitura

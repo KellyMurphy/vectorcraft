@@ -3827,6 +3827,14 @@ axis	Both	Оба
 	Motif	Мотив
 	Motif Size:	Размер мотива:
 	How large one repeat of the motif is	Размер одного повтора мотива
+	Pattern Border	Узорная кайма
+	The pattern repeats along the path, a whole number of times between corners.	Узор повторяется вдоль контура, целое число раз между углами.
+	Scallops	Фестоны
+	Chain	Цепочка
+	the pattern's size	размер узора
+	Pattern Size	Размер узора
+	How wide the border is: the pattern scales with it	Ширина каймы: узор масштабируется вместе с ней
+	Mirror the pattern across the path	Отразить узор на другую сторону контура
 
 # Embroidery: sew order
 	Sew Order	Порядок вышивки

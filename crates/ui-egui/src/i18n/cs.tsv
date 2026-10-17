@@ -753,6 +753,14 @@
 	Motif	Motiv
 	Motif Size:	Velikost motivu:
 	How large one repeat of the motif is	Velikost jednoho opakování motivu
+	Pattern Border	Vzorový okraj
+	The pattern repeats along the path, a whole number of times between corners.	Vzor se opakuje podél cesty, mezi rohy vždy v celém počtu.
+	Scallops	Festony
+	Chain	Řetízek
+	the pattern's size	velikost vzoru
+	Pattern Size	Velikost vzoru
+	How wide the border is: the pattern scales with it	Jak široký je okraj: vzor se s ním zvětšuje
+	Mirror the pattern across the path	Zrcadlit vzor přes cestu
 
 # Embroidery: sew order
 	Sew Order	Pořadí šití

@@ -658,6 +658,37 @@ fn dump_samples() {
             .collect()
     });
     std::fs::write(dir.join("motifs.dst"), write_dst(&plan(&d), "motifs")).unwrap();
+    // Each starter border pattern (a row each) round a rectangle, along an S curve and round a
+    // circle, 6 mm wide.
+    let pt = |x: f64, y: f64| (x / PT_MM, y / PT_MM);
+    let d = doc_with(|d| {
+        let mut out = vec![];
+        for (i, id) in crate::borders::BUILTIN.iter().enumerate() {
+            let y = i as f64 * 60.0;
+            let rect = poly(&[pt(0.0, y), pt(70.0, y), pt(70.0, y + 40.0), pt(0.0, y + 40.0)], true);
+            let s: Vec<(f64, f64)> = (0..=80)
+                .map(|k| {
+                    let t = k as f64 / 80.0;
+                    pt(90.0 + 80.0 * t, y + 20.0 + 15.0 * (2.0 * std::f64::consts::PI * t).sin())
+                })
+                .collect();
+            let circle: Vec<(f64, f64)> = (0..72)
+                .map(|k| {
+                    let a = k as f64 * std::f64::consts::TAU / 72.0;
+                    pt(210.0 + 20.0 * a.cos(), y + 20.0 + 20.0 * a.sin())
+                })
+                .collect();
+            for path in [rect, poly(&s, false), poly(&circle, true)] {
+                let mut n = stitched(d, path, StitchKind::PatternBorder, palette_color(i));
+                n.stitch.as_mut().unwrap().pattern = Some((*id).to_string());
+                out.push(n);
+            }
+        }
+        out
+    });
+    let p = plan(&d);
+    assert!(p.warnings.is_empty(), "{:?}", p.warnings);
+    std::fs::write(dir.join("borders.dst"), write_dst(&p, "borders")).unwrap();
 }
 
 /// Two lines `gap` pt apart in one thread, the first with `first`'s settings.

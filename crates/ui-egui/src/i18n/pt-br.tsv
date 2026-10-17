@@ -2785,6 +2785,14 @@
 	Motif	Motivo
 	Motif Size:	Tamanho do motivo:
 	How large one repeat of the motif is	O tamanho de uma repetição do motivo
+	Pattern Border	Borda de padrão
+	The pattern repeats along the path, a whole number of times between corners.	O padrão se repete ao longo do traçado, um número inteiro de vezes entre os cantos.
+	Scallops	Festonês
+	Chain	Corrente
+	the pattern's size	o tamanho do padrão
+	Pattern Size	Tamanho do padrão
+	How wide the border is: the pattern scales with it	A largura da borda: o padrão acompanha sua escala
+	Mirror the pattern across the path	Espelhar o padrão para o outro lado do traçado
 
 # Embroidery: sew order
 	Sew Order	Ordem de costura

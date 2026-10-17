@@ -18,6 +18,7 @@ Select paths or compound paths (or groups holding them) and choose **Object › 
 | Zigzag Stitch | An open zigzag along the path, swinging side to side (decorative lines, appliqué edges). Corners fan like a satin's. | `width` (3 mm; not the stroke), `spacing` (between points, 2 mm) |
 | Satin Shape | Satin that follows a closed shape's strokes from edge to edge, curving with them (lettering, outlined type, swashes). The shape's centre lines are found automatically; each zig reaches the shape's edges either side, so thick and thin strokes keep their contrast. | `spacing` (density, 0.4 mm), `pull` (0 mm), `underlay` (none, center) |
 | Fill | Rows of staggered running stitches covering the shape (tatami). Holes and separate parts follow the fill rule. | `angle` (0°), `spacing` (density, 0.4 mm), `length` (4 mm), `stagger` (pattern: 2 brick, 3–8 tatami; 3), `motif` (a carved pattern: diamonds, waves, circles, scales, herringbone; none) and `motifSize` (its repeat, 3–60 mm; 10), `underlay` (none, fill), `border` (a satin border over the edges, 0.5–6 mm; none) |
+| Pattern Border | A border pattern repeated end to end along the path, bending with its curves (decorative borders, frames). See [Pattern borders](#pattern-borders). | `pattern` (waves, scallops, chain, diamonds; waves), `width` (the band, 1–40 mm; the pattern's own, 6 mm), `flip` (off), `length` (1.5 mm), `spacing` (satin parts, 0.4 mm) |
 | Manual Stitch | The needle goes down at every anchor, as drawn. Imported designs use it. | — |
 
 **Window › Embroidery** shows the same settings for the selection: the stitch type, the thread, and the
@@ -37,6 +38,20 @@ out), so the motif shows in the fill as lines of needle holes, an embossed patte
 one even layer. The motifs are drawn in code. A motif line running nearly along the rows crosses few of
 them, so it shows faintly (the tops of the circles at a 0° fill): turn the fill's angle to change which parts
 show strongest.
+
+### Pattern borders
+
+A **Pattern Border** sews one repeat of a border pattern after another along the path, like a pattern brush.
+The repeats bend with the path's curves, and their length is adjusted slightly so a whole number of them fits
+each stretch between sharp corners (turns over 50°); a stretch shorter than half a repeat gets none. At a corner
+the pattern's **corner motif** is sewn when it has one (Diamonds has a four-petal rosette), centred on the
+corner, and the border runs through it without a break; a pattern without one ends at the corner and starts
+again after it. A closed path with no corners repeats all the way round and meets itself. **Width** scales the
+whole pattern (stitch length and satin density stay as set; stitches that would be longer than 12 mm are
+split). **Flip** mirrors it across the path, which puts scallops on the other side. The starter patterns,
+drawn in code, are Waves (a bean-stitch wave), Scallops (satin arches on one edge), Chain (linked bean-stitch
+loops) and Diamonds (diamonds on a centre line, with a rosette at corners). On curves tighter than half the
+band's width the inside of the pattern crowds together: widen the curve or narrow the band.
 
 **Remove Stitches** takes the settings off. Settings are saved in the `.vectorcraft` file, and editing a
 path changes its stitches.
@@ -103,14 +118,14 @@ A closed satin path starts halfway along its longest side, away from its corners
 
 | Command | Params |
 |---|---|
-| `embroidery.set` | `{type?: auto\|running\|bean\|satin\|zigzag\|satinShape\|fill\|manual, length?, spacing?, angle?, width?, thread?: "#rrggbb"\|[r,g,b], pull?, underlay?, stagger?, passes?, trimBefore?, trimAfter?, ids?}`. Lengths are in mm; `null` resets one to its default. |
+| `embroidery.set` | `{type?: auto\|running\|bean\|satin\|zigzag\|satinShape\|fill\|patternBorder\|manual, length?, spacing?, angle?, width?, thread?: "#rrggbb"\|[r,g,b], pull?, underlay?, stagger?, passes?, pattern?, flip?, trimBefore?, trimAfter?, ids?}`. Lengths are in mm; `null` resets one to its default. |
 | `embroidery.clear` | `{ids?}` |
 | `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm}`: the document's travel settings |
 | `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings |
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
 | `view.stitchPreview` | toggles Stitch Preview |
 
-Allowed ranges: stitch length 0.3–12 mm, spacing 0.1–10 mm, satin width 0.3–12 mm, pull compensation 0–3 mm,
+Allowed ranges: stitch length 0.3–12 mm, spacing 0.1–10 mm, satin and zigzag width 0.3–12 mm, pattern border width 1–40 mm, pull compensation 0–3 mm,
 stagger 2–8 rows, bean passes 3–9 (odd).
 
 ### How Satin Shape finds strokes
@@ -174,14 +189,14 @@ split. A trim is written as three short jumps that return to where they started.
     an open, documented format (like the embroidery fonts: self-contained, with author and licence). Saved
     patterns appear in the Fill section's Pattern menu (the motif fills) and tile across any shape. Only
     designs the user has the right to reuse should be extracted from; the pattern records where it came from.
-  - **Border patterns:** the same for borders, which repeat in one direction. Select a stretch of a DST border,
-    find its one repeat offset, extract a segment that joins end to end seamlessly, and save it as a border
-    pattern file (same open format family). A **Pattern Border** stitch sews it along any path, like a pattern
-    brush: the motif repeats along the path and bends with its curves, its length adjusted slightly so a
-    whole number of repeats fits each stretch between corners; at a sharp corner a corner motif goes in when
-    the pattern has one, else the run ends and starts again cleanly. Settings: the pattern, width (scales the
-    motif) and flip. A few starter border patterns are generated in code (waves, scallops, chains), so the
-    feature works before any are extracted.
+  - **Border patterns:** the **Pattern Border** stitch and its starter patterns are done (see
+    [Pattern borders](#pattern-borders)). Still to come:
+    - **A border pattern file:** an open, documented format in the same family as the pattern and font
+      files (self-contained, with author, licence and source), holding one repeat and an optional corner
+      motif as the parts the stitch already sews (running, bean, satin and manual lines). Patterns a
+      document uses are kept in it, so it opens anywhere.
+    - **Extraction:** select a stretch of a DST border, find its one repeat offset, and extract a segment
+      that joins end to end seamlessly, saved as a border pattern file.
   - **Embroidery for agents (MCP):** the commands already work over MCP (`run_command`, `export` with
     `dst`, `open_file`), but agents aren't told about them. Mention embroidery in the server's instructions;
     give the commands their Object › Embroidery menu path in the command list; an `embroidery` prompt that

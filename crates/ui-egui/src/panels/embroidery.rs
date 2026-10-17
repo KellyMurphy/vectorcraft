@@ -452,6 +452,51 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
             mm(app, ui, tl!("Width:"), "width", width, StitchSettings::WIDTH, tl!("How wide the zigzag swings"));
             mm(app, ui, tl!("Spacing:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between the points of the zigzag"));
         }
+        StitchKind::PatternBorder => {
+            widgets::section_header(ui, tl!("Pattern Border"));
+            widgets::dim_label(ui, tl!("The pattern repeats along the path, a whole number of times between corners."));
+            let ids = vectorcraft_embroidery::borders::BUILTIN;
+            let pattern = sel["pattern"].as_str();
+            widgets::label_row(ui, tl!("Pattern:"), LABEL_W, |ui| {
+                let labels: Vec<&str> = ids.iter().map(|id| border_label(id)).collect();
+                if let Some(i) = widgets::dropdown_names(ui, "emb-border-pattern", pattern.map(border_label).unwrap_or(""), &labels, 150.0)
+                    && let Some(id) = ids.get(i)
+                {
+                    set(app, json!({"pattern": id}));
+                }
+            });
+            ui.scope(|ui| {
+                widgets::label_row(ui, tl!("Width:"), LABEL_W, |ui| {
+                    let width = sel["width"].as_f64();
+                    if let Some(v) = widgets::mixed_field(ui, ("emb", "patternWidth"), width, " mm", 1, FIELD_W) {
+                        let r = StitchSettings::PATTERN_WIDTH;
+                        set(app, json!({"width": v.clamp(*r.start(), *r.end())}));
+                    }
+                    if width.is_none() {
+                        widgets::dim_label(ui, tl!("the pattern's size"));
+                    } else if widgets::flat_button(ui, tl!("Pattern Size"), 90.0).clicked() {
+                        set(app, json!({"width": null}));
+                    }
+                })
+            })
+            .response
+            .on_hover_text(tl!("How wide the border is: the pattern scales with it"));
+            let flip = sel["flip"].as_bool();
+            ui.horizontal(|ui| {
+                ui.add_space(LABEL_W + 8.0);
+                if widgets::check3_tip(ui, tl!("Flip"), flip, true, tl!("Mirror the pattern across the path")) {
+                    set(app, json!({"flip": flip != Some(true)}));
+                }
+            });
+            mm(app, ui, tl!("Stitch Length:"), "length", num("length"), StitchSettings::LENGTH, tl!("How long each stitch is"));
+            // Density only matters to patterns with satin in them.
+            let satin = pattern
+                .and_then(vectorcraft_embroidery::borders::builtin)
+                .is_some_and(|p| p.repeat.iter().chain(&p.corner).any(|q| q.stitch == vectorcraft_doc::PartStitch::Satin));
+            if satin {
+                mm(app, ui, tl!("Density:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between zigzags: smaller is denser"));
+            }
+        }
         StitchKind::Manual => {
             widgets::dim_label(ui, tl!("The needle goes down at every anchor point, as drawn."));
         }
@@ -483,6 +528,17 @@ fn motif_label(id: &str) -> &'static str {
         "scales" => tl!("Scales"),
         "herringbone" => tl!("Herringbone"),
         _ => tl!("Motif"),
+    }
+}
+
+/// A border pattern's name, translated.
+fn border_label(id: &str) -> &'static str {
+    match id {
+        "waves" => tl!("Waves"),
+        "scallops" => tl!("Scallops"),
+        "chain" => tl!("Chain"),
+        "diamonds" => tl!("Diamonds"),
+        _ => tl!("Pattern"),
     }
 }
 

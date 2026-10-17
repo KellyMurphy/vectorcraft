@@ -3285,6 +3285,14 @@ axis	Both	兩者
 	Motif	圖樣
 	Motif Size:	圖樣大小:
 	How large one repeat of the motif is	圖樣一次重複的大小
+	Pattern Border	圖樣邊框
+	The pattern repeats along the path, a whole number of times between corners.	圖樣沿路徑重複，在兩個角之間重複整數次。
+	Scallops	扇貝邊
+	Chain	鏈條
+	the pattern's size	圖樣的大小
+	Pattern Size	圖樣大小
+	How wide the border is: the pattern scales with it	邊框的寬度：圖樣隨之縮放
+	Mirror the pattern across the path	將圖樣翻轉到路徑另一側
 
 # Embroidery: sew order
 	Sew Order	縫製順序

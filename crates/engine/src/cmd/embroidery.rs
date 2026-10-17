@@ -21,7 +21,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Stitch Settings",
             [],
             None,
-            "{type?: auto|running|bean|satin|zigzag|satinShape|fill|manual (auto: by stroke width, thinUnder?: mm (0.2–3; 1) → bean outline, wideOver?: mm (2–12; 7) → fill with a satin border, else satin shape) (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag, satin shape, zigzag stitch or fill row spacing, 0.1–10; satin and fill 0.4, zigzag 2), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column or zigzag, 0.3–12; satin: the stroke width, zigzag: 3), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), pull?: mm (satin and satin shape pull compensation, 0–3; 0), underlay?: none|center|edge|zigzag (satin) | none|center (satin shape) | none|fill (fill), stagger?: 2–8 (fill rows before the needle holes line up again; 3), passes?: 3|5|7|9 (bean; 3), border?: mm (fill: a satin border over the edges, 0.5–6) | null (none), motif?: diamonds|waves|circles|scales|herringbone | null (fill: a motif carved into the fill, its needle points on the motif's lines), motifSize?: mm (3–60; 10), trimBefore?: bool, trimAfter?: bool (cut the thread before / after the object, however close the next stitch), rails?: bool (satin: between the object's two longest subpaths as its edges, other subpaths crossing both as rungs setting the stitch direction), ids?} stitch the paths, compound paths and type objects in ids or the selection (groups: those inside; type is sewn letter by letter, each letter in its characters' colour: use auto for lettering), as one undo step; null resets length, spacing, width, thread, pull, stagger or passes to the default → {changed}",
+            "{type?: auto|running|bean|satin|zigzag|satinShape|fill|patternBorder|manual (patternBorder: a border pattern repeated along the path, bending with its curves, a whole number of repeats between corners; auto: by stroke width, thinUnder?: mm (0.2–3; 1) → bean outline, wideOver?: mm (2–12; 7) → fill with a satin border, else satin shape) (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag, satin shape, zigzag stitch or fill row spacing, 0.1–10; satin and fill 0.4, zigzag 2), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column or zigzag, 0.3–12; satin: the stroke width, zigzag: 3; pattern border: the band, 1–40, default the pattern's own), pattern?: waves|scallops|chain|diamonds | null (pattern border: the pattern; waves), flip?: bool (pattern border: mirrored across the path), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), pull?: mm (satin and satin shape pull compensation, 0–3; 0), underlay?: none|center|edge|zigzag (satin) | none|center (satin shape) | none|fill (fill), stagger?: 2–8 (fill rows before the needle holes line up again; 3), passes?: 3|5|7|9 (bean; 3), border?: mm (fill: a satin border over the edges, 0.5–6) | null (none), motif?: diamonds|waves|circles|scales|herringbone | null (fill: a motif carved into the fill, its needle points on the motif's lines), motifSize?: mm (3–60; 10), trimBefore?: bool, trimAfter?: bool (cut the thread before / after the object, however close the next stitch), rails?: bool (satin: between the object's two longest subpaths as its edges, other subpaths crossing both as rungs setting the stitch direction), ids?} stitch the paths, compound paths and type objects in ids or the selection (groups: those inside; type is sewn letter by letter, each letter in its characters' colour: use auto for lettering), as one undo step; null resets length, spacing, width, thread, pull, stagger or passes to the default → {changed}",
             has_doc,
             set
         ),
@@ -84,7 +84,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Embroidery Info",
             [],
             None,
-            "{ids?} → {design: {objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings}, setup: {trimJumpsOver, stitchMovesUnder} (embroidery.setup), selection: {stitched, unstitched, type, length, spacing, angle, width, thread, pull, underlay, stagger, passes, border, motif, motifSize, thinUnder, wideOver, rails, trimBefore, trimAfter} (each null when the stitched objects differ, or none is)}",
+            "{ids?} → {design: {objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings}, setup: {trimJumpsOver, stitchMovesUnder} (embroidery.setup), selection: {stitched, unstitched, type, length, spacing, angle, width, thread, pull, underlay, stagger, passes, border, motif, motifSize, pattern, flip, thinUnder, wideOver, rails, trimBefore, trimAfter} (each null when the stitched objects differ, or none is)}",
             has_doc,
             info
         ),
@@ -153,6 +153,8 @@ struct Edits {
     rails: Option<bool>,
     motif: Option<Option<String>>,
     motif_size: Option<Option<f64>>,
+    pattern: Option<Option<String>>,
+    flip: Option<bool>,
     border: Option<Option<f64>>,
     thin_under: Option<Option<f64>>,
     wide_over: Option<Option<f64>>,
@@ -184,7 +186,7 @@ impl Edits {
         let kind = match p.get("type") {
             None | Some(Value::Null) => None,
             Some(v) => Some(v.as_str().and_then(StitchKind::parse).ok_or_else(|| {
-                bad(SET, "`type` must be auto, running, bean, satin, zigzag, satinShape, fill or manual (embroidery.clear removes stitches)")
+                bad(SET, "`type` must be auto, running, bean, satin, zigzag, satinShape, fill, patternBorder or manual (embroidery.clear removes stitches)")
             })?),
         };
         let angle = match p.get("angle") {
@@ -228,9 +230,20 @@ impl Edits {
                 }
             },
             motif_size: measure(p, "motifSize", StitchSettings::MOTIF_SIZE)?,
+            pattern: match p.get("pattern") {
+                None => None,
+                Some(Value::Null) => Some(None),
+                Some(v) => {
+                    let all = vectorcraft_embroidery::borders::BUILTIN;
+                    let id = v.as_str().map(str::to_ascii_lowercase).filter(|id| all.contains(&id.as_str()));
+                    Some(Some(id.ok_or_else(|| bad(SET, format!("`pattern` must be one of {} or null", all.join(", "))))?))
+                }
+            },
+            flip: flag(p, "flip")?,
             length: measure(p, "length", StitchSettings::LENGTH)?,
             spacing: measure(p, "spacing", StitchSettings::SPACING)?,
-            width: measure(p, "width", StitchSettings::WIDTH)?,
+            // Checked against the stitch each object ends up with in `set`.
+            width: measure(p, "width", *StitchSettings::WIDTH.start()..=*StitchSettings::PATTERN_WIDTH.end())?,
             angle,
             thread,
         })
@@ -286,6 +299,12 @@ impl Edits {
         if let Some(v) = self.motif_size {
             s.motif_size = v;
         }
+        if let Some(v) = &self.pattern {
+            s.pattern.clone_from(v);
+        }
+        if let Some(v) = self.flip {
+            s.flip = v;
+        }
         if let Some(v) = self.trim_before {
             s.trim_before = v;
         }
@@ -321,6 +340,14 @@ fn set(s: &mut Session, p: &Value) -> Result<Value> {
             ids.iter().map(|id| edits.apply(d.node(*id).and_then(|n| n.stitch.as_deref())).kind).find(|k| !Underlay::for_kind(*k).contains(&u))
         {
             return Err(bad(SET, format!("{} stitches have no {} underlay", k.id(), u.id())));
+        }
+    }
+    // So must a width: pattern borders span 1–40 mm, satins and zigzags 0.3–12 mm.
+    if let Some(Some(w)) = edits.width {
+        let d = &s.doc()?.doc;
+        let range = |k: StitchKind| if k == StitchKind::PatternBorder { StitchSettings::PATTERN_WIDTH } else { StitchSettings::WIDTH };
+        if let Some(r) = ids.iter().map(|id| range(edits.apply(d.node(*id).and_then(|n| n.stitch.as_deref())).kind)).find(|r| !r.contains(&w)) {
+            return Err(bad(SET, format!("`width` must be from {} to {} mm for these stitches", r.start(), r.end())));
         }
     }
     let changed = edit_counted(s, "Stitch Settings", |d| {
@@ -559,6 +586,8 @@ fn info(s: &mut Session, p: &Value) -> Result<Value> {
         "rails": same(all.iter().map(|s| s.rails)),
         "motif": same(all.iter().map(|s| s.motif.clone())),
         "motifSize": same(all.iter().map(|s| s.motif_size())),
+        "pattern": same(all.iter().map(|s| s.pattern().to_string())),
+        "flip": same(all.iter().map(|s| s.flip)),
         "trimBefore": same(all.iter().map(|s| s.trim_before)),
         "trimAfter": same(all.iter().map(|s| s.trim_after)),
     });

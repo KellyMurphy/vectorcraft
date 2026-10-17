@@ -245,6 +245,26 @@ fn carved_motifs_are_set_and_checked() {
     assert_eq!(info(&mut s)["selection"]["motif"], Value::Null);
 }
 
+#[test]
+fn pattern_borders_are_set_checked_and_sewn() {
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "patternBorder", "pattern": "Diamonds", "width": 20, "flip": true})).unwrap();
+    let got = info(&mut s);
+    let sel = &got["selection"];
+    assert_eq!(
+        (sel["type"].clone(), sel["pattern"].clone(), sel["width"].clone(), sel["flip"].clone()),
+        (json!("patternBorder"), json!("diamonds"), json!(20.0), json!(true))
+    );
+    assert!(got["design"]["stitches"].as_u64().unwrap() > 100, "{got}");
+    assert!(got["design"]["warnings"].as_array().unwrap().is_empty(), "{got}");
+    assert!(s.execute("embroidery.set", &json!({"pattern": "stars"})).is_err());
+    assert!(s.execute("embroidery.set", &json!({"width": 41})).is_err());
+    // 20 mm suits a pattern border, not a satin.
+    assert!(s.execute("embroidery.set", &json!({"type": "satin", "width": 20})).is_err());
+    s.execute("embroidery.set", &json!({"pattern": null})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["pattern"], "waves");
+}
+
 /// Three stitched rectangles (red, blue, red) left to right; their ids.
 fn three(s: &mut Session) -> Vec<u64> {
     s.execute("file.new", &json!({"width": 400, "height": 200})).unwrap();

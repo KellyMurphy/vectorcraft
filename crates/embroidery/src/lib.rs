@@ -10,6 +10,7 @@
 //! - `dst`: the Tajima DST format (writer and reader).
 //! - `import`: a plan as editable art (one manual-stitch path per run of stitches).
 
+pub mod borders;
 mod dst;
 pub mod generate;
 mod import;
@@ -650,6 +651,20 @@ fn sew(s: &StitchSettings, thread: [u8; 3], stroke_mm: f64, paths: &[&PathData],
             StitchKind::Zigzag => {
                 let w = s.width(stroke_mm);
                 runs.extend(lines.iter().map(|(l, closed)| generate::zigzag(l, *closed, w, s.spacing())));
+            }
+            StitchKind::PatternBorder => {
+                let id = s.pattern();
+                let Some(pattern) = borders::builtin(id) else {
+                    b.plan.warnings.push(format!("there is no border pattern `{id}`: not sewn"));
+                    return;
+                };
+                let w = s.pattern_width(pattern.width);
+                for (l, closed) in &lines {
+                    match borders::sew(&pattern, l, *closed, w, s.flip, s.length(), s.spacing()) {
+                        Ok(r) => runs.extend(r),
+                        Err(e) => b.plan.warnings.push(e),
+                    }
+                }
             }
             StitchKind::Bean => runs.extend(lines.iter().map(|(l, _)| generate::bean(&generate::running(l, s.length()), s.passes()))),
             _ => runs.extend(lines.iter().map(|(l, _)| generate::running(l, s.length()))),

@@ -3821,6 +3821,14 @@ theme	Appearance	外観
 	Motif	モチーフ
 	Motif Size:	モチーフのサイズ:
 	How large one repeat of the motif is	モチーフの1回の繰り返しの大きさ
+	Pattern Border	パターンボーダー
+	The pattern repeats along the path, a whole number of times between corners.	パターンはパスに沿って繰り返され、角と角の間には整数回収まります。
+	Scallops	スカラップ
+	Chain	チェーン
+	the pattern's size	パターンのサイズ
+	Pattern Size	パターンのサイズ
+	How wide the border is: the pattern scales with it	ボーダーの幅：パターンはこれに合わせて拡大縮小されます
+	Mirror the pattern across the path	パターンをパスの反対側に反転
 
 # Embroidery: sew order
 	Sew Order	縫製順

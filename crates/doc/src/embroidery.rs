@@ -26,6 +26,10 @@ pub enum StitchKind {
     Fill,
     /// The needle goes down at every anchor, as drawn (imported designs).
     Manual,
+    /// A border pattern ([`StitchSettings::pattern`]) repeated along the path, bending with its
+    /// curves, a whole number of repeats between corners.
+    #[serde(rename = "patternBorder")]
+    PatternBorder,
     /// Chosen by the shape's stroke width ([`StitchSettings::thin_under`],
     /// [`StitchSettings::wide_over`]): thin → bean outline, medium → satin shape, wide → fill
     /// with a satin border (lettering: per letter).
@@ -33,7 +37,8 @@ pub enum StitchKind {
 }
 
 impl StitchKind {
-    pub const ALL: [StitchKind; 8] = [Self::Auto, Self::Running, Self::Bean, Self::Satin, Self::Zigzag, Self::SatinShape, Self::Fill, Self::Manual];
+    pub const ALL: [StitchKind; 9] =
+        [Self::Auto, Self::Running, Self::Bean, Self::Satin, Self::Zigzag, Self::SatinShape, Self::Fill, Self::PatternBorder, Self::Manual];
 
     pub fn id(self) -> &'static str {
         match self {
@@ -44,6 +49,7 @@ impl StitchKind {
             Self::Zigzag => "zigzag",
             Self::SatinShape => "satinShape",
             Self::Manual => "manual",
+            Self::PatternBorder => "patternBorder",
             Self::Auto => "auto",
         }
     }
@@ -57,6 +63,7 @@ impl StitchKind {
             Self::Zigzag => "Zigzag Stitch",
             Self::SatinShape => "Satin Shape",
             Self::Manual => "Manual Stitch",
+            Self::PatternBorder => "Pattern Border",
             Self::Auto => "Auto",
         }
     }
@@ -74,6 +81,8 @@ impl StitchKind {
     pub fn default_length(self) -> f64 {
         match self {
             Self::Fill => 4.0,
+            // Border patterns are small, curvy figures.
+            Self::PatternBorder => 1.5,
             _ => 2.5,
         }
     }
@@ -171,6 +180,12 @@ pub struct StitchSettings {
     /// The carved motif's repeat, mm ([`StitchSettings::DEFAULT_MOTIF_SIZE`]).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub motif_size: Option<f64>,
+    /// Pattern border: the border pattern's id (`None`: [`StitchSettings::DEFAULT_PATTERN`]).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pattern: Option<String>,
+    /// Pattern border: the pattern mirrored across the path.
+    #[serde(default, skip_serializing_if = "crate::skip::is_default")]
+    pub flip: bool,
     /// Bean stitch: how many times each stitch is sewn (odd).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub passes: Option<u8>,
@@ -193,6 +208,56 @@ pub struct StitchSettings {
     /// Cut the thread after the object ends.
     #[serde(default, skip_serializing_if = "crate::skip::is_default")]
     pub trim_after: bool,
+}
+
+/// How a [`PatternPart`] is sewn.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum PartStitch {
+    /// Running stitch along the part's line (the object's stitch length).
+    #[default]
+    Running,
+    /// Bean stitch (each stitch sewn three times) along the line.
+    Bean,
+    /// A satin column [`PatternPart::width`] wide along the line.
+    Satin,
+    /// The needle goes down at each of the part's points, as given (patterns taken from a
+    /// stitched design).
+    Manual,
+}
+
+/// One piece of a border pattern: a line in the pattern's own space (mm at its own size: x along
+/// the border, 0 to [`BorderPattern::length`]; y across it, from −width/2 to width/2, positive
+/// to the left of the direction of travel), and how it is sewn.
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PatternPart {
+    #[serde(default)]
+    pub stitch: PartStitch,
+    pub points: Vec<[f64; 2]>,
+    /// Satin: the column's width, mm at the pattern's size.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub width: Option<f64>,
+}
+
+/// A border pattern: one repeat of a stitched border, sewn end to end along a path by
+/// [`StitchKind::PatternBorder`]. The repeat's parts are sewn in order as one continuous line
+/// (each part starts where the one before ends), entering at its first point and leaving at its
+/// last, which is the next repeat's first point moved `length` along.
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BorderPattern {
+    pub name: String,
+    /// The band's width at the pattern's own size, mm.
+    pub width: f64,
+    /// One repeat's length at the pattern's own size, mm.
+    pub length: f64,
+    pub repeat: Vec<PatternPart>,
+    /// A motif sewn at each sharp corner, centred on it (x along the bisector of the turn, y
+    /// across it), starting and ending at the corner. Empty: the border ends at each corner and
+    /// starts again after it.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub corner: Vec<PatternPart>,
 }
 
 /// The document's embroidery settings: how the needle travels between stitches
@@ -271,6 +336,11 @@ impl StitchSettings {
     pub const DEFAULT_WIDTH: f64 = 3.0;
     /// Zigzag stitch spacing when none is set, mm.
     pub const DEFAULT_ZIGZAG_SPACING: f64 = 2.0;
+    /// Allowed pattern border widths, mm (the motif's stitches are split where they'd be longer
+    /// than a machine sews).
+    pub const PATTERN_WIDTH: std::ops::RangeInclusive<f64> = 1.0..=40.0;
+    /// The border pattern sewn when none is set.
+    pub const DEFAULT_PATTERN: &'static str = "waves";
 
     pub fn new(kind: StitchKind) -> Self {
         Self { kind, ..Self::default() }
@@ -294,6 +364,18 @@ impl StitchSettings {
         let stroke = stroke_mm.is_finite() && stroke_mm > 0.0 && self.kind != StitchKind::Zigzag;
         let fallback = if stroke { stroke_mm } else { Self::DEFAULT_WIDTH };
         clamp(self.width, fallback, Self::WIDTH)
+    }
+
+    /// The pattern border's width, mm, given the pattern's own (always within
+    /// [`Self::PATTERN_WIDTH`]).
+    pub fn pattern_width(&self, nominal: f64) -> f64 {
+        let fallback = if nominal.is_finite() && nominal > 0.0 { nominal } else { Self::DEFAULT_WIDTH };
+        clamp(self.width, fallback, Self::PATTERN_WIDTH)
+    }
+
+    /// The border pattern's id to sew.
+    pub fn pattern(&self) -> &str {
+        self.pattern.as_deref().unwrap_or(Self::DEFAULT_PATTERN)
     }
 
     /// Auto's thresholds, mm: (thin under, wide over), the wide one never below the thin one.
