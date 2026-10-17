@@ -3203,6 +3203,7 @@ axis	Both	Les deux
 @msg	Image Trace: the traced image is missing	Vectorisation de l’image : l’image vectorisée est manquante
 @msg	Imported {what}: {_1}	{what} importé : {_1}
 @msg	Installed plug-in {_1}	Module externe {_1} installé
+@msg	Loaded border pattern {_1}	Bordure à motif chargée : {_1}
 @msg	Internal error: {msg} (please report this bug)	Erreur interne : {msg} (merci de signaler ce bogue)
 @msg	Live Paint Merge: select a Live Paint group and the paths to add	Fusion de peinture dynamique : sélectionnez un groupe de peinture dynamique et les tracés à ajouter
 @msg	Live Paint: select paths or compound paths	Peinture dynamique : sélectionnez des tracés ou des tracés transparents
@@ -3848,6 +3849,9 @@ axis	Both	Les deux
 	Pattern Size	Taille du motif
 	How wide the border is: the pattern scales with it	La largeur de la bordure : le motif suit son échelle
 	Mirror the pattern across the path	Refléter le motif de l’autre côté du tracé
+	Load…	Charger…
+	Load a border pattern file (.vcborder) into the document	Charger un fichier de bordure à motif (.vcborder) dans le document
+	Save this border pattern as a file (.vcborder)	Enregistrer cette bordure à motif dans un fichier (.vcborder)
 
 # Embroidery: sew order
 	Sew Order	Ordre de couture
@@ -3863,3 +3867,7 @@ axis	Both	Les deux
 	Sew by Thread	Coudre par fil
 	Sew in Paint Order	Coudre dans l’ordre de superposition
 	Change Sew Order	Modifier l’ordre de couture
+	Border Patterns	Bordures à motif
+	Load Border Pattern…	Charger une bordure à motif…
+	Save Border Pattern…	Enregistrer la bordure à motif…
+	Remove Border Pattern	Supprimer la bordure à motif

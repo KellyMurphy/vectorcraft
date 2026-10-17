@@ -157,6 +157,8 @@ struct Builder {
     trim_over: Option<f64>,
     /// Moves up to this long are sewn rather than jumped, mm.
     stitch_under: f64,
+    /// The document's own border patterns ([`EmbroiderySetup::patterns`]).
+    patterns: Vec<vectorcraft_doc::BorderPattern>,
 }
 
 impl Builder {
@@ -169,6 +171,7 @@ impl Builder {
             tie: true,
             trim_over: setup.trim_over(),
             stitch_under: setup.stitch_under(),
+            patterns: setup.patterns.clone(),
         }
     }
 
@@ -654,7 +657,7 @@ fn sew(s: &StitchSettings, thread: [u8; 3], stroke_mm: f64, paths: &[&PathData],
             }
             StitchKind::PatternBorder => {
                 let id = s.pattern();
-                let Some(pattern) = borders::builtin(id) else {
+                let Some(pattern) = borders::find(&b.patterns, id) else {
                     b.plan.warnings.push(format!("there is no border pattern `{id}`: not sewn"));
                     return;
                 };

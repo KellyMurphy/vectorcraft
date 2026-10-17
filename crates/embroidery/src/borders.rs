@@ -3,7 +3,9 @@
 //! slightly so a whole number of repeats fits each stretch between sharp corners; at a corner the
 //! pattern's corner motif goes in, or, when it has none, the border ends and starts again.
 //!
-//! The starter patterns are drawn here in code ([`builtin`]).
+//! The starter patterns are drawn here in code ([`builtin`]); others come from `.vcborder` files
+//! ([`read_file`], [`write_file`]; the format is documented in `docs/embroidery.md`) and are kept
+//! in the document that uses them.
 
 use kurbo::{Point, Vec2};
 use vectorcraft_doc::{BorderPattern, PartStitch, PatternPart};
@@ -22,10 +24,88 @@ const CORNER_COS: f64 = 0.64;
 const BEND_STEP: f64 = 0.25;
 /// The most points a pattern may have (its parts and corner together).
 pub const MAX_PATTERN_POINTS: usize = 100_000;
-/// The largest a pattern's own width or repeat length may be, mm.
-const MAX_PATTERN_SIZE: f64 = 1000.0;
+/// The sizes a pattern's own width, repeat length and satin widths may have, mm.
+const PATTERN_SIZE: std::ops::RangeInclusive<f64> = 0.01..=1000.0;
 /// Bean parts sew each stitch this many times.
 const BEAN_PASSES: u8 = 3;
+
+/// The border pattern file's extension.
+pub const FILE_EXT: &str = "vcborder";
+/// The `format` a border pattern file declares.
+pub const FILE_FORMAT: &str = "vectorcraft-border-pattern";
+/// The file format version written; files of a later version aren't read.
+pub const FILE_VERSION: u32 = 1;
+/// The largest border pattern file read, bytes.
+pub const MAX_FILE_BYTES: usize = 8 << 20;
+
+/// The pattern `id`: the document's own (`patterns`) first, then the starters.
+pub fn find(patterns: &[BorderPattern], id: &str) -> Option<BorderPattern> {
+    patterns.iter().find(|p| p.id == id).cloned().or_else(|| builtin(id))
+}
+
+/// `name` as a pattern id: lower case letters and digits, other runs of characters as one dash
+/// (`"Rope Twist 2"` → `rope-twist-2`); `pattern` when nothing is left.
+pub fn slug(name: &str) -> String {
+    let mut out = String::new();
+    for c in name.chars().flat_map(char::to_lowercase) {
+        if c.is_alphanumeric() {
+            out.push(c);
+        } else if !out.is_empty() && !out.ends_with('-') {
+            out.push('-');
+        }
+        if out.len() >= 64 {
+            break;
+        }
+    }
+    let out = out.trim_end_matches('-');
+    if out.is_empty() { "pattern".into() } else { out.to_string() }
+}
+
+/// A border pattern file as stored: the format header, then the pattern's fields.
+#[derive(serde::Serialize, serde::Deserialize)]
+struct File {
+    format: String,
+    version: u32,
+    #[serde(default = "mm")]
+    units: String,
+    #[serde(flatten)]
+    pattern: BorderPattern,
+}
+
+fn mm() -> String {
+    "mm".into()
+}
+
+/// Read a `.vcborder` file: JSON with `format` [`FILE_FORMAT`], `version` and the pattern
+/// ([`BorderPattern`]), checked ([`check`]). Its id is its own, else made from its name.
+pub fn read_file(bytes: &[u8]) -> Result<BorderPattern, String> {
+    if bytes.len() > MAX_FILE_BYTES {
+        return Err(format!("a border pattern file is at most {} MB", MAX_FILE_BYTES >> 20));
+    }
+    let f: File = serde_json::from_slice(bytes).map_err(|e| format!("not a border pattern file: {e}"))?;
+    if f.format != FILE_FORMAT {
+        return Err(format!("not a border pattern file (its format is `{}`)", f.format));
+    }
+    if f.version > FILE_VERSION {
+        return Err(format!("this border pattern file is version {}: this VectorCraft reads up to version {FILE_VERSION}", f.version));
+    }
+    if f.units != "mm" {
+        return Err(format!("border pattern files measure in mm, not `{}`", f.units));
+    }
+    let mut p = f.pattern;
+    p.id = slug(if p.id.trim().is_empty() { &p.name } else { &p.id });
+    if p.name.trim().is_empty() {
+        p.name.clone_from(&p.id);
+    }
+    check(&p)?;
+    Ok(p)
+}
+
+/// `p` as a `.vcborder` file.
+pub fn write_file(p: &BorderPattern) -> Result<String, String> {
+    let f = File { format: FILE_FORMAT.into(), version: FILE_VERSION, units: mm(), pattern: p.clone() };
+    serde_json::to_string_pretty(&f).map_err(|e| e.to_string())
+}
 
 /// A starter pattern by id (one of [`BUILTIN`]).
 pub fn builtin(id: &str) -> Option<BorderPattern> {
@@ -35,7 +115,12 @@ pub fn builtin(id: &str) -> Option<BorderPattern> {
     Some(match id {
         // A sine wave in bean stitch.
         "waves" => BorderPattern {
+            id: "waves".into(),
             name: "Waves".into(),
+            author: Some("VectorCraft contributors".into()),
+            license: Some("CC0-1.0".into()),
+            source: None,
+            description: None,
             width: 6.0,
             length: 10.0,
             repeat: vec![part(PartStitch::Bean, curve(32, &|t| [10.0 * t, 2.5 * (2.0 * PI * t).sin()]))],
@@ -43,7 +128,12 @@ pub fn builtin(id: &str) -> Option<BorderPattern> {
         },
         // Satin arches standing on one edge of the band.
         "scallops" => BorderPattern {
+            id: "scallops".into(),
             name: "Scallops".into(),
+            author: Some("VectorCraft contributors".into()),
+            license: Some("CC0-1.0".into()),
+            source: None,
+            description: None,
             width: 6.0,
             length: 6.0,
             repeat: vec![PatternPart {
@@ -55,7 +145,12 @@ pub fn builtin(id: &str) -> Option<BorderPattern> {
         },
         // Loops linked like a chain (a prolate cycloid), in bean stitch.
         "chain" => BorderPattern {
+            id: "chain".into(),
             name: "Chain".into(),
+            author: Some("VectorCraft contributors".into()),
+            license: Some("CC0-1.0".into()),
+            source: None,
+            description: None,
             width: 6.0,
             length: 6.0,
             repeat: vec![part(PartStitch::Bean, curve(48, &|t| [6.0 * t - 1.6 * (2.0 * PI * t).sin(), -2.6 * (2.0 * PI * t).cos()]))],
@@ -63,7 +158,12 @@ pub fn builtin(id: &str) -> Option<BorderPattern> {
         },
         // Diamonds strung on a centre line, with a four-petal rosette at each corner.
         "diamonds" => BorderPattern {
+            id: "diamonds".into(),
             name: "Diamonds".into(),
+            author: Some("VectorCraft contributors".into()),
+            license: Some("CC0-1.0".into()),
+            source: None,
+            description: None,
             width: 6.0,
             length: 8.0,
             repeat: vec![part(PartStitch::Bean, vec![[0.0, 0.0], [4.0, 2.6], [8.0, 0.0], [4.0, -2.6], [0.0, 0.0], [8.0, 0.0]])],
@@ -84,9 +184,10 @@ pub fn builtin(id: &str) -> Option<BorderPattern> {
 /// Why `p` can't be sewn, if it can't: sizes out of range, no repeat, non-finite points, too
 /// many points.
 pub fn check(p: &BorderPattern) -> Result<(), String> {
-    let size = |v: f64| v.is_finite() && v > 0.0 && v <= MAX_PATTERN_SIZE;
+    let size = |v: f64| PATTERN_SIZE.contains(&v);
     if !size(p.width) || !size(p.length) {
-        return Err(format!("the border pattern `{}` has a width or repeat length that isn't a size (0–{MAX_PATTERN_SIZE} mm)", p.name));
+        let (lo, hi) = (PATTERN_SIZE.start(), PATTERN_SIZE.end());
+        return Err(format!("the border pattern `{}` has a width or repeat length that isn't a size ({lo}–{hi} mm)", p.name));
     }
     if p.repeat.iter().all(|q| q.points.is_empty()) {
         return Err(format!("the border pattern `{}` has nothing in its repeat", p.name));
@@ -128,7 +229,7 @@ impl Stretch {
         self.at.last().copied().unwrap_or(0.0)
     }
 
-    /// The point `s` mm along and the (left) normal there, blended between the points' own
+    /// The point `s` mm along and the normal there (to the right of travel on the page), blended between the points' own
     /// normals so offsets bend smoothly.
     fn frame(&self, s: f64) -> (Point, Vec2) {
         let i = self.at.partition_point(|&a| a <= s).clamp(1, self.at.len().saturating_sub(1).max(1));
@@ -250,6 +351,8 @@ fn stitch(pieces: Vec<Piece>, len: f64, spacing: f64) -> Vec<Point> {
         let skip = usize::from(run.last().zip(pts.first()).is_some_and(|(a, b)| a.distance(*b) < 1e-6));
         run.extend(pts.into_iter().skip(skip));
     }
+    // Belt and braces: a point that isn't a number never reaches the machine.
+    run.retain(|p| p.is_finite());
     generate::split_long(&run)
 }
 
@@ -312,7 +415,7 @@ pub fn sew(pattern: &BorderPattern, line: &[Point], closed: bool, width: f64, fl
             if to < st.len() {
                 add_part(&mut pieces, &centre(to, st.len()), (1.0, 1.0), &|x, _| st.frame(x).0);
             }
-            // The motif, centred on the corner and facing along the bisector of the turn.
+            // The motif, centred on the corner, x along the direction of travel through it.
             let next = parts.get((k + 1) % count).unwrap_or(st);
             let (t_in, t_out) = (st.direction(true), next.direction(false));
             let mut d = t_in + t_out;
@@ -450,10 +553,82 @@ mod tests {
             width: 2.0,
             length: 2.0,
             repeat: vec![PatternPart { stitch: PartStitch::Manual, points: vec![[0.0, -1.0], [1.0, 1.0], [2.0, -1.0]], width: None }],
-            corner: vec![],
+            ..Default::default()
         };
         let runs = sew(&p, &[Point::new(0.0, 0.0), Point::new(200.0, 0.0)], false, 40.0, false, 1.5, 0.4).unwrap();
         assert!(longest(&runs) <= MAX_STITCH + 1e-9);
+    }
+
+    #[test]
+    fn files_round_trip_and_name_their_pattern() {
+        let mut p = builtin("diamonds").unwrap();
+        p.id = "My Diamonds!".into();
+        let text = write_file(&p).unwrap();
+        assert!(text.contains("\"format\": \"vectorcraft-border-pattern\"") && text.contains("\"units\": \"mm\""), "{text}");
+        let back = read_file(text.as_bytes()).unwrap();
+        assert_eq!(back.id, "my-diamonds");
+        assert_eq!(BorderPattern { id: p.id.clone(), ..back }, p);
+        // No id: one is made from the name.
+        let v = serde_json::json!({"format": FILE_FORMAT, "version": 1, "name": "Rope Twist 2", "width": 4, "length": 5,
+            "repeat": [{"stitch": "running", "points": [[0, 0], [5, 0]]}]});
+        let q = read_file(v.to_string().as_bytes()).unwrap();
+        assert_eq!((q.id.as_str(), q.license.as_deref()), ("rope-twist-2", None));
+        assert_eq!(slug("  --  "), "pattern");
+    }
+
+    #[test]
+    fn files_that_arent_patterns_are_refused() {
+        let ok = serde_json::json!({"format": FILE_FORMAT, "version": 1, "name": "x", "width": 4, "length": 5,
+            "repeat": [{"points": [[0, 0], [5, 0]]}]});
+        assert!(read_file(ok.to_string().as_bytes()).is_ok());
+        for (k, v) in [
+            ("format", serde_json::json!("vectorcraft-font")),
+            ("version", serde_json::json!(2)),
+            ("units", serde_json::json!("in")),
+            ("width", serde_json::json!(-1)),
+        ] {
+            let mut bad = ok.clone();
+            bad[k] = v;
+            assert!(read_file(bad.to_string().as_bytes()).is_err(), "{k}");
+        }
+        assert!(read_file(b"").is_err());
+        assert!(read_file(b"{\"format\": 1}").is_err());
+        assert!(read_file(&vec![b' '; MAX_FILE_BYTES + 1]).is_err());
+    }
+
+    #[test]
+    fn document_patterns_come_before_the_starters() {
+        let mine = BorderPattern { id: "waves".into(), name: "My waves".into(), ..builtin("chain").unwrap() };
+        assert_eq!(find(std::slice::from_ref(&mine), "waves").unwrap().name, "My waves");
+        assert_eq!(find(&[], "waves").unwrap().name, "Waves");
+        assert!(find(&[mine], "stars").is_none());
+    }
+
+    proptest::proptest! {
+        // Untrusted files: whatever they hold, reading and sewing them returns, never panics.
+        #[test]
+        fn any_file_reads_or_is_refused(
+            width in proptest::prop_oneof![proptest::num::f64::ANY, 0.0..30.0],
+            length in proptest::prop_oneof![proptest::num::f64::ANY, 0.0..30.0],
+            pts in proptest::collection::vec(proptest::prop_oneof![(proptest::num::f64::ANY, proptest::num::f64::ANY), (-20.0..40.0, -20.0..20.0)], 0..12),
+            kind in 0usize..4,
+            sat in proptest::option::of(proptest::prop_oneof![proptest::num::f64::ANY, 0.0..15.0]),
+            corner in proptest::bool::ANY,
+            junk in ".{0,40}",
+        ) {
+            let stitch = ["running", "bean", "satin", "manual"][kind];
+            let points: Vec<[f64; 2]> = pts.iter().map(|&(x, y)| [x, y]).collect();
+            let part = serde_json::json!({"stitch": stitch, "points": points, "width": sat});
+            let v = serde_json::json!({"format": FILE_FORMAT, "version": 1, "name": junk, "width": width, "length": length,
+                "repeat": [part.clone()], "corner": if corner { vec![part] } else { vec![] }});
+            let _ = read_file(junk.as_bytes());
+            if let Ok(p) = read_file(v.to_string().as_bytes()) {
+                let square = [Point::new(0.0, 0.0), Point::new(40.0, 0.0), Point::new(40.0, 40.0), Point::new(0.0, 40.0), Point::new(0.0, 0.0)];
+                if let Ok(runs) = sew(&p, &square, true, 8.0, false, 1.5, 0.4) {
+                    proptest::prop_assert!(longest(&runs) <= MAX_STITCH + 1e-6);
+                }
+            }
+        }
     }
 
     #[test]

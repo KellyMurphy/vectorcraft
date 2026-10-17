@@ -2793,6 +2793,9 @@
 	Pattern Size	Tamanho do padrão
 	How wide the border is: the pattern scales with it	A largura da borda: o padrão acompanha sua escala
 	Mirror the pattern across the path	Espelhar o padrão para o outro lado do traçado
+	Load…	Carregar…
+	Load a border pattern file (.vcborder) into the document	Carrega no documento um arquivo de borda de padrão (.vcborder)
+	Save this border pattern as a file (.vcborder)	Salva esta borda de padrão como arquivo (.vcborder)
 
 # Embroidery: sew order
 	Sew Order	Ordem de costura
@@ -2808,3 +2811,9 @@
 	Sew by Thread	Costurar por linha
 	Sew in Paint Order	Costurar na ordem de empilhamento
 	Change Sew Order	Alterar ordem de costura
+	Border Patterns	Bordas de padrão
+	Load Border Pattern…	Carregar borda de padrão…
+	Save Border Pattern…	Salvar borda de padrão…
+	Remove Border Pattern	Remover borda de padrão
+
+@msg	Loaded border pattern {_1}	Borda de padrão carregada: {_1}

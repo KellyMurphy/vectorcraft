@@ -265,6 +265,36 @@ fn pattern_borders_are_set_checked_and_sewn() {
     assert_eq!(info(&mut s)["selection"]["pattern"], "waves");
 }
 
+#[test]
+fn border_pattern_files_load_into_the_document_and_save() {
+    let mut s = session();
+    // A starter saved as a file, renamed: a pattern of the document's own.
+    let data = s.execute("embroidery.saveBorderPattern", &json!({"pattern": "chain"})).unwrap()["data"].as_str().unwrap().to_string();
+    let again = s.execute("embroidery.loadBorderPattern", &json!({"data": data})).unwrap();
+    assert_eq!((again["id"].clone(), again["added"].clone()), (json!("chain"), json!(false)), "the starter itself");
+    let mine = data.replace("\"id\": \"chain\"", "\"id\": \"\"").replace("\"name\": \"Chain\"", "\"name\": \"Rope\"");
+    let r = s.execute("embroidery.loadBorderPattern", &json!({"data": mine})).unwrap();
+    assert_eq!((r["id"].clone(), r["added"].clone()), (json!("rope"), json!(true)));
+    let changed = mine.replace("\"width\": 6.0", "\"width\": 5.0");
+    assert_eq!(s.execute("embroidery.loadBorderPattern", &json!({"data": changed})).unwrap()["id"], "rope-2", "a different pattern, same id");
+    let list = s.execute("embroidery.borderPatterns", &json!({})).unwrap();
+    let ids: Vec<&str> = list["patterns"].as_array().unwrap().iter().map(|p| p["id"].as_str().unwrap()).collect();
+    assert_eq!(ids, ["rope", "rope-2", "waves", "scallops", "chain", "diamonds"]);
+    // Sewn with it; kept in the saved document.
+    s.execute("embroidery.set", &json!({"type": "patternBorder", "pattern": "Rope"})).unwrap();
+    assert!(info(&mut s)["design"]["stitches"].as_u64().unwrap() > 50);
+    assert!(s.execute("embroidery.set", &json!({"pattern": "stars"})).is_err());
+    assert!(s.execute("embroidery.removeBorderPattern", &json!({"pattern": "rope"})).is_err(), "in use");
+    assert!(s.execute("embroidery.removeBorderPattern", &json!({"pattern": "waves"})).is_err(), "a starter");
+    s.execute("embroidery.removeBorderPattern", &json!({"pattern": "rope-2"})).unwrap();
+    s.execute("edit.undo", &json!({})).unwrap();
+    assert_eq!(s.execute("embroidery.borderPatterns", &json!({})).unwrap()["patterns"].as_array().unwrap().len(), 6);
+    let doc = &s.doc().unwrap().doc;
+    let back = vectorcraft_format::load(&vectorcraft_format::save(doc, false)).unwrap();
+    assert_eq!(back.embroidery.patterns.len(), 2);
+    assert!(s.execute("embroidery.loadBorderPattern", &json!({"data": "{}"})).is_err());
+}
+
 /// Three stitched rectangles (red, blue, red) left to right; their ids.
 fn three(s: &mut Session) -> Vec<u64> {
     s.execute("file.new", &json!({"width": 400, "height": 200})).unwrap();

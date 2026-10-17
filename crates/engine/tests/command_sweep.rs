@@ -266,6 +266,21 @@ fn structured_junk() {
         ("object.path.offsetPath", json!({"offset": 1e308})),
         ("object.path.offsetPath", json!({"offset": -1e308})),
         ("object.path.simplify", json!({"tolerance": -1, "cornerAngle": 1e308})),
+        // Border pattern files are untrusted: huge, tiny and missing sizes, NaN-ish points.
+        (
+            "embroidery.loadBorderPattern",
+            json!({"data": "{\"format\":\"vectorcraft-border-pattern\",\"version\":1,\"name\":\"x\",\"width\":1e-300,\"length\":1e300,\"repeat\":[{\"points\":[[1e308,-1e308],[0,0]]}]}"}),
+        ),
+        (
+            "embroidery.loadBorderPattern",
+            json!({"data": "{\"format\":\"vectorcraft-border-pattern\",\"version\":1,\"name\":\"\",\"width\":0.01,\"length\":0.01,\"repeat\":[{\"stitch\":\"satin\",\"width\":999,\"points\":[[0,0],[0.01,0]]}],\"corner\":[{\"stitch\":\"manual\",\"points\":[[999,999]]}]}"}),
+        ),
+        ("embroidery.loadBorderPattern", json!({"data": "{\"format\":\"vectorcraft-border-pattern\",\"version\":99}"})),
+        ("embroidery.set", json!({"type": "patternBorder", "pattern": "x", "width": 40})),
+        ("embroidery.set", json!({"type": "patternBorder", "pattern": "pattern", "width": 1})),
+        ("embroidery.stitches", json!({})),
+        ("embroidery.saveBorderPattern", json!({"pattern": "../../etc"})),
+        ("embroidery.removeBorderPattern", json!({"pattern": 7})),
         ("object.path.splitIntoGrid", json!({"rows": 500, "columns": 1, "gutter": 1e308})),
         ("object.path.splitIntoGrid", json!({"rows": 0.4})),
         ("object.setBounds", json!({"width": 0, "height": 0})),

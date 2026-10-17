@@ -228,7 +228,7 @@ pub enum PartStitch {
 
 /// One piece of a border pattern: a line in the pattern's own space (mm at its own size: x along
 /// the border, 0 to [`BorderPattern::length`]; y across it, from −width/2 to width/2, positive
-/// to the left of the direction of travel), and how it is sewn.
+/// to the right of the direction of travel on the page, y being down), and how it is sewn.
 #[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PatternPart {
@@ -247,14 +247,27 @@ pub struct PatternPart {
 #[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BorderPattern {
+    /// What [`StitchSettings::pattern`] calls it (lower case letters, digits and dashes).
+    #[serde(default)]
+    pub id: String,
     pub name: String,
+    /// Who made it, its licence (an SPDX id such as `CC0-1.0`, or text) and where it came from
+    /// (a URL, or the design it was taken from). Information only: nothing is sewn differently.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub author: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub license: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
     /// The band's width at the pattern's own size, mm.
     pub width: f64,
     /// One repeat's length at the pattern's own size, mm.
     pub length: f64,
     pub repeat: Vec<PatternPart>,
-    /// A motif sewn at each sharp corner, centred on it (x along the bisector of the turn, y
-    /// across it), starting and ending at the corner. Empty: the border ends at each corner and
+    /// A motif sewn at each sharp corner, centred on it (x along the direction of travel through
+    /// the corner, halfway between in and out; y across it), starting and ending at the corner. Empty: the border ends at each corner and
     /// starts again after it.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub corner: Vec<PatternPart>,
@@ -274,11 +287,15 @@ pub struct EmbroiderySetup {
     /// in paint order (empty: paint order). Ids of objects no longer there are ignored.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub order: Vec<crate::NodeId>,
+    /// Border patterns loaded into the document (from `.vcborder` files), kept with it so it sews
+    /// the same anywhere; [`StitchSettings::pattern`] names them by id.
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub patterns: Vec<BorderPattern>,
 }
 
 impl Default for EmbroiderySetup {
     fn default() -> Self {
-        Self { trim_jumps_over: Some(Self::DEFAULT_TRIM), stitch_moves_under: Self::DEFAULT_STITCH_MOVES, order: vec![] }
+        Self { trim_jumps_over: Some(Self::DEFAULT_TRIM), stitch_moves_under: Self::DEFAULT_STITCH_MOVES, order: vec![], patterns: vec![] }
     }
 }
 
@@ -470,11 +487,11 @@ mod tests {
     fn setup_defaults_round_trip_and_clamp() {
         let s = EmbroiderySetup::default();
         assert_eq!((s.trim_over(), s.stitch_under()), (Some(3.0), 1.0));
-        let never = EmbroiderySetup { trim_jumps_over: None, stitch_moves_under: 9.0, order: vec![crate::NodeId(7)] };
+        let never = EmbroiderySetup { trim_jumps_over: None, stitch_moves_under: 9.0, order: vec![crate::NodeId(7)], patterns: vec![] };
         let back: EmbroiderySetup = serde_json::from_value(serde_json::to_value(&never).unwrap()).unwrap();
         assert_eq!(back, never);
         assert_eq!((never.trim_over(), never.stitch_under()), (None, 5.0));
-        let tight = EmbroiderySetup { trim_jumps_over: Some(0.6), stitch_moves_under: 2.0, order: vec![] };
+        let tight = EmbroiderySetup { trim_jumps_over: Some(0.6), stitch_moves_under: 2.0, order: vec![], patterns: vec![] };
         assert_eq!(tight.stitch_under(), 0.6, "a sewn move is never longer than a trimmed jump");
         let missing: EmbroiderySetup = serde_json::from_value(serde_json::json!({})).unwrap();
         assert_eq!(missing, EmbroiderySetup::default());

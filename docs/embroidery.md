@@ -53,6 +53,71 @@ drawn in code, are Waves (a bean-stitch wave), Scallops (satin arches on one edg
 loops) and Diamonds (diamonds on a centre line, with a rosette at corners). On curves tighter than half the
 band's width the inside of the pattern crowds together: widen the curve or narrow the band.
 
+More patterns come from **border pattern files** (`.vcborder`): **Load…** under the Pattern menu (or File ›
+Open, or dropping the file on the window) adds one to the document, and the selected pattern borders take it.
+Loaded patterns are kept in the document, so it sews the same on any computer, and are listed in the Pattern
+menu before the starters, with their author and licence. **Save…** writes the chosen pattern, a starter
+included, as a file. A pattern with the same id as one already in the document but different content is
+added under a numbered id (`rope-2`); the very same pattern isn't added twice.
+
+#### The border pattern file format (`.vcborder`, version 1)
+
+An open format: anyone may read and write it. A file is UTF-8 JSON (at most 8 MB) holding one pattern:
+
+```json
+{
+  "format": "vectorcraft-border-pattern",
+  "version": 1,
+  "units": "mm",
+  "id": "rope",
+  "name": "Rope",
+  "author": "A. Digitizer",
+  "license": "CC-BY-4.0",
+  "source": "https://example.org/rope",
+  "description": "A twisted rope, for frames.",
+  "width": 6,
+  "length": 8,
+  "repeat": [
+    { "stitch": "bean", "points": [[0, -2], [4, 2], [8, -2]] }
+  ],
+  "corner": [
+    { "stitch": "running", "points": [[0, 0], [3, 0], [0, 3], [0, 0]] }
+  ]
+}
+```
+
+| Field | |
+|---|---|
+| `format` | Always `vectorcraft-border-pattern`. |
+| `version` | `1`. A reader refuses versions newer than it knows; fields it doesn't know are ignored. |
+| `units` | `mm` (the only unit; may be left out). |
+| `id` | What documents call the pattern: lower-case letters, digits and dashes. Left out, it is made from `name`. |
+| `name` | Shown in the Pattern menu. |
+| `author`, `license`, `source`, `description` | Optional text. `license` is best an [SPDX id](https://spdx.org/licenses/). `source` says where the pattern came from: a URL, or the design it was taken from. Information only: they change nothing that is sewn. |
+| `width`, `length` | The band's width and one repeat's length at the pattern's own size, mm (0.01–1000). |
+| `repeat` | One repeat: a list of **parts** sewn in order as one continuous line. |
+| `corner` | Optional: a motif sewn at each sharp corner, as parts. |
+
+The pattern's space: **x** runs along the border from 0 to `length`; **y** runs across it, from −`width`/2 to
+`width`/2, **positive to the right** of the direction of travel as seen on the page (on a path drawn
+clockwise, the inside). The repeat enters at its first point and leaves at its last, which should be the first point moved
+`length` along x, so repeats join end to end without a gap. Each part should start where the one before it
+ends: the needle sews straight from one to the next.
+
+A **part** is `{ "stitch": "running" | "bean" | "satin" | "manual", "points": [[x, y], …], "width"?: mm }`.
+Running, bean and satin parts are lines: they bend with the path, and their stitches are made at the object's
+stitch length (bean: each stitch sewn three times) and, for satin, as a column `width` wide (1 mm if left
+out) at the object's density. **Manual** points are needle points, sewn as given (patterns taken from stitched
+designs). Everything scales with the border's width.
+
+The **corner** motif is drawn round the corner point at (0, 0), with x along the direction of travel through
+the corner (halfway between the directions in and out) and y across it as in the repeat, and should start and
+end at (0, 0). The repeats stop
+short of the corner by as far as the motif reaches from it.
+
+A reader checks a file before use: a file that isn't this format, sizes out of range, numbers that aren't
+finite, an empty repeat or more than 100,000 points are refused with a message.
+
 **Remove Stitches** takes the settings off. Settings are saved in the `.vectorcraft` file, and editing a
 path changes its stitches.
 
@@ -120,6 +185,10 @@ A closed satin path starts halfway along its longest side, away from its corners
 |---|---|
 | `embroidery.set` | `{type?: auto\|running\|bean\|satin\|zigzag\|satinShape\|fill\|patternBorder\|manual, length?, spacing?, angle?, width?, thread?: "#rrggbb"\|[r,g,b], pull?, underlay?, stagger?, passes?, pattern?, flip?, trimBefore?, trimAfter?, ids?}`. Lengths are in mm; `null` resets one to its default. |
 | `embroidery.clear` | `{ids?}` |
+| `embroidery.borderPatterns` | → the patterns pattern borders can use (the document's, then the starters) |
+| `embroidery.loadBorderPattern` | `{path? \| data?}`: load a `.vcborder` file into the document → `{id, name, added}` |
+| `embroidery.saveBorderPattern` | `{pattern, path?}`: write a pattern as a `.vcborder` file (without `path`: `{data}`) |
+| `embroidery.removeBorderPattern` | `{pattern}`: remove one of the document's patterns that nothing sews with |
 | `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm}`: the document's travel settings |
 | `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings |
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
@@ -189,14 +258,10 @@ split. A trim is written as three short jumps that return to where they started.
     an open, documented format (like the embroidery fonts: self-contained, with author and licence). Saved
     patterns appear in the Fill section's Pattern menu (the motif fills) and tile across any shape. Only
     designs the user has the right to reuse should be extracted from; the pattern records where it came from.
-  - **Border patterns:** the **Pattern Border** stitch and its starter patterns are done (see
-    [Pattern borders](#pattern-borders)). Still to come:
-    - **A border pattern file:** an open, documented format in the same family as the pattern and font
-      files (self-contained, with author, licence and source), holding one repeat and an optional corner
-      motif as the parts the stitch already sews (running, bean, satin and manual lines). Patterns a
-      document uses are kept in it, so it opens anywhere.
-    - **Extraction:** select a stretch of a DST border, find its one repeat offset, and extract a segment
-      that joins end to end seamlessly, saved as a border pattern file.
+  - **Border patterns:** the **Pattern Border** stitch, its starter patterns and the
+    [border pattern file](#the-border-pattern-file-format-vcborder-version-1) are done. Still to come:
+    **extraction**: select a stretch of a DST border, find its one repeat offset, and extract a segment that
+    joins end to end seamlessly, saved as a border pattern file.
   - **Embroidery for agents (MCP):** the commands already work over MCP (`run_command`, `export` with
     `dst`, `open_file`), but agents aren't told about them. Mention embroidery in the server's instructions;
     give the commands their Object › Embroidery menu path in the command list; an `embroidery` prompt that

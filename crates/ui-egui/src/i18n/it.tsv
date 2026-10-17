@@ -3206,6 +3206,7 @@ axis	Both	Entrambi
 @msg	Image Trace: the traced image is missing	Ricalco immagine: manca l'immagine ricalcata
 @msg	Imported {what}: {_1}	Importato {what}: {_1}
 @msg	Installed plug-in {_1}	Plug-in installato: {_1}
+@msg	Loaded border pattern {_1}	Bordo a motivo caricato: {_1}
 @msg	Internal error: {msg} (please report this bug)	Errore interno: {msg} (segnala questo bug)
 @msg	Live Paint Merge: select a Live Paint group and the paths to add	Fondi pittura dinamica: seleziona un gruppo di pittura dinamica e i tracciati da aggiungere
 @msg	Live Paint: select paths or compound paths	Pittura dinamica: seleziona tracciati o tracciati composti
@@ -3837,6 +3838,9 @@ axis	Both	Entrambi
 	Pattern Size	Dimensione motivo
 	How wide the border is: the pattern scales with it	La larghezza del bordo: il motivo si ridimensiona con essa
 	Mirror the pattern across the path	Rifletti il motivo dall’altro lato del tracciato
+	Load…	Carica…
+	Load a border pattern file (.vcborder) into the document	Carica nel documento un file di bordo a motivo (.vcborder)
+	Save this border pattern as a file (.vcborder)	Salva questo bordo a motivo come file (.vcborder)
 
 # Embroidery: sew order
 	Sew Order	Ordine di cucitura
@@ -3852,3 +3856,7 @@ axis	Both	Entrambi
 	Sew by Thread	Cuci per filo
 	Sew in Paint Order	Cuci in ordine di sovrapposizione
 	Change Sew Order	Cambia ordine di cucitura
+	Border Patterns	Bordi a motivo
+	Load Border Pattern…	Carica bordo a motivo…
+	Save Border Pattern…	Salva bordo a motivo…
+	Remove Border Pattern	Rimuovi bordo a motivo

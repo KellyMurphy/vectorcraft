@@ -3202,6 +3202,7 @@ axis	Both	Оба
 @msg	Image Trace: the traced image is missing	Трассировка изображения: трассируемое изображение отсутствует
 @msg	Imported {what}: {_1}	Импортировано: {what}: {_1}
 @msg	Installed plug-in {_1}	Установлен модуль {_1}
+@msg	Loaded border pattern {_1}	Загружена узорная кайма {_1}
 @msg	Internal error: {msg} (please report this bug)	Внутренняя ошибка: {msg} (пожалуйста, сообщите об этой ошибке)
 @msg	Live Paint Merge: select a Live Paint group and the paths to add	Объединение быстрой заливки: выделите группу быстрой заливки и контуры для добавления
 @msg	Live Paint: select paths or compound paths	Быстрая заливка: выделите контуры или составные контуры
@@ -3835,6 +3836,9 @@ axis	Both	Оба
 	Pattern Size	Размер узора
 	How wide the border is: the pattern scales with it	Ширина каймы: узор масштабируется вместе с ней
 	Mirror the pattern across the path	Отразить узор на другую сторону контура
+	Load…	Загрузить…
+	Load a border pattern file (.vcborder) into the document	Загрузить в документ файл узорной каймы (.vcborder)
+	Save this border pattern as a file (.vcborder)	Сохранить эту узорную кайму в файл (.vcborder)
 
 # Embroidery: sew order
 	Sew Order	Порядок вышивки
@@ -3850,3 +3854,7 @@ axis	Both	Оба
 	Sew by Thread	Вышивать по нити
 	Sew in Paint Order	Вышивать в порядке слоёв
 	Change Sew Order	Изменить порядок вышивки
+	Border Patterns	Узорные каймы
+	Load Border Pattern…	Загрузить узорную кайму…
+	Save Border Pattern…	Сохранить узорную кайму…
+	Remove Border Pattern	Удалить узорную кайму

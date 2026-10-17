@@ -761,6 +761,9 @@
 	Pattern Size	Velikost vzoru
 	How wide the border is: the pattern scales with it	Jak široký je okraj: vzor se s ním zvětšuje
 	Mirror the pattern across the path	Zrcadlit vzor přes cestu
+	Load…	Načíst…
+	Load a border pattern file (.vcborder) into the document	Načíst do dokumentu soubor vzorového okraje (.vcborder)
+	Save this border pattern as a file (.vcborder)	Uložit tento vzorový okraj jako soubor (.vcborder)
 
 # Embroidery: sew order
 	Sew Order	Pořadí šití
@@ -776,3 +779,9 @@
 	Sew by Thread	Šít podle nitě
 	Sew in Paint Order	Šít v pořadí vrstev
 	Change Sew Order	Změnit pořadí šití
+	Border Patterns	Vzorové okraje
+	Load Border Pattern…	Načíst vzorový okraj…
+	Save Border Pattern…	Uložit vzorový okraj…
+	Remove Border Pattern	Odstranit vzorový okraj
+
+@msg	Loaded border pattern {_1}	Načten vzorový okraj {_1}

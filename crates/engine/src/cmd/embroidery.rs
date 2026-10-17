@@ -21,7 +21,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Stitch Settings",
             [],
             None,
-            "{type?: auto|running|bean|satin|zigzag|satinShape|fill|patternBorder|manual (patternBorder: a border pattern repeated along the path, bending with its curves, a whole number of repeats between corners; auto: by stroke width, thinUnder?: mm (0.2–3; 1) → bean outline, wideOver?: mm (2–12; 7) → fill with a satin border, else satin shape) (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag, satin shape, zigzag stitch or fill row spacing, 0.1–10; satin and fill 0.4, zigzag 2), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column or zigzag, 0.3–12; satin: the stroke width, zigzag: 3; pattern border: the band, 1–40, default the pattern's own), pattern?: waves|scallops|chain|diamonds | null (pattern border: the pattern; waves), flip?: bool (pattern border: mirrored across the path), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), pull?: mm (satin and satin shape pull compensation, 0–3; 0), underlay?: none|center|edge|zigzag (satin) | none|center (satin shape) | none|fill (fill), stagger?: 2–8 (fill rows before the needle holes line up again; 3), passes?: 3|5|7|9 (bean; 3), border?: mm (fill: a satin border over the edges, 0.5–6) | null (none), motif?: diamonds|waves|circles|scales|herringbone | null (fill: a motif carved into the fill, its needle points on the motif's lines), motifSize?: mm (3–60; 10), trimBefore?: bool, trimAfter?: bool (cut the thread before / after the object, however close the next stitch), rails?: bool (satin: between the object's two longest subpaths as its edges, other subpaths crossing both as rungs setting the stitch direction), ids?} stitch the paths, compound paths and type objects in ids or the selection (groups: those inside; type is sewn letter by letter, each letter in its characters' colour: use auto for lettering), as one undo step; null resets length, spacing, width, thread, pull, stagger or passes to the default → {changed}",
+            "{type?: auto|running|bean|satin|zigzag|satinShape|fill|patternBorder|manual (patternBorder: a border pattern repeated along the path, bending with its curves, a whole number of repeats between corners; auto: by stroke width, thinUnder?: mm (0.2–3; 1) → bean outline, wideOver?: mm (2–12; 7) → fill with a satin border, else satin shape) (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag, satin shape, zigzag stitch or fill row spacing, 0.1–10; satin and fill 0.4, zigzag 2), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column or zigzag, 0.3–12; satin: the stroke width, zigzag: 3; pattern border: the band, 1–40, default the pattern's own), pattern?: a border pattern id: waves|scallops|chain|diamonds or one loaded into the document (embroidery.borderPatterns) | null (pattern border: the pattern; waves), flip?: bool (pattern border: mirrored across the path), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), pull?: mm (satin and satin shape pull compensation, 0–3; 0), underlay?: none|center|edge|zigzag (satin) | none|center (satin shape) | none|fill (fill), stagger?: 2–8 (fill rows before the needle holes line up again; 3), passes?: 3|5|7|9 (bean; 3), border?: mm (fill: a satin border over the edges, 0.5–6) | null (none), motif?: diamonds|waves|circles|scales|herringbone | null (fill: a motif carved into the fill, its needle points on the motif's lines), motifSize?: mm (3–60; 10), trimBefore?: bool, trimAfter?: bool (cut the thread before / after the object, however close the next stitch), rails?: bool (satin: between the object's two longest subpaths as its edges, other subpaths crossing both as rungs setting the stitch direction), ids?} stitch the paths, compound paths and type objects in ids or the selection (groups: those inside; type is sewn letter by letter, each letter in its characters' colour: use auto for lettering), as one undo step; null resets length, spacing, width, thread, pull, stagger or passes to the default → {changed}",
             has_doc,
             set
         ),
@@ -69,6 +69,42 @@ pub fn specs() -> Vec<CommandSpec> {
             "{} sew the objects in paint order again (bottom first); one undo step → {order: [ids]}",
             has_doc,
             reset_order
+        ),
+        cmd!(
+            query "embroidery.borderPatterns",
+            "Border Patterns",
+            [],
+            None,
+            "{} the border patterns pattern borders can sew: the document's own (loaded from .vcborder files) then the starters → {patterns: [{id, name, builtin, width, length (mm, the pattern's own size), corner: has a corner motif, satin: has satin parts (sewn at the object's spacing), author, license, source, description, used: objects sewing with it}]}",
+            has_doc,
+            border_patterns
+        ),
+        cmd!(
+            "embroidery.loadBorderPattern",
+            "Load Border Pattern…",
+            [],
+            None,
+            "{path? | data?: the file's text} load a .vcborder border pattern file into the document (kept in it, so the document sews the same anywhere), as one undo step. Its id is the file's (else made from its name); one already taken by a different pattern gets a number (rope-2…), and a pattern the document (or the starters) already has is not added again → {id, name, added}",
+            has_doc,
+            load_border_pattern
+        ),
+        cmd!(
+            "embroidery.saveBorderPattern",
+            "Save Border Pattern…",
+            [],
+            None,
+            "{pattern: id (the document's or a starter), path?} write a border pattern as a .vcborder file (JSON; see docs/embroidery.md) → {path}, or without path {data: the file's text}",
+            has_doc,
+            save_border_pattern
+        ),
+        cmd!(
+            "embroidery.removeBorderPattern",
+            "Remove Border Pattern",
+            [],
+            None,
+            "{pattern: id} remove one of the document's border patterns, as one undo step (not one objects still sew with; starters can't be removed) → {removed: id}",
+            has_doc,
+            remove_border_pattern
         ),
         cmd!(
             "embroidery.clear",
@@ -233,11 +269,10 @@ impl Edits {
             pattern: match p.get("pattern") {
                 None => None,
                 Some(Value::Null) => Some(None),
-                Some(v) => {
-                    let all = vectorcraft_embroidery::borders::BUILTIN;
-                    let id = v.as_str().map(str::to_ascii_lowercase).filter(|id| all.contains(&id.as_str()));
-                    Some(Some(id.ok_or_else(|| bad(SET, format!("`pattern` must be one of {} or null", all.join(", "))))?))
-                }
+                // Checked against the document's patterns in `set`.
+                Some(v) => Some(Some(
+                    v.as_str().map(|id| id.trim().to_ascii_lowercase()).ok_or_else(|| bad(SET, "`pattern` must be a border pattern id or null"))?,
+                )),
             },
             flip: flag(p, "flip")?,
             length: measure(p, "length", StitchSettings::LENGTH)?,
@@ -342,6 +377,13 @@ fn set(s: &mut Session, p: &Value) -> Result<Value> {
             return Err(bad(SET, format!("{} stitches have no {} underlay", k.id(), u.id())));
         }
     }
+    if let Some(Some(id)) = &edits.pattern {
+        let mine = &s.doc()?.doc.embroidery.patterns;
+        if vectorcraft_embroidery::borders::find(mine, id).is_none() {
+            let ids: Vec<&str> = mine.iter().map(|p| p.id.as_str()).chain(vectorcraft_embroidery::borders::BUILTIN).collect();
+            return Err(bad(SET, format!("no border pattern `{id}` (there are {}; embroidery.loadBorderPattern adds one)", ids.join(", "))));
+        }
+    }
     // So must a width: pattern borders span 1–40 mm, satins and zigzags 0.3–12 mm.
     if let Some(Some(w)) = edits.width {
         let d = &s.doc()?.doc;
@@ -394,6 +436,105 @@ fn setup(s: &mut Session, p: &Value) -> Result<Value> {
         })?;
     }
     Ok(setup_json(&new))
+}
+
+/// How many objects of `doc` sew pattern `id`.
+fn pattern_users(doc: &Document, id: &str) -> usize {
+    let mut n = 0;
+    doc.walk(|node| n += usize::from(node.stitch.as_deref().is_some_and(|s| s.kind == StitchKind::PatternBorder && s.pattern() == id)));
+    n
+}
+
+fn border_patterns(s: &mut Session, _: &Value) -> Result<Value> {
+    use vectorcraft_embroidery::borders;
+    let doc = &s.doc()?.doc;
+    let starters = borders::BUILTIN.iter().filter_map(|id| borders::builtin(id)).map(|p| (p, true));
+    let list: Vec<Value> = doc
+        .embroidery
+        .patterns
+        .iter()
+        .cloned()
+        .map(|p| (p, false))
+        .chain(starters)
+        .map(|(p, builtin)| {
+            json!({
+                "id": p.id, "name": p.name, "builtin": builtin, "width": p.width, "length": p.length,
+                "corner": !p.corner.is_empty(), "author": p.author,
+                "satin": p.repeat.iter().chain(&p.corner).any(|q| q.stitch == vectorcraft_doc::PartStitch::Satin), "license": p.license, "source": p.source,
+                "description": p.description, "used": pattern_users(doc, &p.id),
+            })
+        })
+        .collect();
+    Ok(json!({ "patterns": list }))
+}
+
+fn load_border_pattern(s: &mut Session, p: &Value) -> Result<Value> {
+    use vectorcraft_embroidery::borders;
+    const C: &str = "embroidery.loadBorderPattern";
+    let bytes = match (str_param(p, "path"), str_param(p, "data")) {
+        (Some(path), _) => super::fileio::read_file(path)?,
+        (None, Some(text)) => text.as_bytes().to_vec(),
+        _ => return Err(bad(C, "give `path` or `data`")),
+    };
+    let mut pat = borders::read_file(&bytes).map_err(|e| bad(C, e))?;
+    let mine = &s.doc()?.doc.embroidery.patterns;
+    // The same pattern, already there under its id: nothing to add.
+    let same = |q: &vectorcraft_doc::BorderPattern| q.id == pat.id && *q == pat;
+    if mine.iter().any(same) || borders::builtin(&pat.id).is_some_and(|q| same(&q)) {
+        return Ok(json!({"id": pat.id, "name": pat.name, "added": false}));
+    }
+    let taken = |id: &str| borders::BUILTIN.contains(&id) || mine.iter().any(|q| q.id == id);
+    if taken(&pat.id) {
+        let base = pat.id.clone();
+        let Some(id) = (2..10_000).map(|n| format!("{base}-{n}")).find(|id| !taken(id)) else {
+            return Err(bad(C, format!("too many patterns named `{base}`")));
+        };
+        pat.id = id;
+    }
+    let (id, name) = (pat.id.clone(), pat.name.clone());
+    edit_counted(s, "Load Border Pattern", |d| {
+        d.embroidery.patterns.push(pat);
+        Ok(1)
+    })?;
+    Ok(json!({"id": id, "name": name, "added": true}))
+}
+
+/// The `pattern` param: a border pattern the document can sew.
+fn pattern_param(s: &Session, p: &Value, cmd: &str) -> Result<vectorcraft_doc::BorderPattern> {
+    let id =
+        str_param(p, "pattern").map(|id| id.trim().to_ascii_lowercase()).ok_or_else(|| bad(cmd, "`pattern` (a border pattern id) is missing"))?;
+    vectorcraft_embroidery::borders::find(&s.doc()?.doc.embroidery.patterns, &id).ok_or_else(|| bad(cmd, format!("no border pattern `{id}`")))
+}
+
+fn save_border_pattern(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.saveBorderPattern";
+    let pat = pattern_param(s, p, C)?;
+    let text = vectorcraft_embroidery::borders::write_file(&pat).map_err(|e| bad(C, e))?;
+    match str_param(p, "path") {
+        Some(path) => {
+            super::fileio::write_file(path, text.as_bytes())?;
+            Ok(json!({"path": path}))
+        }
+        None => Ok(json!({"data": text})),
+    }
+}
+
+fn remove_border_pattern(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.removeBorderPattern";
+    let pat = pattern_param(s, p, C)?;
+    if !s.doc()?.doc.embroidery.patterns.iter().any(|q| q.id == pat.id) {
+        return Err(bad(C, format!("`{}` is a starter pattern: it can't be removed", pat.id)));
+    }
+    let users = pattern_users(&s.doc()?.doc, &pat.id);
+    if users > 0 {
+        return Err(bad(C, format!("{users} object(s) sew with `{}`: give them another pattern first", pat.id)));
+    }
+    let id = pat.id.clone();
+    edit_counted(s, "Remove Border Pattern", |d| {
+        d.embroidery.patterns.retain(|q| q.id != id);
+        Ok(1)
+    })?;
+    Ok(json!({"removed": pat.id}))
 }
 
 /// An object's name for the sewing order: its own, else what it is.

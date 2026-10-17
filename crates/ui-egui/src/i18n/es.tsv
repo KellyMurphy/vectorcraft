@@ -3206,6 +3206,7 @@ axis	Both	Ambos
 @msg	Image Trace: the traced image is missing	Calco de imagen: falta la imagen calcada
 @msg	Imported {what}: {_1}	Se importó {what}: {_1}
 @msg	Installed plug-in {_1}	Se instaló el plugin {_1}
+@msg	Loaded border pattern {_1}	Borde de patrón cargado: {_1}
 @msg	Internal error: {msg} (please report this bug)	Error interno: {msg} (por favor, informa de este error)
 @msg	Live Paint Merge: select a Live Paint group and the paths to add	Combinar pintura interactiva: selecciona un grupo de pintura interactiva y los trazados que quieres agregar
 @msg	Live Paint: select paths or compound paths	Pintura interactiva: selecciona trazados o trazados compuestos
@@ -3837,6 +3838,9 @@ axis	Both	Ambos
 	Pattern Size	Tamaño del patrón
 	How wide the border is: the pattern scales with it	El ancho del borde: el patrón se escala con él
 	Mirror the pattern across the path	Reflejar el patrón a través del trazado
+	Load…	Cargar…
+	Load a border pattern file (.vcborder) into the document	Carga en el documento un archivo de borde de patrón (.vcborder)
+	Save this border pattern as a file (.vcborder)	Guarda este borde de patrón como archivo (.vcborder)
 
 # Embroidery: sew order
 	Sew Order	Orden de costura
@@ -3852,3 +3856,7 @@ axis	Both	Ambos
 	Sew by Thread	Coser por hilo
 	Sew in Paint Order	Coser en orden de apilamiento
 	Change Sew Order	Cambiar orden de costura
+	Border Patterns	Bordes de patrón
+	Load Border Pattern…	Cargar borde de patrón…
+	Save Border Pattern…	Guardar borde de patrón…
+	Remove Border Pattern	Quitar borde de patrón

@@ -3515,6 +3515,9 @@ axis	Both	两者
 	Pattern Size	图案大小
 	How wide the border is: the pattern scales with it	边框的宽度：图案随之缩放
 	Mirror the pattern across the path	将图案翻转到路径另一侧
+	Load…	载入…
+	Load a border pattern file (.vcborder) into the document	将图案边框文件（.vcborder）载入文档
+	Save this border pattern as a file (.vcborder)	将此图案边框存储为文件（.vcborder）
 
 # Embroidery: sew order
 	Sew Order	缝制顺序
@@ -3530,3 +3533,9 @@ axis	Both	两者
 	Sew by Thread	按线色缝制
 	Sew in Paint Order	按绘制顺序缝制
 	Change Sew Order	更改缝制顺序
+	Border Patterns	图案边框列表
+	Load Border Pattern…	载入图案边框…
+	Save Border Pattern…	存储图案边框…
+	Remove Border Pattern	删除图案边框
+
+@msg	Loaded border pattern {_1}	已载入图案边框 {_1}

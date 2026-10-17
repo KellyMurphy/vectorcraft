@@ -658,11 +658,16 @@ pub fn open_filters() -> impl Iterator<Item = (&'static str, &'static [&'static 
     std::iter::once(("All readable files", OPEN_EXTS))
         .chain(format_filters())
         .chain(std::iter::once(("Swatch libraries", super::swatchlib::LIBRARY_EXTS)))
+        .chain(std::iter::once(("Border patterns", BORDER_PATTERN_EXTS)))
         .chain(std::iter::once(("Flattener presets", super::flatten::PRESET_EXTS)))
         .chain(std::iter::once(("PDF presets", super::pdfcmds::PRESET_EXTS)))
         .chain(std::iter::once(("Print presets", super::printpresets::PRESET_EXTS)))
         .chain(std::iter::once(("Plug-ins", super::plugin::EXTS)))
 }
+
+/// Embroidery border pattern files (`vectorcraft_embroidery::borders::FILE_EXT`): opening one
+/// loads it into the document.
+pub const BORDER_PATTERN_EXTS: &[&str] = &[vectorcraft_embroidery::borders::FILE_EXT];
 
 /// File → Place dialog filters: "All placeable files", then one per placeable format, then text.
 pub fn place_filters() -> impl Iterator<Item = (&'static str, &'static [&'static str])> {

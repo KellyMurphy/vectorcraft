@@ -3622,6 +3622,7 @@ theme	Appearance	外観
 @msg	Exported {count} file(s) to {folder}	{count} 個のファイルを {folder} に書き出しました
 @msg	Imported {what}: {_1}	{what} を読み込みました: {_1}
 @msg	Installed plug-in {_1}	プラグイン {_1} をインストールしました
+@msg	Loaded border pattern {_1}	パターンボーダー {_1} を読み込みました
 @msg	Opened with {_1} note(s): {_2}	ドキュメントを開きました (注意 {_1} 件): {_2}
 @msg	Saved {path}	{path} を保存しました
 @msg	no app to open files here	この環境にはファイルを開くアプリがありません
@@ -3829,6 +3830,9 @@ theme	Appearance	外観
 	Pattern Size	パターンのサイズ
 	How wide the border is: the pattern scales with it	ボーダーの幅：パターンはこれに合わせて拡大縮小されます
 	Mirror the pattern across the path	パターンをパスの反対側に反転
+	Load…	読み込み…
+	Load a border pattern file (.vcborder) into the document	パターンボーダーファイル（.vcborder）をドキュメントに読み込みます
+	Save this border pattern as a file (.vcborder)	このパターンボーダーをファイル（.vcborder）として保存します
 
 # Embroidery: sew order
 	Sew Order	縫製順
@@ -3844,3 +3848,7 @@ theme	Appearance	外観
 	Sew by Thread	糸ごとに縫う
 	Sew in Paint Order	重ね順で縫う
 	Change Sew Order	縫製順を変更
+	Border Patterns	パターンボーダー一覧
+	Load Border Pattern…	パターンボーダーを読み込み…
+	Save Border Pattern…	パターンボーダーを保存…
+	Remove Border Pattern	パターンボーダーを削除

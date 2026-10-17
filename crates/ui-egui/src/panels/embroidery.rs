@@ -37,6 +37,9 @@ fn info(app: &mut VectorcraftApp, ctx: &egui::Context) -> Value {
     if let (Some(o), Ok(order)) = (v.as_object_mut(), app.session.execute("embroidery.order", &json!({}))) {
         o.insert("sewOrder".into(), order);
     }
+    if let (Some(o), Ok(list)) = (v["selection"].as_object_mut(), app.session.execute("embroidery.borderPatterns", &json!({}))) {
+        o.insert("borderPatterns".into(), list["patterns"].clone());
+    }
     ctx.data_mut(|d| d.insert_temp(id, (key, v.clone())));
     v
 }
@@ -455,16 +458,49 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
         StitchKind::PatternBorder => {
             widgets::section_header(ui, tl!("Pattern Border"));
             widgets::dim_label(ui, tl!("The pattern repeats along the path, a whole number of times between corners."));
-            let ids = vectorcraft_embroidery::borders::BUILTIN;
+            // The document's own patterns, then the starters.
+            let list: Vec<&Value> = sel["borderPatterns"].as_array().map(|a| a.iter().collect()).unwrap_or_default();
             let pattern = sel["pattern"].as_str();
+            let name = |p: &Value| -> String {
+                let id = p["id"].as_str().unwrap_or_default();
+                if p["builtin"] == json!(true) { border_label(id).to_string() } else { p["name"].as_str().unwrap_or(id).to_string() }
+            };
+            let current = list.iter().find(|p| p["id"].as_str() == pattern).copied();
             widgets::label_row(ui, tl!("Pattern:"), LABEL_W, |ui| {
-                let labels: Vec<&str> = ids.iter().map(|id| border_label(id)).collect();
-                if let Some(i) = widgets::dropdown_names(ui, "emb-border-pattern", pattern.map(border_label).unwrap_or(""), &labels, 150.0)
-                    && let Some(id) = ids.get(i)
+                let names: Vec<String> = list.iter().map(|p| name(p)).collect();
+                let labels: Vec<&str> = names.iter().map(String::as_str).collect();
+                let cur = current.map(name).unwrap_or_default();
+                if let Some(i) = widgets::dropdown_names(ui, "emb-border-pattern", &cur, &labels, 150.0)
+                    && let Some(id) = list.get(i).and_then(|p| p["id"].as_str())
                 {
                     set(app, json!({"pattern": id}));
                 }
             });
+            ui.horizontal(|ui| {
+                ui.add_space(LABEL_W + 8.0);
+                if widgets::flat_button(ui, tl!("Load…"), 70.0)
+                    .on_hover_text(tl!("Load a border pattern file (.vcborder) into the document"))
+                    .clicked()
+                {
+                    load_pattern(app);
+                }
+                if let Some(id) = pattern.map(str::to_string)
+                    && widgets::flat_button(ui, tl!("Save…"), 70.0).on_hover_text(tl!("Save this border pattern as a file (.vcborder)")).clicked()
+                {
+                    crate::picks::button(app, move |app| {
+                        let file = format!("{id}.{}", vectorcraft_embroidery::borders::FILE_EXT);
+                        if let Err(e) = crate::io::save_command_output_named(app, "embroidery.saveBorderPattern", &file, json!({ "pattern": id })) {
+                            app.status(e);
+                        }
+                    });
+                }
+            });
+            if let Some(p) = current.filter(|p| p["builtin"] != json!(true)) {
+                let credit = [p["author"].as_str(), p["license"].as_str()].into_iter().flatten().collect::<Vec<_>>().join(" · ");
+                if !credit.is_empty() {
+                    widgets::dim_label(ui, &credit);
+                }
+            }
             ui.scope(|ui| {
                 widgets::label_row(ui, tl!("Width:"), LABEL_W, |ui| {
                     let width = sel["width"].as_f64();
@@ -490,10 +526,7 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
             });
             mm(app, ui, tl!("Stitch Length:"), "length", num("length"), StitchSettings::LENGTH, tl!("How long each stitch is"));
             // Density only matters to patterns with satin in them.
-            let satin = pattern
-                .and_then(vectorcraft_embroidery::borders::builtin)
-                .is_some_and(|p| p.repeat.iter().chain(&p.corner).any(|q| q.stitch == vectorcraft_doc::PartStitch::Satin));
-            if satin {
+            if current.is_some_and(|p| p["satin"] == json!(true)) {
                 mm(app, ui, tl!("Density:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between zigzags: smaller is denser"));
             }
         }
@@ -528,6 +561,35 @@ fn motif_label(id: &str) -> &'static str {
         "scales" => tl!("Scales"),
         "herringbone" => tl!("Herringbone"),
         _ => tl!("Motif"),
+    }
+}
+
+/// Load a border pattern file the user picks into the document (the web: the picked file arrives
+/// later, through [`crate::io::open_bytes`]), and sew the selected pattern borders with it.
+fn load_pattern(app: &mut VectorcraftApp) {
+    if let Some(f) = app.services.open_async.as_mut() {
+        f();
+        return;
+    }
+    crate::picks::button(app, |app| {
+        let ext: &'static [&'static str] = &[vectorcraft_embroidery::borders::FILE_EXT];
+        let pick = crate::FilePick { filters: vec![("Border patterns", ext)], ..Default::default() };
+        let Some(path) = crate::picks::open(app, &pick) else { return };
+        load_pattern_from(app, json!({ "path": path }));
+    });
+}
+
+/// `embroidery.loadBorderPattern` with `p`, then sew the selected pattern borders with it.
+pub(crate) fn load_pattern_from(app: &mut VectorcraftApp, p: Value) {
+    match app.run("embroidery.loadBorderPattern", p) {
+        Ok(r) => {
+            let sel = app.session.execute("embroidery.info", &json!({})).unwrap_or(Value::Null);
+            if sel["selection"]["type"] == json!(StitchKind::PatternBorder.id()) {
+                set(app, json!({ "pattern": r["id"] }));
+            }
+            app.status(format!("Loaded border pattern {}", r["name"].as_str().unwrap_or_default()));
+        }
+        Err(e) => app.status(e),
     }
 }
 

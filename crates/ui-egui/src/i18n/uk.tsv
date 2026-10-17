@@ -3189,6 +3189,7 @@ axis	Both	Обидві
 @msg	Image Trace: the traced image is missing	Трасування зображення: зображення, що трасується, відсутнє
 @msg	Imported {what}: {_1}	Імпортовано: {what}: {_1}
 @msg	Installed plug-in {_1}	Встановлено модуль {_1}
+@msg	Loaded border pattern {_1}	Завантажено візерункову облямівку {_1}
 @msg	Internal error: {msg} (please report this bug)	Внутрішня помилка: {msg} (будь ласка, повідомте про цю помилку)
 @msg	Live Paint Merge: select a Live Paint group and the paths to add	Об’єднання швидкої заливки: виділіть групу швидкої заливки та контури для додавання
 @msg	Live Paint: select paths or compound paths	Швидка заливка: виділіть контури або складені контури
@@ -3820,6 +3821,9 @@ axis	Both	Обидві
 	Pattern Size	Розмір візерунка
 	How wide the border is: the pattern scales with it	Ширина облямівки: візерунок масштабується разом із нею
 	Mirror the pattern across the path	Віддзеркалити візерунок на інший бік контуру
+	Load…	Завантажити…
+	Load a border pattern file (.vcborder) into the document	Завантажити в документ файл візерункової облямівки (.vcborder)
+	Save this border pattern as a file (.vcborder)	Зберегти цю візерункову облямівку як файл (.vcborder)
 
 # Embroidery: sew order
 	Sew Order	Порядок вишивки
@@ -3835,3 +3839,7 @@ axis	Both	Обидві
 	Sew by Thread	Вишивати за ниткою
 	Sew in Paint Order	Вишивати в порядку шарів
 	Change Sew Order	Змінити порядок вишивки
+	Border Patterns	Візерункові облямівки
+	Load Border Pattern…	Завантажити візерункову облямівку…
+	Save Border Pattern…	Зберегти візерункову облямівку…
+	Remove Border Pattern	Вилучити візерункову облямівку
