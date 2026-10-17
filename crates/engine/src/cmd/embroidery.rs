@@ -4,8 +4,8 @@
 //! see `fileio::embroidery`).
 
 use serde_json::{Value, json};
-use vectorcraft_doc::{Document, EmbroiderySetup, NodeId, NodeKind, StitchKind, StitchSettings, Underlay};
-use vectorcraft_embroidery::Plan;
+use vectorcraft_doc::{Document, EmbroiderySetup, NodeId, NodeKind, StitchKind, StitchSettings};
+use vectorcraft_embroidery::{Plan, params};
 
 use super::overprint::edit_counted;
 use super::*;
@@ -16,15 +16,16 @@ const STITCHES_LIMIT: usize = 500_000;
 
 pub fn specs() -> Vec<CommandSpec> {
     vec![
-        cmd!(
-            "embroidery.set",
-            "Stitch Settings",
-            ["Object", "Embroidery"],
-            None,
-            "{type?: auto|running|bean|satin|zigzag|satinShape|fill|patternBorder|manual (patternBorder: a border pattern repeated along the path, bending with its curves, a whole number of repeats between corners; auto: by stroke width, thinUnder?: mm (0.2–3; 1) → bean outline, wideOver?: mm (2–12; 7) → fill with a satin border, else satin shape) (default: the object's own, else running), length?: mm (stitch length, 0.3–12; running/bean 2.5, fill 4), spacing?: mm (satin zigzag, satin shape, zigzag stitch or fill row spacing, 0.1–10; satin and fill 0.4, zigzag 2), angle?: degrees (fill rows, counter-clockwise), width?: mm (satin column or zigzag, 0.3–12; satin: the stroke width, zigzag: 3; pattern border: the band, 1–40, default the pattern's own), pattern?: a border pattern id: waves|scallops|chain|diamonds or one loaded into the document (embroidery.borderPatterns) | null (pattern border: the pattern; waves), flip?: bool (pattern border: mirrored across the path), thread?: \"#rrggbb\" | [r, g, b] (default: the stroke for path stitches, the fill for fills), pull?: mm (satin and satin shape pull compensation, 0–3; 0), underlay?: none|center|edge|zigzag (satin) | none|center (satin shape) | none|fill (fill), stagger?: 2–8 (fill rows before the needle holes line up again; 3), passes?: 3|5|7|9 (bean; 3), border?: mm (fill: a satin border over the edges, 0.5–6) | null (none), motif?: diamonds|waves|circles|scales|herringbone | null (fill: a motif carved into the fill, its needle points on the motif's lines), motifSize?: mm (3–60; 10), trimBefore?: bool, trimAfter?: bool (cut the thread before / after the object, however close the next stitch), rails?: bool (satin: between the object's two longest subpaths as its edges, other subpaths crossing both as rungs setting the stitch direction), ids?} stitch the paths, compound paths and type objects in ids or the selection (groups: those inside; type is sewn letter by letter, each letter in its characters' colour: use auto for lettering), as one undo step; null resets length, spacing, width, thread, pull, stagger or passes to the default → {changed}",
-            has_doc,
-            set
-        ),
+        CommandSpec {
+            id: "embroidery.set",
+            label: "Stitch Settings",
+            menu: &["Object", "Embroidery"],
+            shortcut: None,
+            params: set_doc(),
+            enabled: has_doc,
+            run: set,
+            journal: true,
+        },
         cmd!(
             "embroidery.setup",
             "Embroidery Setup",
@@ -124,15 +125,16 @@ pub fn specs() -> Vec<CommandSpec> {
             has_doc,
             clear
         ),
-        cmd!(
-            query "embroidery.info",
-            "Embroidery Info",
-            ["Window", "Embroidery"],
-            None,
-            "{ids?} → {design: {objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings}, setup: {trimJumpsOver, stitchMovesUnder} (embroidery.setup), selection: {stitched, unstitched, type, length, spacing, angle, width, thread, pull, underlay, stagger, passes, border, motif, motifSize, pattern, flip, thinUnder, wideOver, rails, trimBefore, trimAfter} (each null when the stitched objects differ, or none is)}",
-            has_doc,
-            info
-        ),
+        CommandSpec {
+            id: "embroidery.info",
+            label: "Embroidery Info",
+            menu: &["Window", "Embroidery"],
+            shortcut: None,
+            params: info_doc(),
+            enabled: has_doc,
+            run: info,
+            journal: false,
+        },
         cmd!(
             query "embroidery.preview",
             "Render Stitch Preview",
@@ -154,218 +156,72 @@ pub fn specs() -> Vec<CommandSpec> {
     ]
 }
 
+/// `embroidery.set`'s description, made once from the settings table.
+fn set_doc() -> &'static str {
+    static DOC: std::sync::OnceLock<String> = std::sync::OnceLock::new();
+    DOC.get_or_init(params::set_doc).as_str()
+}
+
+/// `embroidery.info`'s description, the selection's settings listed from the settings table.
+fn info_doc() -> &'static str {
+    static DOC: std::sync::OnceLock<String> = std::sync::OnceLock::new();
+    DOC.get_or_init(|| {
+        format!(
+            "{{ids?}} → {{design: {{objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings}}, setup: {{trimJumpsOver, stitchMovesUnder}} (embroidery.setup), selection: {{stitched, unstitched, {}}} (each null when the stitched objects differ, or none is; type is `unknown` for settings from a newer VectorCraft)}}",
+            params::info_keys()
+        )
+    })
+    .as_str()
+}
+
 pub(crate) fn hex(rgb: [u8; 3]) -> String {
     format!("#{:02x}{:02x}{:02x}", rgb[0], rgb[1], rgb[2])
 }
 
 /// A thread colour: `"#rrggbb"` (or `rrggbb`) or `[r, g, b]` (0–255).
+#[cfg(test)]
 fn parse_thread(v: &Value) -> Option<[u8; 3]> {
-    match v {
-        Value::String(s) => {
-            let s = s.trim().trim_start_matches('#');
-            if s.len() != 6 || !s.is_ascii() {
-                return None;
-            }
-            let c = |i: usize| s.get(i..i + 2).and_then(|h| u8::from_str_radix(h, 16).ok());
-            Some([c(0)?, c(2)?, c(4)?])
-        }
-        Value::Array(a) if a.len() == 3 => {
-            let c = |i: usize| a.get(i)?.as_u64().and_then(|v| u8::try_from(v).ok());
-            Some([c(0)?, c(1)?, c(2)?])
-        }
-        _ => None,
-    }
+    params::parse_thread(v)
 }
 
-/// An optional measurement param: absent → leave it, `null` → the default, a number → checked
-/// against `range`.
-fn measure(p: &Value, key: &str, range: std::ops::RangeInclusive<f64>) -> Result<Option<Option<f64>>> {
-    match p.get(key) {
-        None => Ok(None),
-        Some(Value::Null) => Ok(Some(None)),
-        Some(v) => match v.as_f64() {
-            Some(x) if range.contains(&x) => Ok(Some(Some(x))),
-            _ => Err(bad(SET, format!("`{key}` must be a number from {} to {} (mm), or null", range.start(), range.end()))),
-        },
-    }
-}
-
-/// The edits `embroidery.set` asks for.
-struct Edits {
-    kind: Option<StitchKind>,
-    length: Option<Option<f64>>,
-    spacing: Option<Option<f64>>,
-    width: Option<Option<f64>>,
-    angle: Option<f64>,
-    thread: Option<Option<[u8; 3]>>,
-    pull: Option<Option<f64>>,
-    underlay: Option<Underlay>,
-    stagger: Option<Option<u8>>,
-    passes: Option<Option<u8>>,
-    trim_before: Option<bool>,
-    trim_after: Option<bool>,
-    rails: Option<bool>,
-    motif: Option<Option<String>>,
-    motif_size: Option<Option<f64>>,
-    pattern: Option<Option<String>>,
-    flip: Option<bool>,
-    border: Option<Option<f64>>,
-    thin_under: Option<Option<f64>>,
-    wide_over: Option<Option<f64>>,
-}
-
-/// An optional true/false param.
-fn flag(p: &Value, key: &str) -> Result<Option<bool>> {
-    p.get(key).map(|v| v.as_bool().ok_or_else(|| bad(SET, format!("`{key}` must be true or false")))).transpose()
-}
-
-/// An optional whole-number param in `range` (odd only when `odd`): absent → leave it, `null` →
-/// the default.
-fn count(p: &Value, key: &str, range: std::ops::RangeInclusive<u8>, odd: bool) -> Result<Option<Option<u8>>> {
-    match p.get(key) {
-        None => Ok(None),
-        Some(Value::Null) => Ok(Some(None)),
-        Some(v) => match v.as_u64().and_then(|n| u8::try_from(n).ok()) {
-            Some(n) if range.contains(&n) && (!odd || n % 2 == 1) => Ok(Some(Some(n))),
-            _ => {
-                let what = if odd { "an odd whole number" } else { "a whole number" };
-                Err(bad(SET, format!("`{key}` must be {what} from {} to {}, or null", range.start(), range.end())))
-            }
-        },
-    }
-}
+/// The settings `embroidery.set` was given, each checked against its entry in the settings
+/// table ([`params::PARAMS`]).
+struct Edits(Vec<(&'static params::Param, Value)>);
 
 impl Edits {
     fn parse(p: &Value) -> Result<Self> {
-        let kind = match p.get("type") {
-            None | Some(Value::Null) => None,
-            Some(v) => Some(v.as_str().and_then(StitchKind::parse).ok_or_else(|| {
-                bad(SET, "`type` must be auto, running, bean, satin, zigzag, satinShape, fill, patternBorder or manual (embroidery.clear removes stitches)")
-            })?),
-        };
-        let angle = match p.get("angle") {
-            None => None,
-            Some(v) => Some(v.as_f64().filter(|a| a.is_finite()).ok_or_else(|| bad(SET, "`angle` must be a number of degrees"))?),
-        };
-        let thread = match p.get("thread") {
-            None => None,
-            Some(Value::Null) => Some(None),
-            Some(v) => Some(Some(parse_thread(v).ok_or_else(|| bad(SET, "`thread` must be \"#rrggbb\", [r, g, b] or null"))?)),
-        };
-        let underlay = match p.get("underlay") {
-            None => None,
-            Some(Value::Null) => Some(Underlay::None),
-            Some(v) => Some(
-                v.as_str()
-                    .and_then(Underlay::parse)
-                    .ok_or_else(|| bad(SET, "`underlay` must be none, center, edge, zigzag (satin) or fill (fill)"))?,
-            ),
-        };
-        Ok(Self {
-            kind,
-            pull: measure(p, "pull", StitchSettings::PULL)?,
-            underlay,
-            stagger: count(p, "stagger", StitchSettings::STAGGER, false)?,
-            passes: count(p, "passes", StitchSettings::PASSES, true)?,
-            trim_before: flag(p, "trimBefore")?,
-            border: measure(p, "border", StitchSettings::BORDER)?,
-            thin_under: measure(p, "thinUnder", StitchSettings::THIN)?,
-            wide_over: measure(p, "wideOver", StitchSettings::WIDE)?,
-            trim_after: flag(p, "trimAfter")?,
-            rails: flag(p, "rails")?,
-            motif: match p.get("motif") {
-                None => None,
-                Some(Value::Null) => Some(None),
-                Some(v) => {
-                    let id = v.as_str().map(str::to_ascii_lowercase).filter(|id| vectorcraft_embroidery::motifs::MOTIFS.contains(&id.as_str()));
-                    Some(Some(
-                        id.ok_or_else(|| bad(SET, format!("`motif` must be one of {} or null", vectorcraft_embroidery::motifs::MOTIFS.join(", "))))?,
-                    ))
-                }
-            },
-            motif_size: measure(p, "motifSize", StitchSettings::MOTIF_SIZE)?,
-            pattern: match p.get("pattern") {
-                None => None,
-                Some(Value::Null) => Some(None),
-                // Checked against the document's patterns in `set`.
-                Some(v) => Some(Some(
-                    v.as_str().map(|id| id.trim().to_ascii_lowercase()).ok_or_else(|| bad(SET, "`pattern` must be a border pattern id or null"))?,
-                )),
-            },
-            flip: flag(p, "flip")?,
-            length: measure(p, "length", StitchSettings::LENGTH)?,
-            spacing: measure(p, "spacing", StitchSettings::SPACING)?,
-            // Checked against the stitch each object ends up with in `set`.
-            width: measure(p, "width", *StitchSettings::WIDTH.start()..=*StitchSettings::PATTERN_WIDTH.end())?,
-            angle,
-            thread,
-        })
+        let mut given = vec![];
+        for param in params::PARAMS {
+            if let Some(v) = p.get(param.key) {
+                param.parse(v).map_err(|e| bad(SET, e))?;
+                given.push((param, v.clone()));
+            }
+        }
+        Ok(Self(given))
     }
 
     fn apply(&self, old: Option<&StitchSettings>) -> StitchSettings {
         // Settings from a newer version this one can't read are replaced, not edited.
         let mut s = old.filter(|o| o.unknown.is_none()).cloned().unwrap_or_default();
-        if let Some(k) = self.kind {
-            s.kind = k;
-        }
-        if let Some(v) = self.length {
-            s.length = v;
-        }
-        if let Some(v) = self.spacing {
-            s.spacing = v;
-        }
-        if let Some(v) = self.width {
-            s.width = v;
-        }
-        if let Some(v) = self.angle {
-            s.angle = v % 360.0;
-        }
-        if let Some(v) = self.thread {
-            s.thread = v;
-        }
-        if let Some(v) = self.pull {
-            s.pull = v;
-        }
-        if let Some(v) = self.underlay {
-            s.underlay = v;
-        }
-        if let Some(v) = self.stagger {
-            s.stagger = v;
-        }
-        if let Some(v) = self.passes {
-            s.passes = v;
-        }
-        if let Some(v) = self.border {
-            s.border = v;
-        }
-        if let Some(v) = self.thin_under {
-            s.thin_under = v;
-        }
-        if let Some(v) = self.wide_over {
-            s.wide_over = v;
-        }
-        if let Some(v) = self.rails {
-            s.rails = v;
-        }
-        if let Some(v) = &self.motif {
-            s.motif.clone_from(v);
-        }
-        if let Some(v) = self.motif_size {
-            s.motif_size = v;
-        }
-        if let Some(v) = &self.pattern {
-            s.pattern.clone_from(v);
-        }
-        if let Some(v) = self.flip {
-            s.flip = v;
-        }
-        if let Some(v) = self.trim_before {
-            s.trim_before = v;
-        }
-        if let Some(v) = self.trim_after {
-            s.trim_after = v;
+        for (param, v) in &self.0 {
+            (param.set)(&mut s, v);
         }
         s
+    }
+
+    /// Whether the settings given suit `s`, the settings an object ends up with.
+    fn suits(&self, s: &StitchSettings) -> Result<()> {
+        for (param, _) in &self.0 {
+            if let Some(check) = param.suits {
+                check(s).map_err(|e| bad(SET, e))?;
+            }
+        }
+        Ok(())
+    }
+
+    /// The border pattern asked for, if one is.
+    fn pattern(&self) -> Option<String> {
+        self.0.iter().find(|(p, _)| p.key == "pattern").and_then(|(_, v)| v.as_str()).map(|id| id.trim().to_ascii_lowercase())
     }
 }
 
@@ -387,28 +243,19 @@ fn set(s: &mut Session, p: &Value) -> Result<Value> {
     if ids.is_empty() {
         return Err(bad(SET, "select paths, compound paths or type to stitch"));
     }
-    // An underlay asked for must suit the stitch every target ends up with.
-    if let Some(u) = edits.underlay.filter(|u| *u != Underlay::None) {
+    // Each setting must suit the stitch every target ends up with (an underlay its type uses, a
+    // width in its range).
+    {
         let d = &s.doc()?.doc;
-        if let Some(k) =
-            ids.iter().map(|id| edits.apply(d.node(*id).and_then(|n| n.stitch.as_deref())).kind).find(|k| !Underlay::for_kind(*k).contains(&u))
-        {
-            return Err(bad(SET, format!("{} stitches have no {} underlay", k.id(), u.id())));
+        for id in &ids {
+            edits.suits(&edits.apply(d.node(*id).and_then(|n| n.stitch.as_deref())))?;
         }
     }
-    if let Some(Some(id)) = &edits.pattern {
+    if let Some(id) = edits.pattern() {
         let mine = &s.doc()?.doc.embroidery.patterns;
-        if vectorcraft_embroidery::borders::find(mine, id).is_none() {
+        if vectorcraft_embroidery::borders::find(mine, &id).is_none() {
             let ids: Vec<&str> = mine.iter().map(|p| p.id.as_str()).chain(vectorcraft_embroidery::borders::BUILTIN).collect();
             return Err(bad(SET, format!("no border pattern `{id}` (there are {}; embroidery.loadBorderPattern adds one)", ids.join(", "))));
-        }
-    }
-    // So must a width: pattern borders span 1–40 mm, satins and zigzags 0.3–12 mm.
-    if let Some(Some(w)) = edits.width {
-        let d = &s.doc()?.doc;
-        let range = |k: StitchKind| if k == StitchKind::PatternBorder { StitchSettings::PATTERN_WIDTH } else { StitchSettings::WIDTH };
-        if let Some(r) = ids.iter().map(|id| range(edits.apply(d.node(*id).and_then(|n| n.stitch.as_deref())).kind)).find(|r| !r.contains(&w)) {
-            return Err(bad(SET, format!("`width` must be from {} to {} mm for these stitches", r.start(), r.end())));
         }
     }
     let changed = edit_counted(s, "Stitch Settings", |d| {
@@ -792,30 +639,10 @@ fn info(s: &mut Session, p: &Value) -> Result<Value> {
     let doc = &s.doc()?.doc;
     let plan = vectorcraft_embroidery::plan(doc);
     let all: Vec<&StitchSettings> = ids.iter().filter_map(|id| doc.node(*id)?.stitch.as_deref()).collect();
-    let selection = json!({
-        "stitched": all.len(),
-        "unstitched": ids.len() - all.len(),
-        "type": same(all.iter().map(|s| s.kind_id())),
-        "length": same(all.iter().map(|s| s.length())),
-        "spacing": same(all.iter().map(|s| s.spacing())),
-        "angle": same(all.iter().map(|s| s.angle())),
-        "width": same(all.iter().map(|s| s.width)),
-        "thread": same(all.iter().map(|s| s.thread.map(hex))),
-        "pull": same(all.iter().map(|s| s.pull())),
-        "underlay": same(all.iter().map(|s| s.underlay().id())),
-        "stagger": same(all.iter().map(|s| s.stagger())),
-        "passes": same(all.iter().map(|s| s.passes())),
-        "border": same(all.iter().map(|s| s.border())),
-        "thinUnder": same(all.iter().map(|s| s.auto_thresholds().0)),
-        "wideOver": same(all.iter().map(|s| s.auto_thresholds().1)),
-        "rails": same(all.iter().map(|s| s.rails)),
-        "motif": same(all.iter().map(|s| s.motif.clone())),
-        "motifSize": same(all.iter().map(|s| s.motif_size())),
-        "pattern": same(all.iter().map(|s| s.pattern().to_string())),
-        "flip": same(all.iter().map(|s| s.flip)),
-        "trimBefore": same(all.iter().map(|s| s.trim_before)),
-        "trimAfter": same(all.iter().map(|s| s.trim_after)),
-    });
+    let mut selection = json!({ "stitched": all.len(), "unstitched": ids.len() - all.len() });
+    for param in params::PARAMS {
+        selection[param.key] = same(all.iter().map(|s| (param.get)(s)));
+    }
     Ok(json!({ "design": design(doc, &plan), "setup": setup_json(&doc.embroidery), "selection": selection }))
 }
 

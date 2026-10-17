@@ -88,7 +88,7 @@ means hand-editing the command parser, the info query, the panel, the docs table
 | Step | What | Why it unblocks | Size |
 |---|---|---|---|
 | **E6.1** Forward-compatible stitch data (**done**) | An unknown `kind`, `underlay` or part stitch in a document is kept as written and sewn as nothing (with a warning), instead of making the whole document fail to load. Spec updated. | Every later step adds kinds; older builds must keep opening newer documents. | S |
-| **E6.2** Parameter table | One table describes each stitch parameter (key, type, unit, range, default per kind, which kinds use it, label, tooltip). Command parsing, `embroidery.info`, the panel's rows, the docs table and the schema drift test are driven from it. | Phases 1–3 add 40+ parameters; one place to add each. | M |
+| **E6.2** Parameter table (**done**) | One table describes each stitch parameter (key, type, unit, range, default per kind, which kinds use it, label, tooltip). Command parsing, `embroidery.info`, the panel's rows, the docs table and the schema drift test are driven from it. | Phases 1–3 add 40+ parameters; one place to add each. | M |
 | **E6.3** One module per stitch kind | Split the big `sew()` match into a module per kind (generate, defaults, quality checks), registered in one list. | New fills become a file each, testable alone. | M |
 | **E6.4** Stitch cache and budgets | Cache each object's stitches by geometry and settings, so editing one object re-sews only it. Add an embroidery case to `vectorcraft-cli perf` (a 300-object design with lettering), with a budget. | Contour fills, auto-digitize and the live checker are too slow without it. | M |
 | **E6.5** Design checker framework | Findings with severity, object id and location. Shown as a list in the panel (click to select), as marks on the canvas, and as `embroidery.check`; a summary before export. | Phase 1's checker rules plug into it, and so does every later feature's own check. | M |
@@ -100,6 +100,20 @@ Also in flight, finishing E5:
 - **E5.6** Embroidery for agents (MCP): **done**. Menu paths for every command, server instructions, the
   `embroidery` prompt, the guide and format specs as resources, `render_preview {stitches: true}`
   (`embroidery.preview`), and the MCP-readiness tests.
+
+### Adding a stitch setting (after E6.2)
+
+1. The field on `StitchSettings` (`crates/doc/src/embroidery.rs`), optional and skipped when unset, with
+   its clamped accessor.
+2. Its row in `crates/embroidery/src/params.rs` (`PARAMS`): key, value and range, the stitch types it
+   applies to, label, tooltip, description, `get`/`set`, and `suits` if it depends on the type. Parsing,
+   `embroidery.set`'s and `embroidery.info`'s descriptions and the info value follow from it, and the
+   Embroidery panel shows it with a generic row.
+3. Its use in the generator, with tests.
+4. The schema (`docs/formats/vectorcraft-embroidery.schema.json`) and the spec's table, and the guide's
+   row for each type it applies to; translations for its label and tooltip. Tests name anything
+   missing (`format_specs`, `tests_embroidery`, the i18n tests).
+5. A row of its own in the panel (`own_rows`) when the generic one isn't good enough.
 
 ## Phase 1: production-ready digitizing (P0) — E7
 

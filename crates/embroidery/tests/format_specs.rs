@@ -9,6 +9,7 @@ use std::path::PathBuf;
 use kurbo::Point;
 use serde_json::Value;
 use vectorcraft_doc::{BorderPattern, EmbroiderySetup, NodeId, PartStitch, PatternPart, StitchKind, StitchSettings, Underlay};
+use vectorcraft_embroidery::params::{self, ValueKind};
 use vectorcraft_embroidery::{borders, motifs};
 
 fn formats_dir() -> PathBuf {
@@ -182,18 +183,26 @@ fn embroidery_schema_matches_the_code() {
     let underlays: BTreeSet<String> = Underlay::ALL.iter().map(|u| u.id().to_string()).collect();
     assert_eq!(strings(&stitch["underlay"]["enum"]), underlays);
     assert_eq!(strings(&stitch["motif"]["enum"]), motifs::MOTIFS.iter().map(|m| m.to_string()).collect());
-    range_is(&stitch["length"], StitchSettings::LENGTH, "length");
-    range_is(&stitch["spacing"], StitchSettings::SPACING, "spacing");
-    range_is(&stitch["width"], *StitchSettings::WIDTH.start()..=*StitchSettings::PATTERN_WIDTH.end(), "width");
-    range_is(&stitch["pull"], StitchSettings::PULL, "pull");
-    range_is(&stitch["motifSize"], StitchSettings::MOTIF_SIZE, "motifSize");
-    range_is(&stitch["thinUnder"], StitchSettings::THIN, "thinUnder");
-    range_is(&stitch["wideOver"], StitchSettings::WIDE, "wideOver");
-    range_is(&stitch["border"], StitchSettings::BORDER, "border");
-    let stagger = StitchSettings::STAGGER;
-    range_is(&stitch["stagger"], f64::from(*stagger.start())..=f64::from(*stagger.end()), "stagger");
-    let passes: Vec<u64> = StitchSettings::PASSES.filter(|p| p % 2 == 1).map(u64::from).collect();
-    assert_eq!(stitch["passes"]["enum"].as_array().unwrap().iter().map(|v| v.as_u64().unwrap()).collect::<Vec<_>>(), passes);
+    // The settings table covers every field a document holds (`type` is the document's `kind`),
+    // and its ranges and choices are the schema's.
+    let table: BTreeSet<String> = params::PARAMS.iter().map(|p| if p.key == "type" { "kind".to_string() } else { p.key.to_string() }).collect();
+    assert_eq!(table, keys(stitch), "the settings table (params::PARAMS) and the schema list the same settings");
+    for p in params::PARAMS {
+        let prop = &stitch[if p.key == "type" { "kind" } else { p.key }];
+        match &p.value {
+            ValueKind::Mm(r) => range_is(prop, r.clone(), p.key),
+            ValueKind::Whole { range, odd: false } => range_is(prop, f64::from(*range.start())..=f64::from(*range.end()), p.key),
+            ValueKind::Whole { range, odd: true } => {
+                let odd: Vec<u64> = range.clone().filter(|n| n % 2 == 1).map(u64::from).collect();
+                assert_eq!(prop["enum"].as_array().unwrap().iter().map(|v| v.as_u64().unwrap()).collect::<Vec<_>>(), odd, "{}", p.key);
+            }
+            ValueKind::Choice(ids) => assert_eq!(strings(&prop["enum"]), ids.iter().map(|s| s.to_string()).collect(), "{}", p.key),
+            ValueKind::Flag => assert_eq!(prop["type"], "boolean", "{}", p.key),
+            ValueKind::Kind | ValueKind::Degrees | ValueKind::Id | ValueKind::Thread => {}
+        }
+    }
+    // The fixed lists the table points at are the code's own.
+    assert_eq!(strings(&stitch["motif"]["enum"]), motifs::MOTIFS.iter().map(|m| m.to_string()).collect());
 
     let setup = &defs["setup"]["properties"];
     assert_eq!(keys(setup), keys(&serde_json::to_value(full_setup()).unwrap()), "the setup's fields");

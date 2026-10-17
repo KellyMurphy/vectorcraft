@@ -3845,6 +3845,17 @@ axis	Both	Обидві
 	Save Border Pattern…	Зберегти візерункову облямівку…
 	Remove Border Pattern	Вилучити візерункову облямівку
 	Render Stitch Preview	Відобразити попередній перегляд стібків
+	A motif carved into the fill	Мотив, вирізаний у заливці
+	Distance between zigzags or rows: smaller is denser	Відстань між зигзагами або рядами: менша — щільніше
+	How many times each stitch is sewn	Скільки разів прошивається кожен стібок
+	How the object is stitched	Як вишивається об’єкт
+	How wide the column, zigzag or border is	Ширина стовпчика, зигзагу чи облямівки
+	Motif:	Мотив:
+	Rows before the needle holes line up again (2: brick, 3–8: tatami)	Ряди, після яких проколи знову збігаються (2: цегла, 3–8: татамі)
+	Stitches sewn first to hold the fabric and lift the top stitches	Стібки, що прошиваються першими: тримають тканину й піднімають верхні стібки
+	The border pattern repeated along the path	Візерункова облямівка, повторювана вздовж контуру
+	The direction of the fill's rows	Напрямок рядів заливки
+	The thread colour (unset: the object's stroke or fill colour)	Колір нитки (не задано: колір обведення чи заливки об’єкта)
 	These stitch settings are from a newer VectorCraft: kept as they are, but not sewn. Choose a stitch to replace them.	Ці налаштування стібків створено новішою версією VectorCraft: їх збережено як є, але вони не вишиваються. Виберіть стібок, щоб замінити їх.
 	Extract Border Pattern	Видобути візерункову облямівку
 	Select a straight stretch of a border with two or more repeats, or a shape drawn over it too.	Виділіть прямий відрізок облямівки з двома чи більше повторами або разом із ним фігуру, намальовану поверх.

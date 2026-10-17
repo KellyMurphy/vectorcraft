@@ -3862,6 +3862,17 @@ axis	Both	Ambos
 	Save Border Pattern…	Guardar borde de patrón…
 	Remove Border Pattern	Quitar borde de patrón
 	Render Stitch Preview	Representar vista previa de puntadas
+	A motif carved into the fill	Un motivo tallado en el relleno
+	Distance between zigzags or rows: smaller is denser	Distancia entre zigzags o filas: menor es más denso
+	How many times each stitch is sewn	Cuántas veces se cose cada puntada
+	How the object is stitched	Cómo se borda el objeto
+	How wide the column, zigzag or border is	El ancho de la columna, el zigzag o el borde
+	Motif:	Motivo:
+	Rows before the needle holes line up again (2: brick, 3–8: tatami)	Filas hasta que los pinchazos vuelven a alinearse (2: ladrillo, 3–8: tatami)
+	Stitches sewn first to hold the fabric and lift the top stitches	Puntadas cosidas primero para sujetar la tela y levantar las puntadas superiores
+	The border pattern repeated along the path	El borde de patrón repetido a lo largo del trazado
+	The direction of the fill's rows	La dirección de las filas del relleno
+	The thread colour (unset: the object's stroke or fill colour)	El color del hilo (sin definir: el color del trazo o del relleno del objeto)
 	These stitch settings are from a newer VectorCraft: kept as they are, but not sewn. Choose a stitch to replace them.	Estos ajustes de puntada son de una versión más reciente de VectorCraft: se conservan tal cual, pero no se bordan. Elige una puntada para sustituirlos.
 	Extract Border Pattern	Extraer borde de patrón
 	Select a straight stretch of a border with two or more repeats, or a shape drawn over it too.	Selecciona un tramo recto de un borde con dos o más repeticiones, o también una forma dibujada sobre él.

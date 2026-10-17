@@ -3854,6 +3854,17 @@ theme	Appearance	外観
 	Save Border Pattern…	パターンボーダーを保存…
 	Remove Border Pattern	パターンボーダーを削除
 	Render Stitch Preview	ステッチプレビューを描画
+	A motif carved into the fill	塗りに彫り込むモチーフ
+	Distance between zigzags or rows: smaller is denser	ジグザグまたは列の間隔：小さいほど密になります
+	How many times each stitch is sewn	各ステッチを縫う回数
+	How the object is stitched	オブジェクトの縫い方
+	How wide the column, zigzag or border is	コラム、ジグザグ、ボーダーの幅
+	Motif:	モチーフ：
+	Rows before the needle holes line up again (2: brick, 3–8: tatami)	針穴が再びそろうまでの列数（2：レンガ、3〜8：タタミ）
+	Stitches sewn first to hold the fabric and lift the top stitches	生地を押さえ、上のステッチを持ち上げるために最初に縫うステッチ
+	The border pattern repeated along the path	パスに沿って繰り返すパターンボーダー
+	The direction of the fill's rows	塗りの列の方向
+	The thread colour (unset: the object's stroke or fill colour)	糸の色（未設定：オブジェクトの線または塗りの色）
 	These stitch settings are from a newer VectorCraft: kept as they are, but not sewn. Choose a stitch to replace them.	これらのステッチ設定は新しいバージョンの VectorCraft で作成されたものです。そのまま保持されますが、縫製されません。置き換えるにはステッチを選択してください。
 	Extract Border Pattern	パターンボーダーを抽出
 	Select a straight stretch of a border with two or more repeats, or a shape drawn over it too.	繰り返しが2回以上あるボーダーの直線部分を選択します。その上に描いたシェイプも一緒に選択できます。

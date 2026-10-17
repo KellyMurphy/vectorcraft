@@ -4555,6 +4555,7 @@ dependencies = [
  "serde_json",
  "socket2",
  "vectorcraft-doc",
+ "vectorcraft-embroidery",
  "vectorcraft-engine",
  "vectorcraft-format",
  "vectorcraft-geom",

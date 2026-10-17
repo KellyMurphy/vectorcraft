@@ -3538,6 +3538,17 @@ axis	Both	两者
 	Save Border Pattern…	存储图案边框…
 	Remove Border Pattern	删除图案边框
 	Render Stitch Preview	渲染针迹预览
+	A motif carved into the fill	刻入填充中的图案
+	Distance between zigzags or rows: smaller is denser	锯齿或行之间的距离：越小越密
+	How many times each stitch is sewn	每个针迹缝制的次数
+	How the object is stitched	对象的缝制方式
+	How wide the column, zigzag or border is	柱、锯齿或边框的宽度
+	Motif:	图案：
+	Rows before the needle holes line up again (2: brick, 3–8: tatami)	针孔再次对齐前的行数（2：砖形，3–8：榻榻米）
+	Stitches sewn first to hold the fabric and lift the top stitches	最先缝制的针迹，用于固定布料并托起上层针迹
+	The border pattern repeated along the path	沿路径重复的图案边框
+	The direction of the fill's rows	填充行的方向
+	The thread colour (unset: the object's stroke or fill colour)	线的颜色（未设置：对象的描边或填充颜色）
 	These stitch settings are from a newer VectorCraft: kept as they are, but not sewn. Choose a stitch to replace them.	这些针迹设置来自更新版本的 VectorCraft：会原样保留，但不会缝制。选择一种针迹即可替换。
 	Extract Border Pattern	提取图案边框
 	Select a straight stretch of a border with two or more repeats, or a shape drawn over it too.	选择边框中包含两个或更多重复的直线段，也可一并选择绘制在其上的形状。

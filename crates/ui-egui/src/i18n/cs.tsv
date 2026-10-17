@@ -784,6 +784,17 @@
 	Save Border Pattern…	Uložit vzorový okraj…
 	Remove Border Pattern	Odstranit vzorový okraj
 	Render Stitch Preview	Vykreslit náhled stehů
+	A motif carved into the fill	Motiv vyrytý do výplně
+	Distance between zigzags or rows: smaller is denser	Vzdálenost mezi cikcaky nebo řadami: menší je hustší
+	How many times each stitch is sewn	Kolikrát se každý steh prošije
+	How the object is stitched	Jak se objekt vyšívá
+	How wide the column, zigzag or border is	Jak široký je sloupec, cikcak nebo okraj
+	Motif:	Motiv:
+	Rows before the needle holes line up again (2: brick, 3–8: tatami)	Řady, po kterých se vpichy znovu zarovnají (2: cihla, 3–8: tatami)
+	Stitches sewn first to hold the fabric and lift the top stitches	Stehy šité jako první, které drží látku a nadzvedávají horní stehy
+	The border pattern repeated along the path	Vzorový okraj opakovaný podél cesty
+	The direction of the fill's rows	Směr řad výplně
+	The thread colour (unset: the object's stroke or fill colour)	Barva nitě (nenastaveno: barva tahu nebo výplně objektu)
 	These stitch settings are from a newer VectorCraft: kept as they are, but not sewn. Choose a stitch to replace them.	Tato nastavení stehů pocházejí z novější verze VectorCraftu: zůstávají zachována, ale nevyšívají se. Vyberte steh, který je nahradí.
 	Extract Border Pattern	Extrahovat vzorový okraj
 	Select a straight stretch of a border with two or more repeats, or a shape drawn over it too.	Vyberte rovný úsek okraje se dvěma nebo více opakováními, případně i tvar nakreslený přes něj.

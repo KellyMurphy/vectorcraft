@@ -442,6 +442,7 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
                 StitchSettings::PULL,
                 tl!("Sews the column this much wider, since the thread pulls the fabric in"),
             );
+            border_row(app, ui, sel);
         }
         StitchKind::SatinShape => {
             widgets::section_header(ui, tl!("Satin Shape"));
@@ -544,6 +545,82 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
         }
         StitchKind::Manual => {
             widgets::dim_label(ui, tl!("The needle goes down at every anchor point, as drawn."));
+        }
+    }
+    other_settings(app, ui, kind, sel, own_rows(kind));
+}
+
+/// Settings every stitch type's panel shows above its own rows (stitch, thread, trims).
+const ALWAYS_SHOWN: [&str; 4] = ["type", "thread", "trimBefore", "trimAfter"];
+
+/// The settings each stitch type's own rows show; any other setting it uses
+/// ([`vectorcraft_embroidery::params::PARAMS`]) gets a generic row from [`other_settings`].
+fn own_rows(kind: StitchKind) -> &'static [&'static str] {
+    match kind {
+        StitchKind::Running => &["length"],
+        StitchKind::Bean => &["length", "passes"],
+        StitchKind::Satin => &["rails", "width", "spacing", "pull", "underlay"],
+        StitchKind::Zigzag => &["width", "spacing"],
+        StitchKind::SatinShape => &["spacing", "pull", "underlay"],
+        StitchKind::Fill => &["angle", "spacing", "length", "stagger", "motif", "motifSize", "underlay", "border"],
+        StitchKind::PatternBorder => &["pattern", "width", "flip", "length", "spacing"],
+        StitchKind::Auto => &["thinUnder", "wideOver", "spacing", "pull", "border"],
+        StitchKind::Manual => &[],
+    }
+}
+
+/// A row for each setting `kind` uses that isn't in `own` (the rows it draws itself), drawn from
+/// the settings table: a new setting appears here until it is given a row of its own.
+fn other_settings(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Value, own: &[&str]) {
+    use vectorcraft_embroidery::params::{PARAMS, ValueKind};
+    for p in PARAMS.iter().filter(|p| p.applies(kind) && !own.contains(&p.key) && !ALWAYS_SHOWN.contains(&p.key)) {
+        let (key, label, help) = (p.key, tl!(p.label), tl!(p.help));
+        match &p.value {
+            ValueKind::Mm(r) => mm(app, ui, label, key, sel[key].as_f64(), r.clone(), help),
+            ValueKind::Degrees => {
+                ui.scope(|ui| {
+                    widgets::label_row(ui, label, LABEL_W, |ui| {
+                        if let Some(v) = widgets::mixed_field(ui, ("emb", key), sel[key].as_f64(), "°", 1, FIELD_W) {
+                            set(app, json!({ key: v }));
+                        }
+                    })
+                })
+                .response
+                .on_hover_text(help);
+            }
+            ValueKind::Whole { range, odd } => {
+                let values: Vec<String> = range.clone().filter(|n| !odd || n % 2 == 1).map(|n| n.to_string()).collect();
+                let names: Vec<&str> = values.iter().map(String::as_str).collect();
+                let cur = sel[key].as_u64().map(|n| n.to_string()).unwrap_or_default();
+                widgets::label_row(ui, label, LABEL_W, |ui| {
+                    if let Some(i) = widgets::dropdown_names(ui, ("emb-generic", key), &cur, &names, FIELD_W)
+                        && let Some(v) = values.get(i).and_then(|v| v.parse::<u64>().ok())
+                    {
+                        set(app, json!({ key: v }));
+                    }
+                });
+            }
+            ValueKind::Flag => {
+                let v = sel[key].as_bool();
+                ui.horizontal(|ui| {
+                    ui.add_space(LABEL_W + 8.0);
+                    if widgets::check3_tip(ui, label, v, true, help) {
+                        set(app, json!({ key: v != Some(true) }));
+                    }
+                });
+            }
+            ValueKind::Choice(ids) => {
+                let cur = sel[key].as_str().unwrap_or_default();
+                widgets::label_row(ui, label, LABEL_W, |ui| {
+                    if let Some(i) = widgets::dropdown_names(ui, ("emb-generic", key), cur, ids, 150.0)
+                        && let Some(id) = ids.get(i)
+                    {
+                        set(app, json!({ key: id }));
+                    }
+                });
+            }
+            // The stitch type, the thread and ids have rows of their own above.
+            ValueKind::Kind | ValueKind::Thread | ValueKind::Id => {}
         }
     }
 }
@@ -699,6 +776,53 @@ fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
 
 #[cfg(test)]
 mod tests {
+    use vectorcraft_embroidery::params::{PARAMS, ValueKind, param};
+
+    /// The generic rows draw every kind of setting: shown for every stitch type with none of its
+    /// own rows, each setting's label appears (translated labels fall back to English here).
+    #[test]
+    fn generic_rows_draw_every_kind_of_setting() {
+        fn texts(s: &egui::Shape, out: &mut Vec<String>) {
+            match s {
+                egui::Shape::Text(t) => out.push(t.galley.text().to_string()),
+                egui::Shape::Vec(v) => v.iter().for_each(|s| texts(s, out)),
+                _ => {}
+            }
+        }
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        app.session.execute("file.new", &json!({"width": 100, "height": 100})).unwrap();
+        app.session.execute("shape.rectangle", &json!({"x": 0, "y": 0, "width": 50, "height": 50})).unwrap();
+        for k in StitchKind::ALL {
+            app.session.execute("embroidery.set", &json!({"type": k.id()})).unwrap();
+            let sel = app.session.execute("embroidery.info", &json!({})).unwrap()["selection"].clone();
+            let ctx = egui::Context::default();
+            let mut out = ctx.run_ui(egui::RawInput::default(), |ui| other_settings(&mut app, ui, k, &sel, &[]));
+            out.textures_delta.clear();
+            let mut shown = vec![];
+            out.shapes.iter().for_each(|c| texts(&c.shape, &mut shown));
+            for p in PARAMS.iter().filter(|p| p.applies(k) && !ALWAYS_SHOWN.contains(&p.key)) {
+                if matches!(p.value, ValueKind::Kind | ValueKind::Thread | ValueKind::Id) {
+                    continue;
+                }
+                assert!(shown.iter().any(|t| t == p.label), "{}: no generic row for `{}` in {shown:?}", k.id(), p.key);
+            }
+        }
+    }
+
+    #[test]
+    fn every_setting_a_stitch_uses_has_a_row() {
+        for k in StitchKind::ALL {
+            for key in own_rows(k) {
+                assert!(param(key).is_some_and(|p| p.applies(k)), "{key}: not a setting {} uses", k.id());
+            }
+            for p in PARAMS.iter().filter(|p| p.applies(k)) {
+                let own = own_rows(k).contains(&p.key) || ALWAYS_SHOWN.contains(&p.key);
+                let generic = !matches!(p.value, ValueKind::Kind | ValueKind::Thread | ValueKind::Id);
+                assert!(own || generic, "{} has no row for `{}`: give it one of its own", k.id(), p.key);
+            }
+        }
+    }
+
     use super::*;
 
     #[test]

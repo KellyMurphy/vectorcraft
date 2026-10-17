@@ -110,6 +110,22 @@ fn every_stitch_type_reaches_agents() {
     assert_eq!(crate::prompts::STITCH_TYPES.len(), StitchKind::ALL.len(), "the prompt lists a type the engine doesn't have");
 }
 
+/// Every stitch type's row in the guide's table names the settings it uses (from the settings
+/// table), so agents reading the guide know what each type takes.
+#[test]
+fn every_stitch_types_guide_row_names_its_settings() {
+    let always = ["type", "thread", "trimBefore", "trimAfter"];
+    for k in StitchKind::ALL {
+        let row = guide()
+            .lines()
+            .find(|l| l.starts_with(&format!("| {} |", k.label())))
+            .unwrap_or_else(|| panic!("the guide's table has no row for {}", k.label()));
+        for p in vectorcraft_embroidery::params::PARAMS.iter().filter(|p| p.applies(k) && !always.contains(&p.key)) {
+            assert!(row.contains(&format!("`{}`", p.key)), "the guide's {} row doesn't mention `{}`", k.label(), p.key);
+        }
+    }
+}
+
 /// Every stitch setting a document can hold (the schema, itself checked against the code) is
 /// described by the command that sets it and the one that reports it.
 #[test]
