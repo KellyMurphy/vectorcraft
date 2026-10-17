@@ -209,6 +209,9 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
 
     if rows.is_empty() {
         widgets::dim_label(ui, tl!("Give paths stitch settings in the Embroidery panel; they are sewn in this order."));
+        if widgets::flat_button(ui, tl!("Embroidery…"), 96.0).clicked() {
+            app.run("window.panel", json!({"panel": super::embroidery::ID})).ok();
+        }
         return;
     }
     let ids: Vec<u64> = rows.iter().filter_map(|r| r["id"].as_u64()).collect();
@@ -311,6 +314,10 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         }
     });
     widgets::dim_label(ui, tl!("Drag a row to move it. Objects sewn later lie on top."));
+    ui.add_space(2.0);
+    if widgets::flat_button(ui, tl!("Embroidery…"), 96.0).on_hover_text(tl!("The selection's stitch and its settings")).clicked() {
+        app.run("window.panel", json!({"panel": super::embroidery::ID})).ok();
+    }
     widgets::divider(ui);
     travel(app, ui, &info["setup"]);
 }

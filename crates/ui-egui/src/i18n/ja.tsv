@@ -3850,6 +3850,8 @@ theme	Appearance	外観
 	Save Border Pattern…	パターンボーダーを保存…
 	Remove Border Pattern	パターンボーダーを削除
 	Render Stitch Preview	ステッチプレビューを描画
+	Embroidery…	刺しゅう…
+	The selection's stitch and its settings	選択範囲のステッチとその設定
 	Choose a stitch to sew the selection with.	選択範囲を縫うステッチを選んでください。
 	Drag a row to move it. Objects sewn later lie on top.	行をドラッグして移動します。後に縫うオブジェクトが上になります。
 	First object	最初のオブジェクト
