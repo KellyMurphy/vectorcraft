@@ -124,6 +124,10 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     } else if stitched > 0 {
         widgets::dim_label(ui, tl!("Some selected objects aren't stitched."));
     }
+    // Manual stitches (an opened design), maybe with a shape over the stretch to take.
+    if sel["type"] == json!(StitchKind::Manual.id()) {
+        extract_row(app, ui);
+    }
     widgets::divider(ui);
     sew_order(app, ui, &info["sewOrder"]);
     widgets::divider(ui);
@@ -561,6 +565,22 @@ fn motif_label(id: &str) -> &'static str {
         "scales" => tl!("Scales"),
         "herringbone" => tl!("Herringbone"),
         _ => tl!("Motif"),
+    }
+}
+
+/// Extract Border Pattern: the repeat of the selected border stitches, added to the document's
+/// border patterns.
+fn extract_row(app: &mut VectorcraftApp, ui: &mut Ui) {
+    widgets::divider(ui);
+    widgets::dim_label(ui, tl!("Select a straight stretch of a border with two or more repeats, or a shape drawn over it too."));
+    if widgets::flat_button(ui, tl!("Extract Border Pattern"), 170.0).clicked() {
+        match app.run("embroidery.extractBorderPattern", json!({})) {
+            Ok(r) => {
+                let period = r["period"].as_f64().unwrap_or_default();
+                app.status(format!("Extracted border pattern {}: a {} mm repeat", r["name"].as_str().unwrap_or_default(), period));
+            }
+            Err(e) => app.status(e),
+        }
     }
 }
 

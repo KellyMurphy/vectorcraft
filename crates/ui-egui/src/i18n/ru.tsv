@@ -3203,6 +3203,7 @@ axis	Both	Оба
 @msg	Imported {what}: {_1}	Импортировано: {what}: {_1}
 @msg	Installed plug-in {_1}	Установлен модуль {_1}
 @msg	Loaded border pattern {_1}	Загружена узорная кайма {_1}
+@msg	Extracted border pattern {_1}: a {_2} mm repeat	Извлечена узорная кайма {_1}: повтор {_2} мм
 @msg	Internal error: {msg} (please report this bug)	Внутренняя ошибка: {msg} (пожалуйста, сообщите об этой ошибке)
 @msg	Live Paint Merge: select a Live Paint group and the paths to add	Объединение быстрой заливки: выделите группу быстрой заливки и контуры для добавления
 @msg	Live Paint: select paths or compound paths	Быстрая заливка: выделите контуры или составные контуры
@@ -3858,3 +3859,5 @@ axis	Both	Оба
 	Load Border Pattern…	Загрузить узорную кайму…
 	Save Border Pattern…	Сохранить узорную кайму…
 	Remove Border Pattern	Удалить узорную кайму
+	Extract Border Pattern	Извлечь узорную кайму
+	Select a straight stretch of a border with two or more repeats, or a shape drawn over it too.	Выделите прямой участок каймы с двумя или более повторами или вместе с ним фигуру, нарисованную поверх.

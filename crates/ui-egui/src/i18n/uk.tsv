@@ -3190,6 +3190,7 @@ axis	Both	Обидві
 @msg	Imported {what}: {_1}	Імпортовано: {what}: {_1}
 @msg	Installed plug-in {_1}	Встановлено модуль {_1}
 @msg	Loaded border pattern {_1}	Завантажено візерункову облямівку {_1}
+@msg	Extracted border pattern {_1}: a {_2} mm repeat	Видобуто візерункову облямівку {_1}: повтор {_2} мм
 @msg	Internal error: {msg} (please report this bug)	Внутрішня помилка: {msg} (будь ласка, повідомте про цю помилку)
 @msg	Live Paint Merge: select a Live Paint group and the paths to add	Об’єднання швидкої заливки: виділіть групу швидкої заливки та контури для додавання
 @msg	Live Paint: select paths or compound paths	Швидка заливка: виділіть контури або складені контури
@@ -3843,3 +3844,5 @@ axis	Both	Обидві
 	Load Border Pattern…	Завантажити візерункову облямівку…
 	Save Border Pattern…	Зберегти візерункову облямівку…
 	Remove Border Pattern	Вилучити візерункову облямівку
+	Extract Border Pattern	Видобути візерункову облямівку
+	Select a straight stretch of a border with two or more repeats, or a shape drawn over it too.	Виділіть прямий відрізок облямівки з двома чи більше повторами або разом із ним фігуру, намальовану поверх.

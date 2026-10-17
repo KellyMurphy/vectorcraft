@@ -89,6 +89,15 @@ pub fn specs() -> Vec<CommandSpec> {
             load_border_pattern
         ),
         cmd!(
+            "embroidery.extractBorderPattern",
+            "Extract Border Pattern",
+            [],
+            None,
+            "{ids?, name?, period?: mm (skip the search for the repeat's length), author?, license?, source? (default: the document's title)} find the repeat of a stitched border in the selected manual-stitch paths (an opened DST design; with a closed unstitched path selected too, only the stitches inside it: draw one over the stretch to take) and add one repeat, joining end to end, to the document's border patterns (save it with embroidery.saveBorderPattern), as one undo step. Pick a straight stretch with two or more repeats → {id, name, period: the repeat's length, mm, width: mm, stitches: needle points a repeat, repeats: whole repeats found, error: mm the repeats differ from the pattern on average}",
+            has_doc,
+            extract_border_pattern
+        ),
+        cmd!(
             "embroidery.saveBorderPattern",
             "Save Border Pattern…",
             [],
@@ -476,27 +485,81 @@ fn load_border_pattern(s: &mut Session, p: &Value) -> Result<Value> {
         (None, Some(text)) => text.as_bytes().to_vec(),
         _ => return Err(bad(C, "give `path` or `data`")),
     };
-    let mut pat = borders::read_file(&bytes).map_err(|e| bad(C, e))?;
+    let pat = borders::read_file(&bytes).map_err(|e| bad(C, e))?;
+    let (id, added) = add_pattern(s, pat.clone(), "Load Border Pattern", C)?;
+    Ok(json!({"id": id, "name": pat.name, "added": added}))
+}
+
+/// Add `pat` to the document's border patterns as undo step `label`: under its id, else (the id
+/// taken by a different pattern, or a starter's) a numbered one. The very same pattern already
+/// there isn't added again. → (its id, whether it was added).
+fn add_pattern(s: &mut Session, mut pat: vectorcraft_doc::BorderPattern, label: &str, cmd: &str) -> Result<(String, bool)> {
+    use vectorcraft_embroidery::borders;
     let mine = &s.doc()?.doc.embroidery.patterns;
-    // The same pattern, already there under its id: nothing to add.
     let same = |q: &vectorcraft_doc::BorderPattern| q.id == pat.id && *q == pat;
     if mine.iter().any(same) || borders::builtin(&pat.id).is_some_and(|q| same(&q)) {
-        return Ok(json!({"id": pat.id, "name": pat.name, "added": false}));
+        return Ok((pat.id, false));
     }
     let taken = |id: &str| borders::BUILTIN.contains(&id) || mine.iter().any(|q| q.id == id);
     if taken(&pat.id) {
         let base = pat.id.clone();
         let Some(id) = (2..10_000).map(|n| format!("{base}-{n}")).find(|id| !taken(id)) else {
-            return Err(bad(C, format!("too many patterns named `{base}`")));
+            return Err(bad(cmd, format!("too many patterns named `{base}`")));
         };
         pat.id = id;
     }
-    let (id, name) = (pat.id.clone(), pat.name.clone());
-    edit_counted(s, "Load Border Pattern", |d| {
+    let id = pat.id.clone();
+    edit_counted(s, label, |d| {
         d.embroidery.patterns.push(pat);
         Ok(1)
     })?;
-    Ok(json!({"id": id, "name": name, "added": true}))
+    Ok((id, true))
+}
+
+fn extract_border_pattern(s: &mut Session, p: &Value) -> Result<Value> {
+    use vectorcraft_embroidery::{extract, generate};
+    const C: &str = "embroidery.extractBorderPattern";
+    let period = match p.get("period") {
+        None | Some(Value::Null) => None,
+        Some(v) => Some(
+            v.as_f64().filter(|t| t.is_finite() && *t > 0.0 && *t <= 1000.0).ok_or_else(|| bad(C, "`period` must be a length in mm (up to 1000)"))?,
+        ),
+    };
+    let text = |key: &str| str_param(p, key).map(str::trim).filter(|t| !t.is_empty()).map(str::to_string);
+    let ids = leaf_targets(s, &targets(s, p)?)?;
+    let st = s.doc()?;
+    let doc = &st.doc;
+    // The stitches: manual-stitch paths (an opened design); the stretch: any other closed path
+    // selected with them, drawn over the part to take.
+    let (mut runs, mut region) = (vec![], vec![]);
+    for id in &ids {
+        let Some(n) = doc.node(*id) else { continue };
+        let Some(path) = n.path_data() else { continue };
+        if n.stitch.as_deref().is_some_and(|t| t.kind == StitchKind::Manual) {
+            runs.extend(generate::manual(path));
+        } else {
+            region.extend(generate::polylines(path).into_iter().filter(|(_, closed)| *closed).map(|(l, _)| l));
+        }
+    }
+    if runs.is_empty() {
+        return Err(bad(
+            C,
+            "select the stitches of a border (an opened DST design's manual stitches), and optionally a shape over the stretch to take",
+        ));
+    }
+    let pts = extract::stretch(&runs, (!region.is_empty()).then_some(region.as_slice()));
+    let title = st.title();
+    let name = text("name").unwrap_or_else(|| format!("{} border", title.rsplit_once('.').map_or(title.as_str(), |(stem, _)| stem)));
+    let mut e = extract::border(&pts, &name, period).map_err(|e| bad(C, e))?;
+    e.pattern.author = text("author");
+    e.pattern.license = text("license");
+    e.pattern.source = Some(text("source").unwrap_or_else(|| format!("extracted from {title}")));
+    let (id, _) = add_pattern(s, e.pattern.clone(), "Extract Border Pattern", C)?;
+    let r = |v: f64| (v * 100.0).round() / 100.0;
+    Ok(json!({
+        "id": id, "name": e.pattern.name, "period": r(e.period), "width": r(e.pattern.width), "stitches": e.stitches,
+        "repeats": e.repeats, "error": r(e.error),
+    }))
 }
 
 /// The `pattern` param: a border pattern the document can sew.

@@ -701,7 +701,7 @@ fn route(polys: &[Vec<Point>], rule: FillRule, lanes: Vec<Vec<Point>>, len: f64)
 }
 
 /// Is `p` inside the area `polys` fill (or within 0.05 mm of its edge)?
-fn inside(polys: &[Vec<Point>], rule: FillRule, p: Point) -> bool {
+pub(crate) fn inside(polys: &[Vec<Point>], rule: FillRule, p: Point) -> bool {
     row_spans(polys, rule, p.y).iter().any(|&(a, b)| p.x >= a - 0.05 && p.x <= b + 0.05)
 }
 

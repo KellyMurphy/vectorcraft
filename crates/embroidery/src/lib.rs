@@ -12,6 +12,7 @@
 
 pub mod borders;
 mod dst;
+pub mod extract;
 pub mod generate;
 mod import;
 pub mod motifs;

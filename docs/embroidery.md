@@ -60,6 +60,18 @@ menu before the starters, with their author and licence. **Save…** writes the 
 included, as a file. A pattern with the same id as one already in the document but different content is
 added under a numbered id (`rope-2`); the very same pattern isn't added twice.
 
+**Extracting a border pattern** from a stitched design: open the design (a DST opens as manual stitches),
+select its border stitches and, in the Embroidery panel, choose **Extract Border Pattern**. To take only part
+of the border, draw a shape over a straight stretch of it and select the shape too: only the stitches inside
+it are used (the longest unbroken run of them). The stretch needs two or more repeats. VectorCraft finds the
+distance at which the stitched line lies on itself shifted (the repeat's length, from 1 to 200 mm; the
+`period` param sets it instead), and when every repeat has the same number of stitches, it averages all the
+repeats into one, which cancels the file's 0.1 mm rounding. The repeat is cut where the stitches cross the
+middle of the band, so it joins end to end, and added to the document's patterns as manual stitches, with
+"extracted from" the design's name as its source. Save it as a file from the Pattern Border section. Only
+take patterns from designs you have the right to reuse. Curved stretches aren't recognized: pick a straight
+one.
+
 The file format is open and documented, so other programs can make patterns too: see the
 [`.vcborder` specification](formats/vcborder.md). In short, a file is JSON holding the pattern's name,
 author, licence and source, its width and repeat length in mm, one repeat as a list of running, bean,
@@ -136,6 +148,7 @@ A closed satin path starts halfway along its longest side, away from its corners
 | `embroidery.borderPatterns` | → the patterns pattern borders can use (the document's, then the starters) |
 | `embroidery.loadBorderPattern` | `{path? \| data?}`: load a `.vcborder` file into the document → `{id, name, added}` |
 | `embroidery.saveBorderPattern` | `{pattern, path?}`: write a pattern as a `.vcborder` file (without `path`: `{data}`) |
+| `embroidery.extractBorderPattern` | `{name?, period?, author?, license?, source?, ids?}`: the repeat of the selected border stitches (only those inside a selected closed shape, if any) as a new document pattern → `{id, name, period, width, stitches, repeats, error}` |
 | `embroidery.removeBorderPattern` | `{pattern}`: remove one of the document's patterns that nothing sews with |
 | `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm}`: the document's travel settings |
 | `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings |
@@ -206,10 +219,6 @@ split. A trim is written as three short jumps that return to where they started.
     an open, documented format (like the embroidery fonts: self-contained, with author and licence). Saved
     patterns appear in the Fill section's Pattern menu (the motif fills) and tile across any shape. Only
     designs the user has the right to reuse should be extracted from; the pattern records where it came from.
-  - **Border patterns:** the **Pattern Border** stitch, its starter patterns and the
-    [border pattern file](formats/vcborder.md) are done. Still to come:
-    **extraction**: select a stretch of a DST border, find its one repeat offset, and extract a segment that
-    joins end to end seamlessly, saved as a border pattern file.
   - **Embroidery for agents (MCP):** the commands already work over MCP (`run_command`, `export` with
     `dst`, `open_file`), but agents aren't told about them. Mention embroidery in the server's instructions;
     give the commands their Object › Embroidery menu path in the command list; an `embroidery` prompt that

@@ -295,6 +295,38 @@ fn border_pattern_files_load_into_the_document_and_save() {
     assert!(s.execute("embroidery.loadBorderPattern", &json!({"data": "{}"})).is_err());
 }
 
+#[test]
+fn a_border_is_extracted_from_an_opened_design() {
+    let mut s = session();
+    // A design with a border: a starter pattern sewn along a line, written as DST and opened.
+    s.execute("file.new", &json!({"width": 400, "height": 200})).unwrap();
+    s.execute("paint.setStroke", &json!({"color": "#204080"})).unwrap();
+    let line = s.execute("path.create", &json!({"d": "M 20 50 L 380 50"})).unwrap();
+    s.execute("embroidery.set", &json!({"ids": [line["id"]], "type": "patternBorder", "pattern": "diamonds"})).unwrap();
+    let bytes = b64(&s.execute("document.export", &json!({"format": "dst"})).unwrap());
+    s.execute("document.open", &json!({"name": "border.dst", "dataBase64": vectorcraft_format::base64_encode(&bytes)})).unwrap();
+    s.execute("select.all", &json!({})).unwrap();
+    let e = s.execute("embroidery.extractBorderPattern", &json!({"license": "CC0-1.0"})).unwrap();
+    // 127 mm of 8 mm diamonds: 16 repeats of 7.94 mm.
+    let period = e["period"].as_f64().unwrap();
+    assert!((period - 127.0 / 16.0).abs() < 0.05, "{e}");
+    assert!(e["repeats"].as_u64().unwrap() >= 10 && e["error"].as_f64().unwrap() < 0.3, "{e}");
+    assert_eq!(e["name"], "border border");
+    let list = s.execute("embroidery.borderPatterns", &json!({})).unwrap();
+    let mine = &list["patterns"][0];
+    assert_eq!(
+        (mine["id"].clone(), mine["license"].clone(), mine["source"].clone()),
+        (e["id"].clone(), json!("CC0-1.0"), json!("extracted from border.dst"))
+    );
+    // Saved as a file, it reads back.
+    let data = s.execute("embroidery.saveBorderPattern", &json!({"pattern": e["id"]})).unwrap();
+    assert!(vectorcraft_embroidery::borders::read_file(data["data"].as_str().unwrap().as_bytes()).is_ok());
+    // Nothing stitched selected: an error, not a pattern.
+    s.execute("select.none", &json!({})).unwrap();
+    assert!(s.execute("embroidery.extractBorderPattern", &json!({})).is_err());
+    assert!(s.execute("embroidery.extractBorderPattern", &json!({"period": -1})).is_err());
+}
+
 /// Three stitched rectangles (red, blue, red) left to right; their ids.
 fn three(s: &mut Session) -> Vec<u64> {
     s.execute("file.new", &json!({"width": 400, "height": 200})).unwrap();
