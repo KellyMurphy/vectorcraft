@@ -1,0 +1,221 @@
+//! The file format specifications in `docs/formats/` stay in step with the code: their JSON
+//! Schemas list exactly the fields, enum values and ranges the code writes and reads, their pages
+//! mention every field, and their example files read.
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
+
+use std::collections::BTreeSet;
+use std::path::PathBuf;
+
+use kurbo::Point;
+use serde_json::Value;
+use vectorcraft_doc::{BorderPattern, EmbroiderySetup, NodeId, PartStitch, PatternPart, StitchKind, StitchSettings, Underlay};
+use vectorcraft_embroidery::{borders, motifs};
+
+fn formats_dir() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../docs/formats")
+}
+
+fn read(name: &str) -> String {
+    std::fs::read_to_string(formats_dir().join(name)).unwrap_or_else(|e| panic!("docs/formats/{name}: {e}"))
+}
+
+fn json(name: &str) -> Value {
+    serde_json::from_str(&read(name)).unwrap_or_else(|e| panic!("docs/formats/{name} isn't JSON: {e}"))
+}
+
+/// The keys of a JSON object.
+fn keys(v: &Value) -> BTreeSet<String> {
+    v.as_object().unwrap().keys().cloned().collect()
+}
+
+/// The strings of a JSON array.
+fn strings(v: &Value) -> BTreeSet<String> {
+    v.as_array().unwrap_or_else(|| panic!("not an array: {v}")).iter().map(|s| s.as_str().unwrap().to_string()).collect()
+}
+
+/// Every part stitch (a new variant fails to compile here until it is listed, and so checked).
+fn part_stitches() -> Vec<PartStitch> {
+    let all = [PartStitch::Running, PartStitch::Bean, PartStitch::Satin, PartStitch::Manual];
+    for s in all {
+        match s {
+            PartStitch::Running | PartStitch::Bean | PartStitch::Satin | PartStitch::Manual => {}
+        }
+    }
+    all.to_vec()
+}
+
+fn serde_name<T: serde::Serialize>(v: T) -> String {
+    serde_json::to_value(v).unwrap().as_str().unwrap().to_string()
+}
+
+/// A border pattern with every field set, so its JSON has every key.
+fn full_pattern() -> BorderPattern {
+    let part = PatternPart { stitch: PartStitch::Satin, points: vec![[0.0, 0.0], [4.0, 0.0]], width: Some(1.0) };
+    BorderPattern {
+        id: "full".into(),
+        name: "Full".into(),
+        author: Some("a".into()),
+        license: Some("CC0-1.0".into()),
+        source: Some("s".into()),
+        description: Some("d".into()),
+        width: 6.0,
+        length: 4.0,
+        repeat: vec![part.clone()],
+        corner: vec![part],
+    }
+}
+
+/// Stitch settings with every field set away from its default, so its JSON has every key (a new
+/// field fails to compile here until it is set, and so checked against the spec).
+fn full_stitch() -> StitchSettings {
+    StitchSettings {
+        kind: StitchKind::Fill,
+        length: Some(1.0),
+        spacing: Some(1.0),
+        angle: 10.0,
+        width: Some(1.0),
+        thread: Some([1, 2, 3]),
+        pull: Some(1.0),
+        underlay: Underlay::Fill,
+        stagger: Some(4),
+        motif: Some("waves".into()),
+        motif_size: Some(10.0),
+        pattern: Some("waves".into()),
+        flip: true,
+        passes: Some(5),
+        thin_under: Some(1.0),
+        wide_over: Some(7.0),
+        border: Some(2.0),
+        rails: true,
+        trim_before: true,
+        trim_after: true,
+    }
+}
+
+fn full_setup() -> EmbroiderySetup {
+    EmbroiderySetup { trim_jumps_over: Some(5.0), stitch_moves_under: 2.0, order: vec![NodeId(1)], patterns: vec![full_pattern()] }
+}
+
+/// `range` matches the schema property's `minimum` and `maximum`.
+fn range_is(prop: &Value, range: std::ops::RangeInclusive<f64>, what: &str) {
+    assert_eq!(prop["minimum"].as_f64(), Some(*range.start()), "{what} minimum");
+    assert_eq!(prop["maximum"].as_f64(), Some(*range.end()), "{what} maximum");
+}
+
+#[test]
+fn vcborder_schema_matches_the_code() {
+    let schema = json("vcborder.schema.json");
+    let props = &schema["properties"];
+    assert_eq!(props["format"]["const"], borders::FILE_FORMAT);
+    assert_eq!(props["version"]["maximum"].as_u64(), Some(u64::from(borders::FILE_VERSION)));
+    // Every key a file has, and no other.
+    let file: Value = serde_json::from_str(&borders::write_file(&full_pattern()).unwrap()).unwrap();
+    assert_eq!(keys(props), keys(&file), "the schema's fields are the file's");
+    let part = &schema["$defs"]["part"]["properties"];
+    assert_eq!(keys(part), keys(&file["repeat"][0]), "a part's fields");
+    let stitches: BTreeSet<String> = part_stitches().into_iter().map(serde_name).collect();
+    assert_eq!(strings(&part["stitch"]["enum"]), stitches);
+    // Required: what a file can't be read without.
+    for field in strings(&schema["required"]) {
+        if matches!(field.as_str(), "format" | "version") {
+            continue;
+        }
+        let mut v = file.clone();
+        v.as_object_mut().unwrap().remove(&field);
+        assert!(borders::read_file(v.to_string().as_bytes()).is_err(), "a file without `{field}` is refused");
+    }
+}
+
+#[test]
+fn vcborder_page_describes_every_field_and_the_limits() {
+    let page = read("vcborder.md");
+    let file: Value = serde_json::from_str(&borders::write_file(&full_pattern()).unwrap()).unwrap();
+    for k in keys(&file).iter().chain(keys(&file["repeat"][0]).iter()) {
+        assert!(page.contains(&format!("`{k}`")), "vcborder.md describes `{k}`");
+    }
+    for s in part_stitches() {
+        assert!(page.contains(&format!("`\"{}\"`", serde_name(s))), "vcborder.md describes the {s:?} stitch");
+    }
+    for id in borders::BUILTIN {
+        assert!(page.contains(&format!("`{id}`")), "vcborder.md lists the starter `{id}`");
+    }
+    assert_eq!(borders::MAX_PATTERN_POINTS, 100_000, "the point limit vcborder.md gives");
+    assert!(page.contains("100,000 points"), "the point limit");
+    assert!(page.contains(&format!("{} MB", borders::MAX_FILE_BYTES >> 20)), "the size limit");
+}
+
+#[test]
+fn the_example_border_pattern_reads_and_sews() {
+    let p = borders::read_file(read("examples/rope.vcborder").as_bytes()).unwrap();
+    assert_eq!((p.id.as_str(), p.corner.is_empty()), ("rope", false));
+    let square = [Point::new(0.0, 0.0), Point::new(60.0, 0.0), Point::new(60.0, 40.0), Point::new(0.0, 40.0), Point::new(0.0, 0.0)];
+    let runs = borders::sew(&p, &square, true, 6.0, false, 1.5, 0.4).unwrap();
+    assert_eq!(runs.len(), 1, "one run through the corner motifs");
+    // The example on the page is the example file's pattern, credits aside.
+    let page = read("vcborder.md");
+    let start = page.find("```json").unwrap() + 7;
+    let end = start + page.get(start..).unwrap().find("```").unwrap();
+    let shown = borders::read_file(page.get(start..end).unwrap().as_bytes()).unwrap();
+    assert_eq!((shown.width, shown.length, &shown.repeat, &shown.corner), (p.width, p.length, &p.repeat, &p.corner));
+}
+
+#[test]
+fn embroidery_schema_matches_the_code() {
+    let schema = json("vectorcraft-embroidery.schema.json");
+    let defs = &schema["$defs"];
+    let stitch = &defs["stitch"]["properties"];
+    assert_eq!(keys(stitch), keys(&serde_json::to_value(full_stitch()).unwrap()), "the stitch settings' fields");
+    let kinds: BTreeSet<String> = StitchKind::ALL.iter().map(|k| k.id().to_string()).collect();
+    assert_eq!(strings(&stitch["kind"]["enum"]), kinds);
+    assert!(StitchKind::ALL.iter().all(|k| serde_name(*k) == k.id()), "kinds are written by id");
+    let underlays: BTreeSet<String> = Underlay::ALL.iter().map(|u| u.id().to_string()).collect();
+    assert_eq!(strings(&stitch["underlay"]["enum"]), underlays);
+    assert_eq!(strings(&stitch["motif"]["enum"]), motifs::MOTIFS.iter().map(|m| m.to_string()).collect());
+    range_is(&stitch["length"], StitchSettings::LENGTH, "length");
+    range_is(&stitch["spacing"], StitchSettings::SPACING, "spacing");
+    range_is(&stitch["width"], *StitchSettings::WIDTH.start()..=*StitchSettings::PATTERN_WIDTH.end(), "width");
+    range_is(&stitch["pull"], StitchSettings::PULL, "pull");
+    range_is(&stitch["motifSize"], StitchSettings::MOTIF_SIZE, "motifSize");
+    range_is(&stitch["thinUnder"], StitchSettings::THIN, "thinUnder");
+    range_is(&stitch["wideOver"], StitchSettings::WIDE, "wideOver");
+    range_is(&stitch["border"], StitchSettings::BORDER, "border");
+    let stagger = StitchSettings::STAGGER;
+    range_is(&stitch["stagger"], f64::from(*stagger.start())..=f64::from(*stagger.end()), "stagger");
+    let passes: Vec<u64> = StitchSettings::PASSES.filter(|p| p % 2 == 1).map(u64::from).collect();
+    assert_eq!(stitch["passes"]["enum"].as_array().unwrap().iter().map(|v| v.as_u64().unwrap()).collect::<Vec<_>>(), passes);
+
+    let setup = &defs["setup"]["properties"];
+    assert_eq!(keys(setup), keys(&serde_json::to_value(full_setup()).unwrap()), "the setup's fields");
+    range_is(&setup["trimJumpsOver"], EmbroiderySetup::TRIM, "trimJumpsOver");
+    range_is(&setup["stitchMovesUnder"], EmbroiderySetup::STITCH_MOVES, "stitchMovesUnder");
+    assert_eq!(setup["trimJumpsOver"]["default"].as_f64(), Some(EmbroiderySetup::DEFAULT_TRIM));
+    assert_eq!(setup["stitchMovesUnder"]["default"].as_f64(), Some(EmbroiderySetup::DEFAULT_STITCH_MOVES));
+    // A document's patterns have a border pattern file's fields, less the header.
+    assert_eq!(keys(&defs["pattern"]["properties"]), keys(&serde_json::to_value(full_pattern()).unwrap()));
+}
+
+#[test]
+fn embroidery_page_describes_every_field_and_kind() {
+    let page = read("vectorcraft-embroidery.md");
+    let fields = keys(&serde_json::to_value(full_stitch()).unwrap()).into_iter().chain(keys(&serde_json::to_value(full_setup()).unwrap()));
+    for k in fields {
+        assert!(page.contains(&format!("`{k}`")), "vectorcraft-embroidery.md describes `{k}`");
+    }
+    for k in StitchKind::ALL {
+        assert!(page.contains(&format!("| `{}` |", k.id())), "vectorcraft-embroidery.md describes the {} kind", k.id());
+    }
+    for u in Underlay::ALL {
+        assert!(page.contains(&format!("`{}`", u.id())), "vectorcraft-embroidery.md lists the {} underlay", u.id());
+    }
+}
+
+#[test]
+fn the_formats_index_lists_every_spec() {
+    let index = read("README.md");
+    for entry in std::fs::read_dir(formats_dir()).unwrap() {
+        let name = entry.unwrap().file_name().to_string_lossy().to_string();
+        if name != "README.md" && (name.ends_with(".md") || name.ends_with(".json")) {
+            assert!(index.contains(&format!("]({name})")), "docs/formats/README.md links {name}");
+        }
+    }
+}

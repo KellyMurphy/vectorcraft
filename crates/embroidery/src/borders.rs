@@ -4,7 +4,7 @@
 //! pattern's corner motif goes in, or, when it has none, the border ends and starts again.
 //!
 //! The starter patterns are drawn here in code ([`builtin`]); others come from `.vcborder` files
-//! ([`read_file`], [`write_file`]; the format is documented in `docs/embroidery.md`) and are kept
+//! ([`read_file`], [`write_file`]; specified in `docs/formats/vcborder.md`) and are kept
 //! in the document that uses them.
 
 use kurbo::{Point, Vec2};

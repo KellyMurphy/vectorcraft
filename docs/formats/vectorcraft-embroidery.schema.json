@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KellyMurphy/vectorcraft/blob/main/docs/formats/vectorcraft-embroidery.schema.json",
+  "title": "Embroidery data in .vectorcraft documents",
+  "description": "A node's `stitch` settings and the document's `embroidery` setup. See vectorcraft-embroidery.md. Ranges are what programs sew with; values outside them are clamped on reading, not refused.",
+  "$defs": {
+    "stitch": {
+      "title": "Stitch settings (a node's `stitch`)",
+      "type": "object",
+      "properties": {
+        "kind": { "enum": ["running", "bean", "satin", "zigzag", "satinShape", "fill", "patternBorder", "manual", "auto"], "default": "running" },
+        "length": { "type": "number", "minimum": 0.3, "maximum": 12, "description": "Stitch length, mm." },
+        "spacing": { "type": "number", "minimum": 0.1, "maximum": 10, "description": "Satin zig or fill row spacing, mm." },
+        "angle": { "type": "number", "description": "Fill row direction, degrees counter-clockwise.", "default": 0 },
+        "width": { "type": "number", "minimum": 0.3, "maximum": 40, "description": "Satin or zigzag width (0.3-12 mm), or pattern border width (1-40 mm)." },
+        "thread": {
+          "type": "array",
+          "prefixItems": [{ "$ref": "#/$defs/byte" }, { "$ref": "#/$defs/byte" }, { "$ref": "#/$defs/byte" }],
+          "minItems": 3,
+          "maxItems": 3,
+          "description": "sRGB thread colour."
+        },
+        "pull": { "type": "number", "minimum": 0, "maximum": 3, "description": "Pull compensation, mm." },
+        "underlay": { "enum": ["none", "center", "edge", "zigzag", "fill"], "default": "none" },
+        "stagger": { "type": "integer", "minimum": 2, "maximum": 8, "description": "Fill rows before the needle holes line up again." },
+        "motif": { "enum": ["diamonds", "waves", "circles", "scales", "herringbone"], "description": "Fill: a carved motif." },
+        "motifSize": { "type": "number", "minimum": 3, "maximum": 60, "description": "The carved motif's repeat, mm." },
+        "pattern": { "type": "string", "description": "Pattern border: a border pattern id (a starter, or one of document.embroidery.patterns)." },
+        "flip": { "type": "boolean", "default": false },
+        "passes": { "type": "integer", "enum": [3, 5, 7, 9], "description": "Bean: times each stitch is sewn." },
+        "thinUnder": { "type": "number", "minimum": 0.2, "maximum": 3 },
+        "wideOver": { "type": "number", "minimum": 2, "maximum": 12 },
+        "border": { "type": "number", "minimum": 0.5, "maximum": 6, "description": "Fill: a satin border's width, mm." },
+        "rails": { "type": "boolean", "default": false },
+        "trimBefore": { "type": "boolean", "default": false },
+        "trimAfter": { "type": "boolean", "default": false }
+      }
+    },
+    "setup": {
+      "title": "Embroidery setup (`document.embroidery`)",
+      "type": "object",
+      "properties": {
+        "trimJumpsOver": { "type": ["number", "null"], "minimum": 0.5, "maximum": 100, "default": 3, "description": "null: never trim on length." },
+        "stitchMovesUnder": { "type": "number", "minimum": 0, "maximum": 5, "default": 1 },
+        "order": { "type": "array", "items": { "type": "integer", "minimum": 0 }, "description": "Object ids sewn first, in this order." },
+        "patterns": {
+          "type": "array",
+          "items": {
+            "allOf": [{ "$ref": "#/$defs/pattern" }],
+            "required": ["id"],
+            "properties": { "id": { "type": "string", "minLength": 1 } }
+          }
+        }
+      }
+    },
+    "pattern": {
+      "description": "A border pattern: the fields of a .vcborder file other than format, version and units.",
+      "type": "object",
+      "required": ["name", "width", "length", "repeat"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "author": { "type": "string" },
+        "license": { "type": "string" },
+        "source": { "type": "string" },
+        "description": { "type": "string" },
+        "width": { "$ref": "vcborder.schema.json#/$defs/size" },
+        "length": { "$ref": "vcborder.schema.json#/$defs/size" },
+        "repeat": { "type": "array", "items": { "$ref": "vcborder.schema.json#/$defs/part" }, "minItems": 1 },
+        "corner": { "type": "array", "items": { "$ref": "vcborder.schema.json#/$defs/part" } }
+      }
+    },
+    "byte": { "type": "integer", "minimum": 0, "maximum": 255 }
+  }
+}

@@ -93,7 +93,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Save Border Pattern…",
             [],
             None,
-            "{pattern: id (the document's or a starter), path?} write a border pattern as a .vcborder file (JSON; see docs/embroidery.md) → {path}, or without path {data: the file's text}",
+            "{pattern: id (the document's or a starter), path?} write a border pattern as a .vcborder file (JSON; specified in docs/formats/vcborder.md) → {path}, or without path {data: the file's text}",
             has_doc,
             save_border_pattern
         ),
