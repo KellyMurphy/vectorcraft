@@ -55,7 +55,10 @@ Machine-readable schema: [vcborder.schema.json](vcborder.schema.json). Example:
 
 `author`, `license`, `source` and `description` are information only: they change nothing that is sewn.
 Programs should show the author and licence where users choose patterns, and keep all four when they copy
-a pattern. Unknown fields are ignored.
+a pattern. Fields a reader doesn't know are kept with the pattern and written back when it is saved. A
+file with a part `stitch` the reader doesn't know is refused with a message. A pattern like that inside a
+document is kept as written but not used (see
+[Embroidery data in documents](vectorcraft-embroidery.md#compatibility)).
 
 ### Ids
 

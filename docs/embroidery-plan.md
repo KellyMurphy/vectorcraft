@@ -87,7 +87,7 @@ means hand-editing the command parser, the info query, the panel, the docs table
 
 | Step | What | Why it unblocks | Size |
 |---|---|---|---|
-| **E6.1** Forward-compatible stitch data | An unknown `kind`, `underlay` or part stitch in a document is kept as written and sewn as nothing (with a warning), instead of making the whole document fail to load. Spec updated. | Every later step adds kinds; older builds must keep opening newer documents. | S |
+| **E6.1** Forward-compatible stitch data (**done**) | An unknown `kind`, `underlay` or part stitch in a document is kept as written and sewn as nothing (with a warning), instead of making the whole document fail to load. Spec updated. | Every later step adds kinds; older builds must keep opening newer documents. | S |
 | **E6.2** Parameter table | One table describes each stitch parameter (key, type, unit, range, default per kind, which kinds use it, label, tooltip). Command parsing, `embroidery.info`, the panel's rows, the docs table and the schema drift test are driven from it. | Phases 1–3 add 40+ parameters; one place to add each. | M |
 | **E6.3** One module per stitch kind | Split the big `sew()` match into a module per kind (generate, defaults, quality checks), registered in one list. | New fills become a file each, testable alone. | M |
 | **E6.4** Stitch cache and budgets | Cache each object's stitches by geometry and settings, so editing one object re-sews only it. Add an embroidery case to `vectorcraft-cli perf` (a 300-object design with lettering), with a budget. | Contour fills, auto-digitize and the live checker are too slow without it. | M |

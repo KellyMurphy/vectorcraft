@@ -347,7 +347,7 @@ fn finish(f: Found, name: &str) -> Extracted {
         // Width of the band the stitches fill (at least a millimetre, for a nearly flat line).
         width: (2.0 * half).max(1.0),
         length: f.period,
-        repeat: vec![PatternPart { stitch: PartStitch::Manual, points: f.points, width: None }],
+        repeat: vec![PatternPart { stitch: PartStitch::Manual, points: f.points, width: None, ..Default::default() }],
         ..BorderPattern::default()
     };
     Extracted { pattern, period: f.period, stitches, repeats: f.repeats, error: f.error }

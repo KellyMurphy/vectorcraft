@@ -23,7 +23,9 @@ own published specifications and aren't described here.
   number). A reader refuses a file whose `version` is newer than it knows, with a message, rather than
   read it wrongly. A new version is made only when an older reader would misread a file; adding an
   optional field that older readers can ignore doesn't need one.
-- **Unknown fields are ignored** by readers, so later additions don't break older programs.
+- **Unknown fields are kept** by readers and written back when they save, so later additions neither break
+  older programs nor get lost when an older program saves the file. Values a reader can't understand are
+  kept as written too (each spec says how they are treated).
 - **Millimetres** for embroidery lengths, the unit embroidery machines and their files work in.
 - **Untrusted input.** Readers check every value (sizes, counts, finite numbers) and refuse a file that
   fails, never crash on it. The limits are in each spec.

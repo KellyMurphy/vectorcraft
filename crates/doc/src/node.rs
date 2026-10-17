@@ -497,7 +497,12 @@ pub struct Node {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub perspective: Option<Box<crate::PerspectiveAttachment>>,
     /// Embroidery: how the object is stitched (`None`: not stitched).
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::embroidery::de_stitch",
+        serialize_with = "crate::embroidery::ser_stitch"
+    )]
     pub stitch: Option<Box<crate::StitchSettings>>,
 }
 

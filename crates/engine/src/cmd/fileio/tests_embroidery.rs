@@ -327,6 +327,51 @@ fn a_border_is_extracted_from_an_opened_design() {
     assert!(s.execute("embroidery.extractBorderPattern", &json!({"period": -1})).is_err());
 }
 
+#[test]
+fn a_document_from_a_newer_version_opens_saves_and_can_be_restitched() {
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "satin"})).unwrap();
+    // Saved, then edited as a newer VectorCraft would write it: an unknown stitch kind on the
+    // object, a member this version doesn't know, and a pattern with an unknown part stitch.
+    let saved = s.execute("document.export", &json!({"format": "vectorcraft"})).unwrap();
+    let bytes = b64(&saved);
+    let mut v: Value = serde_json::from_slice(&bytes).unwrap();
+    let mut found = false;
+    fn walk(v: &mut Value, found: &mut bool) {
+        if let Some(st) = v.get_mut("stitch") {
+            *st = json!({"kind": "crossStitch", "cellSize": 2.5});
+            *found = true;
+        }
+        match v {
+            Value::Object(o) => o.values_mut().for_each(|c| walk(c, found)),
+            Value::Array(a) => a.iter_mut().for_each(|c| walk(c, found)),
+            _ => {}
+        }
+    }
+    walk(&mut v["document"], &mut found);
+    assert!(found);
+    v["document"]["embroidery"] = json!({"trimJumpsOver": 3.0, "stitchMovesUnder": 1.0, "patterns": [
+        {"id": "lace", "name": "Lace", "width": 6.0, "length": 8.0, "repeat": [{"stitch": "tripleSatin", "points": [[0.0, 0.0]]}]}
+    ]});
+    let newer = serde_json::to_vec(&v).unwrap();
+    s.execute("document.open", &json!({"name": "newer.vectorcraft", "dataBase64": vectorcraft_format::base64_encode(&newer)})).unwrap();
+    s.execute("select.all", &json!({})).unwrap();
+    let got = info(&mut s);
+    assert_eq!(got["selection"]["type"], "unknown", "{got}");
+    assert!(got["design"]["warnings"].as_array().unwrap().iter().any(|w| w.as_str().unwrap().contains("newer VectorCraft")), "{got}");
+    let pats = s.execute("embroidery.borderPatterns", &json!({})).unwrap();
+    assert_eq!((pats["patterns"][0]["id"].clone(), pats["patterns"][0]["supported"].clone()), (json!("lace"), json!(false)));
+    // Saved again, what this version couldn't read is still there.
+    let again = b64(&s.execute("document.export", &json!({"format": "vectorcraft"})).unwrap());
+    let text = String::from_utf8_lossy(&again).to_string();
+    assert!(text.contains("crossStitch") && text.contains("cellSize") && text.contains("tripleSatin"));
+    // Choosing a stitch replaces the unknown settings; the newer pattern can be removed.
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["type"], "fill");
+    s.execute("embroidery.removeBorderPattern", &json!({"pattern": "lace"})).unwrap();
+    assert!(s.execute("embroidery.set", &json!({"type": "patternBorder", "pattern": "lace"})).is_err());
+}
+
 /// Three stitched rectangles (red, blue, red) left to right; their ids.
 fn three(s: &mut Session) -> Vec<u64> {
     s.execute("file.new", &json!({"width": 400, "height": 200})).unwrap();

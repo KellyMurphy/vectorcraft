@@ -117,6 +117,12 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         widgets::divider(ui);
         match kind {
             Some(k) => parameters(app, ui, k, sel),
+            None if sel["type"] == json!("unknown") => {
+                widgets::dim_label(
+                    ui,
+                    tl!("These stitch settings are from a newer VectorCraft: kept as they are, but not sewn. Choose a stitch to replace them."),
+                );
+            }
             None => {
                 widgets::dim_label(ui, tl!("The selected objects use different stitches."));
             }
@@ -463,7 +469,9 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
             widgets::section_header(ui, tl!("Pattern Border"));
             widgets::dim_label(ui, tl!("The pattern repeats along the path, a whole number of times between corners."));
             // The document's own patterns, then the starters.
-            let list: Vec<&Value> = sel["borderPatterns"].as_array().map(|a| a.iter().collect()).unwrap_or_default();
+            // Patterns from a newer version can't be used, so they aren't offered.
+            let list: Vec<&Value> =
+                sel["borderPatterns"].as_array().map(|a| a.iter().filter(|p| p["supported"] != json!(false)).collect()).unwrap_or_default();
             let pattern = sel["pattern"].as_str();
             let name = |p: &Value| -> String {
                 let id = p["id"].as_str().unwrap_or_default();

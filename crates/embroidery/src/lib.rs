@@ -316,6 +316,13 @@ pub fn plan(doc: &Document) -> Plan {
         let n = tally.skipped;
         plan.warnings.push(format!("{n} stitched {} can't be stitched yet (only paths, compound paths and type are): left out", what(n)));
     }
+    if tally.newer > 0 {
+        let n = tally.newer;
+        plan.warnings.push(format!(
+            "{n} stitched {} use stitch settings from a newer VectorCraft that this version can't read: kept as they are, but not sewn",
+            what(n)
+        ));
+    }
     if tally.clipped > 0 {
         let n = tally.clipped;
         plan.warnings.push(format!("{n} stitched {} under a clipping or opacity mask are stitched whole: masks don't apply to stitches", what(n)));
@@ -365,6 +372,8 @@ struct Tally {
     skipped: usize,
     /// Stitched objects under a clipping mask or opacity mask, stitched whole.
     clipped: usize,
+    /// Objects whose stitch settings came from a newer VectorCraft (kept, not sewn).
+    newer: usize,
 }
 
 /// The objects under `n` that are sewn, in paint order.
@@ -376,7 +385,9 @@ fn collect<'a>(n: &'a Arc<Node>, items: &mut Vec<&'a Node>, tally: &mut Tally, m
         return;
     }
     let masked = masked || n.mask.is_some() || matches!(n.kind, NodeKind::Group { clip: true, .. } | NodeKind::Layer { clip: true, .. });
-    if n.stitch.is_some() {
+    if n.stitch.as_deref().is_some_and(|s| s.unknown.is_some()) {
+        tally.newer += 1;
+    } else if n.stitch.is_some() {
         let sewn = match &n.kind {
             NodeKind::Path { guide: false, clipping: false, .. } | NodeKind::Compound { .. } | NodeKind::Text(_) => true,
             NodeKind::Path { .. } => false,
@@ -660,7 +671,12 @@ fn sew(s: &StitchSettings, thread: [u8; 3], stroke_mm: f64, paths: &[&PathData],
             StitchKind::PatternBorder => {
                 let id = s.pattern();
                 let Some(pattern) = borders::find(&b.patterns, id) else {
-                    b.plan.warnings.push(format!("there is no border pattern `{id}`: not sewn"));
+                    let newer = b.patterns.iter().any(|p| p.id == id && p.unknown.is_some());
+                    b.plan.warnings.push(if newer {
+                        format!("the border pattern `{id}` is from a newer VectorCraft that this version can't read: not sewn")
+                    } else {
+                        format!("there is no border pattern `{id}`: not sewn")
+                    });
                     return;
                 };
                 let w = s.pattern_width(pattern.width);

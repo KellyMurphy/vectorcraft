@@ -691,6 +691,19 @@ fn dump_samples() {
     std::fs::write(dir.join("borders.dst"), write_dst(&p, "borders")).unwrap();
 }
 
+#[test]
+fn settings_from_a_newer_version_are_kept_but_not_sewn() {
+    let d = doc_with(|d| {
+        let a = stitched(d, poly(&[(0.0, 0.0), (72.0, 0.0)], false), StitchKind::Running, [0; 3]);
+        let mut b = stitched(d, poly(&[(0.0, 50.0), (72.0, 50.0)], false), StitchKind::Running, [0; 3]);
+        b.stitch.as_mut().unwrap().unknown = Some(Box::new(serde_json::json!({"kind": "crossStitch"})));
+        vec![a, b]
+    });
+    let p = plan(&d);
+    assert_eq!(p.runs().len(), 1, "only the readable object is sewn");
+    assert!(p.warnings.iter().any(|w| w.contains("newer VectorCraft")), "{:?}", p.warnings);
+}
+
 /// Two lines `gap` pt apart in one thread, the first with `first`'s settings.
 fn two_lines(gap: f64, first: impl FnOnce(&mut StitchSettings), setup: EmbroiderySetup) -> Plan {
     let mut d = doc_with(|d| {

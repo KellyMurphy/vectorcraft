@@ -38,9 +38,14 @@ pub const FILE_VERSION: u32 = 1;
 /// The largest border pattern file read, bytes.
 pub const MAX_FILE_BYTES: usize = 8 << 20;
 
-/// The pattern `id`: the document's own (`patterns`) first, then the starters.
+/// The pattern `id`: the document's own (`patterns`) first, then the starters. A document pattern
+/// this version can't read (from a newer VectorCraft) is none.
 pub fn find(patterns: &[BorderPattern], id: &str) -> Option<BorderPattern> {
-    patterns.iter().find(|p| p.id == id).cloned().or_else(|| builtin(id))
+    match patterns.iter().find(|p| p.id == id) {
+        Some(p) if p.unknown.is_some() => None,
+        Some(p) => Some(p.clone()),
+        None => builtin(id),
+    }
 }
 
 /// `name` as a pattern id: lower case letters and digits, other runs of characters as one dash
@@ -111,7 +116,7 @@ pub fn write_file(p: &BorderPattern) -> Result<String, String> {
 pub fn builtin(id: &str) -> Option<BorderPattern> {
     use std::f64::consts::PI;
     let curve = |n: usize, f: &dyn Fn(f64) -> [f64; 2]| -> Vec<[f64; 2]> { (0..=n).map(|k| f(k as f64 / n as f64)).collect() };
-    let part = |stitch: PartStitch, points: Vec<[f64; 2]>| PatternPart { stitch, points, width: None };
+    let part = |stitch: PartStitch, points: Vec<[f64; 2]>| PatternPart { stitch, points, width: None, ..Default::default() };
     Some(match id {
         // A sine wave in bean stitch.
         "waves" => BorderPattern {
@@ -125,6 +130,7 @@ pub fn builtin(id: &str) -> Option<BorderPattern> {
             length: 10.0,
             repeat: vec![part(PartStitch::Bean, curve(32, &|t| [10.0 * t, 2.5 * (2.0 * PI * t).sin()]))],
             corner: vec![],
+            ..Default::default()
         },
         // Satin arches standing on one edge of the band.
         "scallops" => BorderPattern {
@@ -140,8 +146,10 @@ pub fn builtin(id: &str) -> Option<BorderPattern> {
                 stitch: PartStitch::Satin,
                 points: curve(24, &|t| [3.0 - 3.0 * (PI * t).cos(), 2.4 - 4.8 * (PI * t).sin()]),
                 width: Some(1.2),
+                ..Default::default()
             }],
             corner: vec![],
+            ..Default::default()
         },
         // Loops linked like a chain (a prolate cycloid), in bean stitch.
         "chain" => BorderPattern {
@@ -155,6 +163,7 @@ pub fn builtin(id: &str) -> Option<BorderPattern> {
             length: 6.0,
             repeat: vec![part(PartStitch::Bean, curve(48, &|t| [6.0 * t - 1.6 * (2.0 * PI * t).sin(), -2.6 * (2.0 * PI * t).cos()]))],
             corner: vec![],
+            ..Default::default()
         },
         // Diamonds strung on a centre line, with a four-petal rosette at each corner.
         "diamonds" => BorderPattern {
@@ -176,6 +185,7 @@ pub fn builtin(id: &str) -> Option<BorderPattern> {
                     [r * a.cos(), r * a.sin()]
                 }),
             )],
+            ..Default::default()
         },
         _ => return None,
     })
@@ -389,7 +399,8 @@ pub fn sew(pattern: &BorderPattern, line: &[Point], closed: bool, width: f64, fl
         let (from, to) = (if corner_in { reach } else { 0.0 }, st.len() - if corner_out { reach } else { 0.0 });
         let avail = to - from;
         let n = if avail >= rep * 0.5 { (avail / rep).round().max(1.0) } else { 0.0 };
-        let centre = |a: f64, b: f64| PatternPart { stitch: PartStitch::Running, points: vec![[a, 0.0], [b, 0.0]], width: None };
+        let centre =
+            |a: f64, b: f64| PatternPart { stitch: PartStitch::Running, points: vec![[a, 0.0], [b, 0.0]], width: None, ..Default::default() };
         let along = |x: f64, y: f64| {
             let (p, nrm) = st.frame(x);
             p + nrm * (y * ys)
@@ -552,7 +563,12 @@ mod tests {
             name: "zag".into(),
             width: 2.0,
             length: 2.0,
-            repeat: vec![PatternPart { stitch: PartStitch::Manual, points: vec![[0.0, -1.0], [1.0, 1.0], [2.0, -1.0]], width: None }],
+            repeat: vec![PatternPart {
+                stitch: PartStitch::Manual,
+                points: vec![[0.0, -1.0], [1.0, 1.0], [2.0, -1.0]],
+                width: None,
+                ..Default::default()
+            }],
             ..Default::default()
         };
         let runs = sew(&p, &[Point::new(0.0, 0.0), Point::new(200.0, 0.0)], false, 40.0, false, 1.5, 0.4).unwrap();
@@ -567,6 +583,12 @@ mod tests {
         assert!(text.contains("\"format\": \"vectorcraft-border-pattern\"") && text.contains("\"units\": \"mm\""), "{text}");
         let back = read_file(text.as_bytes()).unwrap();
         assert_eq!(back.id, "my-diamonds");
+        assert!(back.extra.is_empty(), "the file's header isn't taken for unknown members: {:?}", back.extra);
+        // A member a newer version added survives a read and a write.
+        let newer = text.replacen("\"name\"", "\"thumbnail\": \"x.png\", \"name\"", 1);
+        let kept = read_file(newer.as_bytes()).unwrap();
+        assert_eq!(kept.extra.get("thumbnail"), Some(&serde_json::json!("x.png")));
+        assert_eq!(write_file(&kept).unwrap().matches("\"format\"").count(), 1);
         assert_eq!(BorderPattern { id: p.id.clone(), ..back }, p);
         // No id: one is made from the name.
         let v = serde_json::json!({"format": FILE_FORMAT, "version": 1, "name": "Rope Twist 2", "width": 4, "length": 5,

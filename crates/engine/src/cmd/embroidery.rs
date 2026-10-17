@@ -75,7 +75,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Border Patterns",
             ["Window", "Embroidery"],
             None,
-            "{} the border patterns pattern borders can sew: the document's own (loaded from .vcborder files) then the starters → {patterns: [{id, name, builtin, width, length (mm, the pattern's own size), corner: has a corner motif, satin: has satin parts (sewn at the object's spacing), author, license, source, description, used: objects sewing with it}]}",
+            "{} the border patterns pattern borders can sew: the document's own (loaded from .vcborder files) then the starters → {patterns: [{id, name, builtin, supported (false: from a newer VectorCraft, kept but not usable; only id, name and used are given), width, length (mm, the pattern's own size), corner: has a corner motif, satin: has satin parts (sewn at the object's spacing), author, license, source, description, used: objects sewing with it}]}",
             has_doc,
             border_patterns
         ),
@@ -303,7 +303,8 @@ impl Edits {
     }
 
     fn apply(&self, old: Option<&StitchSettings>) -> StitchSettings {
-        let mut s = old.cloned().unwrap_or_default();
+        // Settings from a newer version this one can't read are replaced, not edited.
+        let mut s = old.filter(|o| o.unknown.is_none()).cloned().unwrap_or_default();
         if let Some(k) = self.kind {
             s.kind = k;
         }
@@ -475,7 +476,12 @@ fn border_patterns(s: &mut Session, _: &Value) -> Result<Value> {
         .map(|p| (p, false))
         .chain(starters)
         .map(|(p, builtin)| {
+            if p.unknown.is_some() {
+                // From a newer version: listed so it can be removed, but it can't be used.
+                return json!({"id": p.id, "name": p.name, "builtin": false, "supported": false, "used": pattern_users(doc, &p.id)});
+            }
             json!({
+                "supported": true,
                 "id": p.id, "name": p.name, "builtin": builtin, "width": p.width, "length": p.length,
                 "corner": !p.corner.is_empty(), "author": p.author,
                 "satin": p.repeat.iter().chain(&p.corner).any(|q| q.stitch == vectorcraft_doc::PartStitch::Satin), "license": p.license, "source": p.source,
@@ -593,10 +599,16 @@ fn save_border_pattern(s: &mut Session, p: &Value) -> Result<Value> {
 
 fn remove_border_pattern(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "embroidery.removeBorderPattern";
-    let pat = pattern_param(s, p, C)?;
-    if !s.doc()?.doc.embroidery.patterns.iter().any(|q| q.id == pat.id) {
-        return Err(bad(C, format!("`{}` is a starter pattern: it can't be removed", pat.id)));
-    }
+    // Found among the document's own, readable or not (one from a newer version can be removed).
+    let id = str_param(p, "pattern").map(|id| id.trim().to_ascii_lowercase()).ok_or_else(|| bad(C, "`pattern` (a border pattern id) is missing"))?;
+    let Some(pat) = s.doc()?.doc.embroidery.patterns.iter().find(|q| q.id == id).cloned() else {
+        let why = if vectorcraft_embroidery::borders::builtin(&id).is_some() {
+            "is a starter pattern: it can't be removed"
+        } else {
+            "isn't one of the document's patterns"
+        };
+        return Err(bad(C, format!("`{id}` {why}")));
+    };
     let users = pattern_users(&s.doc()?.doc, &pat.id);
     if users > 0 {
         return Err(bad(C, format!("{users} object(s) sew with `{}`: give them another pattern first", pat.id)));
@@ -637,7 +649,7 @@ fn order(s: &mut Session, _: &Value) -> Result<Value> {
             json!({
                 "id": n.id.0,
                 "name": object_name(n),
-                "stitch": n.stitch.as_deref().map(|s| s.kind.id()),
+                "stitch": n.stitch.as_deref().map(StitchSettings::kind_id),
                 "thread": hex(vectorcraft_embroidery::thread_of_node(n)),
             })
         })
@@ -783,7 +795,7 @@ fn info(s: &mut Session, p: &Value) -> Result<Value> {
     let selection = json!({
         "stitched": all.len(),
         "unstitched": ids.len() - all.len(),
-        "type": same(all.iter().map(|s| s.kind.id())),
+        "type": same(all.iter().map(|s| s.kind_id())),
         "length": same(all.iter().map(|s| s.length())),
         "spacing": same(all.iter().map(|s| s.spacing())),
         "angle": same(all.iter().map(|s| s.angle())),

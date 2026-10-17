@@ -49,8 +49,9 @@ are kept but have no effect.
 | `trimAfter` | boolean | all | | false |
 
 Readers don't refuse out-of-range or non-finite numbers in a document: they use the nearest value in range,
-or the default for one that isn't a number. The exceptions are `thread`, `stagger` and `passes`, which must
-be whole numbers from 0 to 255 (VectorCraft refuses the document otherwise). An underlay the kind doesn't use counts as `none`.
+or the default for one that isn't a number. `thread`, `stagger` and `passes` must be whole numbers from 0 to
+255; otherwise the object's stitch settings can't be read and are kept as described under
+[Compatibility](#compatibility). An underlay the kind doesn't use counts as `none`.
 
 ### Kinds
 
@@ -95,8 +96,17 @@ Readers clamp `trimJumpsOver` and `stitchMovesUnder` into range like stitch sett
 
 ## Compatibility
 
-These members were added without a new document version, as optional additions older programs ignore.
-One exception: a `kind`, `underlay` or part `stitch` value that a program doesn't know makes VectorCraft
-refuse the whole document. So a document using a kind added in a later VectorCraft (`patternBorder` was
-added in 2026-10) doesn't open in an earlier one. Other programs reading these documents should instead
-treat an unknown kind as not stitched and keep the object.
+New stitch types, settings and patterns are added without a new document version, so a document made
+by a newer VectorCraft opens in an older one. A reader must:
+
+- **Keep members it doesn't know**, in a `stitch` object, in `document.embroidery`, in a pattern or in a
+  part, and write them back when it saves.
+- **Keep a `stitch` object it can't read** (a `kind` or `underlay` value it doesn't know, or a value of the
+  wrong type, such as `thread` past 255) exactly as written, not sew that object, and warn. Choosing a
+  stitch for the object replaces it.
+- **Keep a pattern it can't read** (a part `stitch` it doesn't know) exactly as written, not sew with it,
+  and warn. It can still be removed.
+
+Never refuse the whole document because of embroidery data. VectorCraft follows these rules from
+2026-10-17 (E6.1). Earlier builds refuse a document with a `kind`, `underlay` or part `stitch` they don't
+know: `patternBorder` (added 2026-10-16) doesn't open in them.

@@ -50,7 +50,8 @@ fn serde_name<T: serde::Serialize>(v: T) -> String {
 
 /// A border pattern with every field set, so its JSON has every key.
 fn full_pattern() -> BorderPattern {
-    let part = PatternPart { stitch: PartStitch::Satin, points: vec![[0.0, 0.0], [4.0, 0.0]], width: Some(1.0) };
+    // `extra` and `unknown` hold what a newer version wrote; empty, they are never written.
+    let part = PatternPart { stitch: PartStitch::Satin, points: vec![[0.0, 0.0], [4.0, 0.0]], width: Some(1.0), extra: Default::default() };
     BorderPattern {
         id: "full".into(),
         name: "Full".into(),
@@ -62,6 +63,8 @@ fn full_pattern() -> BorderPattern {
         length: 4.0,
         repeat: vec![part.clone()],
         corner: vec![part],
+        extra: Default::default(),
+        unknown: None,
     }
 }
 
@@ -89,11 +92,19 @@ fn full_stitch() -> StitchSettings {
         rails: true,
         trim_before: true,
         trim_after: true,
+        extra: Default::default(),
+        unknown: None,
     }
 }
 
 fn full_setup() -> EmbroiderySetup {
-    EmbroiderySetup { trim_jumps_over: Some(5.0), stitch_moves_under: 2.0, order: vec![NodeId(1)], patterns: vec![full_pattern()] }
+    EmbroiderySetup {
+        trim_jumps_over: Some(5.0),
+        stitch_moves_under: 2.0,
+        order: vec![NodeId(1)],
+        patterns: vec![full_pattern()],
+        extra: Default::default(),
+    }
 }
 
 /// `range` matches the schema property's `minimum` and `maximum`.

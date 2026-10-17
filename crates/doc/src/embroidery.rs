@@ -208,6 +208,61 @@ pub struct StitchSettings {
     /// Cut the thread after the object ends.
     #[serde(default, skip_serializing_if = "crate::skip::is_default")]
     pub trim_after: bool,
+    /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
+    #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
+    pub extra: serde_json::Map<String, serde_json::Value>,
+    /// Settings this version can't read (a stitch type, underlay or value from a newer
+    /// VectorCraft), kept exactly as written so saving doesn't lose them. Such an object isn't
+    /// sewn; the other fields are left at their defaults. See [`de_stitch`].
+    #[serde(skip)]
+    pub unknown: Option<Box<serde_json::Value>>,
+}
+
+/// Read a node's `stitch`: settings this version can't read are kept as written in
+/// [`StitchSettings::unknown`] instead of failing the whole document.
+pub fn de_stitch<'de, D: serde::Deserializer<'de>>(d: D) -> Result<Option<Box<StitchSettings>>, D::Error> {
+    let v = Option::<serde_json::Value>::deserialize(d)?;
+    Ok(v.map(|v| match StitchSettings::deserialize(&v) {
+        Ok(s) => Box::new(s),
+        Err(_) => Box::new(StitchSettings { unknown: Some(Box::new(v)), ..StitchSettings::default() }),
+    }))
+}
+
+/// Write a node's `stitch`: settings kept from a newer version go back as they were read.
+pub fn ser_stitch<S: serde::Serializer>(s: &Option<Box<StitchSettings>>, ser: S) -> Result<S::Ok, S::Error> {
+    match s.as_deref() {
+        Some(StitchSettings { unknown: Some(raw), .. }) => raw.serialize(ser),
+        Some(st) => st.serialize(ser),
+        None => ser.serialize_none(),
+    }
+}
+
+/// Read a document's border patterns: one this version can't read (a part stitch from a newer
+/// VectorCraft) is kept as written in [`BorderPattern::unknown`], with its id and name.
+pub fn de_patterns<'de, D: serde::Deserializer<'de>>(d: D) -> Result<Vec<BorderPattern>, D::Error> {
+    let v = Vec::<serde_json::Value>::deserialize(d)?;
+    Ok(v.into_iter()
+        .map(|v| match BorderPattern::deserialize(&v) {
+            Ok(p) => p,
+            Err(_) => {
+                let text = |k: &str| v.get(k).and_then(serde_json::Value::as_str).unwrap_or_default().to_string();
+                BorderPattern { id: text("id"), name: text("name"), unknown: Some(Box::new(v.clone())), ..BorderPattern::default() }
+            }
+        })
+        .collect())
+}
+
+/// Write a document's border patterns, those kept from a newer version as they were read.
+pub fn ser_patterns<S: serde::Serializer>(v: &[BorderPattern], ser: S) -> Result<S::Ok, S::Error> {
+    use serde::ser::SerializeSeq;
+    let mut seq = ser.serialize_seq(Some(v.len()))?;
+    for p in v {
+        match &p.unknown {
+            Some(raw) => seq.serialize_element(raw)?,
+            None => seq.serialize_element(p)?,
+        }
+    }
+    seq.end()
 }
 
 /// How a [`PatternPart`] is sewn.
@@ -238,6 +293,9 @@ pub struct PatternPart {
     /// Satin: the column's width, mm at the pattern's size.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub width: Option<f64>,
+    /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
+    #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
+    pub extra: serde_json::Map<String, serde_json::Value>,
 }
 
 /// A border pattern: one repeat of a stitched border, sewn end to end along a path by
@@ -271,6 +329,13 @@ pub struct BorderPattern {
     /// starts again after it.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub corner: Vec<PatternPart>,
+    /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
+    #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
+    pub extra: serde_json::Map<String, serde_json::Value>,
+    /// A pattern from a newer VectorCraft this version can't read, kept as written (see
+    /// [`de_patterns`]). It isn't sewn.
+    #[serde(skip)]
+    pub unknown: Option<Box<serde_json::Value>>,
 }
 
 /// The document's embroidery settings: how the needle travels between stitches
@@ -289,13 +354,22 @@ pub struct EmbroiderySetup {
     pub order: Vec<crate::NodeId>,
     /// Border patterns loaded into the document (from `.vcborder` files), kept with it so it sews
     /// the same anywhere; [`StitchSettings::pattern`] names them by id.
-    #[serde(skip_serializing_if = "Vec::is_empty")]
+    #[serde(skip_serializing_if = "Vec::is_empty", deserialize_with = "de_patterns", serialize_with = "ser_patterns")]
     pub patterns: Vec<BorderPattern>,
+    /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
+    #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
+    pub extra: serde_json::Map<String, serde_json::Value>,
 }
 
 impl Default for EmbroiderySetup {
     fn default() -> Self {
-        Self { trim_jumps_over: Some(Self::DEFAULT_TRIM), stitch_moves_under: Self::DEFAULT_STITCH_MOVES, order: vec![], patterns: vec![] }
+        Self {
+            trim_jumps_over: Some(Self::DEFAULT_TRIM),
+            stitch_moves_under: Self::DEFAULT_STITCH_MOVES,
+            order: vec![],
+            patterns: vec![],
+            extra: Default::default(),
+        }
     }
 }
 
@@ -381,6 +455,11 @@ impl StitchSettings {
         let stroke = stroke_mm.is_finite() && stroke_mm > 0.0 && self.kind != StitchKind::Zigzag;
         let fallback = if stroke { stroke_mm } else { Self::DEFAULT_WIDTH };
         clamp(self.width, fallback, Self::WIDTH)
+    }
+
+    /// The stitch type's id, or `unknown` for settings from a newer version this one can't read.
+    pub fn kind_id(&self) -> &'static str {
+        if self.unknown.is_some() { "unknown" } else { self.kind.id() }
     }
 
     /// The pattern border's width, mm, given the pattern's own (always within
@@ -487,14 +566,66 @@ mod tests {
     fn setup_defaults_round_trip_and_clamp() {
         let s = EmbroiderySetup::default();
         assert_eq!((s.trim_over(), s.stitch_under()), (Some(3.0), 1.0));
-        let never = EmbroiderySetup { trim_jumps_over: None, stitch_moves_under: 9.0, order: vec![crate::NodeId(7)], patterns: vec![] };
+        let never = EmbroiderySetup { trim_jumps_over: None, stitch_moves_under: 9.0, order: vec![crate::NodeId(7)], ..Default::default() };
         let back: EmbroiderySetup = serde_json::from_value(serde_json::to_value(&never).unwrap()).unwrap();
         assert_eq!(back, never);
         assert_eq!((never.trim_over(), never.stitch_under()), (None, 5.0));
-        let tight = EmbroiderySetup { trim_jumps_over: Some(0.6), stitch_moves_under: 2.0, order: vec![], patterns: vec![] };
+        let tight = EmbroiderySetup { trim_jumps_over: Some(0.6), stitch_moves_under: 2.0, ..Default::default() };
         assert_eq!(tight.stitch_under(), 0.6, "a sewn move is never longer than a trimmed jump");
         let missing: EmbroiderySetup = serde_json::from_value(serde_json::json!({})).unwrap();
         assert_eq!(missing, EmbroiderySetup::default());
+    }
+
+    /// A node as a newer VectorCraft might write it: a stitch kind, an underlay and a member this
+    /// version doesn't know.
+    fn newer_node() -> serde_json::Value {
+        serde_json::json!({
+            "id": 7,
+            "kind": {"type": "path", "path": {"subpaths": []}},
+            "stitch": {"kind": "crossStitch", "underlay": "lattice", "cellSize": 2.5, "length": 3.0}
+        })
+    }
+
+    #[test]
+    fn settings_from_a_newer_version_load_and_save_unchanged() {
+        let n: crate::Node = serde_json::from_value(newer_node()).expect("a newer stitch kind doesn't fail the node");
+        let s = n.stitch.as_deref().unwrap();
+        assert!(s.unknown.is_some());
+        assert_eq!(s.kind_id(), "unknown");
+        let back = serde_json::to_value(&n).unwrap();
+        assert_eq!(back["stitch"], newer_node()["stitch"], "written back exactly as read");
+        // Numbers too big for their field are kept the same way.
+        let mut big = newer_node();
+        big["stitch"] = serde_json::json!({"kind": "satin", "thread": [300, 0, 0]});
+        let n: crate::Node = serde_json::from_value(big.clone()).unwrap();
+        assert_eq!(serde_json::to_value(&n).unwrap()["stitch"], big["stitch"]);
+    }
+
+    #[test]
+    fn unknown_members_are_kept_and_known_ones_still_read() {
+        let v = serde_json::json!({"kind": "satin", "width": 4.0, "fabricProfile": "knit", "pushComp": {"x": 0.2}});
+        let s: StitchSettings = serde_json::from_value(v.clone()).unwrap();
+        assert_eq!((s.kind, s.width, s.unknown.is_none()), (StitchKind::Satin, Some(4.0), true));
+        assert_eq!(serde_json::to_value(&s).unwrap(), v, "the newer members survive a save");
+        let setup = serde_json::json!({"trimJumpsOver": 2.0, "stitchMovesUnder": 1.0, "fabric": "towel"});
+        let e: EmbroiderySetup = serde_json::from_value(setup.clone()).unwrap();
+        assert_eq!(serde_json::to_value(&e).unwrap(), setup);
+    }
+
+    #[test]
+    fn patterns_from_a_newer_version_are_kept() {
+        let setup = serde_json::json!({
+            "trimJumpsOver": 3.0, "stitchMovesUnder": 1.0,
+            "patterns": [
+                {"id": "rope", "name": "Rope", "width": 6.0, "length": 8.0, "repeat": [{"stitch": "bean", "points": [[0.0, 0.0], [8.0, 0.0]]}]},
+                {"id": "lace", "name": "Lace", "width": 6.0, "length": 8.0, "repeat": [{"stitch": "tripleSatin", "points": [[0.0, 0.0]]}]}
+            ]
+        });
+        let e: EmbroiderySetup = serde_json::from_value(setup.clone()).unwrap();
+        assert_eq!(e.patterns.len(), 2);
+        assert!(e.patterns[0].unknown.is_none() && e.patterns[1].unknown.is_some());
+        assert_eq!((e.patterns[1].id.as_str(), e.patterns[1].name.as_str()), ("lace", "Lace"));
+        assert_eq!(serde_json::to_value(&e).unwrap(), setup);
     }
 
     #[test]
