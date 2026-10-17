@@ -2816,6 +2816,20 @@
 	Save Border Pattern…	Salvar borda de padrão…
 	Remove Border Pattern	Remover borda de padrão
 	Render Stitch Preview	Renderizar visualização de pontos
+	Check	Verificação
+	No problems found.	Nenhum problema encontrado.
+	Only the first 30 are listed.	Apenas os 30 primeiros são listados.
+	A stitched object that makes no stitches: empty, or too small for its stitch type.	Um objeto bordado que não gera pontos: vazio, ou pequeno demais para o seu tipo de ponto.
+	Art the stitch can't follow	Arte que o ponto não consegue seguir
+	Check Design	Verificar design
+	Design cut short	Design cortado
+	Long stitches	Pontos longos
+	Makes no stitches	Não gera pontos
+	Not sewn as set	Não bordado como definido
+	Objects that are stitched but can't be sewn (not a path, compound path or type; settings from a newer VectorCraft), or are sewn whole although a mask hides part of them.	Objetos bordados que não podem ser costurados (não são traçado, traçado composto nem texto; configurações de uma versão mais nova do VectorCraft), ou costurados inteiros embora uma máscara esconda parte deles.
+	Stitches longer than 7 mm snag and loosen with wear. Shorten the stitch length, narrow the satin, or fill a shape that wide.	Pontos com mais de 7 mm prendem e afrouxam com o uso. Encurte o comprimento do ponto, estreite o cetim ou preencha uma forma tão larga.
+	The design has more needle moves than a file can hold; the rest is left out. Split it into several designs.	O design tem mais movimentos de agulha do que um arquivo comporta; o restante fica de fora. Divida-o em vários designs.
+	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	O que o tipo de ponto informou sobre a forma do objeto (uma forma de cetim sem traços, um motivo fino demais, uma borda de padrão que falta…).
 	A motif carved into the fill	Um motivo entalhado no preenchimento
 	Distance between zigzags or rows: smaller is denser	Distância entre zigue-zagues ou fileiras: menor é mais denso
 	How many times each stitch is sewn	Quantas vezes cada ponto é costurado

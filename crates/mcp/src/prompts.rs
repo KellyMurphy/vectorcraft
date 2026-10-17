@@ -357,8 +357,10 @@ Method:
    letter for type): bean outline for thin strokes, satin shape in between, fill with a satin
    border for wide shapes. Tune the type's settings (length, spacing, width, angle, underlay,
    pull, pattern…; embroidery.set's parameter description lists them all with their ranges).
-3. run_command embroidery.info: stitch count, size in mm, jumps, trims, threads and warnings.
-   Fix every warning before going on.
+3. run_command embroidery.info: stitch count, size in mm, jumps, trims and threads; then
+   run_command embroidery.check for the design checker's findings (long stitches, objects that
+   make no stitches, art a stitch can't follow…), each with its object and where it is. Fix the
+   errors and warnings before going on.
 4. render_preview {stitches: true} to see the stitches in their thread colours on fabric.
    Look for gaps, long satin stitches and objects that crowd each other.
 5. Order the sewing: embroidery.order shows it; embroidery.sortByThread sews each colour

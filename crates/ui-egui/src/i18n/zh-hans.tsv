@@ -3538,6 +3538,20 @@ axis	Both	两者
 	Save Border Pattern…	存储图案边框…
 	Remove Border Pattern	删除图案边框
 	Render Stitch Preview	渲染针迹预览
+	Check	检查
+	No problems found.	未发现问题。
+	Only the first 30 are listed.	仅列出前 30 项。
+	A stitched object that makes no stitches: empty, or too small for its stitch type.	不产生针迹的刺绣对象：为空，或对其针迹类型而言太小。
+	Art the stitch can't follow	针迹无法跟随的图稿
+	Check Design	检查设计
+	Design cut short	设计被截断
+	Long stitches	长针迹
+	Makes no stitches	不产生针迹
+	Not sewn as set	未按设置缝制
+	Objects that are stitched but can't be sewn (not a path, compound path or type; settings from a newer VectorCraft), or are sewn whole although a mask hides part of them.	无法缝制的刺绣对象（不是路径、复合路径或文字；来自更新版本 VectorCraft 的设置），或虽有蒙版遮住一部分仍整体缝制的对象。
+	Stitches longer than 7 mm snag and loosen with wear. Shorten the stitch length, narrow the satin, or fill a shape that wide.	超过 7 毫米的针迹容易勾挂，穿着后会松弛。缩短针迹长度、收窄缎纹，或将这么宽的形状改为填充。
+	The design has more needle moves than a file can hold; the rest is left out. Split it into several designs.	设计的走针次数超出文件可容纳的数量；其余部分被省略。请将其拆分为多个设计。
+	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	针迹类型对对象形状给出的提示（没有笔画的缎纹形状、过细的图案、缺失的图案边框……）。
 	A motif carved into the fill	刻入填充中的图案
 	Distance between zigzags or rows: smaller is denser	锯齿或行之间的距离：越小越密
 	How many times each stitch is sewn	每个针迹缝制的次数

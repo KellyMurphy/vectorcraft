@@ -3860,6 +3860,20 @@ axis	Both	Оба
 	Save Border Pattern…	Сохранить узорную кайму…
 	Remove Border Pattern	Удалить узорную кайму
 	Render Stitch Preview	Отрисовать предпросмотр стежков
+	Check	Проверка
+	No problems found.	Проблем не найдено.
+	Only the first 30 are listed.	Показаны только первые 30.
+	A stitched object that makes no stitches: empty, or too small for its stitch type.	Вышиваемый объект, который не даёт стежков: пустой или слишком мал для своего типа стежка.
+	Art the stitch can't follow	Рисунок, за которым стежок не может следовать
+	Check Design	Проверить дизайн
+	Design cut short	Дизайн обрезан
+	Long stitches	Длинные стежки
+	Makes no stitches	Не даёт стежков
+	Not sewn as set	Не вышивается как задано
+	Objects that are stitched but can't be sewn (not a path, compound path or type; settings from a newer VectorCraft), or are sewn whole although a mask hides part of them.	Вышиваемые объекты, которые нельзя вышить (не контур, не составной контур и не текст; настройки из более новой версии VectorCraft), или вышиваемые целиком, хотя часть их скрыта маской.
+	Stitches longer than 7 mm snag and loosen with wear. Shorten the stitch length, narrow the satin, or fill a shape that wide.	Стежки длиннее 7 мм цепляются и ослабевают при носке. Укоротите стежок, сузьте гладь или заполните такую широкую фигуру.
+	The design has more needle moves than a file can hold; the rest is left out. Split it into several designs.	В дизайне больше движений иглы, чем вмещает файл; остальное пропущено. Разделите его на несколько дизайнов.
+	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	Что тип стежка сообщил о форме объекта (форма гладью без штрихов, слишком мелкий мотив, отсутствующая узорная кайма…).
 	A motif carved into the fill	Мотив, вырезанный в заливке
 	Distance between zigzags or rows: smaller is denser	Расстояние между зигзагами или рядами: меньше — плотнее
 	How many times each stitch is sewn	Сколько раз прошивается каждый стежок

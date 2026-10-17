@@ -3473,6 +3473,8 @@ pub fn menu_strings() -> std::collections::BTreeSet<String> {
     out.extend(crate::state::all_panels().map(|(_, label)| label.to_string()));
     // The embroidery settings' labels and tooltips (the Embroidery panel's generic rows).
     out.extend(vectorcraft_embroidery::params::PARAMS.iter().flat_map(|p| [p.label, p.help]).map(str::to_string));
+    // The design checker's rules (the Embroidery panel's Check list).
+    out.extend(vectorcraft_embroidery::check::RULES.iter().flat_map(|r| [r.label, r.help]).map(str::to_string));
     out.extend(vectorcraft_tools::catalog::all_tools().map(|t| t.label.to_string()));
     out.extend(crate::toolbar::BASIC.iter().map(|c| c.0.to_string()));
     out.extend(vectorcraft_color::BlendMode::ALL.iter().map(|m| m.label().to_string()));

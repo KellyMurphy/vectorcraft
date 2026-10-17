@@ -37,6 +37,9 @@ fn info(app: &mut VectorcraftApp, ctx: &egui::Context) -> Value {
     if let (Some(o), Ok(order)) = (v.as_object_mut(), app.session.execute("embroidery.order", &json!({}))) {
         o.insert("sewOrder".into(), order);
     }
+    if let (Some(o), Ok(check)) = (v.as_object_mut(), app.session.execute("embroidery.check", &json!({}))) {
+        o.insert("check".into(), check);
+    }
     if let (Some(o), Ok(list)) = (v["selection"].as_object_mut(), app.session.execute("embroidery.borderPatterns", &json!({}))) {
         o.insert("borderPatterns".into(), list["patterns"].clone());
     }
@@ -140,6 +143,50 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     travel(app, ui, &info["setup"]);
     widgets::divider(ui);
     design(app, ui, &info["design"]);
+    widgets::divider(ui);
+    checks(app, ui, &info["check"]);
+}
+
+/// The most findings the Check list shows.
+const MAX_CHECK_ROWS: usize = 30;
+
+/// The design checker's findings, errors first: click one to select its object. Stitch Preview
+/// marks where each one is.
+fn checks(app: &mut VectorcraftApp, ui: &mut Ui, check: &Value) {
+    let t = crate::theme::Tokens::get(ui.ctx());
+    widgets::section_header(ui, tl!("Check"));
+    let findings: Vec<&Value> = check["findings"].as_array().map(|a| a.iter().collect()).unwrap_or_default();
+    if findings.is_empty() {
+        widgets::dim_label(ui, tl!("No problems found."));
+        return;
+    }
+    let rules = check["rules"].as_array().cloned().unwrap_or_default();
+    let help = |id: &str| rules.iter().find(|r| r["id"] == id).and_then(|r| r["help"].as_str()).map(|h| tl!(h)).unwrap_or_default();
+    for f in findings.iter().take(MAX_CHECK_ROWS) {
+        let color = match f["severity"].as_str() {
+            Some("error") => t.error,
+            Some("warning") => t.warning,
+            _ => t.text_dim,
+        };
+        let message = f["message"].as_str().unwrap_or_default();
+        let text = match f["objectName"].as_str() {
+            Some(name) => format!("{name}: {message}"),
+            None => message.to_string(),
+        };
+        ui.horizontal(|ui| {
+            let (dot, _) = ui.allocate_exact_size(vec2(10.0, 14.0), egui::Sense::hover());
+            ui.painter().circle_filled(dot.center(), 4.0, color);
+            let row = ui.add(egui::Label::new(text).wrap().sense(egui::Sense::click())).on_hover_text(help(f["rule"].as_str().unwrap_or_default()));
+            if row.clicked()
+                && let Some(id) = f["object"].as_u64()
+            {
+                app.run("select.set", json!({ "ids": [id] })).ok();
+            }
+        });
+    }
+    if findings.len() > MAX_CHECK_ROWS {
+        widgets::dim_label(ui, tl!("Only the first 30 are listed."));
+    }
 }
 
 /// A row of the sewing order dragged in the list: its index.

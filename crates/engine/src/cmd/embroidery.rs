@@ -145,6 +145,15 @@ pub fn specs() -> Vec<CommandSpec> {
             preview
         ),
         cmd!(
+            query "embroidery.check",
+            "Check Design",
+            ["Window", "Embroidery"],
+            None,
+            "{ids?: only findings about these objects (groups: those inside) and the design as a whole} run the design checker on the design as it is sewn → {findings: [{rule, severity: error|warning|note, message, object: id | null (the design), objectName, at: [x, y] | null (document points; null: the object as a whole)}] (errors first, then in sewing order), counts: {error, warning, note}, rules: [{id, label, help}]}",
+            has_doc,
+            check
+        ),
+        cmd!(
             query "embroidery.stitches",
             "Embroidery Stitches",
             ["Window", "Embroidery"],
@@ -644,6 +653,42 @@ fn info(s: &mut Session, p: &Value) -> Result<Value> {
         selection[param.key] = same(all.iter().map(|s| (param.get)(s)));
     }
     Ok(json!({ "design": design(doc, &plan), "setup": setup_json(&doc.embroidery), "selection": selection }))
+}
+
+fn check(s: &mut Session, p: &Value) -> Result<Value> {
+    use vectorcraft_embroidery::check;
+    let only = match ids_param(p, "ids") {
+        Some(ids) => Some(leaf_targets(s, &ids)?),
+        None => None,
+    };
+    let doc = &s.doc()?.doc;
+    let plan = s.stitch_plan(doc);
+    let findings: Vec<check::Finding> = check::check(doc, &plan)
+        .into_iter()
+        .filter(|f| match (&only, f.object) {
+            (Some(ids), Some(id)) => ids.contains(&id),
+            _ => true,
+        })
+        .collect();
+    let pt = |v: f64| (v / vectorcraft_embroidery::PT_MM * 100.0).round() / 100.0;
+    let list: Vec<Value> = findings
+        .iter()
+        .map(|f| {
+            json!({
+                "rule": f.rule, "severity": f.severity.id(), "message": f.message,
+                "object": f.object.map(|id| id.0),
+                "objectName": f.object.and_then(|id| doc.node(id)).map(object_name),
+                "at": f.at.map(|a| [pt(a.x), pt(a.y)]),
+            })
+        })
+        .collect();
+    let count = |sev: check::Severity| findings.iter().filter(|f| f.severity == sev).count();
+    let rules: Vec<Value> = check::RULES.iter().map(|r| json!({"id": r.id, "label": r.label, "help": r.help})).collect();
+    Ok(json!({
+        "findings": list,
+        "counts": {"error": count(check::Severity::Error), "warning": count(check::Severity::Warning), "note": count(check::Severity::Note)},
+        "rules": rules,
+    }))
 }
 
 fn preview(s: &mut Session, p: &Value) -> Result<Value> {

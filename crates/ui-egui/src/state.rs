@@ -354,7 +354,7 @@ pub struct UiState {
     pub dialog_file: Option<std::sync::Arc<crate::dialogs::import_pdf::DialogFile>>,
     /// Stitch Preview's plan and the document state it was made from.
     #[serde(skip)]
-    pub stitch_cache: Option<(std::sync::Arc<vectorcraft_doc::Document>, std::sync::Arc<vectorcraft_embroidery::Plan>)>,
+    pub stitch_cache: Option<crate::canvas::StitchMemo>,
     /// The DXF Options chosen last (`document.exportDxf` options; null: never used).
     #[serde(default)]
     pub dxf_options: Value,

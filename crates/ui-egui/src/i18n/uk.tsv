@@ -3845,6 +3845,20 @@ axis	Both	Обидві
 	Save Border Pattern…	Зберегти візерункову облямівку…
 	Remove Border Pattern	Вилучити візерункову облямівку
 	Render Stitch Preview	Відобразити попередній перегляд стібків
+	Check	Перевірка
+	No problems found.	Проблем не знайдено.
+	Only the first 30 are listed.	Показано лише перші 30.
+	A stitched object that makes no stitches: empty, or too small for its stitch type.	Вишиваний об’єкт, що не дає стібків: порожній або замалий для свого типу стібка.
+	Art the stitch can't follow	Малюнок, за яким стібок не може йти
+	Check Design	Перевірити дизайн
+	Design cut short	Дизайн обрізано
+	Long stitches	Довгі стібки
+	Makes no stitches	Не дає стібків
+	Not sewn as set	Не вишивається, як задано
+	Objects that are stitched but can't be sewn (not a path, compound path or type; settings from a newer VectorCraft), or are sewn whole although a mask hides part of them.	Вишивані об’єкти, які не можна вишити (не контур, не складений контур і не текст; налаштування з новішої версії VectorCraft), або вишиті цілими, хоча частину їх приховує маска.
+	Stitches longer than 7 mm snag and loosen with wear. Shorten the stitch length, narrow the satin, or fill a shape that wide.	Стібки, довші за 7 мм, чіпляються й слабшають під час носіння. Скоротіть стібок, звузьте гладь або заповніть таку широку фігуру.
+	The design has more needle moves than a file can hold; the rest is left out. Split it into several designs.	У дизайні більше рухів голки, ніж уміщує файл; решту пропущено. Розділіть його на кілька дизайнів.
+	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	Що тип стібка повідомив про форму об’єкта (форма гладдю без штрихів, задрібний мотив, відсутня візерункова облямівка…).
 	A motif carved into the fill	Мотив, вирізаний у заливці
 	Distance between zigzags or rows: smaller is denser	Відстань між зигзагами або рядами: менша — щільніше
 	How many times each stitch is sewn	Скільки разів прошивається кожен стібок

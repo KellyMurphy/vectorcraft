@@ -784,6 +784,20 @@
 	Save Border Pattern…	Uložit vzorový okraj…
 	Remove Border Pattern	Odstranit vzorový okraj
 	Render Stitch Preview	Vykreslit náhled stehů
+	Check	Kontrola
+	No problems found.	Nenalezeny žádné problémy.
+	Only the first 30 are listed.	Zobrazeno je jen prvních 30.
+	A stitched object that makes no stitches: empty, or too small for its stitch type.	Vyšívaný objekt, který nevytváří žádné stehy: je prázdný nebo příliš malý pro svůj typ stehu.
+	Art the stitch can't follow	Kresba, které steh nemůže sledovat
+	Check Design	Zkontrolovat návrh
+	Design cut short	Návrh je zkrácen
+	Long stitches	Dlouhé stehy
+	Makes no stitches	Nevytváří stehy
+	Not sewn as set	Nevyšívá se podle nastavení
+	Objects that are stitched but can't be sewn (not a path, compound path or type; settings from a newer VectorCraft), or are sewn whole although a mask hides part of them.	Objekty se stehy, které nelze vyšít (nejde o cestu, složenou cestu ani text; nastavení z novější verze VectorCraftu), nebo se vyšívají celé, i když jejich část skrývá maska.
+	Stitches longer than 7 mm snag and loosen with wear. Shorten the stitch length, narrow the satin, or fill a shape that wide.	Stehy delší než 7 mm se zachytávají a nošením povolují. Zkraťte délku stehu, zužte saténový steh, nebo tak široký tvar vyplňte.
+	The design has more needle moves than a file can hold; the rest is left out. Split it into several designs.	Návrh má více pohybů jehly, než pojme soubor; zbytek je vynechán. Rozdělte ho na několik návrhů.
+	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	Co typ stehu hlásí o tvaru objektu (saténový tvar bez tahů, příliš jemný motiv, chybějící vzorový okraj…).
 	A motif carved into the fill	Motiv vyrytý do výplně
 	Distance between zigzags or rows: smaller is denser	Vzdálenost mezi cikcaky nebo řadami: menší je hustší
 	How many times each stitch is sewn	Kolikrát se každý steh prošije

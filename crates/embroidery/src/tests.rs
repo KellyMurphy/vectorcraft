@@ -8,12 +8,12 @@ use vectorcraft_geom::{Anchor, FillRule, PathData, SubPath};
 
 use super::*;
 
-fn poly(pts: &[(f64, f64)], closed: bool) -> PathData {
+pub(crate) fn poly(pts: &[(f64, f64)], closed: bool) -> PathData {
     PathData::single(SubPath { anchors: pts.iter().map(|&(x, y)| Anchor::corner(Point::new(x, y))).collect(), closed })
 }
 
 /// A document holding `nodes` (made with `f`, given the document for ids) on its first layer.
-fn doc_with(f: impl FnOnce(&mut Document) -> Vec<Node>) -> Document {
+pub(crate) fn doc_with(f: impl FnOnce(&mut Document) -> Vec<Node>) -> Document {
     let mut d = Document::new(500.0, 500.0);
     let nodes = f(&mut d);
     let layer = Arc::make_mut(&mut d.layers[0]);
@@ -21,7 +21,7 @@ fn doc_with(f: impl FnOnce(&mut Document) -> Vec<Node>) -> Document {
     d
 }
 
-fn stitched(d: &mut Document, path: PathData, kind: StitchKind, stroke: [u8; 3]) -> Node {
+pub(crate) fn stitched(d: &mut Document, path: PathData, kind: StitchKind, stroke: [u8; 3]) -> Node {
     let mut n = Node::path(d.alloc_id(), path, Appearance::basic(Paint::None, Paint::solid(Color::rgb8(stroke[0], stroke[1], stroke[2])), 1.0));
     n.stitch = Some(Box::new(StitchSettings::new(kind)));
     n
@@ -234,7 +234,7 @@ fn long_moves_are_split_into_short_records() {
             Needle { x: 50.0, y: 0.0, cmd: Cmd::Stitch },
             Needle { x: 50.0, y: 0.0, cmd: Cmd::End },
         ],
-        warnings: vec![],
+        ..Plan::default()
     };
     let back = read_dst(&write_dst(&plan, "")).unwrap();
     let stitches: Vec<&Needle> = back.needles.iter().filter(|n| n.cmd == Cmd::Stitch).collect();
@@ -320,7 +320,7 @@ proptest! {
             y += dy;
             needles.push(Needle { x, y, cmd: Cmd::Stitch });
         }
-        let plan = Plan { threads: vec![[0; 3]], needles, warnings: vec![] };
+        let plan = Plan { threads: vec![[0; 3]], needles, ..Plan::default() };
         let back = read_dst(&write_dst(&plan, "")).unwrap();
         let (a, b) = (plan.stats().bounds.unwrap(), back.stats().bounds.unwrap());
         prop_assert!(((a[2] - a[0]) - (b[2] - b[0])).abs() <= 0.11);

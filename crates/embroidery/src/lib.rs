@@ -11,6 +11,7 @@
 //! - `import`: a plan as editable art (one manual-stitch path per run of stitches).
 
 pub mod borders;
+pub mod check;
 mod dst;
 pub mod extract;
 pub mod generate;
@@ -74,6 +75,37 @@ pub struct Plan {
     /// Problems with the art (objects that can't be stitched, a design cut short).
     #[serde(skip)]
     pub warnings: Vec<String>,
+    /// The objects sewn, in sewing order: which needle moves each made, and its own warnings
+    /// (for the design checker, [`check`]).
+    #[serde(skip)]
+    pub objects: Vec<PlannedObject>,
+    /// Stitched objects that aren't sewn as set, and why.
+    #[serde(skip)]
+    pub left_out: Vec<(NodeId, LeftOut)>,
+    /// Whether the design was cut short at [`MAX_NEEDLES`].
+    #[serde(skip)]
+    pub truncated: bool,
+}
+
+/// One object of a plan.
+#[derive(Clone, Debug, PartialEq)]
+pub struct PlannedObject {
+    pub id: NodeId,
+    /// Its needle moves: `needles[range]` of the plan (ties, trims and jumps into it included).
+    pub needles: std::ops::Range<usize>,
+    /// What its stitch type said about its art.
+    pub warnings: Vec<String>,
+}
+
+/// Why a stitched object isn't sewn as set.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum LeftOut {
+    /// Only paths, compound paths and type can be stitched.
+    CantStitch,
+    /// Its settings come from a newer VectorCraft.
+    Newer,
+    /// Sewn whole: a clipping or opacity mask over it doesn't apply to stitches.
+    Masked,
 }
 
 /// A plan's counts and size.
@@ -335,12 +367,19 @@ pub fn plan_cached(doc: &Document, cache: &mut StitchCache) -> Plan {
     let mut tally = Tally::default();
     // Only the objects sewn now are kept for the next plan.
     let mut next = HashMap::new();
+    let mut objects = vec![];
     for n in ordered(doc, &mut tally) {
         let sewn = cache.get(n, &mut next);
+        let start = b.plan.needles.len();
         b.apply(&sewn);
+        objects.push(PlannedObject { id: n.id, needles: start..b.plan.needles.len(), warnings: sewn.warnings.clone() });
     }
     cache.entries = next;
+    let truncated = b.full;
     let mut plan = b.finish();
+    plan.objects = objects;
+    plan.truncated = truncated;
+    plan.left_out = std::mem::take(&mut tally.ids);
     let what = |n: usize| if n == 1 { "object" } else { "objects" };
     if tally.skipped > 0 {
         let n = tally.skipped;
@@ -404,6 +443,8 @@ struct Tally {
     clipped: usize,
     /// Objects whose stitch settings came from a newer VectorCraft (kept, not sewn).
     newer: usize,
+    /// Each of those objects, and why.
+    ids: Vec<(NodeId, LeftOut)>,
 }
 
 /// The objects under `n` that are sewn, in paint order.
@@ -417,18 +458,23 @@ fn collect<'a>(n: &'a Arc<Node>, items: &mut Vec<&'a Arc<Node>>, tally: &mut Tal
     let masked = masked || n.mask.is_some() || matches!(n.kind, NodeKind::Group { clip: true, .. } | NodeKind::Layer { clip: true, .. });
     if n.stitch.as_deref().is_some_and(|s| s.unknown.is_some()) {
         tally.newer += 1;
+        tally.ids.push((n.id, LeftOut::Newer));
     } else if n.stitch.is_some() {
         let sewn = match &n.kind {
             NodeKind::Path { guide: false, clipping: false, .. } | NodeKind::Compound { .. } | NodeKind::Text(_) => true,
             NodeKind::Path { .. } => false,
             _ => {
                 tally.skipped += 1;
+                tally.ids.push((n.id, LeftOut::CantStitch));
                 false
             }
         };
         if sewn {
             items.push(n);
             tally.clipped += usize::from(masked);
+            if masked {
+                tally.ids.push((n.id, LeftOut::Masked));
+            }
         }
     }
     if let Some(children) = n.children() {

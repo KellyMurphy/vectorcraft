@@ -3854,6 +3854,20 @@ theme	Appearance	外観
 	Save Border Pattern…	パターンボーダーを保存…
 	Remove Border Pattern	パターンボーダーを削除
 	Render Stitch Preview	ステッチプレビューを描画
+	Check	チェック
+	No problems found.	問題は見つかりませんでした。
+	Only the first 30 are listed.	最初の 30 件のみ表示しています。
+	A stitched object that makes no stitches: empty, or too small for its stitch type.	ステッチを作らない刺しゅうオブジェクト：空か、ステッチの種類に対して小さすぎます。
+	Art the stitch can't follow	ステッチがたどれないアート
+	Check Design	デザインをチェック
+	Design cut short	デザインが途中で切れています
+	Long stitches	長いステッチ
+	Makes no stitches	ステッチを作らない
+	Not sewn as set	設定どおりに縫われない
+	Objects that are stitched but can't be sewn (not a path, compound path or type; settings from a newer VectorCraft), or are sewn whole although a mask hides part of them.	縫えない刺しゅうオブジェクト（パス、複合パス、テキスト以外。新しいバージョンの VectorCraft の設定）、またはマスクで一部が隠れていても全体が縫われるオブジェクト。
+	Stitches longer than 7 mm snag and loosen with wear. Shorten the stitch length, narrow the satin, or fill a shape that wide.	7 mm より長いステッチは引っかかり、着用でゆるみます。ステッチの長さを短くするか、サテンを細くするか、その幅の形は塗りにしてください。
+	The design has more needle moves than a file can hold; the rest is left out. Split it into several designs.	デザインの針の動きがファイルに収まる数を超えています。残りは省かれます。複数のデザインに分けてください。
+	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	ステッチの種類がオブジェクトの形について報告した内容（線のないサテンシェイプ、細かすぎるモチーフ、見つからないパターンボーダーなど）。
 	A motif carved into the fill	塗りに彫り込むモチーフ
 	Distance between zigzags or rows: smaller is denser	ジグザグまたは列の間隔：小さいほど密になります
 	How many times each stitch is sewn	各ステッチを縫う回数

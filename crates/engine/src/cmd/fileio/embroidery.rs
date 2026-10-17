@@ -23,7 +23,10 @@ pub(super) fn encode(doc: &Document, _: &Value) -> Result<Encoded> {
         return Err(bad(C, "the stitched objects make no stitches (hidden, empty or too small)"));
     }
     let bytes = vectorcraft_embroidery::write_dst(&plan, &doc.title);
-    Ok(Encoded { warnings: plan.warnings, ..Encoded::one(bytes) })
+    // The design checker's findings the plan's warnings don't already give (long stitches…).
+    let mut warnings = plan.warnings.clone();
+    warnings.extend(vectorcraft_embroidery::check::summary(&vectorcraft_embroidery::check::check(doc, &plan)));
+    Ok(Encoded { warnings, ..Encoded::one(bytes) })
 }
 
 /// A DST design as a new document titled `title`.

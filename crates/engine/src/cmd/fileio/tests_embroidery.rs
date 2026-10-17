@@ -372,6 +372,34 @@ fn a_document_from_a_newer_version_opens_saves_and_can_be_restitched() {
     assert!(s.execute("embroidery.set", &json!({"type": "patternBorder", "pattern": "lace"})).is_err());
 }
 
+#[test]
+fn the_design_check_finds_and_places_problems() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 400, "height": 300})).unwrap();
+    let wide = s.execute("path.create", &json!({"d": "M 20 50 L 380 50"})).unwrap()["id"].as_u64().unwrap();
+    s.execute("embroidery.set", &json!({"type": "satin", "width": 10})).unwrap();
+    s.execute("select.none", &json!({})).unwrap();
+    let fine = s.execute("path.create", &json!({"d": "M 20 150 L 380 150"})).unwrap()["id"].as_u64().unwrap();
+    s.execute("embroidery.set", &json!({"type": "running"})).unwrap();
+    let r = s.execute("embroidery.check", &json!({})).unwrap();
+    let findings = r["findings"].as_array().unwrap();
+    let long = findings.iter().find(|f| f["rule"] == "long-stitch").expect("10 mm satin stitches are long");
+    assert_eq!((long["object"].clone(), long["severity"].clone(), long["objectName"].clone()), (json!(wide), json!("warning"), json!("Path")));
+    let at = long["at"].as_array().unwrap();
+    // On the satin, in document points.
+    assert!((at[1].as_f64().unwrap() - 50.0).abs() < 20.0 && at[0].as_f64().unwrap() > 20.0, "{long}");
+    assert_eq!(r["counts"]["warning"], findings.len());
+    assert!(r["rules"].as_array().unwrap().iter().any(|x| x["id"] == "long-stitch"));
+    // Asked about the fine line only: nothing.
+    assert!(s.execute("embroidery.check", &json!({"ids": [fine]})).unwrap()["findings"].as_array().unwrap().is_empty());
+    // The export says so too.
+    let export = s.execute("document.export", &json!({"format": "dst"})).unwrap();
+    assert!(
+        export["warnings"].as_array().unwrap().iter().any(|w| w.as_str().unwrap().starts_with("design check: 1 object: long stitches")),
+        "{export}"
+    );
+}
+
 /// Three stitched rectangles (red, blue, red) left to right; their ids.
 fn three(s: &mut Session) -> Vec<u64> {
     s.execute("file.new", &json!({"width": 400, "height": 200})).unwrap();

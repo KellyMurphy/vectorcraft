@@ -351,8 +351,9 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     }
     // View › Stitch Preview: the embroidery design on fabric over the art.
     if app.ui.view.stitch_preview {
-        let plan = stitch_plan(&app.session, &mut app.ui.stitch_cache, &doc);
-        draw_stitches(&painter, &xf, &doc, &plan);
+        let memo = stitch_plan(&app.session, &mut app.ui.stitch_cache, &doc);
+        draw_stitches(&painter, &xf, &doc, &memo.plan);
+        draw_findings(&painter, &xf, &memo.findings, &t);
     }
     // Artboard edges and names.
     let active_ab = 0;
@@ -1730,19 +1731,41 @@ fn names_an_artboard(text: &str) -> bool {
 use vectorcraft_embroidery::preview::{FABRIC, JUMP_ALPHA, JUMP_WIDTH_PT, THREAD_MM};
 
 /// Stitch Preview's plan of `doc`, made again only when the document changed.
-fn stitch_plan(
+/// Stitch Preview's plan of a document, and the design checker's findings on it.
+#[derive(Clone, Debug)]
+pub struct StitchMemo {
+    doc: std::sync::Arc<vectorcraft_doc::Document>,
+    plan: std::sync::Arc<vectorcraft_embroidery::Plan>,
+    findings: std::sync::Arc<Vec<vectorcraft_embroidery::check::Finding>>,
+}
+
+fn stitch_plan<'a>(
     session: &vectorcraft_engine::Session,
-    cache: &mut Option<(std::sync::Arc<vectorcraft_doc::Document>, std::sync::Arc<vectorcraft_embroidery::Plan>)>,
+    cache: &'a mut Option<StitchMemo>,
     doc: &std::sync::Arc<vectorcraft_doc::Document>,
-) -> std::sync::Arc<vectorcraft_embroidery::Plan> {
-    if let Some((d, p)) = cache.as_ref()
-        && std::sync::Arc::ptr_eq(d, doc)
-    {
-        return p.clone();
+) -> &'a StitchMemo {
+    if !cache.as_ref().is_some_and(|m| std::sync::Arc::ptr_eq(&m.doc, doc)) {
+        let plan = session.stitch_plan(doc);
+        let findings = vectorcraft_embroidery::check::check(doc, &plan);
+        *cache = Some(StitchMemo { doc: doc.clone(), plan: std::sync::Arc::new(plan), findings: std::sync::Arc::new(findings) });
     }
-    let p = std::sync::Arc::new(session.stitch_plan(doc));
-    *cache = Some((doc.clone(), p.clone()));
-    p
+    cache.get_or_insert_with(|| StitchMemo { doc: doc.clone(), plan: Default::default(), findings: Default::default() })
+}
+
+/// A ring at each finding of the design checker that has a place, in its severity's colour.
+fn draw_findings(painter: &egui::Painter, xf: &Xf, findings: &[vectorcraft_embroidery::check::Finding], t: &Tokens) {
+    use vectorcraft_embroidery::check::Severity;
+    for f in findings {
+        let Some(at) = f.at else { continue };
+        let color = match f.severity {
+            Severity::Error => t.error,
+            Severity::Warning => t.warning,
+            Severity::Note => t.text_dim,
+        };
+        let p = xf.to_screen(Point::new(at.x / vectorcraft_embroidery::PT_MM, at.y / vectorcraft_embroidery::PT_MM));
+        painter.circle_stroke(p, 9.0, Stroke::new(2.0, color));
+        painter.circle_stroke(p, 11.0, Stroke::new(1.0, Color32::from_white_alpha(160)));
+    }
 }
 
 /// The stitches of `plan` in their thread colours on fabric-coloured artboards, jumps as thin

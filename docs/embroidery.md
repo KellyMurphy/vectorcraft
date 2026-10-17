@@ -139,6 +139,24 @@ while the outer side sweeps round, so the stitches neither pile up inside the tu
 A closed satin path starts halfway along its longest side, away from its corners. No stitch is longer than
 12 mm: wider satins (with pull compensation) are sewn at 12 mm.
 
+### Checking the design
+
+The Embroidery panel's **Check** list shows what the design checker finds, errors first, then in sewing
+order; click one to select its object, and Stitch Preview marks where each one is (red for errors, amber
+for warnings). The rules so far:
+
+- **Long stitches:** stitches over 7 mm, which snag and loosen with wear (shorten the stitch length,
+  narrow the satin, or fill a shape that wide).
+- **Makes no stitches:** a stitched object that is empty or too small for its stitch type.
+- **Art the stitch can't follow:** what the stitch type said about the shape (a satin shape with no
+  strokes, a motif too fine, a missing border pattern).
+- **Not sewn as set:** objects that can't be stitched or whose settings are from a newer VectorCraft, and
+  objects sewn whole under a mask.
+- **Design cut short:** more needle moves than a file holds.
+
+Exporting a DST adds a line for each rule that found something to the export's warnings.
+`embroidery.check` gives the same findings to agents and scripts, each with the object and where it is.
+
 ### Commands
 
 | Command | Params |
@@ -153,6 +171,7 @@ A closed satin path starts halfway along its longest side, away from its corners
 | `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm}`: the document's travel settings |
 | `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings |
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
+| `embroidery.check` | `{ids?}` → the design checker's `findings` (`rule`, `severity`, `message`, `object`, `at` in document points), `counts` and the `rules` |
 | `embroidery.preview` | `{scale?, artboard?}` → the artboard as Stitch Preview shows it, as a PNG (`pngBase64`); MCP's `render_preview {stitches: true}` uses it |
 | `embroidery.order` | → the stitched objects in sewing order |
 | `embroidery.reorder` | `{to: first\|earlier\|later\|last, ids?}` or `{order: [ids]}`: change the sewing order |

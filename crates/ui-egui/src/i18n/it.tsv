@@ -3862,6 +3862,20 @@ axis	Both	Entrambi
 	Save Border Pattern…	Salva bordo a motivo…
 	Remove Border Pattern	Rimuovi bordo a motivo
 	Render Stitch Preview	Esegui rendering anteprima punti
+	Check	Controllo
+	No problems found.	Nessun problema trovato.
+	Only the first 30 are listed.	Sono elencati solo i primi 30.
+	A stitched object that makes no stitches: empty, or too small for its stitch type.	Un oggetto ricamato che non produce punti: vuoto, o troppo piccolo per il suo tipo di punto.
+	Art the stitch can't follow	Disegno che il punto non può seguire
+	Check Design	Controlla disegno
+	Design cut short	Disegno troncato
+	Long stitches	Punti lunghi
+	Makes no stitches	Non produce punti
+	Not sewn as set	Non ricamato come impostato
+	Objects that are stitched but can't be sewn (not a path, compound path or type; settings from a newer VectorCraft), or are sewn whole although a mask hides part of them.	Oggetti ricamati che non si possono cucire (né tracciato, né tracciato composto, né testo; impostazioni di una versione più recente di VectorCraft), o cuciti interi anche se una maschera ne nasconde una parte.
+	Stitches longer than 7 mm snag and loosen with wear. Shorten the stitch length, narrow the satin, or fill a shape that wide.	I punti più lunghi di 7 mm si impigliano e si allentano con l’uso. Accorcia la lunghezza del punto, restringi il satin o riempi una forma così larga.
+	The design has more needle moves than a file can hold; the rest is left out. Split it into several designs.	Il disegno ha più movimenti dell’ago di quanti ne possa contenere un file; il resto viene omesso. Dividilo in più disegni.
+	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	Ciò che il tipo di punto segnala sulla forma dell’oggetto (una forma satin senza tratti, un motivo troppo fine, un bordo a motivo mancante…).
 	A motif carved into the fill	Un motivo inciso nel riempimento
 	Distance between zigzags or rows: smaller is denser	Distanza tra zigzag o file: più piccola è più densa
 	How many times each stitch is sewn	Quante volte viene cucito ogni punto

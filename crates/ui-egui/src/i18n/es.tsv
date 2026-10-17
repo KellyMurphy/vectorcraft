@@ -3862,6 +3862,20 @@ axis	Both	Ambos
 	Save Border Pattern…	Guardar borde de patrón…
 	Remove Border Pattern	Quitar borde de patrón
 	Render Stitch Preview	Representar vista previa de puntadas
+	Check	Revisión
+	No problems found.	No se encontraron problemas.
+	Only the first 30 are listed.	Solo se muestran los 30 primeros.
+	A stitched object that makes no stitches: empty, or too small for its stitch type.	Un objeto bordado que no produce puntadas: está vacío o es demasiado pequeño para su tipo de puntada.
+	Art the stitch can't follow	Arte que la puntada no puede seguir
+	Check Design	Revisar diseño
+	Design cut short	Diseño recortado
+	Long stitches	Puntadas largas
+	Makes no stitches	No produce puntadas
+	Not sewn as set	No se borda como está definido
+	Objects that are stitched but can't be sewn (not a path, compound path or type; settings from a newer VectorCraft), or are sewn whole although a mask hides part of them.	Objetos bordados que no se pueden coser (no son trazados, trazados compuestos ni texto; ajustes de una versión más reciente de VectorCraft), o que se cosen enteros aunque una máscara oculte parte de ellos.
+	Stitches longer than 7 mm snag and loosen with wear. Shorten the stitch length, narrow the satin, or fill a shape that wide.	Las puntadas de más de 7 mm se enganchan y se aflojan con el uso. Acorta la longitud de puntada, estrecha el satén o rellena una forma tan ancha.
+	The design has more needle moves than a file can hold; the rest is left out. Split it into several designs.	El diseño tiene más movimientos de aguja de los que caben en un archivo; el resto se omite. Divídelo en varios diseños.
+	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	Lo que el tipo de puntada indica sobre la forma del objeto (una forma satinada sin trazos, un motivo demasiado fino, un borde de patrón que falta…).
 	A motif carved into the fill	Un motivo tallado en el relleno
 	Distance between zigzags or rows: smaller is denser	Distancia entre zigzags o filas: menor es más denso
 	How many times each stitch is sewn	Cuántas veces se cose cada puntada

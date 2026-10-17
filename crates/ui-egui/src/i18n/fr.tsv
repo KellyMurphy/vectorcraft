@@ -3873,6 +3873,20 @@ axis	Both	Les deux
 	Save Border Pattern…	Enregistrer la bordure à motif…
 	Remove Border Pattern	Supprimer la bordure à motif
 	Render Stitch Preview	Rendu de l’aperçu des points
+	Check	Vérification
+	No problems found.	Aucun problème trouvé.
+	Only the first 30 are listed.	Seuls les 30 premiers sont listés.
+	A stitched object that makes no stitches: empty, or too small for its stitch type.	Un objet brodé qui ne produit aucun point : vide, ou trop petit pour son type de point.
+	Art the stitch can't follow	Dessin que le point ne peut pas suivre
+	Check Design	Vérifier le dessin
+	Design cut short	Dessin tronqué
+	Long stitches	Points longs
+	Makes no stitches	Ne produit aucun point
+	Not sewn as set	Pas brodé comme réglé
+	Objects that are stitched but can't be sewn (not a path, compound path or type; settings from a newer VectorCraft), or are sewn whole although a mask hides part of them.	Objets brodés qui ne peuvent pas être cousus (ni tracé, ni tracé transparent, ni texte ; réglages d’une version plus récente de VectorCraft), ou cousus entièrement bien qu’un masque en cache une partie.
+	Stitches longer than 7 mm snag and loosen with wear. Shorten the stitch length, narrow the satin, or fill a shape that wide.	Les points de plus de 7 mm accrochent et se relâchent à l’usage. Raccourcissez la longueur de point, rétrécissez le satin, ou remplissez une forme aussi large.
+	The design has more needle moves than a file can hold; the rest is left out. Split it into several designs.	Le dessin compte plus de mouvements d’aiguille qu’un fichier ne peut en contenir ; le reste est omis. Divisez-le en plusieurs dessins.
+	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	Ce que le type de point signale sur la forme de l’objet (forme satin sans traits, motif trop fin, bordure à motif manquante…).
 	A motif carved into the fill	Un motif gravé dans le remplissage
 	Distance between zigzags or rows: smaller is denser	Distance entre zigzags ou rangs : plus petit est plus dense
 	How many times each stitch is sewn	Combien de fois chaque point est cousu
