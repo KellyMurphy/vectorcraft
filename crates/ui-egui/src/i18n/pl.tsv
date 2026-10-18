@@ -5184,3 +5184,30 @@ mark-style	Japanese	Japońskie
 	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	Co typ ściegu zgłosił o kształcie obiektu (kształt satynowy bez kresek, zbyt drobny motyw, brakujący wzór obwódki…).
 @msg	Extracted border pattern {_1}: a {_2} mm repeat	Wyodrębniono wzór obwódki {_1}: powtórzenie co {_2} mm
 @msg	Loaded border pattern {_1}	Wczytano wzór obwódki {_1}
+
+# Sew-out tests (the Sew-Out Test panel, embroidery.testSheet)
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	Arkusz testowy to zestaw próbek kalibracyjnych do wyhaftowania na Twojej maszynie i tkaninie. Każda sekcja to projekt 100 × 100 mm; po wyhaftowaniu zaznacz tutaj, co pokazała każda próbka.
+	Another test sheet, for another fabric or machine	Kolejny arkusz testowy, dla innej tkaniny lub maszyny
+	Calibration swatches to sew, and a form for what they showed	Próbki kalibracyjne do wyhaftowania i formularz na ich wyniki
+	Click a swatch to select it and add a note.	Kliknij próbkę, aby ją zaznaczyć i dodać notatkę.
+	Each section as a design of its own (one file per artboard)	Każda sekcja jako osobny projekt (jeden plik na obszar roboczy)
+	Fabric:	Tkanina:
+	Fail	Niezaliczona
+	Lettering needs a type face; without one it is left out.	Napisy wymagają kroju pisma; bez niego są pomijane.
+	Machine:	Maszyna:
+	New Test Sheet	Nowy arkusz testowy
+	New Test Sheet…	Nowy arkusz testowy…
+	Notes:	Notatki:
+	Pass	Zaliczona
+	Sew-Out Test…	Haft próbny…
+	Test Sheet	Arkusz testowy
+	To judge	Do oceny
+	Fill Angle	Kąt wypełnienia
+	Fill Density	Gęstość wypełnienia
+	Lettering	Napisy
+	Pull Compensation	Kompensacja ściągania
+	Record Sew-Out	Zapisz haft próbny
+	Satin Density	Gęstość satyny
+	Satin Width	Szerokość satyny
+	Sew-Out Test	Haft próbny
+	Underlay	Podkład

@@ -476,3 +476,82 @@ fn an_explicit_order_lists_some_and_the_rest_follow() {
     assert!(s.execute("embroidery.reorder", &json!({"to": "sideways", "ids": [ids[0]]})).is_err());
     assert!(s.execute("embroidery.reorder", &json!({})).is_err());
 }
+
+#[test]
+fn a_test_sheet_opens_as_a_new_document_with_its_form() {
+    let mut s = Session::new();
+    let r = s.execute("embroidery.testSheet", &json!({"sections": ["satinWidth", "fillAngle"]})).unwrap();
+    assert_eq!(r["index"], 0, "a new document, made without one open");
+    assert_eq!(r["sections"].as_array().unwrap().len(), 2);
+    assert_eq!(r["swatches"], 13, "9 satin widths and 4 fill angles");
+    assert_eq!(s.doc().unwrap().doc.artboards.len(), 2);
+    let form = s.execute("embroidery.sewOut", &json!({})).unwrap();
+    let swatches = form["sewOut"]["swatches"].as_array().unwrap();
+    assert_eq!(swatches.len(), 13);
+    assert_eq!((swatches[0]["id"].as_str(), swatches[0]["result"].as_str()), (Some("A1"), Some("untested")));
+    assert_eq!(swatches[9]["id"], "E1", "named by the section's letter");
+    assert_eq!(form["sewOut"]["counts"], json!({"pass": 0, "fail": 0, "untested": 13}));
+    // The swatch's objects are the document's.
+    let id = vectorcraft_doc::NodeId(swatches[0]["objects"][0].as_u64().unwrap());
+    assert!(s.doc().unwrap().doc.node(id).is_some_and(|n| n.extras().stitch.is_some()));
+    assert!(s.execute("embroidery.testSheet", &json!({"sections": ["nope"]})).is_err());
+    assert!(s.execute("embroidery.testSheet", &json!({"sections": "satinWidth"})).is_err());
+}
+
+#[test]
+fn the_sew_out_form_records_results_as_one_undo_step() {
+    let mut s = Session::new();
+    s.execute("embroidery.testSheet", &json!({"sections": ["satinWidth"]})).unwrap();
+    let r = s
+        .execute(
+            "embroidery.recordSewOut",
+            &json!({"fabric": " denim ", "machine": "home", "results": [
+                {"swatch": "A1", "result": "pass"},
+                {"swatch": "a9", "result": "fail", "notes": "loops at the edges"},
+            ]}),
+        )
+        .unwrap();
+    assert_eq!(r["counts"], json!({"pass": 1, "fail": 1, "untested": 7}));
+    let form = s.execute("embroidery.sewOut", &json!({})).unwrap();
+    assert_eq!(form["sewOut"]["fabric"], "denim");
+    assert_eq!(form["sewOut"]["swatches"][8]["notes"], "loops at the edges");
+    // Back to untested; a note alone keeps the result.
+    s.execute("embroidery.recordSewOut", &json!({"results": [{"swatch": "A1", "result": "untested"}, {"swatch": "A9", "notes": "ok after all"}]}))
+        .unwrap();
+    let form = s.execute("embroidery.sewOut", &json!({})).unwrap();
+    assert_eq!(form["sewOut"]["swatches"][0]["result"], "untested");
+    assert_eq!(form["sewOut"]["swatches"][8]["result"], "fail");
+    s.execute("edit.undo", &json!({})).unwrap();
+    let form = s.execute("embroidery.sewOut", &json!({})).unwrap();
+    assert_eq!(form["sewOut"]["swatches"][0]["result"], "pass", "one undo step");
+    // Saved with the document.
+    let saved = s.execute("document.export", &json!({"format": "vectorcraft"})).unwrap();
+    let back = vectorcraft_format::load(&b64(&saved)).unwrap();
+    assert_eq!(back.embroidery.sew_out.as_ref().map(|r| r.machine.as_str()), Some("home"));
+    for bad in
+        [json!({"results": [{"swatch": "Z9", "result": "pass"}]}), json!({"results": [{"swatch": "A1", "result": "maybe"}]}), json!({"fabric": 3})]
+    {
+        assert!(s.execute("embroidery.recordSewOut", &bad).is_err(), "{bad}");
+    }
+    // A document without a test sheet has no form.
+    s.execute("file.new", &json!({})).unwrap();
+    assert_eq!(s.execute("embroidery.sewOut", &json!({})).unwrap()["sewOut"], Value::Null);
+    assert!(s.execute("embroidery.recordSewOut", &json!({"fabric": "x"})).is_err());
+}
+
+#[test]
+fn dst_export_writes_a_design_per_artboard() {
+    let mut s = Session::new();
+    s.execute("embroidery.testSheet", &json!({"sections": ["satinWidth", "fillDensity"]})).unwrap();
+    let whole = vectorcraft_embroidery::read_dst(&b64(&s.execute("document.export", &json!({"format": "dst"})).unwrap())).unwrap();
+    let one = s.execute("document.export", &json!({"format": "dst", "artboard": 1})).unwrap();
+    let fills = vectorcraft_embroidery::read_dst(&b64(&one)).unwrap();
+    let w = |p: &vectorcraft_embroidery::Plan| p.stats().bounds.map(|b| b[2] - b[0]).unwrap();
+    assert!(w(&fills) < 100.0 && w(&whole) > 150.0, "one section's design: {} of {}", w(&fills), w(&whole));
+    let both = s.execute("document.export", &json!({"format": "dst", "range": "all"})).unwrap();
+    let files = both["files"].as_array().unwrap();
+    assert_eq!(files.len(), 2, "{both}");
+    let total: usize = files.iter().map(|f| vectorcraft_embroidery::read_dst(&b64(f)).unwrap().stats().stitches).sum();
+    assert_eq!(total, whole.stats().stitches, "the sections together are the whole sheet");
+    assert!(s.execute("document.export", &json!({"format": "dst", "artboard": 5})).is_err());
+}

@@ -5268,3 +5268,30 @@ mark-style	Japanese	Japonesas
 
 @msg	Loaded border pattern {_1}	Borda de padrão carregada: {_1}
 @msg	Extracted border pattern {_1}: a {_2} mm repeat	Borda de padrão extraída: {_1}, repetição de {_2} mm
+
+# Sew-out tests (the Sew-Out Test panel, embroidery.testSheet)
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	Uma folha de teste é um conjunto de amostras de calibração para bordar na sua máquina e no seu tecido. Cada seção é um desenho de 100 × 100 mm; depois de bordar, marque aqui o que cada amostra mostrou.
+	Another test sheet, for another fabric or machine	Outra folha de teste, para outro tecido ou outra máquina
+	Calibration swatches to sew, and a form for what they showed	Amostras de calibração para bordar e um formulário para o que elas mostraram
+	Click a swatch to select it and add a note.	Clique em uma amostra para selecioná-la e adicionar uma nota.
+	Each section as a design of its own (one file per artboard)	Cada seção como um desenho próprio (um arquivo por prancheta)
+	Fabric:	Tecido:
+	Fail	Reprovada
+	Lettering needs a type face; without one it is left out.	As letras precisam de uma fonte; sem ela, são omitidas.
+	Machine:	Máquina:
+	New Test Sheet	Nova folha de teste
+	New Test Sheet…	Nova folha de teste…
+	Notes:	Notas:
+	Pass	Aprovada
+	Sew-Out Test…	Teste de bordado…
+	Test Sheet	Folha de teste
+	To judge	A avaliar
+	Fill Angle	Ângulo do preenchimento
+	Fill Density	Densidade do preenchimento
+	Lettering	Letras
+	Pull Compensation	Compensação de repuxo
+	Record Sew-Out	Registrar teste de bordado
+	Satin Density	Densidade do cetim
+	Satin Width	Largura do cetim
+	Sew-Out Test	Teste de bordado
+	Underlay	Base

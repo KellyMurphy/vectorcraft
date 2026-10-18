@@ -5318,3 +5318,30 @@ imageTrace	Outline	Körvonal
 	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	Amit az öltéstípus az objektum alakjáról jelzett (vonalak nélküli szaténalakzat, túl finom motívum, hiányzó szegélyminta…).
 @msg	Extracted border pattern {_1}: a {_2} mm repeat	Szegélyminta kinyerve: {_1}, {_2} mm-es ismétléssel
 @msg	Loaded border pattern {_1}	Szegélyminta betöltve: {_1}
+
+# Sew-out tests (the Sew-Out Test panel, embroidery.testSheet)
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	A tesztlap kalibrációs minták sora, amelyeket a saját gépén és anyagán kell kihímezni. Minden szakasz egy 100 × 100 mm-es minta; hímzés után itt jelölje, mit mutatott az egyes minta.
+	Another test sheet, for another fabric or machine	Újabb tesztlap, másik anyaghoz vagy géphez
+	Calibration swatches to sew, and a form for what they showed	Kihímzendő kalibrációs minták és egy űrlap az eredményükhöz
+	Click a swatch to select it and add a note.	Kattintson egy mintára a kijelöléséhez és megjegyzés hozzáadásához.
+	Each section as a design of its own (one file per artboard)	Minden szakasz külön mintaként (rajztáblánként egy fájl)
+	Fabric:	Anyag:
+	Fail	Nem megfelelő
+	Lettering needs a type face; without one it is left out.	A feliratokhoz betűtípus kell; anélkül kimaradnak.
+	Machine:	Gép:
+	New Test Sheet	Új tesztlap
+	New Test Sheet…	Új tesztlap…
+	Notes:	Megjegyzések:
+	Pass	Megfelelő
+	Sew-Out Test…	Próbahímzés…
+	Test Sheet	Tesztlap
+	To judge	Elbírálandó
+	Fill Angle	Kitöltés szöge
+	Fill Density	Kitöltés sűrűsége
+	Lettering	Feliratok
+	Pull Compensation	Húzáskompenzáció
+	Record Sew-Out	Próbahímzés rögzítése
+	Satin Density	Szatén sűrűsége
+	Satin Width	Szatén szélessége
+	Sew-Out Test	Próbahímzés
+	Underlay	Alátét

@@ -5326,3 +5326,30 @@ swatch	Bright Violet	Kraftig violet
 	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	Hvad stingtypen meldte om objektets form (en satinform uden streger, et for fint motiv, et manglende kantmønster …).
 @msg	Extracted border pattern {_1}: a {_2} mm repeat	Kantmønster {_1} udtrukket: en gentagelse på {_2} mm
 @msg	Loaded border pattern {_1}	Kantmønster {_1} indlæst
+
+# Sew-out tests (the Sew-Out Test panel, embroidery.testSheet)
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	Et testark er et sæt kalibreringsprøver, der skal broderes på din maskine og dit stof. Hver sektion er et design på 100 × 100 mm; marker efter broderingen her, hvad hver prøve viste.
+	Another test sheet, for another fabric or machine	Endnu et testark, til et andet stof eller en anden maskine
+	Calibration swatches to sew, and a form for what they showed	Kalibreringsprøver til brodering og en formular til, hvad de viste
+	Click a swatch to select it and add a note.	Klik på en prøve for at markere den og tilføje en note.
+	Each section as a design of its own (one file per artboard)	Hver sektion som sit eget design (én fil pr. tegneflade)
+	Fabric:	Stof:
+	Fail	Ikke godkendt
+	Lettering needs a type face; without one it is left out.	Bogstaver kræver en skrifttype; uden en udelades de.
+	Machine:	Maskine:
+	New Test Sheet	Nyt testark
+	New Test Sheet…	Nyt testark…
+	Notes:	Noter:
+	Pass	Godkendt
+	Sew-Out Test…	Prøvebrodering…
+	Test Sheet	Testark
+	To judge	Til vurdering
+	Fill Angle	Fyldvinkel
+	Fill Density	Fyldtæthed
+	Lettering	Bogstaver
+	Pull Compensation	Trækkompensation
+	Record Sew-Out	Registrer prøvebrodering
+	Satin Density	Satintæthed
+	Satin Width	Satinbredde
+	Sew-Out Test	Prøvebrodering
+	Underlay	Underlag

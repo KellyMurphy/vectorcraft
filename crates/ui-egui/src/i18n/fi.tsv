@@ -5296,3 +5296,30 @@ mark-style	Japanese	Japanilainen
 	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	Mitä pistotyyppi ilmoitti objektin muodosta (satiinimuoto ilman viivoja, liian hieno kuvio, puuttuva reunuskuvio …).
 @msg	Extracted border pattern {_1}: a {_2} mm repeat	Reunuskuvio {_1} poimittu: {_2} mm:n toisto
 @msg	Loaded border pattern {_1}	Reunuskuvio {_1} ladattu
+
+# Sew-out tests (the Sew-Out Test panel, embroidery.testSheet)
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	Testiarkki on joukko kalibrointinäytteitä, jotka kirjotaan omalla koneellasi ja kankaallasi. Jokainen osio on 100 × 100 mm:n kuvio; merkitse kirjonnan jälkeen tähän, mitä kukin näyte osoitti.
+	Another test sheet, for another fabric or machine	Uusi testiarkki toiselle kankaalle tai koneelle
+	Calibration swatches to sew, and a form for what they showed	Kirjottavat kalibrointinäytteet ja lomake niiden tuloksille
+	Click a swatch to select it and add a note.	Napsauta näytettä valitaksesi sen ja lisätäksesi huomautuksen.
+	Each section as a design of its own (one file per artboard)	Jokainen osio omana kuvionaan (yksi tiedosto piirtoaluetta kohden)
+	Fabric:	Kangas:
+	Fail	Hylätty
+	Lettering needs a type face; without one it is left out.	Tekstiin tarvitaan kirjasin; ilman sitä se jätetään pois.
+	Machine:	Kone:
+	New Test Sheet	Uusi testiarkki
+	New Test Sheet…	Uusi testiarkki…
+	Notes:	Huomautukset:
+	Pass	Hyväksytty
+	Sew-Out Test…	Koekirjonta…
+	Test Sheet	Testiarkki
+	To judge	Arvioitavana
+	Fill Angle	Täytön kulma
+	Fill Density	Täytön tiheys
+	Lettering	Teksti
+	Pull Compensation	Vetokompensaatio
+	Record Sew-Out	Kirjaa koekirjonta
+	Satin Density	Satiinin tiheys
+	Satin Width	Satiinin leveys
+	Sew-Out Test	Koekirjonta
+	Underlay	Alusta

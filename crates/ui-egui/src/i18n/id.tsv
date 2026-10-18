@@ -5326,3 +5326,30 @@ swatch	Bright Violet	Violet cerah
 	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	Apa yang dilaporkan jenis jahitan tentang bentuk objek (bentuk satin tanpa goresan, motif terlalu halus, pola tepi yang hilang…).
 @msg	Extracted border pattern {_1}: a {_2} mm repeat	Pola tepi {_1} diekstrak: ulangan {_2} mm
 @msg	Loaded border pattern {_1}	Pola tepi {_1} dimuat
+
+# Sew-out tests (the Sew-Out Test panel, embroidery.testSheet)
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	Lembar uji adalah serangkaian contoh kalibrasi untuk disulam pada mesin dan kain Anda. Setiap bagian adalah desain 100 × 100 mm; setelah menyulam, tandai di sini hasil setiap contoh.
+	Another test sheet, for another fabric or machine	Lembar uji lain, untuk kain atau mesin lain
+	Calibration swatches to sew, and a form for what they showed	Contoh kalibrasi untuk disulam, dan formulir untuk hasilnya
+	Click a swatch to select it and add a note.	Klik contoh untuk memilihnya dan menambahkan catatan.
+	Each section as a design of its own (one file per artboard)	Setiap bagian sebagai desain tersendiri (satu berkas per papan gambar)
+	Fabric:	Kain:
+	Fail	Gagal
+	Lettering needs a type face; without one it is left out.	Huruf memerlukan rupa huruf; tanpanya bagian ini dilewati.
+	Machine:	Mesin:
+	New Test Sheet	Lembar uji baru
+	New Test Sheet…	Lembar uji baru…
+	Notes:	Catatan:
+	Pass	Lulus
+	Sew-Out Test…	Uji sulam…
+	Test Sheet	Lembar uji
+	To judge	Belum dinilai
+	Fill Angle	Sudut isian
+	Fill Density	Kerapatan isian
+	Lettering	Huruf
+	Pull Compensation	Kompensasi tarikan
+	Record Sew-Out	Catat uji sulam
+	Satin Density	Kerapatan satin
+	Satin Width	Lebar satin
+	Sew-Out Test	Uji sulam
+	Underlay	Lapisan dasar

@@ -4959,3 +4959,30 @@ lighting	Light	Свет
 	These stitch settings are from a newer VectorCraft: kept as they are, but not sewn. Choose a stitch to replace them.	Эти настройки стежков созданы более новой версией VectorCraft: они сохраняются как есть, но не вышиваются. Выберите стежок, чтобы заменить их.
 	Extract Border Pattern	Извлечь узорную кайму
 	Select a straight stretch of a border with two or more repeats, or a shape drawn over it too.	Выделите прямой участок каймы с двумя или более повторами или вместе с ним фигуру, нарисованную поверх.
+
+# Sew-out tests (the Sew-Out Test panel, embroidery.testSheet)
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	Тестовый лист — это набор калибровочных образцов, которые нужно вышить на вашей машине и ткани. Каждый раздел — дизайн 100 × 100 мм; после вышивки отметьте здесь, что показал каждый образец.
+	Another test sheet, for another fabric or machine	Ещё один тестовый лист, для другой ткани или машины
+	Calibration swatches to sew, and a form for what they showed	Калибровочные образцы для вышивки и форма для записи результатов
+	Click a swatch to select it and add a note.	Щёлкните образец, чтобы выбрать его и добавить заметку.
+	Each section as a design of its own (one file per artboard)	Каждый раздел как отдельный дизайн (по файлу на монтажную область)
+	Fabric:	Ткань:
+	Fail	Не годится
+	Lettering needs a type face; without one it is left out.	Для надписей нужен шрифт; без него раздел пропускается.
+	Machine:	Машина:
+	New Test Sheet	Новый тестовый лист
+	New Test Sheet…	Новый тестовый лист…
+	Notes:	Заметки:
+	Pass	Годится
+	Sew-Out Test…	Пробная вышивка…
+	Test Sheet	Тестовый лист
+	To judge	На оценке
+	Fill Angle	Угол заливки
+	Fill Density	Плотность заливки
+	Lettering	Надписи
+	Pull Compensation	Компенсация стягивания
+	Record Sew-Out	Записать пробную вышивку
+	Satin Density	Плотность атласа
+	Satin Width	Ширина атласа
+	Sew-Out Test	Пробная вышивка
+	Underlay	Подложка

@@ -22,6 +22,7 @@ pub mod params;
 pub mod preview;
 pub mod rails;
 pub mod skeleton;
+pub mod testsheet;
 
 use std::collections::HashMap;
 use std::sync::Arc;

@@ -2933,6 +2933,7 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                 panel("Document Info", "docInfo"),
                 panel("Embroidery", crate::panels::embroidery::ID),
                 panel("Sew Order", crate::panels::sew_order::ID),
+                panel("Sew-Out Test", crate::panels::sew_out::ID),
                 panel("Flattener Preview", crate::panels::flattener_preview::ID),
                 panel("Gradient", "gradient"),
                 panel("Graphic Styles", "graphicStyles"),
@@ -4013,6 +4014,8 @@ pub fn menu_strings() -> std::collections::BTreeSet<String> {
     out.extend(vectorcraft_doc::StitchKind::ALL.iter().map(|k| crate::panels::embroidery::kind_blurb(*k).to_string()));
     // The design checker's rules (the Embroidery panel's Check list).
     out.extend(vectorcraft_embroidery::check::RULES.iter().flat_map(|r| [r.label, r.help]).map(str::to_string));
+    // The test sheet's sections (the Sew-Out Test panel).
+    out.extend(vectorcraft_embroidery::testsheet::SECTIONS.iter().map(|s| s.name.to_string()));
     out.extend(vectorcraft_tools::catalog::all_tools().map(|t| t.label.to_string()));
     out.extend(crate::toolbar::BASIC.iter().map(|c| c.0.to_string()));
     out.extend(vectorcraft_color::BlendMode::ALL.iter().map(|m| m.label().to_string()));

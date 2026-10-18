@@ -160,6 +160,8 @@ pub struct Tokens {
     pub error: Color32,
     /// Warning marks (a modified linked file).
     pub warning: Color32,
+    /// Success marks (a sew-out swatch that passed).
+    pub success: Color32,
     /// Rotation gizmo axes, also labelled X, Y and Z.
     pub axis_x: Color32,
     pub axis_y: Color32,
@@ -211,6 +213,7 @@ impl Tokens {
             bleed: hex(0xf03030),
             error: hex(0xe34850),
             warning: hex(0xf0a330),
+            success: hex(0x3f9e5a),
             axis_x: hex(0xef6058),
             axis_y: hex(0x45af63),
             axis_z: hex(0x378ef0),

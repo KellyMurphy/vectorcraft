@@ -8,7 +8,9 @@ use std::path::PathBuf;
 
 use kurbo::Point;
 use serde_json::Value;
-use vectorcraft_doc::{BorderPattern, EmbroiderySetup, NodeId, PartStitch, PatternPart, StitchKind, StitchSettings, Underlay};
+use vectorcraft_doc::{
+    BorderPattern, EmbroiderySetup, NodeId, PartStitch, PatternPart, SewOut, SewResult, SewSwatch, StitchKind, StitchSettings, Underlay,
+};
 use vectorcraft_embroidery::params::{self, ValueKind};
 use vectorcraft_embroidery::{borders, motifs};
 
@@ -104,8 +106,23 @@ fn full_setup() -> EmbroiderySetup {
         stitch_moves_under: 2.0,
         order: vec![NodeId(1)],
         patterns: vec![full_pattern()],
+        sew_out: Some(full_sew_out()),
         extra: Default::default(),
     }
+}
+
+/// A sew-out record with every field set.
+fn full_sew_out() -> SewOut {
+    let swatch = SewSwatch {
+        id: "A1".into(),
+        section: "satinWidth".into(),
+        label: "Satin 1 mm wide".into(),
+        objects: vec![NodeId(2)],
+        result: "pass".into(),
+        notes: "n".into(),
+        extra: Default::default(),
+    };
+    SewOut { fabric: "f".into(), machine: "m".into(), notes: "n".into(), swatches: vec![swatch], extra: Default::default() }
 }
 
 /// `range` matches the schema property's `minimum` and `maximum`.
@@ -210,6 +227,12 @@ fn embroidery_schema_matches_the_code() {
     range_is(&setup["stitchMovesUnder"], EmbroiderySetup::STITCH_MOVES, "stitchMovesUnder");
     assert_eq!(setup["trimJumpsOver"]["default"].as_f64(), Some(EmbroiderySetup::DEFAULT_TRIM));
     assert_eq!(setup["stitchMovesUnder"]["default"].as_f64(), Some(EmbroiderySetup::DEFAULT_STITCH_MOVES));
+    let sew_out = serde_json::to_value(full_sew_out()).unwrap();
+    assert_eq!(keys(&defs["sewOut"]["properties"]), keys(&sew_out), "the sew-out's fields");
+    let swatch = &defs["swatch"]["properties"];
+    assert_eq!(keys(swatch), keys(&sew_out["swatches"][0]), "a swatch's fields");
+    let results: BTreeSet<String> = SewResult::ALL.iter().map(|r| r.id().to_string()).collect();
+    assert_eq!(strings(&swatch["result"]["enum"]), results);
     // A document's patterns have a border pattern file's fields, less the header.
     assert_eq!(keys(&defs["pattern"]["properties"]), keys(&serde_json::to_value(full_pattern()).unwrap()));
 }
@@ -217,7 +240,12 @@ fn embroidery_schema_matches_the_code() {
 #[test]
 fn embroidery_page_describes_every_field_and_kind() {
     let page = read("vectorcraft-embroidery.md");
-    let fields = keys(&serde_json::to_value(full_stitch()).unwrap()).into_iter().chain(keys(&serde_json::to_value(full_setup()).unwrap()));
+    let sew_out = serde_json::to_value(full_sew_out()).unwrap();
+    let fields = keys(&serde_json::to_value(full_stitch()).unwrap())
+        .into_iter()
+        .chain(keys(&serde_json::to_value(full_setup()).unwrap()))
+        .chain(keys(&sew_out))
+        .chain(keys(&sew_out["swatches"][0]));
     for k in fields {
         assert!(page.contains(&format!("`{k}`")), "vectorcraft-embroidery.md describes `{k}`");
     }
@@ -226,6 +254,12 @@ fn embroidery_page_describes_every_field_and_kind() {
     }
     for u in Underlay::ALL {
         assert!(page.contains(&format!("`{}`", u.id())), "vectorcraft-embroidery.md lists the {} underlay", u.id());
+    }
+    for r in SewResult::ALL.iter().filter(|r| !r.id().is_empty()) {
+        assert!(page.contains(&format!("`{}`", r.id())), "vectorcraft-embroidery.md lists the {} result", r.id());
+    }
+    for s in vectorcraft_embroidery::testsheet::SECTIONS {
+        assert!(page.contains(&format!("`{}`", s.id)), "vectorcraft-embroidery.md lists the {} section", s.id);
     }
 }
 

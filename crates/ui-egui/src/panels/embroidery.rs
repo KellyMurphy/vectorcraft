@@ -783,10 +783,20 @@ fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
         }
     });
     ui.add_space(2.0);
-    if widgets::flat_button(ui, tl!("Sew Order…"), 96.0).on_hover_text(tl!("Step through the design as it is sewn, and change the order")).clicked()
-    {
-        app.run("window.panel", json!({"panel": super::sew_order::ID})).ok();
-    }
+    ui.horizontal(|ui| {
+        if widgets::flat_button(ui, tl!("Sew Order…"), 96.0)
+            .on_hover_text(tl!("Step through the design as it is sewn, and change the order"))
+            .clicked()
+        {
+            app.run("window.panel", json!({"panel": super::sew_order::ID})).ok();
+        }
+        if widgets::flat_button(ui, tl!("Sew-Out Test…"), 104.0)
+            .on_hover_text(tl!("Calibration swatches to sew, and a form for what they showed"))
+            .clicked()
+        {
+            app.run("window.panel", json!({"panel": super::sew_out::ID})).ok();
+        }
+    });
 }
 
 #[cfg(test)]

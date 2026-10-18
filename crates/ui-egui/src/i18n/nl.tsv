@@ -5369,3 +5369,30 @@ swatch	Bright Violet	Felviolet
 	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	Wat het steektype over de vorm van het object meldde (een satijnvorm zonder lijnen, een te fijn motief, een ontbrekend randpatroon …).
 @msg	Extracted border pattern {_1}: a {_2} mm repeat	Randpatroon {_1} geëxtraheerd: een herhaling van {_2} mm
 @msg	Loaded border pattern {_1}	Randpatroon {_1} geladen
+
+# Sew-out tests (the Sew-Out Test panel, embroidery.testSheet)
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	Een testblad is een reeks kalibratiestalen om op uw machine en stof te borduren. Elke sectie is een ontwerp van 100 × 100 mm; geef na het borduren hier aan wat elk staal liet zien.
+	Another test sheet, for another fabric or machine	Nog een testblad, voor een andere stof of machine
+	Calibration swatches to sew, and a form for what they showed	Kalibratiestalen om te borduren, en een formulier voor wat ze lieten zien
+	Click a swatch to select it and add a note.	Klik op een staal om het te selecteren en een notitie toe te voegen.
+	Each section as a design of its own (one file per artboard)	Elke sectie als een eigen ontwerp (één bestand per tekengebied)
+	Fabric:	Stof:
+	Fail	Afgekeurd
+	Lettering needs a type face; without one it is left out.	Voor belettering is een lettertype nodig; zonder lettertype wordt deze weggelaten.
+	Machine:	Machine:
+	New Test Sheet	Nieuw testblad
+	New Test Sheet…	Nieuw testblad…
+	Notes:	Notities:
+	Pass	Goedgekeurd
+	Sew-Out Test…	Borduurtest…
+	Test Sheet	Testblad
+	To judge	Te beoordelen
+	Fill Angle	Vulhoek
+	Fill Density	Vuldichtheid
+	Lettering	Belettering
+	Pull Compensation	Trekcompensatie
+	Record Sew-Out	Borduurtest vastleggen
+	Satin Density	Satijndichtheid
+	Satin Width	Satijnbreedte
+	Sew-Out Test	Borduurtest
+	Underlay	Onderlaag

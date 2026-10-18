@@ -50,7 +50,30 @@
             "required": ["id"],
             "properties": { "id": { "type": "string", "minLength": 1 } }
           }
-        }
+        },
+        "sewOut": { "$ref": "#/$defs/sewOut" }
+      }
+    },
+    "sewOut": {
+      "title": "A sew-out test record (`document.embroidery.sewOut`)",
+      "type": "object",
+      "properties": {
+        "fabric": { "type": "string" },
+        "machine": { "type": "string" },
+        "notes": { "type": "string" },
+        "swatches": { "type": "array", "items": { "$ref": "#/$defs/swatch" } }
+      }
+    },
+    "swatch": {
+      "title": "One swatch of a test sheet",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "The section's letter and the swatch's number, as sewn on the sheet (A3)." },
+        "section": { "type": "string", "description": "The test sheet section (see vectorcraft-embroidery.md)." },
+        "label": { "type": "string", "description": "What the swatch tests, in words." },
+        "objects": { "type": "array", "items": { "type": "integer", "minimum": 0 }, "description": "The ids of the objects it is sewn from." },
+        "result": { "enum": ["", "pass", "fail"], "default": "", "description": "Empty: not judged yet. Readers treat other values as not judged, and keep them." },
+        "notes": { "type": "string" }
       }
     },
     "pattern": {

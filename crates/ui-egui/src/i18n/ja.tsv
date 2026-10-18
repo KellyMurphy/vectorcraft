@@ -5004,3 +5004,30 @@ lighting	Light	ライト
 	These stitch settings are from a newer VectorCraft: kept as they are, but not sewn. Choose a stitch to replace them.	これらのステッチ設定は新しいバージョンの VectorCraft で作成されたものです。そのまま保持されますが、縫製されません。置き換えるにはステッチを選択してください。
 	Extract Border Pattern	パターンボーダーを抽出
 	Select a straight stretch of a border with two or more repeats, or a shape drawn over it too.	繰り返しが2回以上あるボーダーの直線部分を選択します。その上に描いたシェイプも一緒に選択できます。
+
+# Sew-out tests (the Sew-Out Test panel, embroidery.testSheet)
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	テストシートは、お使いのミシンと生地で縫う調整用の見本のセットです。各セクションは 100 × 100 mm のデザインです。縫ったあと、各見本の結果をここに記録します。
+	Another test sheet, for another fabric or machine	別の生地やミシン用に、もう 1 枚のテストシート
+	Calibration swatches to sew, and a form for what they showed	縫う調整用の見本と、その結果を記録するフォーム
+	Click a swatch to select it and add a note.	見本をクリックすると選択され、メモを追加できます。
+	Each section as a design of its own (one file per artboard)	各セクションを個別のデザインとして(アートボードごとに 1 ファイル)
+	Fabric:	生地:
+	Fail	不合格
+	Lettering needs a type face; without one it is left out.	文字にはフォントが必要です。フォントがない場合は省かれます。
+	Machine:	ミシン:
+	New Test Sheet	新規テストシート
+	New Test Sheet…	新規テストシート…
+	Notes:	メモ:
+	Pass	合格
+	Sew-Out Test…	試し縫い…
+	Test Sheet	テストシート
+	To judge	未判定
+	Fill Angle	フィルの角度
+	Fill Density	フィルの密度
+	Lettering	文字
+	Pull Compensation	引き補正
+	Record Sew-Out	試し縫いを記録
+	Satin Density	サテンの密度
+	Satin Width	サテンの幅
+	Sew-Out Test	試し縫い
+	Underlay	下縫い

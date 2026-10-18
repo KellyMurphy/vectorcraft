@@ -4254,3 +4254,30 @@ lighting	Light	光源
 
 @msg	Loaded border pattern {_1}	已載入圖樣邊框 {_1}
 @msg	Extracted border pattern {_1}: a {_2} mm repeat	已擷取圖樣邊框 {_1}：重複長度 {_2} 公釐
+
+# Sew-out tests (the Sew-Out Test panel, embroidery.testSheet)
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	測試單是一組校準樣片，用於在您的機器和布料上繡製。每個部分是一個 100 × 100 公釐的設計；繡完後，在此標記每個樣片的結果。
+	Another test sheet, for another fabric or machine	再建一張測試單，用於其他布料或機器
+	Calibration swatches to sew, and a form for what they showed	待繡的校準樣片，以及記錄結果的表單
+	Click a swatch to select it and add a note.	按一下樣片可將其選取並加入備註。
+	Each section as a design of its own (one file per artboard)	每個部分作為獨立的設計（每個工作區域一個檔案）
+	Fabric:	布料:
+	Fail	不合格
+	Lettering needs a type face; without one it is left out.	文字需要字體；沒有字體時會略過此部分。
+	Machine:	機器:
+	New Test Sheet	新增測試單
+	New Test Sheet…	新增測試單…
+	Notes:	備註:
+	Pass	合格
+	Sew-Out Test…	試繡…
+	Test Sheet	測試單
+	To judge	待評判
+	Fill Angle	填色角度
+	Fill Density	填色密度
+	Lettering	文字
+	Pull Compensation	拉力補償
+	Record Sew-Out	記錄試繡
+	Satin Density	緞面密度
+	Satin Width	緞面寬度
+	Sew-Out Test	試繡
+	Underlay	底襯

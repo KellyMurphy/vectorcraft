@@ -5284,3 +5284,30 @@ effect	Points	Σημεία
 	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	Τι ανέφερε ο τύπος βελονιάς για το σχήμα του αντικειμένου (σχήμα σατέν χωρίς γραμμές, πολύ λεπτό μοτίβο, μοτίβο περιγράμματος που λείπει…).
 @msg	Extracted border pattern {_1}: a {_2} mm repeat	Εξήχθη το μοτίβο περιγράμματος {_1}: επανάληψη {_2} mm
 @msg	Loaded border pattern {_1}	Φορτώθηκε το μοτίβο περιγράμματος {_1}
+
+# Sew-out tests (the Sew-Out Test panel, embroidery.testSheet)
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	Ένα φύλλο δοκιμής είναι ένα σύνολο δειγμάτων βαθμονόμησης για κέντημα στη δική σας μηχανή και ύφασμα. Κάθε ενότητα είναι ένα σχέδιο 100 × 100 mm· μετά το κέντημα, σημειώστε εδώ τι έδειξε κάθε δείγμα.
+	Another test sheet, for another fabric or machine	Άλλο ένα φύλλο δοκιμής, για άλλο ύφασμα ή μηχανή
+	Calibration swatches to sew, and a form for what they showed	Δείγματα βαθμονόμησης για κέντημα, και μια φόρμα για ό,τι έδειξαν
+	Click a swatch to select it and add a note.	Κάντε κλικ σε ένα δείγμα για να το επιλέξετε και να προσθέσετε σημείωση.
+	Each section as a design of its own (one file per artboard)	Κάθε ενότητα ως ξεχωριστό σχέδιο (ένα αρχείο ανά πινακίδα σχεδίασης)
+	Fabric:	Ύφασμα:
+	Fail	Αποτυχία
+	Lettering needs a type face; without one it is left out.	Τα γράμματα χρειάζονται γραμματοσειρά· χωρίς αυτήν παραλείπονται.
+	Machine:	Μηχανή:
+	New Test Sheet	Νέο φύλλο δοκιμής
+	New Test Sheet…	Νέο φύλλο δοκιμής…
+	Notes:	Σημειώσεις:
+	Pass	Επιτυχία
+	Sew-Out Test…	Δοκιμαστικό κέντημα…
+	Test Sheet	Φύλλο δοκιμής
+	To judge	Προς κρίση
+	Fill Angle	Γωνία γεμίσματος
+	Fill Density	Πυκνότητα γεμίσματος
+	Lettering	Γράμματα
+	Pull Compensation	Αντιστάθμιση τραβήγματος
+	Record Sew-Out	Καταγραφή δοκιμαστικού κεντήματος
+	Satin Density	Πυκνότητα σατέν
+	Satin Width	Πλάτος σατέν
+	Sew-Out Test	Δοκιμαστικό κέντημα
+	Underlay	Υπόστρωμα

@@ -38,6 +38,7 @@ pub mod pattern_options;
 pub mod properties;
 pub mod separations;
 pub mod sew_order;
+pub mod sew_out;
 pub mod stitch_art;
 pub mod stroke;
 pub mod svg_interactivity;
@@ -177,6 +178,7 @@ pub fn show_icon_panel(app: &mut VectorcraftApp, ui: &mut Ui, id: &str) {
         "attributes" => attributes::show(app, ui),
         embroidery::ID => embroidery::show(app, ui),
         sew_order::ID => sew_order::show(app, ui),
+        sew_out::ID => sew_out::show(app, ui),
         svg_interactivity::ID => svg_interactivity::show(app, ui),
         variables::ID => variables::show(app, ui),
         "colorThemes" => color_themes::show(app, ui),

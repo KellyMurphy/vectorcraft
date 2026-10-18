@@ -154,6 +154,33 @@ pub fn specs() -> Vec<CommandSpec> {
             check
         ),
         cmd!(
+            "embroidery.testSheet",
+            "New Test Sheet…",
+            ["Window", "Embroidery"],
+            None,
+            "{sections?: [satinWidth|satinDensity|pullCompensation|fillDensity|fillAngle|underlay|lettering] (default: all)} a new document of calibration swatches to sew on real fabric: one artboard per section, each a 100 × 100 mm design whose swatches change one setting (the others at their defaults) and are labelled in stitches. Its sew-out form (embroidery.sewOut, embroidery.recordSewOut) lists the swatches; document.export {format: dst, artboard} writes one section → {index, title, sections: [{id, name, artboard, swatches}], swatches, skipped: [{section, reason}] (lettering needs a type face)}",
+            always,
+            test_sheet
+        ),
+        cmd!(
+            query "embroidery.sewOut",
+            "Sew-Out Test",
+            ["Window", "Embroidery"],
+            None,
+            "{} the document's sew-out form: the test sheet's swatches (embroidery.testSheet) and what was seen when they were sewn → {sewOut: null (no test sheet) | {fabric, machine, notes, swatches: [{id (A3: the section's letter, the swatch's number), section, label, objects: [ids], result: pass|fail|untested, notes}], counts: {pass, fail, untested}}, sections: [{id, letter, name}]}",
+            has_doc,
+            sew_out
+        ),
+        cmd!(
+            "embroidery.recordSewOut",
+            "Record Sew-Out",
+            ["Window", "Embroidery"],
+            None,
+            "{fabric?, machine?, notes?, results?: [{swatch: id (A3), result?: pass|fail|untested, notes?}]} record what the sew-out showed in the test sheet's form, as one undo step → {counts: {pass, fail, untested}}",
+            has_doc,
+            record_sew_out
+        ),
+        cmd!(
             query "embroidery.stitches",
             "Embroidery Stitches",
             ["Window", "Embroidery"],
@@ -689,6 +716,117 @@ fn check(s: &mut Session, p: &Value) -> Result<Value> {
         "counts": {"error": count(check::Severity::Error), "warning": count(check::Severity::Warning), "note": count(check::Severity::Note)},
         "rules": rules,
     }))
+}
+
+fn test_sheet(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.testSheet";
+    let ids: Vec<String> = match p.get("sections") {
+        None | Some(Value::Null) => vec![],
+        Some(Value::Array(a)) => a
+            .iter()
+            .map(|v| v.as_str().map(str::to_string).ok_or_else(|| bad(C, "`sections` must be a list of section ids")))
+            .collect::<Result<_>>()?,
+        Some(_) => return Err(bad(C, "`sections` must be a list of section ids")),
+    };
+    let sheet = vectorcraft_embroidery::testsheet::build(&ids).map_err(|e| bad(C, e))?;
+    let sections: Vec<Value> =
+        sheet.sections.iter().map(|x| json!({"id": x.id, "name": x.name, "artboard": x.artboard, "swatches": x.swatches})).collect();
+    let skipped: Vec<Value> = sheet.skipped.iter().map(|(id, why)| json!({"section": id, "reason": why})).collect();
+    let swatches: usize = sheet.sections.iter().map(|x| x.swatches).sum();
+    let title = sheet.doc.title.clone();
+    let index = s.add_document(sheet.doc, None);
+    Ok(json!({"index": index, "title": title, "sections": sections, "swatches": swatches, "skipped": skipped}))
+}
+
+/// How many swatches passed, failed and are still to judge.
+fn sew_counts(r: &vectorcraft_doc::SewOut) -> Value {
+    use vectorcraft_doc::SewResult;
+    let n = |want: SewResult| r.swatches.iter().filter(|w| w.result() == want).count();
+    json!({"pass": n(SewResult::Pass), "fail": n(SewResult::Fail), "untested": n(SewResult::Untested)})
+}
+
+fn result_id(r: vectorcraft_doc::SewResult) -> &'static str {
+    match r {
+        vectorcraft_doc::SewResult::Untested => "untested",
+        other => other.id(),
+    }
+}
+
+fn sew_out(s: &mut Session, _: &Value) -> Result<Value> {
+    let sections: Vec<Value> =
+        vectorcraft_embroidery::testsheet::SECTIONS.iter().map(|x| json!({"id": x.id, "letter": x.letter.to_string(), "name": x.name})).collect();
+    let Some(r) = s.doc()?.doc.embroidery.sew_out.as_ref() else {
+        return Ok(json!({"sewOut": null, "sections": sections}));
+    };
+    let swatches: Vec<Value> = r
+        .swatches
+        .iter()
+        .map(|w| {
+            json!({
+                "id": w.id, "section": w.section, "label": w.label, "objects": w.objects.iter().map(|i| i.0).collect::<Vec<_>>(),
+                "result": result_id(w.result()), "notes": w.notes,
+            })
+        })
+        .collect();
+    Ok(json!({
+        "sewOut": {"fabric": r.fabric, "machine": r.machine, "notes": r.notes, "swatches": swatches, "counts": sew_counts(r)},
+        "sections": sections,
+    }))
+}
+
+fn record_sew_out(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.recordSewOut";
+    let Some(mut r) = s.doc()?.doc.embroidery.sew_out.clone() else {
+        return Err(bad(C, "the document has no sew-out form: make a test sheet first (embroidery.testSheet)"));
+    };
+    let text = |key: &str| -> Result<Option<String>> {
+        match p.get(key) {
+            None | Some(Value::Null) => Ok(None),
+            Some(Value::String(t)) => Ok(Some(t.trim().to_string())),
+            Some(_) => Err(bad(C, format!("`{key}` must be text"))),
+        }
+    };
+    if let Some(t) = text("fabric")? {
+        r.fabric = t;
+    }
+    if let Some(t) = text("machine")? {
+        r.machine = t;
+    }
+    if let Some(t) = text("notes")? {
+        r.notes = t;
+    }
+    match p.get("results") {
+        None | Some(Value::Null) => {}
+        Some(Value::Array(list)) => {
+            for item in list {
+                let id = str_param(item, "swatch").map(str::trim).ok_or_else(|| bad(C, "each result names its `swatch` (A3)"))?;
+                let Some(w) = r.swatches.iter_mut().find(|w| w.id.eq_ignore_ascii_case(id)) else {
+                    return Err(bad(C, format!("no swatch `{id}` on the test sheet")));
+                };
+                match item.get("result") {
+                    None | Some(Value::Null) => {}
+                    Some(v) => {
+                        let res = v.as_str().and_then(vectorcraft_doc::SewResult::parse);
+                        w.result = res.ok_or_else(|| bad(C, "`result` must be pass, fail or untested"))?.id().to_string();
+                    }
+                }
+                match item.get("notes") {
+                    None | Some(Value::Null) => {}
+                    Some(Value::String(t)) => w.notes = t.trim().to_string(),
+                    Some(_) => return Err(bad(C, "`notes` must be text")),
+                }
+            }
+        }
+        Some(_) => return Err(bad(C, "`results` must be a list of {swatch, result?, notes?}")),
+    }
+    let counts = sew_counts(&r);
+    if s.doc()?.doc.embroidery.sew_out.as_ref() != Some(&r) {
+        edit_counted(s, "Record Sew-Out", |d| {
+            d.embroidery.sew_out = Some(r);
+            Ok(1)
+        })?;
+    }
+    Ok(json!({ "counts": counts }))
 }
 
 fn preview(s: &mut Session, p: &Value) -> Result<Value> {

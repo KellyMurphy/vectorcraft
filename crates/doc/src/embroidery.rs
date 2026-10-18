@@ -356,6 +356,10 @@ pub struct EmbroiderySetup {
     /// the same anywhere; [`StitchSettings::pattern`] names them by id.
     #[serde(skip_serializing_if = "Vec::is_empty", deserialize_with = "de_patterns", serialize_with = "ser_patterns")]
     pub patterns: Vec<BorderPattern>,
+    /// A sew-out test: the swatches of a test sheet (`embroidery.testSheet`) and what was seen
+    /// when they were sewn.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub sew_out: Option<SewOut>,
     /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
     #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
     pub extra: serde_json::Map<String, serde_json::Value>,
@@ -368,8 +372,87 @@ impl Default for EmbroiderySetup {
             stitch_moves_under: Self::DEFAULT_STITCH_MOVES,
             order: vec![],
             patterns: vec![],
+            sew_out: None,
             extra: Default::default(),
         }
+    }
+}
+
+/// A sew-out test record: the swatches of a test sheet, the fabric and machine they were sewn
+/// on, and what was seen.
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct SewOut {
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub fabric: String,
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub machine: String,
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub notes: String,
+    pub swatches: Vec<SewSwatch>,
+    /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
+    #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
+    pub extra: serde_json::Map<String, serde_json::Value>,
+}
+
+/// One swatch of a test sheet: the objects it is sewn from and the result seen.
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct SewSwatch {
+    /// Its name on the sheet: the section's letter and its number (`A3`).
+    pub id: String,
+    /// The section's id (`satinWidth`…).
+    pub section: String,
+    /// What it tests, in words (`Satin 3 mm wide`).
+    pub label: String,
+    /// The objects it is sewn from (its label included).
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub objects: Vec<crate::NodeId>,
+    /// `pass`, `fail`, or empty: not judged yet ([`SewSwatch::result`]). Kept as text so a value a
+    /// newer VectorCraft writes survives a save.
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub result: String,
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub notes: String,
+    /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
+    #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
+    pub extra: serde_json::Map<String, serde_json::Value>,
+}
+
+/// What was seen when a swatch was sewn.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum SewResult {
+    /// Not judged yet (or a result this version doesn't know).
+    Untested,
+    Pass,
+    Fail,
+}
+
+impl SewResult {
+    pub const ALL: [SewResult; 3] = [Self::Untested, Self::Pass, Self::Fail];
+
+    pub fn id(self) -> &'static str {
+        match self {
+            Self::Untested => "",
+            Self::Pass => "pass",
+            Self::Fail => "fail",
+        }
+    }
+
+    /// `pass`, `fail`, or `untested` / empty.
+    pub fn parse(s: &str) -> Option<Self> {
+        match s.trim().to_ascii_lowercase().as_str() {
+            "" | "untested" => Some(Self::Untested),
+            "pass" => Some(Self::Pass),
+            "fail" => Some(Self::Fail),
+            _ => None,
+        }
+    }
+}
+
+impl SewSwatch {
+    pub fn result(&self) -> SewResult {
+        SewResult::parse(&self.result).unwrap_or(SewResult::Untested)
     }
 }
 
@@ -626,6 +709,28 @@ mod tests {
         assert!(e.patterns[0].unknown.is_none() && e.patterns[1].unknown.is_some());
         assert_eq!((e.patterns[1].id.as_str(), e.patterns[1].name.as_str()), ("lace", "Lace"));
         assert_eq!(serde_json::to_value(&e).unwrap(), setup);
+    }
+
+    #[test]
+    fn sew_outs_round_trip_and_keep_newer_results() {
+        let setup = serde_json::json!({
+            "trimJumpsOver": 3.0, "stitchMovesUnder": 1.0,
+            "sewOut": {
+                "fabric": "denim", "machine": "home",
+                "swatches": [
+                    {"id": "A1", "section": "satinWidth", "label": "Satin 1 mm wide", "objects": [4, 5], "result": "pass"},
+                    {"id": "A2", "section": "satinWidth", "label": "Satin 2 mm wide", "result": "puckered", "notes": "loops", "photo": "a2.jpg"}
+                ]
+            }
+        });
+        let e: EmbroiderySetup = serde_json::from_value(setup.clone()).unwrap();
+        let s = e.sew_out.as_ref().unwrap();
+        assert_eq!(s.swatches[0].result(), SewResult::Pass);
+        assert_eq!(s.swatches[1].result(), SewResult::Untested, "a result this version doesn't know");
+        assert_eq!(serde_json::to_value(&e).unwrap(), setup, "written back as read");
+        for r in SewResult::ALL {
+            assert_eq!(SewResult::parse(r.id()), Some(r));
+        }
     }
 
     #[test]

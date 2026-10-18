@@ -4925,3 +4925,30 @@ theme	Appearance	Giao diện
 	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	Điều kiểu mũi thêu báo về hình dạng đối tượng (hình satin không có nét, họa tiết quá mảnh, thiếu mẫu đường viền…).
 @msg	Extracted border pattern {_1}: a {_2} mm repeat	Đã trích xuất mẫu đường viền {_1}: lặp {_2} mm
 @msg	Loaded border pattern {_1}	Đã nạp mẫu đường viền {_1}
+
+# Sew-out tests (the Sew-Out Test panel, embroidery.testSheet)
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	Trang thử là một bộ mẫu hiệu chỉnh để thêu trên máy và vải của bạn. Mỗi phần là một thiết kế 100 × 100 mm; sau khi thêu, đánh dấu tại đây kết quả của từng mẫu.
+	Another test sheet, for another fabric or machine	Thêm một trang thử, cho loại vải hoặc máy khác
+	Calibration swatches to sew, and a form for what they showed	Các mẫu hiệu chỉnh để thêu, và một biểu mẫu ghi kết quả của chúng
+	Click a swatch to select it and add a note.	Bấm vào một mẫu để chọn và thêm ghi chú.
+	Each section as a design of its own (one file per artboard)	Mỗi phần thành một thiết kế riêng (một tệp cho mỗi bảng vẽ)
+	Fabric:	Vải:
+	Fail	Không đạt
+	Lettering needs a type face; without one it is left out.	Chữ cần có phông chữ; không có thì bị bỏ qua.
+	Machine:	Máy:
+	New Test Sheet	Trang thử mới
+	New Test Sheet…	Trang thử mới…
+	Notes:	Ghi chú:
+	Pass	Đạt
+	Sew-Out Test…	Thêu thử…
+	Test Sheet	Trang thử
+	To judge	Chờ đánh giá
+	Fill Angle	Góc thêu đầy
+	Fill Density	Mật độ thêu đầy
+	Lettering	Chữ
+	Pull Compensation	Bù co kéo
+	Record Sew-Out	Ghi kết quả thêu thử
+	Satin Density	Mật độ satin
+	Satin Width	Độ rộng satin
+	Sew-Out Test	Thêu thử
+	Underlay	Lớp lót

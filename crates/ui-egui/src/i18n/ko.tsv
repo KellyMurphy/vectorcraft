@@ -4909,3 +4909,30 @@ lighting	Light	광원
 	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	스티치 종류가 오브젝트 모양에 대해 알린 내용(획이 없는 새틴 도형, 너무 가는 모티프, 없는 테두리 패턴 등).
 @msg	Extracted border pattern {_1}: a {_2} mm repeat	테두리 패턴 {_1}을(를) 추출했습니다: {_2} mm 반복
 @msg	Loaded border pattern {_1}	테두리 패턴 {_1}을(를) 불러왔습니다
+
+# Sew-out tests (the Sew-Out Test panel, embroidery.testSheet)
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	테스트 시트는 사용하는 기계와 천에 수놓아 볼 보정용 견본 모음입니다. 각 섹션은 100 × 100 mm 디자인입니다. 수놓은 뒤 각 견본의 결과를 여기에 표시하세요.
+	Another test sheet, for another fabric or machine	다른 천이나 기계를 위한 테스트 시트 하나 더
+	Calibration swatches to sew, and a form for what they showed	수놓을 보정용 견본과 그 결과를 적는 양식
+	Click a swatch to select it and add a note.	견본을 클릭하면 선택하고 메모를 추가할 수 있습니다.
+	Each section as a design of its own (one file per artboard)	각 섹션을 별도의 디자인으로(대지마다 파일 하나)
+	Fabric:	천:
+	Fail	불합격
+	Lettering needs a type face; without one it is left out.	레터링에는 서체가 필요합니다. 서체가 없으면 빠집니다.
+	Machine:	기계:
+	New Test Sheet	새 테스트 시트
+	New Test Sheet…	새 테스트 시트…
+	Notes:	메모:
+	Pass	합격
+	Sew-Out Test…	시험 자수…
+	Test Sheet	테스트 시트
+	To judge	판정 전
+	Fill Angle	채우기 각도
+	Fill Density	채우기 밀도
+	Lettering	레터링
+	Pull Compensation	당김 보정
+	Record Sew-Out	시험 자수 기록
+	Satin Density	새틴 밀도
+	Satin Width	새틴 너비
+	Sew-Out Test	시험 자수
+	Underlay	밑실

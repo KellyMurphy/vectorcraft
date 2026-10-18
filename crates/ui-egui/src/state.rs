@@ -154,6 +154,7 @@ pub const ICON_PANELS: &[(&str, &str, &str)] = &[
     ("attributes", "Attributes", "settings"),
     (crate::panels::embroidery::ID, "Embroidery", "spline"),
     (crate::panels::sew_order::ID, "Sew Order", "dc-list-view"),
+    (crate::panels::sew_out::ID, "Sew-Out Test", "ruler"),
     (crate::panels::svg_interactivity::ID, "SVG Interactivity", "spline-pointer"),
     ("colorThemes", "Color Themes", "sun"),
     (crate::panels::links::ID, "Links", "link"),

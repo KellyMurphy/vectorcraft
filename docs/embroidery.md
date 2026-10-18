@@ -163,6 +163,32 @@ for warnings). The rules so far:
 Exporting a DST adds a line for each rule that found something to the export's warnings.
 `embroidery.check` gives the same findings to agents and scripts, each with the object and where it is.
 
+### Sew-out tests
+
+Stitch quality is only proven on fabric. **New Test Sheet…** (Sew-Out Test panel, `embroidery.testSheet`)
+makes a new document of calibration swatches, one artboard per section, each a 100 × 100 mm design that
+fits the smallest common hoop:
+
+| Section | Swatches |
+|---|---|
+| A Satin Width | satin columns 1–10 mm wide |
+| B Satin Density | 4 mm satin at spacing 0.3–0.8 mm |
+| C Pull Compensation | 3 mm satin with pull compensation 0–0.5 mm, between running-stitch marks at the drawn edges |
+| D Fill Density | fill squares at row spacing 0.3–0.6 mm |
+| E Fill Angle | fill squares at 0°, 45°, 90° and 135° |
+| F Underlay | satin with each satin underlay; fill without and with fill underlay |
+| G Lettering | "Hag" in Auto at 4–20 mm (needs a type face) |
+
+Each swatch changes one setting, the others keep their defaults, and each is labelled in stitches with its
+value under it (a single-stroke font drawn in code). Everything is sewn in one thread. Export each section
+as its own design with `document.export {format: dst, artboard: n}`, or all of them at once with
+`range: "all"` (a file per artboard).
+
+After sewing, the **Sew-Out Test** panel is the form: the fabric and machine, and for each swatch
+(`A3`: section A, third swatch) Pass or Fail and a note. The record is saved in the document
+([`sewOut`](formats/vectorcraft-embroidery.md#sew-out-test-sewout)), so a sheet saved per fabric (woven,
+knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.recordSewOut` fills it in.
+
 ### Commands
 
 | Command | Params |
@@ -183,6 +209,9 @@ Exporting a DST adds a line for each rule that found something to the export's w
 | `embroidery.reorder` | `{to: first\|earlier\|later\|last, ids?}` or `{order: [ids]}`: change the sewing order |
 | `embroidery.sortByThread` | group the sewing order by thread colour |
 | `embroidery.resetOrder` | sew in paint order again |
+| `embroidery.testSheet` | `{sections?: [ids]}`: a new document of calibration swatches (see Sew-out tests) → `{index, sections, swatches, skipped}` |
+| `embroidery.sewOut` | → the sew-out form: `{sewOut: {fabric, machine, notes, swatches: [{id, section, label, objects, result, notes}], counts} \| null, sections}` |
+| `embroidery.recordSewOut` | `{fabric?, machine?, notes?, results?: [{swatch, result?: pass\|fail\|untested, notes?}]}`: fill in the form, one undo step |
 | `view.stitchPreview` | toggles Stitch Preview |
 
 Agents reach all of these over MCP (`run_command`), with the `embroidery` prompt, this guide as the
@@ -214,6 +243,10 @@ loose satin stitches: fill those shapes instead.
 middle, where the machine starts. Opening a `.dst` file creates one manual-stitch path for each run of
 stitches, grouped by colour block. DST stores no thread colours, so each block gets a distinct colour;
 recolour the paths' strokes, or set `thread`, before sewing.
+
+With `artboard`, `artboards` or `range`, the export writes a design per artboard, each holding the
+stitched objects whose middle lies on that artboard (a test sheet's sections, or several designs laid
+out in one document).
 
 DST files VectorCraft writes have been checked against an independent reader,
 [pyembroidery](https://github.com/EmbroidePy/pyembroidery) (used as a test tool only; none of its code is in

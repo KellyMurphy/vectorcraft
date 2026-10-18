@@ -5187,3 +5187,30 @@ lighting	Light	光源
 
 @msg	Loaded border pattern {_1}	已载入图案边框 {_1}
 @msg	Extracted border pattern {_1}: a {_2} mm repeat	已提取图案边框 {_1}：重复长度 {_2} 毫米
+
+# Sew-out tests (the Sew-Out Test panel, embroidery.testSheet)
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	测试单是一组校准样片，用于在您的机器和面料上绣制。每个部分是一个 100 × 100 毫米的设计；绣完后，在此标记每个样片的结果。
+	Another test sheet, for another fabric or machine	再建一张测试单，用于其他面料或机器
+	Calibration swatches to sew, and a form for what they showed	待绣的校准样片，以及记录结果的表单
+	Click a swatch to select it and add a note.	单击样片可将其选中并添加备注。
+	Each section as a design of its own (one file per artboard)	每个部分作为独立的设计（每个画板一个文件）
+	Fabric:	面料:
+	Fail	不合格
+	Lettering needs a type face; without one it is left out.	文字需要字体；没有字体时将省略。
+	Machine:	机器:
+	New Test Sheet	新建测试单
+	New Test Sheet…	新建测试单…
+	Notes:	备注:
+	Pass	合格
+	Sew-Out Test…	试绣…
+	Test Sheet	测试单
+	To judge	待评判
+	Fill Angle	填充角度
+	Fill Density	填充密度
+	Lettering	文字
+	Pull Compensation	拉力补偿
+	Record Sew-Out	记录试绣
+	Satin Density	缎面密度
+	Satin Width	缎面宽度
+	Sew-Out Test	试绣
+	Underlay	底衬

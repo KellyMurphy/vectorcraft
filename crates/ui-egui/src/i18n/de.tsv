@@ -4908,3 +4908,30 @@ effect	Regular	Regelmäßig
 	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	Was der Stichtyp zur Form des Objekts meldet (eine Satinform ohne Striche, ein zu feines Motiv, ein fehlendes Randmuster …).
 @msg	Extracted border pattern {_1}: a {_2} mm repeat	Randmuster {_1} extrahiert: ein Rapport von {_2} mm
 @msg	Loaded border pattern {_1}	Randmuster {_1} geladen
+
+# Sew-out tests (the Sew-Out Test panel, embroidery.testSheet)
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	Ein Testblatt ist eine Reihe von Kalibrierungsmustern zum Sticken auf Ihrer Maschine und Ihrem Stoff. Jeder Abschnitt ist ein Design von 100 × 100 mm; markieren Sie nach dem Sticken hier, was jedes Muster gezeigt hat.
+	Another test sheet, for another fabric or machine	Ein weiteres Testblatt, für einen anderen Stoff oder eine andere Maschine
+	Calibration swatches to sew, and a form for what they showed	Kalibrierungsmuster zum Sticken und ein Formular für das Ergebnis
+	Click a swatch to select it and add a note.	Klicken Sie auf ein Muster, um es auszuwählen und eine Notiz hinzuzufügen.
+	Each section as a design of its own (one file per artboard)	Jeder Abschnitt als eigenes Design (eine Datei pro Zeichenfläche)
+	Fabric:	Stoff:
+	Fail	Nicht bestanden
+	Lettering needs a type face; without one it is left out.	Für die Schrift wird eine Schriftart benötigt; ohne eine wird sie weggelassen.
+	Machine:	Maschine:
+	New Test Sheet	Neues Testblatt
+	New Test Sheet…	Neues Testblatt…
+	Notes:	Notizen:
+	Pass	Bestanden
+	Sew-Out Test…	Stickprobe…
+	Test Sheet	Testblatt
+	To judge	Zu beurteilen
+	Fill Angle	Füllwinkel
+	Fill Density	Fülldichte
+	Lettering	Schrift
+	Pull Compensation	Zugausgleich
+	Record Sew-Out	Stickprobe erfassen
+	Satin Density	Satindichte
+	Satin Width	Satinbreite
+	Sew-Out Test	Stickprobe
+	Underlay	Unterlage

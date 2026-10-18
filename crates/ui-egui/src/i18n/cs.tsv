@@ -5351,3 +5351,30 @@ mark-style	Japanese	Japonské
 
 @msg	Loaded border pattern {_1}	Načten vzorový okraj {_1}
 @msg	Extracted border pattern {_1}: a {_2} mm repeat	Extrahován vzorový okraj {_1}: opakování {_2} mm
+
+# Sew-out tests (the Sew-Out Test panel, embroidery.testSheet)
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	Testovací list je sada kalibračních vzorků k vyšití na vašem stroji a látce. Každá sekce je návrh 100 × 100 mm; po vyšití zde označte, co jednotlivé vzorky ukázaly.
+	Another test sheet, for another fabric or machine	Další testovací list, pro jinou látku nebo stroj
+	Calibration swatches to sew, and a form for what they showed	Kalibrační vzorky k vyšití a formulář pro jejich výsledky
+	Click a swatch to select it and add a note.	Klepnutím na vzorek jej vyberete a můžete přidat poznámku.
+	Each section as a design of its own (one file per artboard)	Každá sekce jako samostatný návrh (jeden soubor na pracovní plochu)
+	Fabric:	Látka:
+	Fail	Nevyhovuje
+	Lettering needs a type face; without one it is left out.	Písmo vyžaduje řez písma; bez něj se vynechá.
+	Machine:	Stroj:
+	New Test Sheet	Nový testovací list
+	New Test Sheet…	Nový testovací list…
+	Notes:	Poznámky:
+	Pass	Vyhovuje
+	Sew-Out Test…	Zkušební výšivka…
+	Test Sheet	Testovací list
+	To judge	K posouzení
+	Fill Angle	Úhel výplně
+	Fill Density	Hustota výplně
+	Lettering	Písmo
+	Pull Compensation	Kompenzace stažení
+	Record Sew-Out	Zaznamenat zkušební výšivku
+	Satin Density	Hustota saténu
+	Satin Width	Šířka saténu
+	Sew-Out Test	Zkušební výšivka
+	Underlay	Podšití

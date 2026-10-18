@@ -5302,3 +5302,30 @@ theme	Appearance	Външен вид
 	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	Какво съобщи типът бод за формата на обекта (сатенена форма без линии, твърде фин мотив, липсваща шарка за кант…).
 @msg	Extracted border pattern {_1}: a {_2} mm repeat	Извлечена е шарка за кант {_1}: повторение от {_2} mm
 @msg	Loaded border pattern {_1}	Заредена е шарка за кант {_1}
+
+# Sew-out tests (the Sew-Out Test panel, embroidery.testSheet)
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	Тестовият лист е набор от калибриращи мостри, които да избродирате на вашата машина и плат. Всеки раздел е дизайн 100 × 100 mm; след бродирането отбележете тук какво показа всяка мостра.
+	Another test sheet, for another fabric or machine	Още един тестов лист, за друг плат или машина
+	Calibration swatches to sew, and a form for what they showed	Калибриращи мостри за бродиране и формуляр за това какво показаха
+	Click a swatch to select it and add a note.	Щракнете върху мостра, за да я изберете и да добавите бележка.
+	Each section as a design of its own (one file per artboard)	Всеки раздел като отделен дизайн (по един файл за всяка монтажна област)
+	Fabric:	Плат:
+	Fail	Неуспех
+	Lettering needs a type face; without one it is left out.	За надписите е нужен шрифт; без такъв те се пропускат.
+	Machine:	Машина:
+	New Test Sheet	Нов тестов лист
+	New Test Sheet…	Нов тестов лист…
+	Notes:	Бележки:
+	Pass	Успех
+	Sew-Out Test…	Пробно бродиране…
+	Test Sheet	Тестов лист
+	To judge	За оценка
+	Fill Angle	Ъгъл на запълването
+	Fill Density	Плътност на запълването
+	Lettering	Надписи
+	Pull Compensation	Компенсация на опъна
+	Record Sew-Out	Записване на пробното бродиране
+	Satin Density	Плътност на сатена
+	Satin Width	Ширина на сатена
+	Sew-Out Test	Пробно бродиране
+	Underlay	Подложка

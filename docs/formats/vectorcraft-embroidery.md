@@ -86,6 +86,7 @@ Type objects are sewn letter by letter, each letter in its characters' colour un
 | `stitchMovesUnder` | number, mm (0–5) | Moves to the next stitch up to this long are sewn as a stitch rather than jumped; never more than `trimJumpsOver`. | 1 |
 | `order` | array of object ids | The sewing order: these objects first, in this order, then any other stitched objects in paint order (bottom first). Ids of objects no longer there are ignored. | empty: paint order |
 | `patterns` | array of border patterns | The border patterns the document uses beyond the starters, so it sews the same anywhere. | empty |
+| `sewOut` | object, see [Sew-out test](#sew-out-test-sewout) | The swatches of a test sheet and what was seen when they were sewn. | none |
 
 Each entry of `patterns` has the fields of a [border pattern file](vcborder.md#fields) other than `format`,
 `version` and `units`, with a non-empty `id`. Stitch settings name them by `id` in `pattern`; a document's
@@ -94,13 +95,61 @@ warns.
 
 Readers clamp `trimJumpsOver` and `stitchMovesUnder` into range like stitch settings.
 
+## Sew-out test (`sewOut`)
+
+`embroidery.testSheet` makes a test sheet: a new document of calibration swatches, one artboard (a
+100 × 100 mm design) per section, every swatch labelled in stitches. The record of the swatches, and what
+the person who sewed them saw, is `document.embroidery.sewOut`:
+
+```json
+"sewOut": {
+  "fabric": "cotton twill, tear-away",
+  "machine": "single-needle, 600 spm",
+  "notes": "",
+  "swatches": [
+    { "id": "A3", "section": "satinWidth", "label": "Satin 3 mm wide", "objects": [41, 42], "result": "pass" },
+    { "id": "A9", "section": "satinWidth", "label": "Satin 10 mm wide", "objects": [57, 58], "result": "fail", "notes": "loops" }
+  ]
+}
+```
+
+| Member | Type | Meaning | Default |
+|---|---|---|---|
+| `fabric` | string | The fabric and stabilizer sewn on. | empty |
+| `machine` | string | The machine, needle and speed. | empty |
+| `notes` | string | Notes on the whole sew-out. | empty |
+| `swatches` | array | One entry per swatch, in the sheet's order. | empty |
+
+Each swatch:
+
+| Member | Type | Meaning | Default |
+|---|---|---|---|
+| `id` | string | Its name on the sheet: the section's letter, then its number (`A3`). | |
+| `section` | string | The section, one of the ids below. | |
+| `label` | string | What it tests, in words. | |
+| `objects` | array of object ids | The objects it is sewn from, its sewn label included. | empty |
+| `result` | string | `pass`, `fail`, or empty: not judged yet. A reader treats any other value as not judged, and keeps it. | empty |
+| `notes` | string | What was seen. | empty |
+
+Sections (each changes one setting; the others keep their defaults):
+
+| Letter | `section` | Swatches |
+|---|---|---|
+| A | `satinWidth` | Satin columns 30 mm long, 1, 2, 3, 4, 5, 6, 7, 8 and 10 mm wide. |
+| B | `satinDensity` | 4 mm satin columns at spacing 0.3, 0.35, 0.4, 0.5, 0.6 and 0.8 mm. |
+| C | `pullCompensation` | 3 mm satin columns with pull compensation 0 to 0.5 mm, each between running-stitch marks at the drawn edges. |
+| D | `fillDensity` | 18 mm fill squares at row spacing 0.3, 0.4, 0.5 and 0.6 mm. |
+| E | `fillAngle` | 18 mm fill squares at 0°, 45°, 90° and 135°. |
+| F | `underlay` | 5 mm satin columns with each satin underlay, then 18 mm fill squares without and with fill underlay. |
+| G | `lettering` | The word "Hag" in auto stitches at 4, 6, 8, 10, 15 and 20 mm type sizes (left out when no type face is available). |
+
 ## Compatibility
 
 New stitch types, settings and patterns are added without a new document version, so a document made
 by a newer VectorCraft opens in an older one. A reader must:
 
-- **Keep members it doesn't know**, in a `stitch` object, in `document.embroidery`, in a pattern or in a
-  part, and write them back when it saves.
+- **Keep members it doesn't know**, in a `stitch` object, in `document.embroidery`, in a pattern, in a part, in
+  `sewOut` or in a swatch, and write them back when it saves.
 - **Keep a `stitch` object it can't read** (a `kind` or `underlay` value it doesn't know, or a value of the
   wrong type, such as `thread` past 255) exactly as written, not sew that object, and warn. Choosing a
   stitch for the object replaces it.
