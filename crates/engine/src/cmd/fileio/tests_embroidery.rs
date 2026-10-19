@@ -555,3 +555,21 @@ fn dst_export_writes_a_design_per_artboard() {
     assert_eq!(total, whole.stats().stitches, "the sections together are the whole sheet");
     assert!(s.execute("document.export", &json!({"format": "dst", "artboard": 5})).is_err());
 }
+
+#[test]
+fn new_stitched_objects_get_the_automatic_underlay() {
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["underlay"], "auto");
+    // Changing the stitch keeps it; a stitch without underlays reports none.
+    s.execute("embroidery.set", &json!({"type": "satinShape"})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["underlay"], "auto");
+    s.execute("embroidery.set", &json!({"type": "running"})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["underlay"], "none");
+    // A choice wins, and null goes back to none.
+    s.execute("embroidery.set", &json!({"type": "satin", "underlay": "edge"})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["underlay"], "edge");
+    s.execute("embroidery.set", &json!({"underlay": null})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["underlay"], "none");
+    assert!(s.execute("embroidery.set", &json!({"type": "running", "underlay": "auto"})).is_err(), "running stitches take no underlay");
+}

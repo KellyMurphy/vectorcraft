@@ -34,7 +34,7 @@ are kept but have no effect.
 | `width` | number, mm | satin, zigzag; pattern border | satin and zigzag 0.3–12; pattern border 1–40 | satin: the stroke width (3 without one); zigzag 3; pattern border: the pattern's own width |
 | `thread` | `[r, g, b]`, each 0–255 (sRGB) | all | | the stroke's colour for stitches along the path, the fill's for fills, satin shapes and auto |
 | `pull` | number, mm | satin, satin shape, auto | 0–3 | 0 |
-| `underlay` | string | satin: `none` `center` `edge` `zigzag`; satin shape: `none` `center`; fill: `none` `fill` | | `none` |
+| `underlay` | string | satin: `none` `auto` `center` `edge` `zigzag`; satin shape: `none` `auto` `center` `edge`; fill: `none` `auto` `fill` | | `none` (programs give new objects `auto`) |
 | `stagger` | integer | fill | 2–8 | 3 |
 | `motif` | string | fill | `diamonds` `waves` `circles` `scales` `herringbone` | none |
 | `motifSize` | number, mm | fill with a motif | 3–60 | 10 |
@@ -52,6 +52,12 @@ Readers don't refuse out-of-range or non-finite numbers in a document: they use 
 or the default for one that isn't a number. `thread`, `stagger` and `passes` must be whole numbers from 0 to
 255; otherwise the object's stitch settings can't be read and are kept as described under
 [Compatibility](#compatibility). An underlay the kind doesn't use counts as `none`.
+
+`auto` picks the underlay by stitch and width: a satin column under 2 mm wide gets `center`, 2–5 mm
+`edge`, wider `edge` then `zigzag`; a fill gets an edge walk (a running stitch just inside its outline)
+then `fill`; a satin shape whose strokes are over 2.5 mm wide gets `edge` (an edge walk round its
+outline), thinner ones `center`. Builds from before 2026-10-18 don't know `auto` and keep such an object
+unsewn (see [Compatibility](#compatibility)).
 
 ### Kinds
 
@@ -140,7 +146,7 @@ Sections (each changes one setting; the others keep their defaults):
 | C | `pullCompensation` | 3 mm satin columns with pull compensation 0 to 0.5 mm, each between running-stitch marks at the drawn edges. |
 | D | `fillDensity` | 18 mm fill squares at row spacing 0.3, 0.4, 0.5 and 0.6 mm. |
 | E | `fillAngle` | 18 mm fill squares at 0°, 45°, 90° and 135°. |
-| F | `underlay` | 5 mm satin columns with each satin underlay, then 18 mm fill squares without and with fill underlay. |
+| F | `underlay` | 5 mm satin columns with each satin underlay (`auto` included), then 18 mm fill squares with each fill underlay. |
 | G | `lettering` | The word "Hag" in auto stitches at 4, 6, 8, 10, 15 and 20 mm type sizes (left out when no type face is available). |
 
 ## Compatibility

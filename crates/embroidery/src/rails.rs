@@ -187,10 +187,34 @@ impl Rails {
                 }
             })
             .collect();
-        let mid = |pairs: &[(Point, Point)]| pairs.iter().map(|(p, q)| p.midpoint(*q)).collect::<Vec<_>>();
         let mut run: Vec<Point> = vec![];
-        // An underlay that ends at the column's far end: the column is sewn back over it.
-        let back = match underlay {
+        // Auto: by the column's mean width.
+        let underlays: &[Underlay] = match underlay {
+            Underlay::Auto => {
+                let widths: Vec<f64> = zig.iter().map(|(p, q)| p.distance(*q)).collect();
+                let mean = if widths.is_empty() { 0.0 } else { widths.iter().sum::<f64>() / widths.len() as f64 };
+                crate::generate::AutoUnderlay::default().satin(mean)
+            }
+            _ => std::slice::from_ref(&underlay),
+        };
+        let mut back = false;
+        for u in underlays {
+            back = self.underlay(*u, &mut run);
+        }
+        if back {
+            zig.reverse();
+        }
+        run.extend(short_stitches(&zig).0);
+        // A wide column's underlay zigs, and the move from the underlay onto the column, are
+        // split where too long to sew at once (the column sews over them).
+        (split_long(&run), narrowed)
+    }
+
+    /// Add underlay `underlay` to `run`; whether it ends at the column's far end (so the column is
+    /// sewn back over it).
+    fn underlay(&self, underlay: Underlay, run: &mut Vec<Point>) -> bool {
+        let mid = |pairs: &[(Point, Point)]| pairs.iter().map(|(p, q)| p.midpoint(*q)).collect::<Vec<_>>();
+        match underlay {
             Underlay::Center => {
                 run.extend(running(&mid(&self.pairs(UNDERLAY_LEN, 0.0)), UNDERLAY_LEN));
                 true
@@ -206,15 +230,8 @@ impl Rails {
                 run.extend(p.iter().enumerate().map(|(k, (a, b))| if k % 2 == 0 { *a } else { *b }));
                 true
             }
-            Underlay::None | Underlay::Fill => false,
-        };
-        if back {
-            zig.reverse();
+            Underlay::None | Underlay::Fill | Underlay::Auto => false,
         }
-        run.extend(short_stitches(&zig).0);
-        // A wide column's underlay zigs, and the move from the underlay onto the column, are
-        // split where too long to sew at once (the column sews over them).
-        (split_long(&run), narrowed)
     }
 }
 

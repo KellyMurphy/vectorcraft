@@ -94,9 +94,15 @@ impl StitchKind {
 pub enum Underlay {
     #[default]
     None,
+    /// Chosen by the stitch and its width (see `vectorcraft_embroidery::generate::AutoUnderlay`):
+    /// narrow satin a centre walk, medium an edge walk, wide an edge walk and a zigzag; fills an
+    /// edge walk and fill underlay; satin shapes a centre or edge walk by stroke width. What new
+    /// objects get.
+    Auto,
     /// Satin: a running stitch along the centre line.
     Center,
-    /// Satin: running stitches just inside both edges of the column.
+    /// Satin: running stitches just inside both edges of the column. Satin shape: a running
+    /// stitch just inside the shape's outline.
     Edge,
     /// Satin: a sparse zigzag inside the column.
     Zigzag,
@@ -105,11 +111,12 @@ pub enum Underlay {
 }
 
 impl Underlay {
-    pub const ALL: [Underlay; 5] = [Self::None, Self::Center, Self::Edge, Self::Zigzag, Self::Fill];
+    pub const ALL: [Underlay; 6] = [Self::None, Self::Auto, Self::Center, Self::Edge, Self::Zigzag, Self::Fill];
 
     pub fn id(self) -> &'static str {
         match self {
             Self::None => "none",
+            Self::Auto => "auto",
             Self::Center => "center",
             Self::Edge => "edge",
             Self::Zigzag => "zigzag",
@@ -120,6 +127,7 @@ impl Underlay {
     pub fn label(self) -> &'static str {
         match self {
             Self::None => "None",
+            Self::Auto => "Auto",
             Self::Center => "Center Walk",
             Self::Edge => "Edge Walk",
             Self::Zigzag => "Zigzag",
@@ -134,9 +142,9 @@ impl Underlay {
     /// The underlays a stitch kind sews (the first is none).
     pub fn for_kind(kind: StitchKind) -> &'static [Underlay] {
         match kind {
-            StitchKind::Satin => &[Self::None, Self::Center, Self::Edge, Self::Zigzag],
-            StitchKind::Fill => &[Self::None, Self::Fill],
-            StitchKind::SatinShape => &[Self::None, Self::Center],
+            StitchKind::Satin => &[Self::None, Self::Auto, Self::Center, Self::Edge, Self::Zigzag],
+            StitchKind::Fill => &[Self::None, Self::Auto, Self::Fill],
+            StitchKind::SatinShape => &[Self::None, Self::Auto, Self::Center, Self::Edge],
             _ => &[Self::None],
         }
     }

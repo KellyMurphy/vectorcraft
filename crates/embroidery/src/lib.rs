@@ -596,10 +596,10 @@ pub fn auto_settings(s: &StitchSettings, width: f64) -> StitchSettings {
         t.length = None;
     } else if width <= wide {
         t.kind = StitchKind::SatinShape;
-        t.underlay = Underlay::Center;
+        t.underlay = Underlay::Auto;
     } else {
         t.kind = StitchKind::Fill;
-        t.underlay = Underlay::Fill;
+        t.underlay = Underlay::Auto;
         t.border = Some(s.border().unwrap_or(StitchSettings::DEFAULT_BORDER));
         t.length = None;
     }

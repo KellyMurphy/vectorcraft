@@ -973,9 +973,9 @@ fn auto_picks_by_stroke_width() {
     let s = StitchSettings::new(StitchKind::Auto);
     assert_eq!(auto_settings(&s, 0.5).kind, StitchKind::Bean);
     let mid = auto_settings(&s, 3.0);
-    assert_eq!((mid.kind, mid.underlay), (StitchKind::SatinShape, Underlay::Center));
+    assert_eq!((mid.kind, mid.underlay), (StitchKind::SatinShape, Underlay::Auto));
     let wide = auto_settings(&s, 9.0);
-    assert_eq!((wide.kind, wide.underlay, wide.border), (StitchKind::Fill, Underlay::Fill, Some(2.0)));
+    assert_eq!((wide.kind, wide.underlay, wide.border), (StitchKind::Fill, Underlay::Auto, Some(2.0)));
     let tuned = StitchSettings { thin_under: Some(2.0), wide_over: Some(10.0), ..s };
     assert_eq!(auto_settings(&tuned, 1.5).kind, StitchKind::Bean);
     assert_eq!(auto_settings(&tuned, 9.0).kind, StitchKind::SatinShape);
@@ -1286,4 +1286,54 @@ fn an_unknown_motif_falls_back_to_a_plain_fill_with_a_warning() {
     );
     assert!(p.stats().stitches > 100);
     assert!(p.warnings.iter().any(|w| w.contains("motif")));
+}
+
+#[test]
+fn auto_underlay_picks_by_satin_width() {
+    use vectorcraft_doc::Underlay;
+    let line = [Point::new(0.0, 0.0), Point::new(30.0, 0.0)];
+    let one = |w: f64, u: Underlay| generate::satin_underlay(&line, false, w, u);
+    assert_eq!(one(1.5, Underlay::Auto), one(1.5, Underlay::Center), "narrow: a centre walk");
+    assert_eq!(one(3.0, Underlay::Auto), one(3.0, Underlay::Edge), "medium: an edge walk");
+    let (edge, _) = one(7.0, Underlay::Edge);
+    let (zig, back) = one(7.0, Underlay::Zigzag);
+    let wide = one(7.0, Underlay::Auto);
+    assert_eq!(wide, (edge.into_iter().chain(zig).collect(), back), "wide: an edge walk, then a zigzag");
+}
+
+#[test]
+fn auto_underlay_reaches_every_stitch_that_takes_one() {
+    use vectorcraft_doc::Underlay;
+    let stitches = |path: PathData, s: StitchSettings| plan_of(path, s).stats().stitches;
+    let with = |kind: StitchKind, u: Underlay| StitchSettings { underlay: u, width: Some(6.0), ..StitchSettings::new(kind) };
+    // A 30 mm fill square: an edge walk and fill underlay, more than fill underlay alone.
+    let sq = || poly(&[(0.0, 0.0), (85.0, 0.0), (85.0, 85.0), (0.0, 85.0)], true);
+    let (none, fill, auto) = (
+        stitches(sq(), with(StitchKind::Fill, Underlay::None)),
+        stitches(sq(), with(StitchKind::Fill, Underlay::Fill)),
+        stitches(sq(), with(StitchKind::Fill, Underlay::Auto)),
+    );
+    assert!(none < fill && fill < auto, "{none} {fill} {auto}");
+    // A 6 mm satin: edge walk and zigzag.
+    let bar = || poly(&[(0.0, 0.0), (100.0, 0.0)], false);
+    assert!(stitches(bar(), with(StitchKind::Satin, Underlay::Auto)) > stitches(bar(), with(StitchKind::Satin, Underlay::Edge)));
+    // Satin shapes: a 4 mm-wide bar gets an edge walk, a 1.5 mm one a centre walk.
+    let shape = |w_mm: f64| poly(&[(0.0, 0.0), (120.0, 0.0), (120.0, w_mm / PT_MM), (0.0, w_mm / PT_MM)], true);
+    let s = |u: Underlay| StitchSettings { underlay: u, ..StitchSettings::new(StitchKind::SatinShape) };
+    assert_eq!(plan_of(shape(4.0), s(Underlay::Auto)), plan_of(shape(4.0), s(Underlay::Edge)));
+    assert_eq!(plan_of(shape(1.5), s(Underlay::Auto)), plan_of(shape(1.5), s(Underlay::Center)));
+    assert!(plan_of(shape(4.0), s(Underlay::Edge)).stats().stitches > plan_of(shape(4.0), s(Underlay::None)).stats().stitches);
+}
+
+#[test]
+fn edge_walks_stay_inside_their_shape() {
+    // A square with a square hole: the walk keeps inside the ring, on both outlines.
+    let outer = vec![Point::new(0.0, 0.0), Point::new(20.0, 0.0), Point::new(20.0, 20.0), Point::new(0.0, 20.0), Point::new(0.0, 0.0)];
+    let hole = vec![Point::new(5.0, 5.0), Point::new(15.0, 5.0), Point::new(15.0, 15.0), Point::new(5.0, 15.0), Point::new(5.0, 5.0)];
+    let polys = vec![outer, hole];
+    let walks = generate::edge_walk(&polys, FillRule::EvenOdd);
+    assert_eq!(walks.len(), 2);
+    for p in walks.iter().flatten() {
+        assert!(generate::inside(&polys, FillRule::EvenOdd, *p), "{p:?}");
+    }
 }

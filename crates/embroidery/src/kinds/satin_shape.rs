@@ -10,7 +10,15 @@ pub(super) fn sew(i: &Input) -> Output {
     let s = i.settings;
     let mut out = Output::default();
     let polys = i.polys();
-    let satin = generate::satin_shape(&polys, i.rule, s.spacing(), s.pull(), s.underlay() == Underlay::Center);
+    let underlay = match s.underlay() {
+        Underlay::Auto => generate::AutoUnderlay::default().shape(crate::stroke_width(&polys)),
+        u => u,
+    };
+    let satin = generate::satin_shape(&polys, i.rule, s.spacing(), s.pull(), underlay == Underlay::Center);
+    // An edge walk goes in first, under the satin (none when the shape is filled instead).
+    if underlay == Underlay::Edge && !satin.is_empty() {
+        out.runs.extend(generate::edge_walk(&polys, i.rule));
+    }
     if satin.is_empty() && !polys.is_empty() {
         // No strokes to follow (a blob, not a letter): fill it instead.
         match generate::fill(

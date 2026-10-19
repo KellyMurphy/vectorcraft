@@ -411,9 +411,57 @@ pub fn zigzag(line: &[Point], closed: bool, width: f64, spacing: f64) -> Vec<Poi
     column(line, closed, width, spacing, false)
 }
 
+/// What an `auto` underlay becomes, by stitch and width (mm). The fabric profile (E7.3) will set
+/// these; [`AutoUnderlay::default`] suits a stable woven fabric.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct AutoUnderlay {
+    /// Satin columns narrower than this get a centre walk.
+    pub satin_center_under: f64,
+    /// Satin columns wider than this get an edge walk and then a zigzag; those between, an edge
+    /// walk.
+    pub satin_zigzag_over: f64,
+    /// Satin shapes whose strokes are wider than this get an edge walk; thinner, a centre walk.
+    pub shape_edge_over: f64,
+}
+
+impl Default for AutoUnderlay {
+    fn default() -> Self {
+        Self { satin_center_under: 2.0, satin_zigzag_over: 5.0, shape_edge_over: 2.5 }
+    }
+}
+
+impl AutoUnderlay {
+    /// The underlays of a satin column `width` mm wide, in sewing order.
+    pub fn satin(&self, width: f64) -> &'static [Underlay] {
+        if width < self.satin_center_under {
+            &[Underlay::Center]
+        } else if width <= self.satin_zigzag_over {
+            &[Underlay::Edge]
+        } else {
+            &[Underlay::Edge, Underlay::Zigzag]
+        }
+    }
+
+    /// The underlay of a satin shape whose strokes are `stroke` mm wide.
+    pub fn shape(&self, stroke: f64) -> Underlay {
+        if stroke > self.shape_edge_over { Underlay::Edge } else { Underlay::Center }
+    }
+}
+
 /// The underlay of a satin column `width` mm wide along `line`, and whether it ends where the
-/// line ends (so the top stitches go back the other way).
+/// line ends (so the top stitches go back the other way). `auto` sews what [`AutoUnderlay`]
+/// picks for the width, one underlay after the other.
 pub fn satin_underlay(line: &[Point], closed: bool, width: f64, kind: Underlay) -> (Vec<Point>, bool) {
+    if kind == Underlay::Auto {
+        let mut out = vec![];
+        let mut back = false;
+        for u in AutoUnderlay::default().satin(width) {
+            let (part, end) = satin_underlay(line, closed, width, *u);
+            out.extend(part);
+            back = end;
+        }
+        return (out, back);
+    }
     let line = &reseam(line, closed)[..];
     let inner = width - 2.0 * UNDERLAY_INSET;
     match kind {
@@ -429,8 +477,45 @@ pub fn satin_underlay(line: &[Point], closed: bool, width: f64, kind: Underlay) 
             (out, false)
         }
         Underlay::Zigzag => (satin(line, closed, inner, UNDERLAY_SPACING), true),
-        Underlay::None | Underlay::Fill => (vec![], false),
+        Underlay::None | Underlay::Fill | Underlay::Auto => (vec![], false),
     }
+}
+
+/// An area's edge walk: a running stitch round each of `polys`' outlines, [`UNDERLAY_INSET`]
+/// inside the shape (filled by `rule`), one run per outline. Where the shape is too thin to step
+/// inside, the walk keeps to the outline.
+pub fn edge_walk(polys: &[Vec<Point>], rule: FillRule) -> Vec<Vec<Point>> {
+    let mut out = vec![];
+    for p in polys {
+        let (Some(first), Some(last)) = (p.first(), p.last()) else { continue };
+        if p.len() < 3 {
+            continue;
+        }
+        let mut ring = p.clone();
+        if first.distance(*last) > 1e-9 {
+            ring.push(*first);
+        }
+        let c = resample(&ring, UNDERLAY_LEN, true);
+        let n = normals(&c, true);
+        let walk: Vec<Point> = c
+            .iter()
+            .zip(&n)
+            .map(|(q, nv)| {
+                let (a, b) = (*q + *nv * UNDERLAY_INSET, *q - *nv * UNDERLAY_INSET);
+                if inside(polys, rule, a) {
+                    a
+                } else if inside(polys, rule, b) {
+                    b
+                } else {
+                    *q
+                }
+            })
+            .collect();
+        if walk.len() >= 2 {
+            out.push(walk);
+        }
+    }
+    out
 }
 
 /// A fill's underlay: sparse rows across the top rows' `angle`.

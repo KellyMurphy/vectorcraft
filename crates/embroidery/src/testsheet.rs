@@ -147,8 +147,9 @@ fn num(v: f64) -> String {
     format!("{v}")
 }
 
+/// `kind` as a new object gets it (auto underlay), in the sheet's thread.
 fn settings(kind: StitchKind) -> StitchSettings {
-    StitchSettings { thread: Some(THREAD), ..StitchSettings::new(kind) }
+    StitchSettings { thread: Some(THREAD), underlay: Underlay::Auto, ..StitchSettings::new(kind) }
 }
 
 /// A satin column `width` mm wide sewn with `s`, upright.

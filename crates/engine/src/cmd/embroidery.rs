@@ -237,8 +237,10 @@ impl Edits {
     }
 
     fn apply(&self, old: Option<&StitchSettings>) -> StitchSettings {
-        // Settings from a newer version this one can't read are replaced, not edited.
-        let mut s = old.filter(|o| o.unknown.is_none()).cloned().unwrap_or_default();
+        // Settings from a newer version this one can't read are replaced, not edited. A newly
+        // stitched object gets the automatic underlay.
+        let fresh = || StitchSettings { underlay: vectorcraft_doc::Underlay::Auto, ..StitchSettings::default() };
+        let mut s = old.filter(|o| o.unknown.is_none()).cloned().unwrap_or_else(fresh);
         for (param, v) in &self.0 {
             (param.set)(&mut s, v);
         }

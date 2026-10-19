@@ -13,6 +13,10 @@ pub(super) fn sew(i: &Input) -> Output {
     let polys = i.polys();
     let under = match s.underlay() {
         Underlay::Fill => generate::fill_underlay(&polys, i.rule, s.angle()),
+        // Auto: the outline walked first, then rows across the top rows.
+        Underlay::Auto => {
+            generate::fill_underlay(&polys, i.rule, s.angle()).map(|rows| generate::edge_walk(&polys, i.rule).into_iter().chain(rows).collect())
+        }
         _ => Ok(vec![]),
     };
     // A carved motif over the shape's box (none when unknown or too fine to carve).

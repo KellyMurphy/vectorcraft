@@ -723,6 +723,7 @@ fn border_label(id: &str) -> &'static str {
 fn underlay_label(u: Underlay) -> &'static str {
     match u {
         Underlay::None => tl!("None"),
+        Underlay::Auto => tl!("Auto"),
         Underlay::Center => tl!("Center Walk"),
         Underlay::Edge => tl!("Edge Walk"),
         Underlay::Zigzag => tl!("Zigzag"),

@@ -225,11 +225,11 @@ pub static PARAMS: &[Param] = &[
     },
     Param {
         key: "underlay",
-        value: ValueKind::Choice(&["none", "center", "edge", "zigzag", "fill"]),
+        value: ValueKind::Choice(&["none", "auto", "center", "edge", "zigzag", "fill"]),
         kinds: &[K::Satin, K::SatinShape, K::Fill],
         label: "Underlay:",
         help: "Stitches sewn first to hold the fabric and lift the top stitches",
-        doc: "none|center|edge|zigzag (satin) | none|center (satin shape) | none|fill (fill)",
+        doc: "none|auto|center|edge|zigzag (satin) | none|auto|center|edge (satin shape) | none|auto|fill (fill); auto (what new objects get) picks by stitch and width",
         nullable: true,
         get: |s| json!(s.underlay().id()),
         set: |s, v| s.underlay = text(v).as_deref().and_then(Underlay::parse).unwrap_or_default(),

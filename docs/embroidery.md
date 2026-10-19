@@ -11,7 +11,7 @@ Select paths or compound paths (or groups holding them) and choose **Object › 
 
 | Stitch | What it sews | Settings |
 |---|---|---|
-| Auto | Picks per shape (per letter, for type) by how wide its strokes are: under **Bean Outline Under** (1 mm) a bean stitch round the outline, over **Fill Over** (7 mm) a tatami fill with fill underlay and a satin border, in between a satin shape with a centre-walk underlay. The stroke width is twice the shape's area over its perimeter. | `thinUnder` (1 mm), `wideOver` (7 mm), `spacing`, `pull`, `border` (for filled shapes; 2 mm) |
+| Auto | Picks per shape (per letter, for type) by how wide its strokes are: under **Bean Outline Under** (1 mm) a bean stitch round the outline, over **Fill Over** (7 mm) a tatami fill with auto underlay and a satin border, in between a satin shape with auto underlay. The stroke width is twice the shape's area over its perimeter. | `thinUnder` (1 mm), `wideOver` (7 mm), `spacing`, `pull`, `border` (for filled shapes; 2 mm) |
 | Running Stitch | Single stitches along the path (outlines, details). Sharp corners keep a needle point. | `length` (2.5 mm) |
 | Bean Stitch | Running stitch sewn several times over each stitch: a bolder line. | `length` (2.5 mm), `passes` (3, 5, 7 or 9; 3) |
 | Satin Column | A zigzag centred on the path, as wide as the stroke (borders, lettering strokes). **Between Rails**: the object's two longest subpaths are the column's edges and the satin spans between them, as wide as they are apart (columns that swell and taper); other subpaths crossing both are rungs, each setting the stitch direction where it crosses. Draw the two edges, join them (Object › Compound Path) and tick Between Rails. | `width` (the stroke width, else 3 mm), `spacing` (density, 0.4 mm), `pull` (pull compensation, 0 mm), `underlay` (none, center, edge, zigzag), `rails` (off) |
@@ -30,8 +30,12 @@ the Sew Order panel, and the design checker's findings.
 
 **Underlay** is sewn before the top stitches to hold the fabric and lift the top stitches. For satin, it can be a
 **center walk** (a running stitch down the middle), an **edge walk** (just inside both edges) or a sparse
-**zigzag**. For fills, a **fill underlay** is a set of sparse rows at right angles to the top rows. **Pull
-compensation** sews a satin column wider than drawn, because the thread pulls the fabric in.
+**zigzag**. For fills, a **fill underlay** is a set of sparse rows at right angles to the top rows. A satin
+shape takes a centre walk along its strokes or an edge walk round its outline. **Auto**, what newly
+stitched objects get, picks by stitch and width: satin under 2 mm a centre walk, 2–5 mm an edge walk,
+wider an edge walk then a zigzag; fills an edge walk then fill underlay; satin shapes an edge walk when
+their strokes are over 2.5 mm wide, else a centre walk. **Pull compensation** sews a satin column wider
+than drawn, because the thread pulls the fabric in.
 
 The fill **pattern** sets how many rows the stitches take before their needle holes line up again: 2 makes a
 brick pattern, 3 to 8 make tatami patterns with longer diagonals. The same menu has **carved motifs**
