@@ -5329,3 +5329,9 @@ theme	Appearance	Външен вид
 	Satin Width	Ширина на сатена
 	Sew-Out Test	Пробно бродиране
 	Underlay	Подложка
+
+# Push and pull compensation (the Embroidery panel)
+	Pull Compensation (%):	Компенсация на опъна (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	Допълнителна компенсация на опъна като дял от ширината (сатен) или дължината на реда (запълване)
+	Push Compensation:	Компенсация на избутването:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Бродира колоните с толкова по-къси в краищата им, а запълванията — напряко на редовете им, защото бодовете избутват плата навън

@@ -14,7 +14,8 @@ pub(super) fn sew(i: &Input) -> Output {
         Underlay::Auto => generate::AutoUnderlay::default().shape(crate::stroke_width(&polys)),
         u => u,
     };
-    let satin = generate::satin_shape(&polys, i.rule, s.spacing(), s.pull(), underlay == Underlay::Center);
+    let pull = s.pull_for(crate::stroke_width(&polys));
+    let satin = generate::satin_shape(&polys, i.rule, s.spacing(), pull, underlay == Underlay::Center);
     // An edge walk goes in first, under the satin (none when the shape is filled instead).
     if underlay == Underlay::Edge && !satin.is_empty() {
         out.runs.extend(generate::edge_walk(&polys, i.rule));

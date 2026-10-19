@@ -4990,3 +4990,9 @@ lighting	Light	Luce
 	Satin Width	Larghezza del satin
 	Sew-Out Test	Prova di ricamo
 	Underlay	Imbottitura
+
+# Push and pull compensation (the Embroidery panel)
+	Pull Compensation (%):	Compensazione della trazione (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	Ulteriore compensazione della trazione, come quota della larghezza (satin) o della lunghezza della fila (riempimento)
+	Push Compensation:	Compensazione della spinta:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Ricama le colonne tanto più corte alle estremità, e i riempimenti di traverso alle file, perché i punti spingono fuori il tessuto

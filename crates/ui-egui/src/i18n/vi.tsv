@@ -4952,3 +4952,9 @@ theme	Appearance	Giao diện
 	Satin Width	Độ rộng satin
 	Sew-Out Test	Thêu thử
 	Underlay	Lớp lót
+
+# Push and pull compensation (the Embroidery panel)
+	Pull Compensation (%):	Bù co kéo (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	Thêm bù co kéo, theo tỉ lệ của độ rộng (satin) hoặc chiều dài hàng (thêu đầy)
+	Push Compensation:	Bù đẩy:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Thêu cột ngắn đi chừng này ở hai đầu, và phần thêu đầy ngắn đi theo chiều ngang các hàng, vì mũi thêu đẩy vải ra ngoài

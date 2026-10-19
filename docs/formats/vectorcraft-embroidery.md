@@ -33,7 +33,9 @@ are kept but have no effect.
 | `angle` | number, degrees counter-clockwise | fill | any | 0 |
 | `width` | number, mm | satin, zigzag; pattern border | satin and zigzag 0.3–12; pattern border 1–40 | satin: the stroke width (3 without one); zigzag 3; pattern border: the pattern's own width |
 | `thread` | `[r, g, b]`, each 0–255 (sRGB) | all | | the stroke's colour for stitches along the path, the fill's for fills, satin shapes and auto |
-| `pull` | number, mm | satin, satin shape, auto | 0–3 | 0 |
+| `pull` | number, mm | satin, satin shape, fill, auto | 0–3 | 0 |
+| `pullPercent` | number, % | satin, satin shape, fill, auto | 0–30 | 0 |
+| `push` | number, mm | satin, fill, auto | 0–3 | 0 |
 | `underlay` | string | satin: `none` `auto` `center` `edge` `zigzag`; satin shape: `none` `auto` `center` `edge`; fill: `none` `auto` `fill` | | `none` (programs give new objects `auto`) |
 | `stagger` | integer | fill | 2–8 | 3 |
 | `motif` | string | fill | `diamonds` `waves` `circles` `scales` `herringbone` | none |
@@ -47,6 +49,8 @@ are kept but have no effect.
 | `rails` | boolean | satin | | false |
 | `trimBefore` | boolean | all | | false |
 | `trimAfter` | boolean | all | | false |
+
+**Compensation.** The thread pulls the fabric in along the stitches and pushes it out at their ends. `pull` (mm) plus `pullPercent` (of the satin's width, or of each fill row's length) sews a satin that much wider and each fill row that much longer, half at each end. `push` sews a satin column along a path that much shorter (half at each end; not a closed one, nor a satin between rails) and a fill that much shorter across its rows (a row whose middle is within half of it of an edge across the rows is left out). A satin shape takes `pullPercent` of its stroke width.
 
 Readers don't refuse out-of-range or non-finite numbers in a document: they use the nearest value in range,
 or the default for one that isn't a number. `thread`, `stagger` and `passes` must be whole numbers from 0 to

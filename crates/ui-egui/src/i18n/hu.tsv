@@ -5345,3 +5345,9 @@ imageTrace	Outline	Körvonal
 	Satin Width	Szatén szélessége
 	Sew-Out Test	Próbahímzés
 	Underlay	Alátét
+
+# Push and pull compensation (the Embroidery panel)
+	Pull Compensation (%):	Húzáskompenzáció (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	További húzáskompenzáció a szélesség (szatén) vagy a sorhossz (kitöltés) arányában
+	Push Compensation:	Tolóerő-kompenzáció:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Ennyivel rövidebbre hímzi az oszlopokat a végeiken, a kitöltéseket pedig a soraikra merőlegesen, mert az öltések kitolják az anyagot

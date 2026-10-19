@@ -481,6 +481,33 @@ pub fn satin_underlay(line: &[Point], closed: bool, width: f64, kind: Underlay) 
     }
 }
 
+/// `line` with `d` mm taken off each end (push compensation); at least 0.5 mm of it is kept,
+/// from its middle.
+pub fn trim_ends(line: &[Point], d: f64) -> Vec<Point> {
+    let total: f64 = line.windows(2).map(|w| w[0].distance(w[1])).sum();
+    if !(d.is_finite() && d > 0.0 && total.is_finite()) || line.len() < 2 {
+        return line.to_vec();
+    }
+    let d = d.min(((total - 0.5) / 2.0).max(0.0));
+    let (from, to) = (d, total - d);
+    let mut out = vec![];
+    let mut at = 0.0;
+    for w in line.windows(2) {
+        let (a, b) = (w[0], w[1]);
+        let l = a.distance(b);
+        let (s, e) = (at, at + l);
+        if e >= from && s <= to && l > 0.0 {
+            let p = |t: f64| a.lerp(b, ((t - s) / l).clamp(0.0, 1.0));
+            if out.is_empty() {
+                out.push(p(from.max(s)));
+            }
+            out.push(p(to.min(e)));
+        }
+        at = e;
+    }
+    if out.len() < 2 { line.to_vec() } else { out }
+}
+
 /// An area's edge walk: a running stitch round each of `polys`' outlines, [`UNDERLAY_INSET`]
 /// inside the shape (filled by `rule`), one run per outline. Where the shape is too thin to step
 /// inside, the walk keeps to the outline.
@@ -544,6 +571,33 @@ pub fn fill_carved(
     stagger: u8,
     carve: &[(Point, Point)],
 ) -> Result<Vec<Vec<Point>>, String> {
+    fill_compensated(polys, rule, angle, spacing, len, stagger, carve, RowComp::default())
+}
+
+/// A fill's compensation (see [`fill_compensated`]).
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct RowComp {
+    /// Each row sewn this much longer, mm (half at each end).
+    pub pull: f64,
+    /// Each row sewn this much longer again, as a percentage of its length.
+    pub pull_percent: f64,
+    /// The fill sewn this much shorter across its rows, mm (rows within half of it of an edge
+    /// across them are left out).
+    pub push: f64,
+}
+
+/// [`fill_carved`] with pull and push compensation `comp`.
+#[allow(clippy::too_many_arguments)]
+pub fn fill_compensated(
+    polys: &[Vec<Point>],
+    rule: FillRule,
+    angle: f64,
+    spacing: f64,
+    len: f64,
+    stagger: u8,
+    carve: &[(Point, Point)],
+    comp: RowComp,
+) -> Result<Vec<Vec<Point>>, String> {
     let stagger = usize::from(stagger.max(1));
     if !(spacing.is_finite() && len.is_finite()) || spacing <= 0.0 || len <= 0.0 {
         return Ok(vec![]);
@@ -570,10 +624,25 @@ pub fn fill_carved(
     // Each row's inside spans, left to right.
     let mut spans: Vec<Vec<(f64, f64)>> = vec![];
     let mut y = y0 + spacing / 2.0;
+    let half_push = if comp.push.is_finite() { comp.push.max(0.0) / 2.0 } else { 0.0 };
     while y < y1 {
-        spans.push(row_spans(&polys, rule, y));
+        let mut row = row_spans(&polys, rule, y);
+        // Push: a span whose middle is within half the push of an edge across the rows is
+        // left out.
+        if half_push > 0.0 {
+            row.retain(|&(a, b)| {
+                let m = (a + b) / 2.0;
+                inside(&polys, rule, Point::new(m, y - half_push)) && inside(&polys, rule, Point::new(m, y + half_push))
+            });
+        }
+        spans.push(row);
         y += spacing;
     }
+    // Pull: each row sewn longer at both ends (the lanes are still joined by the rows as drawn).
+    let pull = |a: f64, b: f64| {
+        let e = (comp.pull + (b - a).abs() * comp.pull_percent / 100.0) / 2.0;
+        if e.is_finite() { e.max(0.0) } else { 0.0 }
+    };
     let row_y = |r: usize| y0 + spacing / 2.0 + r as f64 * spacing;
     // Where the motif crosses each row (x, in row space), found per row from the rows each
     // segment spans.
@@ -607,8 +676,11 @@ pub fn fill_carved(
                 if let Some(u) = used.get_mut(r).and_then(|u| u.get_mut(i)) {
                     *u = true;
                 }
-                let (from, to) = if forward { (a, b) } else { (b, a) };
-                row(&mut run, row_y(r), from, to, len, (r % stagger) as f64 / stagger as f64, marks.get(r).map_or(&[][..], Vec::as_slice));
+                // Where the row ends as drawn (the next row joins from there).
+                let to = if forward { b } else { a };
+                let e = pull(a, b);
+                let (sewn_from, sewn_to) = if forward { (a - e, b + e) } else { (b + e, a - e) };
+                row(&mut run, row_y(r), sewn_from, sewn_to, len, (r % stagger) as f64 / stagger as f64, marks.get(r).map_or(&[][..], Vec::as_slice));
                 // The next row starts at the end nearest this row's end; a join longer than two
                 // stitches would cross outside the shape (round a hole or notch): a new run instead.
                 let next = spans.get(r + 1).and_then(|s| {

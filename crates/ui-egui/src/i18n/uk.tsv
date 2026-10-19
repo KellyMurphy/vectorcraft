@@ -4970,3 +4970,9 @@ lighting	Light	Світло
 	Satin Width	Ширина атласу
 	Sew-Out Test	Пробне вишивання
 	Underlay	Підкладка
+
+# Push and pull compensation (the Embroidery panel)
+	Pull Compensation (%):	Компенсація стягування (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	Додаткова компенсація стягування як частка ширини (атлас) або довжини ряду (заливка)
+	Push Compensation:	Компенсація виштовхування:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Вишиває стовпчики настільки коротшими на кінцях, а заливки — поперек рядів, бо стібки виштовхують тканину назовні

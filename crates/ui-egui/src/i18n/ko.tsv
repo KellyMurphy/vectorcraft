@@ -4936,3 +4936,9 @@ lighting	Light	광원
 	Satin Width	새틴 너비
 	Sew-Out Test	시험 자수
 	Underlay	밑실
+
+# Push and pull compensation (the Embroidery panel)
+	Pull Compensation (%):	당김 보정(%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	너비(새틴)나 행 길이(채우기)에 대한 비율로 더하는 당김 보정
+	Push Compensation:	밀림 보정:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	땀이 천을 바깥으로 밀어내므로 칼럼은 끝에서, 채우기는 행을 가로질러 이만큼 짧게 수놓습니다

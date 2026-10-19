@@ -587,6 +587,17 @@ fn other_settings(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: 
         let (key, label, help) = (p.key, tl!(p.label), tl!(p.help));
         match &p.value {
             ValueKind::Mm(r) => mm(app, ui, label, key, sel[key].as_f64(), r.clone(), help),
+            ValueKind::Percent(r) => {
+                ui.scope(|ui| {
+                    widgets::label_row(ui, label, LABEL_W, |ui| {
+                        if let Some(v) = widgets::mixed_field(ui, ("emb", key), sel[key].as_f64(), " %", 1, FIELD_W) {
+                            set(app, json!({ key: v.clamp(*r.start(), *r.end()) }));
+                        }
+                    })
+                })
+                .response
+                .on_hover_text(help);
+            }
             ValueKind::Degrees => {
                 ui.scope(|ui| {
                     widgets::label_row(ui, label, LABEL_W, |ui| {

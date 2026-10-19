@@ -82,6 +82,8 @@ fn full_stitch() -> StitchSettings {
         width: Some(1.0),
         thread: Some([1, 2, 3]),
         pull: Some(1.0),
+        pull_percent: Some(5.0),
+        push: Some(0.5),
         underlay: Underlay::Fill,
         stagger: Some(4),
         motif: Some("waves".into()),
@@ -207,7 +209,7 @@ fn embroidery_schema_matches_the_code() {
     for p in params::PARAMS {
         let prop = &stitch[if p.key == "type" { "kind" } else { p.key }];
         match &p.value {
-            ValueKind::Mm(r) => range_is(prop, r.clone(), p.key),
+            ValueKind::Mm(r) | ValueKind::Percent(r) => range_is(prop, r.clone(), p.key),
             ValueKind::Whole { range, odd: false } => range_is(prop, f64::from(*range.start())..=f64::from(*range.end()), p.key),
             ValueKind::Whole { range, odd: true } => {
                 let odd: Vec<u64> = range.clone().filter(|n| n % 2 == 1).map(u64::from).collect();

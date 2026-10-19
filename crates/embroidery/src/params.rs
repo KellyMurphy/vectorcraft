@@ -17,6 +17,8 @@ pub enum ValueKind {
     Kind,
     /// A length in mm within the range.
     Mm(RangeInclusive<f64>),
+    /// A percentage within the range.
+    Percent(RangeInclusive<f64>),
     /// Degrees (any finite number).
     Degrees,
     /// A whole number within the range (only odd ones when `odd`).
@@ -214,13 +216,37 @@ pub static PARAMS: &[Param] = &[
     Param {
         key: "pull",
         value: ValueKind::Mm(StitchSettings::PULL),
-        kinds: &[K::Satin, K::SatinShape, K::Auto],
+        kinds: &[K::Satin, K::SatinShape, K::Fill, K::Auto],
         label: "Pull Compensation:",
         help: "Sews the column this much wider, since the thread pulls the fabric in",
-        doc: "mm (satin and satin shape pull compensation, 0–3; 0)",
+        doc: "mm (pull compensation, 0–3; 0: satins sewn this much wider, fill rows this much longer, half at each end)",
         nullable: true,
         get: |s| json!(s.pull()),
         set: |s, v| s.pull = f(v),
+        suits: None,
+    },
+    Param {
+        key: "pullPercent",
+        value: ValueKind::Percent(StitchSettings::PULL_PERCENT),
+        kinds: &[K::Satin, K::SatinShape, K::Fill, K::Auto],
+        label: "Pull Compensation (%):",
+        help: "More pull compensation, as a share of the width (satin) or row length (fill)",
+        doc: "% (0–30; 0: more pull compensation, a share of the satin's width or the fill row's length, added to pull)",
+        nullable: true,
+        get: |s| json!(s.pull_percent()),
+        set: |s, v| s.pull_percent = f(v),
+        suits: None,
+    },
+    Param {
+        key: "push",
+        value: ValueKind::Mm(StitchSettings::PUSH),
+        kinds: &[K::Satin, K::Fill, K::Auto],
+        label: "Push Compensation:",
+        help: "Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out",
+        doc: "mm (push compensation, 0–3; 0: satin columns along a path sewn this much shorter, half at each end; fills this much shorter across their rows)",
+        nullable: true,
+        get: |s| json!(s.push()),
+        set: |s, v| s.push = f(v),
         suits: None,
     },
     Param {
@@ -378,7 +404,7 @@ impl Param {
         }
         let ok = match &self.value {
             ValueKind::Kind => v.as_str().and_then(StitchKind::parse).is_some(),
-            ValueKind::Mm(r) => v.as_f64().is_some_and(|x| r.contains(&x)),
+            ValueKind::Mm(r) | ValueKind::Percent(r) => v.as_f64().is_some_and(|x| r.contains(&x)),
             ValueKind::Degrees => v.as_f64().is_some_and(f64::is_finite),
             ValueKind::Whole { range, odd } => {
                 v.as_u64().and_then(|n| u8::try_from(n).ok()).is_some_and(|n| range.contains(&n) && (!odd || n % 2 == 1))
@@ -404,6 +430,7 @@ impl Param {
                 format!("`type` must be {} (embroidery.clear removes stitches)", ids.join(", "))
             }
             ValueKind::Mm(r) => format!("`{key}` must be a number from {} to {} (mm){or_null}", r.start(), r.end()),
+            ValueKind::Percent(r) => format!("`{key}` must be a number from {} to {} (%){or_null}", r.start(), r.end()),
             ValueKind::Degrees => format!("`{key}` must be a number of degrees"),
             ValueKind::Whole { range, odd } => {
                 let what = if *odd { "an odd whole number" } else { "a whole number" };

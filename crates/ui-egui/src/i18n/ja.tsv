@@ -5031,3 +5031,9 @@ lighting	Light	ライト
 	Satin Width	サテンの幅
 	Sew-Out Test	試し縫い
 	Underlay	下縫い
+
+# Push and pull compensation (the Embroidery panel)
+	Pull Compensation (%):	引き補正 (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	幅 (サテン) または列の長さ (フィル) に対する割合で加える引き補正
+	Push Compensation:	押し補正:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	ステッチが生地を外へ押し出すため、コラムは端で、フィルは列と直交する方向にこの分だけ短く縫います

@@ -5376,3 +5376,9 @@ theme	Appearance	Apparence
 	Satin Width	Largeur du satin
 	Sew-Out Test	Essai de broderie
 	Underlay	Sous-couche
+
+# Push and pull compensation (the Embroidery panel)
+	Pull Compensation (%):	Compensation de traction (%) :
+	More pull compensation, as a share of the width (satin) or row length (fill)	Compensation de traction supplémentaire, en part de la largeur (satin) ou de la longueur de rang (remplissage)
+	Push Compensation:	Compensation de poussée :
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Brode les colonnes d'autant plus courtes à leurs extrémités, et les remplissages en travers de leurs rangs, car les points repoussent le tissu

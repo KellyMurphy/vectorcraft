@@ -164,9 +164,11 @@ impl Rails {
     /// The satin: its underlay (`underlay`), then the column, every `spacing` mm, each stitch
     /// reaching `pull` mm past the rails in all (half each side), no stitch longer than can be
     /// sewn. One run; and whether the column had to be narrowed somewhere to be sewable.
-    pub fn satin(&self, spacing: f64, pull: f64, underlay: Underlay) -> (Vec<Point>, bool) {
+    pub fn satin(&self, spacing: f64, pull: f64, pull_percent: f64, underlay: Underlay) -> (Vec<Point>, bool) {
         let most = (MAX_STITCH - spacing).max(0.3);
-        let narrowed = self.pairs(spacing, 0.0).iter().any(|(p, q)| p.distance(*q) + pull > most);
+        // The pull at a rung `len` mm long: the mm, plus the percentage of its length.
+        let pull_at = |len: f64| pull + len * pull_percent / 100.0;
+        let narrowed = self.pairs(spacing, 0.0).iter().any(|(p, q)| p.distance(*q) + pull_at(p.distance(*q)) > most);
         let mut zig: Vec<(Point, Point)> = self
             .pairs(spacing, 0.0)
             .into_iter()
@@ -177,6 +179,7 @@ impl Rails {
                     return (p, q);
                 }
                 let u = d / len;
+                let pull = pull_at(len);
                 let (p, q) = (p - u * (pull / 2.0), q + u * (pull / 2.0));
                 if len + pull > most {
                     let mid = p.midpoint(q);
@@ -246,7 +249,7 @@ mod tests {
     #[test]
     fn two_lines_make_a_column_between_them() {
         let r = find(&[(line(&[(0.0, 0.0), (30.0, 0.0)]), false), (line(&[(0.0, 4.0), (30.0, 4.0)]), false)]).unwrap();
-        let s = r.satin(0.4, 0.0, Underlay::None).0;
+        let s = r.satin(0.4, 0.0, 0.0, Underlay::None).0;
         assert!(s.len() > 70);
         for (k, p) in s.iter().enumerate() {
             assert!(p.y.abs() < 1e-9 || (p.y - 4.0).abs() < 1e-9, "{p:?}");
@@ -260,7 +263,7 @@ mod tests {
     fn a_rail_drawn_backward_is_turned() {
         let r = find(&[(line(&[(0.0, 0.0), (30.0, 0.0)]), false), (line(&[(30.0, 4.0), (0.0, 4.0)]), false)]).unwrap();
         // Stitches go straight across, not diagonally end to end.
-        for w in r.satin(0.4, 0.0, Underlay::None).0.windows(2) {
+        for w in r.satin(0.4, 0.0, 0.0, Underlay::None).0.windows(2) {
             assert!((w[0].x - w[1].x).abs() < 0.5, "{:?}", w);
         }
     }
@@ -268,10 +271,10 @@ mod tests {
     #[test]
     fn a_tapered_column_follows_its_rails_and_pull_widens_it() {
         let r = find(&[(line(&[(0.0, 0.0), (30.0, 0.0)]), false), (line(&[(0.0, 1.0), (30.0, 6.0)]), false)]).unwrap();
-        let s = r.satin(0.4, 0.0, Underlay::None).0;
+        let s = r.satin(0.4, 0.0, 0.0, Underlay::None).0;
         let at = |x: f64| s.iter().filter(|p| (p.x - x).abs() < 0.3).map(|p| p.y).fold(f64::NEG_INFINITY, f64::max);
         assert!((at(0.5) - 1.0).abs() < 0.3 && (at(29.5) - 6.0).abs() < 0.3);
-        let pulled = r.satin(0.4, 1.0, Underlay::None).0;
+        let pulled = r.satin(0.4, 1.0, 0.0, Underlay::None).0;
         let hi = pulled.iter().map(|p| p.y).fold(f64::NEG_INFINITY, f64::max);
         let lo = pulled.iter().map(|p| p.y).fold(f64::INFINITY, f64::min);
         assert!(hi > 6.3 && lo < -0.3, "{lo}..{hi}");
@@ -287,7 +290,7 @@ mod tests {
         ])
         .unwrap();
         assert_eq!(r.rungs.len(), 1);
-        let s = r.satin(0.4, 0.0, Underlay::None).0;
+        let s = r.satin(0.4, 0.0, 0.0, Underlay::None).0;
         // At the rung, a point on the bottom rail at x≈12 pairs with the top near x≈20.
         let near = s.windows(2).find(|w| w[0].y.abs() < 1e-9 && (w[0].x - 12.08).abs() < 0.3).unwrap();
         assert!((near[1].x - 20.4).abs() < 1.0, "{near:?}");
@@ -304,7 +307,7 @@ mod tests {
                 .collect::<Vec<_>>()
         };
         let r = find(&[(ring(10.0, 48), true), (ring(7.0, 48).into_iter().rev().collect(), true)]).unwrap();
-        let s = r.satin(0.4, 0.0, Underlay::Center).0;
+        let s = r.satin(0.4, 0.0, 0.0, Underlay::Center).0;
         for p in s.iter().skip(40) {
             let d = p.to_vec2().hypot();
             assert!(d > 6.9 && d < 10.1, "{p:?} off the ring");
@@ -320,7 +323,7 @@ mod tests {
     #[test]
     fn stitches_stay_sewable_however_far_apart_the_rails() {
         let r = find(&[(line(&[(0.0, 0.0), (30.0, 0.0)]), false), (line(&[(0.0, 20.0), (30.0, 20.0)]), false)]).unwrap();
-        let (s, narrowed) = r.satin(0.4, 2.0, Underlay::Zigzag);
+        let (s, narrowed) = r.satin(0.4, 2.0, 0.0, Underlay::Zigzag);
         assert!(narrowed, "20 mm apart: narrowed to be sewable");
         for w in s.windows(2) {
             assert!(w[0].distance(w[1]) <= 12.0 + 1e-9);

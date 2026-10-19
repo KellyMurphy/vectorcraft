@@ -5396,3 +5396,9 @@ swatch	Bright Violet	Felviolet
 	Satin Width	Satijnbreedte
 	Sew-Out Test	Borduurtest
 	Underlay	Onderlaag
+
+# Push and pull compensation (the Embroidery panel)
+	Pull Compensation (%):	Trekcompensatie (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	Extra trekcompensatie, als deel van de breedte (satijn) of rijlengte (vulling)
+	Push Compensation:	Duwcompensatie:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Borduurt kolommen zoveel korter aan hun uiteinden, en vullingen dwars op hun rijen, omdat de steken de stof naar buiten duwen

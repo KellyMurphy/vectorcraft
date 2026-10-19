@@ -5378,3 +5378,9 @@ mark-style	Japanese	Japonské
 	Satin Width	Šířka saténu
 	Sew-Out Test	Zkušební výšivka
 	Underlay	Podšití
+
+# Push and pull compensation (the Embroidery panel)
+	Pull Compensation (%):	Kompenzace stažení (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	Další kompenzace stažení jako podíl šířky (satén) nebo délky řady (výplň)
+	Push Compensation:	Kompenzace vytlačení:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Vyšije sloupky o tolik kratší na koncích a výplně napříč řadami, protože stehy vytlačují látku ven

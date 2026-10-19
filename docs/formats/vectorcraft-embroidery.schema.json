@@ -20,7 +20,9 @@
           "maxItems": 3,
           "description": "sRGB thread colour."
         },
-        "pull": { "type": "number", "minimum": 0, "maximum": 3, "description": "Pull compensation, mm." },
+        "pull": { "type": "number", "minimum": 0, "maximum": 3, "description": "Pull compensation, mm: satins wider, fill rows longer." },
+        "pullPercent": { "type": "number", "minimum": 0, "maximum": 30, "description": "More pull compensation, % of the satin's width or the fill row's length." },
+        "push": { "type": "number", "minimum": 0, "maximum": 3, "description": "Push compensation, mm: satin columns shorter at their ends, fills shorter across their rows." },
         "underlay": { "enum": ["none", "auto", "center", "edge", "zigzag", "fill"], "default": "none", "description": "Missing means none; new objects are given auto." },
         "stagger": { "type": "integer", "minimum": 2, "maximum": 8, "description": "Fill rows before the needle holes line up again." },
         "motif": { "enum": ["diamonds", "waves", "circles", "scales", "herringbone"], "description": "Fill: a carved motif." },

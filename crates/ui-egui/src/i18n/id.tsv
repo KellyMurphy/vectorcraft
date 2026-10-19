@@ -5353,3 +5353,9 @@ swatch	Bright Violet	Violet cerah
 	Satin Width	Lebar satin
 	Sew-Out Test	Uji sulam
 	Underlay	Lapisan dasar
+
+# Push and pull compensation (the Embroidery panel)
+	Pull Compensation (%):	Kompensasi tarikan (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	Kompensasi tarikan tambahan, sebagai bagian dari lebar (satin) atau panjang baris (isian)
+	Push Compensation:	Kompensasi dorongan:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Menyulam kolom sependek ini di ujungnya, dan isian melintang barisnya, karena jahitan mendorong kain ke luar

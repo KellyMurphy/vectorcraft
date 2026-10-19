@@ -5353,3 +5353,9 @@ swatch	Bright Violet	Kraftig violet
 	Satin Width	Satinbredde
 	Sew-Out Test	Prøvebrodering
 	Underlay	Underlag
+
+# Push and pull compensation (the Embroidery panel)
+	Pull Compensation (%):	Trækkompensation (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	Mere trækkompensation, som en andel af bredden (satin) eller rækkelængden (fyld)
+	Push Compensation:	Skubkompensation:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Broderer søjler så meget kortere i enderne, og fyld på tværs af rækkerne, da stingene skubber stoffet ud

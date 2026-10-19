@@ -5323,3 +5323,9 @@ mark-style	Japanese	Japanilainen
 	Satin Width	Satiinin leveys
 	Sew-Out Test	Koekirjonta
 	Underlay	Alusta
+
+# Push and pull compensation (the Embroidery panel)
+	Pull Compensation (%):	Vetokompensaatio (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	Lisää vetokompensaatiota osuutena leveydestä (satiini) tai rivin pituudesta (täyttö)
+	Push Compensation:	Työntökompensaatio:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Kirjoo pylväät tämän verran lyhyempinä päistään ja täytöt rivien poikki, koska pistot työntävät kangasta ulos

@@ -5311,3 +5311,9 @@ effect	Points	Σημεία
 	Satin Width	Πλάτος σατέν
 	Sew-Out Test	Δοκιμαστικό κέντημα
 	Underlay	Υπόστρωμα
+
+# Push and pull compensation (the Embroidery panel)
+	Pull Compensation (%):	Αντιστάθμιση τραβήγματος (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	Επιπλέον αντιστάθμιση τραβήγματος, ως ποσοστό του πλάτους (σατέν) ή του μήκους σειράς (γέμισμα)
+	Push Compensation:	Αντιστάθμιση ώθησης:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Κεντά τις στήλες τόσο πιο κοντές στα άκρα τους, και τα γεμίσματα εγκάρσια στις σειρές τους, επειδή οι βελονιές σπρώχνουν το ύφασμα προς τα έξω

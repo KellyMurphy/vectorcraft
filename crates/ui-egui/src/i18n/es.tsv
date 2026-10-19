@@ -5319,3 +5319,9 @@ mark-style	Japanese	Japonesas
 	Satin Width	Anchura del satén
 	Sew-Out Test	Prueba de bordado
 	Underlay	Base
+
+# Push and pull compensation (the Embroidery panel)
+	Pull Compensation (%):	Compensación de tirón (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	Más compensación de tirón, como parte de la anchura (satén) o de la longitud de fila (relleno)
+	Push Compensation:	Compensación de empuje:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Borda las columnas así de más cortas en sus extremos, y los rellenos a lo ancho de sus filas, porque las puntadas empujan la tela hacia fuera

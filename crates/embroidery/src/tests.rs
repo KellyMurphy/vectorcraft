@@ -1337,3 +1337,42 @@ fn edge_walks_stay_inside_their_shape() {
         assert!(generate::inside(&polys, FillRule::EvenOdd, *p), "{p:?}");
     }
 }
+
+/// The sewn design's width and height, mm.
+fn size_of(p: &Plan) -> (f64, f64) {
+    let b = p.stats().bounds.unwrap();
+    (b[2] - b[0], b[3] - b[1])
+}
+
+#[test]
+fn fill_pull_lengthens_rows_and_push_shortens_across_them() {
+    let sq = || poly(&[(0.0, 0.0), (85.0, 0.0), (85.0, 85.0), (0.0, 85.0)], true);
+    let fill = |pull: Option<f64>, pct: Option<f64>, push: Option<f64>| {
+        size_of(&plan_of(sq(), StitchSettings { pull, pull_percent: pct, push, ..StitchSettings::new(StitchKind::Fill) }))
+    };
+    let (w, h) = fill(None, None, None);
+    let (pw, ph) = fill(Some(1.0), None, None);
+    assert!((pw - w - 1.0).abs() < 0.15 && (ph - h).abs() < 0.05, "rows 1 mm longer: {w} → {pw}, {h} → {ph}");
+    // 30 mm rows at 2%: 0.6 mm more.
+    let (cw, _) = fill(Some(1.0), Some(2.0), None);
+    assert!((cw - pw - 0.6).abs() < 0.15, "{pw} → {cw}");
+    let (sw, sh) = fill(None, None, Some(2.0));
+    assert!(h - sh > 0.5 && h - sh < 2.1 && (sw - w).abs() < 0.05, "shorter across the rows: {h} → {sh}");
+}
+
+#[test]
+fn satin_push_shortens_open_columns_and_pull_percent_widens_them() {
+    let line = || poly(&[(0.0, 0.0), (85.0, 0.0)], false);
+    let satin = |s: StitchSettings| size_of(&plan_of(line(), StitchSettings { width: Some(4.0), ..s }));
+    let base = StitchSettings::new(StitchKind::Satin);
+    let (l, w) = satin(base.clone());
+    let (pl, pw) = satin(StitchSettings { push: Some(2.0), ..base.clone() });
+    assert!((l - pl - 2.0).abs() < 0.2 && (pw - w).abs() < 0.05, "2 mm shorter: {l} → {pl}");
+    // 25% of 4 mm is 1 mm: the same as 1 mm of pull.
+    let pct = plan_of(line(), StitchSettings { width: Some(4.0), pull_percent: Some(25.0), ..base.clone() });
+    let mm = plan_of(line(), StitchSettings { width: Some(4.0), pull: Some(1.0), ..base });
+    assert_eq!(pct, mm);
+    assert!((size_of(&mm).1 - w - 1.0).abs() < 0.05);
+    // A short column keeps half a millimetre.
+    assert!(generate::trim_ends(&[Point::new(0.0, 0.0), Point::new(1.0, 0.0)], 3.0).len() == 2);
+}

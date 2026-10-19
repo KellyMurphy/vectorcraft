@@ -5315,3 +5315,9 @@ theme	Appearance	Utseende
 	Satin Width	Satinbredd
 	Sew-Out Test	Provbrodering
 	Underlay	Underlag
+
+# Push and pull compensation (the Embroidery panel)
+	Pull Compensation (%):	Dragkompensation (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	Mer dragkompensation, som en andel av bredden (satin) eller radlängden (fyllning)
+	Push Compensation:	Tryckkompensation:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Broderar kolumner så mycket kortare i ändarna, och fyllningar tvärs över raderna, eftersom stygnen trycker ut tyget

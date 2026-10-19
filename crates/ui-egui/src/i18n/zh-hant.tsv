@@ -4281,3 +4281,9 @@ lighting	Light	光源
 	Satin Width	緞面寬度
 	Sew-Out Test	試繡
 	Underlay	底襯
+
+# Push and pull compensation (the Embroidery panel)
+	Pull Compensation (%):	拉力補償 (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	按寬度（緞面）或行長（填色）的比例追加的拉力補償
+	Push Compensation:	推力補償:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	由於針跡會把布料向外推，柱在兩端、填色在橫跨各行的方向上縮短這麼多

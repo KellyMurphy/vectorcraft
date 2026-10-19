@@ -5295,3 +5295,9 @@ mark-style	Japanese	Japonesas
 	Satin Width	Largura do cetim
 	Sew-Out Test	Teste de bordado
 	Underlay	Base
+
+# Push and pull compensation (the Embroidery panel)
+	Pull Compensation (%):	Compensação de repuxo (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	Mais compensação de repuxo, como parte da largura (cetim) ou do comprimento da fileira (preenchimento)
+	Push Compensation:	Compensação de empurrão:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Borda as colunas tanto mais curtas nas pontas, e os preenchimentos no sentido transversal às fileiras, porque os pontos empurram o tecido para fora

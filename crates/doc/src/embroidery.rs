@@ -170,10 +170,18 @@ pub struct StitchSettings {
     /// Thread colour as sRGB (`None`: the object's stroke for path stitches, its fill for fills).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub thread: Option<[u8; 3]>,
-    /// Satin pull compensation, mm: how much wider the column is sewn than drawn, since the
-    /// thread pulls the fabric in.
+    /// Pull compensation, mm: how much wider a satin is sewn than drawn, and how much longer a
+    /// fill's rows (half at each end), since the thread pulls the fabric in along the stitches.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub pull: Option<f64>,
+    /// More pull compensation, as a percentage of the satin's width or the fill row's length,
+    /// added to [`StitchSettings::pull`].
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pull_percent: Option<f64>,
+    /// Push compensation, mm: how much shorter a satin column is sewn than drawn (half at each
+    /// end), and a fill across its rows, since the stitches push the fabric out at their ends.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub push: Option<f64>,
     /// Underlay sewn first ([`Underlay::for_kind`] lists the ones each kind uses; others are
     /// ignored).
     #[serde(default, skip_serializing_if = "crate::skip::is_default")]
@@ -508,6 +516,10 @@ impl StitchSettings {
     pub const BORDER: std::ops::RangeInclusive<f64> = 0.5..=6.0;
     /// Allowed pull compensation, mm.
     pub const PULL: std::ops::RangeInclusive<f64> = 0.0..=3.0;
+    /// Allowed pull compensation as a percentage of the width or row length.
+    pub const PULL_PERCENT: std::ops::RangeInclusive<f64> = 0.0..=30.0;
+    /// Allowed push compensation, mm.
+    pub const PUSH: std::ops::RangeInclusive<f64> = 0.0..=3.0;
     /// Allowed fill stagger, rows.
     pub const STAGGER: std::ops::RangeInclusive<u8> = 2..=8;
     pub const DEFAULT_STAGGER: u8 = 3;
@@ -584,6 +596,22 @@ impl StitchSettings {
     /// The pull compensation to sew with, mm.
     pub fn pull(&self) -> f64 {
         clamp(self.pull, 0.0, Self::PULL)
+    }
+
+    /// The pull compensation as a percentage of the width or row length.
+    pub fn pull_percent(&self) -> f64 {
+        clamp(self.pull_percent, 0.0, Self::PULL_PERCENT)
+    }
+
+    /// All the pull compensation for a satin `width` mm wide (or a fill row that long), mm.
+    pub fn pull_for(&self, width: f64) -> f64 {
+        let w = if width.is_finite() { width.max(0.0) } else { 0.0 };
+        self.pull() + w * self.pull_percent() / 100.0
+    }
+
+    /// The push compensation to sew with, mm.
+    pub fn push(&self) -> f64 {
+        clamp(self.push, 0.0, Self::PUSH)
     }
 
     /// The fill stagger to sew with, rows.

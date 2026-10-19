@@ -5211,3 +5211,9 @@ mark-style	Japanese	Japońskie
 	Satin Width	Szerokość satyny
 	Sew-Out Test	Haft próbny
 	Underlay	Podkład
+
+# Push and pull compensation (the Embroidery panel)
+	Pull Compensation (%):	Kompensacja ściągania (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	Dodatkowa kompensacja ściągania jako część szerokości (satyna) lub długości rzędu (wypełnienie)
+	Push Compensation:	Kompensacja rozpychania:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Wyszywa kolumny o tyle krótsze na końcach, a wypełnienia w poprzek rzędów, bo ściegi rozpychają tkaninę
