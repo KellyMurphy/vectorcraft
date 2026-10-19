@@ -14,7 +14,7 @@ use crate::theme::Tokens;
 use crate::widgets;
 
 pub const ID: &str = "embroidery";
-const LABEL_W: f32 = 112.0;
+const LABEL_W: f32 = 128.0;
 const FIELD_W: f32 = 76.0;
 
 /// A fill pattern's name: the rows before the needle holes line up again (2: brick).
@@ -730,6 +730,90 @@ fn border_label(id: &str) -> &'static str {
     }
 }
 
+/// A starter fabric's name, translated.
+fn fabric_label(id: &str) -> &'static str {
+    match id {
+        "woven" => tl!("Woven"),
+        "knit" => tl!("Knit"),
+        "towel" => tl!("Fleece / Towel"),
+        "cap" => tl!("Cap"),
+        "leather" => tl!("Leather"),
+        "denim" => tl!("Denim"),
+        _ => tl!("Custom"),
+    }
+}
+
+/// The document's fabric: a starter, none, or its own (loaded or edited); Load… and Save….
+fn fabric_row(app: &mut VectorcraftApp, ui: &mut Ui) {
+    use vectorcraft_embroidery::fabrics;
+    let current = app.session.active().and_then(|d| d.doc.embroidery.fabric.clone());
+    // A starter as it comes shows under its own name; anything else under the fabric's own.
+    let starter = current.as_ref().filter(|f| fabrics::builtin(&f.id).as_ref() == Some(*f)).map(|f| f.id.clone());
+    let own = current.as_ref().filter(|_| starter.is_none()).map(|f| f.name.clone());
+    let mut names: Vec<String> = vec![tl!("None").to_string()];
+    names.extend(fabrics::BUILTIN.iter().map(|id| fabric_label(id).to_string()));
+    if let Some(n) = &own {
+        names.push(n.clone());
+    }
+    let shown = match (&starter, &own) {
+        (Some(id), _) => fabric_label(id).to_string(),
+        (None, Some(n)) => n.clone(),
+        (None, None) => tl!("None").to_string(),
+    };
+    ui.scope(|ui| {
+        widgets::label_row(ui, tl!("Fabric:"), LABEL_W, |ui| {
+            let opts: Vec<&str> = names.iter().map(String::as_str).collect();
+            if let Some(i) = widgets::dropdown_names(ui, "emb-fabric", &shown, &opts, 150.0) {
+                match i {
+                    0 => {
+                        app.run("embroidery.setFabric", json!({"fabric": null})).ok();
+                    }
+                    i => {
+                        if let Some(id) = fabrics::BUILTIN.get(i - 1) {
+                            app.run("embroidery.setFabric", json!({"fabric": id})).ok();
+                        }
+                    }
+                }
+            }
+        })
+    })
+    .response
+    .on_hover_text(tl!("The fabric the design is for: its density, compensation and underlay fill in what objects leave unset"));
+    ui.horizontal(|ui| {
+        ui.add_space(LABEL_W + 8.0);
+        if widgets::flat_button(ui, tl!("Load…"), 70.0).on_hover_text(tl!("Load a fabric profile file (.vcfabric)")).clicked() {
+            load_fabric(app);
+        }
+        if let Some(f) = &current
+            && widgets::flat_button(ui, tl!("Save…"), 70.0).on_hover_text(tl!("Save the fabric as a file (.vcfabric)")).clicked()
+        {
+            let file = format!("{}.{}", if f.id.is_empty() { "fabric" } else { &f.id }, fabrics::FILE_EXT);
+            crate::picks::button(app, move |app| {
+                if let Err(e) = crate::io::save_command_output_named(app, "embroidery.saveFabric", &file, json!({})) {
+                    app.status(e);
+                }
+            });
+        }
+    });
+}
+
+/// Load a fabric profile file the user picks as the document's fabric (the web: the picked file
+/// arrives later, through [`crate::io::open_bytes`]).
+fn load_fabric(app: &mut VectorcraftApp) {
+    if let Some(f) = app.services.open_async.as_mut() {
+        f();
+        return;
+    }
+    crate::picks::button(app, |app| {
+        let ext: &'static [&'static str] = &[vectorcraft_embroidery::fabrics::FILE_EXT];
+        let pick = crate::FilePick { filters: vec![("Fabric profiles", ext)], ..Default::default() };
+        let Some(path) = crate::picks::open(app, &pick) else { return };
+        if let Err(e) = app.run("embroidery.loadFabric", json!({ "path": path })) {
+            app.status(e);
+        }
+    });
+}
+
 /// An underlay's name, translated.
 fn underlay_label(u: Underlay) -> &'static str {
     match u {
@@ -755,6 +839,7 @@ fn underlay_row(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &V
 
 fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
     widgets::section_header(ui, tl!("Design"));
+    fabric_row(app, ui);
     let n = |k: &str| d[k].as_u64().unwrap_or(0);
     if n("objects") == 0 {
         widgets::dim_label(ui, tl!("Nothing is stitched yet."));

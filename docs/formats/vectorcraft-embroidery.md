@@ -96,6 +96,7 @@ Type objects are sewn letter by letter, each letter in its characters' colour un
 | `stitchMovesUnder` | number, mm (0–5) | Moves to the next stitch up to this long are sewn as a stitch rather than jumped; never more than `trimJumpsOver`. | 1 |
 | `order` | array of object ids | The sewing order: these objects first, in this order, then any other stitched objects in paint order (bottom first). Ids of objects no longer there are ignored. | empty: paint order |
 | `patterns` | array of border patterns | The border patterns the document uses beyond the starters, so it sews the same anywhere. | empty |
+| `fabric` | object, see [Fabric](#fabric-fabric) | The fabric the design is for: its settings fill in what objects leave unset. | none: the stitches' own defaults |
 | `sewOut` | object, see [Sew-out test](#sew-out-test-sewout) | The swatches of a test sheet and what was seen when they were sewn. | none |
 
 Each entry of `patterns` has the fields of a [border pattern file](vcborder.md#fields) other than `format`,
@@ -104,6 +105,20 @@ pattern is found before a starter with the same id. A `pattern` naming neither i
 warns.
 
 Readers clamp `trimJumpsOver` and `stitchMovesUnder` into range like stitch settings.
+
+## Fabric (`fabric`)
+
+`document.embroidery.fabric` has the fields of a [fabric profile file](vcfabric.md#fields) other than
+`format`, `version` and `units`. Each of its settings fills in that setting for every object that leaves it
+unset, as if the object had it:
+
+- `satinSpacing`: the `spacing` of satins and satin shapes; `fillSpacing`: the `spacing` of fills.
+- `pull` and `pullPercent`: those of satins, satin shapes and fills; `push`: that of satins and fills.
+- `satinCenterUnder`, `satinZigzagOver` and `shapeEdgeOver`: the thresholds an `auto` underlay picks by
+  (in place of 2, 5 and 2.5 mm).
+
+An object's Auto stitch takes them once it has picked what to sew each shape with. Readers keep unknown
+members of `fabric`.
 
 ## Sew-out test (`sewOut`)
 
@@ -163,6 +178,8 @@ by a newer VectorCraft opens in an older one. A reader must:
 - **Keep a `stitch` object it can't read** (a `kind` or `underlay` value it doesn't know, or a value of the
   wrong type, such as `thread` past 255) exactly as written, not sew that object, and warn. Choosing a
   stitch for the object replaces it.
+- **Keep a `fabric` it can't read** (a value of a type it doesn't expect) exactly as written, and sew as if
+  there were none.
 - **Keep a pattern it can't read** (a part `stitch` it doesn't know) exactly as written, not sew with it,
   and warn. It can still be removed.
 

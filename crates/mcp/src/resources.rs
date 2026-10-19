@@ -65,6 +65,22 @@ pub static TEXT_DOCS: &[TextDoc] = &[
         text: include_str!("../../../docs/formats/vcborder.schema.json"),
     },
     TextDoc {
+        uri: "vectorcraft://spec/vcfabric",
+        name: "spec-vcfabric",
+        title: "Fabric profile file (.vcfabric) specification",
+        description: "The open JSON format for embroidery fabric profiles: density, compensation and automatic underlay thresholds",
+        mime: "text/markdown",
+        text: include_str!("../../../docs/formats/vcfabric.md"),
+    },
+    TextDoc {
+        uri: "vectorcraft://spec/vcfabric.schema.json",
+        name: "spec-vcfabric-schema",
+        title: "Fabric profile file JSON Schema",
+        description: "JSON Schema (draft 2020-12) for .vcfabric files",
+        mime: "application/schema+json",
+        text: include_str!("../../../docs/formats/vcfabric.schema.json"),
+    },
+    TextDoc {
         uri: "vectorcraft://spec/vectorcraft-embroidery",
         name: "spec-vectorcraft-embroidery",
         title: "Embroidery data in documents (specification)",

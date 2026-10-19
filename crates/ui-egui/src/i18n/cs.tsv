@@ -5384,3 +5384,19 @@ mark-style	Japanese	Japonské
 	More pull compensation, as a share of the width (satin) or row length (fill)	Další kompenzace stažení jako podíl šířky (satén) nebo délky řady (výplň)
 	Push Compensation:	Kompenzace vytlačení:
 	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Vyšije sloupky o tolik kratší na koncích a výplně napříč řadami, protože stehy vytlačují látku ven
+
+# Fabric profiles (the Embroidery panel's Fabric menu)
+	Denim	Denim
+	Fleece / Towel	Fleece / Froté
+	Knit	Úplet
+	Leather	Kůže
+	Load a fabric profile file (.vcfabric)	Načíst soubor profilu látky (.vcfabric)
+	Save the fabric as a file (.vcfabric)	Uložit látku jako soubor (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	Látka, pro kterou je návrh určen: její hustota, kompenzace a podšití doplní, co objekty nenastavují
+	Woven	Tkanina
+	Fabric	Látka
+	Fabric Profiles	Profily látek
+	Load Fabric…	Načíst látku…
+	Save Fabric…	Uložit látku…
+	Load Fabric	Načíst látku
+@msg	Fabric: {_1}	Látka: {_1}

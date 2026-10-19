@@ -5351,3 +5351,19 @@ imageTrace	Outline	Körvonal
 	More pull compensation, as a share of the width (satin) or row length (fill)	További húzáskompenzáció a szélesség (szatén) vagy a sorhossz (kitöltés) arányában
 	Push Compensation:	Tolóerő-kompenzáció:
 	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Ennyivel rövidebbre hímzi az oszlopokat a végeiken, a kitöltéseket pedig a soraikra merőlegesen, mert az öltések kitolják az anyagot
+
+# Fabric profiles (the Embroidery panel's Fabric menu)
+	Denim	Farmer
+	Fleece / Towel	Polár / Frottír
+	Knit	Kötött
+	Leather	Bőr
+	Load a fabric profile file (.vcfabric)	Anyagprofil-fájl (.vcfabric) betöltése
+	Save the fabric as a file (.vcfabric)	Az anyag mentése fájlként (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	Az anyag, amelyre a minta készül: sűrűsége, kompenzációja és alátétje kitölti, amit az objektumok beállítatlanul hagynak
+	Woven	Szövött
+	Fabric	Anyag
+	Fabric Profiles	Anyagprofilok
+	Load Fabric…	Anyag betöltése…
+	Save Fabric…	Anyag mentése…
+	Load Fabric	Anyag betöltése
+@msg	Fabric: {_1}	Anyag: {_1}

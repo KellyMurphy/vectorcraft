@@ -4941,3 +4941,19 @@ effect	Regular	Regelmäßig
 	More pull compensation, as a share of the width (satin) or row length (fill)	Zusätzlicher Zugausgleich als Anteil der Breite (Satin) oder Reihenlänge (Füllung)
 	Push Compensation:	Schubausgleich:
 	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Stickt Säulen an ihren Enden um so viel kürzer und Füllungen quer zu ihren Reihen, da die Stiche den Stoff hinausdrücken
+
+# Fabric profiles (the Embroidery panel's Fabric menu)
+	Denim	Denim
+	Fleece / Towel	Fleece / Frottee
+	Knit	Strick
+	Leather	Leder
+	Load a fabric profile file (.vcfabric)	Eine Stoffprofil-Datei (.vcfabric) laden
+	Save the fabric as a file (.vcfabric)	Den Stoff als Datei speichern (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	Der Stoff, für den das Design gedacht ist: seine Dichte, sein Ausgleich und seine Unterlage ergänzen, was Objekte offen lassen
+	Woven	Webware
+	Fabric	Stoff
+	Fabric Profiles	Stoffprofile
+	Load Fabric…	Stoff laden…
+	Save Fabric…	Stoff speichern…
+	Load Fabric	Stoff laden
+@msg	Fabric: {_1}	Stoff: {_1}

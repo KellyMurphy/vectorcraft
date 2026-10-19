@@ -5329,3 +5329,19 @@ mark-style	Japanese	Japanilainen
 	More pull compensation, as a share of the width (satin) or row length (fill)	Lisää vetokompensaatiota osuutena leveydestä (satiini) tai rivin pituudesta (täyttö)
 	Push Compensation:	Työntökompensaatio:
 	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Kirjoo pylväät tämän verran lyhyempinä päistään ja täytöt rivien poikki, koska pistot työntävät kangasta ulos
+
+# Fabric profiles (the Embroidery panel's Fabric menu)
+	Denim	Farkku
+	Fleece / Towel	Fleece / Frotee
+	Knit	Neulos
+	Leather	Nahka
+	Load a fabric profile file (.vcfabric)	Lataa kangasprofiilitiedosto (.vcfabric)
+	Save the fabric as a file (.vcfabric)	Tallenna kangas tiedostoksi (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	Kangas, jolle kuvio on tarkoitettu: sen tiheys, kompensaatio ja alusta täydentävät sen, mitä objektit jättävät asettamatta
+	Woven	Kudottu
+	Fabric	Kangas
+	Fabric Profiles	Kangasprofiilit
+	Load Fabric…	Lataa kangas…
+	Save Fabric…	Tallenna kangas…
+	Load Fabric	Lataa kangas
+@msg	Fabric: {_1}	Kangas: {_1}

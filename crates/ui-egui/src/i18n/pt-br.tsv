@@ -5301,3 +5301,19 @@ mark-style	Japanese	Japonesas
 	More pull compensation, as a share of the width (satin) or row length (fill)	Mais compensação de repuxo, como parte da largura (cetim) ou do comprimento da fileira (preenchimento)
 	Push Compensation:	Compensação de empurrão:
 	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Borda as colunas tanto mais curtas nas pontas, e os preenchimentos no sentido transversal às fileiras, porque os pontos empurram o tecido para fora
+
+# Fabric profiles (the Embroidery panel's Fabric menu)
+	Denim	Jeans
+	Fleece / Towel	Fleece / Atoalhado
+	Knit	Malha
+	Leather	Couro
+	Load a fabric profile file (.vcfabric)	Carregar um arquivo de perfil de tecido (.vcfabric)
+	Save the fabric as a file (.vcfabric)	Salvar o tecido como arquivo (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	O tecido para o qual é o desenho: sua densidade, compensação e base completam o que os objetos não definem
+	Woven	Tecido plano
+	Fabric	Tecido
+	Fabric Profiles	Perfis de tecido
+	Load Fabric…	Carregar tecido…
+	Save Fabric…	Salvar tecido…
+	Load Fabric	Carregar tecido
+@msg	Fabric: {_1}	Tecido: {_1}

@@ -5382,3 +5382,19 @@ theme	Appearance	Apparence
 	More pull compensation, as a share of the width (satin) or row length (fill)	Compensation de traction supplémentaire, en part de la largeur (satin) ou de la longueur de rang (remplissage)
 	Push Compensation:	Compensation de poussée :
 	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Brode les colonnes d'autant plus courtes à leurs extrémités, et les remplissages en travers de leurs rangs, car les points repoussent le tissu
+
+# Fabric profiles (the Embroidery panel's Fabric menu)
+	Denim	Denim
+	Fleece / Towel	Polaire / Éponge
+	Knit	Maille
+	Leather	Cuir
+	Load a fabric profile file (.vcfabric)	Charger un fichier de profil de tissu (.vcfabric)
+	Save the fabric as a file (.vcfabric)	Enregistrer le tissu dans un fichier (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	Le tissu auquel le motif est destiné : sa densité, sa compensation et sa sous-couche complètent ce que les objets ne définissent pas
+	Woven	Tissé
+	Fabric	Tissu
+	Fabric Profiles	Profils de tissu
+	Load Fabric…	Charger un tissu…
+	Save Fabric…	Enregistrer le tissu…
+	Load Fabric	Charger un tissu
+@msg	Fabric: {_1}	Tissu : {_1}

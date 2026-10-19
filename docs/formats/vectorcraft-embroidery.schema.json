@@ -53,7 +53,28 @@
             "properties": { "id": { "type": "string", "minLength": 1 } }
           }
         },
-        "sewOut": { "$ref": "#/$defs/sewOut" }
+        "sewOut": { "$ref": "#/$defs/sewOut" },
+        "fabric": { "$ref": "#/$defs/fabric" }
+      }
+    },
+    "fabric": {
+      "description": "The document's fabric: the fields of a .vcfabric file other than format, version and units.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "author": { "type": "string" },
+        "license": { "type": "string" },
+        "source": { "type": "string" },
+        "description": { "type": "string" },
+        "satinSpacing": { "$ref": "vcfabric.schema.json#/properties/satinSpacing" },
+        "fillSpacing": { "$ref": "vcfabric.schema.json#/properties/fillSpacing" },
+        "pull": { "$ref": "vcfabric.schema.json#/properties/pull" },
+        "pullPercent": { "$ref": "vcfabric.schema.json#/properties/pullPercent" },
+        "push": { "$ref": "vcfabric.schema.json#/properties/push" },
+        "satinCenterUnder": { "$ref": "vcfabric.schema.json#/properties/satinCenterUnder" },
+        "satinZigzagOver": { "$ref": "vcfabric.schema.json#/properties/satinZigzagOver" },
+        "shapeEdgeOver": { "$ref": "vcfabric.schema.json#/properties/shapeEdgeOver" }
       }
     },
     "sewOut": {

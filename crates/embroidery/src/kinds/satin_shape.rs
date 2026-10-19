@@ -11,7 +11,7 @@ pub(super) fn sew(i: &Input) -> Output {
     let mut out = Output::default();
     let polys = i.polys();
     let underlay = match s.underlay() {
-        Underlay::Auto => generate::AutoUnderlay::default().shape(crate::stroke_width(&polys)),
+        Underlay::Auto => i.auto.shape(crate::stroke_width(&polys)),
         u => u,
     };
     let pull = s.pull_for(crate::stroke_width(&polys));

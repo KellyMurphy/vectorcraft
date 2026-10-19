@@ -45,6 +45,12 @@ pub fn open_bytes(app: &mut VectorcraftApp, name: &str, bytes: &[u8], path: Opti
         app.status(format!("Imported {what}: {}", names.join(", ")));
         return Ok(Value::Null);
     }
+    // A fabric profile becomes the document's fabric (embroidery).
+    if fileio::extension(name) == vectorcraft_embroidery::fabrics::FILE_EXT {
+        let r = app.run("embroidery.loadFabric", json!({"data": String::from_utf8_lossy(bytes)}))?;
+        app.status(format!("Fabric: {}", r["fabric"]["name"].as_str().unwrap_or_default()));
+        return Ok(Value::Null);
+    }
     // A border pattern goes into the document (embroidery).
     if fileio::extension(name) == vectorcraft_embroidery::borders::FILE_EXT {
         crate::panels::embroidery::load_pattern_from(app, json!({"data": String::from_utf8_lossy(bytes)}));

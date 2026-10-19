@@ -4976,3 +4976,19 @@ lighting	Light	Світло
 	More pull compensation, as a share of the width (satin) or row length (fill)	Додаткова компенсація стягування як частка ширини (атлас) або довжини ряду (заливка)
 	Push Compensation:	Компенсація виштовхування:
 	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Вишиває стовпчики настільки коротшими на кінцях, а заливки — поперек рядів, бо стібки виштовхують тканину назовні
+
+# Fabric profiles (the Embroidery panel's Fabric menu)
+	Denim	Денім
+	Fleece / Towel	Фліс / Махра
+	Knit	Трикотаж
+	Leather	Шкіра
+	Load a fabric profile file (.vcfabric)	Завантажити файл профілю тканини (.vcfabric)
+	Save the fabric as a file (.vcfabric)	Зберегти тканину у файл (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	Тканина, для якої призначено дизайн: її щільність, компенсація й підкладка доповнюють те, що не задано в об’єктах
+	Woven	Ткана
+	Fabric	Тканина
+	Fabric Profiles	Профілі тканин
+	Load Fabric…	Завантажити тканину…
+	Save Fabric…	Зберегти тканину…
+	Load Fabric	Завантажити тканину
+@msg	Fabric: {_1}	Тканина: {_1}

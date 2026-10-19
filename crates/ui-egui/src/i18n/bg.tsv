@@ -5335,3 +5335,19 @@ theme	Appearance	Външен вид
 	More pull compensation, as a share of the width (satin) or row length (fill)	Допълнителна компенсация на опъна като дял от ширината (сатен) или дължината на реда (запълване)
 	Push Compensation:	Компенсация на избутването:
 	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Бродира колоните с толкова по-къси в краищата им, а запълванията — напряко на редовете им, защото бодовете избутват плата навън
+
+# Fabric profiles (the Embroidery panel's Fabric menu)
+	Denim	Деним
+	Fleece / Towel	Полар / Хавлия
+	Knit	Трико
+	Leather	Кожа
+	Load a fabric profile file (.vcfabric)	Зареждане на файл с профил на плат (.vcfabric)
+	Save the fabric as a file (.vcfabric)	Запазване на плата като файл (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	Платът, за който е дизайнът: плътността, компенсацията и подложката му допълват незададеното от обектите
+	Woven	Тъкан
+	Fabric	Плат
+	Fabric Profiles	Профили на платове
+	Load Fabric…	Зареждане на плат…
+	Save Fabric…	Запазване на плат…
+	Load Fabric	Зареждане на плат
+@msg	Fabric: {_1}	Плат: {_1}

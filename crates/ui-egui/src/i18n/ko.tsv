@@ -4942,3 +4942,19 @@ lighting	Light	광원
 	More pull compensation, as a share of the width (satin) or row length (fill)	너비(새틴)나 행 길이(채우기)에 대한 비율로 더하는 당김 보정
 	Push Compensation:	밀림 보정:
 	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	땀이 천을 바깥으로 밀어내므로 칼럼은 끝에서, 채우기는 행을 가로질러 이만큼 짧게 수놓습니다
+
+# Fabric profiles (the Embroidery panel's Fabric menu)
+	Denim	데님
+	Fleece / Towel	플리스 / 타월
+	Knit	니트
+	Leather	가죽
+	Load a fabric profile file (.vcfabric)	천 프로필 파일(.vcfabric) 불러오기
+	Save the fabric as a file (.vcfabric)	천을 파일(.vcfabric)로 저장
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	디자인을 놓을 천: 그 밀도, 보정, 밑실이 오브젝트가 정하지 않은 값을 채웁니다
+	Woven	직물
+	Fabric	천
+	Fabric Profiles	천 프로필
+	Load Fabric…	천 불러오기…
+	Save Fabric…	천 저장…
+	Load Fabric	천 불러오기
+@msg	Fabric: {_1}	천: {_1}

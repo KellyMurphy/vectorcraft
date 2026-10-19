@@ -5359,3 +5359,19 @@ swatch	Bright Violet	Violet cerah
 	More pull compensation, as a share of the width (satin) or row length (fill)	Kompensasi tarikan tambahan, sebagai bagian dari lebar (satin) atau panjang baris (isian)
 	Push Compensation:	Kompensasi dorongan:
 	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Menyulam kolom sependek ini di ujungnya, dan isian melintang barisnya, karena jahitan mendorong kain ke luar
+
+# Fabric profiles (the Embroidery panel's Fabric menu)
+	Denim	Denim
+	Fleece / Towel	Fleece / Handuk
+	Knit	Rajut
+	Leather	Kulit
+	Load a fabric profile file (.vcfabric)	Muat berkas profil kain (.vcfabric)
+	Save the fabric as a file (.vcfabric)	Simpan kain sebagai berkas (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	Kain tujuan desain: kerapatan, kompensasi, dan lapisan dasarnya mengisi apa yang tidak diatur objek
+	Woven	Tenun
+	Fabric	Kain
+	Fabric Profiles	Profil kain
+	Load Fabric…	Muat kain…
+	Save Fabric…	Simpan kain…
+	Load Fabric	Muat kain
+@msg	Fabric: {_1}	Kain: {_1}

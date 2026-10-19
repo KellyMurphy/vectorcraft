@@ -5321,3 +5321,19 @@ theme	Appearance	Utseende
 	More pull compensation, as a share of the width (satin) or row length (fill)	Mer dragkompensation, som en andel av bredden (satin) eller radlängden (fyllning)
 	Push Compensation:	Tryckkompensation:
 	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Broderar kolumner så mycket kortare i ändarna, och fyllningar tvärs över raderna, eftersom stygnen trycker ut tyget
+
+# Fabric profiles (the Embroidery panel's Fabric menu)
+	Denim	Denim
+	Fleece / Towel	Fleece / Frotté
+	Knit	Trikå
+	Leather	Läder
+	Load a fabric profile file (.vcfabric)	Läs in en tygprofilfil (.vcfabric)
+	Save the fabric as a file (.vcfabric)	Spara tyget som en fil (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	Tyget designen är avsedd för: dess täthet, kompensation och underlag fyller i det objekt lämnar ospecificerat
+	Woven	Vävt
+	Fabric	Tyg
+	Fabric Profiles	Tygprofiler
+	Load Fabric…	Läs in tyg…
+	Save Fabric…	Spara tyg…
+	Load Fabric	Läs in tyg
+@msg	Fabric: {_1}	Tyg: {_1}

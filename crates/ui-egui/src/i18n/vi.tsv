@@ -4958,3 +4958,19 @@ theme	Appearance	Giao diện
 	More pull compensation, as a share of the width (satin) or row length (fill)	Thêm bù co kéo, theo tỉ lệ của độ rộng (satin) hoặc chiều dài hàng (thêu đầy)
 	Push Compensation:	Bù đẩy:
 	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Thêu cột ngắn đi chừng này ở hai đầu, và phần thêu đầy ngắn đi theo chiều ngang các hàng, vì mũi thêu đẩy vải ra ngoài
+
+# Fabric profiles (the Embroidery panel's Fabric menu)
+	Denim	Vải bò
+	Fleece / Towel	Nỉ / Khăn bông
+	Knit	Vải dệt kim
+	Leather	Da
+	Load a fabric profile file (.vcfabric)	Nạp tệp hồ sơ vải (.vcfabric)
+	Save the fabric as a file (.vcfabric)	Lưu vải thành tệp (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	Loại vải mà thiết kế dành cho: mật độ, bù và lớp lót của nó điền vào những gì đối tượng chưa đặt
+	Woven	Vải dệt thoi
+	Fabric	Vải
+	Fabric Profiles	Hồ sơ vải
+	Load Fabric…	Nạp vải…
+	Save Fabric…	Lưu vải…
+	Load Fabric	Nạp vải
+@msg	Fabric: {_1}	Vải: {_1}

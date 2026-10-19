@@ -21,7 +21,7 @@ pub(super) fn sew(i: &Input) -> Output {
         out.warnings.push("a satin set Between Rails needs two subpaths, both open or both closed: sewn along its paths instead".into());
     }
     if let Some(r) = &rails {
-        let (run, narrowed) = r.satin(s.spacing(), s.pull(), s.pull_percent(), s.underlay());
+        let (run, narrowed) = r.satin(s.spacing(), s.pull(), s.pull_percent(), s.underlay(), &i.auto);
         if narrowed {
             out.warnings
                 .push("a satin between rails is wider than a stitch can span (12 mm) in places: narrowed there (fill areas that wide)".into());
@@ -37,7 +37,7 @@ pub(super) fn sew(i: &Input) -> Output {
             pushed = generate::trim_ends(l, s.push() / 2.0);
             &pushed
         };
-        let (under, back) = generate::satin_underlay(l, *closed, w, s.underlay());
+        let (under, back) = generate::satin_underlay_with(l, *closed, w, s.underlay(), &i.auto);
         // After an underlay that ends at the far end, the column is sewn back.
         let top = if back {
             let rev: Vec<Point> = l.iter().rev().copied().collect();

@@ -1376,3 +1376,53 @@ fn satin_push_shortens_open_columns_and_pull_percent_widens_them() {
     // A short column keeps half a millimetre.
     assert!(generate::trim_ends(&[Point::new(0.0, 0.0), Point::new(1.0, 0.0)], 3.0).len() == 2);
 }
+
+#[test]
+fn the_documents_fabric_fills_in_unset_settings_and_moves_the_underlay_thresholds() {
+    use vectorcraft_doc::Underlay;
+    // A 30 mm fill square and a 3.5 mm satin with auto underlay, nothing else set.
+    let mut d = doc_with(|d| {
+        let mut sq = stitched(d, poly(&[(0.0, 0.0), (85.0, 0.0), (85.0, 85.0), (0.0, 85.0)], true), StitchKind::Fill, [0; 3]);
+        sq.extras_mut().stitch = Some(Box::new(StitchSettings::new(StitchKind::Fill)));
+        let mut bar = stitched(d, poly(&[(0.0, 150.0), (200.0, 150.0)], false), StitchKind::Satin, [0; 3]);
+        bar.extras_mut().stitch =
+            Some(Box::new(StitchSettings { width: Some(3.5), underlay: Underlay::Auto, ..StitchSettings::new(StitchKind::Satin) }));
+        vec![sq, bar]
+    });
+    let mut cache = StitchCache::default();
+    let plain = plan_cached(&d, &mut cache);
+    // Leather: a more open fill and less underlay (a 3.5 mm satin gets a centre walk, not an edge walk).
+    d.embroidery.fabric = fabrics::builtin("leather");
+    let leather = plan_cached(&d, &mut cache);
+    assert_eq!(cache.sewn, 2, "a new fabric sews everything again");
+    assert!(leather.stats().stitches < plain.stats().stitches, "{} {}", leather.stats().stitches, plain.stats().stitches);
+    // Towels: the 3.5 mm satin is past the zigzag threshold (3 mm): edge walk and zigzag.
+    d.embroidery.fabric = fabrics::builtin("towel");
+    let towel = plan_cached(&d, &mut cache);
+    assert!(towel.stats().stitches > plain.stats().stitches);
+    // An object that sets everything the fabric would gives the same stitches with it or without it.
+    let own = |d: &Document| {
+        let mut d = d.clone();
+        let id = vectorcraft_embroidery_first_stitched(&d);
+        if let Some(n) = d.node_mut(id) {
+            let s = StitchSettings {
+                spacing: Some(0.4),
+                pull: Some(0.0),
+                pull_percent: Some(0.0),
+                push: Some(0.0),
+                ..StitchSettings::new(StitchKind::Fill)
+            };
+            n.extras_mut().stitch = Some(Box::new(s));
+        }
+        plan(&d)
+    };
+    d.embroidery.fabric = fabrics::builtin("leather");
+    let mut no_fabric = d.clone();
+    no_fabric.embroidery.fabric = None;
+    assert_eq!(own(&d).objects.first().map(|o| o.needles.len()), own(&no_fabric).objects.first().map(|o| o.needles.len()));
+}
+
+/// The first stitched object's id.
+fn vectorcraft_embroidery_first_stitched(d: &Document) -> vectorcraft_doc::NodeId {
+    sew_order(d).first().map(|n| n.id).unwrap()
+}

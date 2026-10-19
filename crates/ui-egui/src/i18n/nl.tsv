@@ -5402,3 +5402,19 @@ swatch	Bright Violet	Felviolet
 	More pull compensation, as a share of the width (satin) or row length (fill)	Extra trekcompensatie, als deel van de breedte (satijn) of rijlengte (vulling)
 	Push Compensation:	Duwcompensatie:
 	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Borduurt kolommen zoveel korter aan hun uiteinden, en vullingen dwars op hun rijen, omdat de steken de stof naar buiten duwen
+
+# Fabric profiles (the Embroidery panel's Fabric menu)
+	Denim	Denim
+	Fleece / Towel	Fleece / Badstof
+	Knit	Tricot
+	Leather	Leer
+	Load a fabric profile file (.vcfabric)	Een stofprofielbestand (.vcfabric) laden
+	Save the fabric as a file (.vcfabric)	De stof als bestand opslaan (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	De stof waarvoor het ontwerp is: zijn dichtheid, compensatie en onderlaag vullen aan wat objecten open laten
+	Woven	Geweven
+	Fabric	Stof
+	Fabric Profiles	Stofprofielen
+	Load Fabric…	Stof laden…
+	Save Fabric…	Stof opslaan…
+	Load Fabric	Stof laden
+@msg	Fabric: {_1}	Stof: {_1}

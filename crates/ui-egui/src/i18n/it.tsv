@@ -4996,3 +4996,19 @@ lighting	Light	Luce
 	More pull compensation, as a share of the width (satin) or row length (fill)	Ulteriore compensazione della trazione, come quota della larghezza (satin) o della lunghezza della fila (riempimento)
 	Push Compensation:	Compensazione della spinta:
 	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Ricama le colonne tanto più corte alle estremità, e i riempimenti di traverso alle file, perché i punti spingono fuori il tessuto
+
+# Fabric profiles (the Embroidery panel's Fabric menu)
+	Denim	Denim
+	Fleece / Towel	Pile / Spugna
+	Knit	Maglia
+	Leather	Pelle
+	Load a fabric profile file (.vcfabric)	Carica un file di profilo tessuto (.vcfabric)
+	Save the fabric as a file (.vcfabric)	Salva il tessuto come file (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	Il tessuto a cui è destinato il disegno: densità, compensazione e imbottitura completano ciò che gli oggetti non impostano
+	Woven	Tessuto a navetta
+	Fabric	Tessuto
+	Fabric Profiles	Profili tessuto
+	Load Fabric…	Carica tessuto…
+	Save Fabric…	Salva tessuto…
+	Load Fabric	Carica tessuto
+@msg	Fabric: {_1}	Tessuto: {_1}

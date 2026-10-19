@@ -573,3 +573,49 @@ fn new_stitched_objects_get_the_automatic_underlay() {
     assert_eq!(info(&mut s)["selection"]["underlay"], "none");
     assert!(s.execute("embroidery.set", &json!({"type": "running", "underlay": "auto"})).is_err(), "running stitches take no underlay");
 }
+
+#[test]
+fn the_document_fabric_is_set_edited_saved_and_loaded() {
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    let plain = info(&mut s)["design"]["stitches"].as_u64().unwrap();
+    let list = s.execute("embroidery.fabrics", &json!({})).unwrap();
+    assert_eq!(list["fabric"], Value::Null);
+    assert_eq!(list["starters"].as_array().unwrap().len(), 6);
+    // Leather: a more open fill.
+    let r = s.execute("embroidery.setFabric", &json!({"fabric": "leather"})).unwrap();
+    assert_eq!(r["fabric"]["fillSpacing"], 0.6);
+    assert!(info(&mut s)["design"]["stitches"].as_u64().unwrap() < plain);
+    // Edited: the given settings on the document's fabric; null clears one.
+    let r = s.execute("embroidery.setFabric", &json!({"name": "Saddle", "fillSpacing": 0.4, "push": null})).unwrap();
+    assert_eq!((r["fabric"]["name"].as_str(), r["fabric"]["fillSpacing"].as_f64(), r["fabric"].get("push")), (Some("Saddle"), Some(0.4), None));
+    s.execute("edit.undo", &json!({})).unwrap();
+    assert_eq!(s.execute("embroidery.fabrics", &json!({})).unwrap()["fabric"]["fillSpacing"], 0.6, "one undo step");
+    // Saved and loaded again.
+    let text = s.execute("embroidery.saveFabric", &json!({})).unwrap()["data"].as_str().unwrap().to_string();
+    assert!(text.contains("\"vectorcraft-fabric\""));
+    s.execute("embroidery.setFabric", &json!({"fabric": null})).unwrap();
+    assert_eq!(info(&mut s)["design"]["stitches"].as_u64().unwrap(), plain);
+    let r = s.execute("embroidery.loadFabric", &json!({"data": text})).unwrap();
+    assert_eq!(r["fabric"]["id"], "leather");
+    let knit = s.execute("embroidery.saveFabric", &json!({"fabric": "knit"})).unwrap();
+    assert!(knit["data"].as_str().unwrap().contains("\"Knit\""));
+    for bad in [json!({"fabric": "silk"}), json!({"pull": 9}), json!({"pullPercent": "x"}), json!({"name": ""})] {
+        assert!(s.execute("embroidery.setFabric", &bad).is_err(), "{bad}");
+    }
+    assert!(s.execute("embroidery.loadFabric", &json!({"data": "{}"})).is_err());
+    s.execute("embroidery.setFabric", &json!({"fabric": null})).unwrap();
+    assert!(s.execute("embroidery.saveFabric", &json!({})).is_err(), "no fabric to save");
+}
+
+#[test]
+fn the_selection_reports_what_is_sewn_with_the_fabric() {
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    s.execute("embroidery.setFabric", &json!({"fabric": "knit"})).unwrap();
+    let sel = info(&mut s)["selection"].clone();
+    assert_eq!((sel["spacing"].as_f64(), sel["pull"].as_f64(), sel["push"].as_f64()), (Some(0.45), Some(0.3), Some(0.2)));
+    // The object's own setting wins.
+    s.execute("embroidery.set", &json!({"spacing": 0.5})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["spacing"].as_f64(), Some(0.5));
+}

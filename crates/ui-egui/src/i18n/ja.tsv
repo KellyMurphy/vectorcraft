@@ -5037,3 +5037,19 @@ lighting	Light	ライト
 	More pull compensation, as a share of the width (satin) or row length (fill)	幅 (サテン) または列の長さ (フィル) に対する割合で加える引き補正
 	Push Compensation:	押し補正:
 	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	ステッチが生地を外へ押し出すため、コラムは端で、フィルは列と直交する方向にこの分だけ短く縫います
+
+# Fabric profiles (the Embroidery panel's Fabric menu)
+	Denim	デニム
+	Fleece / Towel	フリース / タオル
+	Knit	ニット
+	Leather	レザー
+	Load a fabric profile file (.vcfabric)	生地プロファイル ファイル (.vcfabric) を読み込み
+	Save the fabric as a file (.vcfabric)	生地をファイル (.vcfabric) として保存
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	デザインを縫う生地: その密度・補正・下縫いが、オブジェクトで未設定の値を補います
+	Woven	織物
+	Fabric	生地
+	Fabric Profiles	生地プロファイル
+	Load Fabric…	生地を読み込み…
+	Save Fabric…	生地を保存…
+	Load Fabric	生地を読み込み
+@msg	Fabric: {_1}	生地: {_1}

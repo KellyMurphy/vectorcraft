@@ -14,6 +14,7 @@ pub mod borders;
 pub mod check;
 mod dst;
 pub mod extract;
+pub mod fabrics;
 pub mod generate;
 mod import;
 pub mod kinds;
@@ -399,9 +400,10 @@ pub fn plan(doc: &Document) -> Plan {
 
 /// [`plan`], sewing again only the objects `cache` doesn't hold as they are now.
 pub fn plan_cached(doc: &Document, cache: &mut StitchCache) -> Plan {
-    if cache.patterns != doc.embroidery.patterns {
+    if cache.patterns != doc.embroidery.patterns || cache.fabric != doc.embroidery.fabric {
         cache.entries.clear();
         cache.patterns.clone_from(&doc.embroidery.patterns);
+        cache.fabric.clone_from(&doc.embroidery.fabric);
     }
     (cache.reused, cache.sewn) = (0, 0);
     let mut b = Builder::new(&doc.embroidery);
@@ -625,12 +627,12 @@ fn text(t: &vectorcraft_doc::TextObject, s: &StitchSettings, b: &mut Sewer) {
     }
     // Auto decides for the whole object, so its letters look alike: when a quarter or more of
     // those that would be satin can't take it (heavy type), they are all filled.
-    let mut choices: Vec<Choice> = parts.iter().map(|(_, p)| auto_choice(s, &[p], FillRule::NonZero)).collect();
+    let mut choices: Vec<Choice> = parts.iter().map(|(_, p)| auto_choice(s, &[p], FillRule::NonZero, b)).collect();
     let tried = choices.iter().filter(|c| c.tried_satin()).count();
     let poor = choices.iter().filter(|c| matches!(c, Choice::Sew(_, true))).count();
     if tried > 0 && poor * 4 >= tried {
         for c in choices.iter_mut().filter(|c| c.tried_satin()) {
-            *c = Choice::Sew(auto_settings(s, f64::INFINITY), true);
+            *c = Choice::Sew(b.fabric_in(&auto_settings(s, f64::INFINITY)), true);
         }
     }
     for ((run, path), choice) in parts.iter().zip(choices) {
@@ -659,26 +661,37 @@ impl Choice {
 
 /// Auto's choice for `paths`: by stroke width, satin only where it suits the shape (a stroke too
 /// wide for the curve it turns, or merging into a blob, is filled instead).
-fn auto_choice(s: &StitchSettings, paths: &[&PathData], rule: FillRule) -> Choice {
+fn auto_choice(s: &StitchSettings, paths: &[&PathData], rule: FillRule, b: &Sewer) -> Choice {
     let polys: Vec<Vec<Point>> = paths.iter().flat_map(|p| generate::polylines(p)).map(|(l, _)| l).collect();
-    let t = auto_settings(s, stroke_width(&polys));
+    let width = stroke_width(&polys);
+    let t = b.fabric_in(&auto_settings(s, width));
     if t.kind != StitchKind::SatinShape {
         return Choice::Sew(t, false);
     }
-    let (runs, q) = generate::satin_shape_checked(&polys, rule, t.spacing(), t.pull(), true);
-    if !q.poor() && !runs.is_empty() { Choice::Satin(t, runs) } else { Choice::Sew(auto_settings(s, f64::INFINITY), true) }
+    let underlay = match t.underlay() {
+        Underlay::Auto => b.auto.shape(width),
+        u => u,
+    };
+    let (runs, q) = generate::satin_shape_checked(&polys, rule, t.spacing(), t.pull_for(width), underlay == Underlay::Center);
+    if q.poor() || runs.is_empty() {
+        return Choice::Sew(b.fabric_in(&auto_settings(s, f64::INFINITY)), true);
+    }
+    // An edge walk goes in first, under the satin.
+    let walk = if underlay == Underlay::Edge { generate::edge_walk(&polys, rule) } else { vec![] };
+    Choice::Satin(t, walk.into_iter().chain(runs).collect())
 }
 
 /// Sew `paths` with `s` in `thread` (`stroke_mm`: the stroke's width, for satins).
 fn sew(s: &StitchSettings, thread: [u8; 3], stroke_mm: f64, paths: &[&PathData], rule: FillRule, b: &mut Sewer) {
     if s.kind == StitchKind::Auto {
-        match auto_choice(s, paths, rule) {
+        match auto_choice(s, paths, rule, b) {
             Choice::Satin(t, runs) => emit(&t, thread, runs, b),
             Choice::Sew(t, _) => sew(&t, thread, stroke_mm, paths, rule, b),
         }
         return;
     }
-    let out = kinds::sew(&kinds::Input { settings: s, stroke_mm, paths, rule, patterns: b.patterns });
+    let s = &b.fabric_in(s);
+    let out = kinds::sew(&kinds::Input { settings: s, stroke_mm, paths, rule, patterns: b.patterns, auto: b.auto });
     b.out.warnings.extend(out.warnings);
     emit(s, thread, out.runs, b);
 }
@@ -716,7 +729,20 @@ struct Piece {
 struct Sewer<'a> {
     /// The document's own border patterns ([`EmbroiderySetup::patterns`]).
     patterns: &'a [vectorcraft_doc::BorderPattern],
+    /// The document's fabric ([`EmbroiderySetup::fabric`]), and the auto underlay it asks for.
+    fabric: Option<&'a vectorcraft_doc::Fabric>,
+    auto: generate::AutoUnderlay,
     out: Sewn,
+}
+
+impl Sewer<'_> {
+    /// `s` with what it leaves unset taken from the document's fabric.
+    fn fabric_in(&self, s: &StitchSettings) -> StitchSettings {
+        match self.fabric {
+            Some(f) => fabrics::fill_in(s, f),
+            None => s.clone(),
+        }
+    }
 }
 
 /// The stitches of objects already sewn, kept between plans so a plan sews again only what
@@ -727,6 +753,7 @@ struct Sewer<'a> {
 pub struct StitchCache {
     entries: HashMap<NodeId, (Arc<Node>, Arc<Sewn>)>,
     patterns: Vec<vectorcraft_doc::BorderPattern>,
+    fabric: Option<vectorcraft_doc::Fabric>,
     /// Objects the last plan took from the cache and sewed again.
     pub reused: usize,
     pub sewn: usize,
@@ -742,7 +769,9 @@ impl StitchCache {
             }
             _ => {
                 self.sewn += 1;
-                let mut b = Sewer { patterns: &self.patterns, out: Sewn::default() };
+                // A fabric this version can't read isn't used.
+                let fabric = self.fabric.as_ref().filter(|f| f.unknown.is_none());
+                let mut b = Sewer { patterns: &self.patterns, fabric, auto: fabrics::auto_underlay(fabric), out: Sewn::default() };
                 sew_node(n, &mut b);
                 Arc::new(b.out)
             }

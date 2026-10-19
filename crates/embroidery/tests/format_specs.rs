@@ -9,10 +9,10 @@ use std::path::PathBuf;
 use kurbo::Point;
 use serde_json::Value;
 use vectorcraft_doc::{
-    BorderPattern, EmbroiderySetup, NodeId, PartStitch, PatternPart, SewOut, SewResult, SewSwatch, StitchKind, StitchSettings, Underlay,
+    BorderPattern, EmbroiderySetup, Fabric, NodeId, PartStitch, PatternPart, SewOut, SewResult, SewSwatch, StitchKind, StitchSettings, Underlay,
 };
 use vectorcraft_embroidery::params::{self, ValueKind};
-use vectorcraft_embroidery::{borders, motifs};
+use vectorcraft_embroidery::{borders, fabrics, motifs};
 
 fn formats_dir() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../docs/formats")
@@ -109,8 +109,71 @@ fn full_setup() -> EmbroiderySetup {
         order: vec![NodeId(1)],
         patterns: vec![full_pattern()],
         sew_out: Some(full_sew_out()),
+        fabric: Some(full_fabric()),
         extra: Default::default(),
     }
+}
+
+/// A fabric profile with every field set (a new field fails to compile here until it is set).
+fn full_fabric() -> Fabric {
+    Fabric {
+        id: "full".into(),
+        name: "Full".into(),
+        author: Some("a".into()),
+        license: Some("CC0-1.0".into()),
+        source: Some("s".into()),
+        description: Some("d".into()),
+        satin_spacing: Some(0.4),
+        fill_spacing: Some(0.45),
+        pull: Some(0.3),
+        pull_percent: Some(5.0),
+        push: Some(0.2),
+        satin_center_under: Some(1.5),
+        satin_zigzag_over: Some(4.0),
+        shape_edge_over: Some(2.0),
+        extra: Default::default(),
+        unknown: None,
+    }
+}
+
+#[test]
+fn vcfabric_schema_matches_the_code() {
+    let schema = json("vcfabric.schema.json");
+    let props = &schema["properties"];
+    assert_eq!(props["format"]["const"], fabrics::FILE_FORMAT);
+    assert_eq!(props["version"]["maximum"].as_u64(), Some(u64::from(fabrics::FILE_VERSION)));
+    let file: Value = serde_json::from_str(&fabrics::write_file(&full_fabric()).unwrap()).unwrap();
+    assert_eq!(keys(props), keys(&file), "the schema's fields are the file's");
+    range_is(&props["satinSpacing"], StitchSettings::SPACING, "satinSpacing");
+    range_is(&props["fillSpacing"], StitchSettings::SPACING, "fillSpacing");
+    range_is(&props["pull"], StitchSettings::PULL, "pull");
+    range_is(&props["pullPercent"], StitchSettings::PULL_PERCENT, "pullPercent");
+    range_is(&props["push"], StitchSettings::PUSH, "push");
+    for k in ["satinCenterUnder", "satinZigzagOver", "shapeEdgeOver"] {
+        range_is(&props[k], Fabric::THRESHOLD, k);
+    }
+    // The document's fabric has the file's fields, less the header.
+    let doc = json("vectorcraft-embroidery.schema.json");
+    assert_eq!(keys(&doc["$defs"]["fabric"]["properties"]), keys(&serde_json::to_value(full_fabric()).unwrap()));
+}
+
+#[test]
+fn vcfabric_page_describes_every_field_and_starter() {
+    let page = read("vcfabric.md");
+    let file: Value = serde_json::from_str(&fabrics::write_file(&full_fabric()).unwrap()).unwrap();
+    for k in keys(&file) {
+        assert!(page.contains(&format!("`{k}`")), "vcfabric.md describes `{k}`");
+    }
+    for id in fabrics::BUILTIN {
+        assert!(page.contains(&format!("`{id}`")), "vcfabric.md lists the starter `{id}`");
+    }
+    assert!(page.contains(&format!("{} MB", fabrics::MAX_FILE_BYTES >> 20)), "the size limit");
+    // The example file reads, and the page's example is it, credits aside.
+    let ex = fabrics::read_file(read("examples/polo.vcfabric").as_bytes()).unwrap();
+    let start = page.find("```json").unwrap() + 7;
+    let end = start + page.get(start..).unwrap().find("```").unwrap();
+    let shown = fabrics::read_file(page.get(start..end).unwrap().as_bytes()).unwrap();
+    assert_eq!(Fabric { author: None, license: None, description: None, ..shown }, Fabric { author: None, license: None, description: None, ..ex });
 }
 
 /// A sew-out record with every field set.

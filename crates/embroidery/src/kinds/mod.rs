@@ -27,6 +27,8 @@ pub struct Input<'a> {
     pub rule: FillRule,
     /// The document's border patterns.
     pub patterns: &'a [BorderPattern],
+    /// What an `auto` underlay becomes (the document's fabric's thresholds).
+    pub auto: generate::AutoUnderlay,
 }
 
 impl Input<'_> {
@@ -80,7 +82,14 @@ mod tests {
         let path = rect();
         for k in StitchKind::ALL.into_iter().filter(|k| *k != StitchKind::Auto) {
             let settings = StitchSettings::new(k);
-            let out = sew(&Input { settings: &settings, stroke_mm: 1.0, paths: &[&path], rule: FillRule::NonZero, patterns: &[] });
+            let out = sew(&Input {
+                settings: &settings,
+                stroke_mm: 1.0,
+                paths: &[&path],
+                rule: FillRule::NonZero,
+                patterns: &[],
+                auto: Default::default(),
+            });
             assert!(out.warnings.is_empty(), "{}: {:?}", k.id(), out.warnings);
             let needles: usize = out.runs.iter().map(Vec::len).sum();
             assert!(needles >= 4, "{}: {needles} needle points", k.id());
@@ -95,7 +104,8 @@ mod tests {
     fn problems_are_warnings_not_runs() {
         let path = rect();
         let settings = StitchSettings { pattern: Some("no-such-pattern".into()), ..StitchSettings::new(StitchKind::PatternBorder) };
-        let out = sew(&Input { settings: &settings, stroke_mm: 1.0, paths: &[&path], rule: FillRule::NonZero, patterns: &[] });
+        let out =
+            sew(&Input { settings: &settings, stroke_mm: 1.0, paths: &[&path], rule: FillRule::NonZero, patterns: &[], auto: Default::default() });
         assert!(out.runs.iter().all(Vec::is_empty) && out.warnings.len() == 1, "{:?}", out.warnings);
     }
 }

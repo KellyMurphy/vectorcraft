@@ -1,0 +1,18 @@
+{
+  "format": "vectorcraft-fabric",
+  "version": 1,
+  "units": "mm",
+  "id": "polo",
+  "name": "Polo Shirt",
+  "author": "VectorCraft contributors",
+  "license": "CC0-1.0",
+  "description": "Pique knit with a cut-away stabilizer: an example fabric profile.",
+  "satinSpacing": 0.42,
+  "fillSpacing": 0.45,
+  "pull": 0.3,
+  "pullPercent": 5,
+  "push": 0.2,
+  "satinCenterUnder": 1.5,
+  "satinZigzagOver": 4,
+  "shapeEdgeOver": 2
+}

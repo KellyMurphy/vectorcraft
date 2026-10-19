@@ -4287,3 +4287,19 @@ lighting	Light	光源
 	More pull compensation, as a share of the width (satin) or row length (fill)	按寬度（緞面）或行長（填色）的比例追加的拉力補償
 	Push Compensation:	推力補償:
 	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	由於針跡會把布料向外推，柱在兩端、填色在橫跨各行的方向上縮短這麼多
+
+# Fabric profiles (the Embroidery panel's Fabric menu)
+	Denim	丹寧布
+	Fleece / Towel	刷毛 / 毛巾布
+	Knit	針織
+	Leather	皮革
+	Load a fabric profile file (.vcfabric)	載入布料設定檔 (.vcfabric)
+	Save the fabric as a file (.vcfabric)	將布料儲存為檔案 (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	設計所用的布料：其密度、補償與底襯會補足物件未設定的內容
+	Woven	梭織
+	Fabric	布料
+	Fabric Profiles	布料設定
+	Load Fabric…	載入布料…
+	Save Fabric…	儲存布料…
+	Load Fabric	載入布料
+@msg	Fabric: {_1}	布料: {_1}

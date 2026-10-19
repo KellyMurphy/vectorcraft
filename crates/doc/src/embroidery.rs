@@ -376,6 +376,10 @@ pub struct EmbroiderySetup {
     /// when they were sewn.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sew_out: Option<SewOut>,
+    /// The fabric the design is for: its settings fill in what objects leave unset (`None`: the
+    /// stitches' own defaults).
+    #[serde(skip_serializing_if = "Option::is_none", deserialize_with = "de_fabric", serialize_with = "ser_fabric")]
+    pub fabric: Option<Fabric>,
     /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
     #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
     pub extra: serde_json::Map<String, serde_json::Value>,
@@ -389,9 +393,83 @@ impl Default for EmbroiderySetup {
             order: vec![],
             patterns: vec![],
             sew_out: None,
+            fabric: None,
             extra: Default::default(),
         }
     }
+}
+
+/// A fabric profile: the settings a fabric wants (density, compensation, how much underlay), used
+/// for whatever an object's own stitch settings leave unset. Each `None` keeps the stitch's own
+/// default.
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct Fabric {
+    /// Lower case letters, digits and dashes (`knit`).
+    pub id: String,
+    pub name: String,
+    /// Who made it, its licence and where it came from (information only).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub author: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub license: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub source: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    /// Satin, zigzag-free satin shape spacing, mm ([`StitchSettings::spacing`]).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub satin_spacing: Option<f64>,
+    /// Fill row spacing, mm.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub fill_spacing: Option<f64>,
+    /// Pull compensation, mm and %, and push compensation, mm ([`StitchSettings::pull`]…).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub pull: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub pull_percent: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub push: Option<f64>,
+    /// The auto underlay's thresholds, mm: satin columns narrower than `satinCenterUnder` get a
+    /// centre walk, wider than `satinZigzagOver` an edge walk and a zigzag; satin shapes with
+    /// strokes wider than `shapeEdgeOver` an edge walk.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub satin_center_under: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub satin_zigzag_over: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub shape_edge_over: Option<f64>,
+    /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
+    #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
+    pub extra: serde_json::Map<String, serde_json::Value>,
+    /// A fabric this version can't read (a value of a type it doesn't expect), kept exactly as
+    /// written so saving doesn't lose it. It isn't used: the stitches keep their own defaults.
+    #[serde(skip)]
+    pub unknown: Option<Box<serde_json::Value>>,
+}
+
+/// Read a document's fabric: one this version can't read is kept as written in
+/// [`Fabric::unknown`] instead of failing the document.
+fn de_fabric<'de, D: serde::Deserializer<'de>>(d: D) -> Result<Option<Fabric>, D::Error> {
+    let v = Option::<serde_json::Value>::deserialize(d)?;
+    Ok(v.map(|v| match Fabric::deserialize(&v) {
+        Ok(f) => f,
+        Err(_) => Fabric { unknown: Some(Box::new(v)), ..Fabric::default() },
+    }))
+}
+
+/// Write a document's fabric: one kept from a newer version goes back as it was read.
+fn ser_fabric<S: serde::Serializer>(f: &Option<Fabric>, ser: S) -> Result<S::Ok, S::Error> {
+    match f {
+        Some(Fabric { unknown: Some(raw), .. }) => raw.serialize(ser),
+        Some(f) => f.serialize(ser),
+        None => ser.serialize_none(),
+    }
+}
+
+impl Fabric {
+    /// Allowed auto underlay thresholds, mm.
+    pub const THRESHOLD: std::ops::RangeInclusive<f64> = 0.3..=12.0;
 }
 
 /// A sew-out test record: the swatches of a test sheet, the fabric and machine they were sewn
@@ -745,6 +823,18 @@ mod tests {
         assert!(e.patterns[0].unknown.is_none() && e.patterns[1].unknown.is_some());
         assert_eq!((e.patterns[1].id.as_str(), e.patterns[1].name.as_str()), ("lace", "Lace"));
         assert_eq!(serde_json::to_value(&e).unwrap(), setup);
+    }
+
+    #[test]
+    fn a_fabric_this_version_cant_read_is_kept() {
+        let setup = serde_json::json!({"trimJumpsOver": 3.0, "stitchMovesUnder": 1.0, "fabric": {"name": "Silk", "pull": "lots"}});
+        let e: EmbroiderySetup = serde_json::from_value(setup.clone()).expect("a strange fabric doesn't fail the document");
+        assert!(e.fabric.as_ref().is_some_and(|f| f.unknown.is_some()));
+        assert_eq!(serde_json::to_value(&e).unwrap(), setup, "written back as read");
+        let ok = serde_json::json!({"trimJumpsOver": 3.0, "stitchMovesUnder": 1.0, "fabric": {"id": "knit", "name": "Knit", "pull": 0.3}});
+        let e: EmbroiderySetup = serde_json::from_value(ok.clone()).unwrap();
+        assert_eq!(e.fabric.as_ref().and_then(|f| f.pull), Some(0.3));
+        assert_eq!(serde_json::to_value(&e).unwrap(), ok);
     }
 
     #[test]

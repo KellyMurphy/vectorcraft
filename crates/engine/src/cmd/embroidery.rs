@@ -154,6 +154,42 @@ pub fn specs() -> Vec<CommandSpec> {
             check
         ),
         cmd!(
+            query "embroidery.fabrics",
+            "Fabric Profiles",
+            ["Window", "Embroidery"],
+            None,
+            "{} the document's fabric and the starter profiles → {fabric: {id, name, author, license, source, description, satinSpacing, fillSpacing, pull, pullPercent, push, satinCenterUnder, satinZigzagOver, shapeEdgeOver} | null (none: the stitches' own defaults), starters: [the same, for woven, knit, towel, cap, leather, denim]}. A fabric's settings fill in what objects' stitch settings leave unset",
+            has_doc,
+            fabrics
+        ),
+        cmd!(
+            "embroidery.setFabric",
+            "Fabric",
+            ["Window", "Embroidery"],
+            None,
+            "{fabric?: a starter's id (woven|knit|towel|cap|leather|denim) or null (no fabric), name?, satinSpacing?, fillSpacing? (mm, 0.1–10), pull? (mm, 0–3), pullPercent? (%, 0–30), push? (mm, 0–3), satinCenterUnder?, satinZigzagOver?, shapeEdgeOver? (mm, 0.3–12; the auto underlay's thresholds)} set the document's fabric, whose settings fill in what objects leave unset: the starter named (else the document's fabric, else an empty one), then the settings given (null clears one); one undo step → {fabric: the same as embroidery.fabrics | null}",
+            has_doc,
+            set_fabric
+        ),
+        cmd!(
+            "embroidery.loadFabric",
+            "Load Fabric…",
+            ["Window", "Embroidery"],
+            None,
+            "{path? | data?: the file's text} load a .vcfabric fabric profile file (specified in docs/formats/vcfabric.md) as the document's fabric; one undo step → {fabric}",
+            has_doc,
+            load_fabric
+        ),
+        cmd!(
+            "embroidery.saveFabric",
+            "Save Fabric…",
+            ["Window", "Embroidery"],
+            None,
+            "{fabric?: a starter's id (default: the document's fabric), path?} write a fabric profile as a .vcfabric file → {path}, or without path {data: the file's text}",
+            has_doc,
+            save_fabric
+        ),
+        cmd!(
             "embroidery.testSheet",
             "New Test Sheet…",
             ["Window", "Embroidery"],
@@ -203,7 +239,7 @@ fn info_doc() -> &'static str {
     static DOC: std::sync::OnceLock<String> = std::sync::OnceLock::new();
     DOC.get_or_init(|| {
         format!(
-            "{{ids?}} → {{design: {{objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings}}, setup: {{trimJumpsOver, stitchMovesUnder}} (embroidery.setup), selection: {{stitched, unstitched, {}}} (each null when the stitched objects differ, or none is; type is `unknown` for settings from a newer VectorCraft)}}",
+            "{{ids?}} → {{design: {{objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings}}, setup: {{trimJumpsOver, stitchMovesUnder}} (embroidery.setup), selection: {{stitched, unstitched, {}}} (as sewn: the document's fabric fills in what objects leave unset; each null when the stitched objects differ, or none is; type is `unknown` for settings from a newer VectorCraft)}}",
             params::info_keys()
         )
     })
@@ -676,7 +712,13 @@ fn info(s: &mut Session, p: &Value) -> Result<Value> {
     let ids = stitchable(s, &targets(s, p)?)?;
     let doc = &s.doc()?.doc;
     let plan = s.stitch_plan(doc);
-    let all: Vec<&StitchSettings> = ids.iter().filter_map(|id| doc.node(*id)?.extras().stitch.as_deref()).collect();
+    // Reported as sewn: the document's fabric fills in what the objects leave unset.
+    let fabric = doc.embroidery.fabric.as_ref().filter(|f| f.unknown.is_none());
+    let all: Vec<StitchSettings> = ids
+        .iter()
+        .filter_map(|id| doc.node(*id)?.extras().stitch.as_deref())
+        .map(|s| fabric.map_or_else(|| s.clone(), |f| vectorcraft_embroidery::fabrics::fill_in(s, f)))
+        .collect();
     let mut selection = json!({ "stitched": all.len(), "unstitched": ids.len() - all.len() });
     for param in params::PARAMS {
         selection[param.key] = same(all.iter().map(|s| (param.get)(s)));
@@ -718,6 +760,101 @@ fn check(s: &mut Session, p: &Value) -> Result<Value> {
         "counts": {"error": count(check::Severity::Error), "warning": count(check::Severity::Warning), "note": count(check::Severity::Note)},
         "rules": rules,
     }))
+}
+
+fn fabric_json(f: Option<&vectorcraft_doc::Fabric>) -> Value {
+    match f {
+        // From a newer VectorCraft: as written, marked as not used.
+        Some(vectorcraft_doc::Fabric { unknown: Some(raw), .. }) => json!({"unsupported": true, "data": raw}),
+        Some(f) => serde_json::to_value(f).unwrap_or(Value::Null),
+        None => Value::Null,
+    }
+}
+
+fn fabrics(s: &mut Session, _: &Value) -> Result<Value> {
+    use vectorcraft_embroidery::fabrics;
+    let starters: Vec<Value> = fabrics::BUILTIN.iter().filter_map(|id| fabrics::builtin(id)).map(|f| fabric_json(Some(&f))).collect();
+    Ok(json!({"fabric": fabric_json(s.doc()?.doc.embroidery.fabric.as_ref()), "starters": starters}))
+}
+
+/// Make `f` the document's fabric (`None`: none) as undo step `label`.
+fn put_fabric(s: &mut Session, f: Option<vectorcraft_doc::Fabric>, label: &str) -> Result<Value> {
+    let out = json!({"fabric": fabric_json(f.as_ref())});
+    if s.doc()?.doc.embroidery.fabric != f {
+        edit_counted(s, label, |d| {
+            d.embroidery.fabric = f;
+            Ok(1)
+        })?;
+    }
+    Ok(out)
+}
+
+fn set_fabric(s: &mut Session, p: &Value) -> Result<Value> {
+    use vectorcraft_doc::{Fabric, StitchSettings as S};
+    use vectorcraft_embroidery::fabrics;
+    const C: &str = "embroidery.setFabric";
+    let mut f = match p.get("fabric") {
+        Some(Value::Null) => return put_fabric(s, None, "Fabric"),
+        Some(v) => {
+            let id = v.as_str().map(|t| t.trim().to_ascii_lowercase()).unwrap_or_default();
+            fabrics::builtin(&id).ok_or_else(|| bad(C, format!("`fabric` must be one of {}, or null", fabrics::BUILTIN.join(", "))))?
+        }
+        None => s.doc()?.doc.embroidery.fabric.clone().unwrap_or_else(|| Fabric { id: "custom".into(), name: "Custom".into(), ..Fabric::default() }),
+    };
+    if let Some(v) = p.get("name") {
+        let name = v.as_str().map(str::trim).filter(|t| !t.is_empty()).ok_or_else(|| bad(C, "`name` must be text"))?;
+        f.name = name.to_string();
+    }
+    type Field = fn(&mut Fabric) -> &mut Option<f64>;
+    let fields: [(&str, std::ops::RangeInclusive<f64>, &str, Field); 8] = [
+        ("satinSpacing", S::SPACING, "mm", |f| &mut f.satin_spacing),
+        ("fillSpacing", S::SPACING, "mm", |f| &mut f.fill_spacing),
+        ("pull", S::PULL, "mm", |f| &mut f.pull),
+        ("pullPercent", S::PULL_PERCENT, "%", |f| &mut f.pull_percent),
+        ("push", S::PUSH, "mm", |f| &mut f.push),
+        ("satinCenterUnder", Fabric::THRESHOLD, "mm", |f| &mut f.satin_center_under),
+        ("satinZigzagOver", Fabric::THRESHOLD, "mm", |f| &mut f.satin_zigzag_over),
+        ("shapeEdgeOver", Fabric::THRESHOLD, "mm", |f| &mut f.shape_edge_over),
+    ];
+    for (key, range, unit, field) in fields {
+        match p.get(key) {
+            None => {}
+            Some(Value::Null) => *field(&mut f) = None,
+            Some(v) => match v.as_f64() {
+                Some(x) if range.contains(&x) => *field(&mut f) = Some(x),
+                _ => return Err(bad(C, format!("`{key}` must be a number from {} to {} ({unit}), or null", range.start(), range.end()))),
+            },
+        }
+    }
+    put_fabric(s, Some(f), "Fabric")
+}
+
+fn load_fabric(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.loadFabric";
+    let bytes = match (str_param(p, "path"), str_param(p, "data")) {
+        (Some(path), _) => super::fileio::read_file(path)?,
+        (None, Some(text)) => text.as_bytes().to_vec(),
+        _ => return Err(bad(C, "give `path` or `data`")),
+    };
+    let f = vectorcraft_embroidery::fabrics::read_file(&bytes).map_err(|e| bad(C, e))?;
+    put_fabric(s, Some(f), "Load Fabric")
+}
+
+fn save_fabric(s: &mut Session, p: &Value) -> Result<Value> {
+    use vectorcraft_embroidery::fabrics;
+    const C: &str = "embroidery.saveFabric";
+    let f = match str_param(p, "fabric") {
+        Some(id) => fabrics::builtin(&id.trim().to_ascii_lowercase()).ok_or_else(|| bad(C, format!("no starter fabric `{id}`")))?,
+        None => s.doc()?.doc.embroidery.fabric.clone().ok_or_else(|| bad(C, "the document has no fabric: name a starter (`fabric`)"))?,
+    };
+    let text = fabrics::write_file(&f).map_err(|e| bad(C, e))?;
+    match str_param(p, "path") {
+        Some(path) => {
+            super::fileio::write_file(path, text.as_bytes())?;
+            Ok(json!({"path": path}))
+        }
+        None => Ok(json!({"data": text})),
+    }
 }
 
 fn test_sheet(s: &mut Session, p: &Value) -> Result<Value> {

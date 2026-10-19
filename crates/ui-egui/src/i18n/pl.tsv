@@ -5217,3 +5217,19 @@ mark-style	Japanese	Japońskie
 	More pull compensation, as a share of the width (satin) or row length (fill)	Dodatkowa kompensacja ściągania jako część szerokości (satyna) lub długości rzędu (wypełnienie)
 	Push Compensation:	Kompensacja rozpychania:
 	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Wyszywa kolumny o tyle krótsze na końcach, a wypełnienia w poprzek rzędów, bo ściegi rozpychają tkaninę
+
+# Fabric profiles (the Embroidery panel's Fabric menu)
+	Denim	Dżins
+	Fleece / Towel	Polar / Frotte
+	Knit	Dzianina
+	Leather	Skóra
+	Load a fabric profile file (.vcfabric)	Wczytaj plik profilu tkaniny (.vcfabric)
+	Save the fabric as a file (.vcfabric)	Zapisz tkaninę jako plik (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	Tkanina, na którą jest projekt: jej gęstość, kompensacja i podkład uzupełniają to, czego obiekty nie ustawiają
+	Woven	Tkanina tkana
+	Fabric	Tkanina
+	Fabric Profiles	Profile tkanin
+	Load Fabric…	Wczytaj tkaninę…
+	Save Fabric…	Zapisz tkaninę…
+	Load Fabric	Wczytaj tkaninę
+@msg	Fabric: {_1}	Tkanina: {_1}

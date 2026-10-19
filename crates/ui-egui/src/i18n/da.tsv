@@ -5359,3 +5359,19 @@ swatch	Bright Violet	Kraftig violet
 	More pull compensation, as a share of the width (satin) or row length (fill)	Mere trækkompensation, som en andel af bredden (satin) eller rækkelængden (fyld)
 	Push Compensation:	Skubkompensation:
 	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Broderer søjler så meget kortere i enderne, og fyld på tværs af rækkerne, da stingene skubber stoffet ud
+
+# Fabric profiles (the Embroidery panel's Fabric menu)
+	Denim	Denim
+	Fleece / Towel	Fleece / Frotté
+	Knit	Strik
+	Leather	Læder
+	Load a fabric profile file (.vcfabric)	Indlæs en stofprofilfil (.vcfabric)
+	Save the fabric as a file (.vcfabric)	Gem stoffet som en fil (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	Det stof, designet er til: dets tæthed, kompensation og underlag udfylder det, objekter lader stå åbent
+	Woven	Vævet
+	Fabric	Stof
+	Fabric Profiles	Stofprofiler
+	Load Fabric…	Indlæs stof…
+	Save Fabric…	Gem stof…
+	Load Fabric	Indlæs stof
+@msg	Fabric: {_1}	Stof: {_1}

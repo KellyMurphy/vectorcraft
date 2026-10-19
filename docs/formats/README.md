@@ -8,6 +8,7 @@ the repository read these schemas and examples, so they stay in step with the co
 | Format | Extension | Spec | Schema |
 |---|---|---|---|
 | Border pattern (embroidery) | `.vcborder` | [vcborder.md](vcborder.md) | [vcborder.schema.json](vcborder.schema.json) |
+| Fabric profile (embroidery) | `.vcfabric` | [vcfabric.md](vcfabric.md) | [vcfabric.schema.json](vcfabric.schema.json) |
 | Embroidery data in documents | inside `.vectorcraft` | [vectorcraft-embroidery.md](vectorcraft-embroidery.md) | [vectorcraft-embroidery.schema.json](vectorcraft-embroidery.schema.json) |
 
 The native document format, `.vectorcraft`, is described in the `vectorcraft-format` crate's

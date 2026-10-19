@@ -452,10 +452,15 @@ impl AutoUnderlay {
 /// line ends (so the top stitches go back the other way). `auto` sews what [`AutoUnderlay`]
 /// picks for the width, one underlay after the other.
 pub fn satin_underlay(line: &[Point], closed: bool, width: f64, kind: Underlay) -> (Vec<Point>, bool) {
+    satin_underlay_with(line, closed, width, kind, &AutoUnderlay::default())
+}
+
+/// [`satin_underlay`], `auto` picking by `auto`'s thresholds.
+pub fn satin_underlay_with(line: &[Point], closed: bool, width: f64, kind: Underlay, auto: &AutoUnderlay) -> (Vec<Point>, bool) {
     if kind == Underlay::Auto {
         let mut out = vec![];
         let mut back = false;
-        for u in AutoUnderlay::default().satin(width) {
+        for u in auto.satin(width) {
             let (part, end) = satin_underlay(line, closed, width, *u);
             out.extend(part);
             back = end;

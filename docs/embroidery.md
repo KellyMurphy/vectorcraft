@@ -170,6 +170,24 @@ for warnings). The rules so far:
 Exporting a DST adds a line for each rule that found something to the export's warnings.
 `embroidery.check` gives the same findings to agents and scripts, each with the object and where it is.
 
+### Fabric profiles
+
+The fabric changes how a design should be sewn: stretchy knits want more underlay and compensation, lofty
+towels dense stitches, leather fewer holes. The Embroidery panel's **Fabric** menu (Design section,
+`embroidery.setFabric`) sets the document's fabric: **Woven**, **Knit**, **Fleece / Towel**, **Cap**,
+**Leather** or **Denim**, or one loaded from a `.vcfabric` file (**Load…**, or File › Open). Its settings
+fill in whatever an object leaves unset, so an object's own settings always win:
+
+| Setting | What it fills in |
+|---|---|
+| `satinSpacing`, `fillSpacing` | the density of satins and satin shapes, and of fills |
+| `pull`, `pullPercent`, `push` | the compensation of satins, satin shapes and fills |
+| `satinCenterUnder`, `satinZigzagOver`, `shapeEdgeOver` | where the automatic underlay changes (2, 5 and 2.5 mm without a fabric) |
+
+The starters' numbers are starting points from general digitizing practice; the sew-out test sheets
+(below) are how to check them on your fabric. **Save…** writes the fabric as a `.vcfabric` file to share
+([specification](formats/vcfabric.md)).
+
 ### Sew-out tests
 
 Stitch quality is only proven on fabric. **New Test Sheet…** (Sew-Out Test panel, `embroidery.testSheet`)
@@ -216,6 +234,10 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.reorder` | `{to: first\|earlier\|later\|last, ids?}` or `{order: [ids]}`: change the sewing order |
 | `embroidery.sortByThread` | group the sewing order by thread colour |
 | `embroidery.resetOrder` | sew in paint order again |
+| `embroidery.fabrics` | → the document's `fabric` (or null) and the six `starters`, with their settings |
+| `embroidery.setFabric` | `{fabric?: woven\|knit\|towel\|cap\|leather\|denim\|null, name?, satinSpacing?, fillSpacing?, pull?, pullPercent?, push?, satinCenterUnder?, satinZigzagOver?, shapeEdgeOver?}`: set the document's fabric (a starter, then the settings given) |
+| `embroidery.loadFabric` | `{path? \| data?}`: a `.vcfabric` file as the document's fabric |
+| `embroidery.saveFabric` | `{fabric?, path?}`: write the document's fabric (or a starter) as a `.vcfabric` file |
 | `embroidery.testSheet` | `{sections?: [ids]}`: a new document of calibration swatches (see Sew-out tests) → `{index, sections, swatches, skipped}` |
 | `embroidery.sewOut` | → the sew-out form: `{sewOut: {fabric, machine, notes, swatches: [{id, section, label, objects, result, notes}], counts} \| null, sections}` |
 | `embroidery.recordSewOut` | `{fabric?, machine?, notes?, results?: [{swatch, result?: pass\|fail\|untested, notes?}]}`: fill in the form, one undo step |
