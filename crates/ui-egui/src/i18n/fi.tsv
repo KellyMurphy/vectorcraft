@@ -5350,3 +5350,7 @@ mark-style	Japanese	Japanilainen
 	Keep Covered Rows	Säilytä peitetyt rivit
 	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Kirjo tämän täytön rivit myös myöhemmin sen päälle kirjottavien objektien alle (yleensä ne poistetaan)
 	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Kuinka pitkälle täytön rivit yltävät myöhemmin sen päälle kirjottavien objektien alle; loput peitetyistä riveistä poistetaan
+
+# Shortest stitch (the Sew Order panel)
+	Shortest Stitch:	Lyhin pisto:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Tätä lähempänä edellistä olevat neulanpisteet jätetään pois (kangas voi vaatia pidemmän)

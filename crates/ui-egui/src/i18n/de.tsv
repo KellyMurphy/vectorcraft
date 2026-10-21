@@ -4962,3 +4962,7 @@ effect	Regular	Regelmäßig
 	Keep Covered Rows	Verdeckte Reihen behalten
 	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Die Reihen dieser Füllung auch unter später darauf gestickten Objekten sticken (normalerweise werden sie entfernt)
 	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Wie weit die Reihen einer Füllung noch unter später darauf gestickte Objekte reichen; der Rest der verdeckten Reihen wird entfernt
+
+# Shortest stitch (the Sew Order panel)
+	Shortest Stitch:	Kürzester Stich:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Nadelpunkte, die näher als dies am vorigen liegen, werden ausgelassen (der Stoff kann mehr verlangen)

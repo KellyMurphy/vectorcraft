@@ -22,6 +22,7 @@
     "push": { "type": "number", "minimum": 0, "maximum": 3, "description": "Push compensation, mm." },
     "satinCenterUnder": { "type": "number", "minimum": 0.3, "maximum": 12 },
     "satinZigzagOver": { "type": "number", "minimum": 0.3, "maximum": 12 },
-    "shapeEdgeOver": { "type": "number", "minimum": 0.3, "maximum": 12 }
+    "shapeEdgeOver": { "type": "number", "minimum": 0.3, "maximum": 12 },
+    "minStitch": { "type": "number", "minimum": 0, "maximum": 2, "description": "The shortest stitch the fabric takes, mm." }
   }
 }

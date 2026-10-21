@@ -5058,3 +5058,7 @@ lighting	Light	ライト
 	Keep Covered Rows	覆われた列を残す
 	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	後から上に縫うオブジェクトの下にも、このフィルの列を縫います (通常は取り除かれます)
 	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	後から上に縫うオブジェクトの下に、フィルの列がどこまで入り込むか。覆われた列の残りは取り除かれます
+
+# Shortest stitch (the Sew Order panel)
+	Shortest Stitch:	最短ステッチ:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	前の針落ちにこれより近い針落ちは省かれます (生地によってはより長く指定されます)

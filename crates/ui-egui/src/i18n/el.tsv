@@ -5338,3 +5338,7 @@ effect	Points	Σημεία
 	Keep Covered Rows	Διατήρηση καλυμμένων σειρών
 	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Κέντημα των σειρών αυτού του γεμίσματος και κάτω από αντικείμενα που κεντιούνται αργότερα από πάνω (συνήθως αφαιρούνται)
 	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Πόσο φτάνουν ακόμη οι σειρές ενός γεμίσματος κάτω από αντικείμενα που κεντιούνται αργότερα από πάνω· οι υπόλοιπες καλυμμένες σειρές αφαιρούνται
+
+# Shortest stitch (the Sew Order panel)
+	Shortest Stitch:	Συντομότερη βελονιά:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Σημεία βελόνας πιο κοντά από αυτό στο προηγούμενο παραλείπονται (το ύφασμα μπορεί να ζητά μεγαλύτερη)

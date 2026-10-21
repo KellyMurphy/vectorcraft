@@ -31,7 +31,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Embroidery Setup",
             ["Window", "Embroidery"],
             None,
-            "{trimJumpsOver?: mm (0.5–100; 3) | null (never trim on length: only thread changes and objects' trimBefore/trimAfter cut the thread), stitchMovesUnder?: mm (0–5; 1: moves to the next stitch up to this long are sewn, longer ones jump), overlap?: mm (0–3; 0.5: how far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away)} the document's travel and overlap settings, as one undo step → {trimJumpsOver, stitchMovesUnder, overlap}",
+            "{trimJumpsOver?: mm (0.5–100; 3) | null (never trim on length: only thread changes and objects' trimBefore/trimAfter cut the thread), stitchMovesUnder?: mm (0–5; 1: moves to the next stitch up to this long are sewn, longer ones jump), overlap?: mm (0–3; 0.5: how far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away), minStitch?: mm (0–2; 0.3: needle points closer than this to the one before are left out; the document's fabric may ask for longer)} the document's travel, overlap and shortest stitch, as one undo step → {trimJumpsOver, stitchMovesUnder, overlap, minStitch (as sewn: the larger of the document's and its fabric's)}",
             has_doc,
             setup
         ),
@@ -158,7 +158,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Fabric Profiles",
             ["Window", "Embroidery"],
             None,
-            "{} the document's fabric and the starter profiles → {fabric: {id, name, author, license, source, description, satinSpacing, fillSpacing, pull, pullPercent, push, satinCenterUnder, satinZigzagOver, shapeEdgeOver} | null (none: the stitches' own defaults), starters: [the same, for woven, knit, towel, cap, leather, denim]}. A fabric's settings fill in what objects' stitch settings leave unset",
+            "{} the document's fabric and the starter profiles → {fabric: {id, name, author, license, source, description, satinSpacing, fillSpacing, pull, pullPercent, push, satinCenterUnder, satinZigzagOver, shapeEdgeOver, minStitch} | null (none: the stitches' own defaults), starters: [the same, for woven, knit, towel, cap, leather, denim]}. A fabric's settings fill in what objects' stitch settings leave unset",
             has_doc,
             fabrics
         ),
@@ -167,7 +167,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Fabric",
             ["Window", "Embroidery"],
             None,
-            "{fabric?: a starter's id (woven|knit|towel|cap|leather|denim) or null (no fabric), name?, satinSpacing?, fillSpacing? (mm, 0.1–10), pull? (mm, 0–3), pullPercent? (%, 0–30), push? (mm, 0–3), satinCenterUnder?, satinZigzagOver?, shapeEdgeOver? (mm, 0.3–12; the auto underlay's thresholds)} set the document's fabric, whose settings fill in what objects leave unset: the starter named (else the document's fabric, else an empty one), then the settings given (null clears one); one undo step → {fabric: the same as embroidery.fabrics | null}",
+            "{fabric?: a starter's id (woven|knit|towel|cap|leather|denim) or null (no fabric), name?, satinSpacing?, fillSpacing? (mm, 0.1–10), pull? (mm, 0–3), pullPercent? (%, 0–30), push? (mm, 0–3), satinCenterUnder?, satinZigzagOver?, shapeEdgeOver? (mm, 0.3–12; the auto underlay's thresholds), minStitch? (mm, 0–2; the shortest stitch it takes)} set the document's fabric, whose settings fill in what objects leave unset: the starter named (else the document's fabric, else an empty one), then the settings given (null clears one); one undo step → {fabric: the same as embroidery.fabrics | null}",
             has_doc,
             set_fabric
         ),
@@ -348,7 +348,7 @@ fn set(s: &mut Session, p: &Value) -> Result<Value> {
 }
 
 fn setup_json(e: &EmbroiderySetup) -> Value {
-    json!({ "trimJumpsOver": e.trim_over(), "stitchMovesUnder": e.stitch_under(), "overlap": e.overlap() })
+    json!({ "trimJumpsOver": e.trim_over(), "stitchMovesUnder": e.stitch_under(), "overlap": e.overlap(), "minStitch": e.min_stitch() })
 }
 
 fn setup(s: &mut Session, p: &Value) -> Result<Value> {
@@ -366,6 +366,12 @@ fn setup(s: &mut Session, p: &Value) -> Result<Value> {
         match v.as_f64() {
             Some(x) if EmbroiderySetup::STITCH_MOVES.contains(&x) => new.stitch_moves_under = x,
             _ => return Err(bad(C, "`stitchMovesUnder` must be a number from 0 to 5 (mm)")),
+        }
+    }
+    if let Some(v) = p.get("minStitch") {
+        match v.as_f64() {
+            Some(x) if EmbroiderySetup::MIN_STITCH.contains(&x) => new.min_stitch = x,
+            _ => return Err(bad(C, "`minStitch` must be a number from 0 to 2 (mm)")),
         }
     }
     if let Some(v) = p.get("overlap") {
@@ -812,7 +818,7 @@ fn set_fabric(s: &mut Session, p: &Value) -> Result<Value> {
         f.name = name.to_string();
     }
     type Field = fn(&mut Fabric) -> &mut Option<f64>;
-    let fields: [(&str, std::ops::RangeInclusive<f64>, &str, Field); 8] = [
+    let fields: [(&str, std::ops::RangeInclusive<f64>, &str, Field); 9] = [
         ("satinSpacing", S::SPACING, "mm", |f| &mut f.satin_spacing),
         ("fillSpacing", S::SPACING, "mm", |f| &mut f.fill_spacing),
         ("pull", S::PULL, "mm", |f| &mut f.pull),
@@ -821,6 +827,7 @@ fn set_fabric(s: &mut Session, p: &Value) -> Result<Value> {
         ("satinCenterUnder", Fabric::THRESHOLD, "mm", |f| &mut f.satin_center_under),
         ("satinZigzagOver", Fabric::THRESHOLD, "mm", |f| &mut f.satin_zigzag_over),
         ("shapeEdgeOver", Fabric::THRESHOLD, "mm", |f| &mut f.shape_edge_over),
+        ("minStitch", vectorcraft_doc::EmbroiderySetup::MIN_STITCH, "mm", |f| &mut f.min_stitch),
     ];
     for (key, range, unit, field) in fields {
         match p.get(key) {

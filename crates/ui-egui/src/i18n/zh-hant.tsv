@@ -4308,3 +4308,7 @@ lighting	Light	光源
 	Keep Covered Rows	保留被覆蓋的行
 	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	在之後縫於其上的物件下方也縫製此填色的行（通常會被剪除）
 	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	填色的行仍伸入之後縫於其上的物件下方多遠；被覆蓋行的其餘部分會被剪除
+
+# Shortest stitch (the Sew Order panel)
+	Shortest Stitch:	最短針跡:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	與前一針距離小於此值的針點會被略過（布料可能要求更長）

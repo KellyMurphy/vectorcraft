@@ -4963,3 +4963,7 @@ lighting	Light	광원
 	Keep Covered Rows	가려진 행 유지
 	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	나중에 위에 수놓는 오브젝트 아래에도 이 채우기의 행을 수놓습니다(보통은 잘라 냅니다)
 	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	채우기의 행이 나중에 그 위에 수놓는 오브젝트 아래로 들어가는 거리입니다. 가려진 행의 나머지는 잘라 냅니다
+
+# Shortest stitch (the Sew Order panel)
+	Shortest Stitch:	가장 짧은 땀:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	앞 바늘땀에 이보다 가까운 바늘땀은 빠집니다(천에 따라 더 길게 할 수 있습니다)

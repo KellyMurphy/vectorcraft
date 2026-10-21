@@ -357,6 +357,16 @@ fn travel(app: &mut VectorcraftApp, ui: &mut Ui, setup: &Value) {
     })
     .response
     .on_hover_text(tl!("How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away"));
+    ui.scope(|ui| {
+        widgets::label_row(ui, tl!("Shortest Stitch:"), LABEL_W, |ui| {
+            if let Some(v) = widgets::mixed_field(ui, ("emb", "minStitch"), setup["minStitch"].as_f64(), " mm", 1, FIELD_W) {
+                let r = EmbroiderySetup::MIN_STITCH;
+                app.run("embroidery.setup", json!({ "minStitch": v.clamp(*r.start(), *r.end()) })).ok();
+            }
+        })
+    })
+    .response
+    .on_hover_text(tl!("Needle points closer than this to the one before are left out (the fabric may ask for longer)"));
 }
 
 #[cfg(test)]

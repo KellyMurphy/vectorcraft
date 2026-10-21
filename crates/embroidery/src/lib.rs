@@ -236,6 +236,8 @@ struct Builder {
     trim_over: Option<f64>,
     /// Moves up to this long are sewn rather than jumped, mm.
     stitch_under: f64,
+    /// Needle points closer than this to the one before are left out, mm.
+    min_stitch: f64,
 }
 
 impl Builder {
@@ -248,6 +250,7 @@ impl Builder {
             tie: true,
             trim_over: setup.trim_over(),
             stitch_under: setup.stitch_under(),
+            min_stitch: setup.min_stitch(),
         }
     }
 
@@ -261,6 +264,13 @@ impl Builder {
         }
         self.plan.needles.push(Needle { x: p.x, y: p.y, cmd });
         true
+    }
+
+    /// The needle point before the last one, when both are stitches.
+    fn before_last(&self) -> Option<Point> {
+        let n = self.plan.needles.len();
+        let (a, b) = (self.plan.needles.get(n.checked_sub(2)?)?, self.plan.needles.get(n - 1)?);
+        (a.cmd == Cmd::Stitch && b.cmd == Cmd::Stitch).then(|| Point::new(a.x, a.y))
     }
 
     /// Whether the needle last sewed (rather than jumped, trimmed, changed thread or started).
@@ -339,10 +349,31 @@ impl Builder {
                 }
             }
         }
-        for p in rest {
+        // Stitches shorter than the shortest allowed are merged into the next, unless that would
+        // make a stitch too long to sew (manual stitches, `tie` off, are sewn as drawn). The run
+        // still ends where it ends.
+        let min = if tie { self.min_stitch } else { 0.0 };
+        let mut at = first;
+        let last = rest.len().saturating_sub(1);
+        for (k, p) in rest.iter().enumerate() {
+            if min > 0.0 && at.distance(*p) < min {
+                if k < last {
+                    // Left out when the stitch that takes its place can still be sewn.
+                    if rest.get(k + 1).is_some_and(|q| at.distance(*q) <= generate::MAX_STITCH) {
+                        continue;
+                    }
+                } else if at.distance(*p) <= 1e-9 {
+                    continue;
+                } else if at != first && self.before_last().is_some_and(|b| b.distance(*p) <= generate::MAX_STITCH) {
+                    // The end is too close to the point before: that point goes, so the run
+                    // still ends where it ends.
+                    self.plan.needles.pop();
+                }
+            }
             if !self.push(*p, Cmd::Stitch) {
                 break;
             }
+            at = *p;
         }
         self.cur = Some(pts.last().copied().unwrap_or(first));
     }

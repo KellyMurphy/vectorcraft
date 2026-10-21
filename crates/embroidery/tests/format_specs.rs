@@ -108,6 +108,7 @@ fn full_setup() -> EmbroiderySetup {
         trim_jumps_over: Some(5.0),
         stitch_moves_under: 2.0,
         overlap: 1.0,
+        min_stitch: 0.5,
         order: vec![NodeId(1)],
         patterns: vec![full_pattern()],
         sew_out: Some(full_sew_out()),
@@ -133,6 +134,7 @@ fn full_fabric() -> Fabric {
         satin_center_under: Some(1.5),
         satin_zigzag_over: Some(4.0),
         shape_edge_over: Some(2.0),
+        min_stitch: Some(0.4),
         extra: Default::default(),
         unknown: None,
     }

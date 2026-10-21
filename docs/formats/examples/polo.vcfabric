@@ -14,5 +14,6 @@
   "push": 0.2,
   "satinCenterUnder": 1.5,
   "satinZigzagOver": 4,
-  "shapeEdgeOver": 2
+  "shapeEdgeOver": 2,
+  "minStitch": 0.4
 }

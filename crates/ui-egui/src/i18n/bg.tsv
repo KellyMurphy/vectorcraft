@@ -5356,3 +5356,7 @@ theme	Appearance	Външен вид
 	Keep Covered Rows	Запазване на покритите редове
 	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Бродиране на редовете на това запълване и под обекти, бродирани по-късно върху него (обикновено те се изрязват)
 	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Докъде редовете на запълването все още стигат под обектите, бродирани по-късно върху него; останалото от покритите редове се изрязва
+
+# Shortest stitch (the Sew Order panel)
+	Shortest Stitch:	Най-къс бод:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Точките на иглата, по-близки от това до предишната, се пропускат (платът може да изисква по-дълъг)

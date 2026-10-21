@@ -5372,3 +5372,7 @@ imageTrace	Outline	Körvonal
 	Keep Covered Rows	Takart sorok megtartása
 	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	A kitöltés sorainak hímzése a később rá hímzett objektumok alatt is (általában ezeket kivágja)
 	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Milyen messzire nyúlnak még egy kitöltés sorai a később rá hímzett objektumok alá; a takart sorok többi részét kivágja
+
+# Shortest stitch (the Sew Order panel)
+	Shortest Stitch:	Legrövidebb öltés:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Az előzőhöz ennél közelebbi tűpontok kimaradnak (az anyag hosszabbat is kérhet)

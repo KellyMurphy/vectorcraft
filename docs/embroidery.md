@@ -170,6 +170,13 @@ for warnings). The rules so far:
 Exporting a DST adds a line for each rule that found something to the export's warnings.
 `embroidery.check` gives the same findings to agents and scripts, each with the object and where it is.
 
+### Shortest stitch
+
+Very short stitches cut the fabric, break threads and pile up. Needle points closer than the **Shortest
+Stitch** (Sew Order panel, `embroidery.setup {minStitch}`, 0.3 mm) to the one before are left out
+everywhere, satin columns included; a fabric can ask for longer (Leather: 1 mm). Manual stitches are sewn
+exactly as drawn.
+
 ### Overlap removal
 
 Where a fill lies under something sewn after it (lettering on a filled background, a satin outline over
@@ -193,6 +200,7 @@ fill in whatever an object leaves unset, so an object's own settings always win:
 | `satinSpacing`, `fillSpacing` | the density of satins and satin shapes, and of fills |
 | `pull`, `pullPercent`, `push` | the compensation of satins, satin shapes and fills |
 | `satinCenterUnder`, `satinZigzagOver`, `shapeEdgeOver` | where the automatic underlay changes (2, 5 and 2.5 mm without a fabric) |
+| `minStitch` | the shortest stitch (when longer than the document's own, 0.3 mm) |
 
 The starters' numbers are starting points from general digitizing practice; the sew-out test sheets
 (below) are how to check them on your fabric. **Save…** writes the fabric as a `.vcfabric` file to share
@@ -235,7 +243,7 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.saveBorderPattern` | `{pattern, path?}`: write a pattern as a `.vcborder` file (without `path`: `{data}`) |
 | `embroidery.extractBorderPattern` | `{name?, period?, author?, license?, source?, ids?}`: the repeat of the selected border stitches (only those inside a selected closed shape, if any) as a new document pattern → `{id, name, period, width, stitches, repeats, error}` |
 | `embroidery.removeBorderPattern` | `{pattern}`: remove one of the document's patterns that nothing sews with |
-| `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm, overlap?: mm}`: the document's travel settings and overlap |
+| `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm, overlap?: mm, minStitch?: mm}`: the document's travel settings, overlap and shortest stitch |
 | `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings |
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
 | `embroidery.check` | `{ids?}` → the design checker's `findings` (`rule`, `severity`, `message`, `object`, `at` in document points), `counts` and the `rules` |

@@ -5405,3 +5405,7 @@ mark-style	Japanese	Japonské
 	Keep Covered Rows	Ponechat zakryté řady
 	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Vyšít řady této výplně i pod objekty vyšitými později na ní (obvykle se vyříznou)
 	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Jak daleko řady výplně ještě sahají pod objekty vyšité později na ní; zbytek zakrytých řad se vyřízne
+
+# Shortest stitch (the Sew Order panel)
+	Shortest Stitch:	Nejkratší steh:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Body vpichu blíž než toto k předchozímu se vynechají (látka může žádat delší)

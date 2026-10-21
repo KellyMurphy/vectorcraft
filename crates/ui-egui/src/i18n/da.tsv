@@ -5380,3 +5380,7 @@ swatch	Bright Violet	Kraftig violet
 	Keep Covered Rows	Behold dækkede rækker
 	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Brodér også dette fylds rækker under objekter, der broderes ovenpå senere (normalt skæres de væk)
 	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Hvor langt et fylds rækker stadig når ind under objekter, der broderes ovenpå senere; resten af de dækkede rækker skæres væk
+
+# Shortest stitch (the Sew Order panel)
+	Shortest Stitch:	Korteste sting:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Nålepunkter tættere end dette på det forrige udelades (stoffet kan kræve længere)

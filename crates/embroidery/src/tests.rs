@@ -1419,6 +1419,8 @@ fn the_documents_fabric_fills_in_unset_settings_and_moves_the_underlay_threshold
     d.embroidery.fabric = fabrics::builtin("leather");
     let mut no_fabric = d.clone();
     no_fabric.embroidery.fabric = None;
+    // Leather's shortest stitch is 1 mm.
+    no_fabric.embroidery.min_stitch = 1.0;
     assert_eq!(own(&d).objects.first().map(|o| o.needles.len()), own(&no_fabric).objects.first().map(|o| o.needles.len()));
 }
 
@@ -1493,4 +1495,45 @@ fn moving_what_lies_on_top_sews_the_fill_again() {
     assert!(fill_moves(&b) > fill_moves(&a));
     let c = plan_cached(&d, &mut cache);
     assert_eq!((cache.sewn, fill_moves(&c)), (0, fill_moves(&b)), "nothing changed: all from the cache");
+}
+
+/// The stitches of `p` shorter than `mm` (moves between two stitch needles), leaving out the
+/// lock stitches at a one-run design's start and end (they are meant to be tiny).
+fn short_stitches(p: &Plan, mm: f64) -> usize {
+    let n = p.needles.len();
+    p.needles
+        .get(6..n.saturating_sub(6))
+        .unwrap_or_default()
+        .windows(2)
+        .filter(|w| w[0].cmd == Cmd::Stitch && w[1].cmd == Cmd::Stitch && Point::new(w[0].x, w[0].y).distance(Point::new(w[1].x, w[1].y)) < mm)
+        .filter(|w| w[0] != w[1])
+        .count()
+}
+
+#[test]
+fn stitches_shorter_than_the_shortest_are_left_out() {
+    // A 0.5 mm satin: each zig is a stitch shorter than 1 mm.
+    let doc = |kind: StitchKind, min: f64, fabric: Option<f64>| {
+        let mut d = doc_with(|d| {
+            let mut n = stitched(d, poly(&[(0.0, 0.0), (170.0, 0.0)], false), kind, [0; 3]);
+            n.extras_mut().stitch = Some(Box::new(StitchSettings { width: Some(0.5), ..StitchSettings::new(kind) }));
+            vec![n]
+        });
+        d.embroidery.min_stitch = min;
+        d.embroidery.fabric = fabric.map(|m| vectorcraft_doc::Fabric { min_stitch: Some(m), ..Default::default() });
+        d
+    };
+    let none = plan(&doc(StitchKind::Satin, 0.0, None));
+    assert!(short_stitches(&none, 1.0) > 50, "{}", short_stitches(&none, 1.0));
+    let filtered = plan(&doc(StitchKind::Satin, 1.0, None));
+    assert_eq!(short_stitches(&filtered, 1.0), 0);
+    assert!(filtered.stats().stitches < none.stats().stitches);
+    // The run still ends where it ends.
+    let end = |p: &Plan| p.needles.iter().rev().find(|n| n.cmd == Cmd::Stitch).map(|n| (n.x, n.y));
+    assert_eq!(end(&filtered), end(&none));
+    // A fabric asking for longer wins; a shorter one doesn't lower the document's.
+    assert_eq!(plan(&doc(StitchKind::Satin, 0.0, Some(1.0))), filtered);
+    assert_eq!(plan(&doc(StitchKind::Satin, 1.0, Some(0.1))), filtered);
+    // Manual stitches are sewn as drawn.
+    assert_eq!(plan(&doc(StitchKind::Manual, 1.0, None)), plan(&doc(StitchKind::Manual, 0.0, None)));
 }

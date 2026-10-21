@@ -25,47 +25,16 @@ pub const BUILTIN: [&str; 6] = ["woven", "knit", "towel", "cap", "leather", "den
 
 /// A starter profile by id (one of [`BUILTIN`]).
 pub fn builtin(id: &str) -> Option<Fabric> {
-    // (name, satin spacing, fill spacing, pull mm, pull %, push, centre under, zigzag over, shape edge over)
-    let (name, satin, fill, pull, pct, push, center, zigzag, edge, about) = match id {
-        "woven" => (
-            "Woven",
-            0.4,
-            0.4,
-            0.2,
-            0.0,
-            0.0,
-            2.0,
-            5.0,
-            2.5,
-            "Stable woven cotton, twill or canvas: the stitches' usual settings, a little pull compensation.",
-        ),
-        "knit" => (
-            "Knit",
-            0.45,
-            0.45,
-            0.3,
-            5.0,
-            0.2,
-            1.5,
-            4.0,
-            2.0,
-            "T-shirts and polos: stretchy, so more underlay and compensation and a slightly open density.",
-        ),
-        "towel" => (
-            "Fleece / Towel",
-            0.35,
-            0.38,
-            0.3,
-            5.0,
-            0.2,
-            1.0,
-            3.0,
-            1.5,
-            "Lofty pile: dense stitches and heavy underlay so the pile doesn't poke through.",
-        ),
-        "cap" => ("Cap", 0.4, 0.45, 0.35, 5.0, 0.3, 1.5, 4.0, 2.0, "Structured caps: sewn on a curve, so more compensation, especially push."),
-        "leather" => ("Leather", 0.5, 0.6, 0.1, 0.0, 0.0, 3.0, 7.0, 3.5, "Leather and vinyl: every hole stays, so fewer stitches, little underlay."),
-        "denim" => ("Denim", 0.4, 0.4, 0.2, 2.0, 0.1, 2.0, 5.0, 2.5, "Heavy woven denim: like woven, with a little more compensation."),
+    // (name, satin spacing, fill spacing, pull mm, pull %, push, centre under, zigzag over, shape
+    // edge over, shortest stitch)
+    #[rustfmt::skip]
+    let (name, satin, fill, pull, pct, push, center, zigzag, edge, min, about) = match id {
+        "woven" => ("Woven", 0.4, 0.4, 0.2, 0.0, 0.0, 2.0, 5.0, 2.5, 0.3, "Stable woven cotton, twill or canvas: the stitches' usual settings, a little pull compensation."),
+        "knit" => ("Knit", 0.45, 0.45, 0.3, 5.0, 0.2, 1.5, 4.0, 2.0, 0.4, "T-shirts and polos: stretchy, so more underlay and compensation and a slightly open density."),
+        "towel" => ("Fleece / Towel", 0.35, 0.38, 0.3, 5.0, 0.2, 1.0, 3.0, 1.5, 0.5, "Lofty pile: dense stitches and heavy underlay so the pile doesn't poke through."),
+        "cap" => ("Cap", 0.4, 0.45, 0.35, 5.0, 0.3, 1.5, 4.0, 2.0, 0.4, "Structured caps: sewn on a curve, so more compensation, especially push."),
+        "leather" => ("Leather", 0.5, 0.6, 0.1, 0.0, 0.0, 3.0, 7.0, 3.5, 1.0, "Leather and vinyl: every hole stays, so fewer stitches, little underlay, no tiny stitches."),
+        "denim" => ("Denim", 0.4, 0.4, 0.2, 2.0, 0.1, 2.0, 5.0, 2.5, 0.3, "Heavy woven denim: like woven, with a little more compensation."),
         _ => return None,
     };
     Some(Fabric {
@@ -80,6 +49,7 @@ pub fn builtin(id: &str) -> Option<Fabric> {
         satin_center_under: Some(center),
         satin_zigzag_over: Some(zigzag),
         shape_edge_over: Some(edge),
+        min_stitch: Some(min),
         ..Fabric::default()
     })
 }
@@ -159,6 +129,7 @@ pub fn check(f: &Fabric) -> Result<(), String> {
         ("satinCenterUnder", f.satin_center_under),
         ("satinZigzagOver", f.satin_zigzag_over),
         ("shapeEdgeOver", f.shape_edge_over),
+        ("minStitch", f.min_stitch),
     ];
     match values.iter().find(|(_, v)| v.is_some_and(|x| !x.is_finite() || x < 0.0)) {
         Some((k, _)) => Err(format!("a fabric profile's `{k}` must be a number of at least 0")),

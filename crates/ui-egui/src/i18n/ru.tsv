@@ -5013,3 +5013,7 @@ lighting	Light	Свет
 	Keep Covered Rows	Сохранять закрытые ряды
 	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Вышивать ряды этой заливки и под объектами, вышиваемыми позже поверх неё (обычно они вырезаются)
 	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Насколько ряды заливки ещё заходят под объекты, вышиваемые позже поверх неё; остальная часть закрытых рядов вырезается
+
+# Shortest stitch (the Sew Order panel)
+	Shortest Stitch:	Кратчайший стежок:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Проколы ближе этого к предыдущему пропускаются (ткань может требовать больше)

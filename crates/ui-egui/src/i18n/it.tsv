@@ -5017,3 +5017,7 @@ lighting	Light	Luce
 	Keep Covered Rows	Mantieni file coperte
 	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Ricama le file di questo riempimento anche sotto gli oggetti ricamati dopo sopra di esso (di solito vengono tagliate)
 	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Quanto le file di un riempimento arrivano ancora sotto gli oggetti ricamati dopo sopra di esso; il resto delle file coperte viene tagliato
+
+# Shortest stitch (the Sew Order panel)
+	Shortest Stitch:	Punto più corto:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	I punti d'ago più vicini di così al precedente vengono omessi (il tessuto può chiederne uno più lungo)

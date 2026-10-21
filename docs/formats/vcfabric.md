@@ -31,7 +31,8 @@ Machine-readable schema: [vcfabric.schema.json](vcfabric.schema.json). Example:
   "push": 0.2,
   "satinCenterUnder": 1.5,
   "satinZigzagOver": 4,
-  "shapeEdgeOver": 2
+  "shapeEdgeOver": 2,
+  "minStitch": 0.4
 }
 ```
 
@@ -55,6 +56,7 @@ Every field but `format` and `version` may be left out. A setting left out keeps
 | `satinCenterUnder` | number, mm | 0.3–12 | Automatic underlay: satin columns narrower than this get a centre walk. |
 | `satinZigzagOver` | number, mm | 0.3–12, at least `satinCenterUnder` | Automatic underlay: satin columns wider than this get an edge walk and a zigzag; those between, an edge walk. |
 | `shapeEdgeOver` | number, mm | 0.3–12 | Automatic underlay: satin shapes with strokes wider than this get an edge walk; thinner, a centre walk. |
+| `minStitch` | number, mm | 0–2 | The shortest stitch the fabric takes; the document's [`minStitch`](vectorcraft-embroidery.md#embroidery-setup-documentembroidery) is used when it is longer. |
 
 The settings mean what the stitch settings of the same names mean (see
 [vectorcraft-embroidery.md](vectorcraft-embroidery.md#stitch-settings-stitch)). A reader refuses a file

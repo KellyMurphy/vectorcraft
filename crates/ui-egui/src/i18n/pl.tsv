@@ -5238,3 +5238,7 @@ mark-style	Japanese	Japońskie
 	Keep Covered Rows	Zachowaj zakryte rzędy
 	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Wyszywaj rzędy tego wypełnienia także pod obiektami wyszywanymi później na nim (zwykle są wycinane)
 	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Jak daleko rzędy wypełnienia sięgają jeszcze pod obiekty wyszywane później na nim; reszta zakrytych rzędów jest wycinana
+
+# Shortest stitch (the Sew Order panel)
+	Shortest Stitch:	Najkrótszy ścieg:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Punkty wkłucia bliżej poprzedniego niż ta wartość są pomijane (tkanina może wymagać dłuższego)

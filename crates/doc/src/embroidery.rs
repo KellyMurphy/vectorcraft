@@ -372,6 +372,11 @@ pub struct EmbroiderySetup {
     /// of the covered rows is cut away (overlap removal).
     #[serde(skip_serializing_if = "is_default_overlap")]
     pub overlap: f64,
+    /// The shortest stitch sewn, mm: needle points closer than this to the one before are left
+    /// out (manual stitches are sewn as drawn). A fabric may ask for longer
+    /// ([`Fabric::min_stitch`]).
+    #[serde(skip_serializing_if = "is_default_min_stitch")]
+    pub min_stitch: f64,
     /// The order objects are sewn in: these first, in this order, then any other stitched objects
     /// in paint order (empty: paint order). Ids of objects no longer there are ignored.
     #[serde(skip_serializing_if = "Vec::is_empty")]
@@ -399,6 +404,7 @@ impl Default for EmbroiderySetup {
             trim_jumps_over: Some(Self::DEFAULT_TRIM),
             stitch_moves_under: Self::DEFAULT_STITCH_MOVES,
             overlap: Self::DEFAULT_OVERLAP,
+            min_stitch: Self::DEFAULT_MIN_STITCH,
             order: vec![],
             patterns: vec![],
             sew_out: None,
@@ -406,6 +412,10 @@ impl Default for EmbroiderySetup {
             extra: Default::default(),
         }
     }
+}
+
+fn is_default_min_stitch(v: &f64) -> bool {
+    *v == EmbroiderySetup::DEFAULT_MIN_STITCH
 }
 
 fn is_default_overlap(v: &f64) -> bool {
@@ -452,6 +462,9 @@ pub struct Fabric {
     pub satin_zigzag_over: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub shape_edge_over: Option<f64>,
+    /// The shortest stitch this fabric takes, mm (the document's is used when it is longer).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub min_stitch: Option<f64>,
     /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
     #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
     pub extra: serde_json::Map<String, serde_json::Value>,
@@ -567,12 +580,23 @@ impl EmbroiderySetup {
     pub const DEFAULT_TRIM: f64 = 3.0;
     pub const DEFAULT_STITCH_MOVES: f64 = 1.0;
     pub const DEFAULT_OVERLAP: f64 = 0.5;
+    pub const DEFAULT_MIN_STITCH: f64 = 0.3;
+    /// Allowed shortest stitches, mm.
+    pub const MIN_STITCH: std::ops::RangeInclusive<f64> = 0.0..=2.0;
     /// Allowed overlaps, mm.
     pub const OVERLAP: std::ops::RangeInclusive<f64> = 0.0..=3.0;
     /// Allowed trim lengths, mm.
     pub const TRIM: std::ops::RangeInclusive<f64> = 0.5..=100.0;
     /// Allowed sewn-move lengths, mm (a sewn move is a stitch: at most a stitch long).
     pub const STITCH_MOVES: std::ops::RangeInclusive<f64> = 0.0..=5.0;
+
+    /// The shortest stitch to sew, mm: the document's, or its fabric's when that is longer.
+    pub fn min_stitch(&self) -> f64 {
+        let clamp = |v: f64| v.clamp(*Self::MIN_STITCH.start(), *Self::MIN_STITCH.end());
+        let own = if self.min_stitch.is_finite() { clamp(self.min_stitch) } else { Self::DEFAULT_MIN_STITCH };
+        let fabric = self.fabric.as_ref().filter(|f| f.unknown.is_none()).and_then(|f| f.min_stitch).filter(|v| v.is_finite()).map(clamp);
+        fabric.map_or(own, |f| own.max(f))
+    }
 
     /// The overlap to sew with, mm.
     pub fn overlap(&self) -> f64 {

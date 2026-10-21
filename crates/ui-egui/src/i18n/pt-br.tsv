@@ -5322,3 +5322,7 @@ mark-style	Japanese	Japonesas
 	Keep Covered Rows	Manter fileiras cobertas
 	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Bordar também as fileiras deste preenchimento sob objetos bordados depois por cima (normalmente são cortadas)
 	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Até onde as fileiras de um preenchimento ainda chegam sob objetos bordados depois por cima; o resto das fileiras cobertas é cortado
+
+# Shortest stitch (the Sew Order panel)
+	Shortest Stitch:	Ponto mais curto:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Pontos de agulha mais próximos que isto do anterior são omitidos (o tecido pode pedir mais longo)

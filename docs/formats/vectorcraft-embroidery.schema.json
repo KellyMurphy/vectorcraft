@@ -45,6 +45,7 @@
       "properties": {
         "trimJumpsOver": { "type": ["number", "null"], "minimum": 0.5, "maximum": 100, "default": 3, "description": "null: never trim on length." },
         "stitchMovesUnder": { "type": "number", "minimum": 0, "maximum": 5, "default": 1 },
+        "minStitch": { "type": "number", "minimum": 0, "maximum": 2, "default": 0.3, "description": "The shortest stitch sewn, mm (the fabric's minStitch when longer)." },
         "overlap": { "type": "number", "minimum": 0, "maximum": 3, "default": 0.5, "description": "How far a fill's rows still reach under objects sewn on top of it, mm." },
         "order": { "type": "array", "items": { "type": "integer", "minimum": 0 }, "description": "Object ids sewn first, in this order." },
         "patterns": {
@@ -76,7 +77,8 @@
         "push": { "$ref": "vcfabric.schema.json#/properties/push" },
         "satinCenterUnder": { "$ref": "vcfabric.schema.json#/properties/satinCenterUnder" },
         "satinZigzagOver": { "$ref": "vcfabric.schema.json#/properties/satinZigzagOver" },
-        "shapeEdgeOver": { "$ref": "vcfabric.schema.json#/properties/shapeEdgeOver" }
+        "shapeEdgeOver": { "$ref": "vcfabric.schema.json#/properties/shapeEdgeOver" },
+        "minStitch": { "$ref": "vcfabric.schema.json#/properties/minStitch" }
       }
     },
     "sewOut": {

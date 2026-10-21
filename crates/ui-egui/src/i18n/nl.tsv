@@ -5423,3 +5423,7 @@ swatch	Bright Violet	Felviolet
 	Keep Covered Rows	Bedekte rijen behouden
 	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	De rijen van deze vulling ook borduren onder objecten die er later bovenop worden geborduurd (normaal worden ze weggesneden)
 	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Hoe ver de rijen van een vulling nog onder later erop geborduurde objecten reiken; de rest van de bedekte rijen wordt weggesneden
+
+# Shortest stitch (the Sew Order panel)
+	Shortest Stitch:	Kortste steek:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Naaldpunten dichter dan dit bij het vorige worden weggelaten (de stof kan om meer vragen)
