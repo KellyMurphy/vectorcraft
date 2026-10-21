@@ -5345,3 +5345,8 @@ mark-style	Japanese	Japanilainen
 	Save Fabric…	Tallenna kangas…
 	Load Fabric	Lataa kangas
 @msg	Fabric: {_1}	Kangas: {_1}
+
+# Overlap removal (the Embroidery and Sew Order panels)
+	Keep Covered Rows	Säilytä peitetyt rivit
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Kirjo tämän täytön rivit myös myöhemmin sen päälle kirjottavien objektien alle (yleensä ne poistetaan)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Kuinka pitkälle täytön rivit yltävät myöhemmin sen päälle kirjottavien objektien alle; loput peitetyistä riveistä poistetaan

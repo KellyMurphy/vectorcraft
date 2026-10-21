@@ -73,7 +73,17 @@ fn block() -> PathData {
 }
 
 fn sew(settings: &StitchSettings, path: &PathData, stroke_mm: f64, patterns: &[BorderPattern]) -> Vec<Vec<Point>> {
-    kinds::sew(&kinds::Input { settings, stroke_mm, paths: &[path], rule: FillRule::NonZero, patterns, auto: Default::default() }).runs
+    kinds::sew(&kinds::Input {
+        settings,
+        stroke_mm,
+        paths: &[path],
+        rule: FillRule::NonZero,
+        patterns,
+        auto: Default::default(),
+        cuts: &[],
+        overlap: 0.0,
+    })
+    .runs
 }
 
 /// The stitch type `k` on a shape that suits it.

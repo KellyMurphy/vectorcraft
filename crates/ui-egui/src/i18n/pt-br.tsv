@@ -5317,3 +5317,8 @@ mark-style	Japanese	Japonesas
 	Save Fabric…	Salvar tecido…
 	Load Fabric	Carregar tecido
 @msg	Fabric: {_1}	Tecido: {_1}
+
+# Overlap removal (the Embroidery and Sew Order panels)
+	Keep Covered Rows	Manter fileiras cobertas
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Bordar também as fileiras deste preenchimento sob objetos bordados depois por cima (normalmente são cortadas)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Até onde as fileiras de um preenchimento ainda chegam sob objetos bordados depois por cima; o resto das fileiras cobertas é cortado

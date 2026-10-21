@@ -5400,3 +5400,8 @@ mark-style	Japanese	Japonské
 	Save Fabric…	Uložit látku…
 	Load Fabric	Načíst látku
 @msg	Fabric: {_1}	Látka: {_1}
+
+# Overlap removal (the Embroidery and Sew Order panels)
+	Keep Covered Rows	Ponechat zakryté řady
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Vyšít řady této výplně i pod objekty vyšitými později na ní (obvykle se vyříznou)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Jak daleko řady výplně ještě sahají pod objekty vyšité později na ní; zbytek zakrytých řad se vyřízne

@@ -5398,3 +5398,8 @@ theme	Appearance	Apparence
 	Save Fabric…	Enregistrer le tissu…
 	Load Fabric	Charger un tissu
 @msg	Fabric: {_1}	Tissu : {_1}
+
+# Overlap removal (the Embroidery and Sew Order panels)
+	Keep Covered Rows	Conserver les rangs couverts
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Broder aussi les rangs de ce remplissage sous les objets brodés ensuite par-dessus (normalement, ils sont retirés)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Jusqu'où les rangs d'un remplissage passent encore sous les objets brodés ensuite par-dessus ; le reste des rangs couverts est retiré

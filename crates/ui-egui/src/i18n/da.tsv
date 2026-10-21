@@ -5375,3 +5375,8 @@ swatch	Bright Violet	Kraftig violet
 	Save Fabric…	Gem stof…
 	Load Fabric	Indlæs stof
 @msg	Fabric: {_1}	Stof: {_1}
+
+# Overlap removal (the Embroidery and Sew Order panels)
+	Keep Covered Rows	Behold dækkede rækker
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Brodér også dette fylds rækker under objekter, der broderes ovenpå senere (normalt skæres de væk)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Hvor langt et fylds rækker stadig når ind under objekter, der broderes ovenpå senere; resten af de dækkede rækker skæres væk

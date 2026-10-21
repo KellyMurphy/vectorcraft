@@ -5367,3 +5367,8 @@ imageTrace	Outline	Körvonal
 	Save Fabric…	Anyag mentése…
 	Load Fabric	Anyag betöltése
 @msg	Fabric: {_1}	Anyag: {_1}
+
+# Overlap removal (the Embroidery and Sew Order panels)
+	Keep Covered Rows	Takart sorok megtartása
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	A kitöltés sorainak hímzése a később rá hímzett objektumok alatt is (általában ezeket kivágja)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Milyen messzire nyúlnak még egy kitöltés sorai a később rá hímzett objektumok alá; a takart sorok többi részét kivágja

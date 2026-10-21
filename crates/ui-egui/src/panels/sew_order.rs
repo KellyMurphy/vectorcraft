@@ -347,6 +347,16 @@ fn travel(app: &mut VectorcraftApp, ui: &mut Ui, setup: &Value) {
     if trim.is_none() {
         widgets::dim_label(ui, tl!("Only thread changes and objects set to trim cut the thread."));
     }
+    ui.scope(|ui| {
+        widgets::label_row(ui, tl!("Overlap:"), LABEL_W, |ui| {
+            if let Some(v) = widgets::mixed_field(ui, ("emb", "overlap"), setup["overlap"].as_f64(), " mm", 1, FIELD_W) {
+                let r = EmbroiderySetup::OVERLAP;
+                app.run("embroidery.setup", json!({ "overlap": v.clamp(*r.start(), *r.end()) })).ok();
+            }
+        })
+    })
+    .response
+    .on_hover_text(tl!("How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away"));
 }
 
 #[cfg(test)]

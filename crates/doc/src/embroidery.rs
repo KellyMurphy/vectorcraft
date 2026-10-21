@@ -218,6 +218,10 @@ pub struct StitchSettings {
     /// as they are apart; other subpaths crossing both are rungs, setting the stitch direction.
     #[serde(default, skip_serializing_if = "crate::skip::is_default")]
     pub rails: bool,
+    /// Fill: keep the rows under objects sewn later on top of it (normally cut away, leaving
+    /// [`EmbroiderySetup::overlap`]).
+    #[serde(default, skip_serializing_if = "crate::skip::is_default")]
+    pub keep_covered: bool,
     /// Cut the thread before the object starts, however close it is to the stitch before.
     #[serde(default, skip_serializing_if = "crate::skip::is_default")]
     pub trim_before: bool,
@@ -364,6 +368,10 @@ pub struct EmbroiderySetup {
     pub trim_jumps_over: Option<f64>,
     /// Moves to the next stitch up to this long are sewn as a stitch rather than jumped, mm.
     pub stitch_moves_under: f64,
+    /// How far a fill's rows still reach under an object sewn later on top of it, mm: the rest
+    /// of the covered rows is cut away (overlap removal).
+    #[serde(skip_serializing_if = "is_default_overlap")]
+    pub overlap: f64,
     /// The order objects are sewn in: these first, in this order, then any other stitched objects
     /// in paint order (empty: paint order). Ids of objects no longer there are ignored.
     #[serde(skip_serializing_if = "Vec::is_empty")]
@@ -390,6 +398,7 @@ impl Default for EmbroiderySetup {
         Self {
             trim_jumps_over: Some(Self::DEFAULT_TRIM),
             stitch_moves_under: Self::DEFAULT_STITCH_MOVES,
+            overlap: Self::DEFAULT_OVERLAP,
             order: vec![],
             patterns: vec![],
             sew_out: None,
@@ -397,6 +406,10 @@ impl Default for EmbroiderySetup {
             extra: Default::default(),
         }
     }
+}
+
+fn is_default_overlap(v: &f64) -> bool {
+    *v == EmbroiderySetup::DEFAULT_OVERLAP
 }
 
 /// A fabric profile: the settings a fabric wants (density, compensation, how much underlay), used
@@ -553,10 +566,18 @@ impl SewSwatch {
 impl EmbroiderySetup {
     pub const DEFAULT_TRIM: f64 = 3.0;
     pub const DEFAULT_STITCH_MOVES: f64 = 1.0;
+    pub const DEFAULT_OVERLAP: f64 = 0.5;
+    /// Allowed overlaps, mm.
+    pub const OVERLAP: std::ops::RangeInclusive<f64> = 0.0..=3.0;
     /// Allowed trim lengths, mm.
     pub const TRIM: std::ops::RangeInclusive<f64> = 0.5..=100.0;
     /// Allowed sewn-move lengths, mm (a sewn move is a stitch: at most a stitch long).
     pub const STITCH_MOVES: std::ops::RangeInclusive<f64> = 0.0..=5.0;
+
+    /// The overlap to sew with, mm.
+    pub fn overlap(&self) -> f64 {
+        if self.overlap.is_finite() { self.overlap.clamp(*Self::OVERLAP.start(), *Self::OVERLAP.end()) } else { Self::DEFAULT_OVERLAP }
+    }
 
     /// The jump length past which the thread is cut, mm (`None`: never on length).
     pub fn trim_over(&self) -> Option<f64> {

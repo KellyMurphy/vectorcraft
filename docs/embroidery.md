@@ -17,7 +17,7 @@ Select paths or compound paths (or groups holding them) and choose **Object › 
 | Satin Column | A zigzag centred on the path, as wide as the stroke (borders, lettering strokes). **Between Rails**: the object's two longest subpaths are the column's edges and the satin spans between them, as wide as they are apart (columns that swell and taper); other subpaths crossing both are rungs, each setting the stitch direction where it crosses. Draw the two edges, join them (Object › Compound Path) and tick Between Rails. | `width` (the stroke width, else 3 mm), `spacing` (density, 0.4 mm), `pull` (pull compensation, 0 mm) and `pullPercent` (% of the width, 0), `push` (push compensation: shorter at the ends, 0 mm), `underlay` (auto, none, center, edge, zigzag), `rails` (off) |
 | Zigzag Stitch | An open zigzag along the path, swinging side to side (decorative lines, appliqué edges). Corners fan like a satin's. | `width` (3 mm; not the stroke), `spacing` (between points, 2 mm) |
 | Satin Shape | Satin that follows a closed shape's strokes from edge to edge, curving with them (lettering, outlined type, swashes). The shape's centre lines are found automatically; each zig reaches the shape's edges either side, so thick and thin strokes keep their contrast. | `spacing` (density, 0.4 mm), `pull` (0 mm), `pullPercent` (% of the stroke width, 0), `underlay` (auto, none, center, edge) |
-| Fill | Rows of staggered running stitches covering the shape (tatami). Holes and separate parts follow the fill rule. | `angle` (0°), `spacing` (density, 0.4 mm), `length` (4 mm), `stagger` (pattern: 2 brick, 3–8 tatami; 3), `motif` (a carved pattern: diamonds, waves, circles, scales, herringbone; none) and `motifSize` (its repeat, 3–60 mm; 10), `underlay` (auto, none, fill), `pull` and `pullPercent` (rows longer, half at each end; 0), `push` (shorter across the rows; 0 mm), `border` (a satin border over the edges, 0.5–6 mm; none) |
+| Fill | Rows of staggered running stitches covering the shape (tatami). Holes and separate parts follow the fill rule. | `angle` (0°), `spacing` (density, 0.4 mm), `length` (4 mm), `stagger` (pattern: 2 brick, 3–8 tatami; 3), `motif` (a carved pattern: diamonds, waves, circles, scales, herringbone; none) and `motifSize` (its repeat, 3–60 mm; 10), `underlay` (auto, none, fill), `pull` and `pullPercent` (rows longer, half at each end; 0), `push` (shorter across the rows; 0 mm), `border` (a satin border over the edges, 0.5–6 mm; none), `keepCovered` (keep the rows under what is sewn on top; off) |
 | Pattern Border | A border pattern repeated end to end along the path, bending with its curves (decorative borders, frames). See [Pattern borders](#pattern-borders). | `pattern` (waves, scallops, chain, diamonds; waves), `width` (the band, 1–40 mm; the pattern's own, 6 mm), `flip` (off), `length` (1.5 mm), `spacing` (satin parts, 0.4 mm) |
 | Manual Stitch | The needle goes down at every anchor, as drawn. Imported designs use it. | — |
 
@@ -170,6 +170,16 @@ for warnings). The rules so far:
 Exporting a DST adds a line for each rule that found something to the export's warnings.
 `embroidery.check` gives the same findings to agents and scripts, each with the object and where it is.
 
+### Overlap removal
+
+Where a fill lies under something sewn after it (lettering on a filled background, a satin outline over
+a fill, one fill over another), the fill's rows under it are cut away, so the stitches don't pile up into
+a stiff, bullet-proof patch. The rows still reach **0.5 mm** under the covering object's edge so no gap
+shows; the Sew Order panel's **Overlap** (`embroidery.setup {overlap}`) sets that for the document. Fills,
+satin shapes, Auto objects and type cover by their outlines, satin columns by their band; running, bean,
+zigzag and pattern borders cover nothing. Tick a fill's **Keep Covered Rows** (`keepCovered`) to sew it
+whole. Moving or reordering what lies on top sews the fill again.
+
 ### Fabric profiles
 
 The fabric changes how a design should be sewn: stretchy knits want more underlay and compensation, lofty
@@ -225,7 +235,7 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.saveBorderPattern` | `{pattern, path?}`: write a pattern as a `.vcborder` file (without `path`: `{data}`) |
 | `embroidery.extractBorderPattern` | `{name?, period?, author?, license?, source?, ids?}`: the repeat of the selected border stitches (only those inside a selected closed shape, if any) as a new document pattern → `{id, name, period, width, stitches, repeats, error}` |
 | `embroidery.removeBorderPattern` | `{pattern}`: remove one of the document's patterns that nothing sews with |
-| `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm}`: the document's travel settings |
+| `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm, overlap?: mm}`: the document's travel settings and overlap |
 | `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings |
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
 | `embroidery.check` | `{ids?}` → the design checker's `findings` (`rule`, `severity`, `message`, `object`, `at` in document points), `counts` and the `rules` |

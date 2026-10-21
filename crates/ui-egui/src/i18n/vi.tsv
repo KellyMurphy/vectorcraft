@@ -4974,3 +4974,8 @@ theme	Appearance	Giao diện
 	Save Fabric…	Lưu vải…
 	Load Fabric	Nạp vải
 @msg	Fabric: {_1}	Vải: {_1}
+
+# Overlap removal (the Embroidery and Sew Order panels)
+	Keep Covered Rows	Giữ các hàng bị che
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Thêu cả các hàng của phần thêu đầy này bên dưới các đối tượng thêu sau đè lên nó (thường chúng bị cắt bỏ)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Các hàng của phần thêu đầy còn chui dưới các đối tượng thêu sau đè lên nó bao xa; phần còn lại của các hàng bị che sẽ bị cắt bỏ

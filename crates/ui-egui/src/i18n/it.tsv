@@ -5012,3 +5012,8 @@ lighting	Light	Luce
 	Save Fabric…	Salva tessuto…
 	Load Fabric	Carica tessuto
 @msg	Fabric: {_1}	Tessuto: {_1}
+
+# Overlap removal (the Embroidery and Sew Order panels)
+	Keep Covered Rows	Mantieni file coperte
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Ricama le file di questo riempimento anche sotto gli oggetti ricamati dopo sopra di esso (di solito vengono tagliate)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Quanto le file di un riempimento arrivano ancora sotto gli oggetti ricamati dopo sopra di esso; il resto delle file coperte viene tagliato

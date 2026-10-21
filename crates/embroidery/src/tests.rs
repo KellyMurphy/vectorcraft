@@ -1426,3 +1426,71 @@ fn the_documents_fabric_fills_in_unset_settings_and_moves_the_underlay_threshold
 fn vectorcraft_embroidery_first_stitched(d: &Document) -> vectorcraft_doc::NodeId {
     sew_order(d).first().map(|n| n.id).unwrap()
 }
+
+/// A 30 mm fill square (sewn first) and, sewn after it, `top` across its middle.
+fn covered(top: Node, keep: bool, overlap: f64) -> Plan {
+    let mut d = doc_with(|d| {
+        let mut sq = stitched(d, poly(&[(0.0, 0.0), (85.0, 0.0), (85.0, 85.0), (0.0, 85.0)], true), StitchKind::Fill, [0; 3]);
+        sq.extras_mut().stitch = Some(Box::new(StitchSettings { keep_covered: keep, ..StitchSettings::new(StitchKind::Fill) }));
+        let mut top = top;
+        top.id = d.alloc_id();
+        vec![sq, top]
+    });
+    d.embroidery.overlap = overlap;
+    plan(&d)
+}
+
+/// The first object's (the fill's) needle moves.
+fn fill_moves(p: &Plan) -> usize {
+    p.objects.first().map_or(0, |o| o.needles.len())
+}
+
+#[test]
+fn fills_are_cut_away_under_what_is_sewn_on_top() {
+    let mut scratch = Document::new(10.0, 10.0);
+    // A 10 mm fill bar across the square's middle.
+    let base = scratch.clone();
+    let bar = || stitched(&mut base.clone(), poly(&[(-5.0, 28.0), (90.0, 28.0), (90.0, 57.0), (-5.0, 57.0)], true), StitchKind::Fill, [9; 3]);
+    let kept = fill_moves(&covered(bar(), true, 0.5));
+    let cut = fill_moves(&covered(bar(), false, 0.5));
+    let cut_close = fill_moves(&covered(bar(), false, 0.0));
+    assert!(cut < kept * 3 / 4, "about a third of the rows lie under the bar: {kept} → {cut}");
+    assert!(cut_close < cut, "no overlap cuts more: {cut} → {cut_close}");
+    // A satin column across it cuts its band; a running stitch cuts nothing.
+    let mut satin = stitched(&mut scratch, poly(&[(-5.0, 42.0), (90.0, 42.0)], false), StitchKind::Satin, [9; 3]);
+    satin.extras_mut().stitch = Some(Box::new(StitchSettings { width: Some(6.0), ..StitchSettings::new(StitchKind::Satin) }));
+    let under_satin = fill_moves(&covered(satin, false, 0.5));
+    assert!(under_satin < kept && under_satin > cut, "{kept} {under_satin} {cut}");
+    let run = stitched(&mut scratch, poly(&[(-5.0, 42.0), (90.0, 42.0)], false), StitchKind::Running, [9; 3]);
+    assert_eq!(fill_moves(&covered(run, false, 0.5)), kept);
+    // Nothing is left on top of it: the cut fill's stitches stay outside the bar (less the overlap).
+    let p = covered(bar(), false, 0.5);
+    let o = p.objects.first().unwrap();
+    let ys: Vec<f64> = p.needles[o.needles.clone()].iter().filter(|n| n.cmd == Cmd::Stitch).map(|n| n.y).collect();
+    let (top, bottom) = (28.0 * PT_MM + 0.5 + 0.45, 57.0 * PT_MM - 0.5 - 0.45);
+    let inside = ys.iter().filter(|y| **y > top && **y < bottom).count();
+    assert!(inside * 20 < ys.len(), "{inside} of {} stitches under the bar (travel only)", ys.len());
+}
+
+#[test]
+fn moving_what_lies_on_top_sews_the_fill_again() {
+    let mut d = doc_with(|d| {
+        let sq = stitched(d, poly(&[(0.0, 0.0), (85.0, 0.0), (85.0, 85.0), (0.0, 85.0)], true), StitchKind::Fill, [0; 3]);
+        let bar = stitched(d, poly(&[(-5.0, 28.0), (90.0, 28.0), (90.0, 57.0), (-5.0, 57.0)], true), StitchKind::Fill, [9; 3]);
+        vec![sq, bar]
+    });
+    let mut cache = StitchCache::default();
+    let a = plan_cached(&d, &mut cache);
+    let bar_id = sew_order(&d).get(1).map(|n| n.id).unwrap();
+    // Move the bar off the square: the square is sewn again, whole.
+    if let Some(n) = d.node_mut(bar_id)
+        && let NodeKind::Path { path, .. } = &mut n.kind
+    {
+        *path = poly(&[(200.0, 28.0), (290.0, 28.0), (290.0, 57.0), (200.0, 57.0)], true);
+    }
+    let b = plan_cached(&d, &mut cache);
+    assert_eq!(cache.sewn, 2, "the bar changed, and so did what covers the square");
+    assert!(fill_moves(&b) > fill_moves(&a));
+    let c = plan_cached(&d, &mut cache);
+    assert_eq!((cache.sewn, fill_moves(&c)), (0, fill_moves(&b)), "nothing changed: all from the cache");
+}

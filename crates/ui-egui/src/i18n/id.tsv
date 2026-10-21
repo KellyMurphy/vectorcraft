@@ -5375,3 +5375,8 @@ swatch	Bright Violet	Violet cerah
 	Save Fabric…	Simpan kain…
 	Load Fabric	Muat kain
 @msg	Fabric: {_1}	Kain: {_1}
+
+# Overlap removal (the Embroidery and Sew Order panels)
+	Keep Covered Rows	Pertahankan baris tertutup
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Jahit juga baris isian ini di bawah objek yang disulam belakangan di atasnya (biasanya dipotong)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Seberapa jauh baris isian masih masuk ke bawah objek yang disulam belakangan di atasnya; sisa baris yang tertutup dipotong

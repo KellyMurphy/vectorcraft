@@ -5337,3 +5337,8 @@ theme	Appearance	Utseende
 	Save Fabric…	Spara tyg…
 	Load Fabric	Läs in tyg
 @msg	Fabric: {_1}	Tyg: {_1}
+
+# Overlap removal (the Embroidery and Sew Order panels)
+	Keep Covered Rows	Behåll täckta rader
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Brodera även fyllningens rader under objekt som broderas ovanpå senare (vanligtvis tas de bort)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Hur långt en fyllnings rader fortfarande når in under objekt som broderas ovanpå senare; resten av de täckta raderna tas bort

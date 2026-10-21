@@ -5333,3 +5333,8 @@ effect	Points	Σημεία
 	Save Fabric…	Αποθήκευση υφάσματος…
 	Load Fabric	Φόρτωση υφάσματος
 @msg	Fabric: {_1}	Ύφασμα: {_1}
+
+# Overlap removal (the Embroidery and Sew Order panels)
+	Keep Covered Rows	Διατήρηση καλυμμένων σειρών
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Κέντημα των σειρών αυτού του γεμίσματος και κάτω από αντικείμενα που κεντιούνται αργότερα από πάνω (συνήθως αφαιρούνται)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Πόσο φτάνουν ακόμη οι σειρές ενός γεμίσματος κάτω από αντικείμενα που κεντιούνται αργότερα από πάνω· οι υπόλοιπες καλυμμένες σειρές αφαιρούνται

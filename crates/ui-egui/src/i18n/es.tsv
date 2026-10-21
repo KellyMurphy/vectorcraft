@@ -5341,3 +5341,8 @@ mark-style	Japanese	Japonesas
 	Save Fabric…	Guardar tela…
 	Load Fabric	Cargar tela
 @msg	Fabric: {_1}	Tela: {_1}
+
+# Overlap removal (the Embroidery and Sew Order panels)
+	Keep Covered Rows	Conservar filas cubiertas
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Bordar también las filas de este relleno bajo los objetos bordados después encima (normalmente se recortan)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Hasta dónde llegan aún las filas de un relleno bajo los objetos bordados después encima; el resto de las filas cubiertas se recorta

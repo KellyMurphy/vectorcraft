@@ -4957,3 +4957,8 @@ effect	Regular	Regelmäßig
 	Save Fabric…	Stoff speichern…
 	Load Fabric	Stoff laden
 @msg	Fabric: {_1}	Stoff: {_1}
+
+# Overlap removal (the Embroidery and Sew Order panels)
+	Keep Covered Rows	Verdeckte Reihen behalten
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Die Reihen dieser Füllung auch unter später darauf gestickten Objekten sticken (normalerweise werden sie entfernt)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Wie weit die Reihen einer Füllung noch unter später darauf gestickte Objekte reichen; der Rest der verdeckten Reihen wird entfernt

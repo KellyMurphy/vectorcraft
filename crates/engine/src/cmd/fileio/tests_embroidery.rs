@@ -144,9 +144,9 @@ fn satin_fill_and_bean_parameters_are_set_and_checked() {
 #[test]
 fn setup_sets_the_documents_trim_and_jump_lengths() {
     let mut s = session();
-    assert_eq!(info(&mut s)["setup"], json!({"trimJumpsOver": 3.0, "stitchMovesUnder": 1.0}));
+    assert_eq!(info(&mut s)["setup"], json!({"trimJumpsOver": 3.0, "stitchMovesUnder": 1.0, "overlap": 0.5}));
     let r = s.execute("embroidery.setup", &json!({"trimJumpsOver": 8, "stitchMovesUnder": 2})).unwrap();
-    assert_eq!(r, json!({"trimJumpsOver": 8.0, "stitchMovesUnder": 2.0}));
+    assert_eq!(r, json!({"trimJumpsOver": 8.0, "stitchMovesUnder": 2.0, "overlap": 0.5}));
     s.execute("embroidery.setup", &json!({"trimJumpsOver": null})).unwrap();
     assert_eq!(info(&mut s)["setup"]["trimJumpsOver"], Value::Null);
     for p in [json!({"trimJumpsOver": 0}), json!({"trimJumpsOver": "x"}), json!({"stitchMovesUnder": 9})] {

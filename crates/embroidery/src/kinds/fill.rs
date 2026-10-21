@@ -36,7 +36,8 @@ pub(super) fn sew(i: &Input) -> Output {
         None => vec![],
     };
     let comp = generate::RowComp { pull: s.pull(), pull_percent: s.pull_percent(), push: s.push() };
-    let top = generate::fill_compensated(&polys, i.rule, s.angle(), s.spacing(), s.length(), s.stagger(), &carve, comp);
+    let cuts = if s.keep_covered { &[][..] } else { i.cuts };
+    let top = generate::fill_compensated(&polys, i.rule, s.angle(), s.spacing(), s.length(), s.stagger(), &carve, comp, cuts, i.overlap);
     match under.and_then(|u| Ok((u, top?))) {
         Ok((u, top)) => {
             out.runs.extend(u.into_iter().chain(top));

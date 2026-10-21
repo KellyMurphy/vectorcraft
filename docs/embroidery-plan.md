@@ -144,7 +144,7 @@ The goal: real artwork digitized, lettered and exported, sewing cleanly on commo
 | **E7.1** Automatic underlay (**done**; thresholds fixed until E7.3) | An `auto` underlay, made the default, chosen by stitch kind and width: narrow satin gets a centre walk, medium gets an edge walk, wide gets edge walk plus zigzag; fills get an edge walk plus fill underlay at right angles; satin shapes get a centre or edge walk by stroke width. Thresholds come from the fabric profile (E7.3). | M |
 | **E7.2** Compensation (**done**: pull in mm and %, push; push not yet on satin shapes or between rails) | Pull compensation for fills (rows extended at their ends) and satin shapes by stitch angle. **Push compensation** (columns shortened at their ends along the stitch direction). Applied per axis, in mm or %. | M |
 | **E7.3** Fabric profiles (**done**; starters' numbers to be checked by the G1 sew-out; minimum stitch length waits for E7.6) | Document-level fabric presets (woven, knit, fleece/towel, cap, leather, denim) setting density, underlay thresholds, compensation and minimum stitch length; per-object overrides win. Generated in code; saved and loaded as open `.vcfabric` files (spec + schema). | M |
-| **E7.4** Overlap removal | Fill under a covering fill or satin (higher in the sewing order) is cut away, leaving an overlap margin (0.5 mm by default), so stitches don't pile up. On by default, per-object opt-out. | L |
+| **E7.4** Overlap removal (**done**; fill underlay and fill borders are still sewn whole) | Fill under a covering fill or satin (higher in the sewing order) is cut away, leaving an overlap margin (0.5 mm by default), so stitches don't pile up. On by default, per-object opt-out. | L |
 | **E7.5** Start/stop points and auto-sequencing | Per-object start and stop points (handles on the canvas). Within a thread, objects are ordered and each started at the end nearest the last stop, cutting jumps and trims. Running-stitch networks are sewn by branching (each line once, travel doubled under it). Travel hidden under fills that are sewn later. | L |
 | **E7.6** Small-stitch filter | A document minimum stitch length (from the fabric profile). Shorter stitches are merged or dropped everywhere, satin columns included. Short stitches on tight satin curves, as satin shape already does. | S |
 | **E7.7** Checker rules | Stitches over 7 mm (snag risk) or 12 mm (impossible); satin under 1 mm or over 10 mm wide; objects too small to sew; density hot spots (stacked layers, from a density map); open shapes set to fill; jumps and trims over budget; design beyond the hoop; type below its safe size. | M |
@@ -158,6 +158,40 @@ The goal: real artwork digitized, lettered and exported, sewing cleanly on commo
 **Gate G1 (fabric):** sew the E6.6 test sheet on woven and on knit, and three real designs (a logo with fills
 and satins, lettering at 6, 10 and 25 mm, a multicolour badge). Pass: no thread breaks or bird-nests, no gaps
 between neighbouring objects, satin edges clean, lettering legible at 6 mm.
+
+## Goal: compensation a step above — E10
+
+Most digitizing tools apply one compensation number per object, tuned by hand. Published research
+measures the effect but offers no predictive model or open algorithm. VectorCraft aims to beat that by
+measuring fabric behaviour and compensating for direction, layering and curvature. E7.2 (push and
+pull, per axis) and E7.3 (fabric profiles) are the base; E10 builds on them once G1 has checked the
+starter numbers. Steps can run alongside E8.
+
+| Step | What | Size |
+|---|---|---|
+| **E10.1** Calibration from sew-outs | Extend the E6.6 kit with a compensation sheet: satin columns at several widths (2, 4, 6, 8 mm) and angles (0°, 45°, 90°, 135° to the fabric grain), and fill squares at the same angles. Each swatch has running-stitch marks at the drawn edges. The user sews it, then enters measured widths and lengths in the Sew-Out Test panel or loads a scan or photo (measured against the marks). VectorCraft fits `pull`, `pullPercent` and `push` per angle and saves them as a `.vcfabric` profile. Measured numbers replace guessed starters. | L |
+| **E10.2** Grain-aware compensation | The document (or hoop placement) records the fabric's grain angle. Compensation for each stitch is interpolated by its angle to the warp and weft, from the per-angle values in the profile (E10.1), instead of one value for every direction. Spec and schema: `.vcfabric` gains an optional per-angle table; profiles without one behave as today. | M |
+| **E10.3** Curvature-aware satin | Pull and push vary along a satin column with the local radius: on tight curves the inside edge has denser needle penetrations than the outside, so each edge is compensated separately. Applies to satin, satin shape and between rails. | M |
+| **E10.4** Layer- and density-aware compensation | Compensation scales with what is already sewn underneath (underlay, lower fills, overlap margins from E7.4), using the checker's density map (E7.7 / E8.7). Areas sewn over heavy layers get less extra pull than bare fabric. | M |
+| **E10.5** Distortion preview | Stitch Preview can show the predicted result: the fabric as a spring mesh, each stitch a contracting cable with tension from the thread and fabric profile, solved to show draw-in, gaps between neighbouring objects and puckering before sewing. Validated against E10.1 measurements. A stretch goal; budgeted in `vectorcraft-cli perf`. | XL |
+
+Priority: E10.1 and E10.2 first; they give the biggest visible gain and the data the rest needs.
+
+**Gate GC (fabric):** sew the compensation sheet on woven and knit; fit profiles; then sew a logo and
+lettering (6, 10, 25 mm) with the fitted profile at the grain set both straight and at 45°. Pass: satin
+widths within ±0.2 mm of drawn, no gaps between neighbouring objects at either angle, and visibly better
+alignment than the same design with the starter profile.
+
+Background (public research, cited as sources; nothing copied): Daukantienė & Mikelionytė, "Investigation
+of the influence of technology parameters and thread type on embroidered textile element quality",
+*AUTEX Research Journal* 20(4), 2020, doi:10.2478/aut-2019-0046 (geometry change depends on fill type,
+density and thread); Radavičienė et al., "The influence of the properties of embroidery threads on
+buckling of fabric inside of the embroidered element", Kaunas University of Technology
+(https://epubl.ktu.edu/object/elaba:3243049/index.html) (the fabric between penetrations is compressed and
+buckles); Hu et al., "Modelling Multi-layer Seam Puckering", *Textile Research Journal* 76(9), 2006 (a thread
+shrinkage and seam deformation model, the starting point for E10.5); Đỗ Thị Tần, shrinkage of embroidery
+patterns on Pe/Co fabric, 2025 (https://vjol.vista.gov.vn/saodo/en/article/view/114635) (shrinkage against
+stitch length, thread and needle size).
 
 ## Phase 2: a productive digitizing studio (P1) — E8
 
@@ -210,5 +244,5 @@ code), renders compared by eye, and the independent reader for each machine form
 ## Order of work
 
 E5.5 and E5.6 done → E6.1–E6.6 → E7 (E7.1–E7.3 first, as the quality basics; E7.12 formats can run in
-parallel) → G1 → E8 → G2 → E9 → G3. `ROADMAP.md`'s E row and `docs/embroidery.md` are updated as each step
+parallel) → G1 → E8, with E10 (E10.1–E10.2 first) alongside → G2 and GC → E9 → G3. `ROADMAP.md`'s E row and `docs/embroidery.md` are updated as each step
 lands.

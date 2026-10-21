@@ -5233,3 +5233,8 @@ mark-style	Japanese	Japońskie
 	Save Fabric…	Zapisz tkaninę…
 	Load Fabric	Wczytaj tkaninę
 @msg	Fabric: {_1}	Tkanina: {_1}
+
+# Overlap removal (the Embroidery and Sew Order panels)
+	Keep Covered Rows	Zachowaj zakryte rzędy
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Wyszywaj rzędy tego wypełnienia także pod obiektami wyszywanymi później na nim (zwykle są wycinane)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Jak daleko rzędy wypełnienia sięgają jeszcze pod obiekty wyszywane później na nim; reszta zakrytych rzędów jest wycinana

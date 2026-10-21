@@ -226,6 +226,18 @@ pub static PARAMS: &[Param] = &[
         suits: None,
     },
     Param {
+        key: "keepCovered",
+        value: ValueKind::Flag,
+        kinds: &[K::Fill],
+        label: "Keep Covered Rows",
+        help: "Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)",
+        doc: "bool (false: the rows under objects sewn later on top of the fill are cut away, leaving the document's overlap)",
+        nullable: false,
+        get: |s| json!(s.keep_covered),
+        set: |s, v| s.keep_covered = flag(v),
+        suits: None,
+    },
+    Param {
         key: "pullPercent",
         value: ValueKind::Percent(StitchSettings::PULL_PERCENT),
         kinds: &[K::Satin, K::SatinShape, K::Fill, K::Auto],

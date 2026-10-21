@@ -400,10 +400,12 @@ pub fn plan(doc: &Document) -> Plan {
 
 /// [`plan`], sewing again only the objects `cache` doesn't hold as they are now.
 pub fn plan_cached(doc: &Document, cache: &mut StitchCache) -> Plan {
-    if cache.patterns != doc.embroidery.patterns || cache.fabric != doc.embroidery.fabric {
+    let overlap = doc.embroidery.overlap();
+    if cache.patterns != doc.embroidery.patterns || cache.fabric != doc.embroidery.fabric || cache.overlap != overlap {
         cache.entries.clear();
         cache.patterns.clone_from(&doc.embroidery.patterns);
         cache.fabric.clone_from(&doc.embroidery.fabric);
+        cache.overlap = overlap;
     }
     (cache.reused, cache.sewn) = (0, 0);
     let mut b = Builder::new(&doc.embroidery);
@@ -411,8 +413,11 @@ pub fn plan_cached(doc: &Document, cache: &mut StitchCache) -> Plan {
     // Only the objects sewn now are kept for the next plan.
     let mut next = HashMap::new();
     let mut objects = vec![];
-    for n in ordered(doc, &mut tally) {
-        let sewn = cache.get(n, &mut next);
+    let items = ordered(doc, &mut tally);
+    let covers = coverers(&items);
+    for (i, n) in items.iter().enumerate() {
+        let over: Vec<Arc<Node>> = covers.get(i).into_iter().flatten().filter_map(|j| items.get(*j).map(|c| Arc::clone(c))).collect();
+        let sewn = cache.get(n, over, &mut next);
         let start = b.plan.needles.len();
         b.apply(&sewn);
         objects.push(PlannedObject { id: n.id, needles: start..b.plan.needles.len(), warnings: sewn.warnings.clone() });
@@ -611,13 +616,8 @@ pub fn auto_settings(s: &StitchSettings, width: f64) -> StitchSettings {
 /// Sew a type object letter by letter (its glyphs as laid out, then its underlines and
 /// strikethroughs), each in the thread of its characters' colour. Inline graphics are left out.
 fn text(t: &vectorcraft_doc::TextObject, s: &StitchSettings, b: &mut Sewer) {
-    let db = vectorcraft_text::FontDb::global();
-    let lay = vectorcraft_text::layout(db, t);
     let style = |run: usize| t.runs.get(run).map(|r| r.style.clone()).unwrap_or_else(|| t.first_style());
-    let glyphs = lay.glyphs.iter().enumerate().filter(|(gi, _)| !lay.inlines.iter().any(|i| i.glyph == *gi)).map(|(_, g)| (g.run, g.outline.clone()));
-    let bars = vectorcraft_text::decorations(&lay, db, t);
-    let parts: Vec<(usize, PathData)> =
-        glyphs.chain(bars).map(|(run, outline)| (run, PathData::from_bezpath(&outline).transformed(t.xf))).filter(|(_, p)| !p.is_empty()).collect();
+    let parts = glyph_parts(t);
     if s.kind != StitchKind::Auto {
         for (run, path) in &parts {
             let a = style(*run).appearance();
@@ -643,6 +643,16 @@ fn text(t: &vectorcraft_doc::TextObject, s: &StitchSettings, b: &mut Sewer) {
             Choice::Sew(t, _) => sew(&t, thread, a.stroke_width() * PT_MM, &[path], FillRule::NonZero, b),
         }
     }
+}
+
+/// A type object's letters as laid out (then its underlines and strikethroughs), each with the
+/// run it is in, inline graphics left out.
+fn glyph_parts(t: &vectorcraft_doc::TextObject) -> Vec<(usize, PathData)> {
+    let db = vectorcraft_text::FontDb::global();
+    let lay = vectorcraft_text::layout(db, t);
+    let glyphs = lay.glyphs.iter().enumerate().filter(|(gi, _)| !lay.inlines.iter().any(|i| i.glyph == *gi)).map(|(_, g)| (g.run, g.outline.clone()));
+    let bars = vectorcraft_text::decorations(&lay, db, t);
+    glyphs.chain(bars).map(|(run, outline)| (run, PathData::from_bezpath(&outline).transformed(t.xf))).filter(|(_, p)| !p.is_empty()).collect()
 }
 
 /// What Auto sews a shape with.
@@ -691,7 +701,8 @@ fn sew(s: &StitchSettings, thread: [u8; 3], stroke_mm: f64, paths: &[&PathData],
         return;
     }
     let s = &b.fabric_in(s);
-    let out = kinds::sew(&kinds::Input { settings: s, stroke_mm, paths, rule, patterns: b.patterns, auto: b.auto });
+    let out =
+        kinds::sew(&kinds::Input { settings: s, stroke_mm, paths, rule, patterns: b.patterns, auto: b.auto, cuts: &b.cuts, overlap: b.overlap });
     b.out.warnings.extend(out.warnings);
     emit(s, thread, out.runs, b);
 }
@@ -732,6 +743,9 @@ struct Sewer<'a> {
     /// The document's fabric ([`EmbroiderySetup::fabric`]), and the auto underlay it asks for.
     fabric: Option<&'a vectorcraft_doc::Fabric>,
     auto: generate::AutoUnderlay,
+    /// The areas sewn later on top of the object, and the document's overlap, mm.
+    cuts: Vec<generate::Cut>,
+    overlap: f64,
     out: Sewn,
 }
 
@@ -751,19 +765,25 @@ impl Sewer<'_> {
 /// changing it in place. A change to the document's border patterns empties the cache.
 #[derive(Default)]
 pub struct StitchCache {
-    entries: HashMap<NodeId, (Arc<Node>, Arc<Sewn>)>,
+    entries: HashMap<NodeId, Entry>,
     patterns: Vec<vectorcraft_doc::BorderPattern>,
     fabric: Option<vectorcraft_doc::Fabric>,
+    overlap: f64,
     /// Objects the last plan took from the cache and sewed again.
     pub reused: usize,
     pub sewn: usize,
 }
 
+/// A cached object: the node sewn, the objects on top of it it was cut by, and its stitches.
+type Entry = (Arc<Node>, Vec<Arc<Node>>, Arc<Sewn>);
+
 impl StitchCache {
-    /// `n`'s stitches: kept ones when `n` is the node they were sewn from, else sewn now.
-    fn get(&mut self, n: &Arc<Node>, next: &mut HashMap<NodeId, (Arc<Node>, Arc<Sewn>)>) -> Arc<Sewn> {
+    /// `n`'s stitches: kept ones when `n` is the node they were sewn from and the same objects
+    /// (`over`) lie on top of it, else sewn now.
+    fn get(&mut self, n: &Arc<Node>, over: Vec<Arc<Node>>, next: &mut HashMap<NodeId, Entry>) -> Arc<Sewn> {
+        let same = |a: &[Arc<Node>]| a.len() == over.len() && a.iter().zip(&over).all(|(p, q)| Arc::ptr_eq(p, q));
         let sewn = match self.entries.get(&n.id) {
-            Some((node, sewn)) if Arc::ptr_eq(node, n) => {
+            Some((node, was_over, sewn)) if Arc::ptr_eq(node, n) && same(was_over) => {
                 self.reused += 1;
                 sewn.clone()
             }
@@ -771,14 +791,99 @@ impl StitchCache {
                 self.sewn += 1;
                 // A fabric this version can't read isn't used.
                 let fabric = self.fabric.as_ref().filter(|f| f.unknown.is_none());
-                let mut b = Sewer { patterns: &self.patterns, fabric, auto: fabrics::auto_underlay(fabric), out: Sewn::default() };
+                let cuts = over.iter().filter_map(|c| cover_area(c)).collect();
+                let mut b = Sewer {
+                    patterns: &self.patterns,
+                    fabric,
+                    auto: fabrics::auto_underlay(fabric),
+                    cuts,
+                    overlap: self.overlap,
+                    out: Sewn::default(),
+                };
                 sew_node(n, &mut b);
                 Arc::new(b.out)
             }
         };
-        next.insert(n.id, (n.clone(), sewn.clone()));
+        next.insert(n.id, (n.clone(), over, sewn.clone()));
         sewn
     }
+}
+
+/// Whether `n` covers what is under it when sewn on top (overlap removal): areas (fill, satin
+/// shape, Auto) and satin columns along a path.
+fn covers(n: &Node) -> bool {
+    n.extras().stitch.as_deref().is_some_and(|s| {
+        s.unknown.is_none()
+            && (matches!(s.kind, StitchKind::Fill | StitchKind::SatinShape | StitchKind::Auto) || (s.kind == StitchKind::Satin && !s.rails))
+    })
+}
+
+/// For each of `items` (in sewing order) that is a fill whose covered rows are cut away, the
+/// later items that may lie on top of it (their boxes meet).
+fn coverers(items: &[&Arc<Node>]) -> Vec<Vec<usize>> {
+    let fills: Vec<bool> = items
+        .iter()
+        .map(|n| n.extras().stitch.as_deref().is_some_and(|s| s.unknown.is_none() && s.kind == StitchKind::Fill && !s.keep_covered))
+        .collect();
+    if !fills.iter().any(|f| *f) {
+        return vec![];
+    }
+    let boxes: Vec<Option<vectorcraft_geom::Rect>> = items.iter().map(|n| n.visual_bounds()).collect();
+    let can: Vec<bool> = items.iter().map(|n| covers(n)).collect();
+    let meet = |a: &vectorcraft_geom::Rect, b: &vectorcraft_geom::Rect| a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
+    (0..items.len())
+        .map(|i| {
+            if fills.get(i) != Some(&true) {
+                return vec![];
+            }
+            let mine = boxes.get(i).copied().flatten();
+            (i + 1..items.len())
+                .filter(|j| can.get(*j) == Some(&true))
+                .filter(|j| match (mine, boxes.get(*j).copied().flatten()) {
+                    (Some(a), Some(b)) => meet(&a, &b),
+                    // A box unknown: it may.
+                    _ => true,
+                })
+                .collect()
+        })
+        .collect()
+}
+
+/// The area `n` covers when sewn on top of a fill (see [`covers`]): areas by their outlines (type:
+/// its letters), satin columns by their band.
+fn cover_area(n: &Node) -> Option<generate::Cut> {
+    let s = n.extras().stitch.as_deref()?;
+    if !covers(n) {
+        return None;
+    }
+    let area = s.kind != StitchKind::Satin;
+    let (paths, rule): (Vec<PathData>, FillRule) = match &n.kind {
+        NodeKind::Path { path, rule, .. } => (vec![path.clone()], *rule),
+        NodeKind::Compound { children, rule } => (children.iter().filter_map(|c| c.path_data().cloned()).collect(), *rule),
+        NodeKind::Text(t) if area => (glyph_parts(t).into_iter().map(|(_, p)| p).collect(), FillRule::NonZero),
+        _ => return None,
+    };
+    let lines: Vec<(Vec<Point>, bool)> = paths.iter().flat_map(generate::polylines).collect();
+    if area {
+        let polys: Vec<Vec<Point>> = lines.into_iter().map(|(l, _)| l).filter(|l| l.len() >= 3).collect();
+        return (!polys.is_empty()).then_some(generate::Cut { polys, rule });
+    }
+    // A satin column: a quad either side of each stretch of its path, all turning the same way.
+    let half = s.width(n.appearance.stroke_width() * PT_MM) / 2.0;
+    let mut quads = vec![];
+    for (l, _) in &lines {
+        for w in l.windows(2) {
+            let (a, b) = (w[0], w[1]);
+            let d = b - a;
+            let len = d.hypot();
+            if len <= 1e-9 || !len.is_finite() {
+                continue;
+            }
+            let side = kurbo::Vec2::new(-d.y, d.x) * (half / len);
+            quads.push(vec![a + side, b + side, b - side, a - side]);
+        }
+    }
+    (!quads.is_empty()).then_some(generate::Cut { polys: quads, rule: FillRule::NonZero })
 }
 
 /// A distinct thread colour for the `i`th colour block of a design whose file holds no colours

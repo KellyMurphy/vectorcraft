@@ -4958,3 +4958,8 @@ lighting	Light	광원
 	Save Fabric…	천 저장…
 	Load Fabric	천 불러오기
 @msg	Fabric: {_1}	천: {_1}
+
+# Overlap removal (the Embroidery and Sew Order panels)
+	Keep Covered Rows	가려진 행 유지
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	나중에 위에 수놓는 오브젝트 아래에도 이 채우기의 행을 수놓습니다(보통은 잘라 냅니다)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	채우기의 행이 나중에 그 위에 수놓는 오브젝트 아래로 들어가는 거리입니다. 가려진 행의 나머지는 잘라 냅니다

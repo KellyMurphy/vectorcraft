@@ -5236,3 +5236,8 @@ lighting	Light	光源
 	Save Fabric…	存储面料…
 	Load Fabric	载入面料
 @msg	Fabric: {_1}	面料: {_1}
+
+# Overlap removal (the Embroidery and Sew Order panels)
+	Keep Covered Rows	保留被覆盖的行
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	在之后缝于其上的对象下方也缝制此填充的行（通常会被剪除）
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	填充的行仍伸入之后缝于其上的对象下方多远；被覆盖行的其余部分会被剪除

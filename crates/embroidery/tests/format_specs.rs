@@ -95,6 +95,7 @@ fn full_stitch() -> StitchSettings {
         wide_over: Some(7.0),
         border: Some(2.0),
         rails: true,
+        keep_covered: true,
         trim_before: true,
         trim_after: true,
         extra: Default::default(),
@@ -106,6 +107,7 @@ fn full_setup() -> EmbroiderySetup {
     EmbroiderySetup {
         trim_jumps_over: Some(5.0),
         stitch_moves_under: 2.0,
+        overlap: 1.0,
         order: vec![NodeId(1)],
         patterns: vec![full_pattern()],
         sew_out: Some(full_sew_out()),

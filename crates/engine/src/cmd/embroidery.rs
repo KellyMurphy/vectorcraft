@@ -31,7 +31,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Embroidery Setup",
             ["Window", "Embroidery"],
             None,
-            "{trimJumpsOver?: mm (0.5–100; 3) | null (never trim on length: only thread changes and objects' trimBefore/trimAfter cut the thread), stitchMovesUnder?: mm (0–5; 1: moves to the next stitch up to this long are sewn, longer ones jump)} the document's travel settings, as one undo step → {trimJumpsOver, stitchMovesUnder}",
+            "{trimJumpsOver?: mm (0.5–100; 3) | null (never trim on length: only thread changes and objects' trimBefore/trimAfter cut the thread), stitchMovesUnder?: mm (0–5; 1: moves to the next stitch up to this long are sewn, longer ones jump), overlap?: mm (0–3; 0.5: how far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away)} the document's travel and overlap settings, as one undo step → {trimJumpsOver, stitchMovesUnder, overlap}",
             has_doc,
             setup
         ),
@@ -348,7 +348,7 @@ fn set(s: &mut Session, p: &Value) -> Result<Value> {
 }
 
 fn setup_json(e: &EmbroiderySetup) -> Value {
-    json!({ "trimJumpsOver": e.trim_over(), "stitchMovesUnder": e.stitch_under() })
+    json!({ "trimJumpsOver": e.trim_over(), "stitchMovesUnder": e.stitch_under(), "overlap": e.overlap() })
 }
 
 fn setup(s: &mut Session, p: &Value) -> Result<Value> {
@@ -366,6 +366,12 @@ fn setup(s: &mut Session, p: &Value) -> Result<Value> {
         match v.as_f64() {
             Some(x) if EmbroiderySetup::STITCH_MOVES.contains(&x) => new.stitch_moves_under = x,
             _ => return Err(bad(C, "`stitchMovesUnder` must be a number from 0 to 5 (mm)")),
+        }
+    }
+    if let Some(v) = p.get("overlap") {
+        match v.as_f64() {
+            Some(x) if EmbroiderySetup::OVERLAP.contains(&x) => new.overlap = x,
+            _ => return Err(bad(C, "`overlap` must be a number from 0 to 3 (mm)")),
         }
     }
     if new != s.doc()?.doc.embroidery {

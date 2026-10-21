@@ -5053,3 +5053,8 @@ lighting	Light	ライト
 	Save Fabric…	生地を保存…
 	Load Fabric	生地を読み込み
 @msg	Fabric: {_1}	生地: {_1}
+
+# Overlap removal (the Embroidery and Sew Order panels)
+	Keep Covered Rows	覆われた列を残す
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	後から上に縫うオブジェクトの下にも、このフィルの列を縫います (通常は取り除かれます)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	後から上に縫うオブジェクトの下に、フィルの列がどこまで入り込むか。覆われた列の残りは取り除かれます

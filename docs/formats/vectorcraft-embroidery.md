@@ -47,6 +47,7 @@ are kept but have no effect.
 | `wideOver` | number, mm | auto | 2–12, and at least `thinUnder` | 7 |
 | `border` | number, mm | fill, auto | 0.5–6 | none (auto: 2 on the shapes it fills) |
 | `rails` | boolean | satin | | false |
+| `keepCovered` | boolean | fill | | false: rows under objects sewn later on top are cut away (see `overlap`) |
 | `trimBefore` | boolean | all | | false |
 | `trimAfter` | boolean | all | | false |
 
@@ -94,6 +95,7 @@ Type objects are sewn letter by letter, each letter in its characters' colour un
 |---|---|---|---|
 | `trimJumpsOver` | number, mm (0.5–100), or `null` | Jumps longer than this cut the thread first. `null`: never on length (only thread changes and objects' `trimBefore`/`trimAfter` cut it). | 3 |
 | `stitchMovesUnder` | number, mm (0–5) | Moves to the next stitch up to this long are sewn as a stitch rather than jumped; never more than `trimJumpsOver`. | 1 |
+| `overlap` | number, mm (0–3) | **Overlap removal.** A fill's rows under an object sewn later on top of it (a fill, satin shape or Auto object by its outline, type by its letters, a satin column along a path by its band) are cut away, except this far in from the covering object's edge, so the two still meet. A fill with `keepCovered` keeps all its rows. | 0.5 |
 | `order` | array of object ids | The sewing order: these objects first, in this order, then any other stitched objects in paint order (bottom first). Ids of objects no longer there are ignored. | empty: paint order |
 | `patterns` | array of border patterns | The border patterns the document uses beyond the starters, so it sews the same anywhere. | empty |
 | `fabric` | object, see [Fabric](#fabric-fabric) | The fabric the design is for: its settings fill in what objects leave unset. | none: the stitches' own defaults |

@@ -576,8 +576,51 @@ pub fn fill_carved(
     stagger: u8,
     carve: &[(Point, Point)],
 ) -> Result<Vec<Vec<Point>>, String> {
-    fill_compensated(polys, rule, angle, spacing, len, stagger, carve, RowComp::default())
+    fill_compensated(polys, rule, angle, spacing, len, stagger, carve, RowComp::default(), &[], 0.0)
 }
+
+/// An area sewn on top of a fill (overlap removal): its outlines, mm, and how they fill. Its
+/// rows' stretches under it are cut away.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Cut {
+    pub polys: Vec<Vec<Point>>,
+    pub rule: FillRule,
+}
+
+/// Where both `a` and `b` are (sorted, separate intervals).
+fn intersect(a: &[(f64, f64)], b: &[(f64, f64)]) -> Vec<(f64, f64)> {
+    let mut out = vec![];
+    for &(p, q) in a {
+        for &(r, s) in b {
+            let (lo, hi) = (p.max(r), q.min(s));
+            if hi > lo {
+                out.push((lo, hi));
+            }
+        }
+    }
+    out
+}
+
+/// `spans` less `holes`; pieces shorter than [`MIN_SPAN`] are left out.
+fn subtract(spans: Vec<(f64, f64)>, holes: &[(f64, f64)]) -> Vec<(f64, f64)> {
+    let mut out = spans;
+    for &(h0, h1) in holes {
+        out = out
+            .into_iter()
+            .flat_map(|(a, b)| {
+                if h1 <= a || h0 >= b {
+                    vec![(a, b)]
+                } else {
+                    [(a, h0.min(b)), (h1.max(a), b)].into_iter().filter(|(p, q)| q - p >= MIN_SPAN).collect()
+                }
+            })
+            .collect();
+    }
+    out
+}
+
+/// The shortest piece of a fill row sewn after overlap removal, mm.
+const MIN_SPAN: f64 = 0.5;
 
 /// A fill's compensation (see [`fill_compensated`]).
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
@@ -591,7 +634,8 @@ pub struct RowComp {
     pub push: f64,
 }
 
-/// [`fill_carved`] with pull and push compensation `comp`.
+/// [`fill_carved`] with pull and push compensation `comp`, and the areas `cuts` (objects sewn on
+/// top) cut out of its rows, the rows still reaching `overlap` mm under them.
 #[allow(clippy::too_many_arguments)]
 pub fn fill_compensated(
     polys: &[Vec<Point>],
@@ -602,6 +646,8 @@ pub fn fill_compensated(
     stagger: u8,
     carve: &[(Point, Point)],
     comp: RowComp,
+    cuts: &[Cut],
+    overlap: f64,
 ) -> Result<Vec<Vec<Point>>, String> {
     let stagger = usize::from(stagger.max(1));
     if !(spacing.is_finite() && len.is_finite()) || spacing <= 0.0 || len <= 0.0 {
@@ -630,6 +676,9 @@ pub fn fill_compensated(
     let mut spans: Vec<Vec<(f64, f64)>> = vec![];
     let mut y = y0 + spacing / 2.0;
     let half_push = if comp.push.is_finite() { comp.push.max(0.0) / 2.0 } else { 0.0 };
+    let overlap = if overlap.is_finite() { overlap.max(0.0) } else { 0.0 };
+    let cuts: Vec<(Vec<Vec<Point>>, FillRule)> =
+        cuts.iter().map(|c| (c.polys.iter().map(|p| p.iter().map(|q| rot * *q).collect()).collect(), c.rule)).collect();
     while y < y1 {
         let mut row = row_spans(&polys, rule, y);
         // Push: a span whose middle is within half the push of an edge across the rows is
@@ -639,6 +688,17 @@ pub fn fill_compensated(
                 let m = (a + b) / 2.0;
                 inside(&polys, rule, Point::new(m, y - half_push)) && inside(&polys, rule, Point::new(m, y + half_push))
             });
+        }
+        // Overlap removal: what lies under each cut, less the overlap all round, is cut away.
+        for (cut, cut_rule) in &cuts {
+            let mut hole = row_spans(cut, *cut_rule, y);
+            if overlap > 0.0 {
+                hole = intersect(&intersect(&hole, &row_spans(cut, *cut_rule, y - overlap)), &row_spans(cut, *cut_rule, y + overlap));
+                hole = hole.into_iter().map(|(a, b)| (a + overlap, b - overlap)).filter(|(a, b)| b > a).collect();
+            }
+            if !hole.is_empty() {
+                row = subtract(row, &hole);
+            }
         }
         spans.push(row);
         y += spacing;

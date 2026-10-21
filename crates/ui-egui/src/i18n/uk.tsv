@@ -4992,3 +4992,8 @@ lighting	Light	Світло
 	Save Fabric…	Зберегти тканину…
 	Load Fabric	Завантажити тканину
 @msg	Fabric: {_1}	Тканина: {_1}
+
+# Overlap removal (the Embroidery and Sew Order panels)
+	Keep Covered Rows	Зберігати закриті ряди
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Вишивати ряди цієї заливки й під об’єктами, що вишиваються пізніше поверх неї (зазвичай їх вирізають)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Наскільки ряди заливки ще заходять під об’єкти, що вишиваються пізніше поверх неї; решта закритих рядів вирізається
