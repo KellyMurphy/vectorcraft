@@ -5398,3 +5398,16 @@ theme	Appearance	Външен вид
 	Optimize Sew Order	Оптимизиране на реда на бродиране
 	Start At:	Начало при:
 	Where the needle starts: the path is entered at its point nearest it	Откъде започва иглата: пътят започва от най-близката си точка
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	Карта на конците:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Всеки цвят конец в дизайна получава най-близкия конец от тази карта. Зареждайте карти, които имате право да ползвате (.vcthreads).
+	Load a thread chart file (.vcthreads)	Зареждане на файл с карта на конците (.vcthreads)
+	Thread Charts	Карти на конците
+	Thread Chart	Карта на конците
+	Load Thread Chart…	Зареждане на карта на конците…
+	Save Thread Chart…	Запазване на карта на конците…
+	Remove Thread Chart	Премахване на карта на конците
+	Match Threads	Съпоставяне на конците
+	Load Thread Chart	Зареждане на карта на конците
+@msg	Thread chart: {_1}	Карта на конците: {_1}

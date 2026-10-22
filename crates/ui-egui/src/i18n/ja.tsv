@@ -5100,3 +5100,16 @@ lighting	Light	ライト
 	Optimize Sew Order	縫製順を最適化
 	Start At:	開始位置:
 	Where the needle starts: the path is entered at its point nearest it	針が縫い始める位置: パスはここに最も近い点から始まります
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	糸チャート:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	デザインの各糸色に、このチャートで最も近い糸を割り当てます。使用する権利のあるチャートを読み込んでください (.vcthreads)。
+	Load a thread chart file (.vcthreads)	糸チャート ファイル (.vcthreads) を読み込み
+	Thread Charts	糸チャート
+	Thread Chart	糸チャート
+	Load Thread Chart…	糸チャートを読み込み…
+	Save Thread Chart…	糸チャートを保存…
+	Remove Thread Chart	糸チャートを削除
+	Match Threads	糸を照合
+	Load Thread Chart	糸チャートを読み込み
+@msg	Thread chart: {_1}	糸チャート: {_1}

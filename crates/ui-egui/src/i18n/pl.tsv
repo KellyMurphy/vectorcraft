@@ -5280,3 +5280,16 @@ mark-style	Japanese	Japońskie
 	Optimize Sew Order	Optymalizuj kolejność wyszywania
 	Start At:	Początek w:
 	Where the needle starts: the path is entered at its point nearest it	Gdzie igła zaczyna: ścieżka zaczyna się w najbliższym punkcie
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	Wzornik nici:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Każdy kolor nici w projekcie dostaje najbliższą nić z tego wzornika. Wczytuj wzorniki, do których masz prawo (.vcthreads).
+	Load a thread chart file (.vcthreads)	Wczytaj plik wzornika nici (.vcthreads)
+	Thread Charts	Wzorniki nici
+	Thread Chart	Wzornik nici
+	Load Thread Chart…	Wczytaj wzornik nici…
+	Save Thread Chart…	Zapisz wzornik nici…
+	Remove Thread Chart	Usuń wzornik nici
+	Match Threads	Dopasuj nici
+	Load Thread Chart	Wczytaj wzornik nici
+@msg	Thread chart: {_1}	Wzornik nici: {_1}

@@ -65,6 +65,22 @@ pub static TEXT_DOCS: &[TextDoc] = &[
         text: include_str!("../../../docs/formats/vcborder.schema.json"),
     },
     TextDoc {
+        uri: "vectorcraft://spec/vcthreads",
+        name: "spec-vcthreads",
+        title: "Thread chart file (.vcthreads) specification",
+        description: "The open JSON format for embroidery thread charts (code, name, colour) and how colours are matched to threads",
+        mime: "text/markdown",
+        text: include_str!("../../../docs/formats/vcthreads.md"),
+    },
+    TextDoc {
+        uri: "vectorcraft://spec/vcthreads.schema.json",
+        name: "spec-vcthreads-schema",
+        title: "Thread chart file JSON Schema",
+        description: "JSON Schema (draft 2020-12) for .vcthreads files",
+        mime: "application/schema+json",
+        text: include_str!("../../../docs/formats/vcthreads.schema.json"),
+    },
+    TextDoc {
         uri: "vectorcraft://spec/vchoop",
         name: "spec-vchoop",
         title: "Hoop list file (.vchoop) specification",

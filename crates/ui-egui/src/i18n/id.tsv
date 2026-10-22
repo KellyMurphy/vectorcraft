@@ -5422,3 +5422,16 @@ swatch	Bright Violet	Violet cerah
 	Optimize Sew Order	Optimalkan urutan sulam
 	Start At:	Mulai di:
 	Where the needle starts: the path is entered at its point nearest it	Tempat jarum mulai: jalur dimulai di titik terdekatnya
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	Bagan benang:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Setiap warna benang desain mendapat benang terdekat dari bagan ini. Muat bagan yang boleh Anda gunakan (.vcthreads).
+	Load a thread chart file (.vcthreads)	Muat berkas bagan benang (.vcthreads)
+	Thread Charts	Bagan benang
+	Thread Chart	Bagan benang
+	Load Thread Chart…	Muat bagan benang…
+	Save Thread Chart…	Simpan bagan benang…
+	Remove Thread Chart	Hapus bagan benang
+	Match Threads	Cocokkan benang
+	Load Thread Chart	Muat bagan benang
+@msg	Thread chart: {_1}	Bagan benang: {_1}

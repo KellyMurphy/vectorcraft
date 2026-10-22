@@ -163,6 +163,60 @@ pub fn specs() -> Vec<CommandSpec> {
             check
         ),
         cmd!(
+            query "embroidery.threadCharts",
+            "Thread Charts",
+            ["Window", "Embroidery"],
+            None,
+            "{} the thread charts loaded into the document (VectorCraft ships none: load charts you have the right to use) → {chart: id | null (the one the design's colours are matched against), charts: [{id, name, brand, weight, threads: count, author, license, source, description, supported}]}",
+            has_doc,
+            thread_charts
+        ),
+        cmd!(
+            "embroidery.loadThreadChart",
+            "Load Thread Chart…",
+            ["Window", "Embroidery"],
+            None,
+            "{path? | data?: the file's text} load a .vcthreads thread chart file (specified in docs/formats/vcthreads.md) into the document, replacing one with its id, and match against it when none is chosen; one undo step → {id, name, threads}",
+            has_doc,
+            load_thread_chart
+        ),
+        cmd!(
+            "embroidery.setThreadChart",
+            "Thread Chart",
+            ["Window", "Embroidery"],
+            None,
+            "{chart: id | null} the chart the design's colours are matched against (null: none); one undo step → {chart}",
+            has_doc,
+            set_thread_chart
+        ),
+        cmd!(
+            "embroidery.removeThreadChart",
+            "Remove Thread Chart",
+            ["Window", "Embroidery"],
+            None,
+            "{chart: id} remove a thread chart from the document; one undo step → {removed}",
+            has_doc,
+            remove_thread_chart
+        ),
+        cmd!(
+            "embroidery.saveThreadChart",
+            "Save Thread Chart…",
+            ["Window", "Embroidery"],
+            None,
+            "{chart: id, path?} write one of the document's thread charts as a .vcthreads file → {path}, or without path {data: the file's text}",
+            has_doc,
+            save_thread_chart
+        ),
+        cmd!(
+            query "embroidery.matchThreads",
+            "Match Threads",
+            ["Window", "Embroidery"],
+            None,
+            "{chart?: id (default: the document's chosen chart)} each thread colour of the design (in sewing order) and its nearest thread in the chart, by CIEDE2000 colour difference (under about 2: hard to tell apart) → {chart, threads: [{color: \"#rrggbb\", code, name, threadColor, deltaE}]}",
+            has_doc,
+            match_threads
+        ),
+        cmd!(
             query "embroidery.hoops",
             "Hoops",
             ["Window", "Embroidery"],
@@ -903,6 +957,132 @@ fn check(s: &mut Session, p: &Value) -> Result<Value> {
         "counts": {"error": count(check::Severity::Error), "warning": count(check::Severity::Warning), "note": count(check::Severity::Note)},
         "rules": rules,
     }))
+}
+
+fn thread_charts(s: &mut Session, _: &Value) -> Result<Value> {
+    let e = &s.doc()?.doc.embroidery;
+    let charts: Vec<Value> = e
+        .charts
+        .iter()
+        .map(|c| {
+            json!({
+                "id": c.id, "name": c.name, "brand": c.brand, "weight": c.weight, "threads": c.threads.len(),
+                "author": c.author, "license": c.license, "source": c.source, "description": c.description,
+                "supported": c.unknown.is_none(),
+            })
+        })
+        .collect();
+    Ok(json!({"chart": e.chart, "charts": charts}))
+}
+
+fn load_thread_chart(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.loadThreadChart";
+    let bytes = match (str_param(p, "path"), str_param(p, "data")) {
+        (Some(path), _) => super::fileio::read_file(path)?,
+        (None, Some(text)) => text.as_bytes().to_vec(),
+        _ => return Err(bad(C, "give `path` or `data`")),
+    };
+    let chart = vectorcraft_embroidery::threads::read_file(&bytes).map_err(|e| bad(C, e))?;
+    let out = json!({"id": chart.id, "name": chart.name, "threads": chart.threads.len()});
+    edit_counted(s, "Load Thread Chart", |d| {
+        let e = &mut d.embroidery;
+        e.charts.retain(|c| c.id != chart.id);
+        if e.chart.is_none() {
+            e.chart = Some(chart.id.clone());
+        }
+        e.charts.push(chart);
+        Ok(1)
+    })?;
+    Ok(out)
+}
+
+fn set_thread_chart(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.setThreadChart";
+    let chart = match p.get("chart") {
+        Some(Value::Null) => None,
+        Some(Value::String(id)) => {
+            let id = id.trim().to_string();
+            if !s.doc()?.doc.embroidery.charts.iter().any(|c| c.id == id && c.unknown.is_none()) {
+                return Err(bad(C, format!("the document has no thread chart `{id}` (embroidery.loadThreadChart adds one)")));
+            }
+            Some(id)
+        }
+        _ => return Err(bad(C, "`chart` must be a chart's id, or null")),
+    };
+    if s.doc()?.doc.embroidery.chart != chart {
+        let c = chart.clone();
+        edit_counted(s, "Thread Chart", |d| {
+            d.embroidery.chart = c;
+            Ok(1)
+        })?;
+    }
+    Ok(json!({"chart": chart}))
+}
+
+fn remove_thread_chart(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.removeThreadChart";
+    let id = str_param(p, "chart").map(str::trim).ok_or_else(|| bad(C, "`chart` (a chart's id) is missing"))?.to_string();
+    if !s.doc()?.doc.embroidery.charts.iter().any(|c| c.id == id) {
+        return Err(bad(C, format!("the document has no thread chart `{id}`")));
+    }
+    let gone = id.clone();
+    edit_counted(s, "Remove Thread Chart", |d| {
+        d.embroidery.charts.retain(|c| c.id != gone);
+        if d.embroidery.chart.as_deref() == Some(gone.as_str()) {
+            d.embroidery.chart = None;
+        }
+        Ok(1)
+    })?;
+    Ok(json!({"removed": id}))
+}
+
+fn save_thread_chart(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.saveThreadChart";
+    let id = str_param(p, "chart").map(str::trim).ok_or_else(|| bad(C, "`chart` (a chart's id) is missing"))?;
+    let chart = s
+        .doc()?
+        .doc
+        .embroidery
+        .charts
+        .iter()
+        .find(|c| c.id == id && c.unknown.is_none())
+        .cloned()
+        .ok_or_else(|| bad(C, format!("the document has no thread chart `{id}`")))?;
+    let text = vectorcraft_embroidery::threads::write_file(&chart).map_err(|e| bad(C, e))?;
+    match str_param(p, "path") {
+        Some(path) => {
+            super::fileio::write_file(path, text.as_bytes())?;
+            Ok(json!({"path": path}))
+        }
+        None => Ok(json!({"data": text})),
+    }
+}
+
+fn match_threads(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.matchThreads";
+    let doc = &s.doc()?.doc;
+    let id = match str_param(p, "chart") {
+        Some(id) => Some(id.trim().to_string()),
+        None => doc.embroidery.chart.clone(),
+    };
+    let Some(id) = id else { return Err(bad(C, "no thread chart chosen: load one (embroidery.loadThreadChart) or name it (`chart`)")) };
+    let chart = doc
+        .embroidery
+        .charts
+        .iter()
+        .find(|c| c.id == id && c.unknown.is_none())
+        .ok_or_else(|| bad(C, format!("the document has no thread chart `{id}`")))?
+        .clone();
+    let plan = s.stitch_plan(&s.doc()?.doc);
+    let threads: Vec<Value> = plan
+        .threads
+        .iter()
+        .map(|t| match vectorcraft_embroidery::threads::nearest(&chart, *t) {
+            Some((n, d)) => json!({"color": hex(*t), "code": n.code, "name": n.name, "threadColor": n.color, "deltaE": (d * 10.0).round() / 10.0}),
+            None => json!({"color": hex(*t), "code": null, "name": null, "threadColor": null, "deltaE": null}),
+        })
+        .collect();
+    Ok(json!({"chart": chart.id, "threads": threads}))
 }
 
 fn hoop_json(h: Option<&vectorcraft_doc::Hoop>) -> Value {

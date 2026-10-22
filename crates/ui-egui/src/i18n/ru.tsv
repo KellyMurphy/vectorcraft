@@ -5055,3 +5055,16 @@ lighting	Light	Свет
 	Optimize Sew Order	Оптимизировать порядок вышивки
 	Start At:	Начало в:
 	Where the needle starts: the path is entered at its point nearest it	Где начинает игла: контур начинается в ближайшей точке
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	Карта ниток:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Каждому цвету нитки в дизайне подбирается ближайшая нитка из этой карты. Загружайте карты, которые вы вправе использовать (.vcthreads).
+	Load a thread chart file (.vcthreads)	Загрузить файл карты ниток (.vcthreads)
+	Thread Charts	Карты ниток
+	Thread Chart	Карта ниток
+	Load Thread Chart…	Загрузить карту ниток…
+	Save Thread Chart…	Сохранить карту ниток…
+	Remove Thread Chart	Удалить карту ниток
+	Match Threads	Подобрать нитки
+	Load Thread Chart	Загрузить карту ниток
+@msg	Thread chart: {_1}	Карта ниток: {_1}

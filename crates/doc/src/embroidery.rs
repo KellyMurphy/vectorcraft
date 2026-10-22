@@ -407,6 +407,13 @@ pub struct EmbroiderySetup {
     /// it (`None`: no hoop chosen, nothing checked).
     #[serde(skip_serializing_if = "Option::is_none", deserialize_with = "de_hoop", serialize_with = "ser_hoop")]
     pub hoop: Option<Box<Hoop>>,
+    /// Thread charts loaded into the document (from `.vcthreads` files), kept with it.
+    #[serde(skip_serializing_if = "Vec::is_empty", deserialize_with = "de_charts", serialize_with = "ser_charts")]
+    pub charts: Vec<ThreadChart>,
+    /// The chart the design's colours are matched against (an id of [`EmbroiderySetup::charts`];
+    /// `None`: none).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub chart: Option<String>,
     /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
     #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
     pub extra: serde_json::Map<String, serde_json::Value>,
@@ -425,6 +432,8 @@ impl Default for EmbroiderySetup {
             sew_out: None,
             fabric: None,
             hoop: None,
+            charts: vec![],
+            chart: None,
             extra: Default::default(),
         }
     }
@@ -492,6 +501,76 @@ pub struct Fabric {
     /// written so saving doesn't lose it. It isn't used: the stitches keep their own defaults.
     #[serde(skip)]
     pub unknown: Option<Box<serde_json::Value>>,
+}
+
+/// A thread chart: a brand's (or a person's) threads, each with its code, name and colour.
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct ThreadChart {
+    /// Lower case letters, digits and dashes.
+    pub id: String,
+    pub name: String,
+    /// The thread maker and line, and the thread's weight (information only).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub brand: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub weight: Option<String>,
+    /// Who made the chart, its licence and where it came from.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub author: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub license: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub source: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    pub threads: Vec<ChartThread>,
+    /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
+    #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
+    pub extra: serde_json::Map<String, serde_json::Value>,
+    /// A chart this version can't read, kept exactly as written; it isn't used.
+    #[serde(skip)]
+    pub unknown: Option<Box<serde_json::Value>>,
+}
+
+/// One thread of a chart.
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct ChartThread {
+    /// The maker's number for it (`1801`).
+    pub code: String,
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub name: String,
+    /// Its colour, `#rrggbb` (sRGB).
+    pub color: String,
+    /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
+    #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
+    pub extra: serde_json::Map<String, serde_json::Value>,
+}
+
+fn de_charts<'de, D: serde::Deserializer<'de>>(d: D) -> Result<Vec<ThreadChart>, D::Error> {
+    let v = Vec::<serde_json::Value>::deserialize(d)?;
+    Ok(v.into_iter()
+        .map(|v| match ThreadChart::deserialize(&v) {
+            Ok(c) => c,
+            Err(_) => {
+                let text = |k: &str| v.get(k).and_then(serde_json::Value::as_str).unwrap_or_default().to_string();
+                ThreadChart { id: text("id"), name: text("name"), unknown: Some(Box::new(v.clone())), ..ThreadChart::default() }
+            }
+        })
+        .collect())
+}
+
+fn ser_charts<S: serde::Serializer>(v: &[ThreadChart], ser: S) -> Result<S::Ok, S::Error> {
+    use serde::ser::SerializeSeq;
+    let mut seq = ser.serialize_seq(Some(v.len()))?;
+    for c in v {
+        match &c.unknown {
+            Some(raw) => seq.serialize_element(raw)?,
+            None => seq.serialize_element(c)?,
+        }
+    }
+    seq.end()
 }
 
 /// An embroidery hoop: the area a machine can sew in it (its sewing field), mm.

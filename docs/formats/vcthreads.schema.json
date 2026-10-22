@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KellyMurphy/vectorcraft/blob/main/docs/formats/vcthreads.schema.json",
+  "title": "VectorCraft thread chart file (.vcthreads), version 1",
+  "description": "Threads: code, name and colour. See vcthreads.md.",
+  "type": "object",
+  "required": ["format", "version", "threads"],
+  "properties": {
+    "format": { "const": "vectorcraft-thread-chart" },
+    "version": { "type": "integer", "minimum": 1, "maximum": 1 },
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "brand": { "type": "string" },
+    "weight": { "type": "string" },
+    "author": { "type": "string" },
+    "license": { "type": "string" },
+    "source": { "type": "string" },
+    "description": { "type": "string" },
+    "threads": { "type": "array", "items": { "$ref": "#/$defs/thread" }, "minItems": 1, "maxItems": 20000 }
+  },
+  "$defs": {
+    "thread": {
+      "type": "object",
+      "required": ["code", "color"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "name": { "type": "string" },
+        "color": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }
+      }
+    }
+  }
+}

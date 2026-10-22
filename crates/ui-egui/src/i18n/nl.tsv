@@ -5465,3 +5465,16 @@ swatch	Bright Violet	Felviolet
 	Optimize Sew Order	Borduurvolgorde optimaliseren
 	Start At:	Begin bij:
 	Where the needle starts: the path is entered at its point nearest it	Waar de naald begint: het pad begint bij zijn dichtstbijzijnde punt
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	Garenkaart:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Elke garenkleur van het ontwerp krijgt het dichtstbijzijnde garen van deze kaart. Laad kaarten die u mag gebruiken (.vcthreads).
+	Load a thread chart file (.vcthreads)	Een garenkaartbestand (.vcthreads) laden
+	Thread Charts	Garenkaarten
+	Thread Chart	Garenkaart
+	Load Thread Chart…	Garenkaart laden…
+	Save Thread Chart…	Garenkaart opslaan…
+	Remove Thread Chart	Garenkaart verwijderen
+	Match Threads	Garens koppelen
+	Load Thread Chart	Garenkaart laden
+@msg	Thread chart: {_1}	Garenkaart: {_1}

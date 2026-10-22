@@ -180,6 +180,16 @@ for warnings). The rules so far:
 Exporting a DST adds a line for each rule that found something to the export's warnings.
 `embroidery.check` gives the same findings to agents and scripts, each with the object and where it is.
 
+### Thread charts
+
+A thread chart lists a maker's threads: code, name and colour. Load one into the document (the
+Embroidery panel's **Thread Chart** › **Load…**, File › Open, or `embroidery.loadThreadChart`) and each
+thread colour of the design gets the nearest thread in it, by CIEDE2000 colour difference: the panel
+shows the codes under the design's thread chips (hover for names and the difference), and
+`embroidery.matchThreads` lists them. VectorCraft ships no makers' charts: their numbers and colours are
+the makers' data, and none is published under terms that allow redistributing it, so load charts you
+have the right to use, or make your own ([specification](formats/vcthreads.md)).
+
 ### Hoops
 
 The Embroidery panel's **Hoop** menu (Design section, `embroidery.setHoop`) sets the hoop the design is
@@ -284,6 +294,12 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.sortByThread` | group the sewing order by thread colour |
 | `embroidery.optimizeOrder` | group by thread and sew each thread's objects nearest first, cutting travel → `travelBefore`, `travelAfter` |
 | `embroidery.resetOrder` | sew in paint order again |
+| `embroidery.threadCharts` | → the document's thread `charts` and the `chart` matched against |
+| `embroidery.loadThreadChart` | `{path? \| data?}`: load a `.vcthreads` chart into the document |
+| `embroidery.setThreadChart` | `{chart: id \| null}`: the chart the design's colours are matched against |
+| `embroidery.removeThreadChart` | `{chart}`: remove a chart from the document |
+| `embroidery.saveThreadChart` | `{chart, path?}`: write a chart as a `.vcthreads` file |
+| `embroidery.matchThreads` | `{chart?}` → each design thread colour's nearest chart thread (`code`, `name`, `threadColor`, `deltaE`) |
 | `embroidery.hoops` | → the document's `hoop` (or null), the `common` hoops, and whether the design `fit`s |
 | `embroidery.setHoop` | `{hoop?: 4x4\|5x7\|6x10\|8x8\|8x12\|cap\|null, name?, width?, height?, round?}`: set the document's hoop |
 | `embroidery.loadHoop` | `{path? \| data?, hoop?}`: a hoop from a `.vchoop` file as the document's |

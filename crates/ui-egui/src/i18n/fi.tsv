@@ -5392,3 +5392,16 @@ mark-style	Japanese	Japanilainen
 	Optimize Sew Order	Optimoi kirjontajärjestys
 	Start At:	Aloituskohta:
 	Where the needle starts: the path is entered at its point nearest it	Mistä neula aloittaa: polku aloitetaan sen lähimmästä pisteestä
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	Lankakartta:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Jokainen kuvion lankaväri saa tämän kartan lähimmän langan. Lataa karttoja, joita sinulla on oikeus käyttää (.vcthreads).
+	Load a thread chart file (.vcthreads)	Lataa lankakarttatiedosto (.vcthreads)
+	Thread Charts	Lankakartat
+	Thread Chart	Lankakartta
+	Load Thread Chart…	Lataa lankakartta…
+	Save Thread Chart…	Tallenna lankakartta…
+	Remove Thread Chart	Poista lankakartta
+	Match Threads	Sovita langat
+	Load Thread Chart	Lataa lankakartta
+@msg	Thread chart: {_1}	Lankakartta: {_1}

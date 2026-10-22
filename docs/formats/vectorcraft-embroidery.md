@@ -101,6 +101,8 @@ Type objects are sewn letter by letter, each letter in its characters' colour un
 | `overlap` | number, mm (0–3) | **Overlap removal.** A fill's rows under an object sewn later on top of it (a fill, satin shape or Auto object by its outline, type by its letters, a satin column along a path by its band) are cut away (its underlay too), except this far in from the covering object's edge, so the two still meet; where the covering object reaches past the fill's own edge no rim is kept. A fill with `keepCovered` keeps all its rows. | 0.5 |
 | `order` | array of object ids | The sewing order: these objects first, in this order, then any other stitched objects in paint order (bottom first). Ids of objects no longer there are ignored. | empty: paint order |
 | `patterns` | array of border patterns | The border patterns the document uses beyond the starters, so it sews the same anywhere. | empty |
+| `charts` | array of thread charts, see [Thread charts](#thread-charts-charts-chart) | Thread charts loaded into the document. | empty |
+| `chart` | string, a chart's `id` | The chart the design's colours are matched against. | none |
 | `hoop` | object, see [Hoop](#hoop-hoop) | The hoop the design is sewn in: its sewing field is checked against the design and drawn in Stitch Preview. | none: nothing checked |
 | `fabric` | object, see [Fabric](#fabric-fabric) | The fabric the design is for: its settings fill in what objects leave unset. | none: the stitches' own defaults |
 | `sewOut` | object, see [Sew-out test](#sew-out-test-sewout) | The swatches of a test sheet and what was seen when they were sewn. | none |
@@ -111,6 +113,13 @@ pattern is found before a starter with the same id. A `pattern` naming neither i
 warns.
 
 Readers clamp `trimJumpsOver` and `stitchMovesUnder` into range like stitch settings.
+
+## Thread charts (`charts`, `chart`)
+
+Each entry of `charts` has the fields of a [thread chart file](vcthreads.md#fields) other than `format`
+and `version`. `chart` names the one the design's colours are matched against (see
+[Matching](vcthreads.md#matching)). Readers keep a chart they can't read exactly as written and don't use
+it.
 
 ## Hoop (`hoop`)
 

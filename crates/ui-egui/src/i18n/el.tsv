@@ -5380,3 +5380,16 @@ effect	Points	Σημεία
 	Optimize Sew Order	Βελτιστοποίηση σειράς κεντήματος
 	Start At:	Έναρξη στο:
 	Where the needle starts: the path is entered at its point nearest it	Πού ξεκινά η βελόνα: η διαδρομή ξεκινά από το πλησιέστερο σημείο της
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	Χάρτης κλωστών:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Κάθε χρώμα κλωστής του σχεδίου παίρνει την πλησιέστερη κλωστή αυτού του χάρτη. Φορτώνετε χάρτες που έχετε δικαίωμα να χρησιμοποιείτε (.vcthreads).
+	Load a thread chart file (.vcthreads)	Φόρτωση αρχείου χάρτη κλωστών (.vcthreads)
+	Thread Charts	Χάρτες κλωστών
+	Thread Chart	Χάρτης κλωστών
+	Load Thread Chart…	Φόρτωση χάρτη κλωστών…
+	Save Thread Chart…	Αποθήκευση χάρτη κλωστών…
+	Remove Thread Chart	Αφαίρεση χάρτη κλωστών
+	Match Threads	Αντιστοίχιση κλωστών
+	Load Thread Chart	Φόρτωση χάρτη κλωστών
+@msg	Thread chart: {_1}	Χάρτης κλωστών: {_1}

@@ -5384,3 +5384,16 @@ theme	Appearance	Utseende
 	Optimize Sew Order	Optimera broderingsordning
 	Start At:	Starta vid:
 	Where the needle starts: the path is entered at its point nearest it	Där nålen börjar: banan börjas vid sin närmaste punkt
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	Trådkarta:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Varje trådfärg i designen får den närmaste tråden i den här kartan. Läs in kartor du har rätt att använda (.vcthreads).
+	Load a thread chart file (.vcthreads)	Läs in en trådkartefil (.vcthreads)
+	Thread Charts	Trådkartor
+	Thread Chart	Trådkarta
+	Load Thread Chart…	Läs in trådkarta…
+	Save Thread Chart…	Spara trådkarta…
+	Remove Thread Chart	Ta bort trådkarta
+	Match Threads	Matcha trådar
+	Load Thread Chart	Läs in trådkarta
+@msg	Thread chart: {_1}	Trådkarta: {_1}

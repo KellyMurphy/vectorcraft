@@ -5004,3 +5004,16 @@ effect	Regular	Regelmäßig
 	Optimize Sew Order	Stickreihenfolge optimieren
 	Start At:	Start bei:
 	Where the needle starts: the path is entered at its point nearest it	Wo die Nadel beginnt: der Pfad wird an seinem nächstgelegenen Punkt begonnen
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	Garnkarte:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Jede Garnfarbe des Designs erhält das nächstgelegene Garn dieser Karte. Laden Sie Karten, die Sie verwenden dürfen (.vcthreads).
+	Load a thread chart file (.vcthreads)	Eine Garnkarten-Datei (.vcthreads) laden
+	Thread Charts	Garnkarten
+	Thread Chart	Garnkarte
+	Load Thread Chart…	Garnkarte laden…
+	Save Thread Chart…	Garnkarte speichern…
+	Remove Thread Chart	Garnkarte entfernen
+	Match Threads	Garne zuordnen
+	Load Thread Chart	Garnkarte laden
+@msg	Thread chart: {_1}	Garnkarte: {_1}

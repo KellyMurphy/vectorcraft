@@ -94,7 +94,8 @@ pub use assets::ExportAsset;
 pub use corners::LiveCorners;
 pub use depth::MAX_DEPTH;
 pub use embroidery::{
-    BorderPattern, EmbroiderySetup, Fabric, Hoop, PartStitch, PatternPart, SewOut, SewResult, SewSwatch, StitchKind, StitchSettings, Underlay,
+    BorderPattern, ChartThread, EmbroiderySetup, Fabric, Hoop, PartStitch, PatternPart, SewOut, SewResult, SewSwatch, StitchKind, StitchSettings,
+    ThreadChart, Underlay,
 };
 pub use graph::{
     ColumnDesign, ColumnType, Fractions, GraphDesign, GraphKind, GraphSpec, LabelStyles, MAX_GRAPH_CATEGORIES, MAX_GRAPH_SERIES, PiePosition,

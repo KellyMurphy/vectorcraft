@@ -5039,3 +5039,16 @@ lighting	Light	Світло
 	Optimize Sew Order	Оптимізувати порядок вишивання
 	Start At:	Початок у:
 	Where the needle starts: the path is entered at its point nearest it	Де починає голка: контур починається в найближчій точці
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	Карта ниток:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Кожному кольору нитки в дизайні добирається найближча нитка з цієї карти. Завантажуйте карти, які ви маєте право використовувати (.vcthreads).
+	Load a thread chart file (.vcthreads)	Завантажити файл карти ниток (.vcthreads)
+	Thread Charts	Карти ниток
+	Thread Chart	Карта ниток
+	Load Thread Chart…	Завантажити карту ниток…
+	Save Thread Chart…	Зберегти карту ниток…
+	Remove Thread Chart	Вилучити карту ниток
+	Match Threads	Дібрати нитки
+	Load Thread Chart	Завантажити карту ниток
+@msg	Thread chart: {_1}	Карта ниток: {_1}

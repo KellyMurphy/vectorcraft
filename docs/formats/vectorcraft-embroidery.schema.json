@@ -60,7 +60,26 @@
         },
         "sewOut": { "$ref": "#/$defs/sewOut" },
         "fabric": { "$ref": "#/$defs/fabric" },
-        "hoop": { "$ref": "vchoop.schema.json#/$defs/hoop" }
+        "hoop": { "$ref": "vchoop.schema.json#/$defs/hoop" },
+        "charts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "A thread chart: the fields of a .vcthreads file other than format and version.",
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "brand": { "type": "string" },
+              "weight": { "type": "string" },
+              "author": { "type": "string" },
+              "license": { "type": "string" },
+              "source": { "type": "string" },
+              "description": { "type": "string" },
+              "threads": { "type": "array", "items": { "$ref": "vcthreads.schema.json#/$defs/thread" } }
+            }
+          }
+        },
+        "chart": { "type": "string", "description": "The id of the chart the design's colours are matched against." }
       }
     },
     "fabric": {

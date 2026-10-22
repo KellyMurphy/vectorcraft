@@ -5021,3 +5021,16 @@ theme	Appearance	Giao diện
 	Optimize Sew Order	Tối ưu thứ tự thêu
 	Start At:	Bắt đầu tại:
 	Where the needle starts: the path is entered at its point nearest it	Nơi kim bắt đầu: đường dẫn bắt đầu tại điểm gần nhất của nó
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	Bảng màu chỉ:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Mỗi màu chỉ của thiết kế được gán sợi chỉ gần nhất trong bảng này. Hãy nạp những bảng bạn có quyền sử dụng (.vcthreads).
+	Load a thread chart file (.vcthreads)	Nạp tệp bảng màu chỉ (.vcthreads)
+	Thread Charts	Bảng màu chỉ
+	Thread Chart	Bảng màu chỉ
+	Load Thread Chart…	Nạp bảng màu chỉ…
+	Save Thread Chart…	Lưu bảng màu chỉ…
+	Remove Thread Chart	Bỏ bảng màu chỉ
+	Match Threads	Khớp màu chỉ
+	Load Thread Chart	Nạp bảng màu chỉ
+@msg	Thread chart: {_1}	Bảng màu chỉ: {_1}

@@ -680,3 +680,34 @@ fn optimizing_the_order_groups_threads_and_cuts_travel() {
     assert_eq!(info(&mut s)["selection"]["startAt"], Value::Null);
     assert!(s.execute("embroidery.set", &json!({"startAt": [1.0]})).is_err());
 }
+
+#[test]
+fn thread_charts_are_loaded_matched_chosen_and_removed() {
+    let chart = r##"{"format": "vectorcraft-thread-chart", "version": 1, "name": "Test Threads",
+        "threads": [{"code": "R1", "name": "Red", "color": "#e00000"}, {"code": "B1", "name": "Blue", "color": "#0020c0"}]}"##;
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    assert!(s.execute("embroidery.matchThreads", &json!({})).is_err(), "no chart yet");
+    let r = s.execute("embroidery.loadThreadChart", &json!({"data": chart})).unwrap();
+    assert_eq!((r["id"].as_str(), r["threads"].as_u64()), (Some("test-threads"), Some(2)));
+    let list = s.execute("embroidery.threadCharts", &json!({})).unwrap();
+    assert_eq!(list["chart"], "test-threads", "the first chart loaded is matched against");
+    // The red square's thread is the chart's red.
+    let m = s.execute("embroidery.matchThreads", &json!({})).unwrap();
+    assert_eq!((m["threads"][0]["code"].as_str(), m["threads"][0]["color"].as_str()), (Some("R1"), Some("#ff0000")));
+    assert!(m["threads"][0]["deltaE"].as_f64().unwrap() < 10.0);
+    // Saved, chosen off, removed; one undo step each.
+    let text = s.execute("embroidery.saveThreadChart", &json!({"chart": "test-threads"})).unwrap()["data"].as_str().unwrap().to_string();
+    assert!(text.contains("\"R1\""));
+    s.execute("embroidery.setThreadChart", &json!({"chart": null})).unwrap();
+    assert_eq!(s.execute("embroidery.threadCharts", &json!({})).unwrap()["chart"], Value::Null);
+    s.execute("edit.undo", &json!({})).unwrap();
+    assert_eq!(s.execute("embroidery.threadCharts", &json!({})).unwrap()["chart"], "test-threads");
+    s.execute("embroidery.removeThreadChart", &json!({"chart": "test-threads"})).unwrap();
+    let list = s.execute("embroidery.threadCharts", &json!({})).unwrap();
+    assert_eq!((list["chart"].clone(), list["charts"].as_array().map(Vec::len)), (Value::Null, Some(0)));
+    for bad in [json!({"chart": "nope"}), json!({"chart": 3})] {
+        assert!(s.execute("embroidery.setThreadChart", &bad).is_err(), "{bad}");
+    }
+    assert!(s.execute("embroidery.loadThreadChart", &json!({"data": "{}"})).is_err());
+}

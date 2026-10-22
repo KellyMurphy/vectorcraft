@@ -9,10 +9,11 @@ use std::path::PathBuf;
 use kurbo::Point;
 use serde_json::Value;
 use vectorcraft_doc::{
-    BorderPattern, EmbroiderySetup, Fabric, Hoop, NodeId, PartStitch, PatternPart, SewOut, SewResult, SewSwatch, StitchKind, StitchSettings, Underlay,
+    BorderPattern, ChartThread, EmbroiderySetup, Fabric, Hoop, NodeId, PartStitch, PatternPart, SewOut, SewResult, SewSwatch, StitchKind,
+    StitchSettings, Underlay,
 };
 use vectorcraft_embroidery::params::{self, ValueKind};
-use vectorcraft_embroidery::{borders, fabrics, hoops, motifs};
+use vectorcraft_embroidery::{borders, fabrics, hoops, motifs, threads};
 
 fn formats_dir() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../docs/formats")
@@ -116,8 +117,51 @@ fn full_setup() -> EmbroiderySetup {
         sew_out: Some(Box::new(full_sew_out())),
         fabric: Some(Box::new(full_fabric())),
         hoop: Some(Box::new(full_hoop())),
+        charts: vec![full_chart()],
+        chart: Some("full".into()),
         extra: Default::default(),
     }
+}
+
+/// A thread chart with every field set (a new field fails to compile here until it is set).
+fn full_chart() -> vectorcraft_doc::ThreadChart {
+    vectorcraft_doc::ThreadChart {
+        id: "full".into(),
+        name: "Full".into(),
+        brand: Some("b".into()),
+        weight: Some("40".into()),
+        author: Some("a".into()),
+        license: Some("CC0-1.0".into()),
+        source: Some("s".into()),
+        description: Some("d".into()),
+        threads: vec![ChartThread { code: "1".into(), name: "One".into(), color: "#102030".into(), extra: Default::default() }],
+        extra: Default::default(),
+        unknown: None,
+    }
+}
+
+#[test]
+fn vcthreads_schema_page_and_example_match_the_code() {
+    let schema = json("vcthreads.schema.json");
+    assert_eq!(schema["properties"]["format"]["const"], threads::FILE_FORMAT);
+    assert_eq!(schema["properties"]["version"]["maximum"].as_u64(), Some(u64::from(threads::FILE_VERSION)));
+    assert_eq!(schema["properties"]["threads"]["maxItems"].as_u64(), Some(threads::MAX_THREADS as u64));
+    let file: Value = serde_json::from_str(&threads::write_file(&full_chart()).unwrap()).unwrap();
+    assert_eq!(keys(&schema["properties"]), keys(&file), "the file's fields");
+    assert_eq!(keys(&schema["$defs"]["thread"]["properties"]), keys(&file["threads"][0]), "a thread's fields");
+    let page = read("vcthreads.md");
+    for k in keys(&file).iter().chain(keys(&file["threads"][0]).iter()) {
+        assert!(page.contains(&format!("`{k}`")), "vcthreads.md describes `{k}`");
+    }
+    assert!(page.contains("20,000 threads") && page.contains(&format!("{} MB", threads::MAX_FILE_BYTES >> 20)));
+    let ex = threads::read_file(read("examples/sample.vcthreads").as_bytes()).unwrap();
+    let start = page.find("```json").unwrap() + 7;
+    let end = start + page.get(start..).unwrap().find("```").unwrap();
+    assert_eq!(threads::read_file(page.get(start..end).unwrap().as_bytes()).unwrap(), ex, "the page's example is the example file");
+    // The document's charts have the file's fields, less the header.
+    let doc = json("vectorcraft-embroidery.schema.json");
+    let chart_keys = keys(&doc["$defs"]["setup"]["properties"]["charts"]["items"]["properties"]);
+    assert_eq!(chart_keys, keys(&serde_json::to_value(full_chart()).unwrap()));
 }
 
 /// A hoop with every field set (a new field fails to compile here until it is set).

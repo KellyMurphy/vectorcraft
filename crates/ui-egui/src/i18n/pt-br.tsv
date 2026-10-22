@@ -5364,3 +5364,16 @@ mark-style	Japanese	Japonesas
 	Optimize Sew Order	Otimizar ordem de costura
 	Start At:	Começar em:
 	Where the needle starts: the path is entered at its point nearest it	Onde a agulha começa: o traçado começa no seu ponto mais próximo
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	Cartela de linhas:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Cada cor de linha do desenho recebe a linha mais próxima desta cartela. Carregue cartelas que você tem o direito de usar (.vcthreads).
+	Load a thread chart file (.vcthreads)	Carregar um arquivo de cartela de linhas (.vcthreads)
+	Thread Charts	Cartelas de linhas
+	Thread Chart	Cartela de linhas
+	Load Thread Chart…	Carregar cartela de linhas…
+	Save Thread Chart…	Salvar cartela de linhas…
+	Remove Thread Chart	Remover cartela de linhas
+	Match Threads	Combinar linhas
+	Load Thread Chart	Carregar cartela de linhas
+@msg	Thread chart: {_1}	Cartela de linhas: {_1}

@@ -4350,3 +4350,16 @@ lighting	Light	光源
 	Optimize Sew Order	最佳化縫製順序
 	Start At:	起點:
 	Where the needle starts: the path is entered at its point nearest it	針的起點：路徑從離它最近的點開始
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	線色卡:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	設計的每種線色都會配對此色卡中最接近的線。請載入您有權使用的色卡（.vcthreads）。
+	Load a thread chart file (.vcthreads)	載入線色卡檔案 (.vcthreads)
+	Thread Charts	線色卡
+	Thread Chart	線色卡
+	Load Thread Chart…	載入線色卡…
+	Save Thread Chart…	儲存線色卡…
+	Remove Thread Chart	移除線色卡
+	Match Threads	配對線色
+	Load Thread Chart	載入線色卡
+@msg	Thread chart: {_1}	線色卡: {_1}

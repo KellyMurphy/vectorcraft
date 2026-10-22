@@ -5059,3 +5059,16 @@ lighting	Light	Luce
 	Optimize Sew Order	Ottimizza ordine di cucitura
 	Start At:	Inizia da:
 	Where the needle starts: the path is entered at its point nearest it	Dove inizia l'ago: il tracciato inizia dal suo punto più vicino
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	Cartella colori fili:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Ogni colore di filo del disegno riceve il filo più vicino di questa cartella. Caricate cartelle che avete il diritto di usare (.vcthreads).
+	Load a thread chart file (.vcthreads)	Carica un file di cartella colori fili (.vcthreads)
+	Thread Charts	Cartelle colori fili
+	Thread Chart	Cartella colori fili
+	Load Thread Chart…	Carica cartella colori fili…
+	Save Thread Chart…	Salva cartella colori fili…
+	Remove Thread Chart	Rimuovi cartella colori fili
+	Match Threads	Abbina fili
+	Load Thread Chart	Carica cartella colori fili
+@msg	Thread chart: {_1}	Cartella colori fili: {_1}

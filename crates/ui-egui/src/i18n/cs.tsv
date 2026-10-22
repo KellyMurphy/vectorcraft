@@ -5447,3 +5447,16 @@ mark-style	Japanese	Japonské
 	Optimize Sew Order	Optimalizovat pořadí vyšívání
 	Start At:	Začít v:
 	Where the needle starts: the path is entered at its point nearest it	Kde jehla začíná: cesta začne v nejbližším bodě
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	Vzorník nití:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Každá barva nitě v návrhu dostane nejbližší nit z tohoto vzorníku. Načítejte vzorníky, které smíte používat (.vcthreads).
+	Load a thread chart file (.vcthreads)	Načíst soubor vzorníku nití (.vcthreads)
+	Thread Charts	Vzorníky nití
+	Thread Chart	Vzorník nití
+	Load Thread Chart…	Načíst vzorník nití…
+	Save Thread Chart…	Uložit vzorník nití…
+	Remove Thread Chart	Odebrat vzorník nití
+	Match Threads	Přiřadit nitě
+	Load Thread Chart	Načíst vzorník nití
+@msg	Thread chart: {_1}	Vzorník nití: {_1}

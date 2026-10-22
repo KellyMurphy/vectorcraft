@@ -817,6 +817,57 @@ fn fabric_row(app: &mut VectorcraftApp, ui: &mut Ui) {
     });
 }
 
+/// The thread chart the design's colours are matched against: none, or one loaded into the
+/// document; Load….
+fn chart_row(app: &mut VectorcraftApp, ui: &mut Ui) {
+    let (charts, chosen): (Vec<(String, String)>, Option<String>) = app
+        .session
+        .active()
+        .map(|d| {
+            let e = &d.doc.embroidery;
+            (e.charts.iter().filter(|c| c.unknown.is_none()).map(|c| (c.id.clone(), c.name.clone())).collect(), e.chart.clone())
+        })
+        .unwrap_or_default();
+    let mut names: Vec<String> = vec![tl!("None").to_string()];
+    names.extend(charts.iter().map(|(_, n)| n.clone()));
+    let shown = chosen.as_ref().and_then(|id| charts.iter().find(|(c, _)| c == id)).map_or_else(|| tl!("None").to_string(), |(_, n)| n.clone());
+    ui.scope(|ui| {
+        widgets::label_row(ui, tl!("Thread Chart:"), LABEL_W, |ui| {
+            let opts: Vec<&str> = names.iter().map(String::as_str).collect();
+            if let Some(i) = widgets::dropdown_names(ui, "emb-chart", &shown, &opts, 150.0) {
+                let chart = if i == 0 { Value::Null } else { charts.get(i - 1).map_or(Value::Null, |(id, _)| json!(id)) };
+                app.run("embroidery.setThreadChart", json!({ "chart": chart })).ok();
+            }
+        })
+    })
+    .response
+    .on_hover_text(tl!(
+        "Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads)."
+    ));
+    ui.horizontal(|ui| {
+        ui.add_space(LABEL_W + 8.0);
+        if widgets::flat_button(ui, tl!("Load…"), 70.0).on_hover_text(tl!("Load a thread chart file (.vcthreads)")).clicked() {
+            load_chart(app);
+        }
+    });
+}
+
+/// Load a thread chart file the user picks into the document.
+fn load_chart(app: &mut VectorcraftApp) {
+    if let Some(f) = app.services.open_async.as_mut() {
+        f();
+        return;
+    }
+    crate::picks::button(app, |app| {
+        let ext: &'static [&'static str] = &[vectorcraft_embroidery::threads::FILE_EXT];
+        let pick = crate::FilePick { filters: vec![("Thread charts", ext)], ..Default::default() };
+        let Some(path) = crate::picks::open(app, &pick) else { return };
+        if let Err(e) = app.run("embroidery.loadThreadChart", json!({ "path": path })) {
+            app.status(e);
+        }
+    });
+}
+
 /// The document's hoop: a common one, none, or its own (loaded); whether the design fits it.
 fn hoop_row(app: &mut VectorcraftApp, ui: &mut Ui) {
     use vectorcraft_embroidery::hoops;
@@ -914,6 +965,7 @@ fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
     widgets::section_header(ui, tl!("Design"));
     fabric_row(app, ui);
     hoop_row(app, ui);
+    chart_row(app, ui);
     let n = |k: &str| d[k].as_u64().unwrap_or(0);
     if n("objects") == 0 {
         widgets::dim_label(ui, tl!("Nothing is stitched yet."));
@@ -928,15 +980,36 @@ fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
         widgets::label_row(ui, tl!("Trims / Jumps:"), LABEL_W, |ui| {
             ui.label(format!("{} / {}", n("trims"), n("jumps")));
         });
+        // Each thread's nearest in the chosen chart, when one is.
+        let matched = app.session.execute("embroidery.matchThreads", &json!({})).ok();
+        let matched = matched.as_ref().and_then(|m| m["threads"].as_array());
         widgets::label_row(ui, tl!("Threads:"), LABEL_W, |ui| {
             ui.horizontal_wrapped(|ui| {
                 for (i, t) in d["threads"].as_array().into_iter().flatten().enumerate() {
                     if let Some(c) = t.as_str().and_then(rgb) {
-                        chip(ui, c, 14.0).on_hover_text(format!("{} {}", i + 1, t.as_str().unwrap_or("")));
+                        let mut tip = format!("{} {}", i + 1, t.as_str().unwrap_or(""));
+                        if let Some(m) = matched.and_then(|m| m.get(i)).filter(|m| !m["code"].is_null()) {
+                            tip.push_str(&format!(
+                                "\n{} {} (ΔE {})",
+                                m["code"].as_str().unwrap_or(""),
+                                m["name"].as_str().unwrap_or(""),
+                                m["deltaE"]
+                            ));
+                        }
+                        chip(ui, c, 14.0).on_hover_text(tip);
                     }
                 }
             });
         });
+        if let Some(m) = matched {
+            let codes: Vec<&str> = m.iter().filter_map(|t| t["code"].as_str()).collect();
+            if !codes.is_empty() {
+                ui.horizontal(|ui| {
+                    ui.add_space(LABEL_W + 8.0);
+                    ui.label(egui::RichText::new(codes.join(" · ")).size(11.5).color(Tokens::get(ui.ctx()).text_dim));
+                });
+            }
+        }
         for w in d["warnings"].as_array().into_iter().flatten().filter_map(Value::as_str) {
             widgets::dim_label(ui, w);
         }

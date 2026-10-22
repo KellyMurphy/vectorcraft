@@ -5414,3 +5414,16 @@ imageTrace	Outline	Körvonal
 	Optimize Sew Order	Hímzési sorrend optimalizálása
 	Start At:	Kezdés itt:
 	Where the needle starts: the path is entered at its point nearest it	Ahol a tű kezd: a görbe a legközelebbi pontjánál kezdődik
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	Cérnatáblázat:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	A minta minden cérnaszíne megkapja e táblázat legközelebbi cérnáját. Olyan táblázatokat töltsön be, amelyek használatára jogosult (.vcthreads).
+	Load a thread chart file (.vcthreads)	Cérnatáblázat-fájl (.vcthreads) betöltése
+	Thread Charts	Cérnatáblázatok
+	Thread Chart	Cérnatáblázat
+	Load Thread Chart…	Cérnatáblázat betöltése…
+	Save Thread Chart…	Cérnatáblázat mentése…
+	Remove Thread Chart	Cérnatáblázat eltávolítása
+	Match Threads	Cérnák párosítása
+	Load Thread Chart	Cérnatáblázat betöltése
+@msg	Thread chart: {_1}	Cérnatáblázat: {_1}

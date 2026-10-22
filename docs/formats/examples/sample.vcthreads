@@ -1,0 +1,18 @@
+{
+  "format": "vectorcraft-thread-chart",
+  "version": 1,
+  "id": "sample",
+  "name": "Sample Threads",
+  "brand": "Sample Thread Co. (made up)",
+  "weight": "40",
+  "author": "VectorCraft contributors",
+  "license": "CC0-1.0",
+  "description": "A made-up chart for testing: not a real maker's threads.",
+  "threads": [
+    { "code": "S100", "name": "Sample Red", "color": "#c8102e" },
+    { "code": "S200", "name": "Sample Green", "color": "#00843d" },
+    { "code": "S300", "name": "Sample Blue", "color": "#0033a0" },
+    { "code": "S400", "name": "Sample Black", "color": "#101010" },
+    { "code": "S500", "name": "Sample White", "color": "#f4f4f0" }
+  ]
+}

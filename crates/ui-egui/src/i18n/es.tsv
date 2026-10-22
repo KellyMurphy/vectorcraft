@@ -5388,3 +5388,16 @@ mark-style	Japanese	Japonesas
 	Optimize Sew Order	Optimizar orden de bordado
 	Start At:	Empezar en:
 	Where the needle starts: the path is entered at its point nearest it	Dónde empieza la aguja: el trazado se empieza en su punto más cercano
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	Carta de hilos:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Cada color de hilo del diseño recibe el hilo más cercano de esta carta. Cargue cartas que tenga derecho a usar (.vcthreads).
+	Load a thread chart file (.vcthreads)	Cargar un archivo de carta de hilos (.vcthreads)
+	Thread Charts	Cartas de hilos
+	Thread Chart	Carta de hilos
+	Load Thread Chart…	Cargar carta de hilos…
+	Save Thread Chart…	Guardar carta de hilos…
+	Remove Thread Chart	Quitar carta de hilos
+	Match Threads	Emparejar hilos
+	Load Thread Chart	Cargar carta de hilos
+@msg	Thread chart: {_1}	Carta de hilos: {_1}

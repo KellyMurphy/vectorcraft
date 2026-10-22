@@ -5445,3 +5445,16 @@ theme	Appearance	Apparence
 	Optimize Sew Order	Optimiser l'ordre de couture
 	Start At:	Début à :
 	Where the needle starts: the path is entered at its point nearest it	Où l'aiguille commence : le tracé est commencé à son point le plus proche
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	Nuancier de fils :
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Chaque couleur de fil du motif reçoit le fil le plus proche de ce nuancier. Chargez des nuanciers que vous avez le droit d'utiliser (.vcthreads).
+	Load a thread chart file (.vcthreads)	Charger un fichier de nuancier de fils (.vcthreads)
+	Thread Charts	Nuanciers de fils
+	Thread Chart	Nuancier de fils
+	Load Thread Chart…	Charger un nuancier de fils…
+	Save Thread Chart…	Enregistrer le nuancier de fils…
+	Remove Thread Chart	Supprimer le nuancier de fils
+	Match Threads	Associer les fils
+	Load Thread Chart	Charger un nuancier de fils
+@msg	Thread chart: {_1}	Nuancier de fils : {_1}

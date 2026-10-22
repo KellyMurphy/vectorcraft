@@ -5422,3 +5422,16 @@ swatch	Bright Violet	Kraftig violet
 	Optimize Sew Order	Optimér broderingsrækkefølge
 	Start At:	Start ved:
 	Where the needle starts: the path is entered at its point nearest it	Hvor nålen starter: stien begyndes ved sit nærmeste punkt
+
+# Thread charts (the Embroidery panel)
+	Thread Chart:	Trådkort:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Hver trådfarve i designet får den nærmeste tråd fra dette kort. Indlæs kort, du har ret til at bruge (.vcthreads).
+	Load a thread chart file (.vcthreads)	Indlæs en trådkortfil (.vcthreads)
+	Thread Charts	Trådkort
+	Thread Chart	Trådkort
+	Load Thread Chart…	Indlæs trådkort…
+	Save Thread Chart…	Gem trådkort…
+	Remove Thread Chart	Fjern trådkort
+	Match Threads	Match tråde
+	Load Thread Chart	Indlæs trådkort
+@msg	Thread chart: {_1}	Trådkort: {_1}
