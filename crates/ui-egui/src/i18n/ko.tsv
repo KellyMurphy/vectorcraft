@@ -5018,3 +5018,14 @@ lighting	Light	광원
 	Match Threads	실 맞추기
 	Load Thread Chart	실 색상표 불러오기
 @msg	Thread chart: {_1}	실 색상표: {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	재생
+	Pause	일시 정지
+	Play the sewing stitch by stitch	자수를 한 땀씩 재생합니다
+	Previous thread	이전 실
+	Next thread	다음 실
+	Sewing Time	자수 시간
+	At the machine speed set below, with time for trims and thread changes	아래에 설정한 기계 속도 기준이며, 자르기와 실 교체 시간을 포함합니다
+	Machine Speed:	기계 속도:
+	Stitches per minute, for the sewing time estimate	분당 땀 수(자수 시간 추정용)

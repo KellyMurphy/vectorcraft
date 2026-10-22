@@ -5435,3 +5435,14 @@ swatch	Bright Violet	Violet cerah
 	Match Threads	Cocokkan benang
 	Load Thread Chart	Muat bagan benang
 @msg	Thread chart: {_1}	Bagan benang: {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	Putar
+	Pause	Jeda
+	Play the sewing stitch by stitch	Putar proses sulam jahitan demi jahitan
+	Previous thread	Benang sebelumnya
+	Next thread	Benang berikutnya
+	Sewing Time	Waktu sulam
+	At the machine speed set below, with time for trims and thread changes	Pada kecepatan mesin yang diatur di bawah, termasuk waktu potong dan ganti benang
+	Machine Speed:	Kecepatan mesin:
+	Stitches per minute, for the sewing time estimate	Jahitan per menit, untuk perkiraan waktu sulam

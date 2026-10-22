@@ -5393,3 +5393,14 @@ effect	Points	Σημεία
 	Match Threads	Αντιστοίχιση κλωστών
 	Load Thread Chart	Φόρτωση χάρτη κλωστών
 @msg	Thread chart: {_1}	Χάρτης κλωστών: {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	Αναπαραγωγή
+	Pause	Παύση
+	Play the sewing stitch by stitch	Αναπαραγωγή του κεντήματος βελονιά προς βελονιά
+	Previous thread	Προηγούμενη κλωστή
+	Next thread	Επόμενη κλωστή
+	Sewing Time	Χρόνος κεντήματος
+	At the machine speed set below, with time for trims and thread changes	Με την ταχύτητα μηχανής που ορίζεται παρακάτω, μαζί με χρόνο για κοψίματα και αλλαγές κλωστής
+	Machine Speed:	Ταχύτητα μηχανής:
+	Stitches per minute, for the sewing time estimate	Βελονιές ανά λεπτό, για τον εκτιμώμενο χρόνο κεντήματος

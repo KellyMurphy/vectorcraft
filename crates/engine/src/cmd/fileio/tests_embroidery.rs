@@ -144,9 +144,12 @@ fn satin_fill_and_bean_parameters_are_set_and_checked() {
 #[test]
 fn setup_sets_the_documents_trim_and_jump_lengths() {
     let mut s = session();
-    assert_eq!(info(&mut s)["setup"], json!({"trimJumpsOver": 3.0, "stitchMovesUnder": 1.0, "overlap": 0.5, "minStitch": 0.3, "autoStart": true}));
+    assert_eq!(
+        info(&mut s)["setup"],
+        json!({"trimJumpsOver": 3.0, "stitchMovesUnder": 1.0, "overlap": 0.5, "minStitch": 0.3, "autoStart": true, "speed": 600.0})
+    );
     let r = s.execute("embroidery.setup", &json!({"trimJumpsOver": 8, "stitchMovesUnder": 2})).unwrap();
-    assert_eq!(r, json!({"trimJumpsOver": 8.0, "stitchMovesUnder": 2.0, "overlap": 0.5, "minStitch": 0.3, "autoStart": true}));
+    assert_eq!(r, json!({"trimJumpsOver": 8.0, "stitchMovesUnder": 2.0, "overlap": 0.5, "minStitch": 0.3, "autoStart": true, "speed": 600.0}));
     s.execute("embroidery.setup", &json!({"trimJumpsOver": null})).unwrap();
     assert_eq!(info(&mut s)["setup"]["trimJumpsOver"], Value::Null);
     for p in [json!({"trimJumpsOver": 0}), json!({"trimJumpsOver": "x"}), json!({"stitchMovesUnder": 9})] {
@@ -710,4 +713,20 @@ fn thread_charts_are_loaded_matched_chosen_and_removed() {
         assert!(s.execute("embroidery.setThreadChart", &bad).is_err(), "{bad}");
     }
     assert!(s.execute("embroidery.loadThreadChart", &json!({"data": "{}"})).is_err());
+}
+
+#[test]
+fn the_sewing_time_follows_the_machine_speed() {
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    let at = |s: &mut Session| info(s)["design"]["minutes"].as_f64().unwrap();
+    let normal = at(&mut s);
+    assert!(normal > 0.0);
+    s.execute("embroidery.setup", &json!({"speed": 1200})).unwrap();
+    let fast = at(&mut s);
+    assert!(fast < normal, "{fast} < {normal}");
+    assert!(s.execute("embroidery.setup", &json!({"speed": 5})).is_err());
+    // Each object's stitches are listed in the sewing order.
+    let order = s.execute("embroidery.order", &json!({})).unwrap();
+    assert!(order["order"][0]["stitches"].as_u64().unwrap() > 100);
 }

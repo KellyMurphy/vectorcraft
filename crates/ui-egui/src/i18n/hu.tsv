@@ -5427,3 +5427,14 @@ imageTrace	Outline	Körvonal
 	Match Threads	Cérnák párosítása
 	Load Thread Chart	Cérnatáblázat betöltése
 @msg	Thread chart: {_1}	Cérnatáblázat: {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	Lejátszás
+	Pause	Szünet
+	Play the sewing stitch by stitch	A hímzés lejátszása öltésről öltésre
+	Previous thread	Előző cérna
+	Next thread	Következő cérna
+	Sewing Time	Hímzési idő
+	At the machine speed set below, with time for trims and thread changes	Az alább beállított gépsebességgel, a vágások és cérnacserék idejével együtt
+	Machine Speed:	Gépsebesség:
+	Stitches per minute, for the sewing time estimate	Öltés percenként, a becsült hímzési időhöz

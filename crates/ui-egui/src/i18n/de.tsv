@@ -5017,3 +5017,14 @@ effect	Regular	Regelmäßig
 	Match Threads	Garne zuordnen
 	Load Thread Chart	Garnkarte laden
 @msg	Thread chart: {_1}	Garnkarte: {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	Abspielen
+	Pause	Pause
+	Play the sewing stitch by stitch	Das Sticken Stich für Stich abspielen
+	Previous thread	Vorheriges Garn
+	Next thread	Nächstes Garn
+	Sewing Time	Stickzeit
+	At the machine speed set below, with time for trims and thread changes	Bei der unten eingestellten Maschinengeschwindigkeit, mit Zeit für Schnitte und Garnwechsel
+	Machine Speed:	Maschinengeschwindigkeit:
+	Stitches per minute, for the sewing time estimate	Stiche pro Minute, für die geschätzte Stickzeit

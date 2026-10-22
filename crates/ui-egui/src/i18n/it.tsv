@@ -5072,3 +5072,14 @@ lighting	Light	Luce
 	Match Threads	Abbina fili
 	Load Thread Chart	Carica cartella colori fili
 @msg	Thread chart: {_1}	Cartella colori fili: {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	Riproduci
+	Pause	Pausa
+	Play the sewing stitch by stitch	Riproduci il ricamo punto per punto
+	Previous thread	Filo precedente
+	Next thread	Filo successivo
+	Sewing Time	Tempo di ricamo
+	At the machine speed set below, with time for trims and thread changes	Alla velocità della macchina impostata sotto, con il tempo per tagli e cambi di filo
+	Machine Speed:	Velocità della macchina:
+	Stitches per minute, for the sewing time estimate	Punti al minuto, per il tempo di ricamo stimato

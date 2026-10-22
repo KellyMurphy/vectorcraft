@@ -5034,3 +5034,14 @@ theme	Appearance	Giao diện
 	Match Threads	Khớp màu chỉ
 	Load Thread Chart	Nạp bảng màu chỉ
 @msg	Thread chart: {_1}	Bảng màu chỉ: {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	Phát
+	Pause	Tạm dừng
+	Play the sewing stitch by stitch	Phát quá trình thêu từng mũi
+	Previous thread	Màu chỉ trước
+	Next thread	Màu chỉ tiếp
+	Sewing Time	Thời gian thêu
+	At the machine speed set below, with time for trims and thread changes	Theo tốc độ máy đặt bên dưới, gồm thời gian cắt chỉ và đổi chỉ
+	Machine Speed:	Tốc độ máy:
+	Stitches per minute, for the sewing time estimate	Số mũi mỗi phút, để ước tính thời gian thêu

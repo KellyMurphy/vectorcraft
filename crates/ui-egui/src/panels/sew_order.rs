@@ -75,6 +75,7 @@ fn order(app: &mut VectorcraftApp, ctx: &egui::Context) -> Value {
     let mut v = app.session.execute("embroidery.order", &json!({})).unwrap_or(Value::Null);
     if let (Some(o), Ok(info)) = (v.as_object_mut(), app.session.execute("embroidery.info", &json!({}))) {
         o.insert("setup".into(), info["setup"].clone());
+        o.insert("minutes".into(), info["design"]["minutes"].clone());
     }
     ctx.data_mut(|d| d.insert_temp(id, (key, v.clone())));
     v
@@ -132,6 +133,86 @@ fn preview(ui: &mut Ui, objects: &[Drawn], bounds: Option<[f64; 4]>, step: usize
     }
 }
 
+/// The design's stitches for the player: each run (a stretch sewn without a jump) with its thread
+/// and the index of its first needle move, the needle moves where the thread changes, and how
+/// many needle moves there are.
+struct Needles {
+    runs: Vec<(Color32, usize, Vec<Point>)>,
+    stops: Vec<usize>,
+    total: usize,
+}
+
+/// The player's stitches, kept per plan.
+fn needles(ctx: &egui::Context, memo: &crate::canvas::StitchMemo) -> std::sync::Arc<Needles> {
+    use vectorcraft_embroidery::Cmd;
+    let key = egui::Id::new(("sew-player-needles", std::sync::Arc::as_ptr(&memo.plan) as usize));
+    if let Some(n) = ctx.data(|d| d.get_temp::<std::sync::Arc<Needles>>(key)) {
+        return n;
+    }
+    let plan = &memo.plan;
+    let color = |b: usize| {
+        let [r, g, bl] = plan.threads.get(b).copied().unwrap_or([0; 3]);
+        Color32::from_rgb(r, g, bl)
+    };
+    let (mut runs, mut stops) = (vec![], vec![]);
+    let mut block = 0usize;
+    let mut cur: Option<(usize, Vec<Point>)> = None;
+    for (i, n) in plan.needles.iter().enumerate() {
+        match n.cmd {
+            Cmd::Stitch => cur.get_or_insert_with(|| (i, vec![])).1.push(Point::new(n.x, n.y)),
+            Cmd::Jump | Cmd::Trim | Cmd::End | Cmd::ColorChange => {
+                if let Some((start, pts)) = cur.take() {
+                    runs.push((color(block), start, pts));
+                }
+                if n.cmd == Cmd::ColorChange {
+                    block += 1;
+                    stops.push(i);
+                }
+                // A jump's end is where the next run starts.
+                if n.cmd == Cmd::Jump {
+                    cur = Some((i, vec![Point::new(n.x, n.y)]));
+                }
+            }
+        }
+    }
+    if let Some((start, pts)) = cur {
+        runs.push((color(block), start, pts));
+    }
+    let out = std::sync::Arc::new(Needles { runs, stops, total: plan.needles.len() });
+    ctx.data_mut(|d| d.insert_temp(key, out.clone()));
+    out
+}
+
+/// The preview while the player plays: the stitches sewn up to needle move `at`, the needle where
+/// it is.
+fn played(ui: &mut Ui, n: &Needles, bounds: Option<[f64; 4]>, at: usize) {
+    let t = Tokens::get(ui.ctx());
+    let w = ui.available_width();
+    let h = (w * 0.62).clamp(120.0, 220.0);
+    let (rect, _) = ui.allocate_exact_size(vec2(w, h), Sense::hover());
+    let [r, g, b, a] = vectorcraft_embroidery::preview::FABRIC;
+    ui.painter().rect_filled(rect, 4.0, Color32::from_rgba_unmultiplied(r, g, b, a));
+    ui.painter().rect_stroke(rect, 4.0, Stroke::new(1.0, t.input_border), egui::StrokeKind::Inside);
+    let Some(bounds) = bounds else { return };
+    let to = fit(rect, bounds);
+    let painter = ui.painter_at(rect);
+    let mut needle = None;
+    for (color, start, pts) in &n.runs {
+        if *start > at {
+            break;
+        }
+        let shown = (at - start + 1).min(pts.len());
+        let line: Vec<Pos2> = pts.iter().take(shown).map(|p| to(*p)).collect();
+        if let Some(last) = line.last() {
+            needle = Some(*last);
+        }
+        painter.add(egui::Shape::line(line, Stroke::new(1.3, *color)));
+    }
+    if let Some(p) = needle {
+        painter.circle_stroke(p, 5.0, Stroke::new(2.0, t.accent));
+    }
+}
+
 /// The scrub bar under the preview: a track with a mark per object, the sewn part in the accent
 /// colour; click or drag along it to choose how many objects are shown. The step chosen.
 fn scrubber(ui: &mut Ui, step: usize, n: usize) -> usize {
@@ -183,10 +264,26 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     if kept == 0 {
         step = n;
     }
-    preview(ui, &objects, bounds, step);
+    // The player: playing (or paused part way) it shows the sewing stitch by stitch.
+    let stitches = needles(ui.ctx(), &memo);
+    let mut play: Option<usize> = pstate(ui.ctx(), "sew-play-at");
+    let mut playing: bool = pstate(ui.ctx(), "sew-playing");
+    match play.filter(|k| *k < stitches.total) {
+        Some(k) => played(ui, &stitches, bounds, k),
+        None => {
+            play = None;
+            playing = false;
+            preview(ui, &objects, bounds, step);
+        }
+    }
     if n > 0 {
         ui.add_space(4.0);
+        let before = step;
         step = scrubber(ui, step, n);
+        if step != before {
+            // Scrubbing by object leaves the player.
+            (play, playing) = (None, false);
+        }
         ui.horizontal(|ui| {
             for (icon, tip, to) in [("chevrons-left", tl!("First object"), 0usize), ("chevron-left", tl!("Previous object"), 1)] {
                 if widgets::icon_button_enabled(ui, icon, tip, false, step > 1, 20.0).clicked() {
@@ -204,7 +301,49 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 rows.get(step.saturating_sub(1)).and_then(|r| r["stitch"].as_str()).and_then(StitchKind::parse).map_or("", |k| tl!(k.label()));
             ui.label(egui::RichText::new(format!("{step} / {n}  ·  {name}  ·  {stitch}")).size(11.0).color(t.text_dim));
         });
+        // Play, pause, and step from colour stop to colour stop.
+        ui.horizontal(|ui| {
+            let label = if playing { tl!("Pause") } else { tl!("Play") };
+            if widgets::flat_button(ui, label, 64.0).on_hover_text(tl!("Play the sewing stitch by stitch")).clicked() {
+                playing = !playing;
+                if playing && play.is_none_or(|k| k + 1 >= stitches.total) {
+                    play = Some(0);
+                }
+            }
+            let at = play.unwrap_or(stitches.total);
+            let prev = stitches.stops.iter().rev().find(|s| **s + 1 < at).copied();
+            if widgets::icon_button_enabled(ui, "chevrons-left", tl!("Previous thread"), false, play.is_some(), 20.0).clicked() {
+                play = Some(prev.map_or(0, |s| s + 1));
+                playing = false;
+            }
+            let next = stitches.stops.iter().find(|s| **s > at).copied();
+            if widgets::icon_button_enabled(ui, "chevrons-right", tl!("Next thread"), false, next.is_some() && play.is_some(), 20.0).clicked()
+                && let Some(s) = next
+            {
+                play = Some(s + 1);
+                playing = false;
+            }
+            if let Some(k) = play {
+                ui.label(egui::RichText::new(format!("{} %", (k * 100) / stitches.total.max(1))).size(11.0).color(t.text_dim));
+            }
+            if let Some(m) = info["minutes"].as_f64() {
+                ui.label(egui::RichText::new(format!("{}: {m:.1} min", tl!("Sewing Time"))).size(11.0).color(t.text_dim))
+                    .on_hover_text(tl!("At the machine speed set below, with time for trims and thread changes"));
+            }
+        });
+        if playing {
+            // About ten seconds for a whole design.
+            let k = play.unwrap_or(0) + (stitches.total / 600).max(1);
+            if k + 1 >= stitches.total {
+                (play, playing) = (None, false);
+            } else {
+                play = Some(k);
+                ui.ctx().request_repaint();
+            }
+        }
     }
+    set_pstate(ui.ctx(), "sew-play-at", play);
+    set_pstate(ui.ctx(), "sew-playing", playing);
     widgets::divider(ui);
 
     if rows.is_empty() {
@@ -252,15 +391,18 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 let chip = Rect::from_center_size(rect.left_center() + vec2(82.0, 0.0), vec2(10.0, 10.0));
                 ui.painter().rect_filled(chip, 2.0, Color32::from_rgb(c[0], c[1], c[2]));
             }
-            ui.painter().text(
-                rect.left_center() + vec2(94.0, 0.0),
-                egui::Align2::LEFT_CENTER,
-                r["name"].as_str().unwrap_or(""),
-                font.clone(),
-                t.text,
-            );
+            // The name, clipped short of the stitch type and count on the right.
+            let name_rect = Rect::from_min_max(rect.left_top() + vec2(94.0, 0.0), Pos2::new(rect.right() - 120.0, rect.bottom()));
+            ui.painter_at(name_rect).text(name_rect.left_center(), egui::Align2::LEFT_CENTER, r["name"].as_str().unwrap_or(""), font.clone(), t.text);
             let stitch = r["stitch"].as_str().and_then(StitchKind::parse).map_or("", |k| tl!(k.label()));
-            ui.painter().text(rect.right_center() - vec2(6.0, 0.0), egui::Align2::RIGHT_CENTER, stitch, egui::FontId::proportional(11.0), t.text_dim);
+            let count = r["stitches"].as_u64().unwrap_or(0);
+            ui.painter().text(
+                rect.right_center() - vec2(6.0, 0.0),
+                egui::Align2::RIGHT_CENTER,
+                format!("{stitch} · {count}"),
+                egui::FontId::proportional(11.0),
+                t.text_dim,
+            );
             if resp.clicked() {
                 select = Some((id, i + 1));
             }
@@ -354,6 +496,16 @@ fn travel(app: &mut VectorcraftApp, ui: &mut Ui, setup: &Value) {
         widgets::dim_label(ui, tl!("Only thread changes and objects set to trim cut the thread."));
     }
     ui.scope(|ui| {
+        widgets::label_row(ui, tl!("Machine Speed:"), LABEL_W, |ui| {
+            if let Some(v) = widgets::mixed_field(ui, ("emb", "speed"), setup["speed"].as_f64(), " /min", 0, FIELD_W) {
+                let r = EmbroiderySetup::SPEED;
+                app.run("embroidery.setup", json!({ "speed": v.clamp(*r.start(), *r.end()) })).ok();
+            }
+        })
+    })
+    .response
+    .on_hover_text(tl!("Stitches per minute, for the sewing time estimate"));
+    ui.scope(|ui| {
         widgets::label_row(ui, tl!("Overlap:"), LABEL_W, |ui| {
             if let Some(v) = widgets::mixed_field(ui, ("emb", "overlap"), setup["overlap"].as_f64(), " mm", 1, FIELD_W) {
                 let r = EmbroiderySetup::OVERLAP;
@@ -421,7 +573,11 @@ mod tests {
         run(&mut app, "embroidery.set", json!({"type": "satin", "width": 3}));
         let (texts, lines) = frame(&mut app);
         assert!(texts.iter().filter(|t| *t == "Path").count() >= 2, "{texts:?}");
-        assert!(texts.iter().any(|t| t == "Fill") && texts.iter().any(|t| t == "Satin Column"), "{texts:?}");
+        assert!(
+            texts.iter().any(|t| t.starts_with("Fill · ")) && texts.iter().any(|t| t.starts_with("Satin Column · ")),
+            "each row with its stitch count: {texts:?}"
+        );
+        assert!(texts.iter().any(|t| t.starts_with("Sewing Time: ")) && texts.iter().any(|t| t == "Play"), "{texts:?}");
         assert!(texts.iter().any(|t| t.starts_with("2 / 2")), "the last step by default: {texts:?}");
         assert!(lines > 10, "the preview and the rows' pictures draw stitches: {lines}");
     }

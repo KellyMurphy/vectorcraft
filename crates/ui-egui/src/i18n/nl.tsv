@@ -5478,3 +5478,14 @@ swatch	Bright Violet	Felviolet
 	Match Threads	Garens koppelen
 	Load Thread Chart	Garenkaart laden
 @msg	Thread chart: {_1}	Garenkaart: {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	Afspelen
+	Pause	Pauzeren
+	Play the sewing stitch by stitch	Het borduren steek voor steek afspelen
+	Previous thread	Vorig garen
+	Next thread	Volgend garen
+	Sewing Time	Borduurtijd
+	At the machine speed set below, with time for trims and thread changes	Bij de hieronder ingestelde machinesnelheid, met tijd voor knippen en garenwissels
+	Machine Speed:	Machinesnelheid:
+	Stitches per minute, for the sewing time estimate	Steken per minuut, voor de geschatte borduurtijd

@@ -5411,3 +5411,14 @@ theme	Appearance	Външен вид
 	Match Threads	Съпоставяне на конците
 	Load Thread Chart	Зареждане на карта на конците
 @msg	Thread chart: {_1}	Карта на конците: {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	Възпроизвеждане
+	Pause	Пауза
+	Play the sewing stitch by stitch	Възпроизвеждане на бродирането бод по бод
+	Previous thread	Предишен конец
+	Next thread	Следващ конец
+	Sewing Time	Време за бродиране
+	At the machine speed set below, with time for trims and thread changes	При зададената по-долу скорост на машината, с време за отрязвания и смени на конеца
+	Machine Speed:	Скорост на машината:
+	Stitches per minute, for the sewing time estimate	Бодове в минута, за прогнозното време за бродиране

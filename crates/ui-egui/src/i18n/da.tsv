@@ -5435,3 +5435,14 @@ swatch	Bright Violet	Kraftig violet
 	Match Threads	Match tråde
 	Load Thread Chart	Indlæs trådkort
 @msg	Thread chart: {_1}	Trådkort: {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	Afspil
+	Pause	Pause
+	Play the sewing stitch by stitch	Afspil broderingen sting for sting
+	Previous thread	Forrige tråd
+	Next thread	Næste tråd
+	Sewing Time	Broderitid
+	At the machine speed set below, with time for trims and thread changes	Ved maskinhastigheden angivet nedenfor, med tid til klip og trådskift
+	Machine Speed:	Maskinhastighed:
+	Stitches per minute, for the sewing time estimate	Sting pr. minut, til den anslåede broderitid

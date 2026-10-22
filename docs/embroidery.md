@@ -207,6 +207,15 @@ Stitch** (Sew Order panel, `embroidery.setup {minStitch}`, 0.3 mm) to the one be
 everywhere, satin columns included; a fabric can ask for longer (Leather: 1 mm). Manual stitches are sewn
 exactly as drawn.
 
+### Playing the sewing
+
+The Sew Order panel plays the design as the machine sews it: **Play** draws it stitch by stitch in its
+threads, the needle ringed; **Pause** stops; the arrows jump to the previous or next thread change.
+Dragging the scrub bar or clicking a row goes back to stepping object by object. Each row shows the
+object's stitch count, and the panel shows the **Sewing Time**: the stitches at the **Machine Speed**
+(Travel, 600 stitches a minute unless set; `embroidery.setup {speed}`), plus 5 seconds a trim and 30
+seconds a thread change. `embroidery.info` gives it as the design's `minutes`.
+
 ### Sequencing
 
 Running, bean and zigzag lines are entered nearest where the needle is: a closed running path at its
@@ -284,7 +293,7 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.saveBorderPattern` | `{pattern, path?}`: write a pattern as a `.vcborder` file (without `path`: `{data}`) |
 | `embroidery.extractBorderPattern` | `{name?, period?, author?, license?, source?, ids?}`: the repeat of the selected border stitches (only those inside a selected closed shape, if any) as a new document pattern → `{id, name, period, width, stitches, repeats, error}` |
 | `embroidery.removeBorderPattern` | `{pattern}`: remove one of the document's patterns that nothing sews with |
-| `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm, overlap?: mm, minStitch?: mm}`: the document's travel settings, overlap and shortest stitch |
+| `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm, overlap?: mm, minStitch?: mm, autoStart?, speed?: stitches/min}`: the document's travel settings, overlap, shortest stitch and machine speed |
 | `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings |
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
 | `embroidery.check` | `{ids?}` → the design checker's `findings` (`rule`, `severity`, `message`, `object`, `at` in document points), `counts` and the `rules` |

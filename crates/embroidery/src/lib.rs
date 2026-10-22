@@ -496,6 +496,20 @@ pub fn plan_cached(doc: &Document, cache: &mut StitchCache) -> Plan {
     plan
 }
 
+/// Seconds a trim takes (the machine cuts and moves on).
+pub const TRIM_SECONDS: f64 = 5.0;
+/// Seconds a thread change takes (the machine stops; someone changes the thread).
+pub const CHANGE_SECONDS: f64 = 30.0;
+
+/// How long `plan` takes to sew at `speed` stitches per minute, seconds: its stitches, plus
+/// [`TRIM_SECONDS`] per trim and [`CHANGE_SECONDS`] per thread change (an estimate: real machines
+/// slow down for long stitches and frame moves).
+pub fn sewing_seconds(plan: &Plan, speed: f64) -> f64 {
+    let st = plan.stats();
+    let spm = if speed.is_finite() && speed > 0.0 { speed } else { EmbroiderySetup::DEFAULT_SPEED };
+    st.stitches as f64 * 60.0 / spm + st.trims as f64 * TRIM_SECONDS + st.color_changes as f64 * CHANGE_SECONDS
+}
+
 /// Whether any object in `doc` carries stitch settings.
 pub fn has_stitches(doc: &Document) -> bool {
     let mut any = false;

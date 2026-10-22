@@ -5460,3 +5460,14 @@ mark-style	Japanese	Japonské
 	Match Threads	Přiřadit nitě
 	Load Thread Chart	Načíst vzorník nití
 @msg	Thread chart: {_1}	Vzorník nití: {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	Přehrát
+	Pause	Pozastavit
+	Play the sewing stitch by stitch	Přehrát vyšívání steh po stehu
+	Previous thread	Předchozí nit
+	Next thread	Další nit
+	Sewing Time	Čas vyšívání
+	At the machine speed set below, with time for trims and thread changes	Při rychlosti stroje nastavené níže, včetně času na odstřihy a výměny nití
+	Machine Speed:	Rychlost stroje:
+	Stitches per minute, for the sewing time estimate	Stehů za minutu, pro odhad času vyšívání

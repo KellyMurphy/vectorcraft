@@ -5405,3 +5405,14 @@ mark-style	Japanese	Japanilainen
 	Match Threads	Sovita langat
 	Load Thread Chart	Lataa lankakartta
 @msg	Thread chart: {_1}	Lankakartta: {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	Toista
+	Pause	Tauko
+	Play the sewing stitch by stitch	Toista kirjonta pisto pistolta
+	Previous thread	Edellinen lanka
+	Next thread	Seuraava lanka
+	Sewing Time	Kirjonta-aika
+	At the machine speed set below, with time for trims and thread changes	Alla asetetulla koneen nopeudella, aika katkaisuille ja langanvaihdoille mukaan lukien
+	Machine Speed:	Koneen nopeus:
+	Stitches per minute, for the sewing time estimate	Pistoa minuutissa, arvioitua kirjonta-aikaa varten

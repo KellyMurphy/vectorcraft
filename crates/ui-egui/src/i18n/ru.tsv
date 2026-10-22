@@ -5068,3 +5068,14 @@ lighting	Light	Свет
 	Match Threads	Подобрать нитки
 	Load Thread Chart	Загрузить карту ниток
 @msg	Thread chart: {_1}	Карта ниток: {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	Воспроизвести
+	Pause	Пауза
+	Play the sewing stitch by stitch	Воспроизвести вышивку стежок за стежком
+	Previous thread	Предыдущая нитка
+	Next thread	Следующая нитка
+	Sewing Time	Время вышивки
+	At the machine speed set below, with time for trims and thread changes	При скорости машины, заданной ниже, с учётом обрезок и смен нитки
+	Machine Speed:	Скорость машины:
+	Stitches per minute, for the sewing time estimate	Стежков в минуту, для оценки времени вышивки

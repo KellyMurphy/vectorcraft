@@ -5113,3 +5113,14 @@ lighting	Light	ライト
 	Match Threads	糸を照合
 	Load Thread Chart	糸チャートを読み込み
 @msg	Thread chart: {_1}	糸チャート: {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	再生
+	Pause	一時停止
+	Play the sewing stitch by stitch	縫製を 1 針ずつ再生します
+	Previous thread	前の糸
+	Next thread	次の糸
+	Sewing Time	縫製時間
+	At the machine speed set below, with time for trims and thread changes	下で設定したミシン速度で、糸切りと糸替えの時間を含みます
+	Machine Speed:	ミシン速度:
+	Stitches per minute, for the sewing time estimate	1 分あたりの針数 (縫製時間の見積もり用)

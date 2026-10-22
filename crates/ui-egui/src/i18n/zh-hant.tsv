@@ -4363,3 +4363,14 @@ lighting	Light	光源
 	Match Threads	配對線色
 	Load Thread Chart	載入線色卡
 @msg	Thread chart: {_1}	線色卡: {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	播放
+	Pause	暫停
+	Play the sewing stitch by stitch	逐針播放縫製過程
+	Previous thread	上一種線
+	Next thread	下一種線
+	Sewing Time	縫製時間
+	At the machine speed set below, with time for trims and thread changes	依下方設定的機器速度計算，包括剪線與換線時間
+	Machine Speed:	機器速度:
+	Stitches per minute, for the sewing time estimate	每分鐘針數，用於估計縫製時間

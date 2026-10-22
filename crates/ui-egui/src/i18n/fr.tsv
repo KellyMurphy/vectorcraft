@@ -5458,3 +5458,14 @@ theme	Appearance	Apparence
 	Match Threads	Associer les fils
 	Load Thread Chart	Charger un nuancier de fils
 @msg	Thread chart: {_1}	Nuancier de fils : {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	Lecture
+	Pause	Pause
+	Play the sewing stitch by stitch	Jouer la couture point par point
+	Previous thread	Fil précédent
+	Next thread	Fil suivant
+	Sewing Time	Durée de couture
+	At the machine speed set below, with time for trims and thread changes	À la vitesse de machine réglée ci-dessous, avec le temps des coupes et des changements de fil
+	Machine Speed:	Vitesse de la machine :
+	Stitches per minute, for the sewing time estimate	Points par minute, pour la durée de couture estimée

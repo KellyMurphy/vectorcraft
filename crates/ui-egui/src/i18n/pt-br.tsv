@@ -5377,3 +5377,14 @@ mark-style	Japanese	Japonesas
 	Match Threads	Combinar linhas
 	Load Thread Chart	Carregar cartela de linhas
 @msg	Thread chart: {_1}	Cartela de linhas: {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	Reproduzir
+	Pause	Pausar
+	Play the sewing stitch by stitch	Reproduzir o bordado ponto a ponto
+	Previous thread	Linha anterior
+	Next thread	Próxima linha
+	Sewing Time	Tempo de bordado
+	At the machine speed set below, with time for trims and thread changes	Na velocidade de máquina definida abaixo, com tempo para cortes e trocas de linha
+	Machine Speed:	Velocidade da máquina:
+	Stitches per minute, for the sewing time estimate	Pontos por minuto, para o tempo de bordado estimado

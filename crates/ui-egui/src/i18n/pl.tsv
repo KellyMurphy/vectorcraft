@@ -5293,3 +5293,14 @@ mark-style	Japanese	Japońskie
 	Match Threads	Dopasuj nici
 	Load Thread Chart	Wczytaj wzornik nici
 @msg	Thread chart: {_1}	Wzornik nici: {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	Odtwórz
+	Pause	Wstrzymaj
+	Play the sewing stitch by stitch	Odtwórz wyszywanie ścieg po ściegu
+	Previous thread	Poprzednia nić
+	Next thread	Następna nić
+	Sewing Time	Czas wyszywania
+	At the machine speed set below, with time for trims and thread changes	Przy prędkości maszyny ustawionej poniżej, z czasem na obcięcia i zmiany nici
+	Machine Speed:	Prędkość maszyny:
+	Stitches per minute, for the sewing time estimate	Ściegi na minutę, do szacowanego czasu wyszywania

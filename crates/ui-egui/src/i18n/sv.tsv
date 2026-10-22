@@ -5397,3 +5397,14 @@ theme	Appearance	Utseende
 	Match Threads	Matcha trådar
 	Load Thread Chart	Läs in trådkarta
 @msg	Thread chart: {_1}	Trådkarta: {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	Spela upp
+	Pause	Pausa
+	Play the sewing stitch by stitch	Spela upp broderingen stygn för stygn
+	Previous thread	Föregående tråd
+	Next thread	Nästa tråd
+	Sewing Time	Broderingstid
+	At the machine speed set below, with time for trims and thread changes	Vid maskinhastigheten nedan, med tid för klipp och trådbyten
+	Machine Speed:	Maskinhastighet:
+	Stitches per minute, for the sewing time estimate	Stygn per minut, för den uppskattade broderingstiden

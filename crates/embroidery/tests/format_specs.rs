@@ -112,6 +112,7 @@ fn full_setup() -> EmbroiderySetup {
         overlap: 1.0,
         min_stitch: 0.5,
         auto_start: false,
+        speed: 800.0,
         order: vec![NodeId(1)],
         patterns: vec![full_pattern()],
         sew_out: Some(Box::new(full_sew_out())),

@@ -5401,3 +5401,14 @@ mark-style	Japanese	Japonesas
 	Match Threads	Emparejar hilos
 	Load Thread Chart	Cargar carta de hilos
 @msg	Thread chart: {_1}	Carta de hilos: {_1}
+
+# Stitch player (the Sew Order panel)
+	Play	Reproducir
+	Pause	Pausa
+	Play the sewing stitch by stitch	Reproducir el bordado puntada a puntada
+	Previous thread	Hilo anterior
+	Next thread	Hilo siguiente
+	Sewing Time	Tiempo de bordado
+	At the machine speed set below, with time for trims and thread changes	A la velocidad de máquina indicada abajo, con tiempo para cortes y cambios de hilo
+	Machine Speed:	Velocidad de la máquina:
+	Stitches per minute, for the sewing time estimate	Puntadas por minuto, para el tiempo de bordado estimado

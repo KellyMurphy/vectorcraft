@@ -31,7 +31,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Embroidery Setup",
             ["Window", "Embroidery"],
             None,
-            "{trimJumpsOver?: mm (0.5–100; 3) | null (never trim on length: only thread changes and objects' trimBefore/trimAfter cut the thread), stitchMovesUnder?: mm (0–5; 1: moves to the next stitch up to this long are sewn, longer ones jump), overlap?: mm (0–3; 0.5: how far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away), minStitch?: mm (0–2; 0.3: needle points closer than this to the one before are left out; the document's fabric may ask for longer), autoStart?: bool (true: running, bean and zigzag lines without a startAt are entered nearest where the needle is)} the document's travel, overlap and shortest stitch, as one undo step → {trimJumpsOver, stitchMovesUnder, overlap, minStitch (as sewn: the larger of the document's and its fabric's)}",
+            "{trimJumpsOver?: mm (0.5–100; 3) | null (never trim on length: only thread changes and objects' trimBefore/trimAfter cut the thread), stitchMovesUnder?: mm (0–5; 1: moves to the next stitch up to this long are sewn, longer ones jump), overlap?: mm (0–3; 0.5: how far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away), minStitch?: mm (0–2; 0.3: needle points closer than this to the one before are left out; the document's fabric may ask for longer), autoStart?: bool (true: running, bean and zigzag lines without a startAt are entered nearest where the needle is), speed?: stitches per minute (100–1500; 600: the machine's, for the sewing time estimate)} the document's travel, overlap and shortest stitch, as one undo step → {trimJumpsOver, stitchMovesUnder, overlap, minStitch (as sewn: the larger of the document's and its fabric's)}",
             has_doc,
             setup
         ),
@@ -40,7 +40,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Sew Order",
             ["Window", "Embroidery"],
             None,
-            "{} the stitched objects in the order they are sewn → {order: [{id, name, stitch: type id, thread: \"#rrggbb\"}], custom: bool (false: paint order)}. Whatever is sewn later lies on top on the fabric",
+            "{} the stitched objects in the order they are sewn → {order: [{id, name, stitch: type id, thread: \"#rrggbb\", stitches: how many it sews}], custom: bool (false: paint order)}. Whatever is sewn later lies on top on the fabric",
             has_doc,
             order
         ),
@@ -447,7 +447,7 @@ fn set(s: &mut Session, p: &Value) -> Result<Value> {
 }
 
 fn setup_json(e: &EmbroiderySetup) -> Value {
-    json!({ "trimJumpsOver": e.trim_over(), "stitchMovesUnder": e.stitch_under(), "overlap": e.overlap(), "minStitch": e.min_stitch(), "autoStart": e.auto_start })
+    json!({ "trimJumpsOver": e.trim_over(), "stitchMovesUnder": e.stitch_under(), "overlap": e.overlap(), "minStitch": e.min_stitch(), "autoStart": e.auto_start, "speed": e.speed() })
 }
 
 fn setup(s: &mut Session, p: &Value) -> Result<Value> {
@@ -465,6 +465,12 @@ fn setup(s: &mut Session, p: &Value) -> Result<Value> {
         match v.as_f64() {
             Some(x) if EmbroiderySetup::STITCH_MOVES.contains(&x) => new.stitch_moves_under = x,
             _ => return Err(bad(C, "`stitchMovesUnder` must be a number from 0 to 5 (mm)")),
+        }
+    }
+    if let Some(v) = p.get("speed") {
+        match v.as_f64() {
+            Some(x) if EmbroiderySetup::SPEED.contains(&x) => new.speed = x,
+            _ => return Err(bad(C, "`speed` must be a number from 100 to 1500 (stitches per minute)")),
         }
     }
     if let Some(v) = p.get("autoStart") {
@@ -678,6 +684,12 @@ fn sewn_ids(doc: &Document) -> Vec<NodeId> {
 
 fn order(s: &mut Session, _: &Value) -> Result<Value> {
     let doc = &s.doc()?.doc;
+    let plan = s.stitch_plan(doc);
+    let count = |id: NodeId| {
+        plan.objects.iter().find(|o| o.id == id).map_or(0, |o| {
+            plan.needles.get(o.needles.clone()).unwrap_or_default().iter().filter(|n| n.cmd == vectorcraft_embroidery::Cmd::Stitch).count()
+        })
+    };
     let list: Vec<Value> = vectorcraft_embroidery::sew_order(doc)
         .into_iter()
         .map(|n| {
@@ -686,6 +698,7 @@ fn order(s: &mut Session, _: &Value) -> Result<Value> {
                 "name": object_name(n),
                 "stitch": n.extras().stitch.as_deref().map(StitchSettings::kind_id),
                 "thread": hex(vectorcraft_embroidery::thread_of_node(n)),
+                "stitches": count(n.id),
             })
         })
         .collect();
@@ -902,6 +915,7 @@ pub(crate) fn design(doc: &Document, plan: &Plan) -> Value {
         "widthMm": (w * 10.0).round() / 10.0,
         "heightMm": (h * 10.0).round() / 10.0,
         "warnings": plan.warnings,
+        "minutes": (vectorcraft_embroidery::sewing_seconds(plan, doc.embroidery.speed()) / 6.0).round() / 10.0,
     })
 }
 
