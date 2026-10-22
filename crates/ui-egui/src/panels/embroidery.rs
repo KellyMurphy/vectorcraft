@@ -1027,6 +1027,14 @@ fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
         }
     });
     ui.add_space(2.0);
+    let r = ui
+        .add_enabled_ui(n("objects") > 0, |ui| widgets::flat_button(ui, tl!("Worksheet…"), 96.0))
+        .inner
+        .on_hover_text(tl!("A printable sheet for whoever sews the design: picture, size, threads, time and notes"));
+    if r.clicked() {
+        app.run("embroidery.worksheet", json!({})).ok();
+    }
+    ui.add_space(2.0);
     ui.horizontal(|ui| {
         if widgets::flat_button(ui, tl!("Sew Order…"), 96.0)
             .on_hover_text(tl!("Step through the design as it is sewn, and change the order"))

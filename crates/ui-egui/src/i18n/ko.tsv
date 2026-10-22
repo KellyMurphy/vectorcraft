@@ -5029,3 +5029,8 @@ lighting	Light	광원
 	At the machine speed set below, with time for trims and thread changes	아래에 설정한 기계 속도 기준이며, 자르기와 실 교체 시간을 포함합니다
 	Machine Speed:	기계 속도:
 	Stitches per minute, for the sewing time estimate	분당 땀 수(자수 시간 추정용)
+
+# Production worksheet (the Embroidery panel)
+	Worksheet…	작업 지시서…
+	A printable sheet for whoever sews the design: picture, size, threads, time and notes	디자인을 수놓을 사람을 위한 인쇄용 시트: 그림, 크기, 실, 시간, 메모
+	Production Worksheet	생산 작업 지시서

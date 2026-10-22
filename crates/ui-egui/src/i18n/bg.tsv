@@ -5422,3 +5422,8 @@ theme	Appearance	Външен вид
 	At the machine speed set below, with time for trims and thread changes	При зададената по-долу скорост на машината, с време за отрязвания и смени на конеца
 	Machine Speed:	Скорост на машината:
 	Stitches per minute, for the sewing time estimate	Бодове в минута, за прогнозното време за бродиране
+
+# Production worksheet (the Embroidery panel)
+	Worksheet…	Работен лист…
+	A printable sheet for whoever sews the design: picture, size, threads, time and notes	Лист за печат за човека, който бродира дизайна: изображение, размер, конци, време и бележки
+	Production Worksheet	Производствен лист

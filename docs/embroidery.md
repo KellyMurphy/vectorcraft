@@ -207,6 +207,15 @@ Stitch** (Sew Order panel, `embroidery.setup {minStitch}`, 0.3 mm) to the one be
 everywhere, satin columns included; a fabric can ask for longer (Leather: 1 mm). Manual stitches are sewn
 exactly as drawn.
 
+### Production worksheet
+
+**Worksheet…** in the Embroidery panel (`embroidery.worksheet`) opens a printable page for whoever sews
+the design: its picture in stitches; size, stitch count, thread changes, trims and jumps, hoop, fabric
+and sewing time; the thread sequence with colour chips, each matched to the chosen thread chart's
+nearest thread, with an estimate of the thread it uses (the stitches' length plus 20 % taken up into the
+fabric); and a box for notes. It is an ordinary document: print it, or export it as PDF
+(`embroidery.worksheet {format: pdf}` gives the PDF straight away). A4 unless `page: letter`.
+
 ### Playing the sewing
 
 The Sew Order panel plays the design as the machine sews it: **Play** draws it stitch by stitch in its
@@ -317,6 +326,7 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.setFabric` | `{fabric?: woven\|knit\|towel\|cap\|leather\|denim\|null, name?, satinSpacing?, fillSpacing?, pull?, pullPercent?, push?, satinCenterUnder?, satinZigzagOver?, shapeEdgeOver?}`: set the document's fabric (a starter, then the settings given) |
 | `embroidery.loadFabric` | `{path? \| data?}`: a `.vcfabric` file as the document's fabric |
 | `embroidery.saveFabric` | `{fabric?, path?}`: write the document's fabric (or a starter) as a `.vcfabric` file |
+| `embroidery.worksheet` | `{page?: a4\|letter, format?: pdf, path?}`: the production worksheet, as a new document or a PDF |
 | `embroidery.testSheet` | `{sections?: [ids]}`: a new document of calibration swatches (see Sew-out tests) → `{index, sections, swatches, skipped}` |
 | `embroidery.sewOut` | → the sew-out form: `{sewOut: {fabric, machine, notes, swatches: [{id, section, label, objects, result, notes}], counts} \| null, sections}` |
 | `embroidery.recordSewOut` | `{fabric?, machine?, notes?, results?: [{swatch, result?: pass\|fail\|untested, notes?}]}`: fill in the form, one undo step |

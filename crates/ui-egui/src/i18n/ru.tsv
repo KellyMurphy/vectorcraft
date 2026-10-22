@@ -5079,3 +5079,8 @@ lighting	Light	Свет
 	At the machine speed set below, with time for trims and thread changes	При скорости машины, заданной ниже, с учётом обрезок и смен нитки
 	Machine Speed:	Скорость машины:
 	Stitches per minute, for the sewing time estimate	Стежков в минуту, для оценки времени вышивки
+
+# Production worksheet (the Embroidery panel)
+	Worksheet…	Рабочий лист…
+	A printable sheet for whoever sews the design: picture, size, threads, time and notes	Лист для печати тому, кто вышивает дизайн: изображение, размер, нитки, время и заметки
+	Production Worksheet	Производственный лист

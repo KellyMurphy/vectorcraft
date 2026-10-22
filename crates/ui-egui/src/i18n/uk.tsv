@@ -5063,3 +5063,8 @@ lighting	Light	Світло
 	At the machine speed set below, with time for trims and thread changes	За швидкості машини, заданої нижче, з часом на обрізання й заміни нитки
 	Machine Speed:	Швидкість машини:
 	Stitches per minute, for the sewing time estimate	Стібків за хвилину, для оцінки часу вишивання
+
+# Production worksheet (the Embroidery panel)
+	Worksheet…	Робочий аркуш…
+	A printable sheet for whoever sews the design: picture, size, threads, time and notes	Аркуш для друку тому, хто вишиває дизайн: зображення, розмір, нитки, час і нотатки
+	Production Worksheet	Виробничий аркуш

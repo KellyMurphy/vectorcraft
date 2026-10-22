@@ -5045,3 +5045,8 @@ theme	Appearance	Giao diện
 	At the machine speed set below, with time for trims and thread changes	Theo tốc độ máy đặt bên dưới, gồm thời gian cắt chỉ và đổi chỉ
 	Machine Speed:	Tốc độ máy:
 	Stitches per minute, for the sewing time estimate	Số mũi mỗi phút, để ước tính thời gian thêu
+
+# Production worksheet (the Embroidery panel)
+	Worksheet…	Phiếu sản xuất…
+	A printable sheet for whoever sews the design: picture, size, threads, time and notes	Một phiếu in cho người thêu thiết kế: hình, kích thước, chỉ, thời gian và ghi chú
+	Production Worksheet	Phiếu sản xuất

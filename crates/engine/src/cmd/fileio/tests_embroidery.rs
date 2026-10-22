@@ -730,3 +730,17 @@ fn the_sewing_time_follows_the_machine_speed() {
     let order = s.execute("embroidery.order", &json!({})).unwrap();
     assert!(order["order"][0]["stitches"].as_u64().unwrap() > 100);
 }
+
+#[test]
+fn the_worksheet_opens_or_comes_back_as_a_pdf() {
+    let mut s = session();
+    assert!(s.execute("embroidery.worksheet", &json!({})).is_err(), "nothing stitched");
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    let pdf = s.execute("embroidery.worksheet", &json!({"format": "pdf", "page": "letter"})).unwrap();
+    let bytes = vectorcraft_format::base64_decode(pdf["dataBase64"].as_str().unwrap()).unwrap();
+    assert!(bytes.starts_with(b"%PDF"));
+    let r = s.execute("embroidery.worksheet", &json!({})).unwrap();
+    assert_eq!((r["index"].as_u64(), r["threads"].as_u64()), (Some(1), Some(1)), "a new document");
+    assert!(s.doc().unwrap().doc.title.ends_with("worksheet"));
+    assert!(s.execute("embroidery.worksheet", &json!({"page": "a3"})).is_err());
+}

@@ -289,6 +289,15 @@ pub fn specs() -> Vec<CommandSpec> {
             save_fabric
         ),
         cmd!(
+            "embroidery.worksheet",
+            "Production Worksheet",
+            ["Window", "Embroidery"],
+            None,
+            "{page?: a4|letter (a4), format?: pdf, path?} a printable production worksheet for the design: its picture in stitches; size, stitches, thread changes, trims and jumps, hoop, fabric and sewing time; the thread sequence with colour chips, the chosen thread chart's matched threads and the thread each uses (estimate); a box for notes. Opened as a new document → {index, threads}; with format pdf, written to path → {path}, or without path {dataBase64}",
+            has_doc,
+            worksheet
+        ),
+        cmd!(
             "embroidery.testSheet",
             "New Test Sheet…",
             ["Window", "Embroidery"],
@@ -1330,6 +1339,39 @@ fn save_fabric(s: &mut Session, p: &Value) -> Result<Value> {
             Ok(json!({"path": path}))
         }
         None => Ok(json!({"data": text})),
+    }
+}
+
+fn worksheet(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.worksheet";
+    let letter = match str_param(p, "page").map(|v| v.trim().to_ascii_lowercase()) {
+        None => false,
+        Some(v) if v == "a4" => false,
+        Some(v) if v == "letter" => true,
+        Some(_) => return Err(bad(C, "`page` must be a4 or letter")),
+    };
+    let doc = s.doc()?.doc.clone();
+    let plan = s.stitch_plan(&doc);
+    if plan.stats().stitches == 0 {
+        return Err(bad(C, "nothing is stitched: give paths stitch settings first (embroidery.set)"));
+    }
+    let sheet = vectorcraft_embroidery::worksheet::build(&doc, &plan, letter);
+    match str_param(p, "format") {
+        None => {
+            let index = s.add_document(sheet, None);
+            Ok(json!({"index": index, "threads": plan.threads.len()}))
+        }
+        Some(f) if f.eq_ignore_ascii_case("pdf") => {
+            let bytes = super::fileio::encode(&sheet, "pdf", &json!({}))?;
+            match str_param(p, "path") {
+                Some(path) => {
+                    super::fileio::write_file(path, &bytes)?;
+                    Ok(json!({"path": path}))
+                }
+                None => Ok(json!({"dataBase64": vectorcraft_format::base64_encode(&bytes)})),
+            }
+        }
+        Some(_) => Err(bad(C, "`format` must be pdf (or left out: a new document)")),
     }
 }
 

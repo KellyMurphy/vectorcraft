@@ -5416,3 +5416,8 @@ mark-style	Japanese	Japanilainen
 	At the machine speed set below, with time for trims and thread changes	Alla asetetulla koneen nopeudella, aika katkaisuille ja langanvaihdoille mukaan lukien
 	Machine Speed:	Koneen nopeus:
 	Stitches per minute, for the sewing time estimate	Pistoa minuutissa, arvioitua kirjonta-aikaa varten
+
+# Production worksheet (the Embroidery panel)
+	Worksheet…	Työlomake…
+	A printable sheet for whoever sews the design: picture, size, threads, time and notes	Tulostettava lomake kuvion kirjojalle: kuva, koko, langat, aika ja huomautukset
+	Production Worksheet	Tuotantolomake

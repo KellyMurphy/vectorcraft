@@ -26,6 +26,7 @@ pub mod rails;
 pub mod skeleton;
 pub mod testsheet;
 pub mod threads;
+pub mod worksheet;
 
 use std::collections::HashMap;
 use std::sync::Arc;

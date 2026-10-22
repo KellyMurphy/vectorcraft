@@ -5438,3 +5438,8 @@ imageTrace	Outline	Körvonal
 	At the machine speed set below, with time for trims and thread changes	Az alább beállított gépsebességgel, a vágások és cérnacserék idejével együtt
 	Machine Speed:	Gépsebesség:
 	Stitches per minute, for the sewing time estimate	Öltés percenként, a becsült hímzési időhöz
+
+# Production worksheet (the Embroidery panel)
+	Worksheet…	Munkalap…
+	A printable sheet for whoever sews the design: picture, size, threads, time and notes	Nyomtatható lap annak, aki a mintát hímzi: kép, méret, cérnák, idő és megjegyzések
+	Production Worksheet	Gyártási munkalap

@@ -5307,3 +5307,8 @@ lighting	Light	光源
 	At the machine speed set below, with time for trims and thread changes	按下方设置的机器速度计算，包括剪线和换线时间
 	Machine Speed:	机器速度:
 	Stitches per minute, for the sewing time estimate	每分钟针数，用于估计缝制时间
+
+# Production worksheet (the Embroidery panel)
+	Worksheet…	生产单…
+	A printable sheet for whoever sews the design: picture, size, threads, time and notes	供缝制人员使用的可打印单页：图样、尺寸、线、时间和备注
+	Production Worksheet	生产单

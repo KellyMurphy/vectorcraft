@@ -5124,3 +5124,8 @@ lighting	Light	ライト
 	At the machine speed set below, with time for trims and thread changes	下で設定したミシン速度で、糸切りと糸替えの時間を含みます
 	Machine Speed:	ミシン速度:
 	Stitches per minute, for the sewing time estimate	1 分あたりの針数 (縫製時間の見積もり用)
+
+# Production worksheet (the Embroidery panel)
+	Worksheet…	作業指示書…
+	A printable sheet for whoever sews the design: picture, size, threads, time and notes	デザインを縫う人のための印刷用シート: 画像、サイズ、糸、時間、メモ
+	Production Worksheet	生産指示書

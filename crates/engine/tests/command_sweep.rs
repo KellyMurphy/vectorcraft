@@ -575,7 +575,10 @@ fn every_command_undoes_exactly() {
     let mut failures = vec![];
     for c in command_specs() {
         // embroidery.testSheet opens a new document (a new tab, not an edit of this one): nothing to undo.
-        if matches!(c.id, "edit.undo" | "edit.redo" | "embroidery.testSheet") || c.id.starts_with("file.") || c.id.starts_with("document.") {
+        if matches!(c.id, "edit.undo" | "edit.redo" | "embroidery.testSheet" | "embroidery.worksheet")
+            || c.id.starts_with("file.")
+            || c.id.starts_with("document.")
+        {
             continue;
         }
         let mut s = Fixture::Multi.session();
