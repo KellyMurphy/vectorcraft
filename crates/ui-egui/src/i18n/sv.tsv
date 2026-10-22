@@ -5346,3 +5346,19 @@ theme	Appearance	Utseende
 # Shortest stitch (the Sew Order panel)
 	Shortest Stitch:	Kortaste stygn:
 	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Nålpunkter närmare än detta till den föregående utelämnas (tyget kan kräva längre)
+
+# Design checker rules (the Embroidery panel's Check list)
+	Stitches too long to sew	Stygn för långa att brodera
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	Stygn längre än 12 mm kan inte sys i en rörelse. Lägg till punkter längs banan eller använd en stygntyp som delar långa stygn.
+	Satin too narrow or too wide	Satin för smal eller för bred
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	Satin smalare än 1 mm täcker inte (använd raksöm eller bönstygn); bredare än 10 mm blir stygnen långa och lösa (fyll formen i stället).
+	Too small to sew	För litet att brodera
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	Objekt vars stygn ryms i en ruta på 1 mm blir en trådknut. Gör dem större eller ta bort dem.
+	Open shape set to fill	Öppen form som fyllning
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	En fyllning stänger öppna banor med en rak linje, vilket kanske inte är den avsedda formen. Stäng banan eller använd ett stygn längs den.
+	Too many needle holes in one place	För många nålhål på ett ställe
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	Där objekt staplas går så många nålhål in på ett ställe att tyget rivs eller nålen bryts. Skär bort det täckta, sänk tätheten eller ta bort ett lager.
+	Many trims or jumps	Många klipp eller hopp
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Varje klipp och hopp saktar ner maskinen och lämnar trådändar. Brodera per tråd, ordna om objekt eller sammanfoga närliggande delar.
+	Type too small	Text för liten
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Bokstäver under sin säkra storlek flyter ihop och kan inte läsas: satinbokstäver behöver minst 4 mm, fyllda 6 mm, raksöms- eller bönstygnsbokstäver 2,5 mm. Gör texten större eller använd raksöm.

@@ -5021,3 +5021,19 @@ lighting	Light	Luce
 # Shortest stitch (the Sew Order panel)
 	Shortest Stitch:	Punto più corto:
 	Needle points closer than this to the one before are left out (the fabric may ask for longer)	I punti d'ago più vicini di così al precedente vengono omessi (il tessuto può chiederne uno più lungo)
+
+# Design checker rules (the Embroidery panel's Check list)
+	Stitches too long to sew	Punti troppo lunghi da ricamare
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	I punti più lunghi di 12 mm non si cuciono in un solo movimento. Aggiungete punti lungo il tracciato o usate un tipo di punto che divide i punti lunghi.
+	Satin too narrow or too wide	Satin troppo stretto o troppo largo
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	Un satin sotto 1 mm non copre (usate un punto filza o fagiolo); oltre 10 mm i punti sono lunghi e lenti (riempite invece la forma).
+	Too small to sew	Troppo piccolo da ricamare
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	Gli oggetti i cui punti stanno in un riquadro di 1 mm diventano un nodo di filo. Ingranditeli o eliminateli.
+	Open shape set to fill	Forma aperta come riempimento
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	Un riempimento chiude i tracciati aperti con una linea retta, che potrebbe non essere la forma voluta. Chiudete il tracciato o usate un punto lungo di esso.
+	Too many needle holes in one place	Troppi fori d'ago in un punto
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	Dove gli oggetti si sovrappongono, entrano tanti fori d'ago in un punto che il tessuto si strappa o l'ago si rompe. Tagliate ciò che è coperto, abbassate la densità o togliete uno strato.
+	Many trims or jumps	Molti tagli o salti
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Ogni taglio e salto rallenta la macchina e lascia capi di filo. Ricamate per filo, riordinate gli oggetti o unite le parti vicine.
+	Type too small	Testo troppo piccolo
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Le lettere sotto la loro dimensione sicura si chiudono e non si leggono: il satin richiede almeno 4 mm, il riempimento 6 mm, il punto filza o fagiolo 2,5 mm. Ingrandite il testo o usate un punto filza.

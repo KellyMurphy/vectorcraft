@@ -5427,3 +5427,19 @@ swatch	Bright Violet	Felviolet
 # Shortest stitch (the Sew Order panel)
 	Shortest Stitch:	Kortste steek:
 	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Naaldpunten dichter dan dit bij het vorige worden weggelaten (de stof kan om meer vragen)
+
+# Design checker rules (the Embroidery panel's Check list)
+	Stitches too long to sew	Steken te lang om te borduren
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	Steken langer dan 12 mm kunnen niet in één beweging worden geborduurd. Voeg punten langs het pad toe of gebruik een steeksoort die lange steken splitst.
+	Satin too narrow or too wide	Satijn te smal of te breed
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	Satijn smaller dan 1 mm dekt niet (gebruik een rijg- of boonsteek); breder dan 10 mm zijn de steken lang en los (vul de vorm in plaats daarvan).
+	Too small to sew	Te klein om te borduren
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	Objecten waarvan de steken in een vak van 1 mm passen, worden een knoop garen. Maak ze groter of verwijder ze.
+	Open shape set to fill	Open vorm als vulling
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	Een vulling sluit open paden met een rechte lijn, wat misschien niet de bedoelde vorm is. Sluit het pad of gebruik een steek langs het pad.
+	Too many needle holes in one place	Te veel naaldgaten op één plek
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	Waar objecten zich opstapelen, gaan zoveel naaldgaten in één plek dat de stof scheurt of de naald breekt. Snijd weg wat bedekt is, verlaag de dichtheid of verwijder een laag.
+	Many trims or jumps	Veel knippen of sprongen
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Elke knip en sprong vertraagt de machine en laat draadeinden achter. Borduur per garen, herschik objecten of verbind nabije delen.
+	Type too small	Tekst te klein
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Letters onder hun veilige grootte lopen dicht en zijn onleesbaar: satijnletters hebben minstens 4 mm nodig, gevulde 6 mm, rijg- of boonsteekletters 2,5 mm. Vergroot de tekst of gebruik een rijgsteek.

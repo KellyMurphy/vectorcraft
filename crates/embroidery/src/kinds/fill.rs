@@ -11,12 +11,13 @@ pub(super) fn sew(i: &Input) -> Output {
     let s = i.settings;
     let mut out = Output::default();
     let polys = i.polys();
+    // What is sewn on top later is cut out of the underlay too.
+    let cuts = if s.keep_covered { &[][..] } else { i.cuts };
+    let rows = || generate::fill_underlay_cut(&polys, i.rule, s.angle(), cuts, i.overlap);
     let under = match s.underlay() {
-        Underlay::Fill => generate::fill_underlay(&polys, i.rule, s.angle()),
+        Underlay::Fill => rows(),
         // Auto: the outline walked first, then rows across the top rows.
-        Underlay::Auto => {
-            generate::fill_underlay(&polys, i.rule, s.angle()).map(|rows| generate::edge_walk(&polys, i.rule).into_iter().chain(rows).collect())
-        }
+        Underlay::Auto => rows().map(|rows| generate::outside_cuts(generate::edge_walk(&polys, i.rule), cuts).into_iter().chain(rows).collect()),
         _ => Ok(vec![]),
     };
     // A carved motif over the shape's box (none when unknown or too fine to carve).
@@ -36,7 +37,6 @@ pub(super) fn sew(i: &Input) -> Output {
         None => vec![],
     };
     let comp = generate::RowComp { pull: s.pull(), pull_percent: s.pull_percent(), push: s.push() };
-    let cuts = if s.keep_covered { &[][..] } else { i.cuts };
     let top = generate::fill_compensated(&polys, i.rule, s.angle(), s.spacing(), s.length(), s.stagger(), &carve, comp, cuts, i.overlap);
     match under.and_then(|u| Ok((u, top?))) {
         Ok((u, top)) => {

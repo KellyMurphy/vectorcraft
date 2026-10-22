@@ -5354,3 +5354,19 @@ mark-style	Japanese	Japanilainen
 # Shortest stitch (the Sew Order panel)
 	Shortest Stitch:	Lyhin pisto:
 	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Tätä lähempänä edellistä olevat neulanpisteet jätetään pois (kangas voi vaatia pidemmän)
+
+# Design checker rules (the Embroidery panel's Check list)
+	Stitches too long to sew	Pistot liian pitkiä kirjottaviksi
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	Yli 12 mm:n pistoja ei voi kirjoa yhdellä liikkeellä. Lisää pisteitä polulle tai käytä pistotyyppiä, joka jakaa pitkät pistot.
+	Satin too narrow or too wide	Satiini liian kapea tai leveä
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	Alle 1 mm:n satiini ei peitä (käytä etupistoa tai bean-pistoa); yli 10 mm:n satiinin pistot ovat pitkiä ja löysiä (täytä muoto sen sijaan).
+	Too small to sew	Liian pieni kirjottavaksi
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	Objektit, joiden pistot mahtuvat 1 mm:n laatikkoon, kirjoutuvat lankasolmuksi. Suurenna tai poista ne.
+	Open shape set to fill	Avoin muoto täyttönä
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	Täyttö sulkee avoimet polut suoralla viivalla, mikä ei ehkä ole tarkoitettu muoto. Sulje polku tai käytä polkua seuraavaa pistoa.
+	Too many needle holes in one place	Liikaa neulanreikiä yhdessä kohdassa
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	Missä objektit pinoutuvat, yhteen kohtaan menee niin monta neulanreikää, että kangas repeää tai neula katkeaa. Leikkaa peitetty pois, laske tiheyttä tai poista kerros.
+	Many trims or jumps	Paljon katkaisuja tai hyppyjä
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Jokainen katkaisu ja hyppy hidastaa konetta ja jättää langanpäitä. Kirjo langan mukaan, järjestä objektit uudelleen tai yhdistä lähekkäiset osat.
+	Type too small	Teksti liian pieni
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Turvallista kokoa pienempi teksti tukkeutuu eikä ole luettavaa: satiiniteksti tarvitsee vähintään 4 mm, täytetty 6 mm, etupisto- tai bean-teksti 2,5 mm. Suurenna tekstiä tai käytä etupistoa.

@@ -4983,3 +4983,19 @@ theme	Appearance	Giao diện
 # Shortest stitch (the Sew Order panel)
 	Shortest Stitch:	Mũi ngắn nhất:
 	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Các điểm kim gần điểm trước hơn mức này sẽ bị bỏ (loại vải có thể yêu cầu dài hơn)
+
+# Design checker rules (the Embroidery panel's Check list)
+	Stitches too long to sew	Mũi quá dài để thêu
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	Mũi dài hơn 12 mm không thể thêu trong một lần. Thêm điểm dọc đường dẫn, hoặc dùng kiểu mũi tự chia mũi dài.
+	Satin too narrow or too wide	Satin quá hẹp hoặc quá rộng
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	Satin hẹp hơn 1 mm không phủ kín (dùng mũi lược hoặc bean); rộng hơn 10 mm thì mũi dài và lỏng (hãy thêu đầy hình thay vào).
+	Too small to sew	Quá nhỏ để thêu
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	Đối tượng có mũi thêu nằm gọn trong ô 1 mm sẽ thành một nút chỉ. Phóng to hoặc xóa chúng.
+	Open shape set to fill	Hình hở đặt thêu đầy
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	Thêu đầy đóng đường dẫn hở bằng một đường thẳng, có thể không phải hình mong muốn. Hãy đóng đường dẫn, hoặc dùng mũi chạy theo nó.
+	Too many needle holes in one place	Quá nhiều lỗ kim ở một chỗ
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	Nơi các đối tượng chồng lên nhau, quá nhiều lỗ kim dồn vào một chỗ làm rách vải hoặc gãy kim. Cắt bỏ phần bị che, giảm mật độ, hoặc bỏ một lớp.
+	Many trims or jumps	Nhiều lần cắt chỉ hoặc nhảy
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Mỗi lần cắt chỉ và nhảy làm chậm máy và để lại đầu chỉ. Thêu theo chỉ, sắp xếp lại đối tượng, hoặc nối các phần gần nhau.
+	Type too small	Chữ quá nhỏ
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Chữ nhỏ hơn cỡ an toàn sẽ bị bít và không đọc được: chữ satin cần ít nhất 4 mm, chữ thêu đầy 6 mm, chữ mũi lược hoặc bean 2,5 mm. Phóng to chữ, hoặc dùng mũi lược.

@@ -4312,3 +4312,19 @@ lighting	Light	光源
 # Shortest stitch (the Sew Order panel)
 	Shortest Stitch:	最短針跡:
 	Needle points closer than this to the one before are left out (the fabric may ask for longer)	與前一針距離小於此值的針點會被略過（布料可能要求更長）
+
+# Design checker rules (the Embroidery panel's Check list)
+	Stitches too long to sew	針跡過長無法縫製
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	超過 12 公釐的針跡無法一次縫出。請沿路徑增加點，或改用會拆分長針跡的針法。
+	Satin too narrow or too wide	緞面過窄或過寬
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	窄於 1 公釐的緞面蓋不住（請改用平針或豆針）；寬於 10 公釐時針跡又長又鬆（請改為填色）。
+	Too small to sew	太小無法縫製
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	針跡可裝進 1 公釐方框的物件會縫成一團線結。請放大或刪除。
+	Open shape set to fill	開放形狀設為填色
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	填色會用直線封閉開放路徑，可能不是想要的形狀。請封閉路徑，或改用沿路徑的針法。
+	Too many needle holes in one place	一處針孔過多
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	物件疊放處有太多針孔落在同一點，會撕破布料或折斷針。請剪除被覆蓋部分、降低密度或去掉一層。
+	Many trims or jumps	剪線或跳針過多
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	每次剪線和跳針都會讓機器變慢並留下線頭。請依線縫製、重排物件或連接相鄰部分。
+	Type too small	文字過小
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	小於安全尺寸的文字會糊在一起無法辨認：緞面文字至少需 4 公釐，填色文字 6 公釐，平針或豆針文字 2.5 公釐。請放大文字或改用平針。

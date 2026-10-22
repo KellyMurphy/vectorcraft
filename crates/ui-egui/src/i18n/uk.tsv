@@ -5001,3 +5001,19 @@ lighting	Light	Світло
 # Shortest stitch (the Sew Order panel)
 	Shortest Stitch:	Найкоротший стібок:
 	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Проколи, ближчі за це до попереднього, пропускаються (тканина може вимагати більшого)
+
+# Design checker rules (the Embroidery panel's Check list)
+	Stitches too long to sew	Стібки задовгі для вишивання
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	Стібки, довші за 12 мм, не можна вишити одним рухом. Додайте точки вздовж контуру або використайте тип стібка, що ділить довгі стібки.
+	Satin too narrow or too wide	Атлас завузький або заширокий
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	Атлас, вужчий за 1 мм, не вкриває (використайте прямий стібок або bean); ширший за 10 мм має довгі й вільні стібки (краще залийте форму).
+	Too small to sew	Замало для вишивання
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	Об’єкти, стібки яких уміщуються в квадрат 1 мм, вишиваються вузлом нитки. Збільште їх або вилучіть.
+	Open shape set to fill	Відкрита форма як заливка
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	Заливка замикає відкриті контури прямою, а це може бути не та форма. Замкніть контур або використайте стібок уздовж нього.
+	Too many needle holes in one place	Забагато проколів в одному місці
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	Де об’єкти накладаються, в одне місце потрапляє стільки проколів, що тканина рветься або голка ламається. Виріжте закрите, зменште щільність або приберіть шар.
+	Many trims or jumps	Багато обрізань чи стрибків
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Кожне обрізання та стрибок сповільнюють машину й залишають кінці нитки. Вишивайте за нитками, переставте об’єкти або з’єднайте близькі частини.
+	Type too small	Текст замалий
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Літери, менші за безпечний розмір, запливають і не читаються: атласним потрібно щонайменше 4 мм, залитим 6 мм, прямим стібком чи bean 2,5 мм. Збільште текст або використайте прямий стібок.

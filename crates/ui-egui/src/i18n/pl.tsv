@@ -5242,3 +5242,19 @@ mark-style	Japanese	Japońskie
 # Shortest stitch (the Sew Order panel)
 	Shortest Stitch:	Najkrótszy ścieg:
 	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Punkty wkłucia bliżej poprzedniego niż ta wartość są pomijane (tkanina może wymagać dłuższego)
+
+# Design checker rules (the Embroidery panel's Check list)
+	Stitches too long to sew	Ściegi za długie do wyszycia
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	Ściegów dłuższych niż 12 mm nie da się wyszyć jednym ruchem. Dodaj punkty wzdłuż ścieżki lub użyj typu ściegu, który dzieli długie ściegi.
+	Satin too narrow or too wide	Satyna za wąska lub za szeroka
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	Satyna węższa niż 1 mm nie kryje (użyj ściegu prostego lub bean); szersza niż 10 mm ma długie, luźne ściegi (wypełnij kształt zamiast tego).
+	Too small to sew	Za małe do wyszycia
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	Obiekty, których ściegi mieszczą się w polu 1 mm, wyszywają się jako supeł nici. Powiększ je lub usuń.
+	Open shape set to fill	Otwarty kształt jako wypełnienie
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	Wypełnienie zamyka otwarte ścieżki linią prostą, co może nie być zamierzonym kształtem. Zamknij ścieżkę lub użyj ściegu wzdłuż niej.
+	Too many needle holes in one place	Za dużo wkłuć w jednym miejscu
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	Tam, gdzie obiekty się nakładają, w jedno miejsce trafia tyle wkłuć, że tkanina się rwie albo igła łamie. Wytnij to, co zakryte, zmniejsz gęstość lub usuń warstwę.
+	Many trims or jumps	Dużo obcięć lub skoków
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Każde obcięcie i skok spowalnia maszynę i zostawia końce nici. Wyszywaj według nici, zmień kolejność obiektów lub połącz bliskie części.
+	Type too small	Tekst za mały
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Litery poniżej bezpiecznego rozmiaru zlewają się i są nieczytelne: litery satynowe wymagają co najmniej 4 mm, wypełniane 6 mm, ściegiem prostym lub bean 2,5 mm. Powiększ tekst lub użyj ściegu prostego.

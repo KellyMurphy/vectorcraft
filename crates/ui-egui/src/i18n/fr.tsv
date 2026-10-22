@@ -5407,3 +5407,19 @@ theme	Appearance	Apparence
 # Shortest stitch (the Sew Order panel)
 	Shortest Stitch:	Point le plus court :
 	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Les points d'aiguille plus proches que cela du précédent sont omis (le tissu peut demander plus long)
+
+# Design checker rules (the Embroidery panel's Check list)
+	Stitches too long to sew	Points trop longs à broder
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	Les points de plus de 12 mm ne se brodent pas en un seul mouvement. Ajoutez des points le long du tracé, ou utilisez un type de point qui coupe les points longs.
+	Satin too narrow or too wide	Satin trop étroit ou trop large
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	Un satin de moins de 1 mm ne couvre pas (utilisez un point droit ou un point haricot) ; au-delà de 10 mm, ses points sont longs et lâches (remplissez plutôt la forme).
+	Too small to sew	Trop petit pour être brodé
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	Les objets dont les points tiennent dans un carré de 1 mm se brodent en nœud de fil. Agrandissez-les ou supprimez-les.
+	Open shape set to fill	Forme ouverte en remplissage
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	Un remplissage ferme les tracés ouverts par une ligne droite, qui n'est peut-être pas la forme voulue. Fermez le tracé, ou utilisez un point qui le suit.
+	Too many needle holes in one place	Trop de piqûres au même endroit
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	Là où les objets s'empilent, tant de piqûres tombent au même endroit que le tissu se déchire ou l'aiguille casse. Retirez ce qui est couvert, baissez la densité ou enlevez une couche.
+	Many trims or jumps	Beaucoup de coupes ou de sauts
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Chaque coupe et chaque saut ralentit la machine et laisse des bouts de fil. Brodez par fil, réordonnez les objets ou reliez les parties proches.
+	Type too small	Texte trop petit
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Un lettrage sous sa taille sûre se bouche et devient illisible : le satin demande au moins 4 mm, le remplissage 6 mm, le point droit ou haricot 2,5 mm. Agrandissez le texte, ou utilisez un point droit.

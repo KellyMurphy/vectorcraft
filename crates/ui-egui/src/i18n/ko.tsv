@@ -4967,3 +4967,19 @@ lighting	Light	광원
 # Shortest stitch (the Sew Order panel)
 	Shortest Stitch:	가장 짧은 땀:
 	Needle points closer than this to the one before are left out (the fabric may ask for longer)	앞 바늘땀에 이보다 가까운 바늘땀은 빠집니다(천에 따라 더 길게 할 수 있습니다)
+
+# Design checker rules (the Embroidery panel's Check list)
+	Stitches too long to sew	너무 길어 수놓을 수 없는 땀
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	12 mm보다 긴 땀은 한 번에 수놓을 수 없습니다. 패스에 점을 더하거나 긴 땀을 나누는 스티치 종류를 쓰세요.
+	Satin too narrow or too wide	너무 좁거나 넓은 새틴
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	1 mm보다 좁은 새틴은 덮지 못합니다(러닝이나 빈 스티치를 쓰세요). 10 mm보다 넓으면 땀이 길고 느슨합니다(대신 채우기로 하세요).
+	Too small to sew	너무 작아 수놓을 수 없음
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	땀이 1 mm 상자 안에 드는 오브젝트는 실뭉치가 됩니다. 크게 하거나 지우세요.
+	Open shape set to fill	채우기로 설정된 열린 도형
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	채우기는 열린 패스를 직선으로 닫으므로 의도한 모양이 아닐 수 있습니다. 패스를 닫거나 패스를 따르는 스티치를 쓰세요.
+	Too many needle holes in one place	한곳에 바늘땀이 너무 많음
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	오브젝트가 겹쳐 쌓이는 곳에 바늘땀이 너무 많이 들어가 천이 찢어지거나 바늘이 부러집니다. 가려진 부분을 잘라 내거나 밀도를 낮추거나 한 겹을 없애세요.
+	Many trims or jumps	자르기나 점프가 많음
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	자르기와 점프마다 기계가 느려지고 실 끝이 남습니다. 실별로 수놓거나 오브젝트 순서를 바꾸거나 가까운 부분을 이으세요.
+	Type too small	글자가 너무 작음
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	안전 크기보다 작은 글자는 뭉개져 읽을 수 없습니다. 새틴 글자는 4 mm 이상, 채우기 글자는 6 mm, 러닝이나 빈 글자는 2.5 mm가 필요합니다. 글자를 키우거나 러닝 스티치를 쓰세요.

@@ -5409,3 +5409,19 @@ mark-style	Japanese	Japonské
 # Shortest stitch (the Sew Order panel)
 	Shortest Stitch:	Nejkratší steh:
 	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Body vpichu blíž než toto k předchozímu se vynechají (látka může žádat delší)
+
+# Design checker rules (the Embroidery panel's Check list)
+	Stitches too long to sew	Stehy příliš dlouhé k vyšití
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	Stehy delší než 12 mm nelze ušít jedním pohybem. Přidejte body podél cesty, nebo použijte typ stehu, který dlouhé stehy dělí.
+	Satin too narrow or too wide	Satén příliš úzký nebo široký
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	Satén užší než 1 mm nekryje (použijte rovný steh nebo steh bean); širší než 10 mm má dlouhé a volné stehy (raději tvar vyplňte).
+	Too small to sew	Příliš malé k vyšití
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	Objekty, jejichž stehy se vejdou do čtverce 1 mm, se vyšijí jako uzel nitě. Zvětšete je, nebo je odstraňte.
+	Open shape set to fill	Otevřený tvar jako výplň
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	Výplň uzavře otevřené cesty přímkou, což nemusí být zamýšlený tvar. Uzavřete cestu, nebo použijte steh podél ní.
+	Too many needle holes in one place	Příliš mnoho vpichů na jednom místě
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	Kde se objekty vrší, jde do jednoho místa tolik vpichů, že se látka trhá nebo jehla láme. Vyřízněte zakryté, snižte hustotu, nebo odeberte vrstvu.
+	Many trims or jumps	Mnoho odstřihů nebo skoků
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Každý odstřih a skok zpomaluje stroj a nechává konce nití. Vyšívejte podle nitě, změňte pořadí objektů, nebo spojte blízké části.
+	Type too small	Písmo příliš malé
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Písmo pod bezpečnou velikostí se slije a nedá se číst: saténové potřebuje aspoň 4 mm, vyplněné 6 mm, rovným stehem nebo bean 2,5 mm. Zvětšete písmo, nebo použijte rovný steh.

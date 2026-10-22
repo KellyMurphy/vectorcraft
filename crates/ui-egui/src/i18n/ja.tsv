@@ -5062,3 +5062,19 @@ lighting	Light	ライト
 # Shortest stitch (the Sew Order panel)
 	Shortest Stitch:	最短ステッチ:
 	Needle points closer than this to the one before are left out (the fabric may ask for longer)	前の針落ちにこれより近い針落ちは省かれます (生地によってはより長く指定されます)
+
+# Design checker rules (the Embroidery panel's Check list)
+	Stitches too long to sew	縫えないほど長いステッチ
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	12 mm を超えるステッチは一度に縫えません。パスに点を加えるか、長いステッチを分割するステッチの種類を使ってください。
+	Satin too narrow or too wide	狭すぎる・広すぎるサテン
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	1 mm 未満のサテンは覆いきれません (ランニングかビーンを使ってください)。10 mm を超えるとステッチが長くゆるくなります (代わりにフィルにしてください)。
+	Too small to sew	小さすぎて縫えない
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	ステッチが 1 mm 四方に収まるオブジェクトは糸の玉になります。大きくするか削除してください。
+	Open shape set to fill	フィルに設定された開いた形
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	フィルは開いたパスを直線で閉じるため、意図した形にならないことがあります。パスを閉じるか、パスに沿うステッチを使ってください。
+	Too many needle holes in one place	一か所の針穴が多すぎる
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	オブジェクトが重なる所では一か所に針穴が集中し、生地が破れたり針が折れたりします。覆われた部分を取り除くか、密度を下げるか、層を減らしてください。
+	Many trims or jumps	糸切りやジャンプが多い
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	糸切りやジャンプのたびにミシンが遅くなり、糸端が残ります。糸ごとに縫う、オブジェクトを並べ替える、近い部分をつなぐなどしてください。
+	Type too small	文字が小さすぎる
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	安全なサイズより小さい文字はつぶれて読めません。サテン文字は 4 mm 以上、フィル文字は 6 mm、ランニングやビーンの文字は 2.5 mm が必要です。文字を大きくするか、ランニング ステッチを使ってください。

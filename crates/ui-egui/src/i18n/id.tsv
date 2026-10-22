@@ -5384,3 +5384,19 @@ swatch	Bright Violet	Violet cerah
 # Shortest stitch (the Sew Order panel)
 	Shortest Stitch:	Jahitan terpendek:
 	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Titik jarum yang lebih dekat dari ini ke titik sebelumnya dilewati (kain bisa meminta lebih panjang)
+
+# Design checker rules (the Embroidery panel's Check list)
+	Stitches too long to sew	Jahitan terlalu panjang untuk disulam
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	Jahitan lebih dari 12 mm tidak bisa dijahit dalam satu gerakan. Tambahkan titik di sepanjang jalur, atau gunakan jenis jahitan yang membagi jahitan panjang.
+	Satin too narrow or too wide	Satin terlalu sempit atau lebar
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	Satin di bawah 1 mm tidak menutup (gunakan jahitan jelujur atau bean); di atas 10 mm jahitannya panjang dan longgar (isi bentuknya saja).
+	Too small to sew	Terlalu kecil untuk disulam
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	Objek yang jahitannya muat dalam kotak 1 mm menjadi simpul benang. Perbesar atau hapus.
+	Open shape set to fill	Bentuk terbuka diatur sebagai isian
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	Isian menutup jalur terbuka dengan garis lurus, yang mungkin bukan bentuk yang dimaksud. Tutup jalurnya, atau gunakan jahitan di sepanjangnya.
+	Too many needle holes in one place	Terlalu banyak lubang jarum di satu tempat
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	Di tempat objek bertumpuk, begitu banyak lubang jarum masuk ke satu titik sehingga kain sobek atau jarum patah. Potong yang tertutup, turunkan kerapatan, atau buang satu lapisan.
+	Many trims or jumps	Banyak potongan atau lompatan
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Setiap potongan dan lompatan memperlambat mesin dan meninggalkan ujung benang. Sulam per benang, ubah urutan objek, atau gabungkan bagian yang berdekatan.
+	Type too small	Huruf terlalu kecil
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Huruf di bawah ukuran amannya menutup dan tidak terbaca: huruf satin perlu minimal 4 mm, isian 6 mm, jelujur atau bean 2,5 mm. Perbesar hurufnya, atau gunakan jahitan jelujur.

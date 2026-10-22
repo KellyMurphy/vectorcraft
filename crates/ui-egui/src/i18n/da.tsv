@@ -5384,3 +5384,19 @@ swatch	Bright Violet	Kraftig violet
 # Shortest stitch (the Sew Order panel)
 	Shortest Stitch:	Korteste sting:
 	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Nålepunkter tættere end dette på det forrige udelades (stoffet kan kræve længere)
+
+# Design checker rules (the Embroidery panel's Check list)
+	Stitches too long to sew	Sting for lange til at brodere
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	Sting længere end 12 mm kan ikke sys i én bevægelse. Tilføj punkter langs stien, eller brug en stingtype, der deler lange sting.
+	Satin too narrow or too wide	Satin for smal eller for bred
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	Satin under 1 mm dækker ikke (brug et forsting eller bønnesting); over 10 mm er stingene lange og løse (fyld formen i stedet).
+	Too small to sew	For lille til at brodere
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	Objekter, hvis sting kan være i en boks på 1 mm, bliver til en knude af tråd. Gør dem større, eller fjern dem.
+	Open shape set to fill	Åben form sat til fyld
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	Et fyld lukker åbne stier med en lige linje, som måske ikke er den ønskede form. Luk stien, eller brug et sting langs den.
+	Too many needle holes in one place	For mange nålehuller ét sted
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	Hvor objekter stables, går så mange nålehuller ét sted ind, at stoffet rives, eller nålen knækker. Skær det dækkede væk, sænk tætheden, eller fjern et lag.
+	Many trims or jumps	Mange klip eller spring
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Hvert klip og spring sinker maskinen og efterlader trådender. Brodér efter tråd, omarranger objekter, eller forbind nære dele.
+	Type too small	Tekst for lille
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Bogstaver under deres sikre størrelse lukker sig og kan ikke læses: satinbogstaver kræver mindst 4 mm, fyldte 6 mm, forsting- eller bønnestingbogstaver 2,5 mm. Gør teksten større, eller brug et forsting.

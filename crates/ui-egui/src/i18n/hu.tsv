@@ -5376,3 +5376,19 @@ imageTrace	Outline	Körvonal
 # Shortest stitch (the Sew Order panel)
 	Shortest Stitch:	Legrövidebb öltés:
 	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Az előzőhöz ennél közelebbi tűpontok kimaradnak (az anyag hosszabbat is kérhet)
+
+# Design checker rules (the Embroidery panel's Check list)
+	Stitches too long to sew	Túl hosszú öltések
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	A 12 mm-nél hosszabb öltések egy mozdulattal nem varrhatók. Adjon pontokat a görbéhez, vagy használjon olyan öltéstípust, amely felosztja a hosszú öltéseket.
+	Satin too narrow or too wide	Túl keskeny vagy túl széles szatén
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	Az 1 mm-nél keskenyebb szatén nem fed (használjon előöltést vagy bean-öltést); 10 mm fölött az öltések hosszúak és lazák (inkább töltse ki az alakzatot).
+	Too small to sew	Túl kicsi a hímzéshez
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	Azok az objektumok, amelyek öltései elférnek egy 1 mm-es négyzetben, cérnacsomóvá varródnak. Nagyítsa vagy törölje őket.
+	Open shape set to fill	Kitöltésre állított nyitott alakzat
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	A kitöltés egyenes vonallal zárja le a nyitott görbéket, ami lehet, hogy nem a kívánt alak. Zárja le a görbét, vagy használjon a görbe menti öltést.
+	Too many needle holes in one place	Túl sok tűszúrás egy helyen
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	Ahol az objektumok egymásra rakódnak, annyi tűszúrás kerül egy helyre, hogy az anyag elszakad vagy a tű eltörik. Vágja ki a takartat, csökkentse a sűrűséget, vagy távolítson el egy réteget.
+	Many trims or jumps	Sok vágás vagy ugrás
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Minden vágás és ugrás lassítja a gépet és cérnavégeket hagy. Hímezzen cérna szerint, rendezze át az objektumokat, vagy kösse össze a közeli részeket.
+	Type too small	Túl kicsi szöveg
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	A biztonságos méretnél kisebb betűk összefolynak és olvashatatlanok: a szaténbetűkhöz legalább 4 mm kell, a kitöltöttekhez 6 mm, az elő- vagy bean-öltéses betűkhöz 2,5 mm. Nagyítsa a szöveget, vagy használjon előöltést.

@@ -555,6 +555,36 @@ pub fn fill_underlay(polys: &[Vec<Point>], rule: FillRule, angle: f64) -> Result
     fill(polys, rule, angle + 90.0, UNDERLAY_SPACING, UNDERLAY_FILL_LEN, 2)
 }
 
+/// [`fill_underlay`] with the areas `cuts` cut out as from the top rows (see [`fill_compensated`]).
+pub fn fill_underlay_cut(polys: &[Vec<Point>], rule: FillRule, angle: f64, cuts: &[Cut], overlap: f64) -> Result<Vec<Vec<Point>>, String> {
+    fill_compensated(polys, rule, angle + 90.0, UNDERLAY_SPACING, UNDERLAY_FILL_LEN, 2, &[], RowComp::default(), cuts, overlap)
+}
+
+/// `runs` with the points under any of `cuts` left out, each run split where it goes under one.
+pub fn outside_cuts(runs: Vec<Vec<Point>>, cuts: &[Cut]) -> Vec<Vec<Point>> {
+    if cuts.is_empty() {
+        return runs;
+    }
+    let mut out = vec![];
+    for run in runs {
+        let mut part: Vec<Point> = vec![];
+        for p in run {
+            if cuts.iter().any(|c| inside(&c.polys, c.rule, p)) {
+                if part.len() >= 2 {
+                    out.push(std::mem::take(&mut part));
+                }
+                part.clear();
+            } else {
+                part.push(p);
+            }
+        }
+        if part.len() >= 2 {
+            out.push(part);
+        }
+    }
+    out
+}
+
 /// Tatami fill: rows `spacing` mm apart at `angle` degrees (counter-clockwise on the page) across
 /// the area of the closed `polys` (filled by `rule`), each row running stitches up to `len` mm
 /// long, staggered row to row so the needle holes line up again only every `stagger` rows (2: a
@@ -601,14 +631,18 @@ fn intersect(a: &[(f64, f64)], b: &[(f64, f64)]) -> Vec<(f64, f64)> {
     out
 }
 
-/// `spans` less `holes`; pieces shorter than [`MIN_SPAN`] are left out.
-fn subtract(spans: Vec<(f64, f64)>, holes: &[(f64, f64)]) -> Vec<(f64, f64)> {
+/// `spans` less `holes`, each hole `overlap` mm short of the cut's edge at either end, except an
+/// end where the cut reaches past the span's own end (no gap can show there, so no rim is kept);
+/// pieces shorter than [`MIN_SPAN`] are left out.
+fn subtract(spans: Vec<(f64, f64)>, holes: &[(f64, f64)], overlap: f64) -> Vec<(f64, f64)> {
     let mut out = spans;
-    for &(h0, h1) in holes {
+    for &(c0, c1) in holes {
         out = out
             .into_iter()
             .flat_map(|(a, b)| {
-                if h1 <= a || h0 >= b {
+                let h0 = if c0 <= a + overlap { a } else { c0 + overlap };
+                let h1 = if c1 >= b - overlap { b } else { c1 - overlap };
+                if h1 <= h0 || h1 <= a || h0 >= b {
                     vec![(a, b)]
                 } else {
                     [(a, h0.min(b)), (h1.max(a), b)].into_iter().filter(|(p, q)| q - p >= MIN_SPAN).collect()
@@ -693,11 +727,11 @@ pub fn fill_compensated(
         for (cut, cut_rule) in &cuts {
             let mut hole = row_spans(cut, *cut_rule, y);
             if overlap > 0.0 {
+                // Across the rows: only where the cut reaches past the overlap both ways.
                 hole = intersect(&intersect(&hole, &row_spans(cut, *cut_rule, y - overlap)), &row_spans(cut, *cut_rule, y + overlap));
-                hole = hole.into_iter().map(|(a, b)| (a + overlap, b - overlap)).filter(|(a, b)| b > a).collect();
             }
             if !hole.is_empty() {
-                row = subtract(row, &hole);
+                row = subtract(row, &hole, overlap);
             }
         }
         spans.push(row);

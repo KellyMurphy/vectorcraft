@@ -5326,3 +5326,19 @@ mark-style	Japanese	Japonesas
 # Shortest stitch (the Sew Order panel)
 	Shortest Stitch:	Ponto mais curto:
 	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Pontos de agulha mais próximos que isto do anterior são omitidos (o tecido pode pedir mais longo)
+
+# Design checker rules (the Embroidery panel's Check list)
+	Stitches too long to sew	Pontos longos demais para bordar
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	Pontos com mais de 12 mm não podem ser costurados em um movimento. Adicione pontos ao longo do traçado ou use um tipo de ponto que divida os pontos longos.
+	Satin too narrow or too wide	Cetim estreito ou largo demais
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	Cetim com menos de 1 mm não cobre (use ponto corrido ou feijão); com mais de 10 mm os pontos ficam longos e frouxos (preencha a forma em vez disso).
+	Too small to sew	Pequeno demais para bordar
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	Objetos cujos pontos cabem em um quadrado de 1 mm viram um nó de linha. Aumente-os ou remova-os.
+	Open shape set to fill	Forma aberta como preenchimento
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	Um preenchimento fecha traçados abertos com uma linha reta, que pode não ser a forma desejada. Feche o traçado ou use um ponto ao longo dele.
+	Too many needle holes in one place	Furos de agulha demais em um lugar
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	Onde objetos se empilham, entram tantos furos de agulha em um ponto que o tecido rasga ou a agulha quebra. Corte o que está coberto, reduza a densidade ou remova uma camada.
+	Many trims or jumps	Muitos cortes ou saltos
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Cada corte e salto deixa a máquina mais lenta e deixa pontas de linha. Borde por linha, reordene os objetos ou una partes próximas.
+	Type too small	Texto pequeno demais
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Letras abaixo do tamanho seguro se fecham e ficam ilegíveis: letras em cetim pedem pelo menos 4 mm, preenchidas 6 mm, em ponto corrido ou feijão 2,5 mm. Aumente o texto ou use ponto corrido.

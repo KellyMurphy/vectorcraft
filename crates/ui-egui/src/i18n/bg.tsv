@@ -5360,3 +5360,19 @@ theme	Appearance	Външен вид
 # Shortest stitch (the Sew Order panel)
 	Shortest Stitch:	Най-къс бод:
 	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Точките на иглата, по-близки от това до предишната, се пропускат (платът може да изисква по-дълъг)
+
+# Design checker rules (the Embroidery panel's Check list)
+	Stitches too long to sew	Бодове, твърде дълги за бродиране
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	Бодове по-дълги от 12 mm не могат да се ушият с едно движение. Добавете точки по пътя или използвайте тип бод, който разделя дългите бодове.
+	Satin too narrow or too wide	Сатен твърде тесен или твърде широк
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	Сатен под 1 mm не покрива (използвайте прав бод или бод bean); над 10 mm бодовете са дълги и хлабави (по-добре запълнете формата).
+	Too small to sew	Твърде малко за бродиране
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	Обекти, чиито бодове се побират в квадрат от 1 mm, се избродират като възел от конец. Уголемете ги или ги премахнете.
+	Open shape set to fill	Отворена форма като запълване
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	Запълването затваря отворените пътища с права линия, което може да не е желаната форма. Затворете пътя или използвайте бод по него.
+	Too many needle holes in one place	Твърде много дупки на едно място
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	Където обектите се наслагват, толкова много дупки от иглата попадат на едно място, че платът се къса или иглата се чупи. Изрежете покритото, намалете плътността или махнете слой.
+	Many trims or jumps	Много отрязвания или скокове
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Всяко отрязване и скок забавя машината и оставя краища на конеца. Бродирайте по конец, пренаредете обектите или съединете близките части.
+	Type too small	Твърде малък текст
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Буквите под безопасния им размер се затварят и не се четат: сатенените изискват поне 4 mm, запълнените 6 mm, с прав бод или bean 2,5 mm. Уголемете текста или използвайте прав бод.

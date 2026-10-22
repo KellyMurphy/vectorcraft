@@ -166,6 +166,14 @@ for warnings). The rules so far:
 - **Not sewn as set:** objects that can't be stitched or whose settings are from a newer VectorCraft, and
   objects sewn whole under a mask.
 - **Design cut short:** more needle moves than a file holds.
+- **Stitches too long to sew:** stitches over 12 mm, which no machine sews in one move (an error).
+- **Satin too narrow or too wide:** satin under 1 mm doesn't cover; over 10 mm it is long and loose.
+- **Too small to sew:** objects whose stitches fit in a 1 mm box.
+- **Open shape set to fill:** a fill or satin shape on an open path, which is closed with a straight line.
+- **Too many needle holes in one place:** more than 40 needle holes in a 2 × 2 mm spot, where objects
+  stack up (a single fill reaches about 25).
+- **Many trims or jumps:** more than 40 trims or 150 jumps in the design.
+- **Type too small:** lettering under 4 mm (satin, Auto), 6 mm (fill) or 2.5 mm (running, bean).
 
 Exporting a DST adds a line for each rule that found something to the export's warnings.
 `embroidery.check` gives the same findings to agents and scripts, each with the object and where it is.
@@ -185,7 +193,8 @@ a stiff, bullet-proof patch. The rows still reach **0.5 mm** under the covering 
 shows; the Sew Order panel's **Overlap** (`embroidery.setup {overlap}`) sets that for the document. Fills,
 satin shapes, Auto objects and type cover by their outlines, satin columns by their band; running, bean,
 zigzag and pattern borders cover nothing. Tick a fill's **Keep Covered Rows** (`keepCovered`) to sew it
-whole. Moving or reordering what lies on top sews the fill again.
+whole. The fill's underlay is cut the same way. Where the covering object reaches past the fill's own
+edge, no rim is kept (no gap can show there). Moving or reordering what lies on top sews the fill again.
 
 ### Fabric profiles
 

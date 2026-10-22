@@ -4966,3 +4966,19 @@ effect	Regular	Regelmäßig
 # Shortest stitch (the Sew Order panel)
 	Shortest Stitch:	Kürzester Stich:
 	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Nadelpunkte, die näher als dies am vorigen liegen, werden ausgelassen (der Stoff kann mehr verlangen)
+
+# Design checker rules (the Embroidery panel's Check list)
+	Stitches too long to sew	Stiche zu lang zum Sticken
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	Stiche über 12 mm lassen sich nicht in einer Bewegung sticken. Fügen Sie Punkte entlang des Pfads hinzu oder verwenden Sie eine Stichart, die lange Stiche teilt.
+	Satin too narrow or too wide	Satin zu schmal oder zu breit
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	Satin unter 1 mm deckt nicht (Steppstich oder Bohnenstich verwenden); über 10 mm sind die Stiche lang und locker (die Form stattdessen füllen).
+	Too small to sew	Zu klein zum Sticken
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	Objekte, deren Stiche in ein 1-mm-Feld passen, werden zu einem Fadenknoten. Vergrößern oder entfernen Sie sie.
+	Open shape set to fill	Offene Form als Füllung
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	Eine Füllung schließt offene Pfade mit einer Geraden, was nicht die gemeinte Form sein muss. Schließen Sie den Pfad oder verwenden Sie einen Stich entlang des Pfads.
+	Too many needle holes in one place	Zu viele Einstiche an einer Stelle
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	Wo sich Objekte stapeln, gehen so viele Einstiche an eine Stelle, dass der Stoff reißt oder die Nadel bricht. Verdecktes wegschneiden, die Dichte senken oder eine Lage entfernen.
+	Many trims or jumps	Viele Schnitte oder Sprünge
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Jeder Schnitt und Sprung bremst die Maschine und hinterlässt Fadenenden. Nach Garn sticken, Objekte umordnen oder nahe Teile verbinden.
+	Type too small	Schrift zu klein
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Schrift unter ihrer sicheren Größe läuft zu und ist nicht lesbar: Satinschrift braucht mindestens 4 mm, gefüllte 6 mm, Steppstich- oder Bohnenstichschrift 2,5 mm. Schrift vergrößern oder einen Steppstich verwenden.

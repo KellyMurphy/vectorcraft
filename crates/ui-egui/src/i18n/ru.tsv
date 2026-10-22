@@ -5017,3 +5017,19 @@ lighting	Light	Свет
 # Shortest stitch (the Sew Order panel)
 	Shortest Stitch:	Кратчайший стежок:
 	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Проколы ближе этого к предыдущему пропускаются (ткань может требовать больше)
+
+# Design checker rules (the Embroidery panel's Check list)
+	Stitches too long to sew	Стежки слишком длинные для вышивки
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	Стежки длиннее 12 мм нельзя вышить одним движением. Добавьте точки вдоль контура или используйте тип стежка, который делит длинные стежки.
+	Satin too narrow or too wide	Атлас слишком узкий или широкий
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	Атлас уже 1 мм не закрывает (используйте прямой стежок или bean); шире 10 мм его стежки длинные и свободные (лучше залейте форму).
+	Too small to sew	Слишком мало для вышивки
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	Объекты, стежки которых помещаются в квадрат 1 мм, вышиваются узлом нити. Увеличьте их или удалите.
+	Open shape set to fill	Открытая форма как заливка
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	Заливка замыкает открытые контуры прямой линией, а это может быть не та форма. Замкните контур или используйте стежок вдоль него.
+	Too many needle holes in one place	Слишком много проколов в одном месте
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	Где объекты накладываются, в одно место приходится столько проколов, что ткань рвётся или игла ломается. Вырежьте закрытое, уменьшите плотность или уберите слой.
+	Many trims or jumps	Много обрезок или прыжков
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Каждая обрезка и прыжок замедляют машину и оставляют концы нити. Вышивайте по ниткам, переставьте объекты или соедините близкие части.
+	Type too small	Текст слишком мелкий
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Буквы меньше безопасного размера заплывают и не читаются: атласным нужно не меньше 4 мм, залитым 6 мм, прямым стежком или bean 2,5 мм. Увеличьте текст или используйте прямой стежок.
