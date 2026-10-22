@@ -5037,3 +5037,18 @@ lighting	Light	Luce
 	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Ogni taglio e salto rallenta la macchina e lascia capi di filo. Ricamate per filo, riordinate gli oggetti o unite le parti vicine.
 	Type too small	Testo troppo piccolo
 	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Le lettere sotto la loro dimensione sicura si chiudono e non si leggono: il satin richiede almeno 4 mm, il riempimento 6 mm, il punto filza o fagiolo 2,5 mm. Ingrandite il testo o usate un punto filza.
+
+# Hoops (the Embroidery panel's Hoop menu, the design checker)
+	Hoop:	Telaio:
+	The hoop the design is sewn in: its sewing field, centred on the design, is checked and shown in Stitch Preview	Il telaio in cui si ricama il disegno: il suo campo di ricamo, centrato sul disegno, viene controllato e mostrato nell'anteprima dei punti
+	The design fits the hoop.	Il disegno sta nel telaio.
+	The design fits only turned a quarter turn.	Il disegno ci sta solo ruotato di un quarto di giro.
+	The design is bigger than the hoop.	Il disegno è più grande del telaio.
+	Hoops	Telai
+	Hoop	Telaio
+	Load Hoop…	Carica telaio…
+	Save Hoop…	Salva telaio…
+	Load Hoop	Carica telaio
+	Design bigger than the hoop	Disegno più grande del telaio
+	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	Il disegno deve stare nel campo di ricamo del telaio. Scegliete un telaio più grande, ruotate il disegno di un quarto di giro, riducetelo o dividetelo in disegni ricamati uno dopo l'altro.
+@msg	Hoop: {_1}	Telaio: {_1}

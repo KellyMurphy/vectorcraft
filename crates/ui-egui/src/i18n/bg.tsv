@@ -5376,3 +5376,18 @@ theme	Appearance	Външен вид
 	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Всяко отрязване и скок забавя машината и оставя краища на конеца. Бродирайте по конец, пренаредете обектите или съединете близките части.
 	Type too small	Твърде малък текст
 	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Буквите под безопасния им размер се затварят и не се четат: сатенените изискват поне 4 mm, запълнените 6 mm, с прав бод или bean 2,5 mm. Уголемете текста или използвайте прав бод.
+
+# Hoops (the Embroidery panel's Hoop menu, the design checker)
+	Hoop:	Гергеф:
+	The hoop the design is sewn in: its sewing field, centred on the design, is checked and shown in Stitch Preview	Гергефът, в който се бродира дизайнът: полето му за бродиране, центрирано върху дизайна, се проверява и показва в прегледа на бодовете
+	The design fits the hoop.	Дизайнът се побира в гергефа.
+	The design fits only turned a quarter turn.	Дизайнът се побира само завъртян на четвърт оборот.
+	The design is bigger than the hoop.	Дизайнът е по-голям от гергефа.
+	Hoops	Гергефи
+	Hoop	Гергеф
+	Load Hoop…	Зареждане на гергеф…
+	Save Hoop…	Запазване на гергеф…
+	Load Hoop	Зареждане на гергеф
+	Design bigger than the hoop	Дизайн, по-голям от гергефа
+	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	Дизайнът трябва да се побира в полето за бродиране на гергефа. Изберете по-голям гергеф, завъртете дизайна на четвърт оборот, смалете го или го разделете на дизайни, бродирани един след друг.
+@msg	Hoop: {_1}	Гергеф: {_1}

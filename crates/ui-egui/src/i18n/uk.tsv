@@ -5017,3 +5017,18 @@ lighting	Light	Світло
 	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Кожне обрізання та стрибок сповільнюють машину й залишають кінці нитки. Вишивайте за нитками, переставте об’єкти або з’єднайте близькі частини.
 	Type too small	Текст замалий
 	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Літери, менші за безпечний розмір, запливають і не читаються: атласним потрібно щонайменше 4 мм, залитим 6 мм, прямим стібком чи bean 2,5 мм. Збільште текст або використайте прямий стібок.
+
+# Hoops (the Embroidery panel's Hoop menu, the design checker)
+	Hoop:	П’яльця:
+	The hoop the design is sewn in: its sewing field, centred on the design, is checked and shown in Stitch Preview	П’яльця, у яких вишивається дизайн: їхнє поле вишивання, відцентроване за дизайном, перевіряється й показується в попередньому перегляді стібків
+	The design fits the hoop.	Дизайн уміщується в п’яльця.
+	The design fits only turned a quarter turn.	Дизайн уміщується, лише якщо повернути його на чверть оберту.
+	The design is bigger than the hoop.	Дизайн більший за п’яльця.
+	Hoops	П’яльця
+	Hoop	П’яльця
+	Load Hoop…	Завантажити п’яльця…
+	Save Hoop…	Зберегти п’яльця…
+	Load Hoop	Завантажити п’яльця
+	Design bigger than the hoop	Дизайн більший за п’яльця
+	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	Дизайн має вміщуватися в поле вишивання п’ялець. Виберіть більші п’яльця, поверніть дизайн на чверть оберту, зменште його або розділіть на дизайни, що вишиваються один за одним.
+@msg	Hoop: {_1}	П’яльця: {_1}

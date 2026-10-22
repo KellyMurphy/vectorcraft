@@ -5078,3 +5078,18 @@ lighting	Light	ライト
 	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	糸切りやジャンプのたびにミシンが遅くなり、糸端が残ります。糸ごとに縫う、オブジェクトを並べ替える、近い部分をつなぐなどしてください。
 	Type too small	文字が小さすぎる
 	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	安全なサイズより小さい文字はつぶれて読めません。サテン文字は 4 mm 以上、フィル文字は 6 mm、ランニングやビーンの文字は 2.5 mm が必要です。文字を大きくするか、ランニング ステッチを使ってください。
+
+# Hoops (the Embroidery panel's Hoop menu, the design checker)
+	Hoop:	枠:
+	The hoop the design is sewn in: its sewing field, centred on the design, is checked and shown in Stitch Preview	デザインを縫う刺繍枠。デザインの中央に合わせた縫製範囲を確認し、ステッチ プレビューに表示します
+	The design fits the hoop.	デザインは枠に収まります。
+	The design fits only turned a quarter turn.	デザインは 90° 回転したときだけ収まります。
+	The design is bigger than the hoop.	デザインが枠より大きいです。
+	Hoops	刺繍枠
+	Hoop	刺繍枠
+	Load Hoop…	刺繍枠を読み込み…
+	Save Hoop…	刺繍枠を保存…
+	Load Hoop	刺繍枠を読み込み
+	Design bigger than the hoop	枠より大きいデザイン
+	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	デザインは枠の縫製範囲に収まる必要があります。より大きい枠を選ぶ、デザインを 90° 回転する、縮小する、または順に縫う複数のデザインに分けてください。
+@msg	Hoop: {_1}	刺繍枠: {_1}

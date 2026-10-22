@@ -193,6 +193,26 @@ pub static RULES: &[Rule] = &[
         },
     },
     Rule {
+        id: "hoop",
+        label: "Design bigger than the hoop",
+        help: "The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.",
+        in_plan_warnings: false,
+        run: |doc, plan| {
+            let Some(hoop) = doc.embroidery.hoop.as_ref().filter(|h| h.unknown.is_none()) else { return vec![] };
+            let Some(b) = plan.stats().bounds else { return vec![] };
+            let (w, h) = (b[2] - b[0], b[3] - b[1]);
+            let (fw, fh) = crate::hoops::size(hoop);
+            let (severity, message) = match crate::hoops::fit(w, h, hoop) {
+                crate::hoops::Fit::Fits => return vec![],
+                crate::hoops::Fit::FitsTurned => {
+                    (Severity::Warning, format!("the design ({w:.0} × {h:.0} mm) fits the {fw:.0} × {fh:.0} mm hoop only turned a quarter turn"))
+                }
+                crate::hoops::Fit::TooBig => (Severity::Error, format!("the design ({w:.0} × {h:.0} mm) doesn't fit the {fw:.0} × {fh:.0} mm hoop")),
+            };
+            vec![Finding { rule: "hoop", severity, message, object: None, at: None }]
+        },
+    },
+    Rule {
         id: "satin-width",
         label: "Satin too narrow or too wide",
         help: "Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).",

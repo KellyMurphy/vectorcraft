@@ -5366,3 +5366,18 @@ mark-style	Japanese	Japonesas
 	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Cada corte y salto frena la máquina y deja cabos de hilo. Borde por hilo, reordene los objetos o una partes cercanas.
 	Type too small	Texto demasiado pequeño
 	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Las letras por debajo de su tamaño seguro se cierran y no se leen: el satén necesita al menos 4 mm, el relleno 6 mm, la puntada recta o de frijol 2,5 mm. Agrande el texto o use una puntada recta.
+
+# Hoops (the Embroidery panel's Hoop menu, the design checker)
+	Hoop:	Bastidor:
+	The hoop the design is sewn in: its sewing field, centred on the design, is checked and shown in Stitch Preview	El bastidor en el que se borda el diseño: su campo de bordado, centrado en el diseño, se comprueba y se muestra en la vista previa de puntadas
+	The design fits the hoop.	El diseño cabe en el bastidor.
+	The design fits only turned a quarter turn.	El diseño solo cabe girado un cuarto de vuelta.
+	The design is bigger than the hoop.	El diseño es más grande que el bastidor.
+	Hoops	Bastidores
+	Hoop	Bastidor
+	Load Hoop…	Cargar bastidor…
+	Save Hoop…	Guardar bastidor…
+	Load Hoop	Cargar bastidor
+	Design bigger than the hoop	Diseño más grande que el bastidor
+	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	El diseño debe caber en el campo de bordado del bastidor. Elija un bastidor mayor, gire el diseño un cuarto de vuelta, redúzcalo o divídalo en diseños bordados uno tras otro.
+@msg	Hoop: {_1}	Bastidor: {_1}

@@ -1392,12 +1392,12 @@ fn the_documents_fabric_fills_in_unset_settings_and_moves_the_underlay_threshold
     let mut cache = StitchCache::default();
     let plain = plan_cached(&d, &mut cache);
     // Leather: a more open fill and less underlay (a 3.5 mm satin gets a centre walk, not an edge walk).
-    d.embroidery.fabric = fabrics::builtin("leather");
+    d.embroidery.fabric = fabrics::builtin("leather").map(Box::new);
     let leather = plan_cached(&d, &mut cache);
     assert_eq!(cache.sewn, 2, "a new fabric sews everything again");
     assert!(leather.stats().stitches < plain.stats().stitches, "{} {}", leather.stats().stitches, plain.stats().stitches);
     // Towels: the 3.5 mm satin is past the zigzag threshold (3 mm): edge walk and zigzag.
-    d.embroidery.fabric = fabrics::builtin("towel");
+    d.embroidery.fabric = fabrics::builtin("towel").map(Box::new);
     let towel = plan_cached(&d, &mut cache);
     assert!(towel.stats().stitches > plain.stats().stitches);
     // An object that sets everything the fabric would gives the same stitches with it or without it.
@@ -1416,7 +1416,7 @@ fn the_documents_fabric_fills_in_unset_settings_and_moves_the_underlay_threshold
         }
         plan(&d)
     };
-    d.embroidery.fabric = fabrics::builtin("leather");
+    d.embroidery.fabric = fabrics::builtin("leather").map(Box::new);
     let mut no_fabric = d.clone();
     no_fabric.embroidery.fabric = None;
     // Leather's shortest stitch is 1 mm.
@@ -1520,7 +1520,7 @@ fn stitches_shorter_than_the_shortest_are_left_out() {
             vec![n]
         });
         d.embroidery.min_stitch = min;
-        d.embroidery.fabric = fabric.map(|m| vectorcraft_doc::Fabric { min_stitch: Some(m), ..Default::default() });
+        d.embroidery.fabric = fabric.map(|m| Box::new(vectorcraft_doc::Fabric { min_stitch: Some(m), ..Default::default() }));
         d
     };
     let none = plan(&doc(StitchKind::Satin, 0.0, None));

@@ -388,11 +388,15 @@ pub struct EmbroiderySetup {
     /// A sew-out test: the swatches of a test sheet (`embroidery.testSheet`) and what was seen
     /// when they were sewn.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub sew_out: Option<SewOut>,
+    pub sew_out: Option<Box<SewOut>>,
     /// The fabric the design is for: its settings fill in what objects leave unset (`None`: the
     /// stitches' own defaults).
     #[serde(skip_serializing_if = "Option::is_none", deserialize_with = "de_fabric", serialize_with = "ser_fabric")]
-    pub fabric: Option<Fabric>,
+    pub fabric: Option<Box<Fabric>>,
+    /// The hoop the design is sewn in: its sewing field, centred on the design as machines centre
+    /// it (`None`: no hoop chosen, nothing checked).
+    #[serde(skip_serializing_if = "Option::is_none", deserialize_with = "de_hoop", serialize_with = "ser_hoop")]
+    pub hoop: Option<Box<Hoop>>,
     /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
     #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
     pub extra: serde_json::Map<String, serde_json::Value>,
@@ -409,6 +413,7 @@ impl Default for EmbroiderySetup {
             patterns: vec![],
             sew_out: None,
             fabric: None,
+            hoop: None,
             extra: Default::default(),
         }
     }
@@ -474,19 +479,66 @@ pub struct Fabric {
     pub unknown: Option<Box<serde_json::Value>>,
 }
 
+/// An embroidery hoop: the area a machine can sew in it (its sewing field), mm.
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct Hoop {
+    /// Lower case letters, digits and dashes (`5x7`).
+    pub id: String,
+    pub name: String,
+    /// The sewing field's width (across the machine) and height, mm.
+    pub width: f64,
+    pub height: f64,
+    /// A round field: the largest circle in `width` × `height`.
+    #[serde(skip_serializing_if = "crate::skip::is_default")]
+    pub round: bool,
+    /// Which machines take it, in words (information only).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub machines: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
+    #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
+    pub extra: serde_json::Map<String, serde_json::Value>,
+    /// A hoop this version can't read, kept exactly as written; it isn't used.
+    #[serde(skip)]
+    pub unknown: Option<Box<serde_json::Value>>,
+}
+
+impl Hoop {
+    /// Allowed sewing field sizes, mm.
+    pub const SIZE: std::ops::RangeInclusive<f64> = 10.0..=2000.0;
+}
+
+fn de_hoop<'de, D: serde::Deserializer<'de>>(d: D) -> Result<Option<Box<Hoop>>, D::Error> {
+    let v = Option::<serde_json::Value>::deserialize(d)?;
+    Ok(v.map(|v| match Hoop::deserialize(&v) {
+        Ok(h) => Box::new(h),
+        Err(_) => Box::new(Hoop { unknown: Some(Box::new(v)), ..Hoop::default() }),
+    }))
+}
+
+fn ser_hoop<S: serde::Serializer>(h: &Option<Box<Hoop>>, ser: S) -> Result<S::Ok, S::Error> {
+    match h.as_deref() {
+        Some(Hoop { unknown: Some(raw), .. }) => raw.serialize(ser),
+        Some(h) => h.serialize(ser),
+        None => ser.serialize_none(),
+    }
+}
+
 /// Read a document's fabric: one this version can't read is kept as written in
 /// [`Fabric::unknown`] instead of failing the document.
-fn de_fabric<'de, D: serde::Deserializer<'de>>(d: D) -> Result<Option<Fabric>, D::Error> {
+fn de_fabric<'de, D: serde::Deserializer<'de>>(d: D) -> Result<Option<Box<Fabric>>, D::Error> {
     let v = Option::<serde_json::Value>::deserialize(d)?;
     Ok(v.map(|v| match Fabric::deserialize(&v) {
-        Ok(f) => f,
-        Err(_) => Fabric { unknown: Some(Box::new(v)), ..Fabric::default() },
+        Ok(f) => Box::new(f),
+        Err(_) => Box::new(Fabric { unknown: Some(Box::new(v)), ..Fabric::default() }),
     }))
 }
 
 /// Write a document's fabric: one kept from a newer version goes back as it was read.
-fn ser_fabric<S: serde::Serializer>(f: &Option<Fabric>, ser: S) -> Result<S::Ok, S::Error> {
-    match f {
+fn ser_fabric<S: serde::Serializer>(f: &Option<Box<Fabric>>, ser: S) -> Result<S::Ok, S::Error> {
+    match f.as_deref() {
         Some(Fabric { unknown: Some(raw), .. }) => raw.serialize(ser),
         Some(f) => f.serialize(ser),
         None => ser.serialize_none(),

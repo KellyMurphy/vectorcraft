@@ -5258,3 +5258,18 @@ mark-style	Japanese	Japońskie
 	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Każde obcięcie i skok spowalnia maszynę i zostawia końce nici. Wyszywaj według nici, zmień kolejność obiektów lub połącz bliskie części.
 	Type too small	Tekst za mały
 	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Litery poniżej bezpiecznego rozmiaru zlewają się i są nieczytelne: litery satynowe wymagają co najmniej 4 mm, wypełniane 6 mm, ściegiem prostym lub bean 2,5 mm. Powiększ tekst lub użyj ściegu prostego.
+
+# Hoops (the Embroidery panel's Hoop menu, the design checker)
+	Hoop:	Tamborek:
+	The hoop the design is sewn in: its sewing field, centred on the design, is checked and shown in Stitch Preview	Tamborek, w którym wyszywany jest projekt: jego pole haftu, wyśrodkowane na projekcie, jest sprawdzane i pokazywane w podglądzie ściegów
+	The design fits the hoop.	Projekt mieści się w tamborku.
+	The design fits only turned a quarter turn.	Projekt mieści się tylko obrócony o ćwierć obrotu.
+	The design is bigger than the hoop.	Projekt jest większy niż tamborek.
+	Hoops	Tamborki
+	Hoop	Tamborek
+	Load Hoop…	Wczytaj tamborek…
+	Save Hoop…	Zapisz tamborek…
+	Load Hoop	Wczytaj tamborek
+	Design bigger than the hoop	Projekt większy niż tamborek
+	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	Projekt musi mieścić się w polu haftu tamborka. Wybierz większy tamborek, obróć projekt o ćwierć obrotu, zmniejsz go lub podziel na projekty wyszywane jeden po drugim.
+@msg	Hoop: {_1}	Tamborek: {_1}

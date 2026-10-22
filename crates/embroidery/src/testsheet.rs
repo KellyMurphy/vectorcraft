@@ -125,7 +125,7 @@ pub fn build(ids: &[String]) -> Result<Sheet, String> {
         *c = groups;
     }
     doc.layers = vec![Arc::new(layer)];
-    doc.embroidery.sew_out = Some(record);
+    doc.embroidery.sew_out = Some(Box::new(record));
     Ok(Sheet { doc, sections, skipped })
 }
 

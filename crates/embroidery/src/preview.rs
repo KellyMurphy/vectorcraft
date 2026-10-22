@@ -20,6 +20,24 @@ pub const THREAD_MM: f64 = 0.35;
 pub const JUMP_ALPHA: u8 = 90;
 pub const JUMP_WIDTH_PT: f64 = 0.5;
 
+/// The hoop's outline: its colour and width (points).
+pub const HOOP: [u8; 3] = [60, 120, 200];
+pub const HOOP_WIDTH_PT: f64 = 1.0;
+
+/// A hoop field `w` × `h` mm around `c` (mm) as a path in points: a rectangle, or its largest
+/// circle.
+pub fn hoop_outline(c: Point, w: f64, h: f64, round: bool) -> PathData {
+    let pt = |x: f64, y: f64| Anchor::corner(Point::new(x / PT_MM, y / PT_MM));
+    let anchors: Vec<Anchor> = if round {
+        let r = w.min(h) / 2.0;
+        (0..72).map(|k| (k as f64 * 5.0).to_radians()).map(|a| pt(c.x + r * a.cos(), c.y + r * a.sin())).collect()
+    } else {
+        let (hw, hh) = (w / 2.0, h / 2.0);
+        vec![pt(c.x - hw, c.y - hh), pt(c.x + hw, c.y - hh), pt(c.x + hw, c.y + hh), pt(c.x - hw, c.y + hh)]
+    };
+    PathData::single(SubPath { anchors, closed: true })
+}
+
 /// `doc` with the design `plan` drawn over its art, on a layer of its own above every other.
 pub fn document(doc: &Document, plan: &Plan) -> Document {
     let mut out = doc.clone();
@@ -57,6 +75,16 @@ pub fn document(doc: &Document, plan: &Plan) -> Document {
             children.push(Arc::new(jump));
         }
         from = Some(p);
+    }
+    // The hoop's sewing field, centred on the design.
+    if let Some((c, w, h)) = doc.embroidery.hoop.as_ref().filter(|h| h.unknown.is_none()).and_then(|hoop| crate::hoops::field(plan, hoop)) {
+        let round = doc.embroidery.hoop.as_ref().is_some_and(|h| h.round);
+        let path = hoop_outline(c, w, h, round);
+        let mut look = Appearance::basic(Paint::None, Paint::solid(Color::rgb8(HOOP[0], HOOP[1], HOOP[2])), HOOP_WIDTH_PT);
+        if let Some(s) = look.stroke_mut() {
+            s.dash = Some(vectorcraft_doc::Dash { pattern: vec![6.0, 4.0], offset: 0.0, align_corners: false });
+        }
+        children.push(Arc::new(Node::path(out.alloc_id(), path, look)));
     }
     let mut layer = Node::layer(out.alloc_id(), "Stitch Preview", LayerColor::Preset(0));
     if let Some(c) = layer.children_mut() {

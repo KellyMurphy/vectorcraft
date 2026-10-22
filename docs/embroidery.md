@@ -174,9 +174,21 @@ for warnings). The rules so far:
   stack up (a single fill reaches about 25).
 - **Many trims or jumps:** more than 40 trims or 150 jumps in the design.
 - **Type too small:** lettering under 4 mm (satin, Auto), 6 mm (fill) or 2.5 mm (running, bean).
+- **Design bigger than the hoop:** the design doesn't fit the document's hoop (an error), or fits only
+  turned a quarter turn.
 
 Exporting a DST adds a line for each rule that found something to the export's warnings.
 `embroidery.check` gives the same findings to agents and scripts, each with the object and where it is.
+
+### Hoops
+
+The Embroidery panel's **Hoop** menu (Design section, `embroidery.setHoop`) sets the hoop the design is
+sewn in: a common size (100 × 100, 130 × 180, 160 × 260, 200 × 200, 200 × 300 mm, or a cap's
+130 × 60 mm), or one from a `.vchoop` file (File › Open; [specification](formats/vchoop.md)). Its sewing
+field is drawn in Stitch Preview as a dashed outline centred on the design, as machines centre it, and
+the panel says whether the design fits. The design checker reports a design that doesn't fit (an
+error) or fits only turned a quarter turn. The common sizes are nominal; a machine's own field can be a
+little smaller, so set its real size (`embroidery.setHoop {width, height}`) when it matters.
 
 ### Shortest stitch
 
@@ -261,6 +273,10 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.reorder` | `{to: first\|earlier\|later\|last, ids?}` or `{order: [ids]}`: change the sewing order |
 | `embroidery.sortByThread` | group the sewing order by thread colour |
 | `embroidery.resetOrder` | sew in paint order again |
+| `embroidery.hoops` | → the document's `hoop` (or null), the `common` hoops, and whether the design `fit`s |
+| `embroidery.setHoop` | `{hoop?: 4x4\|5x7\|6x10\|8x8\|8x12\|cap\|null, name?, width?, height?, round?}`: set the document's hoop |
+| `embroidery.loadHoop` | `{path? \| data?, hoop?}`: a hoop from a `.vchoop` file as the document's |
+| `embroidery.saveHoop` | `{hoops?, path?}`: write the document's hoop (or common ones) as a `.vchoop` file |
 | `embroidery.fabrics` | → the document's `fabric` (or null) and the six `starters`, with their settings |
 | `embroidery.setFabric` | `{fabric?: woven\|knit\|towel\|cap\|leather\|denim\|null, name?, satinSpacing?, fillSpacing?, pull?, pullPercent?, push?, satinCenterUnder?, satinZigzagOver?, shapeEdgeOver?}`: set the document's fabric (a starter, then the settings given) |
 | `embroidery.loadFabric` | `{path? \| data?}`: a `.vcfabric` file as the document's fabric |

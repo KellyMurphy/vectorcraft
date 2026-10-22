@@ -746,7 +746,7 @@ fn fabric_label(id: &str) -> &'static str {
 /// The document's fabric: a starter, none, or its own (loaded or edited); Load… and Save….
 fn fabric_row(app: &mut VectorcraftApp, ui: &mut Ui) {
     use vectorcraft_embroidery::fabrics;
-    let current = app.session.active().and_then(|d| d.doc.embroidery.fabric.clone());
+    let current = app.session.active().and_then(|d| d.doc.embroidery.fabric.as_deref().cloned());
     // A starter as it comes shows under its own name; anything else under the fabric's own.
     let starter = current.as_ref().filter(|f| fabrics::builtin(&f.id).as_ref() == Some(*f)).map(|f| f.id.clone());
     let own = current.as_ref().filter(|_| starter.is_none()).map(|f| f.name.clone());
@@ -797,6 +797,59 @@ fn fabric_row(app: &mut VectorcraftApp, ui: &mut Ui) {
     });
 }
 
+/// The document's hoop: a common one, none, or its own (loaded); whether the design fits it.
+fn hoop_row(app: &mut VectorcraftApp, ui: &mut Ui) {
+    use vectorcraft_embroidery::hoops;
+    let current = app.session.active().and_then(|d| d.doc.embroidery.hoop.as_deref().cloned()).filter(|h| h.unknown.is_none());
+    let name = |h: &vectorcraft_doc::Hoop| {
+        let (w, hh) = hoops::size(h);
+        let size = format!("{w:.0} × {hh:.0} mm");
+        if h.id == "cap" { format!("{} {size}", tl!("Cap")) } else { size }
+    };
+    let common: Vec<vectorcraft_doc::Hoop> = hoops::BUILTIN.iter().filter_map(|id| hoops::builtin(id)).collect();
+    let starter = current.as_ref().filter(|c| common.iter().any(|h| h == *c));
+    let mut names: Vec<String> = vec![tl!("None").to_string()];
+    names.extend(common.iter().map(name));
+    let own = current.as_ref().filter(|_| starter.is_none()).map(|h| format!("{} ({})", h.name, name(h)));
+    if let Some(n) = &own {
+        names.push(n.clone());
+    }
+    let shown = match (starter, &own) {
+        (Some(h), _) => name(h),
+        (None, Some(n)) => n.clone(),
+        (None, None) => tl!("None").to_string(),
+    };
+    ui.scope(|ui| {
+        widgets::label_row(ui, tl!("Hoop:"), LABEL_W, |ui| {
+            let opts: Vec<&str> = names.iter().map(String::as_str).collect();
+            if let Some(i) = widgets::dropdown_names(ui, "emb-hoop", &shown, &opts, 150.0) {
+                let hoop = if i == 0 { Value::Null } else { common.get(i - 1).map_or(Value::Null, |h| json!(h.id)) };
+                if i == 0 || !hoop.is_null() {
+                    app.run("embroidery.setHoop", json!({ "hoop": hoop })).ok();
+                }
+            }
+        })
+    })
+    .response
+    .on_hover_text(tl!("The hoop the design is sewn in: its sewing field, centred on the design, is checked and shown in Stitch Preview"));
+    if current.is_some() {
+        let fit = app.session.execute("embroidery.hoops", &json!({})).ok().and_then(|r| r["fit"].as_str().map(str::to_string));
+        let t = Tokens::get(ui.ctx());
+        let (text, color) = match fit.as_deref() {
+            Some("fits") => (tl!("The design fits the hoop."), t.text_dim),
+            Some("turned") => (tl!("The design fits only turned a quarter turn."), t.warning),
+            Some("tooBig") => (tl!("The design is bigger than the hoop."), t.error),
+            _ => ("", t.text_dim),
+        };
+        if !text.is_empty() {
+            ui.horizontal(|ui| {
+                ui.add_space(LABEL_W + 8.0);
+                ui.label(egui::RichText::new(text).size(11.5).color(color));
+            });
+        }
+    }
+}
+
 /// Load a fabric profile file the user picks as the document's fabric (the web: the picked file
 /// arrives later, through [`crate::io::open_bytes`]).
 fn load_fabric(app: &mut VectorcraftApp) {
@@ -840,6 +893,7 @@ fn underlay_row(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &V
 fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
     widgets::section_header(ui, tl!("Design"));
     fabric_row(app, ui);
+    hoop_row(app, ui);
     let n = |k: &str| d[k].as_u64().unwrap_or(0);
     if n("objects") == 0 {
         widgets::dim_label(ui, tl!("Nothing is stitched yet."));

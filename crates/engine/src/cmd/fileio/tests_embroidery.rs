@@ -619,3 +619,33 @@ fn the_selection_reports_what_is_sewn_with_the_fabric() {
     s.execute("embroidery.set", &json!({"spacing": 0.5})).unwrap();
     assert_eq!(info(&mut s)["selection"]["spacing"].as_f64(), Some(0.5));
 }
+
+#[test]
+fn the_document_hoop_is_set_checked_saved_and_loaded() {
+    // A 100 pt (35 mm) fill square.
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    let r = s.execute("embroidery.hoops", &json!({})).unwrap();
+    assert_eq!((r["hoop"].clone(), r["fit"].clone(), r["common"].as_array().map(Vec::len)), (Value::Null, Value::Null, Some(6)));
+    let r = s.execute("embroidery.setHoop", &json!({"hoop": "4x4"})).unwrap();
+    assert_eq!(r["fit"], "fits");
+    let check =
+        |s: &mut Session| s.execute("embroidery.check", &json!({})).unwrap()["findings"].as_array().unwrap().iter().any(|f| f["rule"] == "hoop");
+    assert!(!check(&mut s));
+    // A 20 × 50 mm field: the 35 mm square doesn't fit; 40 × 20 only turned.
+    let r = s.execute("embroidery.setHoop", &json!({"width": 20, "height": 50, "name": "Tiny"})).unwrap();
+    assert_eq!((r["fit"].as_str(), r["hoop"]["name"].as_str()), (Some("tooBig"), Some("Tiny")));
+    assert!(check(&mut s), "the checker reports it");
+    s.execute("edit.undo", &json!({})).unwrap();
+    assert_eq!(s.execute("embroidery.hoops", &json!({})).unwrap()["fit"], "fits", "one undo step");
+    // Saved and loaded again.
+    let text = s.execute("embroidery.saveHoop", &json!({})).unwrap()["data"].as_str().unwrap().to_string();
+    s.execute("embroidery.setHoop", &json!({"hoop": null})).unwrap();
+    let r = s.execute("embroidery.loadHoop", &json!({"data": text})).unwrap();
+    assert_eq!((r["hoop"]["id"].as_str(), r["hoops"].clone()), (Some("4x4"), json!(["4x4"])));
+    let two = s.execute("embroidery.saveHoop", &json!({"hoops": ["5x7", "cap"]})).unwrap()["data"].as_str().unwrap().to_string();
+    assert_eq!(s.execute("embroidery.loadHoop", &json!({"data": two, "hoop": "cap"})).unwrap()["hoop"]["height"], 60.0);
+    for bad in [json!({"hoop": "9x9"}), json!({"width": 5}), json!({"round": "yes"})] {
+        assert!(s.execute("embroidery.setHoop", &bad).is_err(), "{bad}");
+    }
+}

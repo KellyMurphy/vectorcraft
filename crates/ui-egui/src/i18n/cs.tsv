@@ -5425,3 +5425,18 @@ mark-style	Japanese	Japonské
 	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Každý odstřih a skok zpomaluje stroj a nechává konce nití. Vyšívejte podle nitě, změňte pořadí objektů, nebo spojte blízké části.
 	Type too small	Písmo příliš malé
 	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Písmo pod bezpečnou velikostí se slije a nedá se číst: saténové potřebuje aspoň 4 mm, vyplněné 6 mm, rovným stehem nebo bean 2,5 mm. Zvětšete písmo, nebo použijte rovný steh.
+
+# Hoops (the Embroidery panel's Hoop menu, the design checker)
+	Hoop:	Rámeček:
+	The hoop the design is sewn in: its sewing field, centred on the design, is checked and shown in Stitch Preview	Rámeček, ve kterém se návrh vyšívá: jeho vyšívací pole, vystředěné na návrh, se kontroluje a zobrazuje v náhledu stehů
+	The design fits the hoop.	Návrh se do rámečku vejde.
+	The design fits only turned a quarter turn.	Návrh se vejde jen otočený o čtvrt otáčky.
+	The design is bigger than the hoop.	Návrh je větší než rámeček.
+	Hoops	Rámečky
+	Hoop	Rámeček
+	Load Hoop…	Načíst rámeček…
+	Save Hoop…	Uložit rámeček…
+	Load Hoop	Načíst rámeček
+	Design bigger than the hoop	Návrh větší než rámeček
+	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	Návrh se musí vejít do vyšívacího pole rámečku. Zvolte větší rámeček, otočte návrh o čtvrt otáčky, zmenšete ho, nebo ho rozdělte na návrhy vyšívané jeden po druhém.
+@msg	Hoop: {_1}	Rámeček: {_1}

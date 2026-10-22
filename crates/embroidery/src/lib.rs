@@ -16,6 +16,7 @@ mod dst;
 pub mod extract;
 pub mod fabrics;
 pub mod generate;
+pub mod hoops;
 mod import;
 pub mod kinds;
 pub mod motifs;
@@ -798,7 +799,7 @@ impl Sewer<'_> {
 pub struct StitchCache {
     entries: HashMap<NodeId, Entry>,
     patterns: Vec<vectorcraft_doc::BorderPattern>,
-    fabric: Option<vectorcraft_doc::Fabric>,
+    fabric: Option<Box<vectorcraft_doc::Fabric>>,
     overlap: f64,
     /// Objects the last plan took from the cache and sewed again.
     pub reused: usize,
@@ -821,7 +822,7 @@ impl StitchCache {
             _ => {
                 self.sewn += 1;
                 // A fabric this version can't read isn't used.
-                let fabric = self.fabric.as_ref().filter(|f| f.unknown.is_none());
+                let fabric = self.fabric.as_deref().filter(|f| f.unknown.is_none());
                 let cuts = over.iter().filter_map(|c| cover_area(c)).collect();
                 let mut b = Sewer {
                     patterns: &self.patterns,

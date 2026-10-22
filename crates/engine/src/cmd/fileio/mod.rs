@@ -777,6 +777,7 @@ pub fn open_filters() -> impl Iterator<Item = (&'static str, &'static [&'static 
         .chain(std::iter::once(("Libraries", super::library::LIBRARY_EXTS)))
         .chain(std::iter::once(("Border patterns", BORDER_PATTERN_EXTS)))
         .chain(std::iter::once(("Fabric profiles", FABRIC_EXTS)))
+        .chain(std::iter::once(("Hoops", HOOP_EXTS)))
         .chain(std::iter::once(("Flattener presets", super::flatten::PRESET_EXTS)))
         .chain(std::iter::once(("PDF presets", super::pdfcmds::PRESET_EXTS)))
         .chain(std::iter::once(("Print presets", super::printpresets::PRESET_EXTS)))
@@ -792,6 +793,10 @@ pub const BORDER_PATTERN_EXTS: &[&str] = &[vectorcraft_embroidery::borders::FILE
 /// Embroidery fabric profile files (`vectorcraft_embroidery::fabrics::FILE_EXT`): opening one makes
 /// it the document's fabric.
 pub const FABRIC_EXTS: &[&str] = &[vectorcraft_embroidery::fabrics::FILE_EXT];
+
+/// Embroidery hoop list files (`vectorcraft_embroidery::hoops::FILE_EXT`): opening one makes its
+/// first hoop the document's.
+pub const HOOP_EXTS: &[&str] = &[vectorcraft_embroidery::hoops::FILE_EXT];
 
 /// File → Place dialog filters: "All placeable files", then one per placeable format, then text,
 /// RTF and Word.

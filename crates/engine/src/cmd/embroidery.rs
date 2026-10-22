@@ -154,6 +154,42 @@ pub fn specs() -> Vec<CommandSpec> {
             check
         ),
         cmd!(
+            query "embroidery.hoops",
+            "Hoops",
+            ["Window", "Embroidery"],
+            None,
+            "{} the document's hoop and the common ones → {hoop: {id, name, width, height (the sewing field, mm), round, machines, description} | null (none chosen), common: [the same, for 4x4, 5x7, 6x10, 8x8, 8x12, cap], fit: fits|turned|tooBig|null (the design in the document's hoop; turned: only a quarter turn), designMm: [width, height] | null}",
+            has_doc,
+            hoops
+        ),
+        cmd!(
+            "embroidery.setHoop",
+            "Hoop",
+            ["Window", "Embroidery"],
+            None,
+            "{hoop?: a common hoop's id (4x4|5x7|6x10|8x8|8x12|cap) or null (none), name?, width?, height? (mm, 10–2000: the sewing field), round?} set the document's hoop, whose sewing field the design must fit (checked; drawn in Stitch Preview, centred on the design): the hoop named (else the document's, else a 100 × 100 mm one), then the settings given; one undo step → the same as embroidery.hoops",
+            has_doc,
+            set_hoop
+        ),
+        cmd!(
+            "embroidery.loadHoop",
+            "Load Hoop…",
+            ["Window", "Embroidery"],
+            None,
+            "{path? | data?: the file's text, hoop?: id (default: the file's first)} make a hoop from a .vchoop hoop list file (specified in docs/formats/vchoop.md) the document's hoop; one undo step → the same as embroidery.hoops, and hoops: [ids in the file]",
+            has_doc,
+            load_hoop
+        ),
+        cmd!(
+            "embroidery.saveHoop",
+            "Save Hoop…",
+            ["Window", "Embroidery"],
+            None,
+            "{hoops?: [ids of common hoops] (default: the document's hoop), path?} write hoops as a .vchoop file → {path}, or without path {data: the file's text}",
+            has_doc,
+            save_hoop
+        ),
+        cmd!(
             query "embroidery.fabrics",
             "Fabric Profiles",
             ["Window", "Embroidery"],
@@ -774,6 +810,139 @@ fn check(s: &mut Session, p: &Value) -> Result<Value> {
     }))
 }
 
+fn hoop_json(h: Option<&vectorcraft_doc::Hoop>) -> Value {
+    match h {
+        Some(vectorcraft_doc::Hoop { unknown: Some(raw), .. }) => json!({"unsupported": true, "data": raw}),
+        Some(h) => serde_json::to_value(h).unwrap_or(Value::Null),
+        None => Value::Null,
+    }
+}
+
+fn hoops(s: &mut Session, _: &Value) -> Result<Value> {
+    use vectorcraft_embroidery::hoops;
+    let doc = &s.doc()?.doc;
+    let common: Vec<Value> = hoops::BUILTIN.iter().filter_map(|id| hoops::builtin(id)).map(|h| hoop_json(Some(&h))).collect();
+    let plan = s.stitch_plan(doc);
+    let size = plan.stats().bounds.map(|b| (b[2] - b[0], b[3] - b[1]));
+    let fit = match (doc.embroidery.hoop.as_ref().filter(|h| h.unknown.is_none()), size) {
+        (Some(h), Some((w, hh))) => json!(match hoops::fit(w, hh, h) {
+            hoops::Fit::Fits => "fits",
+            hoops::Fit::FitsTurned => "turned",
+            hoops::Fit::TooBig => "tooBig",
+        }),
+        _ => Value::Null,
+    };
+    let r = |v: f64| (v * 10.0).round() / 10.0;
+    Ok(json!({
+        "hoop": hoop_json(doc.embroidery.hoop.as_deref()),
+        "common": common,
+        "fit": fit,
+        "designMm": size.map(|(w, h)| [r(w), r(h)]),
+    }))
+}
+
+/// Make `h` the document's hoop (`None`: none) as undo step `label`; the hoops listing after.
+fn put_hoop(s: &mut Session, h: Option<vectorcraft_doc::Hoop>, label: &str) -> Result<Value> {
+    let h = h.map(Box::new);
+    if s.doc()?.doc.embroidery.hoop != h {
+        edit_counted(s, label, |d| {
+            d.embroidery.hoop = h;
+            Ok(1)
+        })?;
+    }
+    hoops(s, &Value::Null)
+}
+
+fn set_hoop(s: &mut Session, p: &Value) -> Result<Value> {
+    use vectorcraft_doc::Hoop;
+    use vectorcraft_embroidery::hoops;
+    const C: &str = "embroidery.setHoop";
+    let mut h = match p.get("hoop") {
+        Some(Value::Null) => return put_hoop(s, None, "Hoop"),
+        Some(v) => {
+            let id = v.as_str().map(|t| t.trim().to_ascii_lowercase()).unwrap_or_default();
+            hoops::builtin(&id).ok_or_else(|| bad(C, format!("`hoop` must be one of {}, or null", hoops::BUILTIN.join(", "))))?
+        }
+        None => s.doc()?.doc.embroidery.hoop.as_deref().cloned().filter(|h| h.unknown.is_none()).unwrap_or_else(|| Hoop {
+            id: "custom".into(),
+            name: "Custom".into(),
+            width: 100.0,
+            height: 100.0,
+            ..Hoop::default()
+        }),
+    };
+    if let Some(v) = p.get("name") {
+        let name = v.as_str().map(str::trim).filter(|t| !t.is_empty()).ok_or_else(|| bad(C, "`name` must be text"))?;
+        h.name = name.to_string();
+    }
+    for (key, field) in [("width", &mut h.width), ("height", &mut h.height)] {
+        if let Some(v) = p.get(key) {
+            match v.as_f64() {
+                Some(x) if Hoop::SIZE.contains(&x) => *field = x,
+                _ => return Err(bad(C, format!("`{key}` must be a number from 10 to 2000 (mm)"))),
+            }
+        }
+    }
+    if let Some(v) = p.get("round") {
+        h.round = v.as_bool().ok_or_else(|| bad(C, "`round` must be true or false"))?;
+    }
+    put_hoop(s, Some(h), "Hoop")
+}
+
+fn load_hoop(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.loadHoop";
+    let bytes = match (str_param(p, "path"), str_param(p, "data")) {
+        (Some(path), _) => super::fileio::read_file(path)?,
+        (None, Some(text)) => text.as_bytes().to_vec(),
+        _ => return Err(bad(C, "give `path` or `data`")),
+    };
+    let list = vectorcraft_embroidery::hoops::read_file(&bytes).map_err(|e| bad(C, e))?;
+    let ids: Vec<String> = list.iter().map(|h| h.id.clone()).collect();
+    let h = match str_param(p, "hoop") {
+        Some(id) => list.into_iter().find(|h| h.id.eq_ignore_ascii_case(id.trim())).ok_or_else(|| bad(C, format!("the file has no hoop `{id}`")))?,
+        None => list.into_iter().next().ok_or_else(|| bad(C, "the file has no hoops"))?,
+    };
+    let mut r = put_hoop(s, Some(h), "Load Hoop")?;
+    r["hoops"] = json!(ids);
+    Ok(r)
+}
+
+fn save_hoop(s: &mut Session, p: &Value) -> Result<Value> {
+    use vectorcraft_embroidery::hoops;
+    const C: &str = "embroidery.saveHoop";
+    let list: Vec<vectorcraft_doc::Hoop> = match p.get("hoops") {
+        Some(Value::Array(ids)) => ids
+            .iter()
+            .map(|v| {
+                let id = v.as_str().unwrap_or_default();
+                hoops::builtin(&id.trim().to_ascii_lowercase()).ok_or_else(|| bad(C, format!("no common hoop `{id}`")))
+            })
+            .collect::<Result<_>>()?,
+        Some(_) => return Err(bad(C, "`hoops` must be a list of common hoop ids")),
+        None => vec![
+            s.doc()?
+                .doc
+                .embroidery
+                .hoop
+                .as_deref()
+                .cloned()
+                .filter(|h| h.unknown.is_none())
+                .ok_or_else(|| bad(C, "the document has no hoop: name common ones (`hoops`)"))?,
+        ],
+    };
+    if list.is_empty() {
+        return Err(bad(C, "name at least one hoop"));
+    }
+    let text = hoops::write_file(&list).map_err(|e| bad(C, e))?;
+    match str_param(p, "path") {
+        Some(path) => {
+            super::fileio::write_file(path, text.as_bytes())?;
+            Ok(json!({"path": path}))
+        }
+        None => Ok(json!({"data": text})),
+    }
+}
+
 fn fabric_json(f: Option<&vectorcraft_doc::Fabric>) -> Value {
     match f {
         // From a newer VectorCraft: as written, marked as not used.
@@ -786,12 +955,13 @@ fn fabric_json(f: Option<&vectorcraft_doc::Fabric>) -> Value {
 fn fabrics(s: &mut Session, _: &Value) -> Result<Value> {
     use vectorcraft_embroidery::fabrics;
     let starters: Vec<Value> = fabrics::BUILTIN.iter().filter_map(|id| fabrics::builtin(id)).map(|f| fabric_json(Some(&f))).collect();
-    Ok(json!({"fabric": fabric_json(s.doc()?.doc.embroidery.fabric.as_ref()), "starters": starters}))
+    Ok(json!({"fabric": fabric_json(s.doc()?.doc.embroidery.fabric.as_deref()), "starters": starters}))
 }
 
 /// Make `f` the document's fabric (`None`: none) as undo step `label`.
 fn put_fabric(s: &mut Session, f: Option<vectorcraft_doc::Fabric>, label: &str) -> Result<Value> {
-    let out = json!({"fabric": fabric_json(f.as_ref())});
+    let f = f.map(Box::new);
+    let out = json!({"fabric": fabric_json(f.as_deref())});
     if s.doc()?.doc.embroidery.fabric != f {
         edit_counted(s, label, |d| {
             d.embroidery.fabric = f;
@@ -811,7 +981,11 @@ fn set_fabric(s: &mut Session, p: &Value) -> Result<Value> {
             let id = v.as_str().map(|t| t.trim().to_ascii_lowercase()).unwrap_or_default();
             fabrics::builtin(&id).ok_or_else(|| bad(C, format!("`fabric` must be one of {}, or null", fabrics::BUILTIN.join(", "))))?
         }
-        None => s.doc()?.doc.embroidery.fabric.clone().unwrap_or_else(|| Fabric { id: "custom".into(), name: "Custom".into(), ..Fabric::default() }),
+        None => s.doc()?.doc.embroidery.fabric.as_deref().cloned().unwrap_or_else(|| Fabric {
+            id: "custom".into(),
+            name: "Custom".into(),
+            ..Fabric::default()
+        }),
     };
     if let Some(v) = p.get("name") {
         let name = v.as_str().map(str::trim).filter(|t| !t.is_empty()).ok_or_else(|| bad(C, "`name` must be text"))?;
@@ -858,7 +1032,7 @@ fn save_fabric(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "embroidery.saveFabric";
     let f = match str_param(p, "fabric") {
         Some(id) => fabrics::builtin(&id.trim().to_ascii_lowercase()).ok_or_else(|| bad(C, format!("no starter fabric `{id}`")))?,
-        None => s.doc()?.doc.embroidery.fabric.clone().ok_or_else(|| bad(C, "the document has no fabric: name a starter (`fabric`)"))?,
+        None => s.doc()?.doc.embroidery.fabric.as_deref().cloned().ok_or_else(|| bad(C, "the document has no fabric: name a starter (`fabric`)"))?,
     };
     let text = fabrics::write_file(&f).map_err(|e| bad(C, e))?;
     match str_param(p, "path") {

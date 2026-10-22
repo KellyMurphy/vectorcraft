@@ -5362,3 +5362,18 @@ theme	Appearance	Utseende
 	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Varje klipp och hopp saktar ner maskinen och lämnar trådändar. Brodera per tråd, ordna om objekt eller sammanfoga närliggande delar.
 	Type too small	Text för liten
 	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Bokstäver under sin säkra storlek flyter ihop och kan inte läsas: satinbokstäver behöver minst 4 mm, fyllda 6 mm, raksöms- eller bönstygnsbokstäver 2,5 mm. Gör texten större eller använd raksöm.
+
+# Hoops (the Embroidery panel's Hoop menu, the design checker)
+	Hoop:	Ram:
+	The hoop the design is sewn in: its sewing field, centred on the design, is checked and shown in Stitch Preview	Ramen designen broderas i: dess broderifält, centrerat på designen, kontrolleras och visas i Stygnförhandsvisning
+	The design fits the hoop.	Designen ryms i ramen.
+	The design fits only turned a quarter turn.	Designen ryms bara vriden ett kvarts varv.
+	The design is bigger than the hoop.	Designen är större än ramen.
+	Hoops	Ramar
+	Hoop	Ram
+	Load Hoop…	Läs in ram…
+	Save Hoop…	Spara ram…
+	Load Hoop	Läs in ram
+	Design bigger than the hoop	Design större än ramen
+	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	Designen måste rymmas i ramens broderifält. Välj en större ram, vrid designen ett kvarts varv, skala ned den eller dela den i designer som broderas efter varandra.
+@msg	Hoop: {_1}	Ram: {_1}

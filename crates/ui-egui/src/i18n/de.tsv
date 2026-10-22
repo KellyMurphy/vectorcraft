@@ -4982,3 +4982,18 @@ effect	Regular	Regelmäßig
 	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Jeder Schnitt und Sprung bremst die Maschine und hinterlässt Fadenenden. Nach Garn sticken, Objekte umordnen oder nahe Teile verbinden.
 	Type too small	Schrift zu klein
 	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Schrift unter ihrer sicheren Größe läuft zu und ist nicht lesbar: Satinschrift braucht mindestens 4 mm, gefüllte 6 mm, Steppstich- oder Bohnenstichschrift 2,5 mm. Schrift vergrößern oder einen Steppstich verwenden.
+
+# Hoops (the Embroidery panel's Hoop menu, the design checker)
+	Hoop:	Rahmen:
+	The hoop the design is sewn in: its sewing field, centred on the design, is checked and shown in Stitch Preview	Der Rahmen, in dem das Design gestickt wird: sein Stickfeld, auf das Design zentriert, wird geprüft und in der Stichvorschau gezeigt
+	The design fits the hoop.	Das Design passt in den Rahmen.
+	The design fits only turned a quarter turn.	Das Design passt nur um eine Vierteldrehung gedreht.
+	The design is bigger than the hoop.	Das Design ist größer als der Rahmen.
+	Hoops	Rahmen
+	Hoop	Rahmen
+	Load Hoop…	Rahmen laden…
+	Save Hoop…	Rahmen speichern…
+	Load Hoop	Rahmen laden
+	Design bigger than the hoop	Design größer als der Rahmen
+	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	Das Design muss in das Stickfeld des Rahmens passen. Wählen Sie einen größeren Rahmen, drehen Sie das Design um eine Vierteldrehung, verkleinern Sie es oder teilen Sie es in nacheinander gestickte Designs.
+@msg	Hoop: {_1}	Rahmen: {_1}

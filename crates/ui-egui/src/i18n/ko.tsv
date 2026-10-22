@@ -4983,3 +4983,18 @@ lighting	Light	광원
 	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	자르기와 점프마다 기계가 느려지고 실 끝이 남습니다. 실별로 수놓거나 오브젝트 순서를 바꾸거나 가까운 부분을 이으세요.
 	Type too small	글자가 너무 작음
 	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	안전 크기보다 작은 글자는 뭉개져 읽을 수 없습니다. 새틴 글자는 4 mm 이상, 채우기 글자는 6 mm, 러닝이나 빈 글자는 2.5 mm가 필요합니다. 글자를 키우거나 러닝 스티치를 쓰세요.
+
+# Hoops (the Embroidery panel's Hoop menu, the design checker)
+	Hoop:	후프:
+	The hoop the design is sewn in: its sewing field, centred on the design, is checked and shown in Stitch Preview	디자인을 수놓을 후프입니다. 디자인 가운데에 맞춘 자수 영역을 검사하고 스티치 미리보기에 표시합니다
+	The design fits the hoop.	디자인이 후프에 들어갑니다.
+	The design fits only turned a quarter turn.	디자인을 4분의 1 돌려야만 들어갑니다.
+	The design is bigger than the hoop.	디자인이 후프보다 큽니다.
+	Hoops	후프
+	Hoop	후프
+	Load Hoop…	후프 불러오기…
+	Save Hoop…	후프 저장…
+	Load Hoop	후프 불러오기
+	Design bigger than the hoop	후프보다 큰 디자인
+	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	디자인은 후프의 자수 영역에 들어가야 합니다. 더 큰 후프를 고르거나, 디자인을 4분의 1 돌리거나, 줄이거나, 차례로 수놓을 여러 디자인으로 나누세요.
+@msg	Hoop: {_1}	후프: {_1}

@@ -65,6 +65,22 @@ pub static TEXT_DOCS: &[TextDoc] = &[
         text: include_str!("../../../docs/formats/vcborder.schema.json"),
     },
     TextDoc {
+        uri: "vectorcraft://spec/vchoop",
+        name: "spec-vchoop",
+        title: "Hoop list file (.vchoop) specification",
+        description: "The open JSON format for embroidery hoops: sewing fields and how a design fits",
+        mime: "text/markdown",
+        text: include_str!("../../../docs/formats/vchoop.md"),
+    },
+    TextDoc {
+        uri: "vectorcraft://spec/vchoop.schema.json",
+        name: "spec-vchoop-schema",
+        title: "Hoop list file JSON Schema",
+        description: "JSON Schema (draft 2020-12) for .vchoop files",
+        mime: "application/schema+json",
+        text: include_str!("../../../docs/formats/vchoop.schema.json"),
+    },
+    TextDoc {
         uri: "vectorcraft://spec/vcfabric",
         name: "spec-vcfabric",
         title: "Fabric profile file (.vcfabric) specification",

@@ -9,10 +9,10 @@ use std::path::PathBuf;
 use kurbo::Point;
 use serde_json::Value;
 use vectorcraft_doc::{
-    BorderPattern, EmbroiderySetup, Fabric, NodeId, PartStitch, PatternPart, SewOut, SewResult, SewSwatch, StitchKind, StitchSettings, Underlay,
+    BorderPattern, EmbroiderySetup, Fabric, Hoop, NodeId, PartStitch, PatternPart, SewOut, SewResult, SewSwatch, StitchKind, StitchSettings, Underlay,
 };
 use vectorcraft_embroidery::params::{self, ValueKind};
-use vectorcraft_embroidery::{borders, fabrics, motifs};
+use vectorcraft_embroidery::{borders, fabrics, hoops, motifs};
 
 fn formats_dir() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../docs/formats")
@@ -111,10 +111,49 @@ fn full_setup() -> EmbroiderySetup {
         min_stitch: 0.5,
         order: vec![NodeId(1)],
         patterns: vec![full_pattern()],
-        sew_out: Some(full_sew_out()),
-        fabric: Some(full_fabric()),
+        sew_out: Some(Box::new(full_sew_out())),
+        fabric: Some(Box::new(full_fabric())),
+        hoop: Some(Box::new(full_hoop())),
         extra: Default::default(),
     }
+}
+
+/// A hoop with every field set (a new field fails to compile here until it is set).
+fn full_hoop() -> Hoop {
+    Hoop {
+        id: "h".into(),
+        name: "H".into(),
+        width: 100.0,
+        height: 120.0,
+        round: true,
+        machines: Some("m".into()),
+        description: Some("d".into()),
+        extra: Default::default(),
+        unknown: None,
+    }
+}
+
+#[test]
+fn vchoop_schema_page_and_example_match_the_code() {
+    let schema = json("vchoop.schema.json");
+    assert_eq!(schema["properties"]["format"]["const"], hoops::FILE_FORMAT);
+    assert_eq!(schema["properties"]["version"]["maximum"].as_u64(), Some(u64::from(hoops::FILE_VERSION)));
+    assert_eq!(schema["properties"]["hoops"]["maxItems"].as_u64(), Some(hoops::MAX_HOOPS as u64));
+    let file: Value = serde_json::from_str(&hoops::write_file(&[full_hoop()]).unwrap()).unwrap();
+    assert_eq!(keys(&schema["properties"]), keys(&file), "the file's fields");
+    assert_eq!(keys(&schema["$defs"]["hoop"]["properties"]), keys(&file["hoops"][0]), "a hoop's fields");
+    let page = read("vchoop.md");
+    for k in keys(&file).iter().chain(keys(&file["hoops"][0]).iter()) {
+        assert!(page.contains(&format!("`{k}`")), "vchoop.md describes `{k}`");
+    }
+    for id in hoops::BUILTIN {
+        assert!(page.contains(&format!("`{id}`")), "vchoop.md lists `{id}`");
+    }
+    assert!(page.contains("1,000 hoops") && page.contains(&format!("{} MB", hoops::MAX_FILE_BYTES >> 20)));
+    let ex = hoops::read_file(read("examples/frames.vchoop").as_bytes()).unwrap();
+    let start = page.find("```json").unwrap() + 7;
+    let end = start + page.get(start..).unwrap().find("```").unwrap();
+    assert_eq!(hoops::read_file(page.get(start..end).unwrap().as_bytes()).unwrap(), ex, "the page's example is the example file");
 }
 
 /// A fabric profile with every field set (a new field fails to compile here until it is set).

@@ -45,6 +45,12 @@ pub fn open_bytes(app: &mut VectorcraftApp, name: &str, bytes: &[u8], path: Opti
         app.status(format!("Imported {what}: {}", names.join(", ")));
         return Ok(Value::Null);
     }
+    // A hoop list's first hoop becomes the document's hoop (embroidery).
+    if fileio::extension(name) == vectorcraft_embroidery::hoops::FILE_EXT {
+        let r = app.run("embroidery.loadHoop", json!({"data": String::from_utf8_lossy(bytes)}))?;
+        app.status(format!("Hoop: {}", r["hoop"]["name"].as_str().unwrap_or_default()));
+        return Ok(Value::Null);
+    }
     // A fabric profile becomes the document's fabric (embroidery).
     if fileio::extension(name) == vectorcraft_embroidery::fabrics::FILE_EXT {
         let r = app.run("embroidery.loadFabric", json!({"data": String::from_utf8_lossy(bytes)}))?;

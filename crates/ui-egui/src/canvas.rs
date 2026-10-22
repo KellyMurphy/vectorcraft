@@ -2718,6 +2718,16 @@ fn draw_stitches(painter: &egui::Painter, xf: &Xf, doc: &vectorcraft_doc::Docume
         let [r, g, b] = plan.threads.get(thread).copied().unwrap_or([0; 3]);
         painter.add(Shape::line(run.iter().map(|p| at(p.x, p.y)).collect(), Stroke::new(width, Color32::from_rgb(r, g, b))));
     }
+    // The hoop's sewing field, centred on the design.
+    if let Some(hoop) = doc.embroidery.hoop.as_ref().filter(|h| h.unknown.is_none())
+        && let Some((c, w, h)) = vectorcraft_embroidery::hoops::field(plan, hoop)
+    {
+        let outline = vectorcraft_embroidery::preview::hoop_outline(c, w, h, hoop.round);
+        let [r, g, b] = vectorcraft_embroidery::preview::HOOP;
+        for line in to_screen_path(&outline.to_bezpath(), xf) {
+            painter.extend(Shape::dashed_line(&line, Stroke::new(1.5, Color32::from_rgb(r, g, b)), 8.0, 5.0));
+        }
+    }
     let jump = Stroke::new(JUMP_WIDTH_PT as f32, Color32::from_black_alpha(JUMP_ALPHA));
     let mut from = None;
     for n in &plan.needles {

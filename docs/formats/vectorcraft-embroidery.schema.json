@@ -57,7 +57,8 @@
           }
         },
         "sewOut": { "$ref": "#/$defs/sewOut" },
-        "fabric": { "$ref": "#/$defs/fabric" }
+        "fabric": { "$ref": "#/$defs/fabric" },
+        "hoop": { "$ref": "vchoop.schema.json#/$defs/hoop" }
       }
     },
     "fabric": {

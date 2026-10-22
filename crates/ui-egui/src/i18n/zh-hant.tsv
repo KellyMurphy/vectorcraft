@@ -4328,3 +4328,18 @@ lighting	Light	光源
 	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	每次剪線和跳針都會讓機器變慢並留下線頭。請依線縫製、重排物件或連接相鄰部分。
 	Type too small	文字過小
 	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	小於安全尺寸的文字會糊在一起無法辨認：緞面文字至少需 4 公釐，填色文字 6 公釐，平針或豆針文字 2.5 公釐。請放大文字或改用平針。
+
+# Hoops (the Embroidery panel's Hoop menu, the design checker)
+	Hoop:	繡框:
+	The hoop the design is sewn in: its sewing field, centred on the design, is checked and shown in Stitch Preview	縫製設計所用的繡框：其縫製範圍以設計為中心，會被檢查並顯示在針跡預覽中
+	The design fits the hoop.	設計放得進繡框。
+	The design fits only turned a quarter turn.	設計只有旋轉四分之一圈才放得進。
+	The design is bigger than the hoop.	設計比繡框大。
+	Hoops	繡框
+	Hoop	繡框
+	Load Hoop…	載入繡框…
+	Save Hoop…	儲存繡框…
+	Load Hoop	載入繡框
+	Design bigger than the hoop	設計比繡框大
+	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	設計必須放進繡框的縫製範圍。請選用更大的繡框、將設計旋轉四分之一圈、縮小設計，或拆分為依序縫製的多個設計。
+@msg	Hoop: {_1}	繡框: {_1}

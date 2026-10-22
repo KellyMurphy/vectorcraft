@@ -5370,3 +5370,18 @@ mark-style	Japanese	Japanilainen
 	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Jokainen katkaisu ja hyppy hidastaa konetta ja jättää langanpäitä. Kirjo langan mukaan, järjestä objektit uudelleen tai yhdistä lähekkäiset osat.
 	Type too small	Teksti liian pieni
 	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Turvallista kokoa pienempi teksti tukkeutuu eikä ole luettavaa: satiiniteksti tarvitsee vähintään 4 mm, täytetty 6 mm, etupisto- tai bean-teksti 2,5 mm. Suurenna tekstiä tai käytä etupistoa.
+
+# Hoops (the Embroidery panel's Hoop menu, the design checker)
+	Hoop:	Kehys:
+	The hoop the design is sewn in: its sewing field, centred on the design, is checked and shown in Stitch Preview	Kehys, jossa kuvio kirjotaan: sen kirjonta-ala, keskitettynä kuvioon, tarkistetaan ja näytetään pistojen esikatselussa
+	The design fits the hoop.	Kuvio mahtuu kehykseen.
+	The design fits only turned a quarter turn.	Kuvio mahtuu vain neljänneskierroksen käännettynä.
+	The design is bigger than the hoop.	Kuvio on kehystä suurempi.
+	Hoops	Kehykset
+	Hoop	Kehys
+	Load Hoop…	Lataa kehys…
+	Save Hoop…	Tallenna kehys…
+	Load Hoop	Lataa kehys
+	Design bigger than the hoop	Kuvio kehystä suurempi
+	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	Kuvion on mahduttava kehyksen kirjonta-alaan. Valitse suurempi kehys, käännä kuviota neljänneskierros, pienennä sitä tai jaa se peräkkäin kirjottaviin kuvioihin.
+@msg	Hoop: {_1}	Kehys: {_1}
