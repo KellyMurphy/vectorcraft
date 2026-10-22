@@ -35,6 +35,7 @@
         "border": { "type": "number", "minimum": 0.5, "maximum": 6, "description": "Fill: a satin border's width, mm." },
         "rails": { "type": "boolean", "default": false },
         "startAt": { "type": "array", "prefixItems": [{ "type": "number" }, { "type": "number" }], "minItems": 2, "maxItems": 2, "description": "Running, bean, zigzag: where the needle starts, [x, y] mm in document space." },
+        "puff": { "type": "number", "minimum": 1, "maximum": 6, "description": "Puff: the foam's thickness, mm." },
         "keepCovered": { "type": "boolean", "default": false, "description": "Fill: keep the rows under objects sewn later on top of it." },
         "trimBefore": { "type": "boolean", "default": false },
         "trimAfter": { "type": "boolean", "default": false }

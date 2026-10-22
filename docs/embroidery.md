@@ -11,12 +11,12 @@ Select paths or compound paths (or groups holding them) and choose **Object › 
 
 | Stitch | What it sews | Settings |
 |---|---|---|
-| Auto | Picks per shape (per letter, for type) by how wide its strokes are: under **Bean Outline Under** (1 mm) a bean stitch round the outline, over **Fill Over** (7 mm) a tatami fill with auto underlay and a satin border, in between a satin shape with auto underlay. The stroke width is twice the shape's area over its perimeter. | `thinUnder` (1 mm), `wideOver` (7 mm), `spacing`, `pull`, `pullPercent`, `push`, `border` (for filled shapes; 2 mm) |
+| Auto | Picks per shape (per letter, for type) by how wide its strokes are: under **Bean Outline Under** (1 mm) a bean stitch round the outline, over **Fill Over** (7 mm) a tatami fill with auto underlay and a satin border, in between a satin shape with auto underlay. The stroke width is twice the shape's area over its perimeter. | `thinUnder` (1 mm), `wideOver` (7 mm), `spacing`, `pull`, `pullPercent`, `push`, `border` (for filled shapes; 2 mm), `puff` (3D foam, for the letters sewn as satin) |
 | Running Stitch | Single stitches along the path (outlines, details). Sharp corners keep a needle point. | `length` (2.5 mm), `startAt` (where the needle starts; none: nearest where it is) |
 | Bean Stitch | Running stitch sewn several times over each stitch: a bolder line. | `length` (2.5 mm), `passes` (3, 5, 7 or 9; 3), `startAt` |
-| Satin Column | A zigzag centred on the path, as wide as the stroke (borders, lettering strokes). **Between Rails**: the object's two longest subpaths are the column's edges and the satin spans between them, as wide as they are apart (columns that swell and taper); other subpaths crossing both are rungs, each setting the stitch direction where it crosses. Draw the two edges, join them (Object › Compound Path) and tick Between Rails. | `width` (the stroke width, else 3 mm), `spacing` (density, 0.4 mm), `pull` (pull compensation, 0 mm) and `pullPercent` (% of the width, 0), `push` (push compensation: shorter at the ends, 0 mm), `underlay` (auto, none, center, edge, zigzag), `rails` (off) |
+| Satin Column | A zigzag centred on the path, as wide as the stroke (borders, lettering strokes). **Between Rails**: the object's two longest subpaths are the column's edges and the satin spans between them, as wide as they are apart (columns that swell and taper); other subpaths crossing both are rungs, each setting the stitch direction where it crosses. Draw the two edges, join them (Object › Compound Path) and tick Between Rails. | `width` (the stroke width, else 3 mm), `spacing` (density, 0.4 mm), `pull` (pull compensation, 0 mm) and `pullPercent` (% of the width, 0), `push` (push compensation: shorter at the ends, 0 mm), `underlay` (auto, none, center, edge, zigzag), `rails` (off), `puff` (3D foam thickness; none) |
 | Zigzag Stitch | An open zigzag along the path, swinging side to side (decorative lines, appliqué edges). Corners fan like a satin's. | `width` (3 mm; not the stroke), `spacing` (between points, 2 mm), `startAt` |
-| Satin Shape | Satin that follows a closed shape's strokes from edge to edge, curving with them (lettering, outlined type, swashes). The shape's centre lines are found automatically; each zig reaches the shape's edges either side, so thick and thin strokes keep their contrast. | `spacing` (density, 0.4 mm), `pull` (0 mm), `pullPercent` (% of the stroke width, 0), `underlay` (auto, none, center, edge) |
+| Satin Shape | Satin that follows a closed shape's strokes from edge to edge, curving with them (lettering, outlined type, swashes). The shape's centre lines are found automatically; each zig reaches the shape's edges either side, so thick and thin strokes keep their contrast. | `spacing` (density, 0.4 mm), `pull` (0 mm), `pullPercent` (% of the stroke width, 0), `underlay` (auto, none, center, edge), `puff` (3D foam thickness; none) |
 | Fill | Rows of staggered running stitches covering the shape (tatami). Holes and separate parts follow the fill rule. | `angle` (0°), `spacing` (density, 0.4 mm), `length` (4 mm), `stagger` (pattern: 2 brick, 3–8 tatami; 3), `motif` (a carved pattern: diamonds, waves, circles, scales, herringbone; none) and `motifSize` (its repeat, 3–60 mm; 10), `underlay` (auto, none, fill), `pull` and `pullPercent` (rows longer, half at each end; 0), `push` (shorter across the rows; 0 mm), `border` (a satin border over the edges, 0.5–6 mm; none), `keepCovered` (keep the rows under what is sewn on top; off) |
 | Pattern Border | A border pattern repeated end to end along the path, bending with its curves (decorative borders, frames). See [Pattern borders](#pattern-borders). | `pattern` (waves, scallops, chain, diamonds; waves), `width` (the band, 1–40 mm; the pattern's own, 6 mm), `flip` (off), `length` (1.5 mm), `spacing` (satin parts, 0.4 mm) |
 | Manual Stitch | The needle goes down at every anchor, as drawn. Imported designs use it. | — |
@@ -206,6 +206,24 @@ Very short stitches cut the fabric, break threads and pile up. Needle points clo
 Stitch** (Sew Order panel, `embroidery.setup {minStitch}`, 0.3 mm) to the one before are left out
 everywhere, satin columns included; a fabric can ask for longer (Leather: 1 mm). Manual stitches are sewn
 exactly as drawn.
+
+### Puff (3D foam)
+
+Set **Puff Foam** (`puff`, the foam's thickness, 1–6 mm) on a satin column, satin shape or Auto lettering
+to sew it raised over foam. VectorCraft then does what puff needs:
+
+- **A stop for the foam.** The machine stops before the first puffed object, for the foam to be laid
+  over the area (written as a stop: a thread change to the same thread). Sew flat parts first: the
+  checker warns about flat objects sewn after the foam is down, since they would sew through it.
+- **Dense satin, no underlay.** 0.25 mm spacing unless you set one, so the foam doesn't show, and no
+  underlay to flatten it.
+- **Capped ends.** Open columns are lengthened by half the foam's thickness at each end, closing over
+  the foam's cut edge.
+- **A perforation.** After each puffed object, running stitches 1 mm long go all round its edge: the
+  needle holes cut the foam, so the excess tears away cleanly.
+
+Puff rises well from about 3 to 10 mm wide; the checker warns outside that. The test sheet's **Puff**
+section sews 3 mm foam at 3–8 mm.
 
 ### Production worksheet
 

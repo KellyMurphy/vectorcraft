@@ -39,6 +39,10 @@ pub(super) fn sew(i: &Input) -> Output {
         }
     } else {
         out.runs.extend(satin);
+        // Over foam: the perforation, all round the shape's outline.
+        if s.puffed() {
+            out.runs.extend(generate::outline_perforation(&polys));
+        }
     }
     out
 }

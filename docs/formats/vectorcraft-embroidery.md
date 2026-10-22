@@ -48,11 +48,19 @@ are kept but have no effect.
 | `border` | number, mm | fill, auto | 0.5–6 | none (auto: 2 on the shapes it fills) |
 | `rails` | boolean | satin | | false |
 | `startAt` | `[x, y]`, mm in document space | running, bean, zigzag | | none: nearest where the needle is (see `autoStart`). The path is entered at its point nearest it: a closed running path there, an open path from its nearer end. |
+| `puff` | number, mm | satin, satin shape, auto | 1–6 | none: not puffed. Puff (3D foam): see below. |
 | `keepCovered` | boolean | fill | | false: rows under objects sewn later on top are cut away (see `overlap`) |
 | `trimBefore` | boolean | all | | false |
 | `trimAfter` | boolean | all | | false |
 
 **Compensation.** The thread pulls the fabric in along the stitches and pushes it out at their ends. `pull` (mm) plus `pullPercent` (of the satin's width, or of each fill row's length) sews a satin that much wider and each fill row that much longer, half at each end. `push` sews a satin column along a path that much shorter (half at each end; not a closed one, nor a satin between rails) and a fill that much shorter across its rows (a row whose middle is within half of it of an edge across the rows is left out). A satin shape takes `pullPercent` of its stroke width.
+
+**Puff.** A satin or satin shape with `puff` is sewn over foam that thick: the design stops for the foam
+to be laid before the first such object (a stop, written as a thread change to the same thread, unless
+nothing is sewn before it); it is sewn dense (`spacing` 0.25 mm unless set) and with no underlay; an
+open column is lengthened by half the foam's thickness at each end, capping the foam's cut edge; and
+after it comes a perforation, running stitches 1 mm long all round its edge, so the needle holes cut the
+foam and the excess tears away cleanly.
 
 Readers don't refuse out-of-range or non-finite numbers in a document: they use the nearest value in range,
 or the default for one that isn't a number. `thread`, `stagger` and `passes` must be whole numbers from 0 to
@@ -190,6 +198,7 @@ Sections (each changes one setting; the others keep their defaults):
 | D | `fillDensity` | 18 mm fill squares at row spacing 0.3, 0.4, 0.5 and 0.6 mm. |
 | E | `fillAngle` | 18 mm fill squares at 0°, 45°, 90° and 135°. |
 | F | `underlay` | 5 mm satin columns with each satin underlay (`auto` included), then 18 mm fill squares with each fill underlay. |
+| H | `puff` | 3 mm puff (satin over 3 mm foam) 3, 4, 5, 6 and 8 mm wide; the design stops for the foam after its title. |
 | G | `lettering` | The word "Hag" in auto stitches at 4, 6, 8, 10, 15 and 20 mm type sizes (left out when no type face is available). |
 
 ## Compatibility

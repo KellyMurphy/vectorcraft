@@ -97,6 +97,7 @@ fn full_stitch() -> StitchSettings {
         border: Some(2.0),
         rails: true,
         start_at: Some([1.0, 2.0]),
+        puff: Some(3.0),
         keep_covered: true,
         trim_before: true,
         trim_after: true,

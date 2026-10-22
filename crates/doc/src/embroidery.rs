@@ -223,6 +223,11 @@ pub struct StitchSettings {
     /// nearer end). `None`: nearest where the needle is ([`EmbroiderySetup::auto_start`]).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub start_at: Option<[f64; 2]>,
+    /// Puff (3D foam) embroidery: the foam's thickness, mm. A puffed satin is sewn after a stop
+    /// for placing the foam, dense and with no underlay, its open ends capped, then perforated
+    /// with short running stitches all round its edge so the excess foam tears away.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub puff: Option<f64>,
     /// Fill: keep the rows under objects sewn later on top of it (normally cut away, leaving
     /// [`EmbroiderySetup::overlap`]).
     #[serde(default, skip_serializing_if = "crate::skip::is_default")]
@@ -801,6 +806,10 @@ impl StitchSettings {
     pub const BORDER: std::ops::RangeInclusive<f64> = 0.5..=6.0;
     /// Allowed pull compensation, mm.
     pub const PULL: std::ops::RangeInclusive<f64> = 0.0..=3.0;
+    /// Allowed foam thicknesses for puff, mm.
+    pub const PUFF: std::ops::RangeInclusive<f64> = 1.0..=6.0;
+    /// Satin spacing over foam unless set, mm (dense, so the foam doesn't show).
+    pub const PUFF_SPACING: f64 = 0.25;
     /// Allowed pull compensation as a percentage of the width or row length.
     pub const PULL_PERCENT: std::ops::RangeInclusive<f64> = 0.0..=30.0;
     /// Allowed push compensation, mm.
@@ -832,8 +841,24 @@ impl StitchSettings {
 
     /// The satin, zigzag or fill spacing to sew with, mm (always within [`Self::SPACING`]).
     pub fn spacing(&self) -> f64 {
-        let fallback = if self.kind == StitchKind::Zigzag { Self::DEFAULT_ZIGZAG_SPACING } else { Self::DEFAULT_SPACING };
+        let fallback = if self.kind == StitchKind::Zigzag {
+            Self::DEFAULT_ZIGZAG_SPACING
+        } else if self.puffed() {
+            Self::PUFF_SPACING
+        } else {
+            Self::DEFAULT_SPACING
+        };
         clamp(self.spacing, fallback, Self::SPACING)
+    }
+
+    /// The foam's thickness when puffed, mm (always within [`Self::PUFF`]).
+    pub fn puff(&self) -> Option<f64> {
+        self.puff.filter(|v| v.is_finite()).map(|v| v.clamp(*Self::PUFF.start(), *Self::PUFF.end()))
+    }
+
+    /// Whether this is sewn over foam: a puffed satin or satin shape.
+    pub fn puffed(&self) -> bool {
+        self.puff().is_some() && matches!(self.kind, StitchKind::Satin | StitchKind::SatinShape)
     }
 
     /// The satin or zigzag width, mm, given the stroke width in mm (always within
@@ -912,6 +937,10 @@ impl StitchSettings {
 
     /// The underlay to sew with: none when the kind doesn't use this one.
     pub fn underlay(&self) -> Underlay {
+        // Over foam there is no underlay: it would flatten the foam.
+        if self.puffed() {
+            return Underlay::None;
+        }
         if Underlay::for_kind(self.kind).contains(&self.underlay) { self.underlay } else { Underlay::None }
     }
 

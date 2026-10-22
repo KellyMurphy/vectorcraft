@@ -513,6 +513,72 @@ pub fn trim_ends(line: &[Point], d: f64) -> Vec<Point> {
     if out.len() < 2 { line.to_vec() } else { out }
 }
 
+/// The perforation's stitch length, mm: short, so the needle holes cut the foam.
+pub const PERFORATION_LEN: f64 = 1.0;
+
+/// `line` lengthened by `d` mm at each end, straight on from its end stretches.
+pub fn extend_ends(line: &[Point], d: f64) -> Vec<Point> {
+    let mut out = line.to_vec();
+    if !(d.is_finite() && d > 0.0) || line.len() < 2 {
+        return out;
+    }
+    let ahead = |a: Point, b: Point| {
+        let v = b - a;
+        let len = v.hypot();
+        (len > 1e-9).then(|| b + v * (d / len))
+    };
+    if let (Some(a), Some(b)) = (line.get(1), line.first())
+        && let Some(p) = ahead(*a, *b)
+    {
+        out.insert(0, p);
+    }
+    let n = line.len();
+    if let (Some(a), Some(b)) = (line.get(n - 2), line.last())
+        && let Some(p) = ahead(*a, *b)
+    {
+        out.push(p);
+    }
+    out
+}
+
+/// A satin column's perforation: short running stitches all round the column `width` mm wide
+/// along `line` (down one edge, round the end, back along the other), so the foam under it is cut.
+pub fn perforation(line: &[Point], closed: bool, width: f64) -> Vec<Vec<Point>> {
+    let c = resample(line, PERFORATION_LEN, true);
+    let n = normals(&c, closed);
+    let half = width / 2.0;
+    let left: Vec<Point> = c.iter().zip(&n).map(|(p, v)| *p + *v * half).collect();
+    let right: Vec<Point> = c.iter().zip(&n).map(|(p, v)| *p - *v * half).collect();
+    if closed {
+        // Each edge a ring of its own.
+        return [left, right].into_iter().map(|r| running(&r, PERFORATION_LEN)).filter(|r| r.len() >= 2).collect();
+    }
+    let mut ring: Vec<Point> = left;
+    ring.extend(right.into_iter().rev());
+    if let Some(first) = ring.first().copied() {
+        ring.push(first);
+    }
+    vec![running(&ring, PERFORATION_LEN)]
+}
+
+/// An area's perforation: short running stitches round each of `polys`' outlines.
+pub fn outline_perforation(polys: &[Vec<Point>]) -> Vec<Vec<Point>> {
+    polys
+        .iter()
+        .filter(|p| p.len() >= 3)
+        .map(|p| {
+            let mut ring = p.clone();
+            if let (Some(a), Some(b)) = (ring.first().copied(), ring.last().copied())
+                && a.distance(b) > 1e-9
+            {
+                ring.push(a);
+            }
+            running(&ring, PERFORATION_LEN)
+        })
+        .filter(|r| r.len() >= 2)
+        .collect()
+}
+
 /// An area's edge walk: a running stitch round each of `polys`' outlines, [`UNDERLAY_INSET`]
 /// inside the shape (filled by `rule`), one run per outline. Where the shape is too thin to step
 /// inside, the walk keeps to the outline.

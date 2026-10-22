@@ -269,6 +269,18 @@ pub static PARAMS: &[Param] = &[
         suits: None,
     },
     Param {
+        key: "puff",
+        value: ValueKind::Mm(StitchSettings::PUFF),
+        kinds: &[K::Satin, K::SatinShape, K::Auto],
+        label: "Puff Foam:",
+        help: "Sew over 3D foam this thick: a stop to place the foam, dense satin with no underlay, capped ends, and a perforation all round so the excess foam tears away",
+        doc: "mm (foam thickness, 1–6; null: not puffed; a stop to place the foam, dense satin at 0.25 mm unless spacing is set, no underlay, open ends capped, then short running stitches all round the edge to perforate the foam)",
+        nullable: true,
+        get: |s| json!(s.puff()),
+        set: |s, v| s.puff = f(v),
+        suits: None,
+    },
+    Param {
         key: "keepCovered",
         value: ValueKind::Flag,
         kinds: &[K::Fill],

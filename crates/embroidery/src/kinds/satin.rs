@@ -28,14 +28,21 @@ pub(super) fn sew(i: &Input) -> Output {
         }
         out.runs.push(run);
     }
+    let foam = if s.puffed() { s.puff() } else { None };
     for (l, closed) in lines.iter().filter(|_| rails.is_none()) {
-        // Push: an open column sewn shorter at both ends.
+        // Push: an open column sewn shorter at both ends. Over foam: longer, capping the foam's
+        // cut ends (half its thickness each end).
         let pushed;
-        let l = if *closed || s.push() <= 0.0 {
-            l
-        } else {
-            pushed = generate::trim_ends(l, s.push() / 2.0);
-            &pushed
+        let l = match foam {
+            Some(t) if !*closed => {
+                pushed = generate::extend_ends(l, t / 2.0);
+                &pushed
+            }
+            _ if *closed || s.push() <= 0.0 => l,
+            _ => {
+                pushed = generate::trim_ends(l, s.push() / 2.0);
+                &pushed
+            }
         };
         let (under, back) = generate::satin_underlay_with(l, *closed, w, s.underlay(), &i.auto);
         // After an underlay that ends at the far end, the column is sewn back.
@@ -47,6 +54,10 @@ pub(super) fn sew(i: &Input) -> Output {
         };
         // One run: the move from the underlay to the column stays inside the column.
         out.runs.push(under.into_iter().chain(top).collect());
+        // Over foam: the perforation, all round the column's edge.
+        if foam.is_some() {
+            out.runs.extend(generate::perforation(l, *closed, w));
+        }
     }
     out
 }

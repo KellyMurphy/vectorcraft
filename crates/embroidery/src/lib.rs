@@ -243,6 +243,8 @@ struct Builder {
     min_stitch: f64,
     /// Lines without a start point are entered nearest where the needle is.
     auto_start: bool,
+    /// The foam has been laid (the stop for it is behind).
+    foam_down: bool,
 }
 
 impl Builder {
@@ -257,6 +259,7 @@ impl Builder {
             stitch_under: setup.stitch_under(),
             min_stitch: setup.min_stitch(),
             auto_start: setup.auto_start,
+            foam_down: false,
         }
     }
 
@@ -393,6 +396,9 @@ impl Builder {
             if p.trim_before {
                 self.force_trim(p.thread);
             }
+            if p.foam && !self.foam_down {
+                self.stop_for_foam(p.thread);
+            }
             let from = match p.orient {
                 Orient::Free { start: Some(s), rotate } => Some((s, rotate)),
                 Orient::Free { start: None, rotate } if self.auto_start => self.cur.map(|c| (c, rotate)),
@@ -413,6 +419,17 @@ impl Builder {
                 self.force_trim(p.thread);
             }
         }
+    }
+
+    /// Stop for the foam to be laid (a stop, written as a thread change to the same thread), unless
+    /// nothing has been sewn yet: then the foam goes down before the start.
+    fn stop_for_foam(&mut self, thread: [u8; 3]) {
+        self.foam_down = true;
+        let Some(at) = self.cur else { return };
+        self.trim(at);
+        self.push(at, Cmd::ColorChange);
+        self.plan.threads.push(thread);
+        self.thread = Some(thread);
     }
 
     fn force_trim(&mut self, next: [u8; 3]) {
@@ -786,7 +803,8 @@ fn emit(s: &StitchSettings, thread: [u8; 3], runs: Vec<Vec<Point>>, b: &mut Sewe
         (false, _) => Orient::Fixed,
         (true, start) => Orient::Free { start, rotate: s.kind == StitchKind::Running },
     };
-    b.out.pieces.push(Piece { thread, runs, tie, trim_before: s.trim_before, trim_after: s.trim_after, orient });
+    let foam = s.puffed();
+    b.out.pieces.push(Piece { thread, runs, tie, trim_before: s.trim_before, trim_after: s.trim_after, orient, foam });
 }
 
 /// One object's stitches: pieces in sewing order and warnings about its art. What
@@ -808,6 +826,8 @@ struct Piece {
     trim_after: bool,
     /// How the plan may enter the runs.
     orient: Orient,
+    /// Sewn over foam: the machine stops before the first such piece, for the foam to be laid.
+    foam: bool,
 }
 
 /// How a piece's runs may be entered.

@@ -1583,3 +1583,38 @@ fn a_start_point_sets_where_a_line_begins() {
 fn generate_lengths_ok(p: &Plan) -> bool {
     p.needles.windows(2).filter(|w| w[1].cmd == Cmd::Stitch).all(|w| Point::new(w[0].x, w[0].y).distance(Point::new(w[1].x, w[1].y)) <= 12.1)
 }
+
+#[test]
+fn puff_stops_for_the_foam_caps_and_perforates() {
+    // A flat running line, then a 5 mm puff satin on 3 mm foam.
+    let d = doc_with(|d| {
+        let flat = stitched(d, poly(&[(0.0, 100.0), (100.0, 100.0)], false), StitchKind::Running, [0; 3]);
+        let mut puff = stitched(d, poly(&[(0.0, 0.0), (100.0, 0.0)], false), StitchKind::Satin, [0; 3]);
+        puff.extras_mut().stitch = Some(Box::new(StitchSettings { width: Some(5.0), puff: Some(3.0), ..StitchSettings::new(StitchKind::Satin) }));
+        vec![flat, puff]
+    });
+    let p = plan(&d);
+    assert_eq!(p.stats().color_changes, 1, "a stop for the foam");
+    assert_eq!(p.threads.len(), 2, "the same thread after the stop");
+    let puff = p.objects.get(1).unwrap();
+    let pts: Vec<Point> = p.needles[puff.needles.clone()].iter().filter(|n| n.cmd == Cmd::Stitch).map(|n| Point::new(n.x, n.y)).collect();
+    // Capped: the column reaches 1.5 mm past each drawn end (100 pt = 35.3 mm long).
+    let (lo, hi) = pts.iter().fold((f64::INFINITY, f64::NEG_INFINITY), |(lo, hi), q| (lo.min(q.x), hi.max(q.x)));
+    assert!(lo < -1.4 && hi > 100.0 * PT_MM + 1.4, "{lo} {hi}");
+    // Perforated: the last stitches are short, running round both edges (y = ±2.5 mm).
+    let tail: Vec<Point> = pts.iter().rev().take(40).copied().collect();
+    assert!(tail.windows(2).all(|w| w[0].distance(w[1]) <= 1.05), "short stitches");
+    assert!(tail.iter().any(|q| q.y > 2.4) && tail.iter().any(|q| q.y < -2.4), "round both edges");
+    // Dense, with no underlay: more stitches than the same satin flat.
+    let flat_satin = plan_of(poly(&[(0.0, 0.0), (100.0, 0.0)], false), StitchSettings { width: Some(5.0), ..StitchSettings::new(StitchKind::Satin) });
+    assert!(pts.len() > flat_satin.stats().stitches);
+    // The checker: the puff is fine; a flat object after it isn't.
+    let after = doc_with(|d| {
+        let mut puff = stitched(d, poly(&[(0.0, 0.0), (100.0, 0.0)], false), StitchKind::Satin, [0; 3]);
+        puff.extras_mut().stitch = Some(Box::new(StitchSettings { width: Some(2.0), puff: Some(3.0), ..StitchSettings::new(StitchKind::Satin) }));
+        let flat = stitched(d, poly(&[(0.0, 100.0), (100.0, 100.0)], false), StitchKind::Running, [0; 3]);
+        vec![puff, flat]
+    });
+    let found: Vec<String> = check::check(&after, &plan(&after)).into_iter().filter(|f| f.rule == "puff").map(|f| f.message).collect();
+    assert_eq!(found.len(), 2, "too narrow, and a flat object after the foam: {found:?}");
+}

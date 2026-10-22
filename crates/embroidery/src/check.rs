@@ -67,6 +67,9 @@ pub const TINY_MM: f64 = 1.0;
 /// The density map's cell, mm, and the most needle holes a cell takes before it is a hot spot.
 pub const DENSITY_CELL_MM: f64 = 2.0;
 pub const DENSITY_MAX: usize = 40;
+/// Puff satin narrower or wider than these doesn't rise well, mm.
+pub const PUFF_NARROW_MM: f64 = 3.0;
+pub const PUFF_WIDE_MM: f64 = 10.0;
 /// More trims or jumps than these make a slow design.
 pub const TRIMS_MAX: usize = 40;
 pub const JUMPS_MAX: usize = 150;
@@ -360,6 +363,44 @@ pub static RULES: &[Rule] = &[
                     object: None,
                     at: None,
                 });
+            }
+            out
+        },
+    },
+    Rule {
+        id: "puff",
+        label: "Puff that won't rise well",
+        help: "Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.",
+        in_plan_warnings: false,
+        run: |doc, plan| {
+            let mut out = vec![];
+            let mut foam_down = false;
+            for o in &plan.objects {
+                let Some(n) = doc.node(o.id) else { continue };
+                let Some(s) = n.extras().stitch.as_deref().filter(|s| s.unknown.is_none()) else { continue };
+                if s.puffed() {
+                    foam_down = true;
+                    if s.kind == StitchKind::Satin {
+                        let w = s.width(n.appearance.stroke_width() * PT_MM);
+                        if !(PUFF_NARROW_MM..=PUFF_WIDE_MM).contains(&w) {
+                            out.push(Finding {
+                                rule: "puff",
+                                severity: Severity::Warning,
+                                message: format!("is puff {w:.1} mm wide: puff rises well from {PUFF_NARROW_MM} to {PUFF_WIDE_MM} mm"),
+                                object: Some(o.id),
+                                at: first_stitch(plan, o),
+                            });
+                        }
+                    }
+                } else if foam_down {
+                    out.push(Finding {
+                        rule: "puff",
+                        severity: Severity::Warning,
+                        message: "is sewn flat after the foam is laid: it sews through the foam (sew it before the puff)".into(),
+                        object: Some(o.id),
+                        at: first_stitch(plan, o),
+                    });
+                }
             }
             out
         },

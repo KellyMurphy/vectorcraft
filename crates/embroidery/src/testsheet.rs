@@ -54,7 +54,7 @@ pub struct Section {
     sewn: &'static str,
 }
 
-pub const SECTIONS: [Section; 7] = [
+pub const SECTIONS: [Section; 8] = [
     Section { id: "satinWidth", letter: 'A', name: "Satin Width", sewn: "SATIN WIDTH MM" },
     Section { id: "satinDensity", letter: 'B', name: "Satin Density", sewn: "SATIN SPACING MM" },
     Section { id: "pullCompensation", letter: 'C', name: "Pull Compensation", sewn: "PULL COMP MM" },
@@ -62,6 +62,7 @@ pub const SECTIONS: [Section; 7] = [
     Section { id: "fillAngle", letter: 'E', name: "Fill Angle", sewn: "FILL ANGLE" },
     Section { id: "underlay", letter: 'F', name: "Underlay", sewn: "UNDERLAY" },
     Section { id: "lettering", letter: 'G', name: "Lettering", sewn: "LETTERING MM" },
+    Section { id: "puff", letter: 'H', name: "Puff", sewn: "PUFF 3MM FOAM" },
 ];
 
 /// A test sheet: the document, and where its sections went.
@@ -206,6 +207,10 @@ fn cells(id: &str) -> Result<Vec<Cell>, String> {
             });
             column.chain(squares).collect()
         }
+        "puff" => [3.0, 4.0, 5.0, 6.0, 8.0]
+            .into_iter()
+            .map(|w| satin_cell(w, StitchSettings { puff: Some(3.0), ..satin(w) }, num(w), format!("Puff {} mm wide on 3 mm foam", num(w))))
+            .collect(),
         "lettering" => {
             let mut out = vec![];
             for size in [4.0, 6.0, 8.0, 10.0, 15.0, 20.0] {
@@ -250,6 +255,7 @@ fn place(doc: &mut Document, section: &Section, cells: &[Cell], left: f64) -> Re
     let (mut x, mut y, mut row) = (MARGIN, MARGIN + TITLE_H + GAP, 0.0f64);
     let end = FIELD_MM - MARGIN;
     let mut swatches = vec![];
+    let mut flat: Vec<Arc<Node>> = vec![];
     for (i, cell) in cells.iter().enumerate() {
         let lw = label_width(&cell.label, LABEL_H);
         let (cw, ch) = (cell.w.max(lw), cell.h + LABEL_GAP + LABEL_H);
@@ -260,11 +266,19 @@ fn place(doc: &mut Document, section: &Section, cells: &[Cell], left: f64) -> Re
             return Err(format!("the {} section's swatch {} doesn't fit a {FIELD_MM} mm field", section.id, i + 1));
         }
         let mut nodes = (cell.make)(doc, Point::new(left + x + (cw - cell.w) / 2.0, y));
-        if let Some(l) = label(doc, &cell.label, Point::new(left + x + (cw - lw) / 2.0, y + cell.h + LABEL_GAP), LABEL_H) {
-            nodes.push(l);
+        let puffed = nodes.iter().any(|n| n.extras().stitch.as_deref().is_some_and(StitchSettings::puffed));
+        let label = label(doc, &cell.label, Point::new(left + x + (cw - lw) / 2.0, y + cell.h + LABEL_GAP), LABEL_H);
+        let mut objects: Vec<_> = nodes.iter().map(|n| n.id).collect();
+        if let Some(l) = label {
+            objects.push(l.id);
+            // A puffed swatch's label is sewn flat before the foam is laid, with the title.
+            if puffed {
+                flat.push(Arc::new(l));
+            } else {
+                nodes.push(l);
+            }
         }
         let id = format!("{}{}", section.letter, i + 1);
-        let objects = nodes.iter().map(|n| n.id).collect();
         let mut group = Node::group(doc.alloc_id(), nodes.into_iter().map(Arc::new).collect());
         group.name = Some(format!("{id} {}", cell.words));
         children.push(Arc::new(group));
@@ -272,6 +286,9 @@ fn place(doc: &mut Document, section: &Section, cells: &[Cell], left: f64) -> Re
         x += cw + GAP;
         row = row.max(ch);
     }
+    // Flat labels of puffed swatches go first, after the title.
+    let at = children.len().min(1);
+    children.splice(at..at, flat);
     let mut group = Node::group(doc.alloc_id(), children);
     group.name = Some(format!("{} {}", section.letter, section.name));
     Ok((group, swatches))
@@ -494,7 +511,7 @@ mod tests {
         // meant to test the limit.
         let plan = crate::plan(&sheet.doc);
         assert!(plan.stats().stitches > 10_000, "{}", plan.stats().stitches);
-        assert_eq!(plan.threads, vec![THREAD]);
+        assert!(plan.threads.iter().all(|t| *t == THREAD), "one thread (puff stops for the foam with it): {:?}", plan.threads);
         assert!(plan.warnings.is_empty(), "{:?}", plan.warnings);
     }
 
