@@ -218,6 +218,11 @@ pub struct StitchSettings {
     /// as they are apart; other subpaths crossing both are rungs, setting the stitch direction.
     #[serde(default, skip_serializing_if = "crate::skip::is_default")]
     pub rails: bool,
+    /// Where the needle starts, mm in document space: running, bean and zigzag stitches enter
+    /// their path at its point nearest it (a closed running path there, an open one from its
+    /// nearer end). `None`: nearest where the needle is ([`EmbroiderySetup::auto_start`]).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub start_at: Option<[f64; 2]>,
     /// Fill: keep the rows under objects sewn later on top of it (normally cut away, leaving
     /// [`EmbroiderySetup::overlap`]).
     #[serde(default, skip_serializing_if = "crate::skip::is_default")]
@@ -377,6 +382,11 @@ pub struct EmbroiderySetup {
     /// ([`Fabric::min_stitch`]).
     #[serde(skip_serializing_if = "is_default_min_stitch")]
     pub min_stitch: f64,
+    /// Running, bean and zigzag stitches without a start point of their own enter their paths
+    /// nearest where the needle is (closed running paths at their nearest point, open paths from
+    /// their nearer end, separate parts nearest first).
+    #[serde(skip_serializing_if = "is_true")]
+    pub auto_start: bool,
     /// The order objects are sewn in: these first, in this order, then any other stitched objects
     /// in paint order (empty: paint order). Ids of objects no longer there are ignored.
     #[serde(skip_serializing_if = "Vec::is_empty")]
@@ -409,6 +419,7 @@ impl Default for EmbroiderySetup {
             stitch_moves_under: Self::DEFAULT_STITCH_MOVES,
             overlap: Self::DEFAULT_OVERLAP,
             min_stitch: Self::DEFAULT_MIN_STITCH,
+            auto_start: true,
             order: vec![],
             patterns: vec![],
             sew_out: None,
@@ -417,6 +428,10 @@ impl Default for EmbroiderySetup {
             extra: Default::default(),
         }
     }
+}
+
+fn is_true(v: &bool) -> bool {
+    *v
 }
 
 fn is_default_min_stitch(v: &f64) -> bool {

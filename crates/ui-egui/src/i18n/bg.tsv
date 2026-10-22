@@ -5391,3 +5391,10 @@ theme	Appearance	Външен вид
 	Design bigger than the hoop	Дизайн, по-голям от гергефа
 	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	Дизайнът трябва да се побира в полето за бродиране на гергефа. Изберете по-голям гергеф, завъртете дизайна на четвърт оборот, смалете го или го разделете на дизайни, бродирани един след друг.
 @msg	Hoop: {_1}	Гергеф: {_1}
+
+# Sequencing (the Sew Order panel's Optimize, start points)
+	Optimize	Оптимизиране
+	Group by thread and sew each thread's objects nearest first, cutting jumps and trims	Групиране по конец и бродиране на обектите на всеки конец от най-близкия, с по-малко скокове и отрязвания
+	Optimize Sew Order	Оптимизиране на реда на бродиране
+	Start At:	Начало при:
+	Where the needle starts: the path is entered at its point nearest it	Откъде започва иглата: пътят започва от най-близката си точка

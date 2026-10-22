@@ -640,6 +640,26 @@ fn other_settings(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: 
                     }
                 });
             }
+            // A start point: shown, and cleared; set by commands (or, later, a handle).
+            ValueKind::Point => {
+                let at = sel[key].as_array().and_then(|a| Some([a.first()?.as_f64()?, a.get(1)?.as_f64()?]));
+                ui.scope(|ui| {
+                    widgets::label_row(ui, label, LABEL_W, |ui| match at {
+                        Some([x, y]) => {
+                            ui.label(format!("{x:.1}, {y:.1} mm"));
+                            if widgets::flat_button(ui, tl!("Clear"), 50.0).clicked() {
+                                set(app, json!({ key: null }));
+                            }
+                        }
+                        // None set: where the needle is.
+                        None => {
+                            ui.label(tl!("Auto"));
+                        }
+                    })
+                })
+                .response
+                .on_hover_text(help);
+            }
             // The stitch type, the thread and ids have rows of their own above.
             ValueKind::Kind | ValueKind::Thread | ValueKind::Id => {}
         }

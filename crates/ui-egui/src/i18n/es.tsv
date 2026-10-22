@@ -5381,3 +5381,10 @@ mark-style	Japanese	Japonesas
 	Design bigger than the hoop	Diseño más grande que el bastidor
 	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	El diseño debe caber en el campo de bordado del bastidor. Elija un bastidor mayor, gire el diseño un cuarto de vuelta, redúzcalo o divídalo en diseños bordados uno tras otro.
 @msg	Hoop: {_1}	Bastidor: {_1}
+
+# Sequencing (the Sew Order panel's Optimize, start points)
+	Optimize	Optimizar
+	Group by thread and sew each thread's objects nearest first, cutting jumps and trims	Agrupar por hilo y bordar los objetos de cada hilo del más cercano al más lejano, con menos saltos y cortes
+	Optimize Sew Order	Optimizar orden de bordado
+	Start At:	Empezar en:
+	Where the needle starts: the path is entered at its point nearest it	Dónde empieza la aguja: el trazado se empieza en su punto más cercano

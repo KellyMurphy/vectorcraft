@@ -4997,3 +4997,10 @@ effect	Regular	Regelmäßig
 	Design bigger than the hoop	Design größer als der Rahmen
 	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	Das Design muss in das Stickfeld des Rahmens passen. Wählen Sie einen größeren Rahmen, drehen Sie das Design um eine Vierteldrehung, verkleinern Sie es oder teilen Sie es in nacheinander gestickte Designs.
 @msg	Hoop: {_1}	Rahmen: {_1}
+
+# Sequencing (the Sew Order panel's Optimize, start points)
+	Optimize	Optimieren
+	Group by thread and sew each thread's objects nearest first, cutting jumps and trims	Nach Garn gruppieren und die Objekte jedes Garns nächstgelegene zuerst sticken, was Sprünge und Schnitte spart
+	Optimize Sew Order	Stickreihenfolge optimieren
+	Start At:	Start bei:
+	Where the needle starts: the path is entered at its point nearest it	Wo die Nadel beginnt: der Pfad wird an seinem nächstgelegenen Punkt begonnen

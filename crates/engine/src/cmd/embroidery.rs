@@ -31,7 +31,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Embroidery Setup",
             ["Window", "Embroidery"],
             None,
-            "{trimJumpsOver?: mm (0.5–100; 3) | null (never trim on length: only thread changes and objects' trimBefore/trimAfter cut the thread), stitchMovesUnder?: mm (0–5; 1: moves to the next stitch up to this long are sewn, longer ones jump), overlap?: mm (0–3; 0.5: how far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away), minStitch?: mm (0–2; 0.3: needle points closer than this to the one before are left out; the document's fabric may ask for longer)} the document's travel, overlap and shortest stitch, as one undo step → {trimJumpsOver, stitchMovesUnder, overlap, minStitch (as sewn: the larger of the document's and its fabric's)}",
+            "{trimJumpsOver?: mm (0.5–100; 3) | null (never trim on length: only thread changes and objects' trimBefore/trimAfter cut the thread), stitchMovesUnder?: mm (0–5; 1: moves to the next stitch up to this long are sewn, longer ones jump), overlap?: mm (0–3; 0.5: how far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away), minStitch?: mm (0–2; 0.3: needle points closer than this to the one before are left out; the document's fabric may ask for longer), autoStart?: bool (true: running, bean and zigzag lines without a startAt are entered nearest where the needle is)} the document's travel, overlap and shortest stitch, as one undo step → {trimJumpsOver, stitchMovesUnder, overlap, minStitch (as sewn: the larger of the document's and its fabric's)}",
             has_doc,
             setup
         ),
@@ -61,6 +61,15 @@ pub fn specs() -> Vec<CommandSpec> {
             "{} group the sewing order by thread colour (colours in the order they first come, each keeping its objects' order), so each thread is sewn once where layering allows; one undo step → {order: [ids], colorChanges}",
             has_doc,
             sort_by_thread
+        ),
+        cmd!(
+            "embroidery.optimizeOrder",
+            "Optimize Sew Order",
+            ["Window", "Embroidery"],
+            None,
+            "{} set the sewing order to cut travel: objects grouped by thread (colours in the order they first come), each thread's objects sewn nearest first from where the last one ended. What is sewn later lies on top, so check overlapping objects of one colour afterwards; one undo step → {order: [ids], travelBefore, travelAfter (mm the needle jumps), colorChanges}",
+            has_doc,
+            optimize_order
         ),
         cmd!(
             "embroidery.resetOrder",
@@ -384,7 +393,7 @@ fn set(s: &mut Session, p: &Value) -> Result<Value> {
 }
 
 fn setup_json(e: &EmbroiderySetup) -> Value {
-    json!({ "trimJumpsOver": e.trim_over(), "stitchMovesUnder": e.stitch_under(), "overlap": e.overlap(), "minStitch": e.min_stitch() })
+    json!({ "trimJumpsOver": e.trim_over(), "stitchMovesUnder": e.stitch_under(), "overlap": e.overlap(), "minStitch": e.min_stitch(), "autoStart": e.auto_start })
 }
 
 fn setup(s: &mut Session, p: &Value) -> Result<Value> {
@@ -403,6 +412,9 @@ fn setup(s: &mut Session, p: &Value) -> Result<Value> {
             Some(x) if EmbroiderySetup::STITCH_MOVES.contains(&x) => new.stitch_moves_under = x,
             _ => return Err(bad(C, "`stitchMovesUnder` must be a number from 0 to 5 (mm)")),
         }
+    }
+    if let Some(v) = p.get("autoStart") {
+        new.auto_start = v.as_bool().ok_or_else(|| bad(C, "`autoStart` must be true or false"))?;
     }
     if let Some(v) = p.get("minStitch") {
         match v.as_f64() {
@@ -704,6 +716,89 @@ fn sort_by_thread(s: &mut Session, _: &Value) -> Result<Value> {
     }
     let new: Vec<NodeId> = threads.iter().flat_map(|t| sewn.iter().filter(move |(_, u)| u == t).map(|(id, _)| *id)).collect();
     let mut r = set_order(s, "Sew by Thread", new)?;
+    r["colorChanges"] = json!(threads.len().saturating_sub(1));
+    Ok(r)
+}
+
+/// The most objects `embroidery.optimizeOrder` orders (it compares every pair).
+const OPTIMIZE_MAX: usize = 5000;
+
+/// An object as sewn: its id, its thread, and where its stitches start and end (none: it makes
+/// none).
+type Sewn = (NodeId, [u8; 3], Option<(kurbo::Point, kurbo::Point)>);
+
+/// How far the needle jumps in `plan`, mm.
+fn travel_mm(plan: &Plan) -> f64 {
+    let mut at: Option<(f64, f64)> = None;
+    let mut sum = 0.0;
+    for n in &plan.needles {
+        if n.cmd == vectorcraft_embroidery::Cmd::Jump
+            && let Some((x, y)) = at
+        {
+            sum += (n.x - x).hypot(n.y - y);
+        }
+        at = Some((n.x, n.y));
+    }
+    sum
+}
+
+fn optimize_order(s: &mut Session, _: &Value) -> Result<Value> {
+    use kurbo::Point;
+    const C: &str = "embroidery.optimizeOrder";
+    let doc = s.doc()?.doc.clone();
+    let plan = s.stitch_plan(&doc);
+    if plan.objects.len() > OPTIMIZE_MAX {
+        return Err(bad(C, format!("the design has {} objects: at most {OPTIMIZE_MAX} are ordered", plan.objects.len())));
+    }
+    // Each object: its thread, and where its stitches start and end (none: it makes none).
+    let stitch = |i: usize| plan.needles.get(i).filter(|n| n.cmd == vectorcraft_embroidery::Cmd::Stitch).map(|n| Point::new(n.x, n.y));
+    let objs: Vec<Sewn> = plan
+        .objects
+        .iter()
+        .map(|o| {
+            let thread = doc.node(o.id).map_or([0; 3], vectorcraft_embroidery::thread_of_node);
+            let first = o.needles.clone().find_map(stitch);
+            let last = o.needles.clone().rev().find_map(stitch);
+            (o.id, thread, first.zip(last))
+        })
+        .collect();
+    let mut threads: Vec<[u8; 3]> = vec![];
+    for (_, t, _) in &objs {
+        if !threads.contains(t) {
+            threads.push(*t);
+        }
+    }
+    let mut order: Vec<NodeId> = vec![];
+    let mut at: Option<Point> = None;
+    for t in &threads {
+        let mut left: Vec<&Sewn> = objs.iter().filter(|o| o.1 == *t).collect();
+        while !left.is_empty() {
+            // The nearest start (or end: lines are entered from either) to where the needle is.
+            let pick = match at {
+                None => 0,
+                Some(p) => left
+                    .iter()
+                    .enumerate()
+                    .map(|(i, o)| (i, o.2.map_or(f64::INFINITY, |(a, b)| a.distance(p).min(b.distance(p)))))
+                    .min_by(|a, b| a.1.total_cmp(&b.1))
+                    .map_or(0, |(i, _)| i),
+            };
+            let o = left.remove(pick.min(left.len().saturating_sub(1)));
+            if let Some((a, b)) = o.2 {
+                at = Some(match at {
+                    Some(p) if b.distance(p) < a.distance(p) => a,
+                    _ => b,
+                });
+            }
+            order.push(o.0);
+        }
+    }
+    let before = travel_mm(&plan);
+    let mut r = set_order(s, "Optimize Sew Order", order)?;
+    let after = travel_mm(&s.stitch_plan(&s.doc()?.doc));
+    let round = |v: f64| (v * 10.0).round() / 10.0;
+    r["travelBefore"] = json!(round(before));
+    r["travelAfter"] = json!(round(after));
     r["colorChanges"] = json!(threads.len().saturating_sub(1));
     Ok(r)
 }

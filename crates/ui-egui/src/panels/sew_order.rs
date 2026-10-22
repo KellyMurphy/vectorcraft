@@ -297,6 +297,12 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             }
         }
         ui.add_space(6.0);
+        if widgets::flat_button(ui, tl!("Optimize"), 70.0)
+            .on_hover_text(tl!("Group by thread and sew each thread's objects nearest first, cutting jumps and trims"))
+            .clicked()
+        {
+            app.run("embroidery.optimizeOrder", json!({})).ok();
+        }
         if widgets::flat_button(ui, tl!("By Thread"), 70.0)
             .on_hover_text(tl!("Group the sewing order by thread colour, for fewer thread changes"))
             .clicked()

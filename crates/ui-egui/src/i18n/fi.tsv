@@ -5385,3 +5385,10 @@ mark-style	Japanese	Japanilainen
 	Design bigger than the hoop	Kuvio kehystä suurempi
 	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	Kuvion on mahduttava kehyksen kirjonta-alaan. Valitse suurempi kehys, käännä kuviota neljänneskierros, pienennä sitä tai jaa se peräkkäin kirjottaviin kuvioihin.
 @msg	Hoop: {_1}	Kehys: {_1}
+
+# Sequencing (the Sew Order panel's Optimize, start points)
+	Optimize	Optimoi
+	Group by thread and sew each thread's objects nearest first, cutting jumps and trims	Ryhmittele langan mukaan ja kirjo kunkin langan objektit lähin ensin, mikä vähentää hyppyjä ja katkaisuja
+	Optimize Sew Order	Optimoi kirjontajärjestys
+	Start At:	Aloituskohta:
+	Where the needle starts: the path is entered at its point nearest it	Mistä neula aloittaa: polku aloitetaan sen lähimmästä pisteestä

@@ -144,9 +144,9 @@ fn satin_fill_and_bean_parameters_are_set_and_checked() {
 #[test]
 fn setup_sets_the_documents_trim_and_jump_lengths() {
     let mut s = session();
-    assert_eq!(info(&mut s)["setup"], json!({"trimJumpsOver": 3.0, "stitchMovesUnder": 1.0, "overlap": 0.5, "minStitch": 0.3}));
+    assert_eq!(info(&mut s)["setup"], json!({"trimJumpsOver": 3.0, "stitchMovesUnder": 1.0, "overlap": 0.5, "minStitch": 0.3, "autoStart": true}));
     let r = s.execute("embroidery.setup", &json!({"trimJumpsOver": 8, "stitchMovesUnder": 2})).unwrap();
-    assert_eq!(r, json!({"trimJumpsOver": 8.0, "stitchMovesUnder": 2.0, "overlap": 0.5, "minStitch": 0.3}));
+    assert_eq!(r, json!({"trimJumpsOver": 8.0, "stitchMovesUnder": 2.0, "overlap": 0.5, "minStitch": 0.3, "autoStart": true}));
     s.execute("embroidery.setup", &json!({"trimJumpsOver": null})).unwrap();
     assert_eq!(info(&mut s)["setup"]["trimJumpsOver"], Value::Null);
     for p in [json!({"trimJumpsOver": 0}), json!({"trimJumpsOver": "x"}), json!({"stitchMovesUnder": 9})] {
@@ -552,7 +552,10 @@ fn dst_export_writes_a_design_per_artboard() {
     let files = both["files"].as_array().unwrap();
     assert_eq!(files.len(), 2, "{both}");
     let total: usize = files.iter().map(|f| vectorcraft_embroidery::read_dst(&b64(f)).unwrap().stats().stitches).sum();
-    assert_eq!(total, whole.stats().stitches, "the sections together are the whole sheet");
+    // Lines are entered nearest the needle, which starts elsewhere in a section sewn alone: a
+    // few lock stitches differ.
+    let whole_n = whole.stats().stitches;
+    assert!(total.abs_diff(whole_n) * 100 <= whole_n, "the sections together are the whole sheet: {total} vs {whole_n}");
     assert!(s.execute("document.export", &json!({"format": "dst", "artboard": 5})).is_err());
 }
 
@@ -648,4 +651,32 @@ fn the_document_hoop_is_set_checked_saved_and_loaded() {
     for bad in [json!({"hoop": "9x9"}), json!({"width": 5}), json!({"round": "yes"})] {
         assert!(s.execute("embroidery.setHoop", &bad).is_err(), "{bad}");
     }
+}
+
+#[test]
+fn optimizing_the_order_groups_threads_and_cuts_travel() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 600, "height": 400})).unwrap();
+    // Red, blue, red, blue squares far apart, alternating: by paint order every square is a
+    // thread change and a long jump.
+    for (k, color) in ["#ff0000", "#0000ff", "#ff0000", "#0000ff"].iter().enumerate() {
+        s.execute("select.none", &json!({})).unwrap();
+        s.execute("paint.setFill", &json!({"color": color})).unwrap();
+        let x = if k % 2 == 0 { 20 + k * 10 } else { 450 - k * 10 };
+        s.execute("shape.rectangle", &json!({"x": x, "y": 20 + k * 80, "width": 40, "height": 40})).unwrap();
+        s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    }
+    let before = info(&mut s)["design"]["colorChanges"].as_u64().unwrap();
+    let r = s.execute("embroidery.optimizeOrder", &json!({})).unwrap();
+    assert_eq!(r["colorChanges"], 1);
+    assert!(info(&mut s)["design"]["colorChanges"].as_u64().unwrap() < before);
+    assert!(r["travelAfter"].as_f64().unwrap() < r["travelBefore"].as_f64().unwrap(), "{r}");
+    s.execute("edit.undo", &json!({})).unwrap();
+    assert_eq!(info(&mut s)["design"]["colorChanges"].as_u64().unwrap(), before, "one undo step");
+    // A start point is set and cleared like any setting.
+    s.execute("embroidery.set", &json!({"type": "running", "startAt": [10.0, 20.0]})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["startAt"], json!([10.0, 20.0]));
+    s.execute("embroidery.set", &json!({"startAt": null})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["startAt"], Value::Null);
+    assert!(s.execute("embroidery.set", &json!({"startAt": [1.0]})).is_err());
 }

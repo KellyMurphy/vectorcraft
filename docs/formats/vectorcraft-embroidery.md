@@ -47,6 +47,7 @@ are kept but have no effect.
 | `wideOver` | number, mm | auto | 2–12, and at least `thinUnder` | 7 |
 | `border` | number, mm | fill, auto | 0.5–6 | none (auto: 2 on the shapes it fills) |
 | `rails` | boolean | satin | | false |
+| `startAt` | `[x, y]`, mm in document space | running, bean, zigzag | | none: nearest where the needle is (see `autoStart`). The path is entered at its point nearest it: a closed running path there, an open path from its nearer end. |
 | `keepCovered` | boolean | fill | | false: rows under objects sewn later on top are cut away (see `overlap`) |
 | `trimBefore` | boolean | all | | false |
 | `trimAfter` | boolean | all | | false |
@@ -95,6 +96,7 @@ Type objects are sewn letter by letter, each letter in its characters' colour un
 |---|---|---|---|
 | `trimJumpsOver` | number, mm (0.5–100), or `null` | Jumps longer than this cut the thread first. `null`: never on length (only thread changes and objects' `trimBefore`/`trimAfter` cut it). | 3 |
 | `stitchMovesUnder` | number, mm (0–5) | Moves to the next stitch up to this long are sewn as a stitch rather than jumped; never more than `trimJumpsOver`. | 1 |
+| `autoStart` | boolean | Running, bean and zigzag stitches without a `startAt` are entered nearest where the needle is: a closed running path at its nearest point, an open path from its nearer end, separate parts nearest first. | true |
 | `minStitch` | number, mm (0–2) | The shortest stitch sewn: a needle point closer than this to the one before is left out (the last point of a run moves the one before it instead). The fabric's `minStitch` is used when it is longer. Manual stitches are sewn as drawn. | 0.3 |
 | `overlap` | number, mm (0–3) | **Overlap removal.** A fill's rows under an object sewn later on top of it (a fill, satin shape or Auto object by its outline, type by its letters, a satin column along a path by its band) are cut away (its underlay too), except this far in from the covering object's edge, so the two still meet; where the covering object reaches past the fill's own edge no rim is kept. A fill with `keepCovered` keeps all its rows. | 0.5 |
 | `order` | array of object ids | The sewing order: these objects first, in this order, then any other stitched objects in paint order (bottom first). Ids of objects no longer there are ignored. | empty: paint order |

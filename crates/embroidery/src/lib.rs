@@ -239,6 +239,8 @@ struct Builder {
     stitch_under: f64,
     /// Needle points closer than this to the one before are left out, mm.
     min_stitch: f64,
+    /// Lines without a start point are entered nearest where the needle is.
+    auto_start: bool,
 }
 
 impl Builder {
@@ -252,6 +254,7 @@ impl Builder {
             trim_over: setup.trim_over(),
             stitch_under: setup.stitch_under(),
             min_stitch: setup.min_stitch(),
+            auto_start: setup.auto_start,
         }
     }
 
@@ -388,7 +391,20 @@ impl Builder {
             if p.trim_before {
                 self.force_trim(p.thread);
             }
-            for r in &p.runs {
+            let from = match p.orient {
+                Orient::Free { start: Some(s), rotate } => Some((s, rotate)),
+                Orient::Free { start: None, rotate } if self.auto_start => self.cur.map(|c| (c, rotate)),
+                _ => None,
+            };
+            let turned;
+            let runs = match from {
+                Some((at, rotate)) => {
+                    turned = entered(&p.runs, at, rotate);
+                    &turned
+                }
+                None => &p.runs,
+            };
+            for r in runs {
                 self.run(p.thread, r, p.tie);
             }
             if p.trim_after {
@@ -746,7 +762,15 @@ fn emit(s: &StitchSettings, thread: [u8; 3], runs: Vec<Vec<Point>>, b: &mut Sewe
     }
     // Manual stitches are sewn exactly as drawn: no lock stitches added.
     let tie = s.kind != StitchKind::Manual;
-    b.out.pieces.push(Piece { thread, runs, tie, trim_before: s.trim_before, trim_after: s.trim_after });
+    // Lines whose parts may be taken in any order and either way (not fills or satins, whose
+    // underlay comes first, nor manual stitches).
+    let free = matches!(s.kind, StitchKind::Running | StitchKind::Bean | StitchKind::Zigzag);
+    let start = s.start_at.filter(|p| p.iter().all(|v| v.is_finite())).map(|[x, y]| Point::new(x, y));
+    let orient = match (free, start) {
+        (false, _) => Orient::Fixed,
+        (true, start) => Orient::Free { start, rotate: s.kind == StitchKind::Running },
+    };
+    b.out.pieces.push(Piece { thread, runs, tie, trim_before: s.trim_before, trim_after: s.trim_after, orient });
 }
 
 /// One object's stitches: pieces in sewing order and warnings about its art. What
@@ -766,6 +790,72 @@ struct Piece {
     tie: bool,
     trim_before: bool,
     trim_after: bool,
+    /// How the plan may enter the runs.
+    orient: Orient,
+}
+
+/// How a piece's runs may be entered.
+#[derive(Clone, Copy, Debug, PartialEq)]
+enum Orient {
+    /// As made.
+    Fixed,
+    /// In any order and either way, from `start` or else where the needle is (when the document
+    /// asks); a closed run may start anywhere along it when `rotate`.
+    Free { start: Option<Point>, rotate: bool },
+}
+
+/// `runs` ordered and turned to be entered from `at`: each next the one with an end (or, when
+/// `rotate`, a point of a closed run) nearest where the last one ended.
+fn entered(runs: &[Vec<Point>], mut at: Point, rotate: bool) -> Vec<Vec<Point>> {
+    let mut left: Vec<Vec<Point>> = runs.iter().filter(|r| !r.is_empty()).cloned().collect();
+    let mut out = vec![];
+    while !left.is_empty() {
+        // (distance, run, how: start, end, or a point of a closed run)
+        let mut best: Option<(f64, usize, EnterAt)> = None;
+        for (i, r) in left.iter().enumerate() {
+            let (Some(first), Some(last)) = (r.first(), r.last()) else { continue };
+            let closed = r.len() > 2 && first.distance(*last) < 1e-6;
+            let mut consider = |d: f64, how: EnterAt| {
+                if best.is_none_or(|(bd, _, _)| d < bd) {
+                    best = Some((d, i, how));
+                }
+            };
+            if closed && rotate {
+                for (k, p) in r.iter().enumerate() {
+                    consider(p.distance(at), EnterAt::At(k));
+                }
+            } else {
+                consider(first.distance(at), EnterAt::Start);
+                if !closed {
+                    consider(last.distance(at), EnterAt::End);
+                }
+            }
+        }
+        let Some((_, i, how)) = best else { break };
+        let r = left.remove(i);
+        let run = match how {
+            EnterAt::Start => r,
+            EnterAt::End => r.into_iter().rev().collect(),
+            EnterAt::At(k) => {
+                // A closed run (its last point its first) from its kth point round to it again.
+                let n = r.len().saturating_sub(1);
+                (0..=n).filter_map(|j| r.get((k + j) % n.max(1))).copied().collect()
+            }
+        };
+        if let Some(end) = run.last() {
+            at = *end;
+        }
+        out.push(run);
+    }
+    out
+}
+
+/// Where a run is entered.
+#[derive(Clone, Copy, Debug, PartialEq)]
+enum EnterAt {
+    Start,
+    End,
+    At(usize),
 }
 
 /// Sews one object into a [`Sewn`].

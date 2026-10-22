@@ -5407,3 +5407,10 @@ imageTrace	Outline	Körvonal
 	Design bigger than the hoop	A minta nagyobb a keretnél
 	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	A mintának bele kell férnie a keret hímzőmezejébe. Válasszon nagyobb keretet, forgassa el a mintát negyed fordulattal, kicsinyítse le, vagy ossza egymás után hímzett mintákra.
 @msg	Hoop: {_1}	Keret: {_1}
+
+# Sequencing (the Sew Order panel's Optimize, start points)
+	Optimize	Optimalizálás
+	Group by thread and sew each thread's objects nearest first, cutting jumps and trims	Csoportosítás cérna szerint, és minden cérna objektumainak hímzése a legközelebbivel kezdve, kevesebb ugrással és vágással
+	Optimize Sew Order	Hímzési sorrend optimalizálása
+	Start At:	Kezdés itt:
+	Where the needle starts: the path is entered at its point nearest it	Ahol a tű kezd: a görbe a legközelebbi pontjánál kezdődik

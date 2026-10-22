@@ -5093,3 +5093,10 @@ lighting	Light	ライト
 	Design bigger than the hoop	枠より大きいデザイン
 	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	デザインは枠の縫製範囲に収まる必要があります。より大きい枠を選ぶ、デザインを 90° 回転する、縮小する、または順に縫う複数のデザインに分けてください。
 @msg	Hoop: {_1}	刺繍枠: {_1}
+
+# Sequencing (the Sew Order panel's Optimize, start points)
+	Optimize	最適化
+	Group by thread and sew each thread's objects nearest first, cutting jumps and trims	糸ごとにまとめ、各糸のオブジェクトを近い順に縫って、ジャンプと糸切りを減らします
+	Optimize Sew Order	縫製順を最適化
+	Start At:	開始位置:
+	Where the needle starts: the path is entered at its point nearest it	針が縫い始める位置: パスはここに最も近い点から始まります

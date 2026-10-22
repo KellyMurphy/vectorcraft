@@ -5276,3 +5276,10 @@ lighting	Light	光源
 	Design bigger than the hoop	设计比绣框大
 	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	设计必须放进绣框的缝制范围。请选用更大的绣框、将设计旋转四分之一圈、缩小设计，或拆分为依次缝制的多个设计。
 @msg	Hoop: {_1}	绣框: {_1}
+
+# Sequencing (the Sew Order panel's Optimize, start points)
+	Optimize	优化
+	Group by thread and sew each thread's objects nearest first, cutting jumps and trims	按线分组，并按由近及远的顺序缝制每种线的对象，减少跳针和剪线
+	Optimize Sew Order	优化缝制顺序
+	Start At:	起点:
+	Where the needle starts: the path is entered at its point nearest it	针的起点：路径从离它最近的点开始

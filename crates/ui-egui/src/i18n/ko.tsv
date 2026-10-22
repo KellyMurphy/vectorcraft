@@ -4998,3 +4998,10 @@ lighting	Light	광원
 	Design bigger than the hoop	후프보다 큰 디자인
 	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	디자인은 후프의 자수 영역에 들어가야 합니다. 더 큰 후프를 고르거나, 디자인을 4분의 1 돌리거나, 줄이거나, 차례로 수놓을 여러 디자인으로 나누세요.
 @msg	Hoop: {_1}	후프: {_1}
+
+# Sequencing (the Sew Order panel's Optimize, start points)
+	Optimize	최적화
+	Group by thread and sew each thread's objects nearest first, cutting jumps and trims	실별로 묶고 각 실의 오브젝트를 가까운 것부터 수놓아 점프와 자르기를 줄입니다
+	Optimize Sew Order	자수 순서 최적화
+	Start At:	시작 위치:
+	Where the needle starts: the path is entered at its point nearest it	바늘이 시작하는 곳: 패스는 여기에 가장 가까운 점에서 시작합니다

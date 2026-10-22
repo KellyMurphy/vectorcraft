@@ -5273,3 +5273,10 @@ mark-style	Japanese	Japońskie
 	Design bigger than the hoop	Projekt większy niż tamborek
 	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	Projekt musi mieścić się w polu haftu tamborka. Wybierz większy tamborek, obróć projekt o ćwierć obrotu, zmniejsz go lub podziel na projekty wyszywane jeden po drugim.
 @msg	Hoop: {_1}	Tamborek: {_1}
+
+# Sequencing (the Sew Order panel's Optimize, start points)
+	Optimize	Optymalizuj
+	Group by thread and sew each thread's objects nearest first, cutting jumps and trims	Grupuj według nici i wyszywaj obiekty każdej nici od najbliższego, ograniczając skoki i obcięcia
+	Optimize Sew Order	Optymalizuj kolejność wyszywania
+	Start At:	Początek w:
+	Where the needle starts: the path is entered at its point nearest it	Gdzie igła zaczyna: ścieżka zaczyna się w najbliższym punkcie

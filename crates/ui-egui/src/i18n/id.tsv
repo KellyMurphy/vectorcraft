@@ -5415,3 +5415,10 @@ swatch	Bright Violet	Violet cerah
 	Design bigger than the hoop	Desain lebih besar dari ram
 	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	Desain harus muat di bidang sulam ram. Pilih ram yang lebih besar, putar desain seperempat putaran, perkecil, atau bagi menjadi desain yang disulam satu per satu.
 @msg	Hoop: {_1}	Ram: {_1}
+
+# Sequencing (the Sew Order panel's Optimize, start points)
+	Optimize	Optimalkan
+	Group by thread and sew each thread's objects nearest first, cutting jumps and trims	Kelompokkan per benang dan sulam objek tiap benang dari yang terdekat, mengurangi lompatan dan potongan
+	Optimize Sew Order	Optimalkan urutan sulam
+	Start At:	Mulai di:
+	Where the needle starts: the path is entered at its point nearest it	Tempat jarum mulai: jalur dimulai di titik terdekatnya

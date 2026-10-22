@@ -5440,3 +5440,10 @@ mark-style	Japanese	Japonské
 	Design bigger than the hoop	Návrh větší než rámeček
 	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	Návrh se musí vejít do vyšívacího pole rámečku. Zvolte větší rámeček, otočte návrh o čtvrt otáčky, zmenšete ho, nebo ho rozdělte na návrhy vyšívané jeden po druhém.
 @msg	Hoop: {_1}	Rámeček: {_1}
+
+# Sequencing (the Sew Order panel's Optimize, start points)
+	Optimize	Optimalizovat
+	Group by thread and sew each thread's objects nearest first, cutting jumps and trims	Seskupit podle nitě a vyšít objekty každé nitě od nejbližšího, s méně skoky a odstřihy
+	Optimize Sew Order	Optimalizovat pořadí vyšívání
+	Start At:	Začít v:
+	Where the needle starts: the path is entered at its point nearest it	Kde jehla začíná: cesta začne v nejbližším bodě

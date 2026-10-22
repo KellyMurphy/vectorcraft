@@ -5438,3 +5438,10 @@ theme	Appearance	Apparence
 	Design bigger than the hoop	Motif plus grand que le cadre
 	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	Le motif doit tenir dans le champ de broderie du cadre. Choisissez un cadre plus grand, tournez le motif d'un quart de tour, réduisez-le ou divisez-le en motifs brodés l'un après l'autre.
 @msg	Hoop: {_1}	Cadre : {_1}
+
+# Sequencing (the Sew Order panel's Optimize, start points)
+	Optimize	Optimiser
+	Group by thread and sew each thread's objects nearest first, cutting jumps and trims	Grouper par fil et broder les objets de chaque fil du plus proche au plus loin, pour moins de sauts et de coupes
+	Optimize Sew Order	Optimiser l'ordre de couture
+	Start At:	Début à :
+	Where the needle starts: the path is entered at its point nearest it	Où l'aiguille commence : le tracé est commencé à son point le plus proche

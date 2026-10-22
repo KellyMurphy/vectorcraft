@@ -1537,3 +1537,49 @@ fn stitches_shorter_than_the_shortest_are_left_out() {
     // Manual stitches are sewn as drawn.
     assert_eq!(plan(&doc(StitchKind::Manual, 1.0, None)), plan(&doc(StitchKind::Manual, 0.0, None)));
 }
+
+/// How far the needle jumps in `p`, mm.
+fn jumped(p: &Plan) -> f64 {
+    p.needles.windows(2).filter(|w| w[1].cmd == Cmd::Jump).map(|w| Point::new(w[0].x, w[0].y).distance(Point::new(w[1].x, w[1].y))).sum()
+}
+
+#[test]
+fn lines_are_entered_nearest_where_the_needle_is() {
+    // Three lines drawn right to left, one under the other: sewn as drawn, the needle would jump
+    // back across each time; entered from their nearer ends it zigzags down instead.
+    let d = |auto: bool| {
+        let mut d = doc_with(|d| {
+            (0..3)
+                .map(|k| {
+                    let y = k as f64 * 30.0;
+                    stitched(d, poly(&[(200.0, y), (0.0, y)], false), StitchKind::Running, [0; 3])
+                })
+                .collect()
+        });
+        d.embroidery.auto_start = auto;
+        d
+    };
+    let (fixed, auto) = (plan(&d(false)), plan(&d(true)));
+    assert!(jumped(&auto) < jumped(&fixed) / 2.0, "{} {}", jumped(&auto), jumped(&fixed));
+    assert_eq!(auto.stats().stitches, fixed.stats().stitches, "the same stitches, entered differently");
+}
+
+#[test]
+fn a_start_point_sets_where_a_line_begins() {
+    // A closed running square, started at its bottom-right corner.
+    let corner = Point::new(85.0 * PT_MM, 85.0 * PT_MM);
+    let d = doc_with(|d| {
+        let mut n = stitched(d, poly(&[(0.0, 0.0), (85.0, 0.0), (85.0, 85.0), (0.0, 85.0)], true), StitchKind::Running, [0; 3]);
+        n.extras_mut().stitch = Some(Box::new(StitchSettings { start_at: Some([corner.x, corner.y]), ..StitchSettings::new(StitchKind::Running) }));
+        vec![n]
+    });
+    let p = plan(&d);
+    let first = p.needles.iter().find(|n| n.cmd == Cmd::Stitch).map(|n| Point::new(n.x, n.y)).unwrap();
+    assert!(first.distance(corner) < 0.01, "{first:?}");
+    // Generated runs stay within the machine's reach after turning.
+    assert!(generate_lengths_ok(&p));
+}
+
+fn generate_lengths_ok(p: &Plan) -> bool {
+    p.needles.windows(2).filter(|w| w[1].cmd == Cmd::Stitch).all(|w| Point::new(w[0].x, w[0].y).distance(Point::new(w[1].x, w[1].y)) <= 12.1)
+}

@@ -5048,3 +5048,10 @@ lighting	Light	Свет
 	Design bigger than the hoop	Дизайн больше пялец
 	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	Дизайн должен помещаться в поле вышивки пялец. Выберите пяльцы побольше, поверните дизайн на четверть оборота, уменьшите его или разделите на дизайны, вышиваемые один за другим.
 @msg	Hoop: {_1}	Пяльцы: {_1}
+
+# Sequencing (the Sew Order panel's Optimize, start points)
+	Optimize	Оптимизировать
+	Group by thread and sew each thread's objects nearest first, cutting jumps and trims	Сгруппировать по ниткам и вышивать объекты каждой нитки от ближайшего, сокращая прыжки и обрезки
+	Optimize Sew Order	Оптимизировать порядок вышивки
+	Start At:	Начало в:
+	Where the needle starts: the path is entered at its point nearest it	Где начинает игла: контур начинается в ближайшей точке

@@ -5052,3 +5052,10 @@ lighting	Light	Luce
 	Design bigger than the hoop	Disegno più grande del telaio
 	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	Il disegno deve stare nel campo di ricamo del telaio. Scegliete un telaio più grande, ruotate il disegno di un quarto di giro, riducetelo o dividetelo in disegni ricamati uno dopo l'altro.
 @msg	Hoop: {_1}	Telaio: {_1}
+
+# Sequencing (the Sew Order panel's Optimize, start points)
+	Optimize	Ottimizza
+	Group by thread and sew each thread's objects nearest first, cutting jumps and trims	Raggruppa per filo e ricama gli oggetti di ogni filo dal più vicino, riducendo salti e tagli
+	Optimize Sew Order	Ottimizza ordine di cucitura
+	Start At:	Inizia da:
+	Where the needle starts: the path is entered at its point nearest it	Dove inizia l'ago: il tracciato inizia dal suo punto più vicino

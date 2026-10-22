@@ -31,6 +31,8 @@ pub enum ValueKind {
     Id,
     /// A thread colour: `"#rrggbb"` or `[r, g, b]`.
     Thread,
+    /// A point, `[x, y]` mm.
+    Point,
 }
 
 /// Whether a setting suits the settings it was given for; the error says why not.
@@ -75,6 +77,11 @@ fn whole(v: &Value) -> Option<u8> {
 }
 fn text(v: &Value) -> Option<String> {
     if null(v) { None } else { v.as_str().map(|s| s.trim().to_ascii_lowercase()) }
+}
+fn point(v: &Value) -> Option<[f64; 2]> {
+    let a = v.as_array()?;
+    let (x, y) = (a.first()?.as_f64()?, a.get(1)?.as_f64()?);
+    (a.len() == 2 && x.is_finite() && y.is_finite()).then_some([x, y])
 }
 fn flag(v: &Value) -> bool {
     v.as_bool().unwrap_or_default()
@@ -247,6 +254,18 @@ pub static PARAMS: &[Param] = &[
         nullable: true,
         get: |s| json!(s.push()),
         set: |s, v| s.push = f(v),
+        suits: None,
+    },
+    Param {
+        key: "startAt",
+        value: ValueKind::Point,
+        kinds: &[K::Running, K::Bean, K::Zigzag],
+        label: "Start At:",
+        help: "Where the needle starts: the path is entered at its point nearest it",
+        doc: "[x, y] mm in document space (null: nearest where the needle is; the path is entered at its point nearest it)",
+        nullable: true,
+        get: |s| json!(s.start_at),
+        set: |s, v| s.start_at = point(v),
         suits: None,
     },
     Param {
@@ -428,6 +447,7 @@ impl Param {
             }),
             ValueKind::Id => v.as_str().is_some(),
             ValueKind::Thread => parse_thread(v).is_some(),
+            ValueKind::Point => point(v).is_some(),
         };
         if ok { Ok(()) } else { Err(self.expected()) }
     }
@@ -452,6 +472,7 @@ impl Param {
             ValueKind::Choice(ids) => format!("`{key}` must be one of {}{or_null}", ids.join(", ")),
             ValueKind::Id => format!("`{key}` must be an id{or_null}"),
             ValueKind::Thread => format!("`{key}` must be \"#rrggbb\", [r, g, b]{or_null}"),
+            ValueKind::Point => format!("`{key}` must be [x, y] (mm){or_null}"),
         }
     }
 }

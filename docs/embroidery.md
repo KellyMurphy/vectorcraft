@@ -12,10 +12,10 @@ Select paths or compound paths (or groups holding them) and choose **Object › 
 | Stitch | What it sews | Settings |
 |---|---|---|
 | Auto | Picks per shape (per letter, for type) by how wide its strokes are: under **Bean Outline Under** (1 mm) a bean stitch round the outline, over **Fill Over** (7 mm) a tatami fill with auto underlay and a satin border, in between a satin shape with auto underlay. The stroke width is twice the shape's area over its perimeter. | `thinUnder` (1 mm), `wideOver` (7 mm), `spacing`, `pull`, `pullPercent`, `push`, `border` (for filled shapes; 2 mm) |
-| Running Stitch | Single stitches along the path (outlines, details). Sharp corners keep a needle point. | `length` (2.5 mm) |
-| Bean Stitch | Running stitch sewn several times over each stitch: a bolder line. | `length` (2.5 mm), `passes` (3, 5, 7 or 9; 3) |
+| Running Stitch | Single stitches along the path (outlines, details). Sharp corners keep a needle point. | `length` (2.5 mm), `startAt` (where the needle starts; none: nearest where it is) |
+| Bean Stitch | Running stitch sewn several times over each stitch: a bolder line. | `length` (2.5 mm), `passes` (3, 5, 7 or 9; 3), `startAt` |
 | Satin Column | A zigzag centred on the path, as wide as the stroke (borders, lettering strokes). **Between Rails**: the object's two longest subpaths are the column's edges and the satin spans between them, as wide as they are apart (columns that swell and taper); other subpaths crossing both are rungs, each setting the stitch direction where it crosses. Draw the two edges, join them (Object › Compound Path) and tick Between Rails. | `width` (the stroke width, else 3 mm), `spacing` (density, 0.4 mm), `pull` (pull compensation, 0 mm) and `pullPercent` (% of the width, 0), `push` (push compensation: shorter at the ends, 0 mm), `underlay` (auto, none, center, edge, zigzag), `rails` (off) |
-| Zigzag Stitch | An open zigzag along the path, swinging side to side (decorative lines, appliqué edges). Corners fan like a satin's. | `width` (3 mm; not the stroke), `spacing` (between points, 2 mm) |
+| Zigzag Stitch | An open zigzag along the path, swinging side to side (decorative lines, appliqué edges). Corners fan like a satin's. | `width` (3 mm; not the stroke), `spacing` (between points, 2 mm), `startAt` |
 | Satin Shape | Satin that follows a closed shape's strokes from edge to edge, curving with them (lettering, outlined type, swashes). The shape's centre lines are found automatically; each zig reaches the shape's edges either side, so thick and thin strokes keep their contrast. | `spacing` (density, 0.4 mm), `pull` (0 mm), `pullPercent` (% of the stroke width, 0), `underlay` (auto, none, center, edge) |
 | Fill | Rows of staggered running stitches covering the shape (tatami). Holes and separate parts follow the fill rule. | `angle` (0°), `spacing` (density, 0.4 mm), `length` (4 mm), `stagger` (pattern: 2 brick, 3–8 tatami; 3), `motif` (a carved pattern: diamonds, waves, circles, scales, herringbone; none) and `motifSize` (its repeat, 3–60 mm; 10), `underlay` (auto, none, fill), `pull` and `pullPercent` (rows longer, half at each end; 0), `push` (shorter across the rows; 0 mm), `border` (a satin border over the edges, 0.5–6 mm; none), `keepCovered` (keep the rows under what is sewn on top; off) |
 | Pattern Border | A border pattern repeated end to end along the path, bending with its curves (decorative borders, frames). See [Pattern borders](#pattern-borders). | `pattern` (waves, scallops, chain, diamonds; waves), `width` (the band, 1–40 mm; the pattern's own, 6 mm), `flip` (off), `length` (1.5 mm), `spacing` (satin parts, 0.4 mm) |
@@ -197,6 +197,16 @@ Stitch** (Sew Order panel, `embroidery.setup {minStitch}`, 0.3 mm) to the one be
 everywhere, satin columns included; a fabric can ask for longer (Leather: 1 mm). Manual stitches are sewn
 exactly as drawn.
 
+### Sequencing
+
+Running, bean and zigzag lines are entered nearest where the needle is: a closed running path at its
+nearest point, an open path from its nearer end, an object's separate parts nearest first
+(`embroidery.setup {autoStart: false}` sews them as drawn). `startAt` (`[x, y]` mm) fixes where one
+starts. Fills and satins keep their own order, since their underlay comes first. **Optimize** in the Sew
+Order panel (`embroidery.optimizeOrder`) groups the objects by thread and sews each thread's objects
+nearest first, cutting jumps and trims; what is sewn later lies on top, so check overlapping objects of
+one colour afterwards.
+
 ### Overlap removal
 
 Where a fill lies under something sewn after it (lettering on a filled background, a satin outline over
@@ -272,6 +282,7 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.order` | → the stitched objects in sewing order |
 | `embroidery.reorder` | `{to: first\|earlier\|later\|last, ids?}` or `{order: [ids]}`: change the sewing order |
 | `embroidery.sortByThread` | group the sewing order by thread colour |
+| `embroidery.optimizeOrder` | group by thread and sew each thread's objects nearest first, cutting travel → `travelBefore`, `travelAfter` |
 | `embroidery.resetOrder` | sew in paint order again |
 | `embroidery.hoops` | → the document's `hoop` (or null), the `common` hoops, and whether the design `fit`s |
 | `embroidery.setHoop` | `{hoop?: 4x4\|5x7\|6x10\|8x8\|8x12\|cap\|null, name?, width?, height?, round?}`: set the document's hoop |
