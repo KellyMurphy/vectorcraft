@@ -113,6 +113,7 @@ fn full_setup() -> EmbroiderySetup {
         overlap: 1.0,
         min_stitch: 0.5,
         auto_start: false,
+        hide_travel: false,
         speed: 800.0,
         machine_format: "pes".into(),
         order: vec![NodeId(1)],

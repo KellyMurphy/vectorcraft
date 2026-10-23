@@ -392,6 +392,10 @@ pub struct EmbroiderySetup {
     /// their nearer end, separate parts nearest first).
     #[serde(skip_serializing_if = "is_true")]
     pub auto_start: bool,
+    /// Travel to the next stitch that a fill sewn later covers is sewn as running stitches under it
+    /// rather than jumped (and trimmed).
+    #[serde(skip_serializing_if = "is_true")]
+    pub hide_travel: bool,
     /// The machine's sewing speed, stitches per minute (for the sewing time estimate).
     #[serde(skip_serializing_if = "is_default_speed")]
     pub speed: f64,
@@ -440,6 +444,7 @@ impl Default for EmbroiderySetup {
             overlap: Self::DEFAULT_OVERLAP,
             min_stitch: Self::DEFAULT_MIN_STITCH,
             auto_start: true,
+            hide_travel: true,
             speed: Self::DEFAULT_SPEED,
             machine_format: Self::DEFAULT_MACHINE_FORMAT.to_string(),
             order: vec![],

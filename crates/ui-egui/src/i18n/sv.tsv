@@ -5425,3 +5425,10 @@ theme	Appearance	Utseende
 	Export {format}…	Exportera {format}…
 	Machine Format:	Maskinformat:
 	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Filformatet din maskin läser: DST (Tajima och de flesta maskiner), PES (Brother), JEF (Janome) eller EXP (Melco)
+
+# Hidden travel (embroidery)
+	Hide Travel Under Fills	Dölj förflyttning under fyllning
+	Travel that a fill sewn later covers is sewn there as running stitches instead of jumped and trimmed	Förflyttning som en fyllning broderad senare täcker sys där som raksöm i stället för att hoppa och klippas
+
+# Stitch start handles (embroidery)
+	Stitch Start	Stygnstart

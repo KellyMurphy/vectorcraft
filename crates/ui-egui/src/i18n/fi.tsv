@@ -5433,3 +5433,10 @@ mark-style	Japanese	Japanilainen
 	Export {format}…	Vie {format}…
 	Machine Format:	Koneen tiedostomuoto:
 	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Tiedostomuoto, jota koneesi lukee: DST (Tajima ja useimmat koneet), PES (Brother), JEF (Janome) tai EXP (Melco)
+
+# Hidden travel (embroidery)
+	Hide Travel Under Fills	Piilota siirrot täyttöjen alle
+	Travel that a fill sewn later covers is sewn there as running stitches instead of jumped and trimmed	Siirto, jonka myöhemmin kirjottava täyttö peittää, kirjotaan siihen etupistoina hypyn ja katkaisun sijaan
+
+# Stitch start handles (embroidery)
+	Stitch Start	Piston alku

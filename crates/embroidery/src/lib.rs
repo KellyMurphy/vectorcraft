@@ -25,6 +25,7 @@ mod jef;
 pub mod kinds;
 mod machine;
 pub mod motifs;
+pub mod network;
 pub mod params;
 mod pes;
 pub mod preview;
@@ -254,6 +255,94 @@ struct Builder {
     auto_start: bool,
     /// The foam has been laid (the stop for it is behind).
     foam_down: bool,
+    /// Travel under fills sewn later is sewn rather than jumped.
+    hide_travel: bool,
+    /// The areas of the fills that hide travel sewn before them.
+    hiders: Hiders,
+    /// The object being sewn (its place in the sewing order).
+    index: usize,
+}
+
+/// The longest stitch of travel sewn under a later fill, mm.
+pub const TRAVEL_LEN: f64 = 2.5;
+/// How far inside a later fill's edge hidden travel stays, mm.
+pub const TRAVEL_MARGIN: f64 = 0.5;
+/// The side of the grid cells that index the hiding areas, mm.
+const HIDER_CELL: f64 = 10.0;
+/// More cells than this and an area is checked for every move instead.
+const HIDER_CELLS: i64 = 400;
+
+/// The areas that hide travel (fills and satin shapes, by their outlines), each with its place in
+/// the sewing order, indexed by a grid of their boxes.
+#[derive(Default)]
+struct Hiders {
+    areas: Vec<(usize, generate::Cut)>,
+    cells: HashMap<(i64, i64), Vec<usize>>,
+    /// Areas too big for the grid.
+    big: Vec<usize>,
+}
+
+impl Hiders {
+    fn new(items: &[&Arc<Node>]) -> Self {
+        let mut h = Hiders::default();
+        for (i, n) in items.iter().enumerate() {
+            let Some(cut) = hide_area(n) else { continue };
+            let (mut lo, mut hi) = (Point::new(f64::INFINITY, f64::INFINITY), Point::new(f64::NEG_INFINITY, f64::NEG_INFINITY));
+            for p in cut.polys.iter().flatten() {
+                lo = Point::new(lo.x.min(p.x), lo.y.min(p.y));
+                hi = Point::new(hi.x.max(p.x), hi.y.max(p.y));
+            }
+            if !(lo.x.is_finite() && hi.x.is_finite()) {
+                continue;
+            }
+            let k = h.areas.len();
+            h.areas.push((i, cut));
+            let (c0, c1) = (cell(lo), cell(hi));
+            if (c1.0 - c0.0 + 1).saturating_mul(c1.1 - c0.1 + 1) > HIDER_CELLS {
+                h.big.push(k);
+                continue;
+            }
+            for x in c0.0..=c1.0 {
+                for y in c0.1..=c1.1 {
+                    h.cells.entry((x, y)).or_default().push(k);
+                }
+            }
+        }
+        h
+    }
+
+    /// Is `p` at least [`TRAVEL_MARGIN`] inside an area sewn after object `after`?
+    fn hides(&self, p: Point, after: usize) -> bool {
+        let near = self.cells.get(&cell(p)).into_iter().flatten().chain(&self.big);
+        near.filter_map(|k| self.areas.get(*k)).filter(|(i, _)| *i > after).any(|(_, cut)| {
+            [(0.0, 0.0), (1.0, 0.0), (-1.0, 0.0), (0.0, 1.0), (0.0, -1.0)]
+                .iter()
+                .all(|(dx, dy)| generate::inside(&cut.polys, cut.rule, Point::new(p.x + dx * TRAVEL_MARGIN, p.y + dy * TRAVEL_MARGIN)))
+        })
+    }
+}
+
+/// The grid cell of `p`.
+fn cell(p: Point) -> (i64, i64) {
+    let f = |v: f64| (v / HIDER_CELL).floor().clamp(-1e9, 1e9) as i64;
+    (f(p.x), f(p.y))
+}
+
+/// The area a fill or satin shape covers, which hides travel sewn before it (`None`: anything
+/// else, and puffed objects, whose foam is laid after).
+fn hide_area(n: &Node) -> Option<generate::Cut> {
+    let s = n.extras().stitch.as_deref()?;
+    if s.unknown.is_some() || s.puffed() || !matches!(s.kind, StitchKind::Fill | StitchKind::SatinShape) {
+        return None;
+    }
+    let (paths, rule): (Vec<PathData>, FillRule) = match &n.kind {
+        NodeKind::Path { path, rule, .. } => (vec![path.clone()], *rule),
+        NodeKind::Compound { children, rule } => (children.iter().filter_map(|c| c.path_data().cloned()).collect(), *rule),
+        NodeKind::Text(t) => (glyph_parts(t).into_iter().map(|(_, p)| p).collect(), FillRule::NonZero),
+        _ => return None,
+    };
+    let polys: Vec<Vec<Point>> = paths.iter().flat_map(generate::polylines).filter(|(l, _)| l.len() >= 3).map(|(l, _)| l).collect();
+    (!polys.is_empty()).then_some(generate::Cut { polys, rule })
 }
 
 impl Builder {
@@ -269,7 +358,17 @@ impl Builder {
             min_stitch: setup.min_stitch(),
             auto_start: setup.auto_start,
             foam_down: false,
+            hide_travel: setup.hide_travel,
+            hiders: Hiders::default(),
+            index: 0,
         }
+    }
+
+    /// Whether the move from `a` to `b` lies under fills sewn after the current object, at
+    /// least [`TRAVEL_MARGIN`] inside them all the way.
+    fn hidden(&self, a: Point, b: Point) -> bool {
+        let n = ((a.distance(b) / 0.4).ceil() as usize).clamp(1, 2000);
+        (0..=n).all(|k| self.hiders.hides(a.lerp(b, k as f64 / n as f64), self.index))
     }
 
     fn push(&mut self, p: Point, cmd: Cmd) -> bool {
@@ -343,6 +442,13 @@ impl Builder {
             Some(c) if self.sewing() && c.distance(first) <= self.stitch_under => {
                 if c.distance(first) > 1e-9 {
                     self.push(first, Cmd::Stitch);
+                }
+            }
+            // Under a fill sewn later: sewn there as running stitches, which it hides.
+            Some(c) if self.hide_travel && self.sewing() && self.hidden(c, first) => {
+                let n = ((c.distance(first) / TRAVEL_LEN).ceil() as usize).max(1);
+                for k in 1..=n {
+                    self.push(c.lerp(first, k as f64 / n as f64), Cmd::Stitch);
                 }
             }
             Some(c) => {
@@ -491,7 +597,11 @@ pub fn plan_cached(doc: &Document, cache: &mut StitchCache) -> Plan {
     let mut objects = vec![];
     let items = ordered(doc, &mut tally);
     let covers = coverers(&items);
+    if b.hide_travel {
+        b.hiders = Hiders::new(&items);
+    }
     for (i, n) in items.iter().enumerate() {
+        b.index = i;
         let over: Vec<Arc<Node>> = covers.get(i).into_iter().flatten().filter_map(|j| items.get(*j).map(|c| Arc::clone(c))).collect();
         let sewn = cache.get(n, over, &mut next);
         let start = b.plan.needles.len();

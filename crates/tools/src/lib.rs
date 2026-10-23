@@ -34,6 +34,7 @@ pub mod settings;
 pub mod shape;
 pub mod shaperwidget;
 pub mod slice;
+pub mod stitch_start;
 pub mod symbolism;
 pub mod text;
 pub mod touchtype;
@@ -252,6 +253,9 @@ pub struct ToolContext<'a> {
     pub snap_to_point: bool,
     /// View → Show Corner Widget: paths show draggable Live Corners widgets in their corners.
     pub corner_widgets: bool,
+    /// View → Stitch Preview: selected running, bean and zigzag objects show their stitch start
+    /// handles ([`stitch_start`]).
+    pub stitch_preview: bool,
     /// Which paint proxy is in front (true = Fill): the one the Gradient tool edits.
     pub fill_active: bool,
     /// The selected gradient stop (`gradient.selectStop`), marked on the gradient annotator.
@@ -895,6 +899,7 @@ pub(crate) mod testutil {
             snap_to_pixel: false,
             snap_to_point: true,
             corner_widgets: true,
+            stitch_preview: false,
             fill_active: true,
             gradient_stop: None,
             appearance_item: None,

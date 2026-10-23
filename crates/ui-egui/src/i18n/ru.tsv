@@ -5096,3 +5096,10 @@ lighting	Light	Свет
 	Export {format}…	Экспорт в {format}…
 	Machine Format:	Формат машины:
 	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Формат файла, который читает ваша машина: DST (Tajima и большинство машин), PES (Brother), JEF (Janome) или EXP (Melco)
+
+# Hidden travel (embroidery)
+	Hide Travel Under Fills	Прятать переходы под заливками
+	Travel that a fill sewn later covers is sewn there as running stitches instead of jumped and trimmed	Переход, который закроет заливка, вышиваемая позже, прошивается там прямым стежком вместо прыжка и обрезки
+
+# Stitch start handles (embroidery)
+	Stitch Start	Начало строчки

@@ -5486,3 +5486,10 @@ theme	Appearance	Apparence
 	Export {format}…	Exporter en {format}…
 	Machine Format:	Format de la machine :
 	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Le format de fichier que lit votre machine : DST (Tajima et la plupart des machines), PES (Brother), JEF (Janome) ou EXP (Melco)
+
+# Hidden travel (embroidery)
+	Hide Travel Under Fills	Masquer les déplacements sous les remplissages
+	Travel that a fill sewn later covers is sewn there as running stitches instead of jumped and trimmed	Un déplacement qu'un remplissage brodé plus tard recouvre est brodé là en point droit au lieu d'être sauté et coupé
+
+# Stitch start handles (embroidery)
+	Stitch Start	Début de la broderie

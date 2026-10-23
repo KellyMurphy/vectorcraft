@@ -4391,3 +4391,10 @@ lighting	Light	光源
 	Export {format}…	轉存 {format}…
 	Machine Format:	機器格式:
 	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	您的繡花機讀取的檔案格式：DST（Tajima 和大多數機器）、PES（Brother）、JEF（Janome）或 EXP（Melco）
+
+# Hidden travel (embroidery)
+	Hide Travel Under Fills	將移動藏在填色下
+	Travel that a fill sewn later covers is sewn there as running stitches instead of jumped and trimmed	後縫的填色會覆蓋的移動，改在原處用平針縫過，而不跳針剪線
+
+# Stitch start handles (embroidery)
+	Stitch Start	起針點

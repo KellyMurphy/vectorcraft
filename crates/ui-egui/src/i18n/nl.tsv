@@ -5506,3 +5506,10 @@ swatch	Bright Violet	Felviolet
 	Export {format}…	{format} exporteren…
 	Machine Format:	Machineformaat:
 	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Het bestandsformaat dat uw machine leest: DST (Tajima en de meeste machines), PES (Brother), JEF (Janome) of EXP (Melco)
+
+# Hidden travel (embroidery)
+	Hide Travel Under Fills	Verplaatsing onder vullingen verbergen
+	Travel that a fill sewn later covers is sewn there as running stitches instead of jumped and trimmed	Verplaatsing die een later geborduurde vulling bedekt, wordt daar als rijgsteken geborduurd in plaats van gesprongen en afgeknipt
+
+# Stitch start handles (embroidery)
+	Stitch Start	Steekbegin

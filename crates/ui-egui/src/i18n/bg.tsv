@@ -5439,3 +5439,10 @@ theme	Appearance	Външен вид
 	Export {format}…	Експортиране на {format}…
 	Machine Format:	Формат на машината:
 	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Файловият формат, който машината ви чете: DST (Tajima и повечето машини), PES (Brother), JEF (Janome) или EXP (Melco)
+
+# Hidden travel (embroidery)
+	Hide Travel Under Fills	Скриване на преходите под запълвания
+	Travel that a fill sewn later covers is sewn there as running stitches instead of jumped and trimmed	Преход, покрит от запълване, бродирано по-късно, се бродира там с прав бод вместо скок и отрязване
+
+# Stitch start handles (embroidery)
+	Stitch Start	Начало на бода

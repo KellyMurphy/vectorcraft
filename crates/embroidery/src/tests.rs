@@ -8,8 +8,10 @@ use vectorcraft_geom::{Anchor, FillRule, PathData, SubPath};
 
 use super::*;
 
+mod branching;
 mod lettering;
 mod machine_formats;
+mod travel;
 
 pub(crate) fn poly(pts: &[(f64, f64)], closed: bool) -> PathData {
     PathData::single(SubPath { anchors: pts.iter().map(|&(x, y)| Anchor::corner(Point::new(x, y))).collect(), closed })

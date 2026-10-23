@@ -76,6 +76,8 @@ enum State {
     Corner(CornerDrag),
     /// Dragging a live ellipse's pie widget.
     Pie(PieDrag),
+    /// Dragging a stitch start handle (Stitch Preview on).
+    StitchStart(crate::stitch_start::StartDrag),
     /// Dragging a bracket of type on a path.
     Bracket(BracketDrag),
     /// Loaded with the text of area type `from` by a click on its out port; `press`: where the
@@ -371,7 +373,10 @@ impl Tool for SelectionTool {
         match (ev.kind, self.state.clone()) {
             (PointerKind::DoubleClick, _) => {
                 self.state = State::Idle;
-                if let Some(a) = corners::double_click(cx, p, false).or_else(|| pie::double_click(cx, p)).or_else(|| typewidget::double_click(cx, p))
+                if let Some(a) = crate::stitch_start::double_click(cx, p)
+                    .or_else(|| corners::double_click(cx, p, false))
+                    .or_else(|| pie::double_click(cx, p))
+                    .or_else(|| typewidget::double_click(cx, p))
                 {
                     return vec![a];
                 }
@@ -407,6 +412,10 @@ impl Tool for SelectionTool {
                 }
                 // 1. Live Corners widgets, pie widgets and type on a path's brackets, then the
                 // bounding-box handles of the current selection.
+                if let Some(d) = crate::stitch_start::StartDrag::hit(cx, ev) {
+                    self.state = State::StitchStart(d);
+                    return vec![];
+                }
                 if let Some(c) = CornerDrag::hit(cx, ev, false) {
                     self.state = State::Corner(c);
                     return vec![];
@@ -545,6 +554,15 @@ impl Tool for SelectionTool {
                 self.state = State::Idle;
                 c.finish()
             }
+            (PointerKind::Drag, State::StitchStart(mut d)) => {
+                let out = d.drag(cx, p);
+                self.state = State::StitchStart(d);
+                out
+            }
+            (PointerKind::Up, State::StitchStart(d)) => {
+                self.state = State::Idle;
+                d.finish()
+            }
             (PointerKind::Drag, State::Pie(mut d)) => {
                 let out = d.drag(cx, p);
                 self.state = State::Pie(d);
@@ -601,6 +619,8 @@ impl Tool for SelectionTool {
 
     fn overlays(&self, cx: &ToolContext) -> Vec<Overlay> {
         let mut o = pathtype::overlays(cx);
+        let dragging = if let State::StitchStart(d) = &self.state { Some(d.id()) } else { None };
+        o.extend(crate::stitch_start::overlays(cx, dragging));
         if let Some(source) = cx.isolation.and_then(|id| cx.doc.node(id)).filter(|n| n.name.as_deref() == Some(vectorcraft_doc::shaper::SOURCES)) {
             for n in source.children().into_iter().flatten() {
                 if let Some(path) = n.path_data() {
@@ -612,6 +632,7 @@ impl Tool for SelectionTool {
             State::Marquee { start, cur, .. } => o.push(Overlay::Marquee(Rect::from_points(*start, *cur))),
             State::Corner(c) => o.extend(c.overlays(cx)),
             State::Pie(d) => o.extend(d.overlays()),
+            State::StitchStart(d) => o.extend(d.overlays()),
             State::Loaded { press: Some((start, cur)), .. } => o.push(Overlay::Marquee(Rect::from_points(*start, *cur))),
             _ => {}
         }
@@ -638,7 +659,7 @@ impl Tool for SelectionTool {
             State::Moving { began: true, .. } if m.alt => return Cursor::SelectionCopy,
             State::Moving { began: true, .. } => return if self.snapped { Cursor::ArrowHollow } else { Cursor::Arrow },
             State::Corner(_) => return Cursor::CornerRadius,
-            State::Pie(_) => return Cursor::ArrowHollow,
+            State::Pie(_) | State::StitchStart(_) => return Cursor::ArrowHollow,
             State::Bracket(_) => return Cursor::PathBracket,
             State::Loaded { .. } => return Cursor::LoadedText,
             _ => {}
@@ -649,7 +670,7 @@ impl Tool for SelectionTool {
         if over_widget(cx, p, false) {
             return Cursor::CornerRadius;
         }
-        if pie::over_widget(cx, p) {
+        if pie::over_widget(cx, p) || crate::stitch_start::over_handle(cx, p) {
             return Cursor::ArrowHollow;
         }
         if over_bracket(cx, p) {

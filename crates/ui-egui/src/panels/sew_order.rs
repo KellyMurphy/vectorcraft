@@ -495,6 +495,16 @@ fn travel(app: &mut VectorcraftApp, ui: &mut Ui, setup: &Value) {
     if trim.is_none() {
         widgets::dim_label(ui, tl!("Only thread changes and objects set to trim cut the thread."));
     }
+    let hide = setup["hideTravel"].as_bool().unwrap_or(true);
+    if widgets::check_tip(
+        ui,
+        "Hide Travel Under Fills",
+        hide,
+        true,
+        tl!("Travel that a fill sewn later covers is sewn there as running stitches instead of jumped and trimmed"),
+    ) {
+        app.run("embroidery.setup", json!({ "hideTravel": !hide })).ok();
+    }
     ui.scope(|ui| {
         widgets::label_row(ui, tl!("Machine Speed:"), LABEL_W, |ui| {
             if let Some(v) = widgets::mixed_field(ui, ("emb", "speed"), setup["speed"].as_f64(), " /min", 0, FIELD_W) {

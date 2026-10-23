@@ -5421,3 +5421,10 @@ effect	Points	Σημεία
 	Export {format}…	Εξαγωγή {format}…
 	Machine Format:	Μορφή μηχανής:
 	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Η μορφή αρχείου που διαβάζει η μηχανή σας: DST (Tajima και οι περισσότερες μηχανές), PES (Brother), JEF (Janome) ή EXP (Melco)
+
+# Hidden travel (embroidery)
+	Hide Travel Under Fills	Απόκρυψη μετακινήσεων κάτω από γεμίσματα
+	Travel that a fill sewn later covers is sewn there as running stitches instead of jumped and trimmed	Η μετακίνηση που καλύπτει ένα γέμισμα που κεντιέται αργότερα κεντιέται εκεί με τρεχούμενες βελονιές αντί για άλμα και κόψιμο
+
+# Stitch start handles (embroidery)
+	Stitch Start	Αρχή βελονιάς

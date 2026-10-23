@@ -49,6 +49,7 @@
         "stitchMovesUnder": { "type": "number", "minimum": 0, "maximum": 5, "default": 1 },
         "speed": { "type": "number", "minimum": 100, "maximum": 1500, "default": 600, "description": "The machine's speed, stitches per minute (for the sewing time estimate)." },
         "machineFormat": { "type": "string", "default": "dst", "description": "The format the panels' Export button writes: dst, pes, jef or exp (a newer version's value is kept; DST is used in its place)." },
+        "hideTravel": { "type": "boolean", "default": true, "description": "Travel under a fill or satin shape sewn later is sewn there rather than jumped." },
         "autoStart": { "type": "boolean", "default": true, "description": "Lines without startAt are entered nearest where the needle is." },
         "minStitch": { "type": "number", "minimum": 0, "maximum": 2, "default": 0.3, "description": "The shortest stitch sewn, mm (the fabric's minStitch when longer)." },
         "overlap": { "type": "number", "minimum": 0, "maximum": 3, "default": 0.5, "description": "How far a fill's rows still reach under objects sewn on top of it, mm." },

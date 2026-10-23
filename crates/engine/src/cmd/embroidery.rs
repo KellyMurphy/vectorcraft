@@ -31,7 +31,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Embroidery Setup",
             ["Window", "Embroidery"],
             None,
-            "{trimJumpsOver?: mm (0.5–100; 3) | null (never trim on length: only thread changes and objects' trimBefore/trimAfter cut the thread), stitchMovesUnder?: mm (0–5; 1: moves to the next stitch up to this long are sewn, longer ones jump), overlap?: mm (0–3; 0.5: how far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away), minStitch?: mm (0–2; 0.3: needle points closer than this to the one before are left out; the document's fabric may ask for longer), autoStart?: bool (true: running, bean and zigzag lines without a startAt are entered nearest where the needle is), speed?: stitches per minute (100–1500; 600: the machine's, for the sewing time estimate), machineFormat?: dst|pes|jef|exp (dst: the file format the panels' Export button writes, for the machine the design is sewn on)} the document's travel, overlap, shortest stitch, speed and machine format, as one undo step → {trimJumpsOver, stitchMovesUnder, overlap, minStitch (as sewn: the larger of the document's and its fabric's), autoStart, speed, machineFormat}",
+            "{trimJumpsOver?: mm (0.5–100; 3) | null (never trim on length: only thread changes and objects' trimBefore/trimAfter cut the thread), stitchMovesUnder?: mm (0–5; 1: moves to the next stitch up to this long are sewn, longer ones jump), overlap?: mm (0–3; 0.5: how far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away), minStitch?: mm (0–2; 0.3: needle points closer than this to the one before are left out; the document's fabric may ask for longer), autoStart?: bool (true: running, bean and zigzag lines without a startAt are entered nearest where the needle is), hideTravel?: bool (true: travel under a fill or satin shape sewn later is sewn there as running stitches instead of jumped and trimmed), speed?: stitches per minute (100–1500; 600: the machine's, for the sewing time estimate), machineFormat?: dst|pes|jef|exp (dst: the file format the panels' Export button writes, for the machine the design is sewn on)} the document's travel, overlap, shortest stitch, speed and machine format, as one undo step → {trimJumpsOver, stitchMovesUnder, overlap, minStitch (as sewn: the larger of the document's and its fabric's), autoStart, hideTravel, speed, machineFormat}",
             has_doc,
             setup
         ),
@@ -456,7 +456,7 @@ fn set(s: &mut Session, p: &Value) -> Result<Value> {
 }
 
 fn setup_json(e: &EmbroiderySetup) -> Value {
-    json!({ "trimJumpsOver": e.trim_over(), "stitchMovesUnder": e.stitch_under(), "overlap": e.overlap(), "minStitch": e.min_stitch(), "autoStart": e.auto_start, "speed": e.speed(), "machineFormat": e.machine_format() })
+    json!({ "trimJumpsOver": e.trim_over(), "stitchMovesUnder": e.stitch_under(), "overlap": e.overlap(), "minStitch": e.min_stitch(), "autoStart": e.auto_start, "hideTravel": e.hide_travel, "speed": e.speed(), "machineFormat": e.machine_format() })
 }
 
 fn setup(s: &mut Session, p: &Value) -> Result<Value> {
@@ -487,6 +487,9 @@ fn setup(s: &mut Session, p: &Value) -> Result<Value> {
             Some(f) if EmbroiderySetup::MACHINE_FORMATS.contains(&f.as_str()) => new.machine_format = f,
             _ => return Err(bad(C, "`machineFormat` must be dst, pes, jef or exp")),
         }
+    }
+    if let Some(v) = p.get("hideTravel") {
+        new.hide_travel = v.as_bool().ok_or_else(|| bad(C, "`hideTravel` must be true or false"))?;
     }
     if let Some(v) = p.get("autoStart") {
         new.auto_start = v.as_bool().ok_or_else(|| bad(C, "`autoStart` must be true or false"))?;

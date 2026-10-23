@@ -157,6 +157,18 @@ fn pes_jef_and_exp_export_and_open_again() {
 }
 
 #[test]
+fn hide_travel_is_set_and_checked() {
+    let mut s = session();
+    assert_eq!(info(&mut s)["setup"]["hideTravel"], true);
+    let r = s.execute("embroidery.setup", &json!({"hideTravel": false})).unwrap();
+    assert_eq!(r["hideTravel"], false);
+    assert!(!s.doc().unwrap().doc.embroidery.hide_travel);
+    assert!(s.execute("embroidery.setup", &json!({"hideTravel": "no"})).is_err());
+    s.execute("edit.undo", &json!({})).unwrap();
+    assert!(s.doc().unwrap().doc.embroidery.hide_travel);
+}
+
+#[test]
 fn machine_format_is_set_and_checked() {
     let mut s = session();
     let r = s.execute("embroidery.setup", &json!({"machineFormat": "PES"})).unwrap();
@@ -201,12 +213,12 @@ fn setup_sets_the_documents_trim_and_jump_lengths() {
     let mut s = session();
     assert_eq!(
         info(&mut s)["setup"],
-        json!({"trimJumpsOver": 3.0, "stitchMovesUnder": 1.0, "overlap": 0.5, "minStitch": 0.3, "autoStart": true, "speed": 600.0, "machineFormat": "dst"})
+        json!({"trimJumpsOver": 3.0, "stitchMovesUnder": 1.0, "overlap": 0.5, "minStitch": 0.3, "autoStart": true, "hideTravel": true, "speed": 600.0, "machineFormat": "dst"})
     );
     let r = s.execute("embroidery.setup", &json!({"trimJumpsOver": 8, "stitchMovesUnder": 2})).unwrap();
     assert_eq!(
         r,
-        json!({"trimJumpsOver": 8.0, "stitchMovesUnder": 2.0, "overlap": 0.5, "minStitch": 0.3, "autoStart": true, "speed": 600.0, "machineFormat": "dst"})
+        json!({"trimJumpsOver": 8.0, "stitchMovesUnder": 2.0, "overlap": 0.5, "minStitch": 0.3, "autoStart": true, "hideTravel": true, "speed": 600.0, "machineFormat": "dst"})
     );
     s.execute("embroidery.setup", &json!({"trimJumpsOver": null})).unwrap();
     assert_eq!(info(&mut s)["setup"]["trimJumpsOver"], Value::Null);

@@ -5429,3 +5429,10 @@ mark-style	Japanese	Japonesas
 	Export {format}…	Exportar {format}…
 	Machine Format:	Formato de la máquina:
 	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	El formato de archivo que lee su máquina: DST (Tajima y la mayoría de máquinas), PES (Brother), JEF (Janome) o EXP (Melco)
+
+# Hidden travel (embroidery)
+	Hide Travel Under Fills	Ocultar desplazamientos bajo rellenos
+	Travel that a fill sewn later covers is sewn there as running stitches instead of jumped and trimmed	El desplazamiento que cubre un relleno bordado después se borda allí con puntada recta en lugar de saltar y cortar
+
+# Stitch start handles (embroidery)
+	Stitch Start	Inicio de la puntada

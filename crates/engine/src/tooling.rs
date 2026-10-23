@@ -23,6 +23,8 @@ pub struct ViewInfo {
     pub snap_to_point: bool,
     /// View → Show Corner Widget.
     pub corner_widgets: bool,
+    /// View → Stitch Preview: stitch start handles show on the selection.
+    pub stitch_preview: bool,
     /// The document window (none headless): screen-fixed widgets sit in it.
     pub screen: Option<vectorcraft_tools::ScreenFrame>,
     /// The view's active artboard (an index): artboard rulers measure from it.
@@ -41,6 +43,7 @@ impl Default for ViewInfo {
             snap_to_pixel: false,
             snap_to_point: true,
             corner_widgets: true,
+            stitch_preview: false,
             screen: None,
             artboard: 0,
         }
@@ -203,6 +206,7 @@ impl Session {
             snap_to_pixel: view.snap_to_pixel && !view.snap_to_grid,
             snap_to_point: view.snap_to_point,
             corner_widgets: view.corner_widgets,
+            stitch_preview: view.stitch_preview,
             fill_active: self.fill_active,
             gradient_stop: self.selected_stop(),
             appearance_item: self.appearance_item(),

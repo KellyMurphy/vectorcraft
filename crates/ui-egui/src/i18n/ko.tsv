@@ -5046,3 +5046,10 @@ lighting	Light	광원
 	Export {format}…	{format} 내보내기…
 	Machine Format:	기계 형식:
 	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	기계가 읽는 파일 형식: DST(Tajima 및 대부분의 기계), PES(Brother), JEF(Janome), EXP(Melco)
+
+# Hidden travel (embroidery)
+	Hide Travel Under Fills	채우기 아래로 이동 숨기기
+	Travel that a fill sewn later covers is sewn there as running stitches instead of jumped and trimmed	나중에 수놓는 채우기가 덮는 이동은 점프와 실 자르기 대신 그 자리에 러닝 스티치로 수놓습니다
+
+# Stitch start handles (embroidery)
+	Stitch Start	스티치 시작점

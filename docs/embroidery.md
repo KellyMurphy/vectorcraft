@@ -265,10 +265,24 @@ seconds a thread change. `embroidery.info` gives it as the design's `minutes`.
 Running, bean and zigzag lines are entered nearest where the needle is: a closed running path at its
 nearest point, an open path from its nearer end, an object's separate parts nearest first
 (`embroidery.setup {autoStart: false}` sews them as drawn). `startAt` (`[x, y]` mm) fixes where one
-starts. Fills and satins keep their own order, since their underlay comes first. **Optimize** in the Sew
+starts. With Stitch Preview on, a selected running, bean or zigzag object shows its **start handle**: a
+green dot at its Start At point, hollow at its first point while the start is automatic. Drag it with the
+Selection tool to slide the start along the path (one undo step); double-click it to make the start
+automatic again. Fills and satins keep their own order, since their underlay comes first. **Optimize** in the Sew
 Order panel (`embroidery.optimizeOrder`) groups the objects by thread and sews each thread's objects
 nearest first, cutting jumps and trims; what is sewn later lies on top, so check overlapping objects of
 one colour afterwards.
+
+**Branching.** Running and bean lines of one object that meet (end to end, or an end touching another line
+within 0.25 mm) are sewn as one network in one pass: each line once, the way back along a branch sewn over
+its own stitches (a bean's repeats only on the first pass), the longest branch last so it needs no way
+back. A tree, a star or a mesh of lines then sews with no jumps or trims inside it. Lines that meet
+nothing are sewn one by one, as before.
+
+**Hidden travel.** A move to the next stitch that lies under a fill or satin shape sewn later, at least
+0.5 mm inside it all the way, is sewn there as running stitches up to 2.5 mm long instead of jumped and
+trimmed: the fill sewn on top covers it (the Sew Order panel's **Hide Travel Under Fills**,
+`embroidery.setup {hideTravel}`, on unless turned off). Only moves within one thread are sewn this way.
 
 ### Overlap removal
 
@@ -337,7 +351,7 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.saveBorderPattern` | `{pattern, path?}`: write a pattern as a `.vcborder` file (without `path`: `{data}`) |
 | `embroidery.extractBorderPattern` | `{name?, period?, author?, license?, source?, ids?}`: the repeat of the selected border stitches (only those inside a selected closed shape, if any) as a new document pattern → `{id, name, period, width, stitches, repeats, error}` |
 | `embroidery.removeBorderPattern` | `{pattern}`: remove one of the document's patterns that nothing sews with |
-| `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm, overlap?: mm, minStitch?: mm, autoStart?, speed?: stitches/min, machineFormat?: dst \| pes \| jef \| exp}`: the document's travel settings, overlap, shortest stitch, machine speed and the format the panels export |
+| `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm, overlap?: mm, minStitch?: mm, autoStart?, hideTravel?, speed?: stitches/min, machineFormat?: dst \| pes \| jef \| exp}`: the document's travel settings, overlap, shortest stitch, machine speed and the format the panels export |
 | `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings |
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
 | `embroidery.check` | `{ids?}` → the design checker's `findings` (`rule`, `severity`, `message`, `object`, `at` in document points), `counts` and the `rules` |
