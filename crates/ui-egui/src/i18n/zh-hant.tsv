@@ -4327,7 +4327,7 @@ lighting	Light	光源
 	Many trims or jumps	剪線或跳針過多
 	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	每次剪線和跳針都會讓機器變慢並留下線頭。請依線縫製、重排物件或連接相鄰部分。
 	Type too small	文字過小
-	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	小於安全尺寸的文字會糊在一起無法辨認：緞面文字至少需 4 公釐，填色文字 6 公釐，平針或豆針文字 2.5 公釐。請放大文字或改用平針。
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Letters' holes (the inside of an o, a or e) under 1 mm across close up on fabric whatever the stitch, so a font with small holes needs larger type. Make the type larger, or use a running stitch.	小於安全尺寸的文字會糊在一起無法辨認：緞面文字至少需 4 公釐，填色文字 6 公釐，平針或豆針文字 2.5 公釐。字母的孔（o、a、e 的內部）小於 1 公釐時，無論用什麼針法都會在布上閉合，所以孔小的字型需要更大的字級。請放大文字或改用平針。
 
 # Hoops (the Embroidery panel's Hoop menu, the design checker)
 	Hoop:	繡框:

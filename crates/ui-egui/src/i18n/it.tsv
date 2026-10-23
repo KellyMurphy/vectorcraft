@@ -5036,7 +5036,7 @@ lighting	Light	Luce
 	Many trims or jumps	Molti tagli o salti
 	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Ogni taglio e salto rallenta la macchina e lascia capi di filo. Ricamate per filo, riordinate gli oggetti o unite le parti vicine.
 	Type too small	Testo troppo piccolo
-	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Le lettere sotto la loro dimensione sicura si chiudono e non si leggono: il satin richiede almeno 4 mm, il riempimento 6 mm, il punto filza o fagiolo 2,5 mm. Ingrandite il testo o usate un punto filza.
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Letters' holes (the inside of an o, a or e) under 1 mm across close up on fabric whatever the stitch, so a font with small holes needs larger type. Make the type larger, or use a running stitch.	Le lettere sotto la loro dimensione sicura si chiudono e non si leggono: il satin richiede almeno 4 mm, il riempimento 6 mm, il punto filza o fagiolo 2,5 mm. I vuoti delle lettere (l'interno di una o, a o e) sotto 1 mm si chiudono sul tessuto con qualsiasi punto, quindi un carattere con vuoti piccoli richiede un testo più grande. Ingrandite il testo o usate un punto filza.
 
 # Hoops (the Embroidery panel's Hoop menu, the design checker)
 	Hoop:	Telaio:

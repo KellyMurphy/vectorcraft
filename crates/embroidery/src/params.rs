@@ -119,7 +119,7 @@ pub static PARAMS: &[Param] = &[
         kinds: ALL,
         label: "Stitch:",
         help: "How the object is stitched",
-        doc: "auto|running|bean|satin|zigzag|satinShape|fill|patternBorder|manual (patternBorder: a border pattern repeated along the path, bending with its curves, a whole number of repeats between corners; auto: by stroke width, thinUnder?: mm (0.2–3; 1) → bean outline, wideOver?: mm (2–12; 7) → fill with a satin border, else satin shape) (default: the object's own, else running)",
+        doc: "auto|running|bean|satin|zigzag|satinShape|fill|patternBorder|manual (patternBorder: a border pattern repeated along the path, bending with its curves, a whole number of repeats between corners; auto: by stroke width, thinUnder?: mm (0.2–3; 1) → bean outline (letters: narrow satin columns), wideOver?: mm (2–12; 7) → fill with a satin border, else satin shape) (default: the object's own, else running)",
         nullable: true,
         get: |s| json!(s.kind_id()),
         set: |s, v| {
@@ -378,7 +378,7 @@ pub static PARAMS: &[Param] = &[
         kinds: &[K::Auto],
         label: "Bean Outline Under:",
         help: "Thinner strokes get a bean stitch round their outline",
-        doc: "mm (auto: strokes thinner than this get a bean outline, 0.2–3; 1)",
+        doc: "mm (auto: strokes thinner than this get a bean outline, a letter's narrow satin columns at least 0.8 mm wide; 0.2–3; 1)",
         nullable: true,
         get: |s| json!(s.auto_thresholds().0),
         set: |s, v| s.thin_under = f(v),

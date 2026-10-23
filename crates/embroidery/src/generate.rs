@@ -1186,6 +1186,19 @@ impl SatinQuality {
 
 /// [`satin_shape`] and how well it suits the shape.
 pub fn satin_shape_checked(polys: &[Vec<Point>], rule: FillRule, spacing: f64, pull: f64, underlay: bool) -> (Vec<Vec<Point>>, SatinQuality) {
+    satin_shape_at_least(polys, rule, spacing, pull, underlay, 0.0)
+}
+
+/// [`satin_shape_checked`], each zig at least `min_width` mm across (widened evenly about its
+/// middle): thin strokes, as small lettering has, sewn as narrow satin columns rather than lost.
+pub fn satin_shape_at_least(
+    polys: &[Vec<Point>],
+    rule: FillRule,
+    spacing: f64,
+    pull: f64,
+    underlay: bool,
+    min_width: f64,
+) -> (Vec<Vec<Point>>, SatinQuality) {
     let (mut positions, mut skipped, mut points, mut crowded) = (0usize, 0usize, 0usize, 0usize);
     let (mut zigs, mut fanned) = (0usize, 0usize);
     let mut strokes = crate::skeleton::strokes(polys, rule);
@@ -1308,8 +1321,11 @@ pub fn satin_shape_checked(polys: &[Vec<Point>], rule: FillRule, spacing: f64, p
             let len = across.hypot();
             if len > 1e-9 {
                 let u = across / len;
-                lp += u * (pull / 2.0);
-                rp -= u * (pull / 2.0);
+                // At least `min_width` across, compensation included.
+                let grow = pull.max(min_width - len);
+                lp += u * (grow / 2.0);
+                rp -= u * (grow / 2.0);
+                let pull = grow;
                 let most = (MAX_STITCH - spacing).max(0.3);
                 if len + pull > most {
                     let mid = lp.midpoint(rp);

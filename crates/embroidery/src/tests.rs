@@ -8,6 +8,7 @@ use vectorcraft_geom::{Anchor, FillRule, PathData, SubPath};
 
 use super::*;
 
+mod lettering;
 mod machine_formats;
 
 pub(crate) fn poly(pts: &[(f64, f64)], closed: bool) -> PathData {

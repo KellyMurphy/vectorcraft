@@ -408,7 +408,7 @@ pub static RULES: &[Rule] = &[
     Rule {
         id: "small-type",
         label: "Type too small",
-        help: "Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.",
+        help: "Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Letters' holes (the inside of an o, a or e) under 1 mm across close up on fabric whatever the stitch, so a font with small holes needs larger type. Make the type larger, or use a running stitch.",
         in_plan_warnings: false,
         run: |doc, plan| {
             let mut out = vec![];
@@ -429,12 +429,37 @@ pub static RULES: &[Rule] = &[
                         object: Some(o.id),
                         at: first_stitch(plan, o),
                     });
+                    continue;
+                }
+                // Its letters' holes: a stitch that covers the letter (not a running outline)
+                // closes those under MIN_HOLE across.
+                if matches!(s.kind, StitchKind::Running | StitchKind::Bean | StitchKind::Manual) || !size.is_finite() || size <= 0.0 {
+                    continue;
+                }
+                let hole = crate::glyph_parts(t)
+                    .iter()
+                    .filter_map(|(_, p)| crate::narrowest_hole(&crate::generate::polylines(p).into_iter().map(|(l, _)| l).collect::<Vec<_>>()))
+                    .min_by(f64::total_cmp);
+                if let Some(h) = hole.filter(|h| *h < MIN_HOLE && *h > 0.0) {
+                    let needed = (size * MIN_HOLE / h * 2.0).ceil() / 2.0;
+                    out.push(Finding {
+                        rule: "small-type",
+                        severity: Severity::Warning,
+                        message: format!(
+                            "has letters whose holes are {h:.1} mm across at {size:.1} mm: under {MIN_HOLE} mm they close up on fabric. Make the type {needed} mm or more, or use a more open font"
+                        ),
+                        object: Some(o.id),
+                        at: first_stitch(plan, o),
+                    });
                 }
             }
             out
         },
     },
 ];
+
+/// The narrowest a letter's hole (counter) can be and stay open when sewn, mm across.
+pub const MIN_HOLE: f64 = 1.0;
 
 /// The smallest type (its size, mm) stitch settings `s` sew legibly.
 pub fn safe_type_size(s: &StitchSettings) -> f64 {
@@ -583,10 +608,11 @@ mod tests {
                 .collect()
         });
         assert!(!rules_found(&cut).contains(&"dense"), "{:?}", rules_found(&cut));
-        // The test sheet: only what it is made to show (long stitches) and its many trims.
+        // The test sheet: only what it is made to show (long stitches; lettering down to sizes
+        // whose holes close, when a type face is there) and its many trims.
         let sheet = crate::testsheet::build(&[]).unwrap();
         for rule in rules_found(&sheet.doc) {
-            assert!(matches!(rule, "long-stitch" | "travel"), "{rule}");
+            assert!(matches!(rule, "long-stitch" | "travel" | "small-type"), "{rule}");
         }
     }
 

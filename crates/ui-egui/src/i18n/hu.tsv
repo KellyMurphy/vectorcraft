@@ -5391,7 +5391,7 @@ imageTrace	Outline	Körvonal
 	Many trims or jumps	Sok vágás vagy ugrás
 	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Minden vágás és ugrás lassítja a gépet és cérnavégeket hagy. Hímezzen cérna szerint, rendezze át az objektumokat, vagy kösse össze a közeli részeket.
 	Type too small	Túl kicsi szöveg
-	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	A biztonságos méretnél kisebb betűk összefolynak és olvashatatlanok: a szaténbetűkhöz legalább 4 mm kell, a kitöltöttekhez 6 mm, az elő- vagy bean-öltéses betűkhöz 2,5 mm. Nagyítsa a szöveget, vagy használjon előöltést.
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Letters' holes (the inside of an o, a or e) under 1 mm across close up on fabric whatever the stitch, so a font with small holes needs larger type. Make the type larger, or use a running stitch.	A biztonságos méretnél kisebb betűk összefolynak és olvashatatlanok: a szaténbetűkhöz legalább 4 mm kell, a kitöltöttekhez 6 mm, az elő- vagy bean-öltéses betűkhöz 2,5 mm. A betűk 1 mm-nél kisebb belső terei (az o, a vagy e belseje) öltéstől függetlenül bezáródnak az anyagon, ezért a kis belső terű betűtípushoz nagyobb szöveg kell. Nagyítsa a szöveget, vagy használjon előöltést.
 
 # Hoops (the Embroidery panel's Hoop menu, the design checker)
 	Hoop:	Keret:

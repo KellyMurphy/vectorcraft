@@ -11,7 +11,7 @@ Select paths or compound paths (or groups holding them) and choose **Object › 
 
 | Stitch | What it sews | Settings |
 |---|---|---|
-| Auto | Picks per shape (per letter, for type) by how wide its strokes are: under **Bean Outline Under** (1 mm) a bean stitch round the outline, over **Fill Over** (7 mm) a tatami fill with auto underlay and a satin border, in between a satin shape with auto underlay. The stroke width is twice the shape's area over its perimeter. | `thinUnder` (1 mm), `wideOver` (7 mm), `spacing`, `pull`, `pullPercent`, `push`, `border` (for filled shapes; 2 mm), `puff` (3D foam, for the letters sewn as satin) |
+| Auto | Picks per shape (per letter, for type) by how wide its strokes are: under **Bean Outline Under** (1 mm) a bean stitch round the outline (a letter: narrow satin columns, see [Type](#type)), over **Fill Over** (7 mm) a tatami fill with auto underlay and a satin border fitted to the shape, in between a satin shape with auto underlay. The stroke width is twice the shape's area over its perimeter. | `thinUnder` (1 mm), `wideOver` (7 mm), `spacing`, `pull`, `pullPercent`, `push`, `border` (for filled shapes; 2 mm), `puff` (3D foam, for the letters sewn as satin) |
 | Running Stitch | Single stitches along the path (outlines, details). Sharp corners keep a needle point. | `length` (2.5 mm), `startAt` (where the needle starts; none: nearest where it is) |
 | Bean Stitch | Running stitch sewn several times over each stitch: a bolder line. | `length` (2.5 mm), `passes` (3, 5, 7 or 9; 3), `startAt` |
 | Satin Column | A zigzag centred on the path, as wide as the stroke (borders, lettering strokes). **Between Rails**: the object's two longest subpaths are the column's edges and the satin spans between them, as wide as they are apart (columns that swell and taper); other subpaths crossing both are rungs, each setting the stitch direction where it crosses. Draw the two edges, join them (Object › Compound Path) and tick Between Rails. | `width` (the stroke width, else 3 mm), `spacing` (density, 0.4 mm), `pull` (pull compensation, 0 mm) and `pullPercent` (% of the width, 0), `push` (push compensation: shorter at the ends, 0 mm), `underlay` (auto, none, center, edge, zigzag), `rails` (off), `puff` (3D foam thickness; none) |
@@ -98,12 +98,25 @@ symbols can't be stitched.
 
 ### Type
 
+Type on a path, letter spacing (tracking), kerning and baseline shift are sewn as they are laid out: the
+letters' stitches follow the path and move with the spacing (checked by the tests).
+
 Type objects are stitched as they are: no need to create outlines first, and editing the text, font or size
 changes the stitches. Each letter is sewn on its own with the object's settings (then underlines and
 strikethroughs), in the thread of its characters' colour, so multicoloured type changes thread. **Auto** suits
-lettering: small type gets a bean outline, most lettering satin that follows each letter's strokes, and large
-display type a fill with a satin border. Parts of a letter that have no strokes (the dot of an i, a full stop)
-are filled.
+lettering: most lettering gets satin that follows each letter's strokes, and large display type a fill with
+a satin border. Small type, whose strokes are thinner than satin's 1 mm threshold, is sewn as **narrow satin
+columns** at least 0.8 mm wide (thin strokes are widened evenly), not outlined: an outline of long stitches
+round a 5 mm letter loses its shape. Parts of a letter that have no strokes (the dot of an i, a full stop) are
+filled.
+
+**Keeping letters open.** A filled letter's satin border sits on its edge, half inside and half out, so a
+wide border closes a letter's holes (the inside of an o, a or e) and swells the letter. Auto fits the border
+to each letter instead of the usual 2 mm: at most 45% of its narrowest stroke and of its narrowest hole, and
+none when that leaves under 0.6 mm (a border you set yourself is kept as set). With that, holes 1 mm across
+or more stay open in Arial and Arial Black from 5.5 mm and in Times from 10 mm (checked by the tests, which
+look for stitches through each hole's middle). Holes narrower than 1 mm close on fabric whatever the stitch,
+so the checker warns about them (below).
 
 Auto checks each letter's satin before using it. Satin suits a letter when its stitches can span the strokes
 edge to edge without fanning round tight curves or crowding their needle points: heavy type round small
@@ -174,7 +187,10 @@ for warnings). The rules so far:
 - **Too many needle holes in one place:** more than 40 needle holes in a 2 × 2 mm spot, where objects
   stack up (a single fill reaches about 25).
 - **Many trims or jumps:** more than 40 trims or 150 jumps in the design.
-- **Type too small:** lettering under 4 mm (satin, Auto), 6 mm (fill) or 2.5 mm (running, bean).
+- **Type too small:** lettering under 4 mm (satin, Auto), 6 mm (fill) or 2.5 mm (running, bean); and
+  lettering (other than running or bean) whose letters' holes are under 1 mm across, which close up on
+  fabric. That depends on the font: Impact's holes are under 1 mm even at 15 mm. The finding gives the
+  size at which they open.
 - **Design bigger than the hoop:** the design doesn't fit the document's hoop (an error), or fits only
   turned a quarter turn.
 

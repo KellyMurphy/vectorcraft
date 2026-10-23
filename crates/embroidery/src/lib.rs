@@ -684,6 +684,109 @@ pub fn stroke_width(polys: &[Vec<Point>]) -> f64 {
     if perimeter > 0.0 { (area / 2.0).abs() * 2.0 / perimeter } else { 0.0 }
 }
 
+/// The narrowest hole (a letter's counter) among `polys`, mm across: the diameter of the largest
+/// circle that fits in it (`None`: no holes). A hole is a ring wound the other way from the
+/// largest one.
+pub fn narrowest_hole(polys: &[Vec<Point>]) -> Option<f64> {
+    let area = |p: &Vec<Point>| -> f64 {
+        let n = p.len();
+        (0..n).filter_map(|k| Some((p.get(k)?, p.get((k + 1) % n)?))).map(|(a, b)| a.x * b.y - b.x * a.y).sum::<f64>() / 2.0
+    };
+    let outer = polys.iter().map(area).max_by(|a, b| a.abs().total_cmp(&b.abs()))?;
+    polys
+        .iter()
+        .filter(|p| p.len() > 2 && area(p).signum() != outer.signum() && area(p).abs() > 1e-3)
+        .map(|p| 2.0 * inscribed_radius(p))
+        .min_by(f64::total_cmp)
+}
+
+/// The radius of the largest circle inside the polygon `poly` (approximately: a grid search,
+/// refined twice round the best point).
+fn inscribed_radius(poly: &[Point]) -> f64 {
+    let n = poly.len();
+    let inside = |p: Point| {
+        let mut c = false;
+        for k in 0..n {
+            let (Some(a), Some(b)) = (poly.get(k), poly.get((k + 1) % n)) else { continue };
+            if (a.y > p.y) != (b.y > p.y) && p.x < a.x + (p.y - a.y) / (b.y - a.y) * (b.x - a.x) {
+                c = !c;
+            }
+        }
+        c
+    };
+    let edge = |p: Point| -> f64 {
+        (0..n)
+            .filter_map(|k| Some((*poly.get(k)?, *poly.get((k + 1) % n)?)))
+            .map(|(a, b)| {
+                let ab = b - a;
+                let t = if ab.hypot2() > 0.0 { ((p - a).dot(ab) / ab.hypot2()).clamp(0.0, 1.0) } else { 0.0 };
+                p.distance(a + ab * t)
+            })
+            .fold(f64::INFINITY, f64::min)
+    };
+    let (mut lo, mut hi) = (Point::new(f64::INFINITY, f64::INFINITY), Point::new(f64::NEG_INFINITY, f64::NEG_INFINITY));
+    for p in poly {
+        lo = Point::new(lo.x.min(p.x), lo.y.min(p.y));
+        hi = Point::new(hi.x.max(p.x), hi.y.max(p.y));
+    }
+    if !(lo.x.is_finite() && hi.x.is_finite()) {
+        return 0.0;
+    }
+    const STEPS: usize = 16;
+    let mut best = (lo.midpoint(hi), 0.0f64);
+    let (mut centre, mut half) = (lo.midpoint(hi), kurbo::Vec2::new((hi.x - lo.x) / 2.0, (hi.y - lo.y) / 2.0));
+    for _ in 0..3 {
+        for i in 0..=STEPS {
+            for j in 0..=STEPS {
+                let p = Point::new(
+                    centre.x - half.x + 2.0 * half.x * i as f64 / STEPS as f64,
+                    centre.y - half.y + 2.0 * half.y * j as f64 / STEPS as f64,
+                );
+                if inside(p) {
+                    let d = edge(p);
+                    if d > best.1 {
+                        best = (p, d);
+                    }
+                }
+            }
+        }
+        // Again, finer, round the best point so far.
+        centre = best.0;
+        half *= 2.0 / STEPS as f64;
+    }
+    best.1
+}
+
+/// The border Auto gives a filled letter or shape `polys` (mm wide): the user's when set, else
+/// the default narrowed so that, centred on the edge, it covers under half of the narrowest
+/// stroke and of the narrowest hole (a border wider than that closes small letters up), and none
+/// when that leaves it too thin to be a satin.
+pub fn auto_border(s: &StitchSettings, polys: &[Vec<Point>]) -> Option<f64> {
+    if s.border.is_some() {
+        return s.border();
+    }
+    let room = narrowest_hole(polys).map_or(stroke_width(polys), |h| h.min(stroke_width(polys)));
+    let w = StitchSettings::DEFAULT_BORDER.min(AUTO_BORDER_SHARE * room);
+    (w >= AUTO_BORDER_LEAST).then_some(w)
+}
+
+/// The narrowest satin column Auto sews a letter's strokes with, mm: thinner strokes (small
+/// type, hairlines) are widened to it.
+pub const LETTER_COLUMN: f64 = 0.8;
+
+/// The share of a letter's narrowest stroke or hole Auto's border may cover.
+pub const AUTO_BORDER_SHARE: f64 = 0.45;
+/// The narrowest border Auto sews, mm: thinner, the letter is filled without one.
+pub const AUTO_BORDER_LEAST: f64 = 0.6;
+
+/// Auto's fill for a shape too wide or too heavy for satin: fill with a border fitted to it
+/// ([`auto_border`]).
+fn auto_fill(s: &StitchSettings, polys: &[Vec<Point>]) -> StitchSettings {
+    let mut t = auto_settings(s, f64::INFINITY);
+    t.border = auto_border(s, polys);
+    t
+}
+
 /// Auto's choice for a shape `width` mm wide in its strokes: the settings it is sewn with.
 pub fn auto_settings(s: &StitchSettings, width: f64) -> StitchSettings {
     let (thin, wide) = s.auto_thresholds();
@@ -717,12 +820,13 @@ fn text(t: &vectorcraft_doc::TextObject, s: &StitchSettings, b: &mut Sewer) {
     }
     // Auto decides for the whole object, so its letters look alike: when a quarter or more of
     // those that would be satin can't take it (heavy type), they are all filled.
-    let mut choices: Vec<Choice> = parts.iter().map(|(_, p)| auto_choice(s, &[p], FillRule::NonZero, b)).collect();
+    let mut choices: Vec<Choice> = parts.iter().map(|(_, p)| auto_choice(s, &[p], FillRule::NonZero, b, true)).collect();
     let tried = choices.iter().filter(|c| c.tried_satin()).count();
     let poor = choices.iter().filter(|c| matches!(c, Choice::Sew(_, true))).count();
     if tried > 0 && poor * 4 >= tried {
-        for c in choices.iter_mut().filter(|c| c.tried_satin()) {
-            *c = Choice::Sew(b.fabric_in(&auto_settings(s, f64::INFINITY)), true);
+        for ((_, path), c) in parts.iter().zip(choices.iter_mut()).filter(|(_, c)| c.tried_satin()) {
+            let polys: Vec<Vec<Point>> = generate::polylines(path).into_iter().map(|(l, _)| l).collect();
+            *c = Choice::Sew(b.fabric_in(&auto_fill(s, &polys)), true);
         }
     }
     for ((run, path), choice) in parts.iter().zip(choices) {
@@ -760,11 +864,20 @@ impl Choice {
 }
 
 /// Auto's choice for `paths`: by stroke width, satin only where it suits the shape (a stroke too
-/// wide for the curve it turns, or merging into a blob, is filled instead).
-fn auto_choice(s: &StitchSettings, paths: &[&PathData], rule: FillRule, b: &Sewer) -> Choice {
+/// wide for the curve it turns, or merging into a blob, is filled instead). A letter
+/// (`lettering`) thinner than satin's threshold is sewn as satin columns widened to
+/// [`LETTER_COLUMN`], not outlined: small type keeps its shape.
+fn auto_choice(s: &StitchSettings, paths: &[&PathData], rule: FillRule, b: &Sewer, lettering: bool) -> Choice {
     let polys: Vec<Vec<Point>> = paths.iter().flat_map(|p| generate::polylines(p)).map(|(l, _)| l).collect();
     let width = stroke_width(&polys);
-    let t = b.fabric_in(&auto_settings(s, width));
+    let mut t = b.fabric_in(&auto_settings(s, width));
+    let narrow = lettering && t.kind == StitchKind::Bean && width > 0.0;
+    if narrow {
+        t = b.fabric_in(&auto_settings(s, s.auto_thresholds().0));
+    }
+    if t.kind == StitchKind::Fill {
+        return Choice::Sew(b.fabric_in(&auto_fill(s, &polys)), false);
+    }
     if t.kind != StitchKind::SatinShape {
         return Choice::Sew(t, false);
     }
@@ -772,9 +885,10 @@ fn auto_choice(s: &StitchSettings, paths: &[&PathData], rule: FillRule, b: &Sewe
         Underlay::Auto => b.auto.shape(width),
         u => u,
     };
-    let (runs, q) = generate::satin_shape_checked(&polys, rule, t.spacing(), t.pull_for(width), underlay == Underlay::Center);
+    let least = if narrow { LETTER_COLUMN } else { 0.0 };
+    let (runs, q) = generate::satin_shape_at_least(&polys, rule, t.spacing(), t.pull_for(width), underlay == Underlay::Center, least);
     if q.poor() || runs.is_empty() {
-        return Choice::Sew(b.fabric_in(&auto_settings(s, f64::INFINITY)), true);
+        return Choice::Sew(b.fabric_in(&auto_fill(s, &polys)), true);
     }
     // An edge walk goes in first, under the satin.
     let walk = if underlay == Underlay::Edge { generate::edge_walk(&polys, rule) } else { vec![] };
@@ -784,7 +898,7 @@ fn auto_choice(s: &StitchSettings, paths: &[&PathData], rule: FillRule, b: &Sewe
 /// Sew `paths` with `s` in `thread` (`stroke_mm`: the stroke's width, for satins).
 fn sew(s: &StitchSettings, thread: [u8; 3], stroke_mm: f64, paths: &[&PathData], rule: FillRule, b: &mut Sewer) {
     if s.kind == StitchKind::Auto {
-        match auto_choice(s, paths, rule, b) {
+        match auto_choice(s, paths, rule, b, false) {
             Choice::Satin(t, runs) => emit(&t, thread, runs, b),
             Choice::Sew(t, _) => sew(&t, thread, stroke_mm, paths, rule, b),
         }

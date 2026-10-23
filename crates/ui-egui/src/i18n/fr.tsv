@@ -5422,7 +5422,7 @@ theme	Appearance	Apparence
 	Many trims or jumps	Beaucoup de coupes ou de sauts
 	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Chaque coupe et chaque saut ralentit la machine et laisse des bouts de fil. Brodez par fil, réordonnez les objets ou reliez les parties proches.
 	Type too small	Texte trop petit
-	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Make the type larger, or use a running stitch.	Un lettrage sous sa taille sûre se bouche et devient illisible : le satin demande au moins 4 mm, le remplissage 6 mm, le point droit ou haricot 2,5 mm. Agrandissez le texte, ou utilisez un point droit.
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Letters' holes (the inside of an o, a or e) under 1 mm across close up on fabric whatever the stitch, so a font with small holes needs larger type. Make the type larger, or use a running stitch.	Un lettrage sous sa taille sûre se bouche et devient illisible : le satin demande au moins 4 mm, le remplissage 6 mm, le point droit ou haricot 2,5 mm. Les jours des lettres (l'intérieur d'un o, a ou e) de moins de 1 mm se referment sur le tissu quel que soit le point : une police aux jours étroits demande un texte plus grand. Agrandissez le texte, ou utilisez un point droit.
 
 # Hoops (the Embroidery panel's Hoop menu, the design checker)
 	Hoop:	Cadre :
