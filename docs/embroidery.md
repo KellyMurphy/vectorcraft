@@ -314,6 +314,21 @@ The starters' numbers are starting points from general digitizing practice; the 
 (below) are how to check them on your fabric. **Save…** writes the fabric as a `.vcfabric` file to share
 ([specification](formats/vcfabric.md)).
 
+### Libraries
+
+Border patterns, fabric profiles, hoop lists and thread charts you want in every design go in the
+**embroidery library folder**: a folder called `Embroidery` next to the preferences, with a subfolder for
+each kind (`borders`, `fabrics`, `hoops`, `threads`). VectorCraft reads it at start (and on
+`embroidery.rescanLibraries`), so files can be shared just by copying them in. A save command with
+`user: true` writes there, and `embroidery.addToLibrary` copies a file in (never replacing one: a name
+already taken gets a number). `embroidery.libraries` lists what is there, and files that can't be read are
+listed with the reason instead of being dropped silently.
+
+Loading an entry (`library` on `embroidery.loadBorderPattern`, `loadFabric`, `loadHoop` or
+`loadThreadChart`, by its id or name) **copies it into the document**, as loading a file does, so the
+design sews the same on a machine without your library. Changing the library file afterwards doesn't
+change documents that already use it. The web app has no library folder.
+
 ### Sew-out tests
 
 Stitch quality is only proven on fabric. **New Test Sheet…** (Sew-Out Test panel, `embroidery.testSheet`)
@@ -347,8 +362,8 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.set` | `{type?: auto\|running\|bean\|satin\|zigzag\|satinShape\|fill\|patternBorder\|manual, length?, spacing?, angle?, width?, thread?: "#rrggbb"\|[r,g,b], pull?, underlay?, stagger?, passes?, pattern?, flip?, trimBefore?, trimAfter?, ids?}`. Lengths are in mm; `null` resets one to its default. |
 | `embroidery.clear` | `{ids?}` |
 | `embroidery.borderPatterns` | → the patterns pattern borders can use (the document's, then the starters) |
-| `embroidery.loadBorderPattern` | `{path? \| data?}`: load a `.vcborder` file into the document → `{id, name, added}` |
-| `embroidery.saveBorderPattern` | `{pattern, path?}`: write a pattern as a `.vcborder` file (without `path`: `{data}`) |
+| `embroidery.loadBorderPattern` | `{path? \| data? \| library?}`: load a `.vcborder` file into the document → `{id, name, added}` |
+| `embroidery.saveBorderPattern` | `{pattern, path?, user?}`: write a pattern as a `.vcborder` file (without `path`: `{data}`; `user: true`: into the embroidery library) |
 | `embroidery.extractBorderPattern` | `{name?, period?, author?, license?, source?, ids?}`: the repeat of the selected border stitches (only those inside a selected closed shape, if any) as a new document pattern → `{id, name, period, width, stitches, repeats, error}` |
 | `embroidery.removeBorderPattern` | `{pattern}`: remove one of the document's patterns that nothing sews with |
 | `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm, overlap?: mm, minStitch?: mm, autoStart?, hideTravel?, speed?: stitches/min, machineFormat?: dst \| pes \| jef \| exp}`: the document's travel settings, overlap, shortest stitch, machine speed and the format the panels export |
@@ -362,19 +377,22 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.optimizeOrder` | group by thread and sew each thread's objects nearest first, cutting travel → `travelBefore`, `travelAfter` |
 | `embroidery.resetOrder` | sew in paint order again |
 | `embroidery.threadCharts` | → the document's thread `charts` and the `chart` matched against |
-| `embroidery.loadThreadChart` | `{path? \| data?}`: load a `.vcthreads` chart into the document |
+| `embroidery.loadThreadChart` | `{path? \| data? \| library?}`: load a `.vcthreads` chart into the document |
 | `embroidery.setThreadChart` | `{chart: id \| null}`: the chart the design's colours are matched against |
 | `embroidery.removeThreadChart` | `{chart}`: remove a chart from the document |
-| `embroidery.saveThreadChart` | `{chart, path?}`: write a chart as a `.vcthreads` file |
+| `embroidery.saveThreadChart` | `{chart, path?, user?}`: write a chart as a `.vcthreads` file |
 | `embroidery.matchThreads` | `{chart?}` → each design thread colour's nearest chart thread (`code`, `name`, `threadColor`, `deltaE`) |
 | `embroidery.hoops` | → the document's `hoop` (or null), the `common` hoops, and whether the design `fit`s |
 | `embroidery.setHoop` | `{hoop?: 4x4\|5x7\|6x10\|8x8\|8x12\|cap\|null, name?, width?, height?, round?}`: set the document's hoop |
-| `embroidery.loadHoop` | `{path? \| data?, hoop?}`: a hoop from a `.vchoop` file as the document's |
-| `embroidery.saveHoop` | `{hoops?, path?}`: write the document's hoop (or common ones) as a `.vchoop` file |
+| `embroidery.loadHoop` | `{path? \| data? \| library?, hoop?}`: a hoop from a `.vchoop` file as the document's |
+| `embroidery.saveHoop` | `{hoops?, path?, user?, name?}`: write the document's hoop (or common ones) as a `.vchoop` file |
 | `embroidery.fabrics` | → the document's `fabric` (or null) and the six `starters`, with their settings |
 | `embroidery.setFabric` | `{fabric?: woven\|knit\|towel\|cap\|leather\|denim\|null, name?, satinSpacing?, fillSpacing?, pull?, pullPercent?, push?, satinCenterUnder?, satinZigzagOver?, shapeEdgeOver?}`: set the document's fabric (a starter, then the settings given) |
-| `embroidery.loadFabric` | `{path? \| data?}`: a `.vcfabric` file as the document's fabric |
-| `embroidery.saveFabric` | `{fabric?, path?}`: write the document's fabric (or a starter) as a `.vcfabric` file |
+| `embroidery.loadFabric` | `{path? \| data? \| library?}`: a `.vcfabric` file as the document's fabric |
+| `embroidery.saveFabric` | `{fabric?, path?, user?}`: write the document's fabric (or a starter) as a `.vcfabric` file |
+| `embroidery.libraries` | `{kind?: borders\|fabrics\|hoops\|threads}` → the embroidery library `folder`, its `libraries` (`kind`, `id`, `name`, `path`…) and the files `skipped` as unreadable |
+| `embroidery.rescanLibraries` | re-read the embroidery library folder → the same as `embroidery.libraries` |
+| `embroidery.addToLibrary` | `{path? \| data? with name?, kind?}`: copy a `.vcborder`, `.vcfabric`, `.vchoop` or `.vcthreads` file into the embroidery library (never replacing one) |
 | `embroidery.worksheet` | `{page?: a4\|letter, format?: pdf, path?}`: the production worksheet, as a new document or a PDF |
 | `embroidery.testSheet` | `{sections?: [ids]}`: a new document of calibration swatches (see Sew-out tests) → `{index, sections, swatches, skipped}` |
 | `embroidery.sewOut` | → the sew-out form: `{sewOut: {fabric, machine, notes, swatches: [{id, section, label, objects, result, notes}], counts} \| null, sections}` |

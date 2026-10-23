@@ -5296,6 +5296,10 @@ swatch	Bright Violet	Kraftig violet
 	How the object is stitched	Hvordan objektet broderes
 	How wide the column, zigzag or border is	Hvor bred søjlen, zigzaggen eller kanten er
 	Load Border Pattern…	Indlæs kantmønster…
+	Embroidery Libraries	Broderibiblioteker
+	Add to Embroidery Library…	Føj til broderibibliotek…
+	Rescan Embroidery Libraries	Genindlæs broderibiblioteker
+@msg	no embroidery library folder here	ingen mappe til broderibiblioteker her
 	Long stitches	Lange sting
 	Makes no stitches	Laver ingen sting
 	Manual Stitch	Manuel sting

@@ -5206,6 +5206,10 @@ mark-style	Japanese	Japonesas
 	Change Sew Order	Alterar ordem de costura
 	Border Patterns	Bordas de padrão
 	Load Border Pattern…	Carregar borda de padrão…
+	Embroidery Libraries	Bibliotecas de Bordado
+	Add to Embroidery Library…	Adicionar à Biblioteca de Bordado…
+	Rescan Embroidery Libraries	Reexaminar Bibliotecas de Bordado
+@msg	no embroidery library folder here	nenhuma pasta de bibliotecas de bordado aqui
 	Save Border Pattern…	Salvar borda de padrão…
 	Remove Border Pattern	Remover borda de padrão
 	Render Stitch Preview	Renderizar visualização de pontos

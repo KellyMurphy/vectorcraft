@@ -5125,6 +5125,10 @@ lighting	Light	光源
 	Change Sew Order	更改缝制顺序
 	Border Patterns	图案边框列表
 	Load Border Pattern…	载入图案边框…
+	Embroidery Libraries	刺绣库
+	Add to Embroidery Library…	添加到刺绣库…
+	Rescan Embroidery Libraries	重新扫描刺绣库
+@msg	no embroidery library folder here	此处没有刺绣库文件夹
 	Save Border Pattern…	存储图案边框…
 	Remove Border Pattern	删除图案边框
 	Render Stitch Preview	渲染针迹预览

@@ -5290,6 +5290,10 @@ theme	Appearance	Apparence
 	Change Sew Order	Modifier l’ordre de couture
 	Border Patterns	Bordures à motif
 	Load Border Pattern…	Charger une bordure à motif…
+	Embroidery Libraries	Bibliothèques de broderie
+	Add to Embroidery Library…	Ajouter à la bibliothèque de broderie…
+	Rescan Embroidery Libraries	Relire les bibliothèques de broderie
+@msg	no embroidery library folder here	aucun dossier de bibliothèques de broderie ici
 	Save Border Pattern…	Enregistrer la bordure à motif…
 	Remove Border Pattern	Supprimer la bordure à motif
 	Render Stitch Preview	Rendu de l’aperçu des points

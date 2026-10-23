@@ -4884,6 +4884,10 @@ lighting	Light	Світло
 	Change Sew Order	Змінити порядок вишивки
 	Border Patterns	Візерункові облямівки
 	Load Border Pattern…	Завантажити візерункову облямівку…
+	Embroidery Libraries	Бібліотеки вишивки
+	Add to Embroidery Library…	Додати до бібліотеки вишивки…
+	Rescan Embroidery Libraries	Повторно сканувати бібліотеки вишивки
+@msg	no embroidery library folder here	тут немає папки бібліотек вишивки
 	Save Border Pattern…	Зберегти візерункову облямівку…
 	Remove Border Pattern	Вилучити візерункову облямівку
 	Render Stitch Preview	Відобразити попередній перегляд стібків

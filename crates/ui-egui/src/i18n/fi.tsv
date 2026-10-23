@@ -5266,6 +5266,10 @@ mark-style	Japanese	Japanilainen
 	How the object is stitched	Miten objekti kirjotaan
 	How wide the column, zigzag or border is	Kuinka leveä pylväs, siksak tai reunus on
 	Load Border Pattern…	Lataa reunuskuvio…
+	Embroidery Libraries	Kirjontakirjastot
+	Add to Embroidery Library…	Lisää kirjontakirjastoon…
+	Rescan Embroidery Libraries	Lue kirjontakirjastot uudelleen
+@msg	no embroidery library folder here	täällä ei ole kirjontakirjastokansiota
 	Long stitches	Pitkät pistot
 	Makes no stitches	Ei tuota pistoja
 	Manual Stitch	Manuaalinen pisto

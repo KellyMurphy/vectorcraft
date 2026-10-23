@@ -4192,6 +4192,10 @@ lighting	Light	光源
 	Change Sew Order	變更縫製順序
 	Border Patterns	圖樣邊框列表
 	Load Border Pattern…	載入圖樣邊框…
+	Embroidery Libraries	刺繡資料庫
+	Add to Embroidery Library…	加入刺繡資料庫…
+	Rescan Embroidery Libraries	重新掃描刺繡資料庫
+@msg	no embroidery library folder here	此處沒有刺繡資料庫資料夾
 	Save Border Pattern…	儲存圖樣邊框…
 	Remove Border Pattern	刪除圖樣邊框
 	Render Stitch Preview	轉譯針跡預覽

@@ -5272,6 +5272,10 @@ theme	Appearance	Външен вид
 	How the object is stitched	Как се бродира обектът
 	How wide the column, zigzag or border is	Колко широки са колоната, зигзагът или кантът
 	Load Border Pattern…	Зареждане на шарка за кант…
+	Embroidery Libraries	Библиотеки за бродерия
+	Add to Embroidery Library…	Добавяне към библиотека за бродерия…
+	Rescan Embroidery Libraries	Повторно сканиране на библиотеките за бродерия
+@msg	no embroidery library folder here	тук няма папка с библиотеки за бродерия
 	Long stitches	Дълги бодове
 	Makes no stitches	Не дава бодове
 	Manual Stitch	Ръчен бод

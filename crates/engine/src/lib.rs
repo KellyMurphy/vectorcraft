@@ -1247,6 +1247,9 @@ pub struct Session {
     pub(crate) freeform_point: Option<(usize, cmd::gradient::StopOwner)>,
     /// User Defined and loaded graphic style libraries (Window → Graphic Style Libraries); not saved.
     pub style_libraries: cmd::stylelib::Libraries,
+    /// The embroidery library folder's border patterns, fabrics, hoops and thread charts
+    /// (`embroidery.libraries`); not saved.
+    pub embroidery_libraries: cmd::embroidery_lib::EmbroideryLibraries,
     /// The Libraries panel's libraries of graphics, colours and text styles (`library.*`).
     pub libraries: cmd::library::Libraries,
     /// Where the saved PDF presets are kept, one file each; `None`: only for the session
@@ -1349,6 +1352,7 @@ impl Session {
             swatch_libraries: Default::default(),
             freeform_point: None,
             style_libraries: Default::default(),
+            embroidery_libraries: Default::default(),
             libraries: Default::default(),
             pdf_preset_dir: None,
             profile_dir: None,
@@ -2054,6 +2058,8 @@ mod tests_draw2;
 mod tests_editcolors;
 #[cfg(test)]
 mod tests_effectedit;
+#[cfg(test)]
+mod tests_embroidery_lib;
 #[cfg(test)]
 mod tests_emptytype;
 #[cfg(test)]

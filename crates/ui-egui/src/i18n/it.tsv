@@ -4904,6 +4904,10 @@ lighting	Light	Luce
 	Change Sew Order	Cambia ordine di cucitura
 	Border Patterns	Bordi a motivo
 	Load Border Pattern…	Carica bordo a motivo…
+	Embroidery Libraries	Librerie di ricamo
+	Add to Embroidery Library…	Aggiungi alla libreria di ricamo…
+	Rescan Embroidery Libraries	Rileggi le librerie di ricamo
+@msg	no embroidery library folder here	nessuna cartella di librerie di ricamo qui
 	Save Border Pattern…	Salva bordo a motivo…
 	Remove Border Pattern	Rimuovi bordo a motivo
 	Render Stitch Preview	Esegui rendering anteprima punti

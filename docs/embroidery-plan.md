@@ -203,7 +203,7 @@ shared as open files.
 
 | Step | What | Size | Needs |
 |---|---|---|---|
-| **E8.5** Library folders | User folders for every embroidery library type, listed in the panels, shared by copying files. | M | — |
+| **E8.5** Library folders (**E8.5a done**: the folder, scanning and commands; the panels next) | User folders for every embroidery library type, listed in the panels, shared by copying files. | M | — |
 | **E8.8** Appliqué and cut files | Placement, tack-down and cover from a shape, with stops; nested cutter export. | L | — |
 | **E8.1** Embroidery fonts | An open font format, type set in it, and a font editor. | XL | E8.5 |
 | **E8.2** Monograms and text effects | Monogram layouts, arc and envelope text, stitched as live type. | M | E8.1 for embroidery fonts (works with outline fonts without it) |
@@ -233,14 +233,17 @@ Today border patterns, fabrics, hoops and thread charts are loaded into a docume
 already have a user library folder (`crates/engine/src/cmd/swatchlib.rs`: `Libraries::set_user_dir`,
 rescanned at start, User Defined in the library panel). Embroidery reuses that model.
 
-- **E8.5a Folders and scanning.** One embroidery library folder under the user library folder, with a
-  subfolder per type: `borders/`, `motifs/`, `fonts/`, `threads/`, `fabrics/`, `hoops/`. Scanned at start
+- **E8.5a Folders and scanning (done).** One embroidery library folder (`Embroidery` next to the
+  preferences), with a subfolder per type: `borders/`, `fabrics/`, `hoops/`, `threads/` now, and
+  `motifs/` and `fonts/` when their formats land (E8.4, E8.1). Scanned at start
   and on `embroidery.library.rescan`; each file is read with its type's reader, size-capped, and a bad file
-  is listed with its error instead of stopping the scan. Commands: `embroidery.library.list {type?}` →
-  entries with id, name, type, author, licence and path, `embroidery.library.rescan`,
-  `embroidery.library.add {path | from document id}` (copies a file in, never replacing one: a clash gets a
-  number, as swatch libraries do), `embroidery.library.reveal`. Web: no folder; the list is the built-in
-  entries plus files loaded this session (the same as swatch libraries on the web).
+  is listed with its error instead of stopping the scan. As built: `embroidery.libraries {kind?}` →
+  entries with kind, id, name, path, author and licence, plus the files skipped as unreadable;
+  `embroidery.rescanLibraries`; `embroidery.addToLibrary {path | data + name, kind?}` (copies a file in,
+  never replacing one: a clash gets a number, as swatch libraries do); the four load commands take
+  `library` (an entry's id or name) and the four save commands `user: true`. Web: no folder, so nothing is
+  listed (the same as swatch libraries on the web). Showing the folder in the file manager belongs to
+  E8.5b's panel.
 - **E8.5b Panels.** The Embroidery panel's pickers (border patterns, motifs, fabric, hoop, thread chart) list
   three groups: built-in, library, in this document. Picking a library entry copies it into the document
   (`Document.embroidery`), so files still open anywhere; the document copy is used from then on, and a

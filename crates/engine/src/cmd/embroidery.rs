@@ -7,7 +7,9 @@ use serde_json::{Value, json};
 use vectorcraft_doc::{Document, EmbroiderySetup, NodeId, NodeKind, StitchKind, StitchSettings};
 use vectorcraft_embroidery::{Plan, params};
 
+use super::embroidery_lib::library_entry;
 use super::overprint::edit_counted;
+use super::swatchlib::FileData;
 use super::*;
 
 const SET: &str = "embroidery.set";
@@ -94,7 +96,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Load Border Pattern…",
             ["Window", "Embroidery"],
             None,
-            "{path? | data?: the file's text} load a .vcborder border pattern file into the document (kept in it, so the document sews the same anywhere), as one undo step. Its id is the file's (else made from its name); one already taken by a different pattern gets a number (rope-2…), and a pattern the document (or the starters) already has is not added again → {id, name, added}",
+            "{path? | data?: the file's text | library?: an embroidery library entry (embroidery.libraries, kind borders: its id or name)} load a .vcborder border pattern file into the document (kept in it, so the document sews the same anywhere), as one undo step. Its id is the file's (else made from its name); one already taken by a different pattern gets a number (rope-2…), and a pattern the document (or the starters) already has is not added again → {id, name, added}",
             has_doc,
             load_border_pattern
         ),
@@ -112,7 +114,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Save Border Pattern…",
             ["Window", "Embroidery"],
             None,
-            "{pattern: id (the document's or a starter), path?} write a border pattern as a .vcborder file (JSON; specified in docs/formats/vcborder.md) → {path}, or without path {data: the file's text}",
+            "{pattern: id (the document's or a starter), path?, user?: false} write a border pattern as a .vcborder file (JSON; specified in docs/formats/vcborder.md) → {path}, or without path {data: the file's text} (`user: true`: into the embroidery library folder instead → {path, library: its id})",
             has_doc,
             save_border_pattern
         ),
@@ -176,7 +178,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Load Thread Chart…",
             ["Window", "Embroidery"],
             None,
-            "{path? | data?: the file's text} load a .vcthreads thread chart file (specified in docs/formats/vcthreads.md) into the document, replacing one with its id, and match against it when none is chosen; one undo step → {id, name, threads}",
+            "{path? | data?: the file's text | library?: an embroidery library entry (embroidery.libraries, kind threads: its id or name)} load a .vcthreads thread chart file (specified in docs/formats/vcthreads.md) into the document, replacing one with its id, and match against it when none is chosen; one undo step → {id, name, threads}",
             has_doc,
             load_thread_chart
         ),
@@ -203,7 +205,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Save Thread Chart…",
             ["Window", "Embroidery"],
             None,
-            "{chart: id, path?} write one of the document's thread charts as a .vcthreads file → {path}, or without path {data: the file's text}",
+            "{chart: id, path?, user?: false} write one of the document's thread charts as a .vcthreads file → {path}, or without path {data: the file's text} (`user: true`: into the embroidery library folder instead → {path, library: its id})",
             has_doc,
             save_thread_chart
         ),
@@ -239,7 +241,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Load Hoop…",
             ["Window", "Embroidery"],
             None,
-            "{path? | data?: the file's text, hoop?: id (default: the file's first)} make a hoop from a .vchoop hoop list file (specified in docs/formats/vchoop.md) the document's hoop; one undo step → the same as embroidery.hoops, and hoops: [ids in the file]",
+            "{path? | data?: the file's text | library?: an embroidery library entry (embroidery.libraries, kind hoops: its id or name), hoop?: id (default: the file's first)} make a hoop from a .vchoop hoop list file (specified in docs/formats/vchoop.md) the document's hoop; one undo step → the same as embroidery.hoops, and hoops: [ids in the file]",
             has_doc,
             load_hoop
         ),
@@ -248,7 +250,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Save Hoop…",
             ["Window", "Embroidery"],
             None,
-            "{hoops?: [ids of common hoops] (default: the document's hoop), path?} write hoops as a .vchoop file → {path}, or without path {data: the file's text}",
+            "{hoops?: [ids of common hoops] (default: the document's hoop), path?, user?: false, name?: the library file's name (default: the first hoop's)} write hoops as a .vchoop file → {path}, or without path {data: the file's text} (`user: true`: into the embroidery library folder instead → {path, library: its id})",
             has_doc,
             save_hoop
         ),
@@ -275,7 +277,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Load Fabric…",
             ["Window", "Embroidery"],
             None,
-            "{path? | data?: the file's text} load a .vcfabric fabric profile file (specified in docs/formats/vcfabric.md) as the document's fabric; one undo step → {fabric}",
+            "{path? | data?: the file's text | library?: an embroidery library entry (embroidery.libraries, kind fabrics: its id or name)} load a .vcfabric fabric profile file (specified in docs/formats/vcfabric.md) as the document's fabric; one undo step → {fabric}",
             has_doc,
             load_fabric
         ),
@@ -284,7 +286,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Save Fabric…",
             ["Window", "Embroidery"],
             None,
-            "{fabric?: a starter's id (default: the document's fabric), path?} write a fabric profile as a .vcfabric file → {path}, or without path {data: the file's text}",
+            "{fabric?: a starter's id (default: the document's fabric), path?, user?: false} write a fabric profile as a .vcfabric file → {path}, or without path {data: the file's text} (`user: true`: into the embroidery library folder instead → {path, library: its id})",
             has_doc,
             save_fabric
         ),
@@ -554,12 +556,10 @@ fn border_patterns(s: &mut Session, _: &Value) -> Result<Value> {
 fn load_border_pattern(s: &mut Session, p: &Value) -> Result<Value> {
     use vectorcraft_embroidery::borders;
     const C: &str = "embroidery.loadBorderPattern";
-    let bytes = match (str_param(p, "path"), str_param(p, "data")) {
-        (Some(path), _) => super::fileio::read_file(path)?,
-        (None, Some(text)) => text.as_bytes().to_vec(),
-        _ => return Err(bad(C, "give `path` or `data`")),
+    let pat = match library_entry(&s.embroidery_libraries.borders, p, C)? {
+        Some((_, pat)) => (*pat).clone(),
+        None => borders::read_file(&file_param(p, C)?).map_err(|e| bad(C, e))?,
     };
-    let pat = borders::read_file(&bytes).map_err(|e| bad(C, e))?;
     let (id, added) = add_pattern(s, pat.clone(), "Load Border Pattern", C)?;
     Ok(json!({"id": id, "name": pat.name, "added": added}))
 }
@@ -567,6 +567,15 @@ fn load_border_pattern(s: &mut Session, p: &Value) -> Result<Value> {
 /// Add `pat` to the document's border patterns as undo step `label`: under its id, else (the id
 /// taken by a different pattern, or a starter's) a numbered one. The very same pattern already
 /// there isn't added again. → (its id, whether it was added).
+/// The bytes of the file a load command reads: `path`, else `data` (its text).
+fn file_param(p: &Value, cmd: &str) -> Result<Vec<u8>> {
+    match (str_param(p, "path"), str_param(p, "data")) {
+        (Some(path), _) => super::fileio::read_file(path),
+        (None, Some(text)) => Ok(text.as_bytes().to_vec()),
+        _ => Err(bad(cmd, "give `path`, `data` or `library` (see embroidery.libraries)")),
+    }
+}
+
 fn add_pattern(s: &mut Session, mut pat: vectorcraft_doc::BorderPattern, label: &str, cmd: &str) -> Result<(String, bool)> {
     use vectorcraft_embroidery::borders;
     let mine = &s.doc()?.doc.embroidery.patterns;
@@ -647,13 +656,9 @@ fn save_border_pattern(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "embroidery.saveBorderPattern";
     let pat = pattern_param(s, p, C)?;
     let text = vectorcraft_embroidery::borders::write_file(&pat).map_err(|e| bad(C, e))?;
-    match str_param(p, "path") {
-        Some(path) => {
-            super::fileio::write_file(path, text.as_bytes())?;
-            Ok(json!({"path": path}))
-        }
-        None => Ok(json!({"data": text})),
-    }
+    let mut out = json!({});
+    s.embroidery_libraries.borders.write(p, &pat.name, "vcborder", FileData::Text(text), &mut out, C)?;
+    Ok(out)
 }
 
 fn remove_border_pattern(s: &mut Session, p: &Value) -> Result<Value> {
@@ -1009,12 +1014,10 @@ fn thread_charts(s: &mut Session, _: &Value) -> Result<Value> {
 
 fn load_thread_chart(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "embroidery.loadThreadChart";
-    let bytes = match (str_param(p, "path"), str_param(p, "data")) {
-        (Some(path), _) => super::fileio::read_file(path)?,
-        (None, Some(text)) => text.as_bytes().to_vec(),
-        _ => return Err(bad(C, "give `path` or `data`")),
+    let chart = match library_entry(&s.embroidery_libraries.threads, p, C)? {
+        Some((_, chart)) => (*chart).clone(),
+        None => vectorcraft_embroidery::threads::read_file(&file_param(p, C)?).map_err(|e| bad(C, e))?,
     };
-    let chart = vectorcraft_embroidery::threads::read_file(&bytes).map_err(|e| bad(C, e))?;
     let out = json!({"id": chart.id, "name": chart.name, "threads": chart.threads.len()});
     edit_counted(s, "Load Thread Chart", |d| {
         let e = &mut d.embroidery;
@@ -1081,13 +1084,9 @@ fn save_thread_chart(s: &mut Session, p: &Value) -> Result<Value> {
         .cloned()
         .ok_or_else(|| bad(C, format!("the document has no thread chart `{id}`")))?;
     let text = vectorcraft_embroidery::threads::write_file(&chart).map_err(|e| bad(C, e))?;
-    match str_param(p, "path") {
-        Some(path) => {
-            super::fileio::write_file(path, text.as_bytes())?;
-            Ok(json!({"path": path}))
-        }
-        None => Ok(json!({"data": text})),
-    }
+    let mut out = json!({});
+    s.embroidery_libraries.threads.write(p, &chart.name, "vcthreads", FileData::Text(text), &mut out, C)?;
+    Ok(out)
 }
 
 fn match_threads(s: &mut Session, p: &Value) -> Result<Value> {
@@ -1198,12 +1197,10 @@ fn set_hoop(s: &mut Session, p: &Value) -> Result<Value> {
 
 fn load_hoop(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "embroidery.loadHoop";
-    let bytes = match (str_param(p, "path"), str_param(p, "data")) {
-        (Some(path), _) => super::fileio::read_file(path)?,
-        (None, Some(text)) => text.as_bytes().to_vec(),
-        _ => return Err(bad(C, "give `path` or `data`")),
+    let list = match library_entry(&s.embroidery_libraries.hoops, p, C)? {
+        Some((_, list)) => list.hoops.clone(),
+        None => vectorcraft_embroidery::hoops::read_file(&file_param(p, C)?).map_err(|e| bad(C, e))?,
     };
-    let list = vectorcraft_embroidery::hoops::read_file(&bytes).map_err(|e| bad(C, e))?;
     let ids: Vec<String> = list.iter().map(|h| h.id.clone()).collect();
     let h = match str_param(p, "hoop") {
         Some(id) => list.into_iter().find(|h| h.id.eq_ignore_ascii_case(id.trim())).ok_or_else(|| bad(C, format!("the file has no hoop `{id}`")))?,
@@ -1241,13 +1238,16 @@ fn save_hoop(s: &mut Session, p: &Value) -> Result<Value> {
         return Err(bad(C, "name at least one hoop"));
     }
     let text = hoops::write_file(&list).map_err(|e| bad(C, e))?;
-    match str_param(p, "path") {
-        Some(path) => {
-            super::fileio::write_file(path, text.as_bytes())?;
-            Ok(json!({"path": path}))
-        }
-        None => Ok(json!({"data": text})),
-    }
+    let mut out = json!({});
+    s.embroidery_libraries.hoops.write(
+        p,
+        str_param(p, "name").or(list.first().map(|h| h.name.as_str())).unwrap_or("Hoops"),
+        "vchoop",
+        FileData::Text(text),
+        &mut out,
+        C,
+    )?;
+    Ok(out)
 }
 
 fn fabric_json(f: Option<&vectorcraft_doc::Fabric>) -> Value {
@@ -1325,12 +1325,10 @@ fn set_fabric(s: &mut Session, p: &Value) -> Result<Value> {
 
 fn load_fabric(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "embroidery.loadFabric";
-    let bytes = match (str_param(p, "path"), str_param(p, "data")) {
-        (Some(path), _) => super::fileio::read_file(path)?,
-        (None, Some(text)) => text.as_bytes().to_vec(),
-        _ => return Err(bad(C, "give `path` or `data`")),
+    let f = match library_entry(&s.embroidery_libraries.fabrics, p, C)? {
+        Some((_, f)) => (*f).clone(),
+        None => vectorcraft_embroidery::fabrics::read_file(&file_param(p, C)?).map_err(|e| bad(C, e))?,
     };
-    let f = vectorcraft_embroidery::fabrics::read_file(&bytes).map_err(|e| bad(C, e))?;
     put_fabric(s, Some(f), "Load Fabric")
 }
 
@@ -1342,13 +1340,9 @@ fn save_fabric(s: &mut Session, p: &Value) -> Result<Value> {
         None => s.doc()?.doc.embroidery.fabric.as_deref().cloned().ok_or_else(|| bad(C, "the document has no fabric: name a starter (`fabric`)"))?,
     };
     let text = fabrics::write_file(&f).map_err(|e| bad(C, e))?;
-    match str_param(p, "path") {
-        Some(path) => {
-            super::fileio::write_file(path, text.as_bytes())?;
-            Ok(json!({"path": path}))
-        }
-        None => Ok(json!({"data": text})),
-    }
+    let mut out = json!({});
+    s.embroidery_libraries.fabrics.write(p, &f.name, "vcfabric", FileData::Text(text), &mut out, C)?;
+    Ok(out)
 }
 
 fn worksheet(s: &mut Session, p: &Value) -> Result<Value> {

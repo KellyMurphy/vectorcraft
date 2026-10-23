@@ -4879,6 +4879,10 @@ lighting	Light	광원
 	How the object is stitched	오브젝트를 수놓는 방식
 	How wide the column, zigzag or border is	칼럼, 지그재그 또는 테두리의 너비
 	Load Border Pattern…	테두리 패턴 불러오기…
+	Embroidery Libraries	자수 라이브러리
+	Add to Embroidery Library…	자수 라이브러리에 추가…
+	Rescan Embroidery Libraries	자수 라이브러리 다시 검색
+@msg	no embroidery library folder here	여기에는 자수 라이브러리 폴더가 없습니다
 	Long stitches	긴 스티치
 	Makes no stitches	스티치가 생기지 않음
 	Manual Stitch	수동 스티치

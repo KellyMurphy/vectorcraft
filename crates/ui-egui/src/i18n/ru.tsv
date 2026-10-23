@@ -4900,6 +4900,10 @@ lighting	Light	Свет
 	Change Sew Order	Изменить порядок вышивки
 	Border Patterns	Узорные каймы
 	Load Border Pattern…	Загрузить узорную кайму…
+	Embroidery Libraries	Библиотеки вышивки
+	Add to Embroidery Library…	Добавить в библиотеку вышивки…
+	Rescan Embroidery Libraries	Пересканировать библиотеки вышивки
+@msg	no embroidery library folder here	здесь нет папки библиотек вышивки
 	Save Border Pattern…	Сохранить узорную кайму…
 	Remove Border Pattern	Удалить узорную кайму
 	Render Stitch Preview	Отрисовать предпросмотр стежков

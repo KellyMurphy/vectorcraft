@@ -100,6 +100,9 @@ pub struct Libraries<L = SwatchLibrary> {
     /// Loaded libraries copied into the user library folder ([`Libraries::copy_to_user`]): the
     /// loaded id and the User Defined id [`Libraries::get`] finds for it.
     copied: Vec<(String, String)>,
+    /// The files of the user library folder that couldn't be read as libraries, as last scanned,
+    /// with why.
+    skipped: Vec<(String, String)>,
 }
 
 #[derive(Clone, Debug)]
@@ -155,13 +158,24 @@ impl<L: LibraryFile> Libraries<L> {
     /// folder is the app's own: automation roots don't apply to it ([`crate::file_access`]).
     pub fn rescan(&mut self) {
         self.extra.retain(|e| e.info.category != "user");
+        self.skipped.clear();
         let Some(dir) = self.user_dir.clone() else { return };
         for path in library_files(&dir, L::EXTS) {
             let file = file_name(&path);
-            let Some(lib) = crate::file_access::unconfined(|| read_file(&path)).ok().and_then(|b| L::read(&b, stem(&file)).ok()) else { continue };
-            let info = LibraryInfo { id: format!("user/{file}"), name: lib.name().to_string(), category: "user" };
-            self.extra.push(Extra { info, path: Some(path), lib: Arc::new(lib) });
+            let lib = crate::file_access::unconfined(|| read_file(&path)).map_err(|e| e.to_string()).and_then(|b| L::read(&b, stem(&file)));
+            match lib {
+                Ok(lib) => {
+                    let info = LibraryInfo { id: format!("user/{file}"), name: lib.name().to_string(), category: "user" };
+                    self.extra.push(Extra { info, path: Some(path), lib: Arc::new(lib) });
+                }
+                Err(e) => self.skipped.push((path, e)),
+            }
         }
+    }
+
+    /// The files of the user library folder that couldn't be read, as last scanned: path and why.
+    pub fn skipped(&self) -> &[(String, String)] {
+        &self.skipped
     }
 
     /// The User Defined and loaded libraries, in menu order.
@@ -275,15 +289,40 @@ impl<L: LibraryFile> Libraries<L> {
             Some(p) => (file_name(&p), read_file(&p)?),
             None => (library_file_name(lib.name(), ext), encode(&lib)?),
         };
+        let (info, lib, written) = self.store(&dir, &file, &bytes, cmd)?;
+        self.extra.retain(|x| x.info.id != id);
+        self.copied.retain(|(loaded, _)| loaded != id);
+        self.copied.push((id.to_string(), info.id.clone()));
+        Ok((info, lib, written))
+    }
+
+    /// Add library file `name` holding `bytes` to the user library folder, as
+    /// [`Libraries::copy_to_user`] copies one: a name the folder already has gets a number and no
+    /// file is replaced; when a file there already holds the same bytes, its library is used and
+    /// nothing is written. `name` is made safe for file systems and must have one of `L::EXTS`.
+    /// → the User Defined library, and whether a file was written.
+    pub(crate) fn add_user_file(&mut self, name: &str, bytes: &[u8], cmd: &str) -> Result<(LibraryInfo, Arc<L>, bool)> {
+        let dir = self.user_dir().ok_or_else(|| bad(cmd, "no user library folder here"))?.to_string();
+        let ext = extension(name);
+        if !L::EXTS.contains(&ext.as_str()) {
+            return Err(bad(cmd, format!("`{name}` isn't a .{} file", L::EXTS.join(" or ."))));
+        }
+        L::read(bytes, stem(&file_name(name))).map_err(|e| bad(cmd, e))?;
+        self.store(&dir, &library_file_name(stem(&file_name(name)), &ext), bytes, cmd)
+    }
+
+    /// Put file `file` holding `bytes` into user library folder `dir` (a free name; none when a
+    /// file there already holds the same) and list it → its library, and whether it was written.
+    fn store(&mut self, dir: &str, file: &str, bytes: &[u8], cmd: &str) -> Result<(LibraryInfo, Arc<L>, bool)> {
         self.rescan();
-        let (user_id, written) = match self.user_file(&file, &bytes).map(|e| e.info.id.clone()) {
+        let (user_id, written) = match self.user_file(file, bytes).map(|e| e.info.id.clone()) {
             Some(same) => (same, None),
             None => {
-                let mut taken: HashSet<String> = library_files(&dir, L::EXTS).iter().map(|p| file_name(p).to_lowercase()).collect();
-                let file = free_name(&file, &mut taken);
-                let path = std::path::Path::new(&dir).join(&file).to_string_lossy().to_string();
+                let mut taken: HashSet<String> = library_files(dir, L::EXTS).iter().map(|p| file_name(p).to_lowercase()).collect();
+                let file = free_name(file, &mut taken);
+                let path = std::path::Path::new(dir).join(&file).to_string_lossy().to_string();
                 // The app's own folder, under a name made safe: no root applies.
-                crate::file_access::unconfined(|| create_dir(&dir).and_then(|()| write_new_file(&path, &bytes)))?;
+                crate::file_access::unconfined(|| create_dir(dir).and_then(|()| write_new_file(&path, bytes)))?;
                 self.rescan();
                 (format!("user/{file}"), Some(path))
             }
@@ -295,9 +334,6 @@ impl<L: LibraryFile> Libraries<L> {
             }
             return Err(bad(cmd, format!("the copy `{user_id}` can't be read as a library")));
         };
-        self.extra.retain(|x| x.info.id != id);
-        self.copied.retain(|(loaded, _)| loaded != id);
-        self.copied.push((id.to_string(), info.id.clone()));
         Ok((info, lib, written.is_some()))
     }
 }

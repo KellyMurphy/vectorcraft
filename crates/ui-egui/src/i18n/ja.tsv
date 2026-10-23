@@ -4945,6 +4945,10 @@ lighting	Light	ライト
 	Change Sew Order	縫製順を変更
 	Border Patterns	パターンボーダー一覧
 	Load Border Pattern…	パターンボーダーを読み込み…
+	Embroidery Libraries	刺繍ライブラリ
+	Add to Embroidery Library…	刺繍ライブラリに追加…
+	Rescan Embroidery Libraries	刺繍ライブラリを再スキャン
+@msg	no embroidery library folder here	この環境には刺繍ライブラリフォルダーがありません
 	Save Border Pattern…	パターンボーダーを保存…
 	Remove Border Pattern	パターンボーダーを削除
 	Render Stitch Preview	ステッチプレビューを描画

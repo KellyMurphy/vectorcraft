@@ -5154,6 +5154,10 @@ mark-style	Japanese	Japońskie
 	How the object is stitched	Jak obiekt jest wyszywany
 	How wide the column, zigzag or border is	Jak szeroka jest kolumna, zygzak lub obwódka
 	Load Border Pattern…	Wczytaj wzór obwódki…
+	Embroidery Libraries	Biblioteki haftu
+	Add to Embroidery Library…	Dodaj do biblioteki haftu…
+	Rescan Embroidery Libraries	Ponownie przeszukaj biblioteki haftu
+@msg	no embroidery library folder here	brak folderu bibliotek haftu
 	Long stitches	Długie ściegi
 	Makes no stitches	Nie daje ściegów
 	Manual Stitch	Ścieg ręczny

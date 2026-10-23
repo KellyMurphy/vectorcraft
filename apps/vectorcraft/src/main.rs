@@ -880,6 +880,9 @@ fn main() -> std::process::ExitCode {
                 app.session.swatch_libraries.set_user_dir(swatches);
                 let styles = prefs_path().and_then(|p| Some(p.parent()?.join("Graphic Styles").to_string_lossy().to_string()));
                 app.session.style_libraries.set_user_dir(styles);
+                // So do the embroidery libraries (border patterns, fabrics, hoops, thread charts).
+                let embroidery = prefs_path().and_then(|p| Some(p.parent()?.join("Embroidery").to_string_lossy().to_string()));
+                app.session.embroidery_libraries.set_dir(embroidery);
                 // With the User Defined libraries listed, the persistent library panels reopen.
                 vectorcraft_ui_egui::panels::library_panel::restore(&mut app);
                 // So do the Libraries panel's libraries; runs without preferences (agents' test

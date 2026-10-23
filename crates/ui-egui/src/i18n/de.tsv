@@ -4878,6 +4878,10 @@ effect	Regular	Regelmäßig
 	How the object is stitched	Wie das Objekt gestickt wird
 	How wide the column, zigzag or border is	Wie breit die Säule, der Zickzack oder der Rand ist
 	Load Border Pattern…	Randmuster laden…
+	Embroidery Libraries	Stickereibibliotheken
+	Add to Embroidery Library…	Zur Stickereibibliothek hinzufügen…
+	Rescan Embroidery Libraries	Stickereibibliotheken neu einlesen
+@msg	no embroidery library folder here	hier gibt es keinen Ordner für Stickereibibliotheken
 	Long stitches	Lange Stiche
 	Makes no stitches	Erzeugt keine Stiche
 	Manual Stitch	Manueller Stich

@@ -5288,6 +5288,10 @@ imageTrace	Outline	Körvonal
 	How the object is stitched	Hogyan hímzi az objektumot
 	How wide the column, zigzag or border is	Milyen széles az oszlop, a cikcakk vagy a szegély
 	Load Border Pattern…	Szegélyminta betöltése…
+	Embroidery Libraries	Hímzéskönyvtárak
+	Add to Embroidery Library…	Hozzáadás a hímzéskönyvtárhoz…
+	Rescan Embroidery Libraries	Hímzéskönyvtárak újraolvasása
+@msg	no embroidery library folder here	itt nincs hímzéskönyvtár-mappa
 	Long stitches	Hosszú öltések
 	Makes no stitches	Nem ad öltést
 	Manual Stitch	Kézi öltés

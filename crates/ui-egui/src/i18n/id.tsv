@@ -5296,6 +5296,10 @@ swatch	Bright Violet	Violet cerah
 	How the object is stitched	Bagaimana objek disulam
 	How wide the column, zigzag or border is	Seberapa lebar kolom, zigzag, atau tepinya
 	Load Border Pattern…	Muat pola tepi…
+	Embroidery Libraries	Pustaka sulaman
+	Add to Embroidery Library…	Tambahkan ke pustaka sulaman…
+	Rescan Embroidery Libraries	Pindai ulang pustaka sulaman
+@msg	no embroidery library folder here	tidak ada folder pustaka sulaman di sini
 	Long stitches	Jahitan panjang
 	Makes no stitches	Tidak menghasilkan jahitan
 	Manual Stitch	Jahitan manual

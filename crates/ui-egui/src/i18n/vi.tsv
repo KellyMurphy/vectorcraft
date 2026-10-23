@@ -4895,6 +4895,10 @@ theme	Appearance	Giao diện
 	How the object is stitched	Đối tượng được thêu ra sao
 	How wide the column, zigzag or border is	Cột, zigzag hoặc đường viền rộng bao nhiêu
 	Load Border Pattern…	Nạp mẫu đường viền…
+	Embroidery Libraries	Thư viện thêu
+	Add to Embroidery Library…	Thêm vào thư viện thêu…
+	Rescan Embroidery Libraries	Quét lại thư viện thêu
+@msg	no embroidery library folder here	không có thư mục thư viện thêu ở đây
 	Long stitches	Mũi thêu dài
 	Makes no stitches	Không tạo mũi thêu
 	Manual Stitch	Mũi thủ công

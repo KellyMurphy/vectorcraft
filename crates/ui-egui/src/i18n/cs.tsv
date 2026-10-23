@@ -5289,6 +5289,10 @@ mark-style	Japanese	Japonské
 	Change Sew Order	Změnit pořadí šití
 	Border Patterns	Vzorové okraje
 	Load Border Pattern…	Načíst vzorový okraj…
+	Embroidery Libraries	Knihovny výšivek
+	Add to Embroidery Library…	Přidat do knihovny výšivek…
+	Rescan Embroidery Libraries	Znovu prohledat knihovny výšivek
+@msg	no embroidery library folder here	zde není složka knihoven výšivek
 	Save Border Pattern…	Uložit vzorový okraj…
 	Remove Border Pattern	Odstranit vzorový okraj
 	Render Stitch Preview	Vykreslit náhled stehů

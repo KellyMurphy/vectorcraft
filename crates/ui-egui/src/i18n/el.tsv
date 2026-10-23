@@ -5254,6 +5254,10 @@ effect	Points	Σημεία
 	How the object is stitched	Πώς κεντιέται το αντικείμενο
 	How wide the column, zigzag or border is	Πόσο πλατιά είναι η στήλη, το ζιγκ-ζαγκ ή το περίγραμμα
 	Load Border Pattern…	Φόρτωση μοτίβου περιγράμματος…
+	Embroidery Libraries	Βιβλιοθήκες κεντήματος
+	Add to Embroidery Library…	Προσθήκη στη βιβλιοθήκη κεντήματος…
+	Rescan Embroidery Libraries	Επανασάρωση βιβλιοθηκών κεντήματος
+@msg	no embroidery library folder here	δεν υπάρχει φάκελος βιβλιοθηκών κεντήματος εδώ
 	Long stitches	Μακριές βελονιές
 	Makes no stitches	Δεν δίνει βελονιές
 	Manual Stitch	Χειροκίνητη βελονιά

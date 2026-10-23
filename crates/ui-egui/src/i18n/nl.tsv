@@ -5339,6 +5339,10 @@ swatch	Bright Violet	Felviolet
 	How the object is stitched	Hoe het object wordt geborduurd
 	How wide the column, zigzag or border is	Hoe breed de kolom, zigzag of rand is
 	Load Border Pattern…	Randpatroon laden…
+	Embroidery Libraries	Borduurbibliotheken
+	Add to Embroidery Library…	Toevoegen aan borduurbibliotheek…
+	Rescan Embroidery Libraries	Borduurbibliotheken opnieuw inlezen
+@msg	no embroidery library folder here	geen borduurbibliotheekmap hier
 	Long stitches	Lange steken
 	Makes no stitches	Maakt geen steken
 	Manual Stitch	Handmatige steek
