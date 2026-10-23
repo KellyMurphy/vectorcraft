@@ -2756,29 +2756,42 @@ proptest! {
     }
 }
 
-// ---------- Embroidery (DST) ----------
+// ---------- Embroidery (DST, PES, JEF, EXP) ----------
 
 /// A small DST design from a session (a fill and a satin column), as `document.export` writes it.
 fn saved_dst() -> Vec<u8> {
+    saved_design("dst")
+}
+
+/// The same small design in machine format `format` (dst, pes, jef, exp).
+fn saved_design(format: &str) -> Vec<u8> {
     let mut s = vectorcraft_engine::Session::new();
     s.execute("file.new", &json!({"width": 200, "height": 200})).unwrap();
     s.execute("shape.rectangle", &json!({"x": 10, "y": 10, "width": 60, "height": 40})).unwrap();
     s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
     s.execute("shape.ellipse", &json!({"x": 80, "y": 80, "width": 60, "height": 60})).unwrap();
     s.execute("embroidery.set", &json!({"type": "satin", "thread": "#0000ff"})).unwrap();
-    let r = s.execute("document.export", &json!({"format": "dst"})).unwrap();
+    let r = s.execute("document.export", &json!({ "format": format })).unwrap();
     vectorcraft_format::base64_decode(r["dataBase64"].as_str().unwrap()).unwrap()
 }
 
 /// Open `bytes` as a `.dst` file; whatever opens must report, render and export again.
 fn survive_dst(what: &str, bytes: &[u8]) -> Result<(), TestCaseError> {
+    survive_design(what, "dst", bytes)
+}
+
+/// Open `bytes` as a design file in machine format `format`; whatever opens must report, render
+/// and export again in every machine format.
+fn survive_design(what: &str, format: &str, bytes: &[u8]) -> Result<(), TestCaseError> {
     let r = catch_quiet(|| {
         let mut s = vectorcraft_engine::Session::new();
-        let p = json!({"name": "design.dst", "dataBase64": vectorcraft_format::base64_encode(bytes)});
+        let p = json!({"name": format!("design.{format}"), "dataBase64": vectorcraft_format::base64_encode(bytes)});
         if no_panic(s.execute("document.open", &p)).is_ok() {
             let _ = no_panic(s.execute("embroidery.info", &json!({})));
             let _ = no_panic(s.execute("embroidery.stitches", &json!({"limit": 1000})));
-            let _ = no_panic(s.execute("document.export", &json!({"format": "dst"})));
+            for f in ["dst", "pes", "jef", "exp"] {
+                let _ = no_panic(s.execute("document.export", &json!({ "format": f })));
+            }
             let _ = no_panic(s.execute("document.export", &json!({"format": "png"})));
         }
     });
@@ -2904,6 +2917,35 @@ proptest! {
         }
         b.truncate(cut.max(3));
         survive_dst("mutated dst", &b)?;
+    }
+
+    #[test]
+    fn pes_jef_and_exp_garbage_never_panics(body in prop::collection::vec(any::<u8>(), 0..1500), pec in 0u32..2000) {
+        // PES: a header pointing anywhere; JEF: a header that adds up; EXP: anything.
+        let mut pes = b"#PES0060".to_vec();
+        pes.extend(pec.to_le_bytes());
+        pes.extend(&body);
+        survive_design("pes garbage", "pes", &pes)?;
+        let mut jef = 132u32.to_le_bytes().to_vec();
+        jef.extend(0x14u32.to_le_bytes());
+        jef.extend(b"20261022000000\0\0");
+        jef.extend(2u32.to_le_bytes());
+        jef.extend(&body);
+        survive_design("jef garbage", "jef", &jef)?;
+        survive_design("exp garbage", "exp", &body)?;
+    }
+
+    #[test]
+    fn pes_jef_and_exp_mutated_designs_never_panic(cut in 0usize..5000, edits in prop::collection::vec((any::<prop::sample::Index>(), any::<u8>()), 0..24)) {
+        for format in ["pes", "jef", "exp"] {
+            let mut b = saved_design(format);
+            for (i, v) in &edits {
+                let at = i.index(b.len());
+                b[at] = *v;
+            }
+            b.truncate(cut.max(1));
+            survive_design(&format!("mutated {format}"), format, &b)?;
+        }
     }
 
     #[test]

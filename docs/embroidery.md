@@ -1,7 +1,7 @@
 # Embroidery
 
 VectorCraft can turn artwork into machine embroidery. Give paths **stitch settings**, check the result
-with **View › Stitch Preview**, and export a **DST** file for the embroidery machine. This is early work
+with **View › Stitch Preview**, and export a file for the embroidery machine: **DST**, **PES**, **JEF** or **EXP**. This is early work
 (milestones E1–E2): the stitches are correct, but stitch quality still lacks what dedicated digitizing
 software adds (see [What's next](#whats-next)).
 
@@ -25,8 +25,9 @@ Select paths or compound paths (or groups holding them) and choose **Object › 
 pictures (each drawn by the real generator, with a line saying what it does), the thread and trims, and the
 stitch's own settings (Density is the spacing). Fill patterns and border patterns are picked from pictures
 too, so Tatami 4 and Tatami 7 can be told apart before sewing. Below them the panel shows the whole design
-(stitch count, size, trims and jumps, threads) with a Stitch Preview switch, **Export DST…**, a button to
-the Sew Order panel, and the design checker's findings.
+(stitch count, size, trims and jumps, threads) with a Stitch Preview switch, an **Export** button in the
+machine's format (the **Machine Format** menu: DST, PES, JEF or EXP), a button to the Sew Order panel, and
+the design checker's findings.
 
 **Underlay** is sewn before the top stitches to hold the fabric and lift the top stitches. For satin, it can be a
 **center walk** (a running stitch down the middle), an **edge walk** (just inside both edges) or a sparse
@@ -320,7 +321,7 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.saveBorderPattern` | `{pattern, path?}`: write a pattern as a `.vcborder` file (without `path`: `{data}`) |
 | `embroidery.extractBorderPattern` | `{name?, period?, author?, license?, source?, ids?}`: the repeat of the selected border stitches (only those inside a selected closed shape, if any) as a new document pattern → `{id, name, period, width, stitches, repeats, error}` |
 | `embroidery.removeBorderPattern` | `{pattern}`: remove one of the document's patterns that nothing sews with |
-| `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm, overlap?: mm, minStitch?: mm, autoStart?, speed?: stitches/min}`: the document's travel settings, overlap, shortest stitch and machine speed |
+| `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm, overlap?: mm, minStitch?: mm, autoStart?, speed?: stitches/min, machineFormat?: dst \| pes \| jef \| exp}`: the document's travel settings, overlap, shortest stitch, machine speed and the format the panels export |
 | `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings |
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
 | `embroidery.check` | `{ids?}` → the design checker's `findings` (`rule`, `severity`, `message`, `object`, `at` in document points), `counts` and the `rules` |
@@ -373,31 +374,61 @@ stitches). Parts of the shape no stroke runs through (round dots) are filled. Kn
 crossings (an &, an 8) are sewn twice where strokes overlap. Strokes wider than about 7 mm make long,
 loose satin stitches: fill those shapes instead.
 
-## DST files
+## Machine files (DST, PES, JEF, EXP)
 
-`document.export {format: "dst"}` (File › Export As › Embroidery (DST)) writes the design, centred on its
-middle, where the machine starts. Opening a `.dst` file creates one manual-stitch path for each run of
-stitches, grouped by colour block. DST stores no thread colours, so each block gets a distinct colour;
-recolour the paths' strokes, or set `thread`, before sewing.
+`document.export {format: "dst" | "pes" | "jef" | "exp"}` (File › Export As › Embroidery (DST), (PES),
+(JEF) or (EXP)) writes the design for the machine. The Embroidery panel's **Machine Format** menu
+(`embroidery.setup {machineFormat}`, saved with the document) picks the format its **Export** button,
+and the Sew-Out Test panel's, writes. Opening any of them (File › Open, Place, `document.open`) creates one
+manual-stitch path for each run of stitches, grouped by colour block.
+
+| Format | Machines | Thread colours | Trims |
+|---|---|---|---|
+| DST (Tajima) | nearly all | not stored: each block opens in a colour of its own | three short jumps back to the same point |
+| PES (Brother, Baby Lock) | Brother | kept: the real colours in the version 6 thread list | a trim code |
+| JEF (Janome) | Janome | by palette number only (see below) | a trim code (a jump of zero) |
+| EXP (Melco) | Melco, Bernina | not stored | three short jumps, as DST |
+
+**Thread colours in PES and JEF.** Both formats name threads by number in the maker's own palette, and
+the machine shows its palette's colour for each number. VectorCraft ships no maker's palette (as with
+[thread charts](#thread-charts)), so it writes a number per distinct colour: blocks sewn in one thread
+share a number, but the machine shows its own colours for them. PES keeps the real colours as well, in its
+version 6 thread list, which VectorCraft and other software read back. A JEF file, or a PES file older than
+version 6, opens with a colour of its own per palette number. Recolour the paths' strokes, or set
+`thread`, before sewing.
+
+The design is written centred on its middle (DST, JEF, EXP), where the machine starts, or from its
+top-left corner (PES, which machines centre themselves). JEF also records the smallest of its hoops the
+design fits (50 × 50, 110 × 110, 140 × 200 or 200 × 200 mm). Moves longer than a format allows are split:
+12.1 mm (DST), 12.7 mm (JEF, EXP, and PES stitches), 204.7 mm (PES jumps).
 
 With `artboard`, `artboards` or `range`, the export writes a design per artboard, each holding the
 stitched objects whose middle lies on that artboard (a test sheet's sections, or several designs laid
 out in one document).
 
-DST files VectorCraft writes have been checked against an independent reader,
-[pyembroidery](https://github.com/EmbroidePy/pyembroidery) (used as a test tool only; none of its code is in
-VectorCraft): the stitch, jump, trim and colour-change counts and the design size agree.
+**Where the formats come from.** Each is implemented from public descriptions of it:
+[DST](https://edutechwiki.unige.ch/en/Embroidery_format_DST),
+[PES](https://edutechwiki.unige.ch/en/Embroidery_format_PES) with its
+[PEC](https://edutechwiki.unige.ch/en/Embroidery_format_PEC) section,
+[JEF](https://edutechwiki.unige.ch/en/Embroidery_format_JEF) and
+[EXP](https://edutechwiki.unige.ch/en/Embroidery_format_EXP). Where a description leaves a point open
+(EXP's units and direction, where PEC's stitches start) it was settled by writing small test designs with
+an independent open-source tool, [pyembroidery](https://github.com/EmbroidePy/pyembroidery), and reading
+its files' bytes (used as a test tool only; none of its code or palettes are in VectorCraft). EXP has no
+documented trim code (`80 80` is listed both as the end and, by some readers, as a trim), so VectorCraft
+writes trims as DST does and reads `80 80` as a trim, or as the end when nothing follows it.
 
-The format is implemented from public descriptions of it
-([edutechwiki: Embroidery format DST](https://edutechwiki.unige.ch/en/Embroidery_format_DST)): a
-512-byte text header, then 3-byte records that each move the needle up to 12.1 mm. Longer moves are
-split. A trim is written as three short jumps that return to where they started.
+**Checked against an independent reader.** Files VectorCraft writes have been read with pyembroidery: for
+each format the stitch and colour-change counts and the design size agree, PES's thread colours come back
+exactly, and the trims are there (pyembroidery folds a trim next to a colour change into the change, and
+reads EXP trims as the jumps they are). They have not yet been sewn on a machine: that is part of
+gate G1.
 
 ## What's next
 
 - **E3, quality: done.** Underlay, pull compensation, tie-ins and tie-offs, satin corners, fill routing, satin
   between rails, carved motif fills and the Embroidery panel.
-- **E4, breadth:** PES, JEF, EXP and VP3; hoop templates; auto-digitizing traced art.
+- **E4, breadth:** VP3 and other formats as usage demands (DST, PES, JEF and EXP are done, E7.12); hoop templates; auto-digitizing traced art.
 - **E5, future sprints:**
   - **Embroidery fonts:** lettering digitized for embroidery (satin columns laid out by hand per letter), for
     crisp small type and heavy display type where Auto falls back to fill today. Three parts:
@@ -529,7 +560,7 @@ Priority items:
 - Realistic previews: thread-shaded views, fabric mockups and production estimators
 - Appliqué workflows with placement, tack-down, cover stitches and cutter export
 - Machine-transfer and cloud workflows, design libraries and extensions
-- Machine-format support beyond DST: PES, EXP, JEF, VP3 and others as usage demands
+- Machine-format support beyond DST, PES, JEF and EXP: VP3 and others as usage demands
 
 This phase should only begin after the production-quality basics are solid and the app proves its digitizing core on
 real fabric.

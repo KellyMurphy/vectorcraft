@@ -3,7 +3,7 @@ name = "vectorcraft-embroidery"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "VectorCraft embroidery: stitch generation from art, and the DST machine format"
+description = "VectorCraft embroidery: stitch generation from art, and the DST, PES, JEF and EXP machine formats"
 
 [lints]
 workspace = true

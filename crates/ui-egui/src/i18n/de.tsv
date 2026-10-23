@@ -5040,3 +5040,8 @@ effect	Regular	Regelmäßig
 	Puff that won't rise well	Puff, der sich schlecht hebt
 	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	Puff braucht 3 bis 10 mm breiten Satin über Schaum: schmaler hebt er sich nicht, breiter halten die Stiche den Schaum nicht. Flache Objekte, die nach dem Auflegen des Schaums gestickt werden, stechen durch ihn: sticken Sie sie zuerst.
 	Puff	Puff
+
+# Machine file formats (PES, JEF, EXP)
+	Export {format}…	{format} exportieren…
+	Machine Format:	Maschinenformat:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Das Dateiformat, das Ihre Maschine liest: DST (Tajima und die meisten Maschinen), PES (Brother), JEF (Janome) oder EXP (Melco)

@@ -36,7 +36,7 @@ pub static TEXT_DOCS: &[TextDoc] = &[
         uri: "vectorcraft://guide/embroidery",
         name: "guide-embroidery",
         title: "Embroidery guide",
-        description: "How VectorCraft digitizes art for machine embroidery: stitch types and their settings (lengths in mm), type, sew order, travel, border patterns, DST files and every embroidery command",
+        description: "How VectorCraft digitizes art for machine embroidery: stitch types and their settings (lengths in mm), type, sew order, travel, border patterns, machine files (DST, PES, JEF, EXP) and every embroidery command",
         mime: "text/markdown",
         text: include_str!("../../../docs/embroidery.md"),
     },

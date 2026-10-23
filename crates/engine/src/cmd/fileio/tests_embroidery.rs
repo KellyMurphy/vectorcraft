@@ -1,5 +1,5 @@
-//! Embroidery through the commands: stitch settings, the design info and stitches, DST export
-//! and open.
+//! Embroidery through the commands: stitch settings, the design info and stitches, DST, PES, JEF
+//! and EXP export and open.
 
 use serde_json::{Value, json};
 
@@ -120,6 +120,61 @@ fn dst_is_listed_and_sniffed() {
 }
 
 #[test]
+fn pes_jef_and_exp_export_and_open_again() {
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    s.execute("shape.rectangle", &json!({"x": 150, "y": 10, "width": 100, "height": 20})).unwrap();
+    s.execute("embroidery.set", &json!({"type": "satin", "width": 2, "thread": [0, 0, 255]})).unwrap();
+    let before = info(&mut s)["design"].clone();
+    for (format, magic) in [("pes", &b"#PES0060"[..]), ("jef", &[][..]), ("exp", &[][..])] {
+        let r = s.execute("document.export", &json!({ "format": format })).unwrap();
+        let bytes = b64(&r);
+        assert!(bytes.starts_with(magic), "{format}");
+        let name = format!("design.{format}");
+        let o = s.execute("document.open", &json!({"name": name, "dataBase64": vectorcraft_format::base64_encode(&bytes)})).unwrap();
+        assert_eq!(o["format"], format);
+        let after = info(&mut s)["design"].clone();
+        assert_eq!(after["colorChanges"], before["colorChanges"], "{format}");
+        assert!((after["widthMm"].as_f64().unwrap() - before["widthMm"].as_f64().unwrap()).abs() <= 0.2, "{format}");
+        assert!((after["heightMm"].as_f64().unwrap() - before["heightMm"].as_f64().unwrap()).abs() <= 0.2, "{format}");
+        let threads = after["threads"].as_array().unwrap().clone();
+        assert_eq!(threads.len(), 2, "{format}");
+        if format == "pes" {
+            // PES keeps the thread colours.
+            assert_eq!(threads, before["threads"].as_array().unwrap().clone());
+            assert!(o["warnings"].as_array().unwrap().is_empty(), "{}", o["warnings"]);
+        } else {
+            assert!(o["warnings"].to_string().contains("colour of its own"), "{format}: {}", o["warnings"]);
+        }
+        s.execute("file.close", &json!({})).unwrap();
+    }
+    // JEF by its content, whatever its name; EXP only by name.
+    let jef = b64(&s.execute("document.export", &json!({"format": "jef"})).unwrap());
+    assert_eq!(load::detect("x.bin", &jef).map(|f| f.id), Some("jef"));
+    let exp = b64(&s.execute("document.export", &json!({"format": "exp"})).unwrap());
+    assert_eq!(load::detect("x.exp", &exp).map(|f| f.id), Some("exp"));
+    assert!(OPEN_EXTS.contains(&"pes") && PLACE_EXTS.contains(&"jef") && UNASSOCIATED_EXTS.contains(&"exp"));
+}
+
+#[test]
+fn machine_format_is_set_and_checked() {
+    let mut s = session();
+    let r = s.execute("embroidery.setup", &json!({"machineFormat": "PES"})).unwrap();
+    assert_eq!(r["machineFormat"], "pes");
+    assert_eq!(s.doc().unwrap().doc.embroidery.machine_format, "pes");
+    assert!(s.execute("embroidery.setup", &json!({"machineFormat": "vp3"})).is_err());
+    s.execute("edit.undo", &json!({})).unwrap();
+    assert_eq!(s.doc().unwrap().doc.embroidery.machine_format(), "dst");
+    // A format a newer VectorCraft named is kept, and DST is used in its place.
+    let mut e = vectorcraft_doc::EmbroiderySetup { machine_format: "xyz".into(), ..Default::default() };
+    assert_eq!(e.machine_format(), "dst");
+    let json = serde_json::to_value(&e).unwrap();
+    assert_eq!(json["machineFormat"], "xyz");
+    e.machine_format = "dst".into();
+    assert!(serde_json::to_value(&e).unwrap().get("machineFormat").is_none(), "the default isn't written");
+}
+
+#[test]
 fn satin_fill_and_bean_parameters_are_set_and_checked() {
     let mut s = session();
     s.execute("embroidery.set", &json!({"type": "satin", "pull": 0.4, "underlay": "zigzag"})).unwrap();
@@ -146,10 +201,13 @@ fn setup_sets_the_documents_trim_and_jump_lengths() {
     let mut s = session();
     assert_eq!(
         info(&mut s)["setup"],
-        json!({"trimJumpsOver": 3.0, "stitchMovesUnder": 1.0, "overlap": 0.5, "minStitch": 0.3, "autoStart": true, "speed": 600.0})
+        json!({"trimJumpsOver": 3.0, "stitchMovesUnder": 1.0, "overlap": 0.5, "minStitch": 0.3, "autoStart": true, "speed": 600.0, "machineFormat": "dst"})
     );
     let r = s.execute("embroidery.setup", &json!({"trimJumpsOver": 8, "stitchMovesUnder": 2})).unwrap();
-    assert_eq!(r, json!({"trimJumpsOver": 8.0, "stitchMovesUnder": 2.0, "overlap": 0.5, "minStitch": 0.3, "autoStart": true, "speed": 600.0}));
+    assert_eq!(
+        r,
+        json!({"trimJumpsOver": 8.0, "stitchMovesUnder": 2.0, "overlap": 0.5, "minStitch": 0.3, "autoStart": true, "speed": 600.0, "machineFormat": "dst"})
+    );
     s.execute("embroidery.setup", &json!({"trimJumpsOver": null})).unwrap();
     assert_eq!(info(&mut s)["setup"]["trimJumpsOver"], Value::Null);
     for p in [json!({"trimJumpsOver": 0}), json!({"trimJumpsOver": "x"}), json!({"stitchMovesUnder": 9})] {

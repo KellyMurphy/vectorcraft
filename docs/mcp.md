@@ -544,7 +544,9 @@ Everything in the [embroidery guide](embroidery.md) works over MCP:
   finds them all.
 - `render_preview {stitches: true}` draws the design as Stitch Preview shows it: stitches in their thread
   colours on fabric over the art (engine command `embroidery.preview`, so it works headless too).
-- `export {format: "dst"}` writes the machine file; `open_file` on a `.dst` opens a design as manual stitches.
+- `export {format: "dst" | "pes" | "jef" | "exp"}` writes the machine file (PES keeps the thread colours);
+  `open_file` on a `.dst`, `.pes`, `.jef` or `.exp` opens a design as manual stitches.
+  `embroidery.setup {machineFormat}` sets the format the panels' Export button writes.
 - The `embroidery` prompt walks through digitizing, checking, ordering and exporting.
 
 The embroidery tests (`crates/mcp/src/tests_embroidery.rs`) keep this true as features land: every

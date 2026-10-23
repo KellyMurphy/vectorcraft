@@ -5458,3 +5458,8 @@ swatch	Bright Violet	Kraftig violet
 	Puff that won't rise well	Puff, der ikke rejser sig godt
 	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	Puff kræver satin 3 til 10 mm bred over skum: smallere rejser det sig ikke, bredere holder stingene ikke skummet. Flade objekter, der broderes efter skummet er lagt, syr igennem det: brodér dem først.
 	Puff	Puff
+
+# Machine file formats (PES, JEF, EXP)
+	Export {format}…	Eksportér {format}…
+	Machine Format:	Maskinformat:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Det filformat din maskine læser: DST (Tajima og de fleste maskiner), PES (Brother), JEF (Janome) eller EXP (Melco)

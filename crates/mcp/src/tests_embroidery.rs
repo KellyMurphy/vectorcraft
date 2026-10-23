@@ -75,6 +75,16 @@ fn an_agent_digitizes_previews_and_exports() {
     let out = payload(&call(&mut s, "export", json!({"format": "dst"})));
     let dst = vectorcraft_format::base64_decode(out["dataBase64"].as_str().unwrap()).unwrap();
     assert!(dst.starts_with(b"LA:"));
+    // And as PES, which keeps the thread colour, opened again.
+    run(&mut s, "embroidery.setup", json!({"machineFormat": "pes"}));
+    let out = payload(&call(&mut s, "export", json!({"format": "pes"})));
+    let pes = out["dataBase64"].as_str().unwrap().to_string();
+    assert!(vectorcraft_format::base64_decode(&pes).unwrap().starts_with(b"#PES0060"));
+    let thread = info["design"]["threads"].clone();
+    run(&mut s, "document.open", json!({"name": "design.pes", "dataBase64": pes}));
+    let back = run(&mut s, "embroidery.info", json!({}));
+    assert_eq!(back["design"]["threads"], thread);
+    assert_eq!(back["design"]["stitches"], info["design"]["stitches"]);
 
     // The prompt walks through it; the guide and the specs are readable.
     let p = rpc(&mut s, "prompts/get", json!({"name": "embroidery", "arguments": {"stitch": "satin", "path": "out.dst"}}));
@@ -108,6 +118,19 @@ fn every_stitch_type_reaches_agents() {
         assert!(guide().contains(k.label()), "the guide lacks the {} stitch", k.label());
     }
     assert_eq!(crate::prompts::STITCH_TYPES.len(), StitchKind::ALL.len(), "the prompt lists a type the engine doesn't have");
+}
+
+/// Every machine format reaches agents: the prompt's list, `embroidery.setup`'s description, the
+/// formats `export` writes, and the guide.
+#[test]
+fn every_machine_format_reaches_agents() {
+    let setup = spec("embroidery.setup").params;
+    assert_eq!(crate::prompts::MACHINE_FORMATS, vectorcraft_doc::EmbroiderySetup::MACHINE_FORMATS);
+    for f in vectorcraft_doc::EmbroiderySetup::MACHINE_FORMATS {
+        assert!(setup.contains(f), "embroidery.setup's description lacks {f}");
+        assert!(vectorcraft_engine::cmd::fileio::format(f).is_some_and(|x| x.read && x.write), "{f} isn't a readable, writable format");
+        assert!(guide().contains(&format!("| {} (", f.to_uppercase())), "the guide lacks {f}");
+    }
 }
 
 /// Every stitch type's row in the guide's table names the settings it uses (from the settings

@@ -5400,3 +5400,8 @@ mark-style	Japanese	Japonesas
 	Puff that won't rise well	Puff que não sobe bem
 	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	O puff precisa de cetim de 3 a 10 mm de largura sobre a espuma: mais estreito não sobe, mais largo os pontos não seguram a espuma. Objetos planos bordados depois de colocar a espuma a atravessam: borde-os primeiro.
 	Puff	Puff
+
+# Machine file formats (PES, JEF, EXP)
+	Export {format}…	Exportar {format}…
+	Machine Format:	Formato da máquina:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	O formato de arquivo que sua máquina lê: DST (Tajima e a maioria das máquinas), PES (Brother), JEF (Janome) ou EXP (Melco)

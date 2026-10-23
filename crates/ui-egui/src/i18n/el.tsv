@@ -5416,3 +5416,8 @@ effect	Points	Σημεία
 	Puff that won't rise well	Puff που δεν φουσκώνει καλά
 	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	Το puff θέλει σατέν πλάτους 3 έως 10 mm πάνω στον αφρό: πιο στενό δεν φουσκώνει, πιο φαρδύ οι βελονιές δεν κρατούν τον αφρό. Επίπεδα αντικείμενα που κεντιούνται αφού τοποθετηθεί ο αφρός τον τρυπούν: κεντήστε τα πρώτα.
 	Puff	Puff
+
+# Machine file formats (PES, JEF, EXP)
+	Export {format}…	Εξαγωγή {format}…
+	Machine Format:	Μορφή μηχανής:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Η μορφή αρχείου που διαβάζει η μηχανή σας: DST (Tajima και οι περισσότερες μηχανές), PES (Brother), JEF (Janome) ή EXP (Melco)

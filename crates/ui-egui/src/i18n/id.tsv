@@ -5458,3 +5458,8 @@ swatch	Bright Violet	Violet cerah
 	Puff that won't rise well	Puff yang tidak mengembang baik
 	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	Puff butuh satin selebar 3 sampai 10 mm di atas busa: lebih sempit tidak mengembang, lebih lebar jahitannya tidak menahan busa. Objek datar yang disulam setelah busa diletakkan menembusnya: sulam lebih dulu.
 	Puff	Puff
+
+# Machine file formats (PES, JEF, EXP)
+	Export {format}…	Ekspor {format}…
+	Machine Format:	Format mesin:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Format berkas yang dibaca mesin Anda: DST (Tajima dan sebagian besar mesin), PES (Brother), JEF (Janome), atau EXP (Melco)

@@ -116,6 +116,9 @@ pub struct PromptDef {
     pub text: &'static str,
 }
 
+/// The machine file formats `export` writes for embroidery, kept in step with the engine (tested).
+pub(crate) const MACHINE_FORMATS: &[&str] = &["dst", "pes", "jef", "exp"];
+
 /// Stitch types (`embroidery.set`'s `type`), a closed set kept in step with the engine (tested).
 pub(crate) const STITCH_TYPES: &[&str] = &["auto", "running", "bean", "satin", "zigzag", "satinShape", "fill", "patternBorder", "manual"];
 
@@ -318,7 +321,7 @@ The trace is real geometry: every traced shape stays selectable and editable.",
     PromptDef {
         name: "embroidery",
         title: "Digitize for embroidery",
-        description: "Turn art or lettering into a machine embroidery design: stitch types, sewing order and travel, checked with a stitch preview, exported as DST.",
+        description: "Turn art or lettering into a machine embroidery design: stitch types, sewing order and travel, checked with a stitch preview, exported for the machine (DST, PES, JEF or EXP).",
         arguments: &[
             PromptArg {
                 name: "subject",
@@ -336,8 +339,15 @@ The trace is real geometry: every traced shape stays selectable and editable.",
             },
             PromptArg { name: "size", description: "The finished design's size", required: false, default: "as drawn", values: Values::Fixed(NONE) },
             PromptArg {
+                name: "format",
+                description: "The machine's file format: dst (Tajima, nearly all machines), pes (Brother), jef (Janome) or exp (Melco)",
+                required: false,
+                default: "dst",
+                values: Values::Fixed(MACHINE_FORMATS),
+            },
+            PromptArg {
                 name: "path",
-                description: "Where to write the DST file",
+                description: "Where to write the design file",
                 required: false,
                 default: "design.dst in the current directory",
                 values: Values::Fixed(NONE),
@@ -366,8 +376,10 @@ Method:
 5. Order the sewing: embroidery.order shows it; embroidery.sortByThread sews each colour
    once; embroidery.reorder moves objects (what is sewn later lies on top). Set the travel
    with embroidery.setup (trim jumps over, sew moves under).
-6. export {path: \"{path}\", format: \"dst\"}. DST keeps no colours: list the thread
-   colours in order from embroidery.info for the operator.
+6. export {path: \"{path}\", format: \"{format}\"} (run_command embroidery.setup
+   {machineFormat: {format}} makes it the panels' Export format too). PES keeps the thread
+   colours; DST and EXP keep none and JEF only palette numbers: list the thread colours in
+   order from embroidery.info for the operator.
 
 Every change is one undo step, and the art stays editable: changing a path changes its
 stitches.",

@@ -5420,3 +5420,8 @@ theme	Appearance	Utseende
 	Puff that won't rise well	Puff som inte reser sig väl
 	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	Puff behöver satin 3 till 10 mm bred över skum: smalare reser den sig inte, bredare håller stygnen inte skummet. Platta objekt som broderas efter att skummet lagts syr igenom det: brodera dem först.
 	Puff	Puff
+
+# Machine file formats (PES, JEF, EXP)
+	Export {format}…	Exportera {format}…
+	Machine Format:	Maskinformat:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Filformatet din maskin läser: DST (Tajima och de flesta maskiner), PES (Brother), JEF (Janome) eller EXP (Melco)

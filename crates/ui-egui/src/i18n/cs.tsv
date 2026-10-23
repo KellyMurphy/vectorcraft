@@ -5483,3 +5483,8 @@ mark-style	Japanese	Japonské
 	Puff that won't rise well	Puff, který se špatně zvedá
 	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	Puff potřebuje satén široký 3 až 10 mm přes pěnu: užší se nezvedne, širší stehy pěnu neudrží. Ploché objekty vyšité po položení pěny ji prošívají: vyšijte je dřív.
 	Puff	Puff
+
+# Machine file formats (PES, JEF, EXP)
+	Export {format}…	Exportovat {format}…
+	Machine Format:	Formát stroje:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Formát souboru, který čte váš stroj: DST (Tajima a většina strojů), PES (Brother), JEF (Janome) nebo EXP (Melco)

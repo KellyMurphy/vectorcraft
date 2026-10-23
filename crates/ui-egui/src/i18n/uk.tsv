@@ -5075,3 +5075,8 @@ lighting	Light	Світло
 	Puff that won't rise well	Puff, що погано піднімається
 	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	Puff потребує атласу шириною від 3 до 10 мм поверх піни: вужчий не піднімається, ширший не тримає піну. Плоскі об’єкти, вишиті після укладання піни, прошивають її: вишийте їх раніше.
 	Puff	Puff
+
+# Machine file formats (PES, JEF, EXP)
+	Export {format}…	Експорт у {format}…
+	Machine Format:	Формат машини:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Формат файлу, який читає ваша машина: DST (Tajima і більшість машин), PES (Brother), JEF (Janome) або EXP (Melco)

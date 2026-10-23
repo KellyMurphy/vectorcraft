@@ -5057,3 +5057,8 @@ theme	Appearance	Giao diện
 	Puff that won't rise well	Thêu phồng khó nổi
 	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	Thêu phồng cần satin rộng 3 đến 10 mm trên mút: hẹp hơn thì không nổi, rộng hơn thì mũi không giữ được mút. Đối tượng phẳng thêu sau khi đặt mút sẽ xuyên qua mút: hãy thêu chúng trước.
 	Puff	Thêu phồng
+
+# Machine file formats (PES, JEF, EXP)
+	Export {format}…	Xuất {format}…
+	Machine Format:	Định dạng máy:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Định dạng tệp máy của bạn đọc được: DST (Tajima và hầu hết các máy), PES (Brother), JEF (Janome) hoặc EXP (Melco)

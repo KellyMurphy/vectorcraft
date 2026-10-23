@@ -1,7 +1,7 @@
 //! Embroidery panel (Window › Embroidery): the selected objects' stitch, chosen from a grid of
 //! stitched pictures, their thread and trims, and the stitch's own settings (fill patterns and
 //! border patterns picked from pictures too); then the design's numbers with Stitch Preview and
-//! Export DST, and the design checker's findings. The sewing order has a panel of its own
+//! Export in the machine's format (DST, PES, JEF, EXP), and the design checker's findings. The sewing order has a panel of its own
 //! (`sew_order`). Reads `embroidery.info`, acts through `embroidery.set` and `embroidery.clear`.
 
 use egui::{Color32, Rect, Sense, Stroke, Ui, vec2};
@@ -869,6 +869,32 @@ fn load_chart(app: &mut VectorcraftApp) {
 }
 
 /// The document's hoop: a common one, none, or its own (loaded); whether the design fits it.
+/// The machine file format the document exports in (DST, PES, JEF, EXP).
+pub(crate) fn machine_format(app: &VectorcraftApp) -> &'static str {
+    app.session.active().map_or(vectorcraft_doc::EmbroiderySetup::DEFAULT_MACHINE_FORMAT, |d| d.doc.embroidery.machine_format())
+}
+
+/// "Export DST…", in the document's machine format.
+pub(crate) fn export_label(app: &VectorcraftApp) -> String {
+    tl!("Export {format}…").replace("{format}", &machine_format(app).to_uppercase())
+}
+
+fn machine_row(app: &mut VectorcraftApp, ui: &mut Ui) {
+    let formats = vectorcraft_doc::EmbroiderySetup::MACHINE_FORMATS;
+    let names: Vec<String> = formats.iter().map(|f| f.to_uppercase()).collect();
+    let current = machine_format(app).to_uppercase();
+    ui.scope(|ui| {
+        widgets::label_row(ui, tl!("Machine Format:"), LABEL_W, |ui| {
+            let opts: Vec<&str> = names.iter().map(String::as_str).collect();
+            if let Some(f) = widgets::dropdown_names(ui, "emb-machine-format", &current, &opts, 150.0).and_then(|i| formats.get(i)) {
+                app.run("embroidery.setup", json!({ "machineFormat": f })).ok();
+            }
+        })
+    })
+    .response
+    .on_hover_text(tl!("The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)"));
+}
+
 fn hoop_row(app: &mut VectorcraftApp, ui: &mut Ui) {
     use vectorcraft_embroidery::hoops;
     let current = app.session.active().and_then(|d| d.doc.embroidery.hoop.as_deref().cloned()).filter(|h| h.unknown.is_none());
@@ -965,6 +991,7 @@ fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
     widgets::section_header(ui, tl!("Design"));
     fabric_row(app, ui);
     hoop_row(app, ui);
+    machine_row(app, ui);
     chart_row(app, ui);
     let n = |k: &str| d[k].as_u64().unwrap_or(0);
     if n("objects") == 0 {
@@ -1021,9 +1048,11 @@ fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
             app.run("view.stitchPreview", json!({})).ok();
         }
         ui.add_space(8.0);
-        let r = ui.add_enabled_ui(n("objects") > 0, |ui| widgets::flat_button(ui, tl!("Export DST…"), 96.0)).inner;
+        let label = export_label(app);
+        let r = ui.add_enabled_ui(n("objects") > 0, |ui| widgets::flat_button(ui, &label, 96.0)).inner;
         if r.clicked() {
-            app.run("file.exportAs", json!({"format": "dst"})).ok();
+            let format = machine_format(app);
+            app.run("file.exportAs", json!({ "format": format })).ok();
         }
     });
     ui.add_space(2.0);

@@ -5095,3 +5095,8 @@ lighting	Light	Luce
 	Puff that won't rise well	Puff che non si solleva bene
 	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	Il puff richiede un satin largo da 3 a 10 mm sulla schiuma: più stretto non si solleva, più largo i punti non tengono la schiuma. Gli oggetti piatti ricamati dopo la posa della schiuma la attraversano: ricamateli prima.
 	Puff	Puff
+
+# Machine file formats (PES, JEF, EXP)
+	Export {format}…	Esporta {format}…
+	Machine Format:	Formato macchina:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Il formato di file letto dalla vostra macchina: DST (Tajima e la maggior parte delle macchine), PES (Brother), JEF (Janome) o EXP (Melco)

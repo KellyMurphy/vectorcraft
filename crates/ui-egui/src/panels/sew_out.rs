@@ -104,11 +104,10 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     }
     ui.add_space(6.0);
     ui.horizontal(|ui| {
-        if widgets::flat_button(ui, tl!("Export DST…"), 96.0)
-            .on_hover_text(tl!("Each section as a design of its own (one file per artboard)"))
-            .clicked()
-        {
-            crate::dialogs::open_export_as(app, Some("dst"), &json!({"useArtboards": true}));
+        let label = super::embroidery::export_label(app);
+        if widgets::flat_button(ui, &label, 96.0).on_hover_text(tl!("Each section as a design of its own (one file per artboard)")).clicked() {
+            let format = super::embroidery::machine_format(app);
+            crate::dialogs::open_export_as(app, Some(format), &json!({"useArtboards": true}));
         }
         if widgets::flat_button(ui, tl!("New Test Sheet…"), 110.0).on_hover_text(tl!("Another test sheet, for another fabric or machine")).clicked()
         {

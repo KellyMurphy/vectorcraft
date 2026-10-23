@@ -5434,3 +5434,8 @@ theme	Appearance	Външен вид
 	Puff that won't rise well	Puff, който не се повдига добре
 	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	Puff изисква сатен с ширина от 3 до 10 mm върху пяната: по-тесен не се повдига, по-широк не задържа пяната. Плоските обекти, бродирани след поставянето на пяната, я пробиват: бродирайте ги първи.
 	Puff	Puff
+
+# Machine file formats (PES, JEF, EXP)
+	Export {format}…	Експортиране на {format}…
+	Machine Format:	Формат на машината:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Файловият формат, който машината ви чете: DST (Tajima и повечето машини), PES (Brother), JEF (Janome) или EXP (Melco)

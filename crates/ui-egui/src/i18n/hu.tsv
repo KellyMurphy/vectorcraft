@@ -5450,3 +5450,8 @@ imageTrace	Outline	Körvonal
 	Puff that won't rise well	Rosszul emelkedő puff
 	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	A puffhoz 3–10 mm széles szatén kell a habon: keskenyebb nem emelkedik, szélesebbnél az öltések nem tartják a habot. A hab felhelyezése után hímzett lapos objektumok átszúrják: hímezze őket előbb.
 	Puff	Puff
+
+# Machine file formats (PES, JEF, EXP)
+	Export {format}…	{format} exportálása…
+	Machine Format:	Gép fájlformátuma:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	A gépe által olvasott fájlformátum: DST (Tajima és a legtöbb gép), PES (Brother), JEF (Janome) vagy EXP (Melco)

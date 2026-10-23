@@ -5428,3 +5428,8 @@ mark-style	Japanese	Japanilainen
 	Puff that won't rise well	Puff, joka ei kohoa hyvin
 	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	Puff tarvitsee vaahdon päälle 3–10 mm leveän satiinin: kapeampi ei kohoa, leveämmän pistot eivät pidä vaahtoa. Litteät objektit, jotka kirjotaan vaahdon asettamisen jälkeen, menevät sen läpi: kirjo ne ensin.
 	Puff	Puff
+
+# Machine file formats (PES, JEF, EXP)
+	Export {format}…	Vie {format}…
+	Machine Format:	Koneen tiedostomuoto:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Tiedostomuoto, jota koneesi lukee: DST (Tajima ja useimmat koneet), PES (Brother), JEF (Janome) tai EXP (Melco)

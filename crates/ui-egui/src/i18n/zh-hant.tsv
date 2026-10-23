@@ -4386,3 +4386,8 @@ lighting	Light	光源
 	Puff that won't rise well	難以鼓起的立體繡
 	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	立體繡需要在泡棉上縫 3 到 10 公釐寬的緞面：更窄不會鼓起，更寬則針跡壓不住泡棉。放好泡棉後縫製的平繡物件會穿透泡棉：請先縫它們。
 	Puff	立體繡
+
+# Machine file formats (PES, JEF, EXP)
+	Export {format}…	轉存 {format}…
+	Machine Format:	機器格式:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	您的繡花機讀取的檔案格式：DST（Tajima 和大多數機器）、PES（Brother）、JEF（Janome）或 EXP（Melco）

@@ -5501,3 +5501,8 @@ swatch	Bright Violet	Felviolet
 	Puff that won't rise well	Puff die slecht opkomt
 	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	Puff vraagt satijn van 3 tot 10 mm breed over schuim: smaller komt het niet op, breder houden de steken het schuim niet. Platte objecten die na het leggen van het schuim worden geborduurd, gaan erdoorheen: borduur ze eerst.
 	Puff	Puff
+
+# Machine file formats (PES, JEF, EXP)
+	Export {format}…	{format} exporteren…
+	Machine Format:	Machineformaat:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Het bestandsformaat dat uw machine leest: DST (Tajima en de meeste machines), PES (Brother), JEF (Janome) of EXP (Melco)

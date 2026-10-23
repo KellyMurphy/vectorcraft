@@ -1,5 +1,5 @@
 //! Embroidery: turns a document's stitched objects into a machine stitch plan, and reads and
-//! writes the DST format embroidery machines take.
+//! writes the formats embroidery machines take (DST, PES, JEF, EXP).
 //!
 //! An object is stitched when it carries [`StitchSettings`] ([`vectorcraft_doc::Node::stitch`]).
 //! [`plan`] walks the visible art in paint order (bottom first) and generates each object's
@@ -8,19 +8,25 @@
 //!
 //! - `generate`: running, bean, satin, fill and manual stitches from geometry.
 //! - `dst`: the Tajima DST format (writer and reader).
+//! - `exp`, `jef`, `pes`: the Melco EXP, Janome JEF and Brother PES formats (writers and readers),
+//!   sharing `machine`'s needle moves.
 //! - `import`: a plan as editable art (one manual-stitch path per run of stitches).
 
 pub mod borders;
 pub mod check;
 mod dst;
+mod exp;
 pub mod extract;
 pub mod fabrics;
 pub mod generate;
 pub mod hoops;
 mod import;
+mod jef;
 pub mod kinds;
+mod machine;
 pub mod motifs;
 pub mod params;
+mod pes;
 pub mod preview;
 pub mod rails;
 pub mod skeleton;
@@ -38,7 +44,10 @@ use vectorcraft_doc::{Appearance, Document, EmbroiderySetup, Node, NodeId, NodeK
 use vectorcraft_geom::{FillRule, PathData};
 
 pub use dst::{DstError, is_dst, read_dst, write_dst};
+pub use exp::{read_exp, write_exp};
 pub use import::to_document;
+pub use jef::{is_jef, read_jef, write_jef};
+pub use pes::{is_pes, read_pes, write_pes};
 
 /// Millimetres per point.
 pub const PT_MM: f64 = 25.4 / 72.0;

@@ -114,6 +114,7 @@ fn full_setup() -> EmbroiderySetup {
         min_stitch: 0.5,
         auto_start: false,
         speed: 800.0,
+        machine_format: "pes".into(),
         order: vec![NodeId(1)],
         patterns: vec![full_pattern()],
         sew_out: Some(Box::new(full_sew_out())),

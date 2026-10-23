@@ -152,7 +152,7 @@ The goal: real artwork digitized, lettered and exported, sewing cleanly on commo
 | **E7.9** Stitch player and inspection (**done**, in the Sew Order panel) | A player in Stitch Preview: play, step and scrub the sewing in order, by stitch or by colour stop; per-object stitch counts and the time to sew at a set speed. | M |
 | **E7.10** Thread charts (**done**; the user chose (b): no maker publishes a chart under redistributable terms yet, so none ships; users load their own) | Threads by brand and number, matched to the nearest colour, shown in the panel and sew order. An open `.vcthreads` chart format (spec + schema). **Needs a decision** (see below) on where chart data may come from. | M |
 | **E7.11** Production worksheet (**done**; its words are English for now) | A printable sheet (PDF through the existing PDF export, and on screen): design picture, size, stitch count, hoop, start point, colour sequence with thread names, numbers and chips, estimated time and thread used, notes. | M |
-| **E7.12** PES, JEF, EXP | Read and write, from published format descriptions, cited in `docs/embroidery.md`. Colours come through where the format keeps them (PES and JEF keep thread colours). Fuzzed readers. Checked by hand against an independent reader, as DST was. | L |
+| **E7.12** PES, JEF, EXP (**done**; PES keeps thread colours in its version 6 list; no maker's palette ships, so PEC and JEF thread numbers are one per distinct colour; checked against pyembroidery, not yet sewn) | Read and write, from published format descriptions, cited in `docs/embroidery.md`. Colours come through where the format keeps them (PES and JEF keep thread colours). Fuzzed readers. Checked by hand against an independent reader, as DST was. | L |
 | **E7.13** Lettering basics | Verify and test type on a path, stitched. Letter spacing and baseline controls checked against stitched type. Minimum safe sizes per stitch kind, which the checker (E7.7) warns about. | S |
 | **E7.14** Automatic puff (3D foam) embroidery (asked for by the user, 2026-10-22; **done**) | A `puff` setting on satin columns, satin shapes and Auto lettering, with the foam's thickness. A puffed object is sewn after a **stop** for placing the foam, as dense satin (spacing around 0.25 mm) with no underlay over the foam and its open ends **capped** (the column closed over the foam's cut edge). Then comes a **perforation**: a running stitch of short stitches (around 1 mm) all the way round each puffed shape, just inside its edge, so the needle penetrations cut the foam and the excess tears away cleanly. Flat objects are sewn before the stop. The checker warns about puff that is too narrow (under about 3 mm) or too wide (over about 10 mm) to rise, and about thin foam. The test sheet gains a puff section. | M |
 
@@ -236,8 +236,16 @@ code), renders compared by eye, and the independent reader for each machine form
 1. **Thread chart data (E7.10).** Brand charts (thread numbers and colours) are the makers' data. Options:
    (a) ship none, and let users load charts they have the right to use; (b) ship charts only where a maker
    publishes them for free use, cited; (c) generic named colours only. (a) plus (c) is the safe default.
-2. **Machine format priority (E7.12).** This plan takes PES, JEF and EXP into Phase 1. Confirm, or name the
-   machines you sew on, so those formats come first.
+   **Decided: (b).**
+2. **Machine format priority (E7.12).** PES, JEF and EXP are done. Name the machines you sew on, so
+   their formats are checked on fabric first, and any other format (VP3, HUS…) is added.
+2a. **Machine thread palettes (E7.12).** PES's PEC section and JEF name threads by number in Brother's and
+   Janome's built-in palettes, so a machine shows its palette's colour for each number. VectorCraft ships no
+   palette (they are the makers' data, as thread charts are), writes a number per distinct colour and keeps
+   PES's real colours in its version 6 list. Options: (a) keep it so; (b) ship the palettes as community
+   measurements published under terms that allow redistribution, cited, if any are found; (c) let users
+   load a palette as a `.vcthreads` chart and match colours to it on export. (a) now, (c) later, is the
+   safe default.
 3. **Fabric gates.** Which machine and fabrics the gate sew-outs use.
 4. **The research catalog.** Add the 62-feature catalog to the repository (or `plan/`) so the P0/P1/P2 mapping
    can be checked item by item.

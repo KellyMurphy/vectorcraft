@@ -5041,3 +5041,8 @@ lighting	Light	광원
 	Puff that won't rise well	잘 솟지 않는 퍼프
 	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	퍼프는 폼 위에 3~10 mm 너비의 새틴이 필요합니다. 더 좁으면 솟지 않고, 더 넓으면 땀이 폼을 잡지 못합니다. 폼을 놓은 뒤 수놓는 평평한 오브젝트는 폼을 뚫으니 먼저 수놓으세요.
 	Puff	퍼프
+
+# Machine file formats (PES, JEF, EXP)
+	Export {format}…	{format} 내보내기…
+	Machine Format:	기계 형식:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	기계가 읽는 파일 형식: DST(Tajima 및 대부분의 기계), PES(Brother), JEF(Janome), EXP(Melco)

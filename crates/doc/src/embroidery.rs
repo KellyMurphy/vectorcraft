@@ -395,6 +395,11 @@ pub struct EmbroiderySetup {
     /// The machine's sewing speed, stitches per minute (for the sewing time estimate).
     #[serde(skip_serializing_if = "is_default_speed")]
     pub speed: f64,
+    /// The machine file format the design is exported in by default (`dst`, `pes`, `jef` or
+    /// `exp`; see [`EmbroiderySetup::MACHINE_FORMATS`]). A format a newer VectorCraft named is kept
+    /// as written, and DST is used in its place.
+    #[serde(skip_serializing_if = "is_dst")]
+    pub machine_format: String,
     /// The order objects are sewn in: these first, in this order, then any other stitched objects
     /// in paint order (empty: paint order). Ids of objects no longer there are ignored.
     #[serde(skip_serializing_if = "Vec::is_empty")]
@@ -436,6 +441,7 @@ impl Default for EmbroiderySetup {
             min_stitch: Self::DEFAULT_MIN_STITCH,
             auto_start: true,
             speed: Self::DEFAULT_SPEED,
+            machine_format: Self::DEFAULT_MACHINE_FORMAT.to_string(),
             order: vec![],
             patterns: vec![],
             sew_out: None,
@@ -446,6 +452,10 @@ impl Default for EmbroiderySetup {
             extra: Default::default(),
         }
     }
+}
+
+fn is_dst(v: &String) -> bool {
+    v == EmbroiderySetup::DEFAULT_MACHINE_FORMAT
 }
 
 fn is_default_speed(v: &f64) -> bool {
@@ -741,6 +751,10 @@ impl EmbroiderySetup {
     pub const DEFAULT_OVERLAP: f64 = 0.5;
     pub const DEFAULT_MIN_STITCH: f64 = 0.3;
     pub const DEFAULT_SPEED: f64 = 600.0;
+    pub const DEFAULT_MACHINE_FORMAT: &str = "dst";
+    /// The machine file formats a design can be exported in by default: Tajima DST, Brother PES,
+    /// Janome JEF, Melco EXP.
+    pub const MACHINE_FORMATS: [&str; 4] = ["dst", "pes", "jef", "exp"];
     /// Allowed machine speeds, stitches per minute.
     pub const SPEED: std::ops::RangeInclusive<f64> = 100.0..=1500.0;
     /// Allowed shortest stitches, mm.
@@ -758,6 +772,11 @@ impl EmbroiderySetup {
         let own = if self.min_stitch.is_finite() { clamp(self.min_stitch) } else { Self::DEFAULT_MIN_STITCH };
         let fabric = self.fabric.as_ref().filter(|f| f.unknown.is_none()).and_then(|f| f.min_stitch).filter(|v| v.is_finite()).map(clamp);
         fabric.map_or(own, |f| own.max(f))
+    }
+
+    /// The machine format to export in: the document's, or DST for one this version doesn't know.
+    pub fn machine_format(&self) -> &'static str {
+        Self::MACHINE_FORMATS.iter().find(|f| **f == self.machine_format).copied().unwrap_or(Self::DEFAULT_MACHINE_FORMAT)
     }
 
     /// The machine speed to estimate with, stitches per minute.

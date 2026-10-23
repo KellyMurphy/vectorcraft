@@ -91,6 +91,9 @@ pub fn detect(name: &str, bytes: &[u8]) -> Option<&'static Format> {
     if vectorcraft_embroidery::is_dst(bytes) {
         return format("dst");
     }
+    if vectorcraft_embroidery::is_pes(bytes) {
+        return format("pes");
+    }
     if let Some(kind) = vectorcraft_metafile::sniff(bytes) {
         return format(kind.id());
     }
@@ -102,6 +105,11 @@ pub fn detect(name: &str, bytes: &[u8]) -> Option<&'static Format> {
     }
     if clipboard::looks_like_svg(&String::from_utf8_lossy(&bytes[..bytes.len().min(4096)])) {
         return format("svg");
+    }
+    // JEF and EXP have no magic bytes: a JEF header is checked for agreeing fields (else its
+    // name decides), EXP goes by its name alone.
+    if by_name.is_none() && vectorcraft_embroidery::is_jef(bytes) {
+        return format("jef");
     }
     by_name
 }
@@ -253,8 +261,8 @@ pub fn load_with(name: &str, bytes: &[u8], opts: &LoadOptions) -> Result<Loaded>
             let (doc, warnings) = super::dxfimport::import(bytes, &opts.dxf)?;
             (doc, warnings, false)
         }
-        "dst" => {
-            let (doc, warnings) = super::embroidery::import(&title, bytes)?;
+        "dst" | "pes" | "jef" | "exp" => {
+            let (doc, warnings) = super::embroidery::import(format.id, &title, bytes)?;
             (doc, warnings, false)
         }
         "emf" | "wmf" => {

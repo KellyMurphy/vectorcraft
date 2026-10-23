@@ -5319,3 +5319,8 @@ lighting	Light	光源
 	Puff that won't rise well	难以鼓起的立体绣
 	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	立体绣需要在泡棉上缝 3 到 10 毫米宽的缎面：更窄不会鼓起，更宽则针迹压不住泡棉。放好泡棉后缝制的平绣对象会穿透泡棉：请先缝它们。
 	Puff	立体绣
+
+# Machine file formats (PES, JEF, EXP)
+	Export {format}…	导出 {format}…
+	Machine Format:	机器格式:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	您的绣花机读取的文件格式：DST（Tajima 和大多数机器）、PES（Brother）、JEF（Janome）或 EXP（Melco）

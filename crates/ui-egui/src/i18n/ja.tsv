@@ -5136,3 +5136,8 @@ lighting	Light	ライト
 	Puff that won't rise well	うまく立ち上がらないパフ
 	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	パフにはフォームの上に幅 3〜10 mm のサテンが必要です。狭いと立ち上がらず、広いとステッチがフォームを押さえられません。フォームを置いた後に縫う平らなオブジェクトはフォームを貫くので、先に縫ってください。
 	Puff	パフ
+
+# Machine file formats (PES, JEF, EXP)
+	Export {format}…	{format} を書き出し…
+	Machine Format:	ミシンの形式:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	お使いのミシンが読むファイル形式: DST (Tajima とほとんどのミシン)、PES (Brother)、JEF (Janome)、EXP (Melco)

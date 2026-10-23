@@ -5481,3 +5481,8 @@ theme	Appearance	Apparence
 	Puff that won't rise well	Relief 3D qui gonfle mal
 	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	Le relief 3D demande un satin de 3 à 10 mm de large sur la mousse : plus étroit il ne gonfle pas, plus large ses points ne tiennent pas la mousse. Les objets plats brodés après la pose de la mousse la traversent : brodez-les d'abord.
 	Puff	Relief 3D
+
+# Machine file formats (PES, JEF, EXP)
+	Export {format}…	Exporter en {format}…
+	Machine Format:	Format de la machine :
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Le format de fichier que lit votre machine : DST (Tajima et la plupart des machines), PES (Brother), JEF (Janome) ou EXP (Melco)
