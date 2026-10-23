@@ -196,19 +196,257 @@ stitch length, thread and needle size).
 
 ## Phase 2: a productive digitizing studio (P1) — E8
 
-| Step | What | Size |
-|---|---|---|
-| **E8.1** Embroidery fonts | The planned E5 sprint: an open font format (spec + schema), a font editor (one artboard per letter, metrics, kerning, a live sample line), and type set in embroidery fonts sewn from their letters. Fonts live in craft-fonts. | XL |
-| **E8.2** Monograms and text effects | Monogram layouts (2 and 3 letters, sizes and positions), text on arcs and in envelopes, all as live type that stays editable. | M |
-| **E8.3** Fill families | **Contour** (rings following the outline), **spiral**, **radial/circular** (around a set centre), **guided** (rows bending along guide lines drawn in the object), **meander/stipple** (a running stitch wandering through the area without crossing itself). Each one is a kind module (E6.3) with its own parameters (E6.2). | L |
-| **E8.4** Motif fills and extraction | The planned E5 sprint: stitched motif tiles filling a shape, motif extraction from a DST region (two repeat offsets), and an open `.vcmotif` format (spec + schema). User carving patterns use the same format. | L |
-| **E8.5** Library folders | User folders for border patterns, motifs, fonts, thread charts, fabric profiles and hoops, listed in the panels (on the existing swatch-library folder support), shared by copying files. | M |
-| **E8.6** Auto-digitize | Image Trace → regions → a stitch kind for each region by its shape and size (extending Auto) → sequence (E7.5) → check (E7.7). **Click-to-fill** and **click-to-outline** on a traced or placed image, or on overlapping paths (as Live Paint finds regions). | XL |
-| **E8.7** Density adviser | The checker's density map drawn over the design, with a suggested fix per finding (lower density, add trims, remove the overlap), applied in one click. | M |
-| **E8.8** Appliqué and cut files | The planned E5 sprint: placement line, tack-down and cover from a shape, with stops; nested cutter export (SVG/DXF; Brother FCM only from a public specification). | L |
+The goal: the work a serious hobbyist or small shop does every day — lettering in proper embroidery fonts,
+monograms, appliqué patches, decorative fills, turning a customer's logo into stitches — done in
+VectorCraft without hand-placing stitches, with the user's own fonts, motifs and patterns kept in folders and
+shared as open files.
 
-**Gate G2 (fabric):** a lettering sample in an embroidery font at 5–30 mm, each new fill family on a
-10 × 10 cm swatch, an auto-digitized logo with no hand fixes, and an appliqué patch.
+| Step | What | Size | Needs |
+|---|---|---|---|
+| **E8.5** Library folders | User folders for every embroidery library type, listed in the panels, shared by copying files. | M | — |
+| **E8.8** Appliqué and cut files | Placement, tack-down and cover from a shape, with stops; nested cutter export. | L | — |
+| **E8.1** Embroidery fonts | An open font format, type set in it, and a font editor. | XL | E8.5 |
+| **E8.2** Monograms and text effects | Monogram layouts, arc and envelope text, stitched as live type. | M | E8.1 for embroidery fonts (works with outline fonts without it) |
+| **E8.4** Motif fills and extraction | Stitched tiles filling a shape, extraction from a design, `.vcmotif`, user carving patterns. | L | E8.5 |
+| **E8.3** Fill families | Contour, spiral, radial, guided, meander and stipple fills. | L | G1 |
+| **E8.7** Density adviser | The density map over the design, with one-click fixes. | M | — |
+| **E8.6** Auto-digitize | Traced art to stitch objects; click-to-fill and click-to-outline. | XL | E8.3 helps (more kinds to pick from), E8.7 |
+
+### Order of work
+
+The table is in the order of work. E8.5 comes first because fonts, motifs and every later library need
+somewhere to live. Appliqué is next: it is self-contained, uses only stitch kinds that already exist, and its
+patch is a G2 item that can be sewn early. Fonts are the largest step and the one the user asked for first.
+Fill families wait for G1, as the ground rules say: no new fill families until underlay, compensation and
+trims have passed on fabric. E8.7 and E8.6 come last because auto-digitizing leans on everything before it
+(more stitch kinds to pick from, the checker to judge the result, the adviser to fix it). E10 (compensation)
+runs alongside once G1's numbers are in.
+
+Each step below is split into commits (E8.na, E8.nb…), each shipping whole under the ground rules (command,
+panel, translations, guide, tests, fuzzing for new input, spec + schema + drift test for new formats,
+MCP-ready).
+
+### E8.5 Library folders (M)
+
+Today border patterns, fabrics, hoops and thread charts are loaded into a document one file at a time
+(`embroidery.patterns.load`, `.vcfabric`, `.vchoop`, `.vcthreads`). Swatch and graphic-style libraries
+already have a user library folder (`crates/engine/src/cmd/swatchlib.rs`: `Libraries::set_user_dir`,
+rescanned at start, User Defined in the library panel). Embroidery reuses that model.
+
+- **E8.5a Folders and scanning.** One embroidery library folder under the user library folder, with a
+  subfolder per type: `borders/`, `motifs/`, `fonts/`, `threads/`, `fabrics/`, `hoops/`. Scanned at start
+  and on `embroidery.library.rescan`; each file is read with its type's reader, size-capped, and a bad file
+  is listed with its error instead of stopping the scan. Commands: `embroidery.library.list {type?}` →
+  entries with id, name, type, author, licence and path, `embroidery.library.rescan`,
+  `embroidery.library.add {path | from document id}` (copies a file in, never replacing one: a clash gets a
+  number, as swatch libraries do), `embroidery.library.reveal`. Web: no folder; the list is the built-in
+  entries plus files loaded this session (the same as swatch libraries on the web).
+- **E8.5b Panels.** The Embroidery panel's pickers (border patterns, motifs, fabric, hoop, thread chart) list
+  three groups: built-in, library, in this document. Picking a library entry copies it into the document
+  (`Document.embroidery`), so files still open anywhere; the document copy is used from then on, and a
+  newer library version is offered as an update, not applied silently. An "Add to Library…" item on
+  document entries.
+- **Tests.** Scanning a folder with good, bad, oversized and duplicate files; the copy-into-document rule;
+  a document that names a library entry opens without the library; `cargo xtask assets` is unaffected
+  (user folders are outside the repo). MCP: the list and add commands in the guide table, a round trip in
+  `tests_embroidery`.
+
+### E8.8 Appliqué and cut files (L)
+
+Appliqué sews a piece of fabric on instead of filling an area with thread. Publicly documented sequence:
+a placement line, a stop to lay the fabric, a tack-down, a stop to trim the fabric, and a cover over the
+raw edge.
+
+- **E8.8a Stops as a setting.** Puff (E7.14) already writes a stop. Generalise it into `stopBefore`
+  (on any object: "stop, then sew this") with a message for the worksheet ("Lay the fabric", "Trim the
+  fabric"). Written as a colour change to the same thread in DST/EXP and as a stop in PES/JEF where the
+  format has one. The sew order, player, worksheet and checker show stops.
+- **E8.8b Appliqué from a shape.** `embroidery.applique {ids?, cover: "satin"|"zigzag"|"bean"|"none", width,
+  tackDown: "running"|"zigzag"|"doubleRunning", inset, allowance}` turns each closed shape into a group of
+  three objects in sewing order, sharing one thread: placement line (running on the outline, then stop
+  "Lay the fabric"), tack-down (inset a little inside the outline, then stop "Trim the fabric"), cover
+  (satin centred on the outline, wide enough to hide the cut edge, auto underlay off by default over
+  fabric). The group remembers it is an appliqué (`appliqué` in `StitchSettings` on the group), so editing
+  the shape and re-running updates all three, and the panel shows an Appliqué section (cover, width,
+  tack-down, inset, fabric colour for the preview). Stitch Preview draws the fabric piece in its colour
+  under the cover. Several appliqué pieces in one design are sequenced so all placement lines come first
+  where they don't overlap (one stop instead of one per piece), as an option.
+- **E8.8c Cut files.** `embroidery.cutFile {ids?, allowance (mm, default 0), gap (3 mm), mat: "12x12in"|
+  "12x24in"|{w,h}, rotate: "none"|"90"|"any", flip, format: "svg"|"dxf", path}` exports the pieces'
+  outlines (grown by the allowance) **nested**: packed without overlap, the gap apart, onto as few mats as
+  fit, each mat a page (SVG: one file per mat or one file with a group per mat; DXF: one file per mat).
+  Nesting from published algorithms (bottom-left placement over no-fit polygons, cited when implemented),
+  with a time budget in `vectorcraft-cli perf`. Pieces that don't fit any mat are reported, not dropped.
+  The SVG is plain paths in mm, which CanvasWorkspace, Cricut Design Space and Silhouette Studio read;
+  Brother's FCM only from a public specification (see the decisions below).
+- **Checks.** The checker warns about a cover narrower than the tack-down inset plus the fabric's fray
+  (raw edge showing), a piece too small to handle (under about 10 mm), and an appliqué missing its stops.
+  The test sheet gains an appliqué section (one patch, three cover widths).
+- **Tests.** The sequence's order, stops and threads; editing the shape re-makes the parts; nesting
+  never overlaps and respects the gap (property test over random polygons); every piece is placed or
+  reported; SVG/DXF output read back.
+
+### E8.1 Embroidery fonts (XL)
+
+Lettering hand-digitized for embroidery: crisp small type and heavy display type where Auto falls back
+to fill today. The format is decided (2026-10-12): a self-contained file, letters stored as stitch
+objects (shapes with settings), not needle points, so letters scale and are re-sewn at each size.
+
+- **E8.1a The format: `.vcfont`.** JSON, versioned, spec in `docs/formats/vcfont.md` with a schema and a
+  drift test (as `.vcborder`). Contents: `name`, `family`, `style`, `author`, `license` (SPDX or text),
+  `source` (a font it was digitized from, information only), `version`; metrics in font units with
+  `unitsPerEm`, `ascender`, `descender`, `capHeight`, `xHeight`, `baseline`; `sizes` (the recommended
+  range in mm of cap height, e.g. 5–25); `glyphs`, each with `char` (one or more Unicode scalars, so
+  ligatures fit), `advance`, and `objects` (paths in font units, y up, each with a full `StitchSettings`
+  and an order); `kerning` pairs; optional `entry`/`exit` points per glyph so letters can join without a
+  trim (script fonts). Unknown members are kept, as in the other formats. Data types live in the doc crate
+  (serde), the reader is fuzzed (`format/tests/prop_format.rs`), sizes and counts are capped.
+- **E8.1b Setting type in an embroidery font.** Embroidery fonts appear in the type controls in their own
+  group (the Character panel's font menu, `type.fonts` with `kind: "embroidery"`). A type object set in one
+  is laid out by the font's advances and kerning plus the object's tracking, leading, alignment, baseline
+  shift and type on a path (reusing `vectorcraft_text::layout`'s line and path logic with the
+  embroidery font's metrics in place of an outline font's). On screen, letters are drawn from their
+  objects' outlines (as filled shapes), so the type stays live and editable. When sewn, each letter's
+  objects are scaled to the size, their stitches generated by the ordinary kinds (density, underlay and
+  compensation stay in mm, not scaled), and letters joined left to right, using entry/exit points where
+  given, else the nearest-end rule (E7.5) with a trim over the jump limit. A character the font lacks is
+  sewn from a fallback outline font with Auto and reported. The checker warns below or above the font's
+  size range.
+- **E8.1c The font editor.** `embroidery.font.new {name, from?: installed font, chars?: "A-Za-z0-9…"}`
+  makes a font document: one artboard per letter, with guides for baseline, x-height, cap height,
+  ascender and descender and the advance as the artboard's right edge (dragged to change it). With `from`,
+  each artboard gets the installed font's outline on a locked template layer as a tracing guide (not saved
+  in the font, so the font contains only the user's own work). The user digitizes with the ordinary tools
+  and stitch types (satin between rails is the main tool for letters). A **Font** panel: metrics, size
+  range, licence fields, a kerning table (pairs, with a pair picked by clicking two letters in the sample),
+  and a **sample line** that sets a test string in the font being edited, live, with Stitch Preview.
+  `embroidery.font.save {path}` writes the `.vcfont` (artboards → glyphs), `embroidery.font.open` opens
+  one back as a font document. Validation on save: letters with no objects, objects outside the
+  metrics, missing licence.
+- **E8.1d A starter font.** At least one embroidery font, made with the editor by us (original work, or
+  traced from an OFL font with the OFL's renaming and licence carried), published in craft-fonts with its
+  licence; VectorCraft builds and runs without it (`CRAFT_FONTS` empty → no starter font, tests skip). A
+  satin sans for 5–25 mm is the most useful first one. **Needs a decision** (below).
+- **Tests.** Format round trip and drift; fuzzed reader; layout (advances, kerning, tracking, on a path)
+  against hand-computed positions; a letter sewn at 5 and 25 mm has the same density in mm; the editor's
+  save/open round trip; a test font generated in code for tests, so nothing depends on craft-fonts.
+  MCP: the format spec as `vectorcraft://spec/vcfont`, font commands in the guide table, the prompt says how
+  to pick an embroidery font.
+
+### E8.2 Monograms and text effects (M)
+
+- **E8.2a Arc and envelope text.** Check that type in an envelope (Object › Envelope Distort,
+  `crates/engine/src/cmd/live.rs`) and type with a warp effect is sewn from its distorted outlines, and
+  fix it where it isn't (the sewer must use the live result, not the undistorted letters). Add
+  `embroidery.textArc {radius, top|bottom, spacing}`: type on a circle arc with the letters upright on its
+  outside or inside, as a preset over type on a path, so badges get curved lettering in one step.
+  Embroidery-font type follows the same distortions (its letters' objects are distorted as shapes,
+  before sewing).
+- **E8.2b Monograms.** `embroidery.monogram {letters: "ABC", layout, font?, frame?}` with layouts
+  generated in code: three letters with a large centre initial, three equal, two letters, stacked, in a
+  circle, in a diamond. The result is a group of live type objects positioned by the layout (each still
+  editable), plus an optional frame from the border patterns or a satin ring. The panel's Monogram section
+  re-lays out the group when its letters or layout change. Layouts are data (a small list of letter boxes
+  per layout), so more can be added without code.
+- **Tests.** Envelope and warp type sews from the distorted outline; arc text positions; every monogram
+  layout keeps letters inside their boxes and stays editable; small monograms trigger the size warning.
+
+### E8.4 Motif fills and extraction (L)
+
+Carved motifs (E3) shape a tatami fill's needle points along lines. **Motif fills** are different: a small
+stitched tile (a star, a flower, a cross) repeated across the area as stitches of its own, the open
+fabric showing between — a light, decorative fill.
+
+- **E8.4a The format: `.vcmotif`.** Like `.vcborder`, for a tile with two repeat offsets: `id`, `name`,
+  author, licence, source, `size` (mm), `offsets` (the two lattice vectors), `parts` (as `PatternPart`:
+  running, bean, satin, with points), and `kind: "stitched" | "carve"`. A **carve** motif is line art used as
+  a carved pattern (as today's five built-in ones, which become `.vcmotif` data generated in code), so user
+  carving patterns use the same file. Spec, schema, drift test; stored in the document like border
+  patterns, listed from the library folder (E8.5).
+- **E8.4b The Motif Fill stitch.** `StitchKind::MotifFill` (a kind module): tiles laid on the lattice over the
+  shape at a set `motif`, `motifSize`, `angle` and `motifSpacing`, each whole tile inside the shape sewn
+  (tiles cut by the edge are left out, or clipped where the motif allows), joined row by row with travel
+  that runs inside the shape (and under the tiles where it can, as E7.5's hidden travel does), trims where
+  travel would be too long. An optional outline running stitch. Starters generated in code (stars,
+  flowers, crosses, hearts, dots).
+- **E8.4c Extraction.** Extend border extraction (`crates/embroidery/src/extract.rs`, one offset) to two:
+  select a region of an opened design's stitches; find the two shortest independent offsets at which the
+  stitches lie on a shifted copy of themselves (searched over the region's autocorrelation, then refined
+  as E5.5 does); show the lattice on the canvas with handles to adjust it; cut one tile, joining its edges
+  so neighbours meet without gaps or doubled stitches; save as `.vcmotif` with its source recorded. Only
+  designs the user has the right to reuse.
+- **Tests.** Format round trip and drift; tiles stay inside the shape; the joins are within the trim
+  limit; extraction finds known lattices in code-generated designs (square, brick, hexagonal, with DST
+  rounding noise) to 0.1 mm; the carve motifs give the same stitches as before the move to data.
+
+### E8.3 Fill families (L) — after G1
+
+Each is a kind module (E6.3) with its own parameters (E6.2), auto underlay (E7.1), compensation (E7.2),
+overlap removal (E7.4) and checker support. One commit each:
+
+- **E8.3a Contour fill.** Rings following the outline, inset by the spacing (offsets of the shape, from
+  `pathops`), joined ring to ring at the nearest points so it sews as one run; holes get their own rings
+  merging into the outer ones. Setting: `spacing`, `length`, `join: "spiral"|"rings"`.
+- **E8.3b Spiral fill.** The contour rings joined into one continuous spiral (each ring blended into the
+  next over one turn), no visible join. Best on round and near-round shapes; the checker suggests contour
+  where the spiral would distort.
+- **E8.3c Radial and circular fill.** Radial: rows from a centre point outward (a handle on the canvas,
+  default the centroid), spaced by angle so the spacing at the outer edge matches `spacing` and
+  shortened rows inserted near the centre so it doesn't pile up. Circular: concentric circles around the
+  centre clipped to the shape (rows as in tatami, but curved).
+- **E8.3d Guided fill.** Rows that bend along guide lines drawn inside the object (open subpaths of the
+  compound path that cross the shape, as rails' rungs do): each row's direction is blended from the
+  nearest guides, so rows flow around curves (petals, hair, ribbons). Without guides it is a tatami fill.
+- **E8.3e Meander and stipple.** A running stitch wandering through the area without crossing itself.
+  Stipple: a random, smooth, space-filling path (from a spanning-tree walk over a grid inside the shape,
+  smoothed, seeded so it's repeatable); meander: the same with longer, flowing curves (a larger grid,
+  more smoothing). Settings: `spacing` (how close the path comes to itself), `length`, `seed`. Light
+  fills for quilting looks and backgrounds; the checker knows they don't cover.
+- **Tests.** Each fill sews a set of plain and awkward shapes (thin, holed, concave, many parts) within
+  the shape, with no stitch over the limits and no self-crossing where the kind promises none; repeatable
+  by seed; perf budget for a large meander. The test sheet gains a section per fill (the G2 swatches).
+
+### E8.7 Density adviser (M)
+
+The checker's density map (`crates/embroidery/src/check.rs`, the density rule's cells) drawn over the
+design as a heat overlay in Stitch Preview (`view.stitchDensity`), with a legend in needle holes per
+mm². Each density finding gets a suggested fix the user can apply in one click (and `embroidery.fix
+{finding}` for agents): lower the top object's density to a value that clears the limit, turn on overlap
+removal for the lower object, swap a fill's underlay for a lighter one, add a trim before a long travel,
+or drop a duplicated layer. A fix is an ordinary command, so it's undoable, and the adviser re-checks
+after it. Tests: each fix clears its finding on a code-generated design and doesn't create a new one.
+
+### E8.6 Auto-digitize (XL)
+
+Turning a customer's logo into stitches in one step, then fixing what's left by hand.
+
+- **E8.6a Traced art to stitch objects.** `embroidery.digitize {id: image or traced group, colors?, minArea,
+  detail}`: Image Trace (logo mode, `crates/engine/src/cmd/buildcmds.rs`) makes flat-colour regions; small
+  specks under `minArea` merge into neighbours; each region gets a stitch kind by its shape and size
+  (extending Auto's choice: thin → running or bean, narrow → satin shape, wide → fill with border, and the
+  E8.3 fills where they suit); colours become threads (matched to a thread chart when one is set); the
+  objects are sequenced (E7.5: by thread, then nearest), overlaps removed (E7.4), and checked (E7.7). The
+  result is ordinary stitch objects in a group, fully editable. A report lists what was merged or
+  dropped.
+- **E8.6b Click-to-fill and click-to-outline.** A tool (with its own cursor, per the cursor rule): click
+  inside any closed area formed by paths, a traced result or overlapping shapes — the regions Live Paint
+  finds (`pathops::pathfinder::regions`) — and it becomes a stitch object (fill, or Auto) in the current
+  thread; Alt-click outlines it (running or satin). Image areas under the click are traced on the fly at the
+  current colour tolerance. Each click is one undo step.
+- **E8.6c Quality pass.** Run the checker and adviser (E8.7) on the result and apply the safe fixes; a test
+  corpus of logos generated in code (flat shapes, text, thin lines, gradients refused) with a score
+  (trims, stitch count, findings) tracked so changes can't make it worse.
+- **Tests.** Region counts and kinds on code-generated logos; the result sews with no error findings;
+  repeatable; perf budget for a 1000 × 1000 px logo.
+
+### Gate G2 (fabric)
+
+Sew on woven and knit, using the E6.6 kit's new sections: a lettering sample in an embroidery font at
+5, 10, 20 and 30 mm; each new fill family on a 10 × 10 cm swatch; a motif fill swatch; a monogram; an
+auto-digitized logo with no hand fixes; an appliqué patch with its cut piece from the cut file. Pass:
+lettering legible at 5 mm with clean satin; fills cover (or, for meander, stipple and motif fills, lie
+flat) with no puckering beyond the tatami swatch; the appliqué piece fits its placement line within
+1 mm and the cover hides the raw edge; the logo sews without thread breaks.
 
 ## Phase 3: advanced production and specialties (P2) — E9
 
@@ -249,9 +487,19 @@ code), renders compared by eye, and the independent reader for each machine form
 3. **Fabric gates.** Which machine and fabrics the gate sew-outs use.
 4. **The research catalog.** Add the 62-feature catalog to the repository (or `plan/`) so the P0/P1/P2 mapping
    can be checked item by item.
+5. **The starter embroidery font (E8.1d).** (a) ship none, users digitize their own; (b) we digitize one
+   original font with the editor; (c) we digitize one traced from an OFL font, renamed and under the OFL,
+   in craft-fonts. (b) or (c) is needed for G2's lettering sample.
+6. **Brother FCM (E8.8c).** No public FCM specification is known to us. Options: (a) SVG only, imported
+   through CanvasWorkspace (the safe default); (b) FCM if the user finds a public specification. (FCM won't
+   be worked out from Brother's software or files, by the clean-room rule.)
+7. **Appliqué cover default (E8.8b).** Satin (the common choice) or zigzag (lighter, quicker) as the
+   default cover, and whether several pieces share their stops by default.
+8. **Order (E8).** E8's order of work puts fonts after library folders and appliqué. If lettering matters most,
+   E8.1 can go first and E8.5 follow (fonts would then load one file at a time, as border patterns do now).
 
 ## Order of work
 
 E5.5 and E5.6 done → E6.1–E6.6 → E7 (E7.1–E7.3 first, as the quality basics; E7.12 formats can run in
-parallel) → G1 → E8, with E10 (E10.1–E10.2 first) alongside → G2 and GC → E9 → G3. `ROADMAP.md`'s E row and `docs/embroidery.md` are updated as each step
+parallel) → G1 → E8 (in the order of its table: E8.5, E8.8, E8.1, E8.2, E8.4, then E8.3 after G1, E8.7, E8.6), with E10 (E10.1–E10.2 first) alongside → G2 and GC → E9 → G3. `ROADMAP.md`'s E row and `docs/embroidery.md` are updated as each step
 lands.
