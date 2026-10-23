@@ -178,6 +178,7 @@ pub const ICON_PANEL_GROUPS: &[&[&str]] = &[
     &["character", "paragraph", "glyphs"],
     &["history", "actions", "info", "navigator"],
     &["variables"],
+    &[crate::panels::embroidery::ID],
 ];
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

@@ -1131,6 +1131,16 @@ mod tests {
 
     use super::*;
 
+    /// The panel has an icon in the strip beside the dock (both the classic column and the
+    /// docking rail draw `ICON_PANEL_GROUPS`), so it opens with one click.
+    #[test]
+    fn the_panel_has_an_icon_in_the_dock_strip() {
+        assert!(crate::state::ICON_PANEL_GROUPS.iter().any(|g| g.contains(&ID)), "the Embroidery panel has no icon in the strip");
+        let row = crate::state::ICON_PANELS.iter().find(|p| p.0 == ID).unwrap();
+        assert_eq!(row.1, "Embroidery");
+        assert!(crate::icons::exists(row.2), "{} is not a bundled icon", row.2);
+    }
+
     #[test]
     fn hex_threads_parse() {
         assert_eq!(rgb("#0a0B0c"), Some([10, 11, 12]));
