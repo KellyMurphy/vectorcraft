@@ -496,6 +496,9 @@ gate G1.
     - **A font editor:** a document with one artboard per letter (a new font can start from an installed
       font's outlines on a template layer, as a tracing guide that isn't saved in the font), digitized with
       the ordinary tools and stitch types, metrics and kerning set on it, a live sample line to test words, saved straight to the format.
+    - **Ink/Stitch fonts:** Ink/Stitch's embroidery font folders (`font.json` and glyph-layer SVGs) open
+      as embroidery fonts and convert to the open format, with their licence carried over (plan step
+      E8.1e, from Ink/Stitch's public documentation).
     - **Using them:** embroidery fonts appear in the type controls; type set in one is sewn from its letters.
       Like other fonts they live in [craft-fonts](https://github.com/storytold/craft-fonts), not in this
       repository, each with its licence.
