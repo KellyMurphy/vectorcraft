@@ -5261,6 +5261,9 @@ theme	Appearance	Utseende
 	Embroidery Libraries	Broderibibliotek
 	Add to Embroidery Library…	Lägg till i broderibibliotek…
 	Rescan Embroidery Libraries	Läs in broderibibliotek igen
+	More Settings ({n})	Fler inställningar ({n})
+	{n} problems found: see Design	{n} problem hittades: se Design
+@msg	Loaded embroidery font {_1}	Broderiteckensnittet {_1} har lästs in
 	Add Font Folder…	Lägg till teckensnittsmapp…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	En mapp med broderiteckensnitt att visa här, till exempel Ink/Stitch-teckensnittsmappar du har installerat; de läses där de ligger
 	Embroidery Font Folders…	Mappar för broderiteckensnitt…

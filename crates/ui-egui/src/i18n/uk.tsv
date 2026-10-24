@@ -4887,6 +4887,9 @@ lighting	Light	Світло
 	Embroidery Libraries	Бібліотеки вишивки
 	Add to Embroidery Library…	Додати до бібліотеки вишивки…
 	Rescan Embroidery Libraries	Повторно сканувати бібліотеки вишивки
+	More Settings ({n})	Інші налаштування ({n})
+	{n} problems found: see Design	Знайдено проблем: {n} — див. «Дизайн»
+@msg	Loaded embroidery font {_1}	Завантажено шрифт для вишивки {_1}
 	Add Font Folder…	Додати теку шрифтів…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Тека шрифтів для вишивки, що показуються тут, наприклад установлені вами теки шрифтів Ink/Stitch; вони читаються там, де лежать
 	Embroidery Font Folders…	Теки шрифтів для вишивки…

@@ -4881,6 +4881,9 @@ effect	Regular	Regelmäßig
 	Embroidery Libraries	Stickereibibliotheken
 	Add to Embroidery Library…	Zur Stickereibibliothek hinzufügen…
 	Rescan Embroidery Libraries	Stickereibibliotheken neu einlesen
+	More Settings ({n})	Weitere Einstellungen ({n})
+	{n} problems found: see Design	{n} Probleme gefunden: siehe Design
+@msg	Loaded embroidery font {_1}	Stickschrift {_1} geladen
 	Add Font Folder…	Schriftordner hinzufügen…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Ein Ordner mit Stickschriften, die hier aufgeführt werden, etwa installierte Ink/Stitch-Schriftordner; sie werden dort gelesen, wo sie liegen
 	Embroidery Font Folders…	Ordner für Stickschriften…

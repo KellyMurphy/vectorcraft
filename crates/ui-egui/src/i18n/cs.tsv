@@ -5292,6 +5292,9 @@ mark-style	Japanese	Japonské
 	Embroidery Libraries	Knihovny výšivek
 	Add to Embroidery Library…	Přidat do knihovny výšivek…
 	Rescan Embroidery Libraries	Znovu prohledat knihovny výšivek
+	More Settings ({n})	Další nastavení ({n})
+	{n} problems found: see Design	Nalezené problémy: {n} – viz Návrh
+@msg	Loaded embroidery font {_1}	Načteno vyšívací písmo {_1}
 	Add Font Folder…	Přidat složku písem…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Složka vyšívacích písem k zobrazení zde, například složky písem Ink/Stitch, které jste nainstalovali; čtou se tam, kde jsou
 	Embroidery Font Folders…	Složky vyšívacích písem…

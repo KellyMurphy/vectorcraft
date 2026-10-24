@@ -5275,6 +5275,9 @@ theme	Appearance	Външен вид
 	Embroidery Libraries	Библиотеки за бродерия
 	Add to Embroidery Library…	Добавяне към библиотека за бродерия…
 	Rescan Embroidery Libraries	Повторно сканиране на библиотеките за бродерия
+	More Settings ({n})	Още настройки ({n})
+	{n} problems found: see Design	Намерени проблеми: {n} – вижте „Дизайн“
+@msg	Loaded embroidery font {_1}	Зареден е шрифт за бродерия {_1}
 	Add Font Folder…	Добавяне на папка с шрифтове…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Папка с шрифтове за бродерия, които да се показват тук, например инсталирани от вас папки с шрифтове на Ink/Stitch; четат се там, където са
 	Embroidery Font Folders…	Папки с шрифтове за бродерия…

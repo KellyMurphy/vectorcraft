@@ -4903,6 +4903,9 @@ lighting	Light	Свет
 	Embroidery Libraries	Библиотеки вышивки
 	Add to Embroidery Library…	Добавить в библиотеку вышивки…
 	Rescan Embroidery Libraries	Пересканировать библиотеки вышивки
+	More Settings ({n})	Другие настройки ({n})
+	{n} problems found: see Design	Найдено проблем: {n} — см. «Дизайн»
+@msg	Loaded embroidery font {_1}	Загружен шрифт для вышивки {_1}
 	Add Font Folder…	Добавить папку шрифтов…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Папка шрифтов для вышивки, показываемых здесь, например установленные вами папки шрифтов Ink/Stitch; они читаются там, где лежат
 	Embroidery Font Folders…	Папки шрифтов для вышивки…

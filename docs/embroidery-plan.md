@@ -631,6 +631,8 @@ code), renders compared by eye, and the independent reader for each machine form
    original font with the editor; (c) we digitize one traced from an OFL font, renamed and under the OFL,
    in craft-fonts. (b) or (c) is needed for G2's lettering sample, unless the user sews it with an
    Ink/Stitch font they installed themselves (E8.1e; decision 9: none ships).
+   **Decided (2026-10-24): (c)**, a font traced from an OFL font, renamed as the OFL requires (no Reserved
+   Font Name), under the OFL, in craft-fonts.
 6. **Brother FCM (E8.8c).** No public FCM specification is known to us. Options: (a) SVG only, imported
    through CanvasWorkspace (the safe default); (b) FCM if the user finds a public specification. (FCM won't
    be worked out from Brother's software or files, by the clean-room rule.)
@@ -638,6 +640,8 @@ code), renders compared by eye, and the independent reader for each machine form
    default cover, and whether several pieces share their stops by default.
 8. **Order (E8).** E8's order of work puts fonts after library folders and appliqué. If lettering matters most,
    E8.1 can go first and E8.5 follow (fonts would then load one file at a time, as border patterns do now).
+   **Decided (2026-10-24):** E8.3 (fill families) waits for the G1 sew-out, as the ground rules say; the
+   rest of E8 goes ahead: E8.1c, E8.1d, E8.2, E8.4, E8.7, E8.6.
 9. **Shipping Ink/Stitch fonts (E8.1e).** **Decided (2026-10-23):** none ships. VectorCraft supports
    using them if a user wants to, and each user installs their own as they see fit: by setting a folder
    to look in, or by placing the font folders in VectorCraft's embroidery fonts folder, as a how-to page

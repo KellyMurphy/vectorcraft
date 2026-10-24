@@ -4948,6 +4948,9 @@ lighting	Light	ライト
 	Embroidery Libraries	刺繍ライブラリ
 	Add to Embroidery Library…	刺繍ライブラリに追加…
 	Rescan Embroidery Libraries	刺繍ライブラリを再スキャン
+	More Settings ({n})	その他の設定（{n}）
+	{n} problems found: see Design	問題が {n} 件見つかりました：「デザイン」を参照
+@msg	Loaded embroidery font {_1}	刺繍フォント {_1} を読み込みました
 	Add Font Folder…	フォントフォルダーを追加…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	ここに表示する刺繍フォントのフォルダー（インストールした Ink/Stitch のフォントフォルダーなど）。その場所のまま読み込みます
 	Embroidery Font Folders…	刺繍フォントのフォルダー…

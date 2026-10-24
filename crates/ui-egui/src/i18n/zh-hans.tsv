@@ -5128,6 +5128,9 @@ lighting	Light	光源
 	Embroidery Libraries	刺绣库
 	Add to Embroidery Library…	添加到刺绣库…
 	Rescan Embroidery Libraries	重新扫描刺绣库
+	More Settings ({n})	更多设置（{n}）
+	{n} problems found: see Design	发现 {n} 个问题：请看“设计”
+@msg	Loaded embroidery font {_1}	已载入刺绣字体 {_1}
 	Add Font Folder…	添加字体文件夹…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	要在此列出的刺绣字体文件夹，例如您安装的 Ink/Stitch 字体文件夹；就地读取
 	Embroidery Font Folders…	刺绣字体文件夹…

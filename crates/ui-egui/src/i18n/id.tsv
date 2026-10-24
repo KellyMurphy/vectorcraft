@@ -5299,6 +5299,9 @@ swatch	Bright Violet	Violet cerah
 	Embroidery Libraries	Pustaka sulaman
 	Add to Embroidery Library…	Tambahkan ke pustaka sulaman…
 	Rescan Embroidery Libraries	Pindai ulang pustaka sulaman
+	More Settings ({n})	Pengaturan lain ({n})
+	{n} problems found: see Design	{n} masalah ditemukan: lihat Desain
+@msg	Loaded embroidery font {_1}	Fon sulaman {_1} dimuat
 	Add Font Folder…	Tambah folder fon…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Folder fon sulaman yang ditampilkan di sini, misalnya folder fon Ink/Stitch yang Anda pasang; dibaca di tempatnya
 	Embroidery Font Folders…	Folder fon sulaman…

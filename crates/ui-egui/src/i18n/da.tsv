@@ -5299,6 +5299,9 @@ swatch	Bright Violet	Kraftig violet
 	Embroidery Libraries	Broderibiblioteker
 	Add to Embroidery Library…	Føj til broderibibliotek…
 	Rescan Embroidery Libraries	Genindlæs broderibiblioteker
+	More Settings ({n})	Flere indstillinger ({n})
+	{n} problems found: see Design	{n} problemer fundet: se Design
+@msg	Loaded embroidery font {_1}	Broderiskrifttypen {_1} er indlæst
 	Add Font Folder…	Tilføj skrifttypemappe…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	En mappe med broderiskrifttyper, der vises her, fx Ink/Stitch-skrifttypemapper, du har installeret; de læses, hvor de ligger
 	Embroidery Font Folders…	Mapper med broderiskrifttyper…

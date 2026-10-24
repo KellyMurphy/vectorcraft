@@ -21,13 +21,17 @@ Select paths or compound paths (or groups holding them) and choose **Object › 
 | Pattern Border | A border pattern repeated end to end along the path, bending with its curves (decorative borders, frames). See [Pattern borders](#pattern-borders). | `pattern` (waves, scallops, chain, diamonds; waves), `width` (the band, 1–40 mm; the pattern's own, 6 mm), `flip` (off), `length` (1.5 mm), `spacing` (satin parts, 0.4 mm) |
 | Manual Stitch | The needle goes down at every anchor, as drawn. Imported designs use it. | — |
 
-**Window › Embroidery** shows the same for the selection: the stitch, chosen from a grid of stitched
+**Window › Embroidery** has three tabs. **Stitch** shows the same for the selection: the stitch, chosen from a grid of stitched
 pictures (each drawn by the real generator, with a line saying what it does), the thread and trims, and the
-stitch's own settings (Density is the spacing). Fill patterns and border patterns are picked from pictures
-too, so Tatami 4 and Tatami 7 can be told apart before sewing. Below them the panel shows the whole design
-(stitch count, size, trims and jumps, threads) with a Stitch Preview switch, an **Export** button in the
-machine's format (the **Machine Format** menu: DST, PES, JEF or EXP), a button to the Sew Order panel, and
-the design checker's findings.
+stitch's own settings (Density is the spacing), the rarely changed ones folded under **More Settings**. Fill
+patterns and border patterns are picked from pictures too, so Tatami 4 and Tatami 7 can be told apart before
+sewing; when the checker finds problems, a line at the foot of the tab says how many and opens Design.
+**Design** shows the whole design: the fabric, hoop, machine format (DST, PES, JEF or EXP) and thread
+chart, its stitch count, size, trims and jumps and threads, a Stitch Preview switch, **Export** in the
+machine's format, the worksheet, the Sew Order and Sew-Out Test panels, and the design checker's findings.
+**Tools** holds Appliqué and its Cut File, Extract Border Pattern (for an opened design's stitches),
+embroidery fonts (Load, Import Ink/Stitch Font, Add Font Folder) and the library folder. The panel opens
+on the tab it was last left on.
 
 **Underlay** is sewn before the top stitches to hold the fabric and lift the top stitches. For satin, it can be a
 **center walk** (a running stitch down the middle), an **edge walk** (just inside both edges) or a sparse

@@ -5293,6 +5293,9 @@ theme	Appearance	Apparence
 	Embroidery Libraries	Bibliothèques de broderie
 	Add to Embroidery Library…	Ajouter à la bibliothèque de broderie…
 	Rescan Embroidery Libraries	Relire les bibliothèques de broderie
+	More Settings ({n})	Plus de réglages ({n})
+	{n} problems found: see Design	{n} problèmes trouvés : voir Motif
+@msg	Loaded embroidery font {_1}	Police de broderie {_1} chargée
 	Add Font Folder…	Ajouter un dossier de polices…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Un dossier de polices de broderie à lister ici, comme les dossiers de polices Ink/Stitch que vous avez installés ; elles sont lues là où elles sont
 	Embroidery Font Folders…	Dossiers de polices de broderie…

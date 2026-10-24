@@ -4195,6 +4195,9 @@ lighting	Light	光源
 	Embroidery Libraries	刺繡資料庫
 	Add to Embroidery Library…	加入刺繡資料庫…
 	Rescan Embroidery Libraries	重新掃描刺繡資料庫
+	More Settings ({n})	更多設定（{n}）
+	{n} problems found: see Design	發現 {n} 個問題：請看「設計」
+@msg	Loaded embroidery font {_1}	已載入刺繡字體 {_1}
 	Add Font Folder…	加入字體資料夾…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	要在此列出的刺繡字體資料夾，例如您安裝的 Ink/Stitch 字體資料夾；就地讀取
 	Embroidery Font Folders…	刺繡字體資料夾…

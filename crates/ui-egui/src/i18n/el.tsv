@@ -5257,6 +5257,9 @@ effect	Points	Σημεία
 	Embroidery Libraries	Βιβλιοθήκες κεντήματος
 	Add to Embroidery Library…	Προσθήκη στη βιβλιοθήκη κεντήματος…
 	Rescan Embroidery Libraries	Επανασάρωση βιβλιοθηκών κεντήματος
+	More Settings ({n})	Περισσότερες ρυθμίσεις ({n})
+	{n} problems found: see Design	Βρέθηκαν {n} προβλήματα: δείτε το Σχέδιο
+@msg	Loaded embroidery font {_1}	Φορτώθηκε η γραμματοσειρά κεντήματος {_1}
 	Add Font Folder…	Προσθήκη φακέλου γραμματοσειρών…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Ένας φάκελος γραμματοσειρών κεντήματος που θα εμφανίζονται εδώ, π.χ. φάκελοι γραμματοσειρών Ink/Stitch που εγκαταστήσατε· διαβάζονται εκεί που βρίσκονται
 	Embroidery Font Folders…	Φάκελοι γραμματοσειρών κεντήματος…

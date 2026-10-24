@@ -4898,6 +4898,9 @@ theme	Appearance	Giao diện
 	Embroidery Libraries	Thư viện thêu
 	Add to Embroidery Library…	Thêm vào thư viện thêu…
 	Rescan Embroidery Libraries	Quét lại thư viện thêu
+	More Settings ({n})	Cài đặt khác ({n})
+	{n} problems found: see Design	Tìm thấy {n} vấn đề: xem Thiết kế
+@msg	Loaded embroidery font {_1}	Đã nạp phông chữ thêu {_1}
 	Add Font Folder…	Thêm thư mục phông chữ…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Một thư mục phông chữ thêu để liệt kê ở đây, như các thư mục phông chữ Ink/Stitch bạn đã cài; chúng được đọc tại chỗ
 	Embroidery Font Folders…	Thư mục phông chữ thêu…

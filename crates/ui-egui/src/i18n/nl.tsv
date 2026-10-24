@@ -5342,6 +5342,9 @@ swatch	Bright Violet	Felviolet
 	Embroidery Libraries	Borduurbibliotheken
 	Add to Embroidery Library…	Toevoegen aan borduurbibliotheek…
 	Rescan Embroidery Libraries	Borduurbibliotheken opnieuw inlezen
+	More Settings ({n})	Meer instellingen ({n})
+	{n} problems found: see Design	{n} problemen gevonden: zie Ontwerp
+@msg	Loaded embroidery font {_1}	Borduurlettertype {_1} geladen
 	Add Font Folder…	Lettertypemap toevoegen…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Een map met borduurlettertypen om hier te tonen, zoals Ink/Stitch-lettertypemappen die u hebt geïnstalleerd; ze worden gelezen waar ze staan
 	Embroidery Font Folders…	Mappen met borduurlettertypen…

@@ -4907,6 +4907,9 @@ lighting	Light	Luce
 	Embroidery Libraries	Librerie di ricamo
 	Add to Embroidery Library…	Aggiungi alla libreria di ricamo…
 	Rescan Embroidery Libraries	Rileggi le librerie di ricamo
+	More Settings ({n})	Altre impostazioni ({n})
+	{n} problems found: see Design	{n} problemi trovati: vedi Disegno
+@msg	Loaded embroidery font {_1}	Font da ricamo {_1} caricato
 	Add Font Folder…	Aggiungi cartella di font…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Una cartella di font da ricamo da elencare qui, come le cartelle di font Ink/Stitch che hai installato; vengono lette dove si trovano
 	Embroidery Font Folders…	Cartelle di font da ricamo…
