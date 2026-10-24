@@ -498,7 +498,8 @@ gate G1.
       the ordinary tools and stitch types, metrics and kerning set on it, a live sample line to test words, saved straight to the format.
     - **Ink/Stitch fonts:** Ink/Stitch's embroidery font folders (`font.json` and glyph-layer SVGs) open
       as embroidery fonts and convert to the open format, with their licence carried over (plan step
-      E8.1e, from Ink/Stitch's public documentation).
+      E8.1e, from Ink/Stitch's public documentation). VectorCraft ships none: you install the ones you
+      want, by pointing VectorCraft at a folder of them or by putting them in its embroidery fonts folder.
     - **Using them:** embroidery fonts appear in the type controls; type set in one is sewn from its letters.
       Like other fonts they live in [craft-fonts](https://github.com/storytold/craft-fonts), not in this
       repository, each with its licence.

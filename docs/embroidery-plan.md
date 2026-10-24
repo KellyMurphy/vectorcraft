@@ -372,16 +372,32 @@ objects (shapes with settings), not needle points, so letters scale and are re-s
   - *Commands:* `embroidery.font.importInkstitch {path: the font's folder (or a .zip of it), save?: path
     of a .vcfont to write, library?: true (into the library's fonts/)}` → the font, with a report:
     glyphs read, glyphs skipped, attributes not mapped, and the licence found. An Ink/Stitch font folder
-    dropped on the app or opened with File › Open is offered for import. Fonts dropped into the
-    library's `inkstitch/` subfolder are listed as embroidery fonts directly (converted when first used,
-    cached).
+    dropped on the app or opened with File › Open is offered for import.
+  - *Installing fonts (the user's choice, decided 2026-10-23):* VectorCraft ships no Ink/Stitch fonts;
+    each user installs the ones they want. Two ways, both as simple as file handling gets:
+    1. **Point VectorCraft at a folder.** A preference, *Embroidery Font Folders* (Preferences › Type,
+       next to Additional Fonts Folder, and `embroidery.fontFolders {folders: [paths]}`), lists folders
+       to look in, such as the fonts folder of an existing Ink/Stitch install or a folder of downloaded
+       fonts. Every subfolder holding a `font.json` is a font. Nothing is copied: fonts are read where
+       they are, so updating them there updates them here.
+    2. **Put the font folders in VectorCraft's own folder:** the embroidery library's `fonts/` (E8.5),
+       opened with Show in Folder. Ink/Stitch font folders and `.vcfont` files both go there.
+    Fonts found either way are listed in the type controls' embroidery fonts at start and on
+    `embroidery.rescanLibraries` (converted when first used, cached by folder and file times). A folder
+    that isn't a font, or a font that can't be read, is listed in `embroidery.libraries`' `skipped` with
+    the reason. Type set in a font that isn't installed on another computer still sews: the document
+    keeps a copy of the letters it uses (as it keeps border patterns), and says which font they came from.
+  - *The how-to:* `docs/embroidery-fonts.md`, a short page for users (linked from the guide and from the
+    font menu's "How to install fonts…" item): what an Ink/Stitch font folder looks like, the two ways
+    above with screenshots of VectorCraft only, that each font has its own licence (read its `LICENSE`
+    before using a font in work you sell), and where to find fonts (pointing to Ink/Stitch's public font
+    pages by URL; no fonts or font files linked for download from us).
   - *Licences:* the `LICENSE` text is carried into the font's `license` (and its `source` names the
     original font folder). Ink/Stitch's fonts have their own licences: mostly the OFL, some Creative
     Commons (one is CC BY-NC-SA, non-commercial), some derived from GPL-with-font-exception fonts, and
     some with only a credit and no stated licence. VectorCraft shows the licence before a font is used
     in a design and warns on non-commercial or unstated ones. **None ships with VectorCraft or in
-    craft-fonts unless its licence allows redistribution and the craft-fonts rules accept it**, each
-    reviewed by hand with its row in craft-fonts' attribution list (see decision 9).
+    craft-fonts** (decision 9): using them is up to each user.
   - *Fixtures:* test fonts written from scratch for the tests (a few glyphs covering satin with rungs, a
     fill, running and bean strokes, a trim, a stop, kerning pairs, a ligature layer, an `ltr/` folder and
     an `rtl.svg`), never copied from Ink/Stitch's fonts. Real fonts the user has are tried locally,
@@ -391,8 +407,8 @@ objects (shapes with settings), not needle points, so letters scale and are re-s
     trip; a converted font sets type with the right advances and kerning; the mapping table in the
     notes is checked against the code (drift test).
   - *Size:* L. It needs E8.1a (the font model) and E8.1b (setting type); it can land before the editor
-    (E8.1c), and an Ink/Stitch font under a licence that allows it could also serve as G2's lettering
-    sample (decision 5).
+    (E8.1c). An Ink/Stitch font the user installed can serve for G2's lettering sample on their
+    machine (decision 5).
   - *Later, if wanted:* exporting a `.vcfont` back to an Ink/Stitch font folder, so fonts made in
     VectorCraft work there too.
 - **Tests.** Format round trip and drift; fuzzed reader; layout (advances, kerning, tracking, on a path)
@@ -557,8 +573,8 @@ code), renders compared by eye, and the independent reader for each machine form
    can be checked item by item.
 5. **The starter embroidery font (E8.1d).** (a) ship none, users digitize their own; (b) we digitize one
    original font with the editor; (c) we digitize one traced from an OFL font, renamed and under the OFL,
-   in craft-fonts; (d) an Ink/Stitch font whose licence allows it, imported with E8.1e. (b), (c) or (d) is
-   needed for G2's lettering sample.
+   in craft-fonts. (b) or (c) is needed for G2's lettering sample, unless the user sews it with an
+   Ink/Stitch font they installed themselves (E8.1e; decision 9: none ships).
 6. **Brother FCM (E8.8c).** No public FCM specification is known to us. Options: (a) SVG only, imported
    through CanvasWorkspace (the safe default); (b) FCM if the user finds a public specification. (FCM won't
    be worked out from Brother's software or files, by the clean-room rule.)
@@ -566,10 +582,10 @@ code), renders compared by eye, and the independent reader for each machine form
    default cover, and whether several pieces share their stops by default.
 8. **Order (E8).** E8's order of work puts fonts after library folders and appliqué. If lettering matters most,
    E8.1 can go first and E8.5 follow (fonts would then load one file at a time, as border patterns do now).
-9. **Shipping Ink/Stitch fonts (E8.1e).** Import works for any font the user has. Should any Ink/Stitch
-   font also ship (in craft-fonts) where its licence allows redistribution, for example the OFL ones, or
-   should VectorCraft only open fonts users bring? The safe default is that none ships: users bring
-   them, and each one shipped later is reviewed by hand.
+9. **Shipping Ink/Stitch fonts (E8.1e).** **Decided (2026-10-23):** none ships. VectorCraft supports
+   using them if a user wants to, and each user installs their own as they see fit: by setting a folder
+   to look in, or by placing the font folders in VectorCraft's embroidery fonts folder, as a how-to page
+   (`docs/embroidery-fonts.md`) explains.
 
 ## Order of work
 
