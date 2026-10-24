@@ -371,7 +371,7 @@ objects (shapes with settings), not needle points, so letters scale and are re-s
   traced from an OFL font with the OFL's renaming and licence carried), published in craft-fonts with its
   licence; VectorCraft builds and runs without it (`CRAFT_FONTS` empty → no starter font, tests skip). A
   satin sans for 5–25 mm is the most useful first one. **Needs a decision** (below).
-- **E8.1e Ink/Stitch embroidery fonts** (asked for by the user, 2026-10-23). Ink/Stitch has a large
+- **E8.1e Ink/Stitch embroidery fonts** (asked for by the user, 2026-10-23; **done**, see *As built* at the end). Ink/Stitch has a large
   library of embroidery fonts, many under the OFL, and its users make their own. VectorCraft opens them as
   embroidery fonts, so they can be set as type, edited in the font editor and saved as `.vcfont`.
   - *The format, from public documentation only* (cited in `docs/formats/inkstitch-fonts.md`, our own
@@ -443,6 +443,17 @@ objects (shapes with settings), not needle points, so letters scale and are re-s
     machine (decision 5).
   - *Later, if wanted:* exporting a `.vcfont` back to an Ink/Stitch font folder, so fonts made in
     VectorCraft work there too.
+  - *As built:* `crates/embroidery/src/inkstitch.rs` (pure, on bytes: fuzzed; DTDs refused) and the
+    notes `docs/formats/inkstitch-fonts.md` (mapping table checked by a test); `embroidery.importInkstitchFont`
+    (load, `save` a `.vcfont`, `user` into the library); `embroidery.fontFolders` (kept in the library
+    folder's `font-folders.json`, paths checked against automation roots) and Ink/Stitch folders found in
+    the library's `fonts/`, both listed by `embroidery.libraries` (`format: inkstitch`) and loaded by
+    `loadFont {library}`; the panel's Embroidery Font menu lists them, with Add Font Folder…; the how-to
+    `docs/embroidery-fonts.md`. The baseline guide's direction and `hkern`'s layout are read both ways, the
+    font deciding. **Not yet:** `rtl`/`ttb`/`btt` variants, variant glyph layers, visual commands, the
+    resize range, zip files, the conversion cache, colour order; checked only on fixtures written from the
+    documentation, so the next check is on real Ink/Stitch fonts the user has installed
+    (`embroidery.importInkstitchFont` reports what it couldn't map).
 - **Tests.** Format round trip and drift; fuzzed reader; layout (advances, kerning, tracking, on a path)
   against hand-computed positions; a letter sewn at 5 and 25 mm has the same density in mm; the editor's
   save/open round trip; a test font generated in code for tests, so nothing depends on craft-fonts.

@@ -5261,6 +5261,13 @@ theme	Appearance	Utseende
 	Embroidery Libraries	Broderibibliotek
 	Add to Embroidery Library…	Lägg till i broderibibliotek…
 	Rescan Embroidery Libraries	Läs in broderibibliotek igen
+	Add Font Folder…	Lägg till teckensnittsmapp…
+	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	En mapp med broderiteckensnitt att visa här, till exempel Ink/Stitch-teckensnittsmappar du har installerat; de läses där de ligger
+	Embroidery Font Folders…	Mappar för broderiteckensnitt…
+	Import Ink/Stitch Font…	Importera Ink/Stitch-teckensnitt…
+	Import Ink/Stitch Font	Importera Ink/Stitch-teckensnitt
+@msg	font.json is over {_1} MB	font.json är över {_1} MB
+@msg	{_1} embroidery fonts found	{_1} broderiteckensnitt hittades
 	Embroidery Font:	Broderiteckensnitt:
 	Type only: sew the letters from this embroidery font's stitch objects instead of the outline font	Endast text: sy bokstäverna med det här broderiteckensnittets stygnobjekt i stället för konturteckensnittet
 	Embroidery Fonts	Broderiteckensnitt

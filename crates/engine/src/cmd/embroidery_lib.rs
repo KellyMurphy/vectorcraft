@@ -75,10 +75,32 @@ impl LibraryFile for HoopList {
     }
 }
 
+/// An Ink/Stitch font folder found in the library's `fonts/` or a font folder
+/// ([`EmbroideryLibraries::font_folders`]): read in place when it is used.
+#[derive(Clone, Debug, PartialEq)]
+pub struct InkstitchFont {
+    /// `inkstitch/<folder>` (numbered when two folders share a name).
+    pub id: String,
+    pub name: String,
+    pub path: String,
+}
+
+/// The file in the embroidery library folder that keeps the font folders.
+const FONT_FOLDERS_FILE: &str = "font-folders.json";
+/// The largest `font.json` read while listing fonts, bytes.
+const MAX_FONT_JSON: u64 = 1 << 20;
+
 /// The embroidery library folder and what its subfolders hold.
 #[derive(Clone, Debug, Default)]
 pub struct EmbroideryLibraries {
     dir: Option<String>,
+    /// Folders the user set to look in for Ink/Stitch fonts (kept in the library folder's
+    /// `font-folders.json`; in memory only without one).
+    font_folders: Vec<String>,
+    /// The Ink/Stitch font folders found, as last scanned.
+    pub inkstitch: Vec<InkstitchFont>,
+    /// Folders with a `font.json` that couldn't be read: path and why.
+    inkstitch_skipped: Vec<(String, String)>,
     pub borders: Libraries<BorderPattern>,
     pub fabrics: Libraries<Fabric>,
     pub hoops: Libraries<HoopList>,
@@ -101,6 +123,74 @@ impl EmbroideryLibraries {
         self.threads.set_user_dir(sub("threads"));
         self.fonts.set_user_dir(sub("fonts"));
         self.dir = dir;
+        self.font_folders = self.read_font_folders();
+        self.scan_inkstitch();
+    }
+
+    /// The folders looked in for Ink/Stitch fonts.
+    pub fn font_folders(&self) -> &[String] {
+        &self.font_folders
+    }
+
+    /// Set the folders looked in for Ink/Stitch fonts, keep them in the library folder (when there is
+    /// one) and list their fonts.
+    pub fn set_font_folders(&mut self, folders: Vec<String>) -> std::result::Result<(), String> {
+        let mut seen = std::collections::HashSet::new();
+        self.font_folders = folders.into_iter().map(|f| f.trim().to_string()).filter(|f| !f.is_empty() && seen.insert(f.clone())).collect();
+        if let Some(dir) = self.dir.clone() {
+            let path = std::path::Path::new(&dir).join(FONT_FOLDERS_FILE).to_string_lossy().to_string();
+            let text = serde_json::to_string_pretty(&self.font_folders).map_err(|e| e.to_string())?;
+            // The app's own folder: no automation root applies.
+            crate::file_access::unconfined(|| super::fileio::create_dir(&dir).and_then(|()| super::fileio::write_file(&path, text.as_bytes())))
+                .map_err(|e| e.to_string())?;
+        }
+        self.scan_inkstitch();
+        Ok(())
+    }
+
+    fn read_font_folders(&self) -> Vec<String> {
+        let Some(dir) = &self.dir else { return vec![] };
+        let path = std::path::Path::new(dir).join(FONT_FOLDERS_FILE).to_string_lossy().to_string();
+        crate::file_access::unconfined(|| super::fileio::read_file(&path))
+            .ok()
+            .and_then(|b| serde_json::from_slice::<Vec<String>>(&b).ok())
+            .unwrap_or_default()
+    }
+
+    /// List the Ink/Stitch font folders: the library's `fonts/` and each font folder, itself when
+    /// it holds a `font.json`, else its subfolders that do.
+    fn scan_inkstitch(&mut self) {
+        self.inkstitch.clear();
+        self.inkstitch_skipped.clear();
+        let mut roots: Vec<String> = self.fonts.user_dir().map(str::to_string).into_iter().collect();
+        roots.extend(self.font_folders.iter().cloned());
+        let mut taken = std::collections::HashSet::new();
+        for root in roots {
+            for dir in font_dirs(&root) {
+                let folder = std::path::Path::new(&dir).file_name().map_or_else(|| dir.clone(), |n| n.to_string_lossy().to_string());
+                let json = std::path::Path::new(&dir).join("font.json");
+                let name = match read_small(&json) {
+                    Ok(b) => serde_json::from_slice::<Value>(&b)
+                        .ok()
+                        .and_then(|v| v.get("name").and_then(Value::as_str).map(str::to_string))
+                        .filter(|n| !n.trim().is_empty())
+                        .unwrap_or_else(|| folder.clone()),
+                    Err(e) => {
+                        self.inkstitch_skipped.push((dir.clone(), e));
+                        continue;
+                    }
+                };
+                let base = format!("inkstitch/{}", borders::slug(&folder));
+                let id = std::iter::once(base.clone()).chain((2..).map(|n| format!("{base}-{n}"))).find(|id| !taken.contains(id)).unwrap_or(base);
+                taken.insert(id.clone());
+                self.inkstitch.push(InkstitchFont { id, name, path: dir });
+            }
+        }
+    }
+
+    /// The Ink/Stitch font `key` (an id or a name).
+    pub fn inkstitch_font(&self, key: &str) -> Option<&InkstitchFont> {
+        self.inkstitch.iter().find(|f| f.id == key).or_else(|| self.inkstitch.iter().find(|f| f.name.eq_ignore_ascii_case(key)))
     }
 
     /// Re-read every subfolder.
@@ -110,6 +200,7 @@ impl EmbroideryLibraries {
         self.hoops.rescan();
         self.threads.rescan();
         self.fonts.rescan();
+        self.scan_inkstitch();
     }
 
     /// The entries of `kind` (every kind for `None`), each as `embroidery.libraries` lists it.
@@ -144,6 +235,7 @@ impl EmbroideryLibraries {
                 "fonts",
                 |f| json!({"font": f.id, "family": f.family, "glyphs": f.glyphs.len(), "author": f.author, "license": f.license, "source": f.source}),
             ));
+            out.extend(self.inkstitch.iter().map(|f| json!({"kind": "fonts", "id": f.id, "name": f.name, "path": f.path, "format": "inkstitch"})));
         }
         out
     }
@@ -161,8 +253,44 @@ impl EmbroideryLibraries {
             .into_iter()
             .filter(|(k, _)| kind.is_none_or(|w| w == *k))
             .flat_map(|(k, files)| files.iter().map(move |(path, error)| json!({"kind": k, "path": path, "error": error})))
+            .chain(
+                self.inkstitch_skipped
+                    .iter()
+                    .filter(|_| kind.is_none_or(|w| w == "fonts"))
+                    .map(|(path, error)| json!({"kind": "fonts", "path": path, "error": error})),
+            )
             .collect()
     }
+}
+
+/// The folders under `root` that are Ink/Stitch fonts: `root` itself when it holds a `font.json`,
+/// else its subfolders that do, in name order.
+#[cfg(not(target_arch = "wasm32"))]
+fn font_dirs(root: &str) -> Vec<String> {
+    let has = |d: &std::path::Path| d.join("font.json").is_file();
+    let r = std::path::Path::new(root);
+    if has(r) {
+        return vec![root.to_string()];
+    }
+    let Ok(rd) = std::fs::read_dir(r) else { return vec![] };
+    let mut dirs: Vec<String> =
+        rd.filter_map(|e| e.ok().map(|e| e.path())).filter(|p| p.is_dir() && has(p)).map(|p| p.to_string_lossy().to_string()).collect();
+    dirs.sort_by_key(|d| d.to_lowercase());
+    dirs
+}
+
+#[cfg(target_arch = "wasm32")]
+fn font_dirs(_: &str) -> Vec<String> {
+    vec![]
+}
+
+/// A file no larger than [`MAX_FONT_JSON`].
+fn read_small(path: &std::path::Path) -> std::result::Result<Vec<u8>, String> {
+    let len = std::fs::metadata(path).map_err(|e| e.to_string())?.len();
+    if len > MAX_FONT_JSON {
+        return Err(format!("font.json is over {} MB", MAX_FONT_JSON >> 20));
+    }
+    std::fs::read(path).map_err(|e| e.to_string())
 }
 
 /// The User Defined entries of `libs`, each with `kind`, id, name, path and `more`'s members.
@@ -198,7 +326,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Embroidery Libraries",
             ["Window", "Embroidery"],
             None,
-            "{kind?: borders|fabrics|hoops|threads|fonts (default: all)} what the embroidery library folder holds: border patterns (.vcborder), fabric profiles (.vcfabric), hoop lists (.vchoop), thread charts (.vcthreads) and embroidery fonts (.vcfont), one subfolder each, as last scanned (at start, embroidery.rescanLibraries, and after a save or add). Load one into the document with the load commands' `library` (embroidery.loadBorderPattern, loadFabric, loadHoop, loadThreadChart, loadFont) → {folder: path | null (none here: the web, headless sessions), libraries: [{kind, id (user/<file>), name, path, and by kind: pattern, fabric, chart, font (the id it has inside), hoops: [ids], brand, threads (count), family, glyphs (count), author, license, source, supported (false: from a newer VectorCraft)}], skipped: [{kind, path, error}] (files that couldn't be read)}",
+            "{kind?: borders|fabrics|hoops|threads|fonts (default: all)} what the embroidery library folder holds: border patterns (.vcborder), fabric profiles (.vcfabric), hoop lists (.vchoop), thread charts (.vcthreads) and embroidery fonts (.vcfont), one subfolder each, as last scanned (at start, embroidery.rescanLibraries, and after a save or add). Load one into the document with the load commands' `library` (embroidery.loadBorderPattern, loadFabric, loadHoop, loadThreadChart, loadFont) → {folder: path | null (none here: the web, headless sessions), libraries: [{kind, id (user/<file>), name, path, and by kind: pattern, fabric, chart, font (the id it has inside), hoops: [ids], brand, threads (count), family, glyphs (count), author, license, source, supported (false: from a newer VectorCraft), format: inkstitch (an Ink/Stitch font folder, in the library's fonts/ or a font folder: embroidery.fontFolders; read in place, converted when loaded)}], skipped: [{kind, path, error}] (files that couldn't be read)}",
             always,
             libraries
         ),

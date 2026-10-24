@@ -5236,6 +5236,13 @@ mark-style	Japanese	Japonesas
 	Embroidery Libraries	Bibliotecas de bordado
 	Add to Embroidery Library…	Añadir a la biblioteca de bordado…
 	Rescan Embroidery Libraries	Volver a examinar las bibliotecas de bordado
+	Add Font Folder…	Añadir carpeta de fuentes…
+	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Una carpeta de fuentes de bordado que mostrar aquí, como las carpetas de fuentes de Ink/Stitch que haya instalado; se leen donde están
+	Embroidery Font Folders…	Carpetas de fuentes de bordado…
+	Import Ink/Stitch Font…	Importar fuente de Ink/Stitch…
+	Import Ink/Stitch Font	Importar fuente de Ink/Stitch
+@msg	font.json is over {_1} MB	font.json supera los {_1} MB
+@msg	{_1} embroidery fonts found	{_1} fuentes de bordado encontradas
 	Embroidery Font:	Fuente de bordado:
 	Type only: sew the letters from this embroidery font's stitch objects instead of the outline font	Solo texto: bordar las letras con los objetos de puntada de esta fuente de bordado en lugar de la fuente de contorno
 	Embroidery Fonts	Fuentes de bordado

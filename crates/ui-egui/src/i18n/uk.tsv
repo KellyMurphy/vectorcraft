@@ -4887,6 +4887,13 @@ lighting	Light	Світло
 	Embroidery Libraries	Бібліотеки вишивки
 	Add to Embroidery Library…	Додати до бібліотеки вишивки…
 	Rescan Embroidery Libraries	Повторно сканувати бібліотеки вишивки
+	Add Font Folder…	Додати теку шрифтів…
+	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Тека шрифтів для вишивки, що показуються тут, наприклад установлені вами теки шрифтів Ink/Stitch; вони читаються там, де лежать
+	Embroidery Font Folders…	Теки шрифтів для вишивки…
+	Import Ink/Stitch Font…	Імпортувати шрифт Ink/Stitch…
+	Import Ink/Stitch Font	Імпортувати шрифт Ink/Stitch
+@msg	font.json is over {_1} MB	font.json більший за {_1} МБ
+@msg	{_1} embroidery fonts found	Знайдено шрифтів для вишивки: {_1}
 	Embroidery Font:	Шрифт для вишивки:
 	Type only: sew the letters from this embroidery font's stitch objects instead of the outline font	Лише текст: вишивати літери об’єктами стібків цього шрифту для вишивки замість контурного шрифту
 	Embroidery Fonts	Шрифти для вишивки

@@ -4881,6 +4881,13 @@ effect	Regular	Regelmäßig
 	Embroidery Libraries	Stickereibibliotheken
 	Add to Embroidery Library…	Zur Stickereibibliothek hinzufügen…
 	Rescan Embroidery Libraries	Stickereibibliotheken neu einlesen
+	Add Font Folder…	Schriftordner hinzufügen…
+	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Ein Ordner mit Stickschriften, die hier aufgeführt werden, etwa installierte Ink/Stitch-Schriftordner; sie werden dort gelesen, wo sie liegen
+	Embroidery Font Folders…	Ordner für Stickschriften…
+	Import Ink/Stitch Font…	Ink/Stitch-Schrift importieren…
+	Import Ink/Stitch Font	Ink/Stitch-Schrift importieren
+@msg	font.json is over {_1} MB	font.json ist größer als {_1} MB
+@msg	{_1} embroidery fonts found	{_1} Stickschriften gefunden
 	Embroidery Font:	Stickschrift:
 	Type only: sew the letters from this embroidery font's stitch objects instead of the outline font	Nur Text: die Buchstaben aus den Stichobjekten dieser Stickschrift sticken statt aus der Konturschrift
 	Embroidery Fonts	Stickschriften

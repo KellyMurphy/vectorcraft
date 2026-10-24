@@ -5299,6 +5299,13 @@ swatch	Bright Violet	Kraftig violet
 	Embroidery Libraries	Broderibiblioteker
 	Add to Embroidery Library…	Føj til broderibibliotek…
 	Rescan Embroidery Libraries	Genindlæs broderibiblioteker
+	Add Font Folder…	Tilføj skrifttypemappe…
+	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	En mappe med broderiskrifttyper, der vises her, fx Ink/Stitch-skrifttypemapper, du har installeret; de læses, hvor de ligger
+	Embroidery Font Folders…	Mapper med broderiskrifttyper…
+	Import Ink/Stitch Font…	Importér Ink/Stitch-skrifttype…
+	Import Ink/Stitch Font	Importér Ink/Stitch-skrifttype
+@msg	font.json is over {_1} MB	font.json er over {_1} MB
+@msg	{_1} embroidery fonts found	{_1} broderiskrifttyper fundet
 	Embroidery Font:	Broderiskrifttype:
 	Type only: sew the letters from this embroidery font's stitch objects instead of the outline font	Kun tekst: sy bogstaverne fra denne broderiskrifttypes stingobjekter i stedet for konturskrifttypen
 	Embroidery Fonts	Broderiskrifttyper

@@ -4882,6 +4882,13 @@ lighting	Light	광원
 	Embroidery Libraries	자수 라이브러리
 	Add to Embroidery Library…	자수 라이브러리에 추가…
 	Rescan Embroidery Libraries	자수 라이브러리 다시 검색
+	Add Font Folder…	글꼴 폴더 추가…
+	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	여기에 표시할 자수 글꼴 폴더(설치한 Ink/Stitch 글꼴 폴더 등)입니다. 있는 위치에서 그대로 읽습니다
+	Embroidery Font Folders…	자수 글꼴 폴더…
+	Import Ink/Stitch Font…	Ink/Stitch 글꼴 가져오기…
+	Import Ink/Stitch Font	Ink/Stitch 글꼴 가져오기
+@msg	font.json is over {_1} MB	font.json이 {_1}MB를 넘습니다
+@msg	{_1} embroidery fonts found	자수 글꼴 {_1}개를 찾았습니다
 	Embroidery Font:	자수 글꼴:
 	Type only: sew the letters from this embroidery font's stitch objects instead of the outline font	텍스트만: 윤곽 글꼴 대신 이 자수 글꼴의 스티치 개체로 글자를 수놓습니다
 	Embroidery Fonts	자수 글꼴

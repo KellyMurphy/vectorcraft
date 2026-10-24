@@ -1,6 +1,10 @@
 //! Embroidery fonts in a document (E8.1): `.vcfont` files loaded into it (from a file, data or the
 //! embroidery library's `fonts/`), listed, saved and removed. The document keeps a copy of each font
 //! it uses (`document.embroidery.fonts`), so its type sews the same where the font isn't installed.
+//!
+//! Ink/Stitch font folders (E8.1e) are converted when loaded (`vectorcraft_embroidery::inkstitch`):
+//! from a folder given, or found in the library's `fonts/` or the font folders the user set
+//! (`embroidery.fontFolders`). VectorCraft ships none; users install their own.
 
 use serde_json::{Value, json};
 use vectorcraft_doc::EmbroideryFont;
@@ -30,6 +34,24 @@ pub fn specs() -> Vec<CommandSpec> {
             "{path? | data?: the file's text | library?: an embroidery library entry (embroidery.libraries, kind fonts: its id or name)} load a .vcfont embroidery font (specified in docs/formats/vcfont.md) into the document, as one undo step. Its id is the file's; one the document already uses for a different font gets a number (script-2…), and a font the document already has is not added again → {id, name, glyphs, added}",
             has_doc,
             load
+        ),
+        cmd!(
+            "embroidery.importInkstitchFont",
+            "Import Ink/Stitch Font…",
+            ["Window", "Embroidery"],
+            None,
+            "{path: an Ink/Stitch font folder (holding font.json and ltr.svg or an ltr folder of glyph SVGs), save?: path of a .vcfont file to write it to, user?: false (write it into the embroidery library's fonts folder too)} convert an Ink/Stitch embroidery font (from Ink/Stitch's public documentation: GlyphLayer-… layers on a baseline guide, inkstitch: attributes mapped onto VectorCraft's stitch types by meaning) and load it into the document, as one undo step. Each font has its own licence (read its LICENSE): it is carried into the font → {id, name, glyphs, added, license, report: {skipped: [layers left out, with why], unmapped: [Ink/Stitch attributes not mapped yet], commands (visual commands found, not mapped yet), baseline (how it was found)}, path?, library?}",
+            has_doc,
+            import_inkstitch
+        ),
+        cmd!(
+            "embroidery.fontFolders",
+            "Embroidery Font Folders…",
+            ["Window", "Embroidery"],
+            None,
+            "{folders?: [paths] (left out: only list)} the folders VectorCraft looks in for Ink/Stitch embroidery fonts besides the embroidery library's fonts folder: each folder that holds a font.json is a font, else each of its subfolders that does (an Ink/Stitch install's fonts folder, a folder of downloaded fonts). Fonts are read where they are, never copied; the list is kept with the embroidery library → {folders, fonts: [{id (inkstitch/<folder>), name, path}], skipped: [{path, error}]}",
+            always,
+            font_folders
         ),
         cmd!(
             "embroidery.saveFont",
@@ -80,7 +102,14 @@ fn list(s: &mut Session, _: &Value) -> Result<Value> {
 
 fn load(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "embroidery.loadFont";
-    let mut font = match library_entry(&s.embroidery_libraries.fonts, p, C)? {
+    // An Ink/Stitch font folder found in the library or a font folder.
+    if let Some(ink) = str_param(p, "library").and_then(|k| s.embroidery_libraries.inkstitch_font(k.trim())).cloned() {
+        let (font, report) = read_inkstitch(&ink.path, C)?;
+        let mut out = add_font(s, font, "Load Embroidery Font", C)?;
+        out["report"] = report_json(&report);
+        return Ok(out);
+    }
+    let font = match library_entry(&s.embroidery_libraries.fonts, p, C)? {
         Some((_, f)) => (*f).clone(),
         None => {
             let bytes = match (str_param(p, "path"), str_param(p, "data")) {
@@ -91,21 +120,117 @@ fn load(s: &mut Session, p: &Value) -> Result<Value> {
             fonts::read_file(&bytes).map_err(|e| bad(C, e))?
         }
     };
+    add_font(s, font, "Load Embroidery Font", C)
+}
+
+/// Add `font` to the document as undo step `label`: under its id, else (the id taken by a different
+/// font) a numbered one; the very same font already there isn't added again.
+fn add_font(s: &mut Session, mut font: EmbroideryFont, label: &str, cmd: &str) -> Result<Value> {
     let mine = &s.doc()?.doc.embroidery.fonts;
     if mine.contains(&font) {
-        return Ok(json!({"id": font.id, "name": font.name, "glyphs": font.glyphs.len(), "added": false}));
+        return Ok(json!({"id": font.id, "name": font.name, "glyphs": font.glyphs.len(), "license": font.license, "added": false}));
     }
     let taken = |id: &str| mine.iter().any(|f| f.id == id);
     if taken(&font.id) {
         let base = font.id.clone();
-        font.id = (2..10_000).map(|n| format!("{base}-{n}")).find(|id| !taken(id)).ok_or_else(|| bad(C, format!("too many fonts named `{base}`")))?;
+        font.id =
+            (2..10_000).map(|n| format!("{base}-{n}")).find(|id| !taken(id)).ok_or_else(|| bad(cmd, format!("too many fonts named `{base}`")))?;
     }
-    let out = json!({"id": font.id, "name": font.name, "glyphs": font.glyphs.len(), "added": true});
-    edit_counted(s, "Load Embroidery Font", |d| {
+    let out = json!({"id": font.id, "name": font.name, "glyphs": font.glyphs.len(), "license": font.license, "added": true});
+    edit_counted(s, label, |d| {
         d.embroidery.fonts.push(font);
         Ok(1)
     })?;
     Ok(out)
+}
+
+fn report_json(r: &vectorcraft_embroidery::inkstitch::Report) -> Value {
+    json!({"glyphs": r.glyphs, "skipped": r.skipped, "unmapped": r.unmapped, "commands": r.commands, "baseline": r.baseline})
+}
+
+/// Read Ink/Stitch font folder `dir` (`font.json`, `ltr.svg` or the `ltr` folder's SVGs, the
+/// `LICENSE`) and convert it.
+fn read_inkstitch(dir: &str, cmd: &str) -> Result<(EmbroideryFont, vectorcraft_embroidery::inkstitch::Report)> {
+    use vectorcraft_embroidery::inkstitch;
+    let d = std::path::Path::new(dir);
+    let at = |name: &str| d.join(name).to_string_lossy().to_string();
+    let json =
+        super::fileio::read_file(&at("font.json")).map_err(|e| bad(cmd, format!("{dir} isn't an Ink/Stitch font folder (no font.json: {e})")))?;
+    let mut svgs: Vec<(String, Vec<u8>)> = vec![];
+    if d.join("ltr.svg").is_file() {
+        svgs.push(("ltr.svg".into(), super::fileio::read_file(&at("ltr.svg"))?));
+    } else if d.join("ltr").is_dir() {
+        crate::file_access::check_read(&at("ltr")).map_err(|e| bad(cmd, e))?;
+        let mut files: Vec<std::path::PathBuf> = std::fs::read_dir(d.join("ltr"))
+            .map_err(|e| bad(cmd, e.to_string()))?
+            .filter_map(|e| e.ok().map(|e| e.path()))
+            .filter(|p| p.extension().is_some_and(|x| x.eq_ignore_ascii_case("svg")))
+            .collect();
+        files.sort();
+        if files.len() > inkstitch::MAX_SVGS {
+            return Err(bad(cmd, format!("a font is read from at most {} glyph files", inkstitch::MAX_SVGS)));
+        }
+        for f in files {
+            let name = f.file_name().map_or_else(String::new, |n| n.to_string_lossy().to_string());
+            svgs.push((name, super::fileio::read_file(&f.to_string_lossy())?));
+        }
+    }
+    let license = ["LICENSE", "LICENSE.txt", "LICENSE.md", "license.txt"]
+        .iter()
+        .find(|n| d.join(n).is_file())
+        .and_then(|n| super::fileio::read_file(&at(n)).ok())
+        .map(|b| String::from_utf8_lossy(&b).into_owned());
+    let folder = d.file_name().map_or_else(|| dir.to_string(), |n| n.to_string_lossy().to_string());
+    let src = inkstitch::Source {
+        name: &folder,
+        json: &json,
+        svgs: svgs.iter().map(|(n, b)| (n.as_str(), b.as_slice())).collect(),
+        license: license.as_deref(),
+    };
+    inkstitch::import(&src).map_err(|e| bad(cmd, format!("{folder}: {e}")))
+}
+
+fn import_inkstitch(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.importInkstitchFont";
+    let dir = str_param(p, "path").ok_or_else(|| bad(C, "`path` (an Ink/Stitch font folder) is missing"))?;
+    let (font, report) = read_inkstitch(dir, C)?;
+    let mut out = add_font(s, font.clone(), "Import Ink/Stitch Font", C)?;
+    out["report"] = report_json(&report);
+    let text = fonts::write_file(&font).map_err(|e| bad(C, e))?;
+    if let Some(path) = str_param(p, "save") {
+        super::fileio::write_file(path, text.as_bytes())?;
+        out["path"] = json!(path);
+    }
+    if bool_or(p, "user", false) {
+        let mut lib = json!({});
+        s.embroidery_libraries.fonts.write(&json!({"user": true}), &font.name, fonts::FILE_EXT, FileData::Text(text), &mut lib, C)?;
+        out["library"] = lib["library"].clone();
+    }
+    Ok(out)
+}
+
+fn always(_: &Session) -> std::result::Result<(), String> {
+    Ok(())
+}
+
+fn font_folders(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.fontFolders";
+    match p.get("folders") {
+        None | Some(Value::Null) => {}
+        Some(Value::Array(a)) => {
+            let folders: Vec<String> =
+                a.iter().map(|v| v.as_str().map(str::to_string).ok_or_else(|| bad(C, "`folders` must be a list of paths"))).collect::<Result<_>>()?;
+            for f in &folders {
+                crate::file_access::check_read(f).map_err(|e| bad(C, e))?;
+            }
+            s.embroidery_libraries.set_font_folders(folders).map_err(|e| bad(C, e))?;
+        }
+        Some(_) => return Err(bad(C, "`folders` must be a list of paths")),
+    }
+    let l = &s.embroidery_libraries;
+    let fonts: Vec<Value> = l.inkstitch.iter().map(|f| json!({"id": f.id, "name": f.name, "path": f.path})).collect();
+    let skipped: Vec<Value> = l.skipped(Some("fonts")).into_iter().filter(|v| v["path"].as_str().is_some_and(|p| !p.ends_with(".vcfont"))).collect();
+    Ok(json!({"folders": l.font_folders(), "fonts": fonts, "skipped": skipped}))
 }
 
 /// The document's font `p.font`.
@@ -214,6 +339,54 @@ mod tests {
         assert!(info["design"]["stitches"].as_u64().unwrap() > 100, "{info}");
         s.execute("embroidery.set", &json!({"font": null})).unwrap();
         assert_eq!(s.execute("embroidery.info", &json!({})).unwrap()["selection"]["font"], Value::Null);
+    }
+
+    /// An Ink/Stitch font folder written for the test from the public documentation.
+    fn ink_folder(root: &std::path::Path, name: &str) -> std::path::PathBuf {
+        let d = root.join(name);
+        std::fs::create_dir_all(&d).unwrap();
+        std::fs::write(d.join("font.json"), r#"{"name": "Little Block", "size": 100, "horiz_adv_x_default": 60}"#).unwrap();
+        std::fs::write(
+            d.join("ltr.svg"),
+            r##"<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" viewBox="0 0 300 200">
+  <sodipodi:guide position="0,150" inkscape:label="baseline"/>
+  <g inkscape:groupmode="layer" inkscape:label="GlyphLayer-I"><path d="M 10 50 L 30 50 L 30 150 L 10 150 Z" style="fill:#000"/></g>
+  <g inkscape:groupmode="layer" inkscape:label="GlyphLayer-H"><path d="M 0 50 L 15 50 L 15 150 L 0 150 Z M 35 50 L 50 50 L 50 150 L 35 150 Z M 15 90 L 35 90 L 35 105 L 15 105 Z" style="fill:#000"/></g>
+</svg>"##,
+        )
+        .unwrap();
+        std::fs::write(d.join("LICENSE"), "Made for the VectorCraft tests. CC0-1.0").unwrap();
+        d
+    }
+
+    #[test]
+    fn ink_stitch_fonts_import_and_install_by_folder() {
+        let root = std::env::temp_dir().join(format!("vc-ink-fonts-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&root);
+        let folder = ink_folder(&root.join("downloads"), "little_block");
+        let mut s = session();
+        // Imported from the folder.
+        let r = s.execute("embroidery.importInkstitchFont", &json!({"path": folder.to_string_lossy()})).unwrap();
+        assert_eq!((r["name"].as_str(), r["glyphs"].as_u64(), r["added"].as_bool()), (Some("Little Block"), Some(2), Some(true)), "{r}");
+        assert_eq!(r["report"]["baseline"].as_str().map(|b| b.contains("guide")), Some(true));
+        // Installed by pointing VectorCraft at the folder holding it: listed, loaded by name.
+        s.embroidery_libraries.set_dir(Some(root.join("Embroidery").to_string_lossy().to_string()));
+        let f = s.execute("embroidery.fontFolders", &json!({"folders": [root.join("downloads").to_string_lossy()]})).unwrap();
+        assert_eq!(f["fonts"][0]["id"], "inkstitch/little-block", "{f}");
+        let libs = s.execute("embroidery.libraries", &json!({"kind": "fonts"})).unwrap();
+        assert!(libs["libraries"].as_array().unwrap().iter().any(|e| e["format"] == "inkstitch"));
+        let r = s.execute("embroidery.loadFont", &json!({"library": "Little Block"})).unwrap();
+        assert_eq!(r["added"], false, "the same font as imported");
+        // Kept with the library: a new session finds the folder again.
+        let mut again = session();
+        again.embroidery_libraries.set_dir(Some(root.join("Embroidery").to_string_lossy().to_string()));
+        assert_eq!(again.embroidery_libraries.inkstitch.len(), 1);
+        // Or put in the library's fonts folder.
+        ink_folder(&root.join("Embroidery").join("fonts"), "second_block");
+        let f = again.execute("embroidery.rescanLibraries", &json!({})).unwrap();
+        assert_eq!(f["libraries"].as_array().unwrap().iter().filter(|e| e["format"] == "inkstitch").count(), 2, "{f}");
+        assert!(s.execute("embroidery.importInkstitchFont", &json!({"path": root.to_string_lossy()})).is_err(), "not a font folder");
+        let _ = std::fs::remove_dir_all(root);
     }
 
     #[test]

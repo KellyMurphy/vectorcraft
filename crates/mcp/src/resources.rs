@@ -81,6 +81,14 @@ pub static TEXT_DOCS: &[TextDoc] = &[
         text: include_str!("../../../docs/formats/vcfont.schema.json"),
     },
     TextDoc {
+        uri: "vectorcraft://spec/inkstitch-fonts",
+        name: "spec-inkstitch-fonts",
+        title: "Ink/Stitch font folders (read only)",
+        description: "How VectorCraft reads Ink/Stitch embroidery font folders (font.json, GlyphLayer layers, baseline, inkstitch: attributes) and maps them onto its stitch types",
+        mime: "text/markdown",
+        text: include_str!("../../../docs/formats/inkstitch-fonts.md"),
+    },
+    TextDoc {
         uri: "vectorcraft://spec/vcthreads",
         name: "spec-vcthreads",
         title: "Thread chart file (.vcthreads) specification",

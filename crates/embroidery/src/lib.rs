@@ -22,6 +22,7 @@ pub mod fonts;
 pub mod generate;
 pub mod hoops;
 mod import;
+pub mod inkstitch;
 mod jef;
 pub mod kinds;
 pub mod lettering;

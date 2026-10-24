@@ -5257,6 +5257,13 @@ effect	Points	Σημεία
 	Embroidery Libraries	Βιβλιοθήκες κεντήματος
 	Add to Embroidery Library…	Προσθήκη στη βιβλιοθήκη κεντήματος…
 	Rescan Embroidery Libraries	Επανασάρωση βιβλιοθηκών κεντήματος
+	Add Font Folder…	Προσθήκη φακέλου γραμματοσειρών…
+	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Ένας φάκελος γραμματοσειρών κεντήματος που θα εμφανίζονται εδώ, π.χ. φάκελοι γραμματοσειρών Ink/Stitch που εγκαταστήσατε· διαβάζονται εκεί που βρίσκονται
+	Embroidery Font Folders…	Φάκελοι γραμματοσειρών κεντήματος…
+	Import Ink/Stitch Font…	Εισαγωγή γραμματοσειράς Ink/Stitch…
+	Import Ink/Stitch Font	Εισαγωγή γραμματοσειράς Ink/Stitch
+@msg	font.json is over {_1} MB	το font.json ξεπερνά τα {_1} MB
+@msg	{_1} embroidery fonts found	Βρέθηκαν {_1} γραμματοσειρές κεντήματος
 	Embroidery Font:	Γραμματοσειρά κεντήματος:
 	Type only: sew the letters from this embroidery font's stitch objects instead of the outline font	Μόνο κείμενο: κέντημα των γραμμάτων από τα αντικείμενα βελονιάς αυτής της γραμματοσειράς αντί για τη γραμματοσειρά περιγράμματος
 	Embroidery Fonts	Γραμματοσειρές κεντήματος

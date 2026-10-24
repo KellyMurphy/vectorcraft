@@ -350,6 +350,7 @@ fn font_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
         .filter_map(|i| libs.get(&i.id))
         .filter(|(_, f)| !mine.iter().any(|(id, _)| *id == f.id))
         .map(|(i, f)| (i.id, f.name.clone()))
+        .chain(app.session.embroidery_libraries.inkstitch.iter().map(|f| (f.id.clone(), f.name.clone())))
         .collect();
     let mut names = vec![tl!("None").to_string()];
     names.extend(mine.iter().map(|(_, n)| n.clone()));
@@ -374,6 +375,26 @@ fn font_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
     })
     .response
     .on_hover_text(tl!("Type only: sew the letters from this embroidery font's stitch objects instead of the outline font"));
+    ui.horizontal(|ui| {
+        ui.add_space(LABEL_W + 8.0);
+        if widgets::flat_button(ui, tl!("Add Font Folder…"), 120.0)
+            .on_hover_text(tl!(
+                "A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are"
+            ))
+            .clicked()
+        {
+            let folders: Vec<String> = app.session.embroidery_libraries.font_folders().to_vec();
+            crate::picks::button(app, move |app| {
+                let Some(dir) = crate::picks::folder(app) else { return };
+                let mut all = folders.clone();
+                all.push(dir);
+                match app.run("embroidery.fontFolders", json!({ "folders": all })) {
+                    Ok(r) => app.status(format!("{} embroidery fonts found", r["fonts"].as_array().map_or(0, Vec::len))),
+                    Err(e) => app.status(e),
+                }
+            });
+        }
+    });
 }
 
 /// A stop's name, translated (`None` for no stop).

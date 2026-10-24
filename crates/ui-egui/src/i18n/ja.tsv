@@ -4948,6 +4948,13 @@ lighting	Light	ライト
 	Embroidery Libraries	刺繍ライブラリ
 	Add to Embroidery Library…	刺繍ライブラリに追加…
 	Rescan Embroidery Libraries	刺繍ライブラリを再スキャン
+	Add Font Folder…	フォントフォルダーを追加…
+	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	ここに表示する刺繍フォントのフォルダー（インストールした Ink/Stitch のフォントフォルダーなど）。その場所のまま読み込みます
+	Embroidery Font Folders…	刺繍フォントのフォルダー…
+	Import Ink/Stitch Font…	Ink/Stitch フォントを読み込み…
+	Import Ink/Stitch Font	Ink/Stitch フォントを読み込み
+@msg	font.json is over {_1} MB	font.json が {_1} MB を超えています
+@msg	{_1} embroidery fonts found	刺繍フォントが {_1} 個見つかりました
 	Embroidery Font:	刺繍フォント：
 	Type only: sew the letters from this embroidery font's stitch objects instead of the outline font	テキストのみ：アウトラインフォントではなく、この刺繍フォントのステッチオブジェクトで文字を縫います
 	Embroidery Fonts	刺繍フォント

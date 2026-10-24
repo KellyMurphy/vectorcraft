@@ -5128,6 +5128,13 @@ lighting	Light	光源
 	Embroidery Libraries	刺绣库
 	Add to Embroidery Library…	添加到刺绣库…
 	Rescan Embroidery Libraries	重新扫描刺绣库
+	Add Font Folder…	添加字体文件夹…
+	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	要在此列出的刺绣字体文件夹，例如您安装的 Ink/Stitch 字体文件夹；就地读取
+	Embroidery Font Folders…	刺绣字体文件夹…
+	Import Ink/Stitch Font…	导入 Ink/Stitch 字体…
+	Import Ink/Stitch Font	导入 Ink/Stitch 字体
+@msg	font.json is over {_1} MB	font.json 超过 {_1} MB
+@msg	{_1} embroidery fonts found	找到 {_1} 个刺绣字体
 	Embroidery Font:	刺绣字体：
 	Type only: sew the letters from this embroidery font's stitch objects instead of the outline font	仅限文字：用此刺绣字体的针迹对象绣出字母，而不是用轮廓字体
 	Embroidery Fonts	刺绣字体

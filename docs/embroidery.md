@@ -152,6 +152,11 @@ the embroidery font and kept at its alignment. A character the font lacks is sew
 where its letter would be, with a warning; type set outside the font's size range is warned about. For
 now the canvas still draws the type in its outline font: Stitch Preview shows the embroidery letters.
 
+**Ink/Stitch fonts** open as embroidery fonts too: install the ones you want by pointing VectorCraft at a
+folder of them (**Add Font Folder…** under Embroidery Font) or by putting them in the library's `fonts`
+folder, as [Installing embroidery fonts](embroidery-fonts.md) explains; `embroidery.importInkstitchFont`
+converts one to a `.vcfont`. How they are read: [formats/inkstitch-fonts.md](formats/inkstitch-fonts.md).
+
 ### Sew order
 
 Objects are sewn in paint order, bottom first, until you change it. **Window › Sew Order** is the panel for
@@ -460,6 +465,8 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.loadFont` | `{path? \| data? \| library?}`: load a `.vcfont` embroidery font into the document → `{id, name, glyphs, added}` |
 | `embroidery.saveFont` | `{font, path?, user?}`: write one of the document's fonts as a `.vcfont` file (`user: true`: into the embroidery library) |
 | `embroidery.removeFont` | `{font}`: remove a font from the document |
+| `embroidery.importInkstitchFont` | `{path, save?, user?}`: convert an Ink/Stitch font folder and load it → `{id, name, glyphs, added, license, report: {skipped, unmapped, commands, baseline}}` |
+| `embroidery.fontFolders` | `{folders?}`: the folders searched for Ink/Stitch fonts (read in place) → `{folders, fonts, skipped}` |
 | `embroidery.worksheet` | `{page?: a4\|letter, format?: pdf, path?}`: the production worksheet, as a new document or a PDF |
 | `embroidery.testSheet` | `{sections?: [ids]}`: a new document of calibration swatches (see Sew-out tests) → `{index, sections, swatches, skipped}` |
 | `embroidery.sewOut` | → the sew-out form: `{sewOut: {fabric, machine, notes, swatches: [{id, section, label, objects, result, notes}], counts} \| null, sections}` |

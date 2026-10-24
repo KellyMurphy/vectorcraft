@@ -4653,6 +4653,7 @@ version = "0.12.0"
 dependencies = [
  "kurbo 0.13.1",
  "proptest",
+ "roxmltree 0.21.1",
  "serde",
  "serde_json",
  "vectorcraft-color",

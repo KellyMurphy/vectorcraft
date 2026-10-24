@@ -4898,6 +4898,13 @@ theme	Appearance	Giao diện
 	Embroidery Libraries	Thư viện thêu
 	Add to Embroidery Library…	Thêm vào thư viện thêu…
 	Rescan Embroidery Libraries	Quét lại thư viện thêu
+	Add Font Folder…	Thêm thư mục phông chữ…
+	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Một thư mục phông chữ thêu để liệt kê ở đây, như các thư mục phông chữ Ink/Stitch bạn đã cài; chúng được đọc tại chỗ
+	Embroidery Font Folders…	Thư mục phông chữ thêu…
+	Import Ink/Stitch Font…	Nhập phông chữ Ink/Stitch…
+	Import Ink/Stitch Font	Nhập phông chữ Ink/Stitch
+@msg	font.json is over {_1} MB	font.json lớn hơn {_1} MB
+@msg	{_1} embroidery fonts found	Đã tìm thấy {_1} phông chữ thêu
 	Embroidery Font:	Phông chữ thêu:
 	Type only: sew the letters from this embroidery font's stitch objects instead of the outline font	Chỉ văn bản: thêu các chữ từ các đối tượng mũi khâu của phông chữ thêu này thay vì phông chữ đường viền
 	Embroidery Fonts	Phông chữ thêu

@@ -5291,6 +5291,13 @@ imageTrace	Outline	Körvonal
 	Embroidery Libraries	Hímzéskönyvtárak
 	Add to Embroidery Library…	Hozzáadás a hímzéskönyvtárhoz…
 	Rescan Embroidery Libraries	Hímzéskönyvtárak újraolvasása
+	Add Font Folder…	Betűtípusmappa hozzáadása…
+	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Hímzőbetűtípusok mappája, amelyek itt jelennek meg, például a telepített Ink/Stitch betűtípusmappák; ott olvassuk be őket, ahol vannak
+	Embroidery Font Folders…	Hímzőbetűtípusok mappái…
+	Import Ink/Stitch Font…	Ink/Stitch betűtípus importálása…
+	Import Ink/Stitch Font	Ink/Stitch betűtípus importálása
+@msg	font.json is over {_1} MB	a font.json nagyobb {_1} MB-nál
+@msg	{_1} embroidery fonts found	{_1} hímzőbetűtípus található
 	Embroidery Font:	Hímzőbetűtípus:
 	Type only: sew the letters from this embroidery font's stitch objects instead of the outline font	Csak szöveg: a betűk hímzése ennek a hímzőbetűtípusnak az öltésobjektumaiból a körvonalas betűtípus helyett
 	Embroidery Fonts	Hímzőbetűtípusok

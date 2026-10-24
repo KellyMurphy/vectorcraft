@@ -4907,6 +4907,13 @@ lighting	Light	Luce
 	Embroidery Libraries	Librerie di ricamo
 	Add to Embroidery Library…	Aggiungi alla libreria di ricamo…
 	Rescan Embroidery Libraries	Rileggi le librerie di ricamo
+	Add Font Folder…	Aggiungi cartella di font…
+	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Una cartella di font da ricamo da elencare qui, come le cartelle di font Ink/Stitch che hai installato; vengono lette dove si trovano
+	Embroidery Font Folders…	Cartelle di font da ricamo…
+	Import Ink/Stitch Font…	Importa font Ink/Stitch…
+	Import Ink/Stitch Font	Importa font Ink/Stitch
+@msg	font.json is over {_1} MB	font.json supera {_1} MB
+@msg	{_1} embroidery fonts found	{_1} font da ricamo trovati
 	Embroidery Font:	Font da ricamo:
 	Type only: sew the letters from this embroidery font's stitch objects instead of the outline font	Solo testo: ricama le lettere con gli oggetti punto di questo font da ricamo invece che con il font vettoriale
 	Embroidery Fonts	Font da ricamo

@@ -5269,6 +5269,13 @@ mark-style	Japanese	Japanilainen
 	Embroidery Libraries	Kirjontakirjastot
 	Add to Embroidery Library…	Lisää kirjontakirjastoon…
 	Rescan Embroidery Libraries	Lue kirjontakirjastot uudelleen
+	Add Font Folder…	Lisää fonttikansio…
+	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Kansio, jonka kirjontafontit näytetään täällä, esimerkiksi asentamasi Ink/Stitch-fonttikansiot; ne luetaan siellä, missä ne ovat
+	Embroidery Font Folders…	Kirjontafonttien kansiot…
+	Import Ink/Stitch Font…	Tuo Ink/Stitch-fontti…
+	Import Ink/Stitch Font	Tuo Ink/Stitch-fontti
+@msg	font.json is over {_1} MB	font.json on yli {_1} Mt
+@msg	{_1} embroidery fonts found	Kirjontafontteja löytyi: {_1}
 	Embroidery Font:	Kirjontafontti:
 	Type only: sew the letters from this embroidery font's stitch objects instead of the outline font	Vain teksti: kirjo kirjaimet tämän kirjontafontin pisto-objekteista ääriviivafontin sijaan
 	Embroidery Fonts	Kirjontafontit
