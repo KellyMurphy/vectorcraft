@@ -2703,6 +2703,13 @@ fn draw_findings(painter: &egui::Painter, xf: &Xf, findings: &[vectorcraft_embro
     }
 }
 
+/// A run of stitches drawn as thread: each stitch its own segment, ending at its needle holes. (As
+/// one line, the joins of a satin's sharp zigs are mitred into spikes far past the needle holes,
+/// which looks much rougher than the stitching is.)
+pub(crate) fn thread_stitches(painter: &egui::Painter, pts: &[egui::Pos2], stroke: Stroke) {
+    painter.extend(pts.windows(2).filter(|w| w[0] != w[1]).map(|w| Shape::line_segment([w[0], w[1]], stroke)));
+}
+
 /// The stitches of `plan` in their thread colours on fabric-coloured artboards, jumps as thin
 /// lines.
 fn draw_stitches(painter: &egui::Painter, xf: &Xf, doc: &vectorcraft_doc::Document, plan: &vectorcraft_embroidery::Plan) {
@@ -2716,7 +2723,8 @@ fn draw_stitches(painter: &egui::Painter, xf: &Xf, doc: &vectorcraft_doc::Docume
     let width = ((THREAD_MM / PT_MM) * xf.zoom).clamp(0.5, 8.0) as f32;
     for (thread, run) in plan.runs() {
         let [r, g, b] = plan.threads.get(thread).copied().unwrap_or([0; 3]);
-        painter.add(Shape::line(run.iter().map(|p| at(p.x, p.y)).collect(), Stroke::new(width, Color32::from_rgb(r, g, b))));
+        let pts: Vec<egui::Pos2> = run.iter().map(|p| at(p.x, p.y)).collect();
+        thread_stitches(painter, &pts, Stroke::new(width, Color32::from_rgb(r, g, b)));
     }
     // The hoop's sewing field, centred on the design.
     if let Some(hoop) = doc.embroidery.hoop.as_ref().filter(|h| h.unknown.is_none())

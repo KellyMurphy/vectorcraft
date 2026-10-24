@@ -921,7 +921,7 @@ pub const AUTO_BORDER_LEAST: f64 = 0.6;
 
 /// Auto's fill for a shape too wide or too heavy for satin: fill with a border fitted to it
 /// ([`auto_border`]).
-fn auto_fill(s: &StitchSettings, polys: &[Vec<Point>]) -> StitchSettings {
+pub(crate) fn auto_fill(s: &StitchSettings, polys: &[Vec<Point>]) -> StitchSettings {
     let mut t = auto_settings(s, f64::INFINITY);
     t.border = auto_border(s, polys);
     t
@@ -962,6 +962,9 @@ fn text(t: &vectorcraft_doc::TextObject, s: &StitchSettings, b: &mut Sewer) {
         }
     }
     let parts = glyph_parts(t);
+    if s.kind == StitchKind::SatinShape {
+        return satin_letters(t, s, &parts, b);
+    }
     if s.kind != StitchKind::Auto {
         for (run, path) in &parts {
             let a = style(*run).appearance();
@@ -987,6 +990,36 @@ fn text(t: &vectorcraft_doc::TextObject, s: &StitchSettings, b: &mut Sewer) {
             Choice::Satin(t, runs) => emit(&t, thread, runs, b),
             Choice::Sew(t, _) => sew(&t, thread, a.stroke_width() * PT_MM, &[path], FillRule::NonZero, b),
         }
+    }
+}
+
+/// Type sewn as satin shapes, letter by letter, where satin can cover them: letters it can't
+/// (strokes too heavy for satin to reach their corners and junctions) are sewn as a fill with a
+/// satin border instead, as Auto does, and the whole object is when a quarter or more of its
+/// letters are, so its letters look alike.
+fn satin_letters(t: &vectorcraft_doc::TextObject, s: &StitchSettings, parts: &[(usize, PathData)], b: &mut Sewer) {
+    let style = |run: usize| t.runs.get(run).map(|r| r.style.clone()).unwrap_or_else(|| t.first_style());
+    let polys: Vec<Vec<Vec<Point>>> = parts.iter().map(|(_, p)| generate::polylines(p).into_iter().map(|(l, _)| l).collect()).collect();
+    let poor: Vec<bool> = polys
+        .iter()
+        .map(|p| {
+            let s = b.fabric_in(s);
+            !p.is_empty() && generate::satin_shape_checked(p, FillRule::NonZero, s.spacing(), 0.0, false).1.poor()
+        })
+        .collect();
+    let n_poor = poor.iter().filter(|p| **p).count();
+    let all = n_poor > 0 && n_poor * 4 >= parts.len();
+    if n_poor > 0 {
+        b.out.warnings.push(if all {
+            "these letters are too heavy for satin to cover (Satin Shape): all of them are sewn as a fill with a satin border; Auto does the same, or choose a lighter font".to_string()
+        } else {
+            format!("{n_poor} letters are too heavy for satin to cover (Satin Shape): sewn as a fill with a satin border")
+        });
+    }
+    for (((run, path), p), bad) in parts.iter().zip(&polys).zip(&poor) {
+        let a = style(*run).appearance();
+        let settings = if all || *bad { b.fabric_in(&auto_fill(s, p)) } else { s.clone() };
+        sew(&settings, thread_of(&a, s), a.stroke_width() * PT_MM, &[path], FillRule::NonZero, b);
     }
 }
 

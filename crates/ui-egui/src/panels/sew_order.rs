@@ -124,11 +124,13 @@ fn preview(ui: &mut Ui, objects: &[Drawn], bounds: Option<[f64; 4]>, step: usize
         };
         if i + 1 == step {
             for run in &o.runs {
-                painter.add(egui::Shape::line(run.iter().map(|p| at(*p)).collect(), Stroke::new(5.0, Color32::from_white_alpha(120))));
+                let pts: Vec<egui::Pos2> = run.iter().map(|p| at(*p)).collect();
+                crate::canvas::thread_stitches(&painter, &pts, Stroke::new(5.0, Color32::from_white_alpha(120)));
             }
         }
         for run in &o.runs {
-            painter.add(egui::Shape::line(run.iter().map(|p| at(*p)).collect(), Stroke::new(width, color)));
+            let pts: Vec<egui::Pos2> = run.iter().map(|p| at(*p)).collect();
+            crate::canvas::thread_stitches(&painter, &pts, Stroke::new(width, color));
         }
     }
 }

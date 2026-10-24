@@ -292,3 +292,36 @@ fn type_in_an_embroidery_font_is_sewn_from_its_letters() {
     let p = with_font("HI", 20.0, "missing-font");
     assert!(p.warnings.iter().any(|w| w.contains("`missing-font`, which the document doesn't have")), "{:?}", p.warnings);
 }
+
+/// The share of a plan's type left bare: each letter's area that no stitch of the plan comes near.
+fn bare_share(d: &Document) -> f64 {
+    let p = plan(d);
+    let runs: Vec<Vec<Point>> = p.runs().into_iter().map(|(_, r)| r).collect();
+    let NodeKind::Text(t) = &d.layers[0].children().unwrap()[0].kind else { panic!("not type") };
+    let lay = vectorcraft_text::layout(vectorcraft_text::FontDb::global(), t);
+    let polys: Vec<Vec<Point>> = lay
+        .glyphs
+        .iter()
+        .flat_map(|g| generate::polylines(&PathData::from_bezpath(&g.outline).transformed(t.xf)).into_iter().map(|(l, _)| l))
+        .collect();
+    generate::uncovered(&polys, FillRule::NonZero, &runs)
+}
+
+/// Heavy type (Impact) stitched as Satin Shape or Auto leaves no bare patches: letters satin can't
+/// cover are filled with a satin border instead (QA report, 2026-10-24: "Test" in Impact).
+#[test]
+fn heavy_type_leaves_no_bare_fabric() {
+    if !installed("Impact") {
+        return;
+    }
+    for size_mm in [12.0, 20.0, 35.0] {
+        for kind in [StitchKind::SatinShape, StitchKind::Auto] {
+            let d = type_doc("Test", "Impact", size_mm, kind);
+            let bare = bare_share(&d);
+            assert!(bare < 0.01, "{kind:?} at {size_mm} mm leaves {:.1}% bare", bare * 100.0);
+        }
+        // Satin Shape says why it filled the letters.
+        let p = plan(&type_doc("Test", "Impact", size_mm, StitchKind::SatinShape));
+        assert!(p.warnings.iter().any(|w| w.contains("too heavy for satin")), "{size_mm} mm: {:?}", p.warnings);
+    }
+}

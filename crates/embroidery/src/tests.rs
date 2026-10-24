@@ -1173,7 +1173,14 @@ fn report_satin_quality() {
                 continue;
             }
             let (_, q) = generate::satin_shape_checked(&polys, FillRule::NonZero, 0.4, 0.0, false);
-            line += &format!("{ch}:{:.0}/{:.0}/{:.0}{} ", q.skipped * 100.0, q.crowded * 100.0, q.fanned * 100.0, if q.poor() { "*" } else { "" });
+            line += &format!(
+                "{ch}:{:.0}/{:.0}/{:.0}/{:.0}{} ",
+                q.skipped * 100.0,
+                q.crowded * 100.0,
+                q.fanned * 100.0,
+                q.uncovered * 100.0,
+                if q.poor() { "*" } else { "" }
+            );
         }
         println!("{family:16} {line}");
     }
@@ -1667,4 +1674,27 @@ fn puff_stops_for_the_foam_caps_and_perforates() {
     });
     let found: Vec<String> = check::check(&after, &plan(&after)).into_iter().filter(|f| f.rule == "puff").map(|f| f.message).collect();
     assert_eq!(found.len(), 2, "too narrow, and a flat object after the foam: {found:?}");
+}
+
+/// A heavy T (a 10 mm crossbar on a 10 mm stem): satin can't reach the crossbar's corners, so the
+/// bare patches are filled under it and nothing is left bare.
+#[test]
+fn satin_shape_fills_what_it_leaves_bare() {
+    let t = vec![
+        Point::new(0.0, 0.0),
+        Point::new(40.0, 0.0),
+        Point::new(40.0, 10.0),
+        Point::new(25.0, 10.0),
+        Point::new(25.0, 40.0),
+        Point::new(15.0, 40.0),
+        Point::new(15.0, 10.0),
+        Point::new(0.0, 10.0),
+    ];
+    let polys = std::slice::from_ref(&t);
+    let (runs, q) = generate::satin_shape_checked(polys, FillRule::NonZero, 0.4, 0.0, false);
+    assert!(generate::uncovered(polys, FillRule::NonZero, &runs) < 0.01, "measured before: {:.1}%", q.uncovered * 100.0);
+    // A plain bar's satin needs no patch: only thin slivers at its tips aren't stitched over.
+    let bar = vec![Point::new(0.0, 0.0), Point::new(30.0, 0.0), Point::new(30.0, 4.0), Point::new(0.0, 4.0)];
+    let (runs, q) = generate::satin_shape_checked(std::slice::from_ref(&bar), FillRule::NonZero, 0.4, 0.0, false);
+    assert_eq!((runs.len(), q.uncovered), (1, 0.0));
 }

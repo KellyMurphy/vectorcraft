@@ -1,5 +1,6 @@
 //! Satin shape: satin following a closed shape's strokes from edge to edge (lettering); a shape
-//! with no strokes to follow is filled instead.
+//! with no strokes to follow is filled instead, and one whose strokes satin can't cover (too heavy
+//! to reach its corners and junctions) is sewn as a fill with a satin border, as Auto does.
 
 use vectorcraft_doc::{StitchKind, StitchSettings, Underlay};
 
@@ -15,7 +16,13 @@ pub(super) fn sew(i: &Input) -> Output {
         u => u,
     };
     let pull = s.pull_for(crate::stroke_width(&polys));
-    let satin = generate::satin_shape(&polys, i.rule, s.spacing(), pull, underlay == Underlay::Center);
+    let (satin, quality) = generate::satin_shape_checked(&polys, i.rule, s.spacing(), pull, underlay == Underlay::Center);
+    if !satin.is_empty() && quality.poor() {
+        let fill = crate::auto_fill(s, &polys);
+        let mut out = super::sew(&Input { settings: &fill, ..*i });
+        out.warnings.push("a satin shape is too heavy for satin to cover: sewn as a fill with a satin border (as Auto does)".into());
+        return out;
+    }
     // An edge walk goes in first, under the satin (none when the shape is filled instead).
     if underlay == Underlay::Edge && !satin.is_empty() {
         out.runs.extend(generate::edge_walk(&polys, i.rule));

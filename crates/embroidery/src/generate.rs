@@ -1175,12 +1175,19 @@ pub struct SatinQuality {
     /// Of the zigs, those fanning: the needle points on one side three times further apart than
     /// on the other (a stroke wide for the curve it turns, round a small counter).
     pub fanned: f64,
+    /// Of the shape's area, what no stitch covers ([`uncovered`]): bare fabric where the satin
+    /// doesn't reach (a heavy letter's corners and junctions).
+    pub uncovered: f64,
 }
 
 impl SatinQuality {
     /// Satin that leaves out or crowds this much looks wrong: fill the shape instead.
     pub fn poor(&self) -> bool {
-        self.skipped > 0.2 || self.crowded > 0.2 || self.fanned > 0.2 || self.skipped + self.crowded + self.fanned > 0.28
+        self.skipped > 0.2
+            || self.crowded > 0.2
+            || self.fanned > 0.2
+            || self.skipped + self.crowded + self.fanned > 0.28
+            || self.uncovered > UNCOVERED_LIMIT
     }
 }
 
@@ -1392,7 +1399,261 @@ pub fn satin_shape_at_least(
         }
     }
     let frac = |n: usize, of: usize| if of == 0 { 0.0 } else { n as f64 / of as f64 };
-    (out, SatinQuality { skipped: frac(skipped, positions), crowded: frac(crowded, points), fanned: frac(fanned, zigs) })
+    let bare = uncovered(polys, rule, &out);
+    // What the satin leaves bare (corners and junctions of heavy strokes) is filled, under it.
+    if bare > 0.0 && !out.is_empty() {
+        let patches = patch_bare(polys, rule, &out, StitchSettings::DEFAULT_SPACING);
+        out.splice(0..0, patches);
+    }
+    (out, SatinQuality { skipped: frac(skipped, positions), crowded: frac(crowded, points), fanned: frac(fanned, zigs), uncovered: bare })
+}
+
+/// The share of a shape's area satin may leave bare (before the bare patches are filled) before
+/// the shape isn't one for satin: heavy strokes whose corners and junctions it can't reach.
+pub const UNCOVERED_LIMIT: f64 = 0.15;
+/// The grid cell [`uncovered`] measures with, mm.
+const COVER_CELL: f64 = 0.3;
+/// How far from a stitch the fabric still counts as covered, mm (the thread's spread and the
+/// spacing between satin zigs).
+const COVER_REACH: f64 = 0.35;
+/// The most grid cells [`uncovered`] looks at: past it, a coarser grid.
+const COVER_MAX_CELLS: f64 = 400_000.0;
+
+/// A grid over a shape: which cells are inside it, and which of those no stitch comes near.
+struct Coverage {
+    x0: f64,
+    y0: f64,
+    cell: f64,
+    cols: usize,
+    rows: usize,
+    /// Per cell: inside the shape, and bare (inside, no stitch within [`COVER_REACH`]).
+    inside: Vec<bool>,
+    bare: Vec<bool>,
+}
+
+impl Coverage {
+    /// `polys`'s cells, and those `runs` leave bare; none for a shape with no area.
+    fn of(polys: &[Vec<Point>], rule: FillRule, runs: &[Vec<Point>]) -> Option<Coverage> {
+        let (mut x0, mut y0, mut x1, mut y1) = (f64::INFINITY, f64::INFINITY, f64::NEG_INFINITY, f64::NEG_INFINITY);
+        for p in polys.iter().flatten() {
+            (x0, y0, x1, y1) = (x0.min(p.x), y0.min(p.y), x1.max(p.x), y1.max(p.y));
+        }
+        if !(x1 > x0 && y1 > y0 && (x1 - x0).is_finite() && (y1 - y0).is_finite()) {
+            return None;
+        }
+        let cell = COVER_CELL.max(((x1 - x0) * (y1 - y0) / COVER_MAX_CELLS).sqrt());
+        let (cols, rows) = (((x1 - x0) / cell).ceil() as usize, ((y1 - y0) / cell).ceil() as usize);
+        let centre = |gx: usize, gy: usize| Point::new(x0 + (gx as f64 + 0.5) * cell, y0 + (gy as f64 + 0.5) * cell);
+        // The cells a stitch passes near.
+        let reach = COVER_REACH.max(cell);
+        let mut near = vec![false; cols * rows];
+        let r = (reach / cell).ceil() as isize;
+        for run in runs {
+            for w in run.windows(2) {
+                let (a, b) = (w[0], w[1]);
+                let steps = ((a.distance(b) / (cell / 2.0)).ceil() as usize).clamp(1, 100_000);
+                for k in 0..=steps {
+                    let p = a.lerp(b, k as f64 / steps as f64);
+                    let (cx, cy) = (((p.x - x0) / cell).floor() as isize, ((p.y - y0) / cell).floor() as isize);
+                    for dy in -r..=r {
+                        for dx in -r..=r {
+                            let (gx, gy) = (cx + dx, cy + dy);
+                            if gx < 0 || gy < 0 || gx as usize >= cols || gy as usize >= rows {
+                                continue;
+                            }
+                            if centre(gx as usize, gy as usize).distance(p) <= reach
+                                && let Some(c) = near.get_mut(gy as usize * cols + gx as usize)
+                            {
+                                *c = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        let mut inside_cells = vec![false; cols * rows];
+        let mut bare = vec![false; cols * rows];
+        for gy in 0..rows {
+            for gx in 0..cols {
+                let k = gy * cols + gx;
+                if inside(polys, rule, centre(gx, gy)) {
+                    if let Some(c) = inside_cells.get_mut(k) {
+                        *c = true;
+                    }
+                    if !near.get(k).copied().unwrap_or(false)
+                        && let Some(c) = bare.get_mut(k)
+                    {
+                        *c = true;
+                    }
+                }
+            }
+        }
+        let mut c = Coverage { x0, y0, cell, cols, rows, inside: inside_cells, bare };
+        c.keep_thick();
+        Some(c)
+    }
+
+    /// Keep only the bare patches at least [`THICK_CELLS`] cells across somewhere (a cell with
+    /// nothing covered that near it all round): thin slivers, such as where a satin stops just
+    /// short of a stroke's tip, are the thread's to cover.
+    fn keep_thick(&mut self) {
+        let (cols, rows) = (self.cols, self.rows);
+        let r = THICK_CELLS as isize;
+        // Bare on every side, inside the shape: a strip along the outline (where a satin stops just
+        // short of a stroke's tip) has the outside on one side, and isn't a gap.
+        let open = |c: &Coverage, gx: isize, gy: isize| c.at(&c.bare, gx, gy);
+        let core: Vec<bool> = (0..cols * rows)
+            .map(|k| {
+                let (gx, gy) = ((k % cols) as isize, (k / cols) as isize);
+                self.at(&self.bare, gx, gy) && (-r..=r).all(|dy| (-r..=r).all(|dx| open(self, gx + dx, gy + dy)))
+            })
+            .collect();
+        // The patches holding a core cell, grown from the cores through bare cells.
+        let mut keep = vec![false; cols * rows];
+        let mut stack: Vec<usize> = (0..cols * rows).filter(|k| core.get(*k).copied().unwrap_or(false)).collect();
+        while let Some(k) = stack.pop() {
+            if keep.get(k).copied().unwrap_or(true) || !self.bare.get(k).copied().unwrap_or(false) {
+                continue;
+            }
+            if let Some(c) = keep.get_mut(k) {
+                *c = true;
+            }
+            let (gx, gy) = (k % cols, k / cols);
+            for (dx, dy) in [(-1isize, 0isize), (1, 0), (0, -1), (0, 1)] {
+                let (nx, ny) = (gx as isize + dx, gy as isize + dy);
+                if self.at(&self.bare, nx, ny) {
+                    stack.push(ny as usize * cols + nx as usize);
+                }
+            }
+        }
+        self.bare = keep;
+    }
+
+    fn fraction(&self) -> f64 {
+        let inside = self.inside.iter().filter(|c| **c).count();
+        let bare = self.bare.iter().filter(|c| **c).count();
+        if inside == 0 { 0.0 } else { bare as f64 / inside as f64 }
+    }
+
+    /// Whether cell (`gx`, `gy`) of `v` is set (none outside the grid).
+    fn at(&self, v: &[bool], gx: isize, gy: isize) -> bool {
+        gx >= 0
+            && gy >= 0
+            && (gx as usize) < self.cols
+            && (gy as usize) < self.rows
+            && v.get(gy as usize * self.cols + gx as usize).copied().unwrap_or(false)
+    }
+
+    /// Fill rows over the bare cells, each bare patch grown by a cell (so the rows reach under the
+    /// satin round it) and kept inside the shape: horizontal rows `spacing` apart, back and forth,
+    /// one run per patch. Patches smaller than [`MIN_PATCH`] are left: the thread's spread covers
+    /// them.
+    fn patch(&self, spacing: f64) -> Vec<Vec<Point>> {
+        let (cols, rows) = (self.cols, self.rows);
+        // Bare patches, as connected groups of cells.
+        let mut seen = vec![false; cols * rows];
+        let mut patches: Vec<Vec<(usize, usize)>> = vec![];
+        for start in 0..cols * rows {
+            if !self.bare.get(start).copied().unwrap_or(false) || seen.get(start).copied().unwrap_or(true) {
+                continue;
+            }
+            let mut cells = vec![];
+            let mut stack = vec![start];
+            while let Some(k) = stack.pop() {
+                if seen.get(k).copied().unwrap_or(true) || !self.bare.get(k).copied().unwrap_or(false) {
+                    continue;
+                }
+                if let Some(s) = seen.get_mut(k) {
+                    *s = true;
+                }
+                let (gx, gy) = (k % cols, k / cols);
+                cells.push((gx, gy));
+                for (dx, dy) in [(-1isize, 0isize), (1, 0), (0, -1), (0, 1)] {
+                    let (nx, ny) = (gx as isize + dx, gy as isize + dy);
+                    if self.at(&self.bare, nx, ny) {
+                        stack.push(ny as usize * cols + nx as usize);
+                    }
+                }
+            }
+            patches.push(cells);
+        }
+        let min_cells = (MIN_PATCH / (self.cell * self.cell)).ceil() as usize;
+        let mut out = vec![];
+        for cells in patches.iter().filter(|c| c.len() >= min_cells) {
+            // The patch grown by a cell, inside the shape.
+            let mut mask = vec![false; cols * rows];
+            for &(gx, gy) in cells {
+                for dy in -1..=1isize {
+                    for dx in -1..=1isize {
+                        let (nx, ny) = (gx as isize + dx, gy as isize + dy);
+                        if self.at(&self.inside, nx, ny)
+                            && let Some(m) = mask.get_mut(ny as usize * cols + nx as usize)
+                        {
+                            *m = true;
+                        }
+                    }
+                }
+            }
+            let (ylo, yhi) = cells.iter().fold((usize::MAX, 0), |(lo, hi), &(_, gy)| (lo.min(gy), hi.max(gy)));
+            let (ylo, yhi) = (ylo.saturating_sub(1), (yhi + 1).min(rows.saturating_sub(1)));
+            let mut run: Vec<Point> = vec![];
+            let mut y = self.y0 + ylo as f64 * self.cell + spacing / 2.0;
+            let bottom = self.y0 + (yhi + 1) as f64 * self.cell;
+            let mut forward = true;
+            while y < bottom {
+                let gy = ((y - self.y0) / self.cell).floor() as isize;
+                // The row's spans of masked cells.
+                let mut spans: Vec<(f64, f64)> = vec![];
+                let mut gx = 0isize;
+                while (gx as usize) < cols {
+                    if self.at(&mask, gx, gy) {
+                        let s = gx;
+                        while (gx as usize) < cols && self.at(&mask, gx, gy) {
+                            gx += 1;
+                        }
+                        spans.push((self.x0 + s as f64 * self.cell, self.x0 + gx as f64 * self.cell));
+                    }
+                    gx += 1;
+                }
+                if !forward {
+                    spans.reverse();
+                }
+                for (a, b) in spans {
+                    let (a, b) = if forward { (a, b) } else { (b, a) };
+                    // Stitches up to the fill length along the row.
+                    let n = ((a - b).abs() / vectorcraft_doc::StitchKind::Fill.default_length()).ceil().max(1.0) as usize;
+                    for k in 0..=n {
+                        run.push(Point::new(a + (b - a) * k as f64 / n as f64, y));
+                    }
+                }
+                forward = !forward;
+                y += spacing;
+            }
+            if run.len() > 1 {
+                out.push(split_long(&run));
+            }
+        }
+        out
+    }
+}
+
+/// Bare patches smaller than this are left alone, mm².
+const MIN_PATCH: f64 = 0.5;
+/// How many cells a bare patch must be clear of stitches all round somewhere to count (see
+/// [`Coverage::keep_thick`]).
+const THICK_CELLS: usize = 1;
+
+/// The share of the shape `polys` no stitch of `runs` comes within [`COVER_REACH`] of (0 for a
+/// shape with no area): each cell of a grid over the shape, inside it, counts as covered when a
+/// stitch passes that near its centre.
+pub fn uncovered(polys: &[Vec<Point>], rule: FillRule, runs: &[Vec<Point>]) -> f64 {
+    Coverage::of(polys, rule, runs).map_or(0.0, |c| c.fraction())
+}
+
+/// Fill rows for what `runs` leave bare of the shape `polys` (see [`Coverage::patch`]), sewn before
+/// them so the satin lies over their edges.
+pub fn patch_bare(polys: &[Vec<Point>], rule: FillRule, runs: &[Vec<Point>], spacing: f64) -> Vec<Vec<Point>> {
+    Coverage::of(polys, rule, runs).map_or_else(Vec::new, |c| c.patch(spacing))
 }
 
 /// `run` with any stitch longer than [`MAX_STITCH`] split into equal shorter ones (a tight curve
