@@ -4881,7 +4881,11 @@ effect	Regular	Regelmäßig
 	Embroidery Libraries	Stickereibibliotheken
 	Add to Embroidery Library…	Zur Stickereibibliothek hinzufügen…
 	Rescan Embroidery Libraries	Stickereibibliotheken neu einlesen
+	Save a copy in your embroidery library, for any design	Eine Kopie in Ihrer Stickereibibliothek speichern, für jedes Design
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Ihre Stickereibibliothek: Randmuster, Stoffe, Stickrahmen und Garnkarten für jedes Design
 @msg	no embroidery library folder here	hier gibt es keinen Ordner für Stickereibibliotheken
+@msg	Added {_1} to the embroidery library	{_1} zur Stickereibibliothek hinzugefügt
+@msg	nothing to add	nichts hinzuzufügen
 	Long stitches	Lange Stiche
 	Makes no stitches	Erzeugt keine Stiche
 	Manual Stitch	Manueller Stich

@@ -203,7 +203,7 @@ shared as open files.
 
 | Step | What | Size | Needs |
 |---|---|---|---|
-| **E8.5** Library folders (**E8.5a done**: the folder, scanning and commands; the panels next) | User folders for every embroidery library type, listed in the panels, shared by copying files. | M | — |
+| **E8.5** Library folders (**done**) | User folders for every embroidery library type, listed in the panels, shared by copying files. | M | — |
 | **E8.8** Appliqué and cut files | Placement, tack-down and cover from a shape, with stops; nested cutter export. | L | — |
 | **E8.1** Embroidery fonts | An open font format, type set in it, and a font editor. | XL | E8.5 |
 | **E8.2** Monograms and text effects | Monogram layouts, arc and envelope text, stitched as live type. | M | E8.1 for embroidery fonts (works with outline fonts without it) |
@@ -244,11 +244,16 @@ rescanned at start, User Defined in the library panel). Embroidery reuses that m
   `library` (an entry's id or name) and the four save commands `user: true`. Web: no folder, so nothing is
   listed (the same as swatch libraries on the web). Showing the folder in the file manager belongs to
   E8.5b's panel.
-- **E8.5b Panels.** The Embroidery panel's pickers (border patterns, motifs, fabric, hoop, thread chart) list
+- **E8.5b Panels (done; motifs and fonts join when they exist).** The Embroidery panel's pickers (border patterns, motifs, fabric, hoop, thread chart) list
   three groups: built-in, library, in this document. Picking a library entry copies it into the document
   (`Document.embroidery`), so files still open anywhere; the document copy is used from then on, and a
   newer library version is offered as an update, not applied silently. An "Add to Library…" item on
-  document entries.
+  document entries. As built: library entries are listed after the document's own, marked "(Library)"
+  (border patterns with their pictures; one the document or the starters already have is left out);
+  Add to Library on the document's own pattern, fabric, hoop and chart, hidden once the library has the
+  same; Show in Folder under the Design section. **Not yet:** the update offer. A border pattern changed
+  in the library after a document loaded it is listed again and loads under a numbered id; a chart is
+  matched by its id, so a changed one isn't offered.
 - **Tests.** Scanning a folder with good, bad, oversized and duplicate files; the copy-into-document rule;
   a document that names a library entry opens without the library; `cargo xtask assets` is unaffected
   (user folders are outside the repo). MCP: the list and add commands in the guide table, a round trip in

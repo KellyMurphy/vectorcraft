@@ -4907,7 +4907,11 @@ lighting	Light	Luce
 	Embroidery Libraries	Librerie di ricamo
 	Add to Embroidery Library…	Aggiungi alla libreria di ricamo…
 	Rescan Embroidery Libraries	Rileggi le librerie di ricamo
+	Save a copy in your embroidery library, for any design	Salva una copia nella tua libreria di ricamo, per qualsiasi disegno
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	La tua libreria di ricamo: bordi a motivo, tessuti, telai e cartelle colori dei fili per qualsiasi disegno
 @msg	no embroidery library folder here	nessuna cartella di librerie di ricamo qui
+@msg	Added {_1} to the embroidery library	{_1} aggiunto alla libreria di ricamo
+@msg	nothing to add	niente da aggiungere
 	Save Border Pattern…	Salva bordo a motivo…
 	Remove Border Pattern	Rimuovi bordo a motivo
 	Render Stitch Preview	Esegui rendering anteprima punti

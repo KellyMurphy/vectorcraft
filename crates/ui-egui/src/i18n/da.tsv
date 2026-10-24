@@ -5299,7 +5299,11 @@ swatch	Bright Violet	Kraftig violet
 	Embroidery Libraries	Broderibiblioteker
 	Add to Embroidery Library…	Føj til broderibibliotek…
 	Rescan Embroidery Libraries	Genindlæs broderibiblioteker
+	Save a copy in your embroidery library, for any design	Gem en kopi i dit broderibibliotek til ethvert design
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Dit broderibibliotek: kantmønstre, stoffer, rammer og trådkort til ethvert design
 @msg	no embroidery library folder here	ingen mappe til broderibiblioteker her
+@msg	Added {_1} to the embroidery library	{_1} føjet til broderibiblioteket
+@msg	nothing to add	intet at tilføje
 	Long stitches	Lange sting
 	Makes no stitches	Laver ingen sting
 	Manual Stitch	Manuel sting

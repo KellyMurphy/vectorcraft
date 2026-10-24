@@ -5128,7 +5128,11 @@ lighting	Light	光源
 	Embroidery Libraries	刺绣库
 	Add to Embroidery Library…	添加到刺绣库…
 	Rescan Embroidery Libraries	重新扫描刺绣库
+	Save a copy in your embroidery library, for any design	在刺绣库中保存一份副本，供任何设计使用
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	您的刺绣库：可用于任何设计的图案边框、面料、绣框和线色卡
 @msg	no embroidery library folder here	此处没有刺绣库文件夹
+@msg	Added {_1} to the embroidery library	已将 {_1} 添加到刺绣库
+@msg	nothing to add	没有可添加的内容
 	Save Border Pattern…	存储图案边框…
 	Remove Border Pattern	删除图案边框
 	Render Stitch Preview	渲染针迹预览

@@ -4887,7 +4887,11 @@ lighting	Light	Світло
 	Embroidery Libraries	Бібліотеки вишивки
 	Add to Embroidery Library…	Додати до бібліотеки вишивки…
 	Rescan Embroidery Libraries	Повторно сканувати бібліотеки вишивки
+	Save a copy in your embroidery library, for any design	Зберегти копію у вашій бібліотеці вишивки для будь-якого дизайну
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Ваша бібліотека вишивки: візерункові облямівки, тканини, п’яльця та карти ниток для будь-якого дизайну
 @msg	no embroidery library folder here	тут немає папки бібліотек вишивки
+@msg	Added {_1} to the embroidery library	{_1} додано до бібліотеки вишивки
+@msg	nothing to add	нічого додати
 	Save Border Pattern…	Зберегти візерункову облямівку…
 	Remove Border Pattern	Вилучити візерункову облямівку
 	Render Stitch Preview	Відобразити попередній перегляд стібків

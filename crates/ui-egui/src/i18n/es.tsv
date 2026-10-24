@@ -5236,7 +5236,11 @@ mark-style	Japanese	Japonesas
 	Embroidery Libraries	Bibliotecas de bordado
 	Add to Embroidery Library…	Añadir a la biblioteca de bordado…
 	Rescan Embroidery Libraries	Volver a examinar las bibliotecas de bordado
+	Save a copy in your embroidery library, for any design	Guardar una copia en su biblioteca de bordado, para cualquier diseño
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Su biblioteca de bordado: bordes de patrón, tejidos, bastidores y cartas de hilos para cualquier diseño
 @msg	no embroidery library folder here	aquí no hay ninguna carpeta de bibliotecas de bordado
+@msg	Added {_1} to the embroidery library	{_1} añadido a la biblioteca de bordado
+@msg	nothing to add	no hay nada que añadir
 	Save Border Pattern…	Guardar borde de patrón…
 	Remove Border Pattern	Quitar borde de patrón
 	Render Stitch Preview	Representar vista previa de puntadas

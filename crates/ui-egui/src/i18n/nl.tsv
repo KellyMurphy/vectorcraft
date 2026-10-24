@@ -5342,7 +5342,11 @@ swatch	Bright Violet	Felviolet
 	Embroidery Libraries	Borduurbibliotheken
 	Add to Embroidery Library…	Toevoegen aan borduurbibliotheek…
 	Rescan Embroidery Libraries	Borduurbibliotheken opnieuw inlezen
+	Save a copy in your embroidery library, for any design	Een kopie in uw borduurbibliotheek bewaren, voor elk ontwerp
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Uw borduurbibliotheek: randpatronen, stoffen, borduurringen en garenkaarten voor elk ontwerp
 @msg	no embroidery library folder here	geen borduurbibliotheekmap hier
+@msg	Added {_1} to the embroidery library	{_1} toegevoegd aan de borduurbibliotheek
+@msg	nothing to add	niets toe te voegen
 	Long stitches	Lange steken
 	Makes no stitches	Maakt geen steken
 	Manual Stitch	Handmatige steek

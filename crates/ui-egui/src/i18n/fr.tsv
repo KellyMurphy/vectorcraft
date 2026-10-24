@@ -5293,7 +5293,11 @@ theme	Appearance	Apparence
 	Embroidery Libraries	Bibliothèques de broderie
 	Add to Embroidery Library…	Ajouter à la bibliothèque de broderie…
 	Rescan Embroidery Libraries	Relire les bibliothèques de broderie
+	Save a copy in your embroidery library, for any design	Enregistrer une copie dans votre bibliothèque de broderie, pour tout motif
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Votre bibliothèque de broderie : bordures à motif, tissus, cadres et nuanciers de fils pour tout motif
 @msg	no embroidery library folder here	aucun dossier de bibliothèques de broderie ici
+@msg	Added {_1} to the embroidery library	{_1} ajouté à la bibliothèque de broderie
+@msg	nothing to add	rien à ajouter
 	Save Border Pattern…	Enregistrer la bordure à motif…
 	Remove Border Pattern	Supprimer la bordure à motif
 	Render Stitch Preview	Rendu de l’aperçu des points

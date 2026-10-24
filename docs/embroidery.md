@@ -324,6 +324,11 @@ each kind (`borders`, `fabrics`, `hoops`, `threads`). VectorCraft reads it at st
 already taken gets a number). `embroidery.libraries` lists what is there, and files that can't be read are
 listed with the reason instead of being dropped silently.
 
+In the Embroidery panel, the border pattern picker and the **Fabric**, **Hoop** and **Thread Chart** menus
+list the library's entries after the document's own, marked **(Library)**; picking one loads it. **Add to
+Library** next to each copies the document's own pattern, fabric, hoop or chart into the library (it is
+hidden once the library has the same), and **Show in Folder**, under the Design section, opens the folder.
+
 Loading an entry (`library` on `embroidery.loadBorderPattern`, `loadFabric`, `loadHoop` or
 `loadThreadChart`, by its id or name) **copies it into the document**, as loading a file does, so the
 design sews the same on a machine without your library. Changing the library file afterwards doesn't

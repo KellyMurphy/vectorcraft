@@ -5299,7 +5299,11 @@ swatch	Bright Violet	Violet cerah
 	Embroidery Libraries	Pustaka sulaman
 	Add to Embroidery Library…	Tambahkan ke pustaka sulaman…
 	Rescan Embroidery Libraries	Pindai ulang pustaka sulaman
+	Save a copy in your embroidery library, for any design	Simpan salinan di pustaka sulaman Anda, untuk desain apa pun
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Pustaka sulaman Anda: pola tepi, kain, ram, dan bagan benang untuk desain apa pun
 @msg	no embroidery library folder here	tidak ada folder pustaka sulaman di sini
+@msg	Added {_1} to the embroidery library	{_1} ditambahkan ke pustaka sulaman
+@msg	nothing to add	tidak ada yang ditambahkan
 	Long stitches	Jahitan panjang
 	Makes no stitches	Tidak menghasilkan jahitan
 	Manual Stitch	Jahitan manual

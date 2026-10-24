@@ -490,13 +490,29 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
                     (name(p), data.map(|d| stitch_art::border(&ctx, &d)).unwrap_or_default())
                 })
                 .collect();
+            // Then the embroidery library's, unless the document or the starters have the same.
+            let have = |q: &vectorcraft_doc::BorderPattern| {
+                own.iter().any(|o| o == q) || vectorcraft_embroidery::borders::builtin(&q.id).is_some_and(|b| b == *q)
+            };
+            let libs = &app.session.embroidery_libraries.borders;
+            let library: Vec<(String, vectorcraft_doc::BorderPattern)> = libs
+                .infos()
+                .filter(|i| i.category == "user")
+                .filter_map(|i| libs.get(&i.id))
+                .filter(|(_, q)| q.unknown.is_none() && !have(q))
+                .map(|(i, q)| (i.id, (*q).clone()))
+                .collect();
+            let mut entries = entries;
+            entries.extend(library.iter().map(|(_, q)| (library_label(&q.name), stitch_art::border(&ctx, q))));
             let selected = list.iter().position(|p| p["id"].as_str() == pattern);
             widgets::label_row(ui, tl!("Pattern:"), LABEL_W, |ui| {
                 let (label, thumb) = selected.and_then(|i| entries.get(i)).map(|(l, th)| (l.clone(), Some(th))).unwrap_or_default();
-                if let Some(i) = picture_picker(ui, "border-pattern", &label, thumb, &entries, selected, false)
-                    && let Some(id) = list.get(i).and_then(|p| p["id"].as_str())
-                {
-                    set(app, json!({"pattern": id}));
+                if let Some(i) = picture_picker(ui, "border-pattern", &label, thumb, &entries, selected, false) {
+                    match (list.get(i).and_then(|p| p["id"].as_str()), i.checked_sub(list.len()).and_then(|j| library.get(j))) {
+                        (Some(id), _) => set(app, json!({"pattern": id})),
+                        (None, Some((lib, _))) => load_pattern_from(app, json!({ "library": lib })),
+                        _ => {}
+                    }
                 }
             });
             ui.horizontal(|ui| {
@@ -516,6 +532,13 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
                             app.status(e);
                         }
                     });
+                }
+                if let Some(mine) =
+                    current.filter(|p| p["builtin"] != json!(true)).and_then(|p| own.iter().find(|o| p["id"].as_str() == Some(o.id.as_str())))
+                    && add_button(app, ui, !in_library(&app.session.embroidery_libraries.borders, mine))
+                {
+                    let file = format!("{}.{}", mine.name, vectorcraft_embroidery::borders::FILE_EXT);
+                    add_to_library(app, "embroidery.saveBorderPattern", json!({ "pattern": mine.id }), &file, "borders");
                 }
             });
             if let Some(p) = current.filter(|p| p["builtin"] != json!(true)) {
@@ -775,6 +798,11 @@ fn fabric_row(app: &mut VectorcraftApp, ui: &mut Ui) {
     if let Some(n) = &own {
         names.push(n.clone());
     }
+    let first_library = names.len();
+    let libs = &app.session.embroidery_libraries.fabrics;
+    let library: Vec<(String, String)> =
+        libs.infos().filter(|i| i.category == "user").filter_map(|i| libs.get(&i.id)).map(|(i, f)| (i.id, f.name.clone())).collect();
+    names.extend(library.iter().map(|(_, n)| library_label(n)));
     let shown = match (&starter, &own) {
         (Some(id), _) => fabric_label(id).to_string(),
         (None, Some(n)) => n.clone(),
@@ -787,6 +815,13 @@ fn fabric_row(app: &mut VectorcraftApp, ui: &mut Ui) {
                 match i {
                     0 => {
                         app.run("embroidery.setFabric", json!({"fabric": null})).ok();
+                    }
+                    i if i >= first_library => {
+                        if let Some((id, _)) = library.get(i - first_library)
+                            && let Err(e) = app.run("embroidery.loadFabric", json!({ "library": id }))
+                        {
+                            app.status(e);
+                        }
                     }
                     i => {
                         if let Some(id) = fabrics::BUILTIN.get(i - 1) {
@@ -814,6 +849,11 @@ fn fabric_row(app: &mut VectorcraftApp, ui: &mut Ui) {
                 }
             });
         }
+        if let Some(f) = current.as_ref().filter(|_| starter.is_none())
+            && add_button(app, ui, !in_library(&app.session.embroidery_libraries.fabrics, f))
+        {
+            add_to_library(app, "embroidery.saveFabric", json!({}), &format!("{}.{}", f.name, fabrics::FILE_EXT), "fabrics");
+        }
     });
 }
 
@@ -830,13 +870,33 @@ fn chart_row(app: &mut VectorcraftApp, ui: &mut Ui) {
         .unwrap_or_default();
     let mut names: Vec<String> = vec![tl!("None").to_string()];
     names.extend(charts.iter().map(|(_, n)| n.clone()));
+    // The library's charts the document doesn't have yet (by their id inside).
+    let libs = &app.session.embroidery_libraries.threads;
+    let library: Vec<(String, String)> = libs
+        .infos()
+        .filter(|i| i.category == "user")
+        .filter_map(|i| libs.get(&i.id))
+        .filter(|(_, c)| !charts.iter().any(|(id, _)| *id == c.id))
+        .map(|(i, c)| (i.id, c.name.clone()))
+        .collect();
+    names.extend(library.iter().map(|(_, n)| library_label(n)));
     let shown = chosen.as_ref().and_then(|id| charts.iter().find(|(c, _)| c == id)).map_or_else(|| tl!("None").to_string(), |(_, n)| n.clone());
     ui.scope(|ui| {
         widgets::label_row(ui, tl!("Thread Chart:"), LABEL_W, |ui| {
             let opts: Vec<&str> = names.iter().map(String::as_str).collect();
             if let Some(i) = widgets::dropdown_names(ui, "emb-chart", &shown, &opts, 150.0) {
-                let chart = if i == 0 { Value::Null } else { charts.get(i - 1).map_or(Value::Null, |(id, _)| json!(id)) };
-                app.run("embroidery.setThreadChart", json!({ "chart": chart })).ok();
+                if let Some((lib, _)) = i.checked_sub(charts.len() + 1).and_then(|j| library.get(j)) {
+                    // Loaded into the document, then chosen.
+                    match app.run("embroidery.loadThreadChart", json!({ "library": lib })) {
+                        Ok(r) => {
+                            app.run("embroidery.setThreadChart", json!({ "chart": r["id"] })).ok();
+                        }
+                        Err(e) => app.status(e),
+                    }
+                } else {
+                    let chart = if i == 0 { Value::Null } else { charts.get(i - 1).map_or(Value::Null, |(id, _)| json!(id)) };
+                    app.run("embroidery.setThreadChart", json!({ "chart": chart })).ok();
+                }
             }
         })
     })
@@ -848,6 +908,13 @@ fn chart_row(app: &mut VectorcraftApp, ui: &mut Ui) {
         ui.add_space(LABEL_W + 8.0);
         if widgets::flat_button(ui, tl!("Load…"), 70.0).on_hover_text(tl!("Load a thread chart file (.vcthreads)")).clicked() {
             load_chart(app);
+        }
+        let mine = chosen.as_ref().and_then(|id| app.session.active()?.doc.embroidery.charts.iter().find(|c| c.id == *id).cloned());
+        if let Some(c) = mine
+            && add_button(app, ui, !in_library(&app.session.embroidery_libraries.threads, &c))
+        {
+            let file = format!("{}.{}", c.name, vectorcraft_embroidery::threads::FILE_EXT);
+            add_to_library(app, "embroidery.saveThreadChart", json!({ "chart": c.id }), &file, "threads");
         }
     });
 }
@@ -911,6 +978,17 @@ fn hoop_row(app: &mut VectorcraftApp, ui: &mut Ui) {
     if let Some(n) = &own {
         names.push(n.clone());
     }
+    // Each hoop of the library's hoop lists.
+    let first_library = names.len();
+    let libs = &app.session.embroidery_libraries.hoops;
+    let library: Vec<(String, vectorcraft_doc::Hoop)> = libs
+        .infos()
+        .filter(|i| i.category == "user")
+        .filter_map(|i| libs.get(&i.id))
+        .flat_map(|(i, l)| l.hoops.iter().filter(|h| h.unknown.is_none()).map(|h| (i.id.clone(), h.clone())).collect::<Vec<_>>())
+        .collect();
+    // Hoop names already give the size ("130 × 180 mm (5 × 7 in)").
+    names.extend(library.iter().map(|(_, h)| library_label(if h.name.is_empty() { &h.id } else { &h.name })));
     let shown = match (starter, &own) {
         (Some(h), _) => name(h),
         (None, Some(n)) => n.clone(),
@@ -920,15 +998,31 @@ fn hoop_row(app: &mut VectorcraftApp, ui: &mut Ui) {
         widgets::label_row(ui, tl!("Hoop:"), LABEL_W, |ui| {
             let opts: Vec<&str> = names.iter().map(String::as_str).collect();
             if let Some(i) = widgets::dropdown_names(ui, "emb-hoop", &shown, &opts, 150.0) {
-                let hoop = if i == 0 { Value::Null } else { common.get(i - 1).map_or(Value::Null, |h| json!(h.id)) };
-                if i == 0 || !hoop.is_null() {
-                    app.run("embroidery.setHoop", json!({ "hoop": hoop })).ok();
+                if let Some((lib, h)) = i.checked_sub(first_library).and_then(|j| library.get(j)) {
+                    if let Err(e) = app.run("embroidery.loadHoop", json!({ "library": lib, "hoop": h.id })) {
+                        app.status(e);
+                    }
+                } else {
+                    let hoop = if i == 0 { Value::Null } else { common.get(i - 1).map_or(Value::Null, |h| json!(h.id)) };
+                    if i == 0 || !hoop.is_null() {
+                        app.run("embroidery.setHoop", json!({ "hoop": hoop })).ok();
+                    }
                 }
             }
         })
     })
     .response
     .on_hover_text(tl!("The hoop the design is sewn in: its sewing field, centred on the design, is checked and shown in Stitch Preview"));
+    if let Some(h) = current.as_ref().filter(|_| starter.is_none()) {
+        let libs = &app.session.embroidery_libraries.hoops;
+        let listed = libs.infos().filter_map(|i| libs.get(&i.id)).any(|(_, l)| l.hoops.contains(h));
+        ui.horizontal(|ui| {
+            ui.add_space(LABEL_W + 8.0);
+            if add_button(app, ui, !listed) {
+                add_to_library(app, "embroidery.saveHoop", json!({}), &format!("{}.{}", h.name, vectorcraft_embroidery::hoops::FILE_EXT), "hoops");
+            }
+        });
+    }
     if current.is_some() {
         let fit = app.session.execute("embroidery.hoops", &json!({})).ok().and_then(|r| r["fit"].as_str().map(str::to_string));
         let t = Tokens::get(ui.ctx());
@@ -1078,11 +1172,102 @@ fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
             app.run("window.panel", json!({"panel": super::sew_out::ID})).ok();
         }
     });
+    if let Some(dir) = app.session.embroidery_libraries.dir().map(str::to_string) {
+        ui.add_space(2.0);
+        if widgets::flat_button(ui, tl!("Show in Folder"), 104.0)
+            .on_hover_text(tl!("Your embroidery library: border patterns, fabrics, hoops and thread charts for any design"))
+            .clicked()
+        {
+            show_library_folder(app, &dir);
+        }
+    }
+}
+
+/// "Name (Library)": an embroidery library entry as the pickers list it.
+fn library_label(name: &str) -> String {
+    format!("{name} ({})", tl!("Library"))
+}
+
+/// Whether the embroidery library folder already has `item`.
+fn in_library<L: vectorcraft_engine::cmd::swatchlib::LibraryFile + PartialEq>(
+    libs: &vectorcraft_engine::cmd::swatchlib::Libraries<L>,
+    item: &L,
+) -> bool {
+    libs.infos().filter_map(|i| libs.get(&i.id)).any(|(_, l)| *l == *item)
+}
+
+/// The Add to Library button, shown when there is an embroidery library folder and `show`: clicked?
+fn add_button(app: &VectorcraftApp, ui: &mut Ui, show: bool) -> bool {
+    show && app.session.embroidery_libraries.dir().is_some()
+        && widgets::flat_button(ui, tl!("Add to Library"), 104.0)
+            .on_hover_text(tl!("Save a copy in your embroidery library, for any design"))
+            .clicked()
+}
+
+/// Put what save command `cmd` writes with `p` into the embroidery library as file `file` of
+/// `kind`, never replacing a file there (`embroidery.addToLibrary`).
+fn add_to_library(app: &mut VectorcraftApp, cmd: &str, p: Value, file: &str, kind: &str) {
+    let s = &mut app.session;
+    let r = s.execute(cmd, &p).map_err(|e| e.to_string()).and_then(|r| {
+        let data = r["data"].as_str().ok_or("nothing to add")?.to_string();
+        s.execute("embroidery.addToLibrary", &json!({ "data": data, "name": file, "kind": kind })).map_err(|e| e.to_string())
+    });
+    match r {
+        Ok(r) => app.status(format!("Added {} to the embroidery library", r["name"].as_str().unwrap_or_default())),
+        Err(e) => app.status(e),
+    }
+}
+
+/// Show the embroidery library folder in the file manager (made first, so there is one to show).
+fn show_library_folder(app: &mut VectorcraftApp, dir: &str) {
+    #[cfg(not(target_arch = "wasm32"))]
+    if let Err(e) = std::fs::create_dir_all(dir) {
+        app.status(e.to_string());
+        return;
+    }
+    if let Err(e) = crate::io::reveal_path(app, dir) {
+        app.status(e);
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use vectorcraft_embroidery::params::{PARAMS, ValueKind, param};
+
+    /// With an embroidery library folder, the Design section offers Add to Library for the
+    /// document's own fabric until the library has it, and Show in Folder.
+    #[test]
+    fn the_design_section_adds_to_the_embroidery_library() {
+        fn texts(s: &egui::Shape, out: &mut Vec<String>) {
+            match s {
+                egui::Shape::Text(t) => out.push(t.galley.text().to_string()),
+                egui::Shape::Vec(v) => v.iter().for_each(|s| texts(s, out)),
+                _ => {}
+            }
+        }
+        fn shown(app: &mut VectorcraftApp) -> Vec<String> {
+            let ctx = egui::Context::default();
+            let mut out = ctx.run_ui(egui::RawInput::default(), |ui| design(app, ui, &Value::Null));
+            out.textures_delta.clear();
+            let mut shown = vec![];
+            out.shapes.iter().for_each(|c| texts(&c.shape, &mut shown));
+            shown
+        }
+        let dir = std::env::temp_dir().join(format!("vc-emb-panel-lib-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        app.session.execute("file.new", &json!({"width": 100, "height": 100})).unwrap();
+        assert!(!shown(&mut app).iter().any(|t| t == "Show in Folder"), "no folder, no button");
+        app.session.embroidery_libraries.set_dir(Some(dir.to_string_lossy().to_string()));
+        // Knit with its own pull: the document's own fabric, not the starter.
+        app.session.execute("embroidery.setFabric", &json!({"fabric": "knit", "pull": 0.4})).unwrap();
+        let before = shown(&mut app);
+        assert!(before.iter().any(|t| t == "Add to Library") && before.iter().any(|t| t == "Show in Folder"), "{before:?}");
+        add_to_library(&mut app, "embroidery.saveFabric", json!({}), "Mine.vcfabric", "fabrics");
+        assert_eq!(app.session.embroidery_libraries.list(Some("fabrics")).len(), 1);
+        assert!(!shown(&mut app).iter().any(|t| t == "Add to Library"), "the library has it now");
+        let _ = std::fs::remove_dir_all(dir);
+    }
 
     /// The generic rows draw every kind of setting: shown for every stitch type with none of its
     /// own rows, each setting's label appears (translated labels fall back to English here).

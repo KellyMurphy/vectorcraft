@@ -5261,7 +5261,11 @@ theme	Appearance	Utseende
 	Embroidery Libraries	Broderibibliotek
 	Add to Embroidery Library…	Lägg till i broderibibliotek…
 	Rescan Embroidery Libraries	Läs in broderibibliotek igen
+	Save a copy in your embroidery library, for any design	Spara en kopia i ditt broderibibliotek, för alla mönster
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Ditt broderibibliotek: kantmönster, tyger, ramar och trådkartor för alla mönster
 @msg	no embroidery library folder here	ingen mapp för broderibibliotek här
+@msg	Added {_1} to the embroidery library	{_1} har lagts till i broderibiblioteket
+@msg	nothing to add	inget att lägga till
 	Long stitches	Långa sömmar
 	Makes no stitches	Ger inga sömmar
 	Manual Stitch	Manuell söm

@@ -5257,7 +5257,11 @@ effect	Points	Σημεία
 	Embroidery Libraries	Βιβλιοθήκες κεντήματος
 	Add to Embroidery Library…	Προσθήκη στη βιβλιοθήκη κεντήματος…
 	Rescan Embroidery Libraries	Επανασάρωση βιβλιοθηκών κεντήματος
+	Save a copy in your embroidery library, for any design	Αποθήκευση αντιγράφου στη βιβλιοθήκη κεντήματός σας, για κάθε σχέδιο
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Η βιβλιοθήκη κεντήματός σας: μοτίβα περιγράμματος, υφάσματα, τελάρα και χάρτες κλωστών για κάθε σχέδιο
 @msg	no embroidery library folder here	δεν υπάρχει φάκελος βιβλιοθηκών κεντήματος εδώ
+@msg	Added {_1} to the embroidery library	Το {_1} προστέθηκε στη βιβλιοθήκη κεντήματος
+@msg	nothing to add	τίποτα για προσθήκη
 	Long stitches	Μακριές βελονιές
 	Makes no stitches	Δεν δίνει βελονιές
 	Manual Stitch	Χειροκίνητη βελονιά

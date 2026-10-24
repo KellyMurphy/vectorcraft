@@ -5157,7 +5157,11 @@ mark-style	Japanese	Japońskie
 	Embroidery Libraries	Biblioteki haftu
 	Add to Embroidery Library…	Dodaj do biblioteki haftu…
 	Rescan Embroidery Libraries	Ponownie przeszukaj biblioteki haftu
+	Save a copy in your embroidery library, for any design	Zapisz kopię w swojej bibliotece haftu, do dowolnego projektu
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Twoja biblioteka haftu: wzory obwódek, tkaniny, tamborki i karty nici do dowolnego projektu
 @msg	no embroidery library folder here	brak folderu bibliotek haftu
+@msg	Added {_1} to the embroidery library	Dodano {_1} do biblioteki haftu
+@msg	nothing to add	nie ma nic do dodania
 	Long stitches	Długie ściegi
 	Makes no stitches	Nie daje ściegów
 	Manual Stitch	Ścieg ręczny

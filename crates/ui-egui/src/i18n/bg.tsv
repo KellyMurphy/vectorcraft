@@ -5275,7 +5275,11 @@ theme	Appearance	Външен вид
 	Embroidery Libraries	Библиотеки за бродерия
 	Add to Embroidery Library…	Добавяне към библиотека за бродерия…
 	Rescan Embroidery Libraries	Повторно сканиране на библиотеките за бродерия
+	Save a copy in your embroidery library, for any design	Запазване на копие в библиотеката ви за бродерия, за всеки дизайн
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Вашата библиотека за бродерия: шарки за кант, платове, гергефи и карти с конци за всеки дизайн
 @msg	no embroidery library folder here	тук няма папка с библиотеки за бродерия
+@msg	Added {_1} to the embroidery library	{_1} е добавен към библиотеката за бродерия
+@msg	nothing to add	няма какво да се добави
 	Long stitches	Дълги бодове
 	Makes no stitches	Не дава бодове
 	Manual Stitch	Ръчен бод

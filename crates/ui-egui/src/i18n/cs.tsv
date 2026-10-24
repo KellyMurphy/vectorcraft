@@ -5292,7 +5292,11 @@ mark-style	Japanese	Japonské
 	Embroidery Libraries	Knihovny výšivek
 	Add to Embroidery Library…	Přidat do knihovny výšivek…
 	Rescan Embroidery Libraries	Znovu prohledat knihovny výšivek
+	Save a copy in your embroidery library, for any design	Uložit kopii do vaší knihovny výšivek pro jakýkoli návrh
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Vaše knihovna výšivek: vzorové okraje, látky, rámečky a vzorníky nití pro jakýkoli návrh
 @msg	no embroidery library folder here	zde není složka knihoven výšivek
+@msg	Added {_1} to the embroidery library	{_1} přidáno do knihovny výšivek
+@msg	nothing to add	není co přidat
 	Save Border Pattern…	Uložit vzorový okraj…
 	Remove Border Pattern	Odstranit vzorový okraj
 	Render Stitch Preview	Vykreslit náhled stehů

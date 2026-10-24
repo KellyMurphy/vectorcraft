@@ -5269,7 +5269,11 @@ mark-style	Japanese	Japanilainen
 	Embroidery Libraries	Kirjontakirjastot
 	Add to Embroidery Library…	Lisää kirjontakirjastoon…
 	Rescan Embroidery Libraries	Lue kirjontakirjastot uudelleen
+	Save a copy in your embroidery library, for any design	Tallenna kopio kirjontakirjastoosi mitä tahansa mallia varten
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Kirjontakirjastosi: reunuskuviot, kankaat, kehykset ja lankakartat mihin tahansa malliin
 @msg	no embroidery library folder here	täällä ei ole kirjontakirjastokansiota
+@msg	Added {_1} to the embroidery library	{_1} lisätty kirjontakirjastoon
+@msg	nothing to add	ei mitään lisättävää
 	Long stitches	Pitkät pistot
 	Makes no stitches	Ei tuota pistoja
 	Manual Stitch	Manuaalinen pisto

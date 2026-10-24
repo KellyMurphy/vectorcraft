@@ -5209,7 +5209,11 @@ mark-style	Japanese	Japonesas
 	Embroidery Libraries	Bibliotecas de Bordado
 	Add to Embroidery Library…	Adicionar à Biblioteca de Bordado…
 	Rescan Embroidery Libraries	Reexaminar Bibliotecas de Bordado
+	Save a copy in your embroidery library, for any design	Salvar uma cópia na sua biblioteca de bordado, para qualquer design
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Sua biblioteca de bordado: bordas de padrão, tecidos, bastidores e cartelas de linhas para qualquer design
 @msg	no embroidery library folder here	nenhuma pasta de bibliotecas de bordado aqui
+@msg	Added {_1} to the embroidery library	{_1} adicionado à biblioteca de bordado
+@msg	nothing to add	nada a adicionar
 	Save Border Pattern…	Salvar borda de padrão…
 	Remove Border Pattern	Remover borda de padrão
 	Render Stitch Preview	Renderizar visualização de pontos

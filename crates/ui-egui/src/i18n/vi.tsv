@@ -4898,7 +4898,11 @@ theme	Appearance	Giao diện
 	Embroidery Libraries	Thư viện thêu
 	Add to Embroidery Library…	Thêm vào thư viện thêu…
 	Rescan Embroidery Libraries	Quét lại thư viện thêu
+	Save a copy in your embroidery library, for any design	Lưu một bản sao vào thư viện thêu của bạn, dùng cho mọi thiết kế
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Thư viện thêu của bạn: mẫu đường viền, vải, khung thêu và bảng chỉ cho mọi thiết kế
 @msg	no embroidery library folder here	không có thư mục thư viện thêu ở đây
+@msg	Added {_1} to the embroidery library	Đã thêm {_1} vào thư viện thêu
+@msg	nothing to add	không có gì để thêm
 	Long stitches	Mũi thêu dài
 	Makes no stitches	Không tạo mũi thêu
 	Manual Stitch	Mũi thủ công

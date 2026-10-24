@@ -4195,7 +4195,11 @@ lighting	Light	光源
 	Embroidery Libraries	刺繡資料庫
 	Add to Embroidery Library…	加入刺繡資料庫…
 	Rescan Embroidery Libraries	重新掃描刺繡資料庫
+	Save a copy in your embroidery library, for any design	在刺繡資料庫中儲存一份副本，供任何設計使用
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	您的刺繡資料庫：可用於任何設計的圖樣邊框、布料、繡框和線色卡
 @msg	no embroidery library folder here	此處沒有刺繡資料庫資料夾
+@msg	Added {_1} to the embroidery library	已將 {_1} 加入刺繡資料庫
+@msg	nothing to add	沒有可加入的內容
 	Save Border Pattern…	儲存圖樣邊框…
 	Remove Border Pattern	刪除圖樣邊框
 	Render Stitch Preview	轉譯針跡預覽

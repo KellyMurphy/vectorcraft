@@ -5291,7 +5291,11 @@ imageTrace	Outline	Körvonal
 	Embroidery Libraries	Hímzéskönyvtárak
 	Add to Embroidery Library…	Hozzáadás a hímzéskönyvtárhoz…
 	Rescan Embroidery Libraries	Hímzéskönyvtárak újraolvasása
+	Save a copy in your embroidery library, for any design	Másolat mentése a hímzéskönyvtárába, bármely tervhez
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Az Ön hímzéskönyvtára: szegélyminták, anyagok, hímzőrámák és cérnakártyák bármely tervhez
 @msg	no embroidery library folder here	itt nincs hímzéskönyvtár-mappa
+@msg	Added {_1} to the embroidery library	{_1} hozzáadva a hímzéskönyvtárhoz
+@msg	nothing to add	nincs mit hozzáadni
 	Long stitches	Hosszú öltések
 	Makes no stitches	Nem ad öltést
 	Manual Stitch	Kézi öltés
