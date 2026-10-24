@@ -16,7 +16,7 @@ pub(super) fn sew(i: &Input) -> Output {
         u => u,
     };
     let pull = s.pull_for(crate::stroke_width(&polys));
-    let (satin, quality) = generate::satin_shape_checked(&polys, i.rule, s.spacing(), pull, underlay == Underlay::Center);
+    let (satin, quality) = generate::satin_shape_hand(&polys, i.rule, s.spacing(), pull, underlay == Underlay::Center, 0.0, i.hand);
     if !satin.is_empty() && quality.poor() {
         let fill = crate::auto_fill(s, &polys);
         let mut out = super::sew(&Input { settings: &fill, ..*i });

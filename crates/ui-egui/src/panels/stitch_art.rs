@@ -82,6 +82,7 @@ fn sew(settings: &StitchSettings, path: &PathData, stroke_mm: f64, patterns: &[B
         auto: Default::default(),
         cuts: &[],
         overlap: 0.0,
+        hand: vectorcraft_embroidery::penstrokes::Hand::Print,
     })
     .runs
 }

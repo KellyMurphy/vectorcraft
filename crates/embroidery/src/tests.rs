@@ -1698,3 +1698,69 @@ fn satin_shape_fills_what_it_leaves_bare() {
     let (runs, q) = generate::satin_shape_checked(std::slice::from_ref(&bar), FillRule::NonZero, 0.4, 0.0, false);
     assert_eq!((runs.len(), q.uncovered), (1, 0.0));
 }
+
+/// `EMB_FONT=… EMB_TEXT=… cargo test -p vectorcraft-embroidery report_pen_strokes -- --ignored --nocapture`:
+/// each glyph's pen strokes (count), whether pen satin is used (`P`), its bare share before patching.
+#[test]
+#[ignore]
+fn report_pen_strokes() {
+    let var = |k: &str, d: &str| std::env::var(k).unwrap_or_else(|_| d.to_string());
+    for family in var("EMB_FONT", "Arial,Times New Roman,Impact,Segoe Script").split(',') {
+        let hand = crate::penstrokes::hand_of(family, "");
+        let style =
+            vectorcraft_doc::CharStyle { font_family: family.to_string(), size: var("EMB_SIZE", "72").parse().unwrap(), ..Default::default() };
+        let text = var("EMB_TEXT", "Test HELLO tfxkE");
+        let t = vectorcraft_doc::TextObject::point(Point::new(10.0, 100.0), &text, style);
+        let lay = vectorcraft_text::layout(vectorcraft_text::FontDb::global(), &t);
+        let mut line = String::new();
+        for g in &lay.glyphs {
+            let ch = text.get(g.byte..).and_then(|s| s.chars().next()).unwrap_or('?');
+            let path = PathData::from_bezpath(&g.outline).transformed(t.xf);
+            let polys: Vec<Vec<Point>> = generate::polylines(&path).into_iter().map(|(l, _)| l).collect();
+            if polys.is_empty() {
+                continue;
+            }
+            let pieces = crate::skeleton::strokes(&polys, FillRule::NonZero);
+            let pens = crate::penstrokes::pen_strokes(&pieces, hand);
+            let q = generate::satin_pen(&polys, FillRule::NonZero, &pieces, 0.4, 0.0, false, 0.0, hand).map(|(_, q)| q);
+            let used = q.is_some_and(|q| !q.poor() && q.uncovered <= 0.05);
+            line += &format!("{ch}:{}{}/{:.0} ", pens.len(), if used { "P" } else { "" }, q.map_or(0.0, |q| q.uncovered * 100.0));
+        }
+        println!("{family:16} {hand:?} {line}");
+    }
+}
+
+/// `EMB_FONT=Arial EMB_TEXT=t cargo test -p vectorcraft-embroidery report_pen_bare -- --ignored --nocapture`:
+/// where a glyph's pen satin leaves fabric bare (each patch's box, mm, relative to the glyph's box) and its strokes.
+#[test]
+#[ignore]
+fn report_pen_bare() {
+    let var = |k: &str, d: &str| std::env::var(k).unwrap_or_else(|_| d.to_string());
+    let family = var("EMB_FONT", "Arial");
+    let hand = crate::penstrokes::hand_of(&family, "");
+    let style = vectorcraft_doc::CharStyle { font_family: family, size: var("EMB_SIZE", "90").parse().unwrap(), ..Default::default() };
+    let t = vectorcraft_doc::TextObject::point(Point::new(10.0, 100.0), &var("EMB_TEXT", "t"), style);
+    let lay = vectorcraft_text::layout(vectorcraft_text::FontDb::global(), &t);
+    let g = lay.glyphs.first().unwrap();
+    let path = PathData::from_bezpath(&g.outline).transformed(t.xf);
+    let polys: Vec<Vec<Point>> = generate::polylines(&path).into_iter().map(|(l, _)| l).collect();
+    let (x0, y0) = polys.iter().flatten().fold((f64::MAX, f64::MAX), |(x, y), p| (x.min(p.x), y.min(p.y)));
+    let pieces = crate::skeleton::strokes(&polys, FillRule::NonZero);
+    for p in &pieces {
+        let (a, b) = (p.points.first().unwrap(), p.points.last().unwrap());
+        println!("piece ({:.1},{:.1})→({:.1},{:.1}) r {:.2} trim {:?}", a.x - x0, a.y - y0, b.x - x0, b.y - y0, p.radius[p.radius.len() / 2], p.trim);
+    }
+    for s in crate::penstrokes::pen_strokes(&pieces, hand) {
+        let (a, b) = (s.points.first().unwrap(), s.points.last().unwrap());
+        println!("pen ({:.1},{:.1})→({:.1},{:.1}) {} pts", a.x - x0, a.y - y0, b.x - x0, b.y - y0, s.points.len());
+    }
+    let (runs, q) = generate::satin_pen(&polys, FillRule::NonZero, &pieces, 0.4, 0.0, false, 0.0, hand).unwrap();
+    println!("{q:?}");
+    // The satin alone (patches are the runs before it): where the patches went.
+    let patches = generate::patch_bare(&polys, FillRule::NonZero, &runs[runs.len().saturating_sub(pieces.len() * 3)..], 0.4);
+    for r in patches {
+        let (lo, hi) =
+            r.iter().fold(((f64::MAX, f64::MAX), (f64::MIN, f64::MIN)), |(l, h), p| ((l.0.min(p.x), l.1.min(p.y)), (h.0.max(p.x), h.1.max(p.y))));
+        println!("bare ({:.1},{:.1})–({:.1},{:.1})", lo.0 - x0, lo.1 - y0, hi.0 - x0, hi.1 - y0);
+    }
+}

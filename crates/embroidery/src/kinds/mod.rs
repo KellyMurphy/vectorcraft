@@ -33,6 +33,8 @@ pub struct Input<'a> {
     /// reach under them, mm.
     pub cuts: &'a [generate::Cut],
     pub overlap: f64,
+    /// How lettering is written (print or script), for satin by pen strokes.
+    pub hand: crate::penstrokes::Hand,
 }
 
 impl Input<'_> {
@@ -95,6 +97,7 @@ mod tests {
                 auto: Default::default(),
                 cuts: &[],
                 overlap: 0.0,
+                hand: crate::penstrokes::Hand::Print,
             });
             assert!(out.warnings.is_empty(), "{}: {:?}", k.id(), out.warnings);
             let needles: usize = out.runs.iter().map(Vec::len).sum();
@@ -119,6 +122,7 @@ mod tests {
             auto: Default::default(),
             cuts: &[],
             overlap: 0.0,
+            hand: crate::penstrokes::Hand::Print,
         });
         assert!(out.runs.iter().all(Vec::is_empty) && out.warnings.len() == 1, "{:?}", out.warnings);
     }

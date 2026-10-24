@@ -460,6 +460,19 @@ objects (shapes with settings), not needle points, so letters scale and are re-s
   MCP: the format spec as `vectorcraft://spec/vcfont`, font commands in the guide table, the prompt says how
   to pick an embroidery font.
 
+### Lettering quality (QA, 2026-10-24)
+
+The user's QA of "Test" in Impact failed: Satin Shape left bare patches and fanned at junctions. Done: a
+coverage measure with bare patches filled under satin, heavy letters filled with a satin border (Satin Shape
+as Auto), Stitch Preview without mitred spikes; then, at the user's suggestion, **pen-stroke digitizing**
+(`crates/embroidery/src/penstrokes.rs`): letters put back together into pen strokes by penmanship rules
+(straight on through junctions, print breaks at corners, script follows the flow, downstrokes then curves
+then crossbars, own width through junctions, strokes carried on across junctions and corners, crossings sewn
+once with a tuck). Arial and Times: every letter tested by pen satin, none left bare. **Still to improve:**
+satin square to the stroke leaves the corners of slanted cut ends bare (the `s`, `e` terminals); serifs are
+separate tiny strokes (Times' `H`: 11), not part of their stems; travel between a letter's strokes is jumped,
+not hidden under them; the script hand is told by the font's name only.
+
 ### E8.2 Monograms and text effects (M)
 
 - **E8.2a Arc and envelope text.** Check that type in an envelope (Object › Envelope Distort,

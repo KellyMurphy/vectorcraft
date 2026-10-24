@@ -31,6 +31,7 @@ pub mod motifs;
 pub mod nest;
 pub mod network;
 pub mod params;
+pub mod penstrokes;
 mod pes;
 pub mod preview;
 pub mod rails;
@@ -962,6 +963,9 @@ fn text(t: &vectorcraft_doc::TextObject, s: &StitchSettings, b: &mut Sewer) {
         }
     }
     let parts = glyph_parts(t);
+    // Letters are written as their face is: script faces by the flow of the pen.
+    let first = t.first_style();
+    b.hand = penstrokes::hand_of(&first.font_family, &first.font_style);
     if s.kind == StitchKind::SatinShape {
         return satin_letters(t, s, &parts, b);
     }
@@ -1004,7 +1008,7 @@ fn satin_letters(t: &vectorcraft_doc::TextObject, s: &StitchSettings, parts: &[(
         .iter()
         .map(|p| {
             let s = b.fabric_in(s);
-            !p.is_empty() && generate::satin_shape_checked(p, FillRule::NonZero, s.spacing(), 0.0, false).1.poor()
+            !p.is_empty() && generate::satin_shape_hand(p, FillRule::NonZero, s.spacing(), 0.0, false, 0.0, b.hand).1.poor()
         })
         .collect();
     let n_poor = poor.iter().filter(|p| **p).count();
@@ -1126,7 +1130,7 @@ fn auto_choice(s: &StitchSettings, paths: &[&PathData], rule: FillRule, b: &Sewe
         u => u,
     };
     let least = if narrow { LETTER_COLUMN } else { 0.0 };
-    let (runs, q) = generate::satin_shape_at_least(&polys, rule, t.spacing(), t.pull_for(width), underlay == Underlay::Center, least);
+    let (runs, q) = generate::satin_shape_hand(&polys, rule, t.spacing(), t.pull_for(width), underlay == Underlay::Center, least, b.hand);
     if q.poor() || runs.is_empty() {
         return Choice::Sew(b.fabric_in(&auto_fill(s, &polys)), true);
     }
@@ -1145,8 +1149,17 @@ fn sew(s: &StitchSettings, thread: [u8; 3], stroke_mm: f64, paths: &[&PathData],
         return;
     }
     let s = &b.fabric_in(s);
-    let out =
-        kinds::sew(&kinds::Input { settings: s, stroke_mm, paths, rule, patterns: b.patterns, auto: b.auto, cuts: &b.cuts, overlap: b.overlap });
+    let out = kinds::sew(&kinds::Input {
+        settings: s,
+        stroke_mm,
+        paths,
+        rule,
+        patterns: b.patterns,
+        auto: b.auto,
+        cuts: &b.cuts,
+        overlap: b.overlap,
+        hand: b.hand,
+    });
     b.out.warnings.extend(out.warnings);
     emit(s, thread, out.runs, b);
 }
@@ -1273,6 +1286,8 @@ struct Sewer<'a> {
     /// The areas sewn later on top of the object, and the document's overlap, mm.
     cuts: Vec<generate::Cut>,
     overlap: f64,
+    /// How the type being sewn is written (print or script), for satin by pen strokes.
+    hand: penstrokes::Hand,
     out: Sewn,
 }
 
@@ -1328,6 +1343,7 @@ impl StitchCache {
                     auto: fabrics::auto_underlay(fabric),
                     cuts,
                     overlap: self.overlap,
+                    hand: penstrokes::Hand::Print,
                     out: Sewn::default(),
                 };
                 sew_node(n, &mut b);

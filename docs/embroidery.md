@@ -98,6 +98,25 @@ symbols can't be stitched.
 
 ### Type
 
+**Letters are sewn the way they are written.** Satin Shape (and Auto, for the letters it sews as satin)
+puts each letter's centre lines back together into the strokes a pen makes, by common rules of penmanship:
+
+- Through a junction the pieces that carry straight on are one stroke: a `t`'s crossbar is one stroke
+  across its stem, an `H`'s two stems are each one stroke.
+- Print letters break at sharp corners: an `L` is a downstroke and a stroke to the right, an `E` its spine
+  and three arms. Script faces (named Script, Brush, Hand, Cursive, Calligraphy…) never break at a corner:
+  the pen keeps going, following the letter's flow.
+- Downstrokes go first, left to right, each pulled from the top; then slanted strokes and curves; then
+  crossbars and arms, top to bottom, each drawn left to right. Loops start at their top. Script is sewn
+  left to right, as written.
+- A stroke keeps its own width through a junction instead of swelling into it, and a stroke that stops at a
+  junction or corner is carried on to the letter's edge, as a pen draws a crossbar right across a stem.
+  Where a later stroke crosses an earlier one, only a 0.4 mm tuck under the earlier stroke's edge is sewn,
+  so crossings aren't sewn twice.
+
+Where pen strokes don't suit a letter (they would leave more than 5% bare), it is sewn piece by piece of its
+centre line, or filled when satin can't cover it.
+
 Type on a path, letter spacing (tracking), kerning and baseline shift are sewn as they are laid out: the
 letters' stitches follow the path and move with the spacing (checked by the tests).
 
