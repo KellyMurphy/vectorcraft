@@ -574,8 +574,9 @@ fn fuzzed_calls_keep_documents_serializable() {
 fn every_command_undoes_exactly() {
     let mut failures = vec![];
     for c in command_specs() {
-        // embroidery.testSheet opens a new document (a new tab, not an edit of this one): nothing to undo.
-        if matches!(c.id, "edit.undo" | "edit.redo" | "embroidery.testSheet" | "embroidery.worksheet")
+        // embroidery.testSheet, worksheet and cutFile open a new document (a new tab, not an edit of
+        // this one): nothing to undo.
+        if matches!(c.id, "edit.undo" | "edit.redo" | "embroidery.testSheet" | "embroidery.worksheet" | "embroidery.cutFile")
             || c.id.starts_with("file.")
             || c.id.starts_with("document.")
         {

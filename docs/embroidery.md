@@ -247,6 +247,18 @@ command refuses a cover too narrow for its inset. The parts are ordinary stitche
 edited afterwards (or its stops changed with **Stop Before**); the worksheet's thread sequence says what to do
 at each stop.
 
+**Cut files.** A fabric cutter can cut the appliqué pieces. **Object › Embroidery › Appliqué Cut File…** (or
+**Cut File…** in the panel, `embroidery.cutFile`) takes the selected appliqué groups (none selected: all of
+them) or closed shapes and packs their cut outlines onto cutter mats, in a new document with one artboard per
+mat, ready for File › Export as SVG or DXF (or written straight to files with `format` and `path`). Each piece
+is its placement line, grown by the **allowance** (0 mm; more makes the fabric reach under the tack-down),
+cut as a hairline with no fill. Pieces are packed onto as few mats as they fit on (**mat** 12 × 12 in by
+default, 12 × 24 in, or any size), at least the **gap** apart (3 mm), clear of the mat's **margin** (5 mm),
+turned in quarter turns to fit (**rotate**: none for fabric with a grain or a print that must run one way, or
+any angle in 15° steps) and, with **flip**, turned over. A piece too big for a mat is reported, not dropped.
+Brother CanvasWorkspace, Cricut Design Space and Silhouette Studio read the SVG. Brother's own FCM format
+isn't written: there is no public specification of it.
+
 ### Puff (3D foam)
 
 Set **Puff Foam** (`puff`, the foam's thickness, 1–6 mm) on a satin column, satin shape or Auto lettering
@@ -422,6 +434,7 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.rescanLibraries` | re-read the embroidery library folder → the same as `embroidery.libraries` |
 | `embroidery.addToLibrary` | `{path? \| data? with name?, kind?}`: copy a `.vcborder`, `.vcfabric`, `.vchoop` or `.vcthreads` file into the embroidery library (never replacing one) |
 | `embroidery.applique` | `{ids?, cover?: satin\|zigzag\|bean\|none, width?, tackDown?: running\|zigzag\|bean, inset?}`: each closed shape becomes an appliqué group (placement line, stop, tack-down, stop, cover) → `{groups: [{id, placement, tackDown, cover}]}` |
+| `embroidery.cutFile` | `{ids?, allowance?, gap?, mat?: 12x12\|12x24\|{width, height}, margin?, rotate?: none\|quarter\|any, flip?, format?: svg\|dxf, path?}`: the appliqué pieces nested onto cutter mats → `{mats, pieces, unplaced, index \| files}` |
 | `embroidery.worksheet` | `{page?: a4\|letter, format?: pdf, path?}`: the production worksheet, as a new document or a PDF |
 | `embroidery.testSheet` | `{sections?: [ids]}`: a new document of calibration swatches (see Sew-out tests) → `{index, sections, swatches, skipped}` |
 | `embroidery.sewOut` | → the sew-out form: `{sewOut: {fabric, machine, notes, swatches: [{id, section, label, objects, result, notes}], counts} \| null, sections}` |

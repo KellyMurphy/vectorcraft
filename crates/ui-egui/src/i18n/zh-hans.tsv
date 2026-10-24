@@ -5128,6 +5128,9 @@ lighting	Light	光源
 	Embroidery Libraries	刺绣库
 	Add to Embroidery Library…	添加到刺绣库…
 	Rescan Embroidery Libraries	重新扫描刺绣库
+	Appliqué Cut File…	贴布绣切割文件…
+	Cut File…	切割文件…
+	The appliqué pieces' outlines packed onto cutter mats, in a new document to export as SVG or DXF	贴布绣布片的轮廓排布在切割垫上，放在新文档中以导出为 SVG 或 DXF
 	Appliqué	贴布绣
 	Make each selected closed shape an appliqué: placement line, stop, tack-down, stop, cover	将每个选中的闭合形状做成贴布绣：定位线、停止、固定线、停止、覆盖
 	Stop Before:	之前停止：

@@ -5291,6 +5291,9 @@ imageTrace	Outline	Körvonal
 	Embroidery Libraries	Hímzéskönyvtárak
 	Add to Embroidery Library…	Hozzáadás a hímzéskönyvtárhoz…
 	Rescan Embroidery Libraries	Hímzéskönyvtárak újraolvasása
+	Appliqué Cut File…	Applikáció vágófájl…
+	Cut File…	Vágófájl…
+	The appliqué pieces' outlines packed onto cutter mats, in a new document to export as SVG or DXF	Az applikációs darabok körvonalai vágóalátétekre rendezve, új dokumentumban SVG vagy DXF exportáláshoz
 	Appliqué	Applikáció
 	Make each selected closed shape an appliqué: placement line, stop, tack-down, stop, cover	Minden kijelölt zárt alakzatból applikáció: elhelyező vonal, megállás, rögzítés, megállás, fedés
 	Stop Before:	Megállás előtte:

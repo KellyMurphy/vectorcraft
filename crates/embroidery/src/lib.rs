@@ -25,6 +25,7 @@ mod jef;
 pub mod kinds;
 mod machine;
 pub mod motifs;
+pub mod nest;
 pub mod network;
 pub mod params;
 mod pes;

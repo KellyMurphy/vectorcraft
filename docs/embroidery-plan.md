@@ -294,7 +294,7 @@ raw edge.
   Appliqué section to re-make it after editing the shape (the parts are edited one by one); no fabric
   drawn in Stitch Preview; shared placement stops across pieces; the checker's appliqué rules and the
   test sheet's appliqué section (below).
-- **E8.8c Cut files.** `embroidery.cutFile {ids?, allowance (mm, default 0), gap (3 mm), mat: "12x12in"|
+- **E8.8c Cut files (done).** `embroidery.cutFile {ids?, allowance (mm, default 0), gap (3 mm), mat: "12x12in"|
   "12x24in"|{w,h}, rotate: "none"|"90"|"any", flip, format: "svg"|"dxf", path}` exports the pieces'
   outlines (grown by the allowance) **nested**: packed without overlap, the gap apart, onto as few mats as
   fit, each mat a page (SVG: one file per mat or one file with a group per mat; DXF: one file per mat).
@@ -302,6 +302,14 @@ raw edge.
   with a time budget in `vectorcraft-cli perf`. Pieces that don't fit any mat are reported, not dropped.
   The SVG is plain paths in mm, which CanvasWorkspace, Cricut Design Space and Silhouette Studio read;
   Brother's FCM only from a public specification (see the decisions below).
+  As built: `embroidery.cutFile` (Object › Embroidery › Appliqué Cut File…, and Cut File… in the panel);
+  `crates/embroidery/src/nest.rs` nests by raster bottom-left placement on a 1 mm grid, each piece's cells
+  grown by the gap, so outlines never overlap and stay the gap apart (a property test checks random
+  polygons at any turn, flipped). The output is a new document with one artboard per mat (hairline cut
+  paths, the original curves placed, not the grid), or SVG/DXF files (`name-1.svg`… for several mats).
+  Measured (release, 60 pieces on a 12 × 24 in mat): no turning 55 ms, quarter turns 0.22 s, any angle
+  1.8 s. **Not yet:** the `vectorcraft-cli perf` budget, and a faster search for "any angle" (most time
+  goes on testing places that don't fit; skipping ahead along a row past a taken run would help).
 - **Checks.** The checker warns about a cover narrower than the tack-down inset plus the fabric's fray
   (raw edge showing), a piece too small to handle (under about 10 mm), and an appliqué missing its stops.
   The test sheet gains an appliqué section (one patch, three cover widths).

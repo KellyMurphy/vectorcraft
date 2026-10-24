@@ -125,6 +125,13 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             {
                 app.status(e);
             }
+            if widgets::flat_button(ui, tl!("Cut File…"), 80.0)
+                .on_hover_text(tl!("The appliqué pieces' outlines packed onto cutter mats, in a new document to export as SVG or DXF"))
+                .clicked()
+                && let Err(e) = app.run("embroidery.cutFile", json!({}))
+            {
+                app.status(e);
+            }
         });
     }
     if stitched > 0 && unstitched == 0 {

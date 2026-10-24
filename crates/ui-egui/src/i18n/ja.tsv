@@ -4948,6 +4948,9 @@ lighting	Light	ライト
 	Embroidery Libraries	刺繍ライブラリ
 	Add to Embroidery Library…	刺繍ライブラリに追加…
 	Rescan Embroidery Libraries	刺繍ライブラリを再スキャン
+	Appliqué Cut File…	アップリケのカットファイル…
+	Cut File…	カットファイル…
+	The appliqué pieces' outlines packed onto cutter mats, in a new document to export as SVG or DXF	アップリケのパーツの輪郭をカッティングマットに配置した新規ドキュメント（SVG または DXF で書き出し用）
 	Appliqué	アップリケ
 	Make each selected closed shape an appliqué: placement line, stop, tack-down, stop, cover	選択した閉じたシェイプをそれぞれアップリケにします：配置線、停止、仮止め、停止、カバー
 	Stop Before:	前で停止:
