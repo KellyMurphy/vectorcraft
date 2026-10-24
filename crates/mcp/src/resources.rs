@@ -65,6 +65,22 @@ pub static TEXT_DOCS: &[TextDoc] = &[
         text: include_str!("../../../docs/formats/vcborder.schema.json"),
     },
     TextDoc {
+        uri: "vectorcraft://spec/vcfont",
+        name: "spec-vcfont",
+        title: "Embroidery font file (.vcfont) specification",
+        description: "The open JSON format for embroidery fonts: metrics in font units, glyphs as stitch objects (SVG path data with stitch settings), kerning and limits",
+        mime: "text/markdown",
+        text: include_str!("../../../docs/formats/vcfont.md"),
+    },
+    TextDoc {
+        uri: "vectorcraft://spec/vcfont.schema.json",
+        name: "spec-vcfont-schema",
+        title: "Embroidery font file JSON Schema",
+        description: "JSON Schema (draft 2020-12) for .vcfont files",
+        mime: "application/schema+json",
+        text: include_str!("../../../docs/formats/vcfont.schema.json"),
+    },
+    TextDoc {
         uri: "vectorcraft://spec/vcthreads",
         name: "spec-vcthreads",
         title: "Thread chart file (.vcthreads) specification",

@@ -131,6 +131,16 @@ and travels between them instead of jumping: by a straight run of stitches where
 (the rows sewn next cover it), else along the outline (up to 40 mm), stepping off and back on in straight
 lines inside the shape. Only where neither works does the needle jump (and trim).
 
+### Embroidery fonts
+
+An **embroidery font** is lettering digitized for embroidery: each letter is a set of stitch objects (outlines
+with their stitch settings) made by hand for sewing, so small type stays crisp and heavy type keeps its
+satin, where an ordinary font sewn with Auto has to guess. Fonts are open `.vcfont` files
+([specification](formats/vcfont.md)): load one into a document with `embroidery.loadFont` (from a file, or
+from the library's `fonts` folder), list them with `embroidery.fonts`, save one with `embroidery.saveFont`.
+The document keeps a copy of each font it uses, so it sews the same where the font isn't installed.
+VectorCraft ships no embroidery fonts; each font has its own licence (`embroidery.fonts` lists it).
+
 ### Sew order
 
 Objects are sewn in paint order, bottom first, until you change it. **Window › Sew Order** is the panel for
@@ -351,9 +361,9 @@ The starters' numbers are starting points from general digitizing practice; the 
 
 ### Libraries
 
-Border patterns, fabric profiles, hoop lists and thread charts you want in every design go in the
-**embroidery library folder**: a folder called `Embroidery` next to the preferences, with a subfolder for
-each kind (`borders`, `fabrics`, `hoops`, `threads`). VectorCraft reads it at start (and on
+Border patterns, fabric profiles, hoop lists, thread charts and embroidery fonts you want in every design go
+in the **embroidery library folder**: a folder called `Embroidery` next to the preferences, with a subfolder
+for each kind (`borders`, `fabrics`, `hoops`, `threads`, `fonts`). VectorCraft reads it at start (and on
 `embroidery.rescanLibraries`), so files can be shared just by copying them in. A save command with
 `user: true` writes there, and `embroidery.addToLibrary` copies a file in (never replacing one: a name
 already taken gets a number). `embroidery.libraries` lists what is there, and files that can't be read are
@@ -435,6 +445,10 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.addToLibrary` | `{path? \| data? with name?, kind?}`: copy a `.vcborder`, `.vcfabric`, `.vchoop` or `.vcthreads` file into the embroidery library (never replacing one) |
 | `embroidery.applique` | `{ids?, cover?: satin\|zigzag\|bean\|none, width?, tackDown?: running\|zigzag\|bean, inset?}`: each closed shape becomes an appliqué group (placement line, stop, tack-down, stop, cover) → `{groups: [{id, placement, tackDown, cover}]}` |
 | `embroidery.cutFile` | `{ids?, allowance?, gap?, mat?: 12x12\|12x24\|{width, height}, margin?, rotate?: none\|quarter\|any, flip?, format?: svg\|dxf, path?}`: the appliqué pieces nested onto cutter mats → `{mats, pieces, unplaced, index \| files}` |
+| `embroidery.fonts` | → the embroidery `fonts` loaded into the document (`id`, `name`, `glyphs`, `chars`, `sizes`, licence…) |
+| `embroidery.loadFont` | `{path? \| data? \| library?}`: load a `.vcfont` embroidery font into the document → `{id, name, glyphs, added}` |
+| `embroidery.saveFont` | `{font, path?, user?}`: write one of the document's fonts as a `.vcfont` file (`user: true`: into the embroidery library) |
+| `embroidery.removeFont` | `{font}`: remove a font from the document |
 | `embroidery.worksheet` | `{page?: a4\|letter, format?: pdf, path?}`: the production worksheet, as a new document or a PDF |
 | `embroidery.testSheet` | `{sections?: [ids]}`: a new document of calibration swatches (see Sew-out tests) → `{index, sections, swatches, skipped}` |
 | `embroidery.sewOut` | → the sew-out form: `{sewOut: {fabric, machine, notes, swatches: [{id, section, label, objects, result, notes}], counts} \| null, sections}` |

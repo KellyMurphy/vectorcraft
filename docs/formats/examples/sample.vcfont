@@ -1,0 +1,191 @@
+{
+  "format": "vectorcraft-embroidery-font",
+  "version": 1,
+  "id": "vectorcraft-sample-sans",
+  "name": "VectorCraft Sample Sans",
+  "family": "VectorCraft Sample Sans",
+  "style": "Regular",
+  "author": "VectorCraft contributors",
+  "license": "CC0-1.0",
+  "description": "A few straight-stroke capitals drawn in code, for tests and examples.",
+  "fontVersion": "1.0",
+  "unitsPerEm": 1000.0,
+  "ascender": 750.0,
+  "descender": -250.0,
+  "capHeight": 700.0,
+  "xHeight": 500.0,
+  "sizes": [
+    6.0,
+    40.0
+  ],
+  "glyphs": [
+    {
+      "chars": " ",
+      "advance": 300.0,
+      "objects": []
+    },
+    {
+      "chars": "I",
+      "advance": 250.0,
+      "objects": [
+        {
+          "path": "M75 0 L175 0 L175 700 L75 700 Z",
+          "stitch": {
+            "kind": "auto"
+          }
+        }
+      ]
+    },
+    {
+      "chars": "L",
+      "advance": 520.0,
+      "objects": [
+        {
+          "path": "M75 0 L175 0 L175 700 L75 700 Z",
+          "stitch": {
+            "kind": "auto"
+          }
+        },
+        {
+          "path": "M175 0 L470 0 L470 100 L175 100 Z",
+          "stitch": {
+            "kind": "auto"
+          }
+        }
+      ]
+    },
+    {
+      "chars": "T",
+      "advance": 600.0,
+      "objects": [
+        {
+          "path": "M250 0 L350 0 L350 600 L250 600 Z",
+          "stitch": {
+            "kind": "auto"
+          }
+        },
+        {
+          "path": "M20 600 L580 600 L580 700 L20 700 Z",
+          "stitch": {
+            "kind": "auto"
+          }
+        }
+      ]
+    },
+    {
+      "chars": "H",
+      "advance": 650.0,
+      "objects": [
+        {
+          "path": "M75 0 L175 0 L175 700 L75 700 Z",
+          "stitch": {
+            "kind": "auto"
+          }
+        },
+        {
+          "path": "M475 0 L575 0 L575 700 L475 700 Z",
+          "stitch": {
+            "kind": "auto"
+          }
+        },
+        {
+          "path": "M175 300 L475 300 L475 400 L175 400 Z",
+          "stitch": {
+            "kind": "auto"
+          }
+        }
+      ]
+    },
+    {
+      "chars": "E",
+      "advance": 560.0,
+      "objects": [
+        {
+          "path": "M75 0 L175 0 L175 700 L75 700 Z",
+          "stitch": {
+            "kind": "auto"
+          }
+        },
+        {
+          "path": "M175 0 L500 0 L500 100 L175 100 Z",
+          "stitch": {
+            "kind": "auto"
+          }
+        },
+        {
+          "path": "M175 300 L440 300 L440 400 L175 400 Z",
+          "stitch": {
+            "kind": "auto"
+          }
+        },
+        {
+          "path": "M175 600 L500 600 L500 700 L175 700 Z",
+          "stitch": {
+            "kind": "auto"
+          }
+        }
+      ]
+    },
+    {
+      "chars": "F",
+      "advance": 540.0,
+      "objects": [
+        {
+          "path": "M75 0 L175 0 L175 700 L75 700 Z",
+          "stitch": {
+            "kind": "auto"
+          }
+        },
+        {
+          "path": "M175 300 L440 300 L440 400 L175 400 Z",
+          "stitch": {
+            "kind": "auto"
+          }
+        },
+        {
+          "path": "M175 600 L500 600 L500 700 L175 700 Z",
+          "stitch": {
+            "kind": "auto"
+          }
+        }
+      ]
+    },
+    {
+      "chars": "O",
+      "advance": 760.0,
+      "objects": [
+        {
+          "path": "M700 350 C700 543.3050000000001 543.3050000000001 700 350 700 C156.695 700 0 543.3050000000001 0 350 C0 156.695 156.695 0 350 0 C543.3050000000001 0 700 156.695 700 350 Z M600 350 C600 488.07500000000005 488.07500000000005 600 350 600 C211.92499999999998 600 100 488.07500000000005 100 350 C100 211.92499999999998 211.92499999999998 100 350 100 C488.07500000000005 100 600 211.92499999999998 600 350 Z",
+          "rule": "evenodd",
+          "stitch": {
+            "kind": "auto"
+          }
+        }
+      ]
+    },
+    {
+      "chars": "-",
+      "advance": 400.0,
+      "objects": [
+        {
+          "path": "M60 300 L340 300 L340 400 L60 400 Z",
+          "stitch": {
+            "kind": "auto"
+          }
+        }
+      ]
+    }
+  ],
+  "kerning": [
+    {
+      "left": "L",
+      "right": "T",
+      "value": -120.0
+    },
+    {
+      "left": "T",
+      "right": "O",
+      "value": -40.0
+    }
+  ]
+}

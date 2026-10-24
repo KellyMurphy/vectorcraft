@@ -51,7 +51,7 @@ fn without_a_folder_nothing_is_listed_and_nothing_written() {
     assert_eq!(r, json!({"folder": null, "libraries": [], "skipped": []}));
     assert!(s.execute("embroidery.addToLibrary", &json!({"data": chart_file("a"), "name": "A.vcthreads"})).is_err());
     assert!(s.execute("embroidery.saveFabric", &json!({"fabric": "woven", "user": true})).is_err());
-    assert!(s.execute("embroidery.libraries", &json!({"kind": "fonts"})).is_err(), "not a kind yet");
+    assert!(s.execute("embroidery.libraries", &json!({"kind": "motifs"})).is_err(), "not a kind yet");
 }
 
 #[test]

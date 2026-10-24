@@ -436,6 +436,14 @@ pub struct EmbroiderySetup {
     /// `None`: none).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub chart: Option<String>,
+    /// Embroidery fonts loaded into the document (from `.vcfont` files), kept with it so its type
+    /// sews the same where the font isn't installed.
+    #[serde(
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::embroidery_font::de_fonts",
+        serialize_with = "crate::embroidery_font::ser_fonts"
+    )]
+    pub fonts: Vec<crate::EmbroideryFont>,
     /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
     #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
     pub extra: serde_json::Map<String, serde_json::Value>,
@@ -459,6 +467,7 @@ impl Default for EmbroiderySetup {
             hoop: None,
             charts: vec![],
             chart: None,
+            fonts: vec![],
             extra: Default::default(),
         }
     }

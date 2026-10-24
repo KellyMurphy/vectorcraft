@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KellyMurphy/vectorcraft/blob/main/docs/formats/vcfont.schema.json",
+  "title": "VectorCraft embroidery font file (.vcfont), version 1",
+  "description": "Lettering digitized for embroidery: each glyph a set of stitch objects. See vcfont.md.",
+  "type": "object",
+  "required": ["format", "version", "glyphs"],
+  "properties": {
+    "format": { "const": "vectorcraft-embroidery-font" },
+    "version": { "type": "integer", "minimum": 1, "maximum": 1 },
+    "id": { "type": "string", "description": "Lower-case letters and digits joined by dashes; made from name when absent or empty." },
+    "name": { "type": "string" },
+    "family": { "type": "string" },
+    "style": { "type": "string" },
+    "author": { "type": "string" },
+    "license": { "type": "string", "description": "An SPDX identifier, or text." },
+    "source": { "type": "string", "description": "A URL, or the font it was digitized from (information only)." },
+    "description": { "type": "string" },
+    "fontVersion": { "type": "string", "description": "The font's own version." },
+    "unitsPerEm": { "type": "number", "minimum": 16, "maximum": 16384, "default": 1000 },
+    "ascender": { "type": "number" },
+    "descender": { "type": "number" },
+    "capHeight": { "type": "number" },
+    "xHeight": { "type": "number" },
+    "sizes": {
+      "type": "array",
+      "prefixItems": [{ "$ref": "#/$defs/size" }, { "$ref": "#/$defs/size" }],
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "The cap heights the font is made for, mm: [smallest, largest]."
+    },
+    "glyphs": { "type": "array", "items": { "$ref": "#/$defs/glyph" }, "maxItems": 4000 },
+    "kerning": { "type": "array", "items": { "$ref": "#/$defs/kern" }, "maxItems": 100000 }
+  },
+  "$defs": {
+    "size": { "type": "number", "minimum": 1, "maximum": 300 },
+    "point": {
+      "type": "array",
+      "prefixItems": [{ "type": "number" }, { "type": "number" }],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "glyph": {
+      "type": "object",
+      "required": ["chars"],
+      "properties": {
+        "chars": { "type": "string", "minLength": 1, "description": "1 to 8 characters." },
+        "advance": { "type": "number", "minimum": 0 },
+        "objects": { "type": "array", "items": { "$ref": "#/$defs/object" }, "maxItems": 256 },
+        "entry": { "$ref": "#/$defs/point" },
+        "exit": { "$ref": "#/$defs/point" }
+      }
+    },
+    "object": {
+      "type": "object",
+      "required": ["path"],
+      "properties": {
+        "path": { "type": "string", "description": "SVG path data, font units, y up." },
+        "rule": { "enum": ["nonzero", "evenodd"], "default": "nonzero" },
+        "stitch": {
+          "$ref": "vectorcraft-embroidery.schema.json#/$defs/stitch",
+          "description": "Stitch settings, mm (see vectorcraft-embroidery.md)."
+        }
+      }
+    },
+    "kern": {
+      "type": "object",
+      "required": ["left", "right", "value"],
+      "properties": {
+        "left": { "type": "string", "minLength": 1 },
+        "right": { "type": "string", "minLength": 1 },
+        "value": { "type": "number" }
+      }
+    }
+  }
+}

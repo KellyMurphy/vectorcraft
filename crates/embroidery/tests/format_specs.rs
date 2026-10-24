@@ -13,7 +13,7 @@ use vectorcraft_doc::{
     StitchSettings, Underlay,
 };
 use vectorcraft_embroidery::params::{self, ValueKind};
-use vectorcraft_embroidery::{borders, fabrics, hoops, motifs, threads};
+use vectorcraft_embroidery::{borders, fabrics, fonts, hoops, motifs, threads};
 
 fn formats_dir() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../docs/formats")
@@ -124,8 +124,119 @@ fn full_setup() -> EmbroiderySetup {
         hoop: Some(Box::new(full_hoop())),
         charts: vec![full_chart()],
         chart: Some("full".into()),
+        fonts: vec![full_font()],
         extra: Default::default(),
     }
+}
+
+/// An embroidery font with every field set (a new field fails to compile here until it is set).
+fn full_font() -> vectorcraft_doc::EmbroideryFont {
+    use vectorcraft_doc::{EmbroideryFont, FontGlyph, GlyphObject, KernPair};
+    let object = GlyphObject {
+        path: "M0 0 L100 0 L100 700 Z".into(),
+        rule: Some("evenodd".into()),
+        stitch: StitchSettings::new(StitchKind::Auto),
+        extra: Default::default(),
+    };
+    let glyph = FontGlyph {
+        chars: "A".into(),
+        advance: 600.0,
+        objects: vec![object],
+        entry: Some([0.0, 0.0]),
+        exit: Some([600.0, 0.0]),
+        extra: Default::default(),
+    };
+    EmbroideryFont {
+        id: "full".into(),
+        name: "Full".into(),
+        family: Some("Full".into()),
+        style: Some("Bold".into()),
+        author: Some("Someone".into()),
+        license: Some("CC0-1.0".into()),
+        source: Some("https://example.com".into()),
+        description: Some("Every field".into()),
+        version: Some("2.0".into()),
+        units_per_em: 1000.0,
+        ascender: 800.0,
+        descender: -200.0,
+        cap_height: 700.0,
+        x_height: 500.0,
+        sizes: Some([5.0, 30.0]),
+        glyphs: vec![glyph, FontGlyph { chars: "V".into(), advance: 600.0, ..Default::default() }],
+        kerning: vec![KernPair { left: "A".into(), right: "V".into(), value: -60.0 }],
+        extra: Default::default(),
+        unknown: None,
+    }
+}
+
+#[test]
+fn vcfont_schema_matches_the_code() {
+    let schema = json("vcfont.schema.json");
+    let props = &schema["properties"];
+    assert_eq!(props["format"]["const"], fonts::FILE_FORMAT);
+    assert_eq!(props["version"]["maximum"].as_u64(), Some(u64::from(fonts::FILE_VERSION)));
+    let file: Value = serde_json::from_str(&fonts::write_file(&full_font()).unwrap()).unwrap();
+    assert_eq!(keys(props), keys(&file), "the schema's fields are the file's");
+    let defs = &schema["$defs"];
+    assert_eq!(keys(&defs["glyph"]["properties"]), keys(&file["glyphs"][0]), "a glyph's fields");
+    assert_eq!(keys(&defs["object"]["properties"]), keys(&file["glyphs"][0]["objects"][0]), "an object's fields");
+    assert_eq!(keys(&defs["kern"]["properties"]), keys(&file["kerning"][0]), "a kerning pair's fields");
+    range_is(&props["unitsPerEm"], fonts::UNITS_PER_EM, "unitsPerEm");
+    range_is(&defs["size"], fonts::SIZES, "sizes");
+    assert_eq!(props["glyphs"]["maxItems"].as_u64(), Some(fonts::MAX_GLYPHS as u64));
+    assert_eq!(props["kerning"]["maxItems"].as_u64(), Some(fonts::MAX_KERNING as u64));
+    assert_eq!(defs["glyph"]["properties"]["objects"]["maxItems"].as_u64(), Some(fonts::MAX_OBJECTS as u64));
+    for field in strings(&schema["required"]) {
+        if matches!(field.as_str(), "format" | "version") {
+            continue;
+        }
+        let mut v = file.clone();
+        v.as_object_mut().unwrap().remove(&field);
+        assert!(fonts::read_file(v.to_string().as_bytes()).is_err(), "a file without `{field}` is refused");
+    }
+}
+
+#[test]
+fn vcfont_page_describes_every_field_and_the_limits() {
+    let page = read("vcfont.md");
+    let file: Value = serde_json::from_str(&fonts::write_file(&full_font()).unwrap()).unwrap();
+    let glyph = &file["glyphs"][0];
+    for k in keys(&file).iter().chain(keys(glyph).iter()).chain(keys(&glyph["objects"][0]).iter()).chain(keys(&file["kerning"][0]).iter()) {
+        assert!(page.contains(&format!("`{k}`")), "vcfont.md describes `{k}`");
+    }
+    assert!(page.contains(&format!("{} MB", fonts::MAX_FILE_BYTES >> 20)), "the size limit");
+    for n in ["4000 glyphs", "256 objects", "2,000,000 path elements", "100,000 kerning pairs", "16–16384", "1–300", "2–8 characters"] {
+        assert!(page.contains(n), "vcfont.md gives the limit `{n}`");
+    }
+    assert_eq!(
+        (fonts::MAX_GLYPHS, fonts::MAX_OBJECTS, fonts::MAX_PATH_ELEMENTS, fonts::MAX_KERNING, fonts::MAX_GLYPH_CHARS),
+        (4000, 256, 2_000_000, 100_000, 8)
+    );
+}
+
+#[test]
+fn the_example_font_reads_and_is_the_sample() {
+    let f = fonts::read_file(read("examples/sample.vcfont").as_bytes()).unwrap();
+    assert_eq!(f, fonts::sample(), "examples/sample.vcfont is fonts::sample() (regenerate it with write_example_font)");
+    // The page's example reads, and its letters are the sample's.
+    let page = read("vcfont.md");
+    let start = page.find("```json").unwrap() + 7;
+    let end = start + page.get(start..).unwrap().find("```").unwrap();
+    let shown = fonts::read_file(page.get(start..end).unwrap().as_bytes()).unwrap();
+    for g in &shown.glyphs {
+        assert_eq!(Some(g), f.glyph(&g.chars), "the page's `{}`", g.chars);
+    }
+}
+
+/// Write `docs/formats/examples/sample.vcfont` from [`fonts::sample`]:
+/// `cargo test -p vectorcraft-embroidery --test format_specs write_example_font -- --ignored`.
+#[test]
+#[ignore]
+fn write_example_font() {
+    let text = fonts::write_file(&fonts::sample()).unwrap()
+        + "
+";
+    std::fs::write(formats_dir().join("examples/sample.vcfont"), text).unwrap();
 }
 
 /// A thread chart with every field set (a new field fails to compile here until it is set).

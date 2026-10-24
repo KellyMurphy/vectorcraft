@@ -323,7 +323,7 @@ Lettering hand-digitized for embroidery: crisp small type and heavy display type
 to fill today. The format is decided (2026-10-12): a self-contained file, letters stored as stitch
 objects (shapes with settings), not needle points, so letters scale and are re-sewn at each size.
 
-- **E8.1a The format: `.vcfont`.** JSON, versioned, spec in `docs/formats/vcfont.md` with a schema and a
+- **E8.1a The format: `.vcfont` (done).** JSON, versioned, spec in `docs/formats/vcfont.md` with a schema and a
   drift test (as `.vcborder`). Contents: `name`, `family`, `style`, `author`, `license` (SPDX or text),
   `source` (a font it was digitized from, information only), `version`; metrics in font units with
   `unitsPerEm`, `ascender`, `descender`, `capHeight`, `xHeight`, `baseline`; `sizes` (the recommended
@@ -332,6 +332,11 @@ objects (shapes with settings), not needle points, so letters scale and are re-s
   and an order); `kerning` pairs; optional `entry`/`exit` points per glyph so letters can join without a
   trim (script fonts). Unknown members are kept, as in the other formats. Data types live in the doc crate
   (serde), the reader is fuzzed (`format/tests/prop_format.rs`), sizes and counts are capped.
+  As built: `docs/formats/vcfont.md` + schema + drift tests; data types in `crates/doc/src/embroidery_font.rs`
+  (the font's own version is `fontVersion`, as `version` is the file format's); reader, checks and a
+  code-drawn sample font in `crates/embroidery/src/fonts.rs` (fuzzed); `document.embroidery.fonts`;
+  `embroidery.fonts`, `loadFont`, `saveFont`, `removeFont`; `fonts/` in the embroidery library; the
+  spec served over MCP. Opening a `.vcfont` with File › Open or by dropping it comes with E8.1b.
 - **E8.1b Setting type in an embroidery font.** Embroidery fonts appear in the type controls in their own
   group (the Character panel's font menu, `type.fonts` with `kind: "embroidery"`). A type object set in one
   is laid out by the font's advances and kerning plus the object's tracking, leading, alignment, baseline

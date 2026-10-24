@@ -22,6 +22,7 @@ mod draw2;
 mod edit;
 mod effectcmd;
 pub(crate) mod embroidery;
+pub(crate) mod embroidery_fonts;
 pub mod embroidery_lib;
 pub mod expand;
 pub(crate) mod fileinfo;
@@ -297,6 +298,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(embroidery::specs());
         v.extend(embroidery_lib::specs());
         v.extend(applique::specs());
+        v.extend(embroidery_fonts::specs());
         v.extend(shortcutset::specs());
         v.extend(importmatches::specs());
         v

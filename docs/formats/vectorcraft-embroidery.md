@@ -115,6 +115,7 @@ Type objects are sewn letter by letter, each letter in its characters' colour un
 | `patterns` | array of border patterns | The border patterns the document uses beyond the starters, so it sews the same anywhere. | empty |
 | `charts` | array of thread charts, see [Thread charts](#thread-charts-charts-chart) | Thread charts loaded into the document. | empty |
 | `chart` | string, a chart's `id` | The chart the design's colours are matched against. | none |
+| `fonts` | array of embroidery fonts | The embroidery fonts the document uses, each with the fields of a [font file](vcfont.md) other than `format` and `version`, so its type sews the same where the font isn't installed. A font a reader can't read is kept as written and not used. | empty |
 | `hoop` | object, see [Hoop](#hoop-hoop) | The hoop the design is sewn in: its sewing field is checked against the design and drawn in Stitch Preview. | none: nothing checked |
 | `fabric` | object, see [Fabric](#fabric-fabric) | The fabric the design is for: its settings fill in what objects leave unset. | none: the stitches' own defaults |
 | `sewOut` | object, see [Sew-out test](#sew-out-test-sewout) | The swatches of a test sheet and what was seen when they were sewn. | none |

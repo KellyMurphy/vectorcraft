@@ -84,7 +84,14 @@
             }
           }
         },
-        "chart": { "type": "string", "description": "The id of the chart the design's colours are matched against." }
+        "chart": { "type": "string", "description": "The id of the chart the design's colours are matched against." },
+        "fonts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "An embroidery font: the fields of a .vcfont file other than format and version (see vcfont.schema.json)."
+          }
+        }
       }
     },
     "fabric": {

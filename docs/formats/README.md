@@ -8,6 +8,7 @@ the repository read these schemas and examples, so they stay in step with the co
 | Format | Extension | Spec | Schema |
 |---|---|---|---|
 | Border pattern (embroidery) | `.vcborder` | [vcborder.md](vcborder.md) | [vcborder.schema.json](vcborder.schema.json) |
+| Embroidery font | `.vcfont` | [vcfont.md](vcfont.md) | [vcfont.schema.json](vcfont.schema.json) |
 | Fabric profile (embroidery) | `.vcfabric` | [vcfabric.md](vcfabric.md) | [vcfabric.schema.json](vcfabric.schema.json) |
 | Hoop list (embroidery) | `.vchoop` | [vchoop.md](vchoop.md) | [vchoop.schema.json](vchoop.schema.json) |
 | Thread chart (embroidery) | `.vcthreads` | [vcthreads.md](vcthreads.md) | [vcthreads.schema.json](vcthreads.schema.json) |

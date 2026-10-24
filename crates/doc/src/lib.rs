@@ -15,6 +15,7 @@ pub mod corners;
 pub mod depth;
 pub mod dimension;
 pub mod embroidery;
+pub mod embroidery_font;
 pub mod graph;
 pub mod hit;
 mod id_index;
@@ -97,6 +98,7 @@ pub use embroidery::{
     BorderPattern, ChartThread, EmbroiderySetup, Fabric, Hoop, PartStitch, PatternPart, SewOut, SewResult, SewSwatch, StitchKind, StitchSettings,
     ThreadChart, Underlay,
 };
+pub use embroidery_font::{EmbroideryFont, FontGlyph, GlyphObject, KernPair};
 pub use graph::{
     ColumnDesign, ColumnType, Fractions, GraphDesign, GraphKind, GraphSpec, LabelStyles, MAX_GRAPH_CATEGORIES, MAX_GRAPH_SERIES, PiePosition,
     PieSort, SeriesPaint, TickLength, ValueAxisSide,
