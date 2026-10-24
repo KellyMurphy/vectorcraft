@@ -24,6 +24,7 @@ pub mod hoops;
 mod import;
 mod jef;
 pub mod kinds;
+pub mod lettering;
 mod machine;
 pub mod motifs;
 pub mod nest;
@@ -609,9 +610,11 @@ pub fn plan(doc: &Document) -> Plan {
 /// [`plan`], sewing again only the objects `cache` doesn't hold as they are now.
 pub fn plan_cached(doc: &Document, cache: &mut StitchCache) -> Plan {
     let overlap = doc.embroidery.overlap();
-    if cache.patterns != doc.embroidery.patterns || cache.fabric != doc.embroidery.fabric || cache.overlap != overlap {
+    let e = &doc.embroidery;
+    if cache.patterns != e.patterns || cache.fonts != e.fonts || cache.fabric != e.fabric || cache.overlap != overlap {
         cache.entries.clear();
-        cache.patterns.clone_from(&doc.embroidery.patterns);
+        cache.patterns.clone_from(&e.patterns);
+        cache.fonts.clone_from(&e.fonts);
         cache.fabric.clone_from(&doc.embroidery.fabric);
         cache.overlap = overlap;
     }
@@ -946,6 +949,17 @@ pub fn auto_settings(s: &StitchSettings, width: f64) -> StitchSettings {
 /// strikethroughs), each in the thread of its characters' colour. Inline graphics are left out.
 fn text(t: &vectorcraft_doc::TextObject, s: &StitchSettings, b: &mut Sewer) {
     let style = |run: usize| t.runs.get(run).map(|r| r.style.clone()).unwrap_or_else(|| t.first_style());
+    if let Some(id) = s.font.as_deref() {
+        match b.fonts.iter().find(|f| f.id == id && f.unknown.is_none()) {
+            Some(font) => {
+                let font = font.clone();
+                return in_font(t, s, &font, b);
+            }
+            None => {
+                b.out.warnings.push(format!("type is set in the embroidery font `{id}`, which the document doesn't have: sewn from its outline font"))
+            }
+        }
+    }
     let parts = glyph_parts(t);
     if s.kind != StitchKind::Auto {
         for (run, path) in &parts {
@@ -972,6 +986,62 @@ fn text(t: &vectorcraft_doc::TextObject, s: &StitchSettings, b: &mut Sewer) {
             Choice::Satin(t, runs) => emit(&t, thread, runs, b),
             Choice::Sew(t, _) => sew(&t, thread, a.stroke_width() * PT_MM, &[path], FillRule::NonZero, b),
         }
+    }
+}
+
+/// Type `t` sewn from embroidery font `font` (E8.1b): each letter's stitch objects with their own
+/// settings, in the colour of the run they are in unless they name a thread; characters the font
+/// lacks from the outline font, as `s` says, where the embroidery letter would be.
+fn in_font(t: &vectorcraft_doc::TextObject, s: &StitchSettings, font: &vectorcraft_doc::EmbroideryFont, b: &mut Sewer) {
+    let style = |run: usize| t.runs.get(run).map(|r| r.style.clone()).unwrap_or_else(|| t.first_style());
+    let l = lettering::set(t, font);
+    if l.as_point {
+        b.out
+            .warnings
+            .push("area type or type on a path in an embroidery font is set as point type here: no outline font is installed to lay it out".into());
+    }
+    if let Some([lo, hi]) = font.sizes
+        && l.cap_mm > 0.0
+        && !(lo - 1e-6..=hi + 1e-6).contains(&l.cap_mm)
+    {
+        b.out.warnings.push(format!("{} is made for capitals {lo}–{hi} mm tall; this type's are {:.1} mm", font.name, l.cap_mm));
+    }
+    for p in &l.placed {
+        let a = style(p.run).appearance();
+        let settings = b.fabric_in(&p.object.stitch);
+        let thread = thread_of(&a, &settings);
+        sew(&settings, thread, 0.0, &[&p.path], p.rule, b);
+    }
+    if l.missing.is_empty() {
+        return;
+    }
+    // The missing characters, from the outline font, moved to where they go.
+    let db = vectorcraft_text::FontDb::global();
+    let lay = vectorcraft_text::layout(db, t);
+    let mut absent = vec![];
+    for m in &l.missing {
+        let Some(g) = lay.glyphs.iter().find(|g| g.byte == m.byte) else {
+            absent.push(m.chars.clone());
+            continue;
+        };
+        let to = kurbo::Affine::translate(m.pen.to_vec2()) * kurbo::Affine::rotate(m.angle - g.angle) * kurbo::Affine::translate(-g.origin.to_vec2());
+        let path = PathData::from_bezpath(&(to * g.outline.clone())).transformed(t.xf);
+        if path.is_empty() {
+            continue;
+        }
+        let a = style(m.run).appearance();
+        let mut own = s.clone();
+        own.font = None;
+        sew(&own, thread_of(&a, &own), a.stroke_width() * PT_MM, &[&path], FillRule::NonZero, b);
+    }
+    let all: Vec<&str> = l.missing.iter().map(|m| m.chars.as_str()).collect();
+    b.out.warnings.push(format!(
+        "{} has no {}: sewn from the outline font",
+        font.name,
+        all.iter().map(|c| format!("`{c}`")).collect::<Vec<_>>().join(", ")
+    ));
+    if !absent.is_empty() {
+        b.out.warnings.push(format!("no outline font has {}: left out", absent.iter().map(|c| format!("`{c}`")).collect::<Vec<_>>().join(", ")));
     }
 }
 
@@ -1161,6 +1231,8 @@ enum EnterAt {
 struct Sewer<'a> {
     /// The document's own border patterns ([`EmbroiderySetup::patterns`]).
     patterns: &'a [vectorcraft_doc::BorderPattern],
+    /// The document's embroidery fonts ([`EmbroiderySetup::fonts`]).
+    fonts: &'a [vectorcraft_doc::EmbroideryFont],
     /// The document's fabric ([`EmbroiderySetup::fabric`]), and the auto underlay it asks for.
     fabric: Option<&'a vectorcraft_doc::Fabric>,
     auto: generate::AutoUnderlay,
@@ -1183,11 +1255,13 @@ impl Sewer<'_> {
 /// The stitches of objects already sewn, kept between plans so a plan sews again only what
 /// changed. An object counts as unchanged when it is the very same node: documents share the nodes
 /// an edit doesn't touch, and since an entry holds its node, editing one copies it rather than
-/// changing it in place. A change to the document's border patterns empties the cache.
+/// changing it in place. A change to the document's border patterns, fonts, fabric or overlap
+/// empties the cache.
 #[derive(Default)]
 pub struct StitchCache {
     entries: HashMap<NodeId, Entry>,
     patterns: Vec<vectorcraft_doc::BorderPattern>,
+    fonts: Vec<vectorcraft_doc::EmbroideryFont>,
     fabric: Option<Box<vectorcraft_doc::Fabric>>,
     overlap: f64,
     /// Objects the last plan took from the cache and sewed again.
@@ -1215,6 +1289,7 @@ impl StitchCache {
                 let cuts = over.iter().filter_map(|c| cover_area(c)).collect();
                 let mut b = Sewer {
                     patterns: &self.patterns,
+                    fonts: &self.fonts,
                     fabric,
                     auto: fabrics::auto_underlay(fabric),
                     cuts,

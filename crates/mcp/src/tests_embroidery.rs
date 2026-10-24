@@ -137,7 +137,7 @@ fn every_machine_format_reaches_agents() {
 /// table), so agents reading the guide know what each type takes.
 #[test]
 fn every_stitch_types_guide_row_names_its_settings() {
-    let always = ["type", "thread", "trimBefore", "trimAfter", "stopBefore"];
+    let always = ["type", "thread", "trimBefore", "trimAfter", "stopBefore", "font"];
     for k in StitchKind::ALL {
         let row = guide()
             .lines()

@@ -198,6 +198,25 @@ mod tests {
     }
 
     #[test]
+    fn type_is_set_in_a_loaded_font() {
+        let mut s = session();
+        s.execute("text.create", &json!({"x": 10, "y": 50, "text": "HELLO", "size": 36})).unwrap();
+        assert!(
+            s.execute("embroidery.set", &json!({"type": "auto", "font": "vectorcraft-sample-sans"}))
+                .unwrap_err()
+                .to_string()
+                .contains("none is loaded")
+        );
+        s.execute("embroidery.loadFont", &json!({ "data": fonts::write_file(&fonts::sample()).unwrap() })).unwrap();
+        s.execute("embroidery.set", &json!({"type": "auto", "font": "vectorcraft-sample-sans"})).unwrap();
+        let info = s.execute("embroidery.info", &json!({})).unwrap();
+        assert_eq!(info["selection"]["font"], "vectorcraft-sample-sans");
+        assert!(info["design"]["stitches"].as_u64().unwrap() > 100, "{info}");
+        s.execute("embroidery.set", &json!({"font": null})).unwrap();
+        assert_eq!(s.execute("embroidery.info", &json!({})).unwrap()["selection"]["font"], Value::Null);
+    }
+
+    #[test]
     fn documents_keep_their_fonts() {
         let mut s = session();
         s.execute("embroidery.loadFont", &json!({ "data": fonts::write_file(&fonts::sample()).unwrap() })).unwrap();

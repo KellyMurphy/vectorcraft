@@ -39,6 +39,7 @@
         "keepCovered": { "type": "boolean", "default": false, "description": "Fill: keep the rows under objects sewn later on top of it." },
         "trimBefore": { "type": "boolean", "default": false },
         "trimAfter": { "type": "boolean", "default": false },
+        "font": { "type": "string", "description": "Type: the id of an embroidery font of document.embroidery.fonts its letters are sewn from." },
         "stopBefore": { "type": "string", "enum": ["stop", "placeFabric", "trimFabric"], "description": "Stop the machine before the object: a plain stop, placing appliqué fabric, or trimming it. Readers treat an id they don't know as a plain stop." }
       }
     },

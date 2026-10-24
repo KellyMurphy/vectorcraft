@@ -141,6 +141,17 @@ from the library's `fonts` folder), list them with `embroidery.fonts`, save one 
 The document keeps a copy of each font it uses, so it sews the same where the font isn't installed.
 VectorCraft ships no embroidery fonts; each font has its own licence (`embroidery.fonts` lists it).
 
+To sew type in one, select the type and pick it from **Embroidery Font** in the Embroidery panel's Thread
+section (fonts in the library are loaded into the document when picked), or `embroidery.set {font: id}`.
+Each letter is then sewn from the font's own stitch objects, with their own stitch settings, in the type's
+colour. Point type is laid out from the embroidery font alone, so it needs no outline font: the font's
+advances and kerning pairs, with the type's size, tracking, manual kerning, baseline shift, scaling, line
+breaks, leading and alignment, and ligatures the font has. Area type and type on a path keep their lines
+and places from their layout (wrapping in the frame, following the path), each straight line respaced by
+the embroidery font and kept at its alignment. A character the font lacks is sewn from the outline font
+where its letter would be, with a warning; type set outside the font's size range is warned about. For
+now the canvas still draws the type in its outline font: Stitch Preview shows the embroidery letters.
+
 ### Sew order
 
 Objects are sewn in paint order, bottom first, until you change it. **Window › Sew Order** is the panel for

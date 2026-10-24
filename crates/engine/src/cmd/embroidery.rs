@@ -407,6 +407,9 @@ impl Edits {
     fn pattern(&self) -> Option<String> {
         self.0.iter().find(|(p, _)| p.key == "pattern").and_then(|(_, v)| v.as_str()).map(|id| id.trim().to_ascii_lowercase())
     }
+    fn font(&self) -> Option<String> {
+        self.0.iter().find(|(p, _)| p.key == "font").and_then(|(_, v)| v.as_str()).map(|id| id.trim().to_string())
+    }
 }
 
 /// The paths, compound paths and type objects `ids` stand for (groups and layers: those inside;
@@ -440,6 +443,14 @@ fn set(s: &mut Session, p: &Value) -> Result<Value> {
         if vectorcraft_embroidery::borders::find(mine, &id).is_none() {
             let ids: Vec<&str> = mine.iter().map(|p| p.id.as_str()).chain(vectorcraft_embroidery::borders::BUILTIN).collect();
             return Err(bad(SET, format!("no border pattern `{id}` (there are {}; embroidery.loadBorderPattern adds one)", ids.join(", "))));
+        }
+    }
+    if let Some(id) = edits.font() {
+        let mine = &s.doc()?.doc.embroidery.fonts;
+        if !mine.iter().any(|f| f.id == id && f.unknown.is_none()) {
+            let ids: Vec<&str> = mine.iter().filter(|f| f.unknown.is_none()).map(|f| f.id.as_str()).collect();
+            let have = if ids.is_empty() { "none is loaded".to_string() } else { format!("there are {}", ids.join(", ")) };
+            return Err(bad(SET, format!("no embroidery font `{id}` in the document ({have}; embroidery.loadFont adds one)")));
         }
     }
     let changed = edit_counted(s, "Stitch Settings", |d| {

@@ -243,6 +243,11 @@ pub struct StitchSettings {
     /// stop.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub stop_before: Option<String>,
+    /// Type: the embroidery font its letters are made from (an id of
+    /// [`EmbroiderySetup::fonts`]), each letter sewn from that font's stitch objects (`None`: from
+    /// its outline font, with this object's stitch).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub font: Option<String>,
     /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
     #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
     pub extra: serde_json::Map<String, serde_json::Value>,

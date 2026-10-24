@@ -261,3 +261,34 @@ fn the_checker_warns_of_holes_too_small_to_stay_open() {
         assert!(check::check(&d, &plan(&d)).iter().all(|f| f.rule != "small-type"));
     }
 }
+
+/// Type set in an embroidery font (`font`) is sewn from the font's letters, needing no outline
+/// font; what the font lacks, or a font the document lacks, is warned about.
+#[test]
+fn type_in_an_embroidery_font_is_sewn_from_its_letters() {
+    let with_font = |text: &str, size_mm: f64, font: &str| {
+        let mut d = type_doc(text, "No Such Family", size_mm, StitchKind::Auto);
+        d.embroidery.fonts = vec![crate::fonts::sample()];
+        let layer = Arc::make_mut(&mut d.layers[0]);
+        let n = Arc::make_mut(&mut layer.children_mut().unwrap()[0]);
+        n.extras_mut().stitch.as_mut().unwrap().font = Some(font.into());
+        plan(&d)
+    };
+    // 20 mm type: caps 14 mm, inside the sample's 6–40 mm.
+    let p = with_font("HELLO", 20.0, "vectorcraft-sample-sans");
+    assert!(p.stats().stitches > 200, "{}", p.stats().stitches);
+    assert!(p.warnings.is_empty(), "{:?}", p.warnings);
+    let b = p.stats().bounds.unwrap();
+    // H E L L O: 650 + 560 + 520 + 520 + 760 units of advance at 20 mm per em, about 60 mm wide, 14 mm tall.
+    assert!((b[3] - b[1] - 14.0).abs() < 1.5, "{b:?}");
+    assert!(b[2] - b[0] > 50.0 && b[2] - b[0] < 62.0, "{b:?}");
+    // Characters it lacks: warned (no outline font here, so left out too).
+    let p = with_font("HAT", 20.0, "vectorcraft-sample-sans");
+    assert!(p.warnings.iter().any(|w| w.contains("has no `A`")), "{:?}", p.warnings);
+    // Too small for the font's sizes.
+    let p = with_font("HI", 4.0, "vectorcraft-sample-sans");
+    assert!(p.warnings.iter().any(|w| w.contains("is made for capitals 6–40 mm")), "{:?}", p.warnings);
+    // A font the document doesn't have.
+    let p = with_font("HI", 20.0, "missing-font");
+    assert!(p.warnings.iter().any(|w| w.contains("`missing-font`, which the document doesn't have")), "{:?}", p.warnings);
+}

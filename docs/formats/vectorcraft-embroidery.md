@@ -52,6 +52,7 @@ are kept but have no effect.
 | `keepCovered` | boolean | fill | | false: rows under objects sewn later on top are cut away (see `overlap`) |
 | `trimBefore` | boolean | all | | false |
 | `trimAfter` | boolean | all | | false |
+| `font` | string, a font's `id` | type | | none: the outline font. The embroidery font (of `fonts`) the type's letters are sewn from, each from its stitch objects; a reader that can't find it sews the outline font. |
 | `stopBefore` | `stop`, `placeFabric` or `trimFabric` | all | | none. The machine stops before the object for something done by hand (a plain stop, placing appliqué fabric, trimming it); an id a reader doesn't know is a plain stop. |
 
 **Compensation.** The thread pulls the fabric in along the stitches and pushes it out at their ends. `pull` (mm) plus `pullPercent` (of the satin's width, or of each fill row's length) sews a satin that much wider and each fill row that much longer, half at each end. `push` sews a satin column along a path that much shorter (half at each end; not a closed one, nor a satin between rails) and a fill that much shorter across its rows (a row whose middle is within half of it of an edge across the rows is left out). A satin shape takes `pullPercent` of its stroke width.

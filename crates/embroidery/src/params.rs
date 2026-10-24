@@ -435,6 +435,18 @@ pub static PARAMS: &[Param] = &[
         suits: None,
     },
     Param {
+        key: "font",
+        value: ValueKind::Id,
+        kinds: ALL,
+        label: "Embroidery Font:",
+        help: "Type only: sew the letters from this embroidery font's stitch objects instead of the outline font",
+        doc: "an embroidery font's id (one loaded into the document: embroidery.fonts) | null (type only: each letter sewn from the font's own stitch objects, spaced by its advances and kerning with the type's size, tracking and alignment; characters it lacks are sewn from the outline font, with a warning; null: the outline font, with this object's stitch)",
+        nullable: true,
+        get: |s| json!(s.font),
+        set: |s, v| s.font = text(v),
+        suits: None,
+    },
+    Param {
         key: "trimAfter",
         value: ValueKind::Flag,
         kinds: ALL,

@@ -102,6 +102,7 @@ fn full_stitch() -> StitchSettings {
         trim_before: true,
         trim_after: true,
         stop_before: Some("placeFabric".into()),
+        font: Some("script".into()),
         extra: Default::default(),
         unknown: None,
     }

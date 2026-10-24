@@ -140,6 +140,9 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         thread_row(app, ui, sel);
         trim_row(app, ui, sel);
         stop_row(app, ui, sel);
+        if selects_type(app) {
+            font_row(app, ui, sel);
+        }
         if let Some(k) = kind {
             widgets::divider(ui);
             parameters(app, ui, k, sel);
@@ -323,6 +326,54 @@ fn trim_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
             ui.add_space(6.0);
         }
     });
+}
+
+/// Whether the selection holds type.
+fn selects_type(app: &VectorcraftApp) -> bool {
+    app.session
+        .active()
+        .is_some_and(|d| d.selection.objects.iter().any(|id| matches!(d.doc.node(*id).map(|n| &n.kind), Some(vectorcraft_doc::NodeKind::Text(_)))))
+}
+
+/// Embroidery Font (type): none (the outline font), one of the document's, or one of the library's
+/// (loaded into the document when picked).
+fn font_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
+    let mine: Vec<(String, String)> = app
+        .session
+        .active()
+        .map(|d| d.doc.embroidery.fonts.iter().filter(|f| f.unknown.is_none()).map(|f| (f.id.clone(), f.name.clone())).collect())
+        .unwrap_or_default();
+    let libs = &app.session.embroidery_libraries.fonts;
+    let library: Vec<(String, String)> = libs
+        .infos()
+        .filter(|i| i.category == "user")
+        .filter_map(|i| libs.get(&i.id))
+        .filter(|(_, f)| !mine.iter().any(|(id, _)| *id == f.id))
+        .map(|(i, f)| (i.id, f.name.clone()))
+        .collect();
+    let mut names = vec![tl!("None").to_string()];
+    names.extend(mine.iter().map(|(_, n)| n.clone()));
+    names.extend(library.iter().map(|(_, n)| library_label(n)));
+    let current = sel["font"].as_str();
+    let shown = current.and_then(|id| mine.iter().find(|(m, _)| m == id)).map_or_else(|| tl!("None").to_string(), |(_, n)| n.clone());
+    ui.scope(|ui| {
+        widgets::label_row(ui, tl!("Embroidery Font:"), LABEL_W, |ui| {
+            let opts: Vec<&str> = names.iter().map(String::as_str).collect();
+            let Some(i) = widgets::dropdown_names(ui, "emb-font", &shown, &opts, 150.0) else { return };
+            if i == 0 {
+                set(app, json!({"font": null}));
+            } else if let Some((id, _)) = mine.get(i - 1) {
+                set(app, json!({ "font": id }));
+            } else if let Some((lib, _)) = library.get(i - 1 - mine.len()) {
+                match app.run("embroidery.loadFont", json!({ "library": lib })) {
+                    Ok(r) => set(app, json!({ "font": r["id"] })),
+                    Err(e) => app.status(e),
+                }
+            }
+        })
+    })
+    .response
+    .on_hover_text(tl!("Type only: sew the letters from this embroidery font's stitch objects instead of the outline font"));
 }
 
 /// A stop's name, translated (`None` for no stop).
@@ -628,7 +679,7 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
 }
 
 /// Settings every stitch type's panel shows above its own rows (stitch, thread, trims).
-const ALWAYS_SHOWN: [&str; 5] = ["type", "thread", "trimBefore", "trimAfter", "stopBefore"];
+const ALWAYS_SHOWN: [&str; 6] = ["type", "thread", "trimBefore", "trimAfter", "stopBefore", "font"];
 
 /// The settings each stitch type's own rows show; any other setting it uses
 /// ([`vectorcraft_embroidery::params::PARAMS`]) gets a generic row from [`other_settings`].

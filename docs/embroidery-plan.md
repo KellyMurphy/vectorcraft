@@ -337,7 +337,7 @@ objects (shapes with settings), not needle points, so letters scale and are re-s
   code-drawn sample font in `crates/embroidery/src/fonts.rs` (fuzzed); `document.embroidery.fonts`;
   `embroidery.fonts`, `loadFont`, `saveFont`, `removeFont`; `fonts/` in the embroidery library; the
   spec served over MCP. Opening a `.vcfont` with File › Open or by dropping it comes with E8.1b.
-- **E8.1b Setting type in an embroidery font.** Embroidery fonts appear in the type controls in their own
+- **E8.1b Setting type in an embroidery font (done, except the canvas drawing).** Embroidery fonts appear in the type controls in their own
   group (the Character panel's font menu, `type.fonts` with `kind: "embroidery"`). A type object set in one
   is laid out by the font's advances and kerning plus the object's tracking, leading, alignment, baseline
   shift and type on a path (reusing `vectorcraft_text::layout`'s line and path logic with the
@@ -348,6 +348,14 @@ objects (shapes with settings), not needle points, so letters scale and are re-s
   given, else the nearest-end rule (E7.5) with a trim over the jump limit. A character the font lacks is
   sewn from a fallback outline font with Auto and reported. The checker warns below or above the font's
   size range.
+  As built (`crates/embroidery/src/lettering.rs`): the `font` stitch setting on type; point type laid
+  out from the embroidery font alone (no outline font needed); area type and type on a path from the
+  type's layout, straight lines respaced; ligatures; missing characters sewn from the outline font at the
+  embroidery letter's place; size-range and missing-font warnings; the panel's Embroidery Font menu
+  (library fonts loaded when picked). **Not yet:** the canvas draws the type in its outline font (only
+  Stitch Preview shows the embroidery letters); type in an embroidery font listed in the type controls'
+  font menu; entry/exit joins (letters are entered nearest, as other objects); overlap removal and hidden
+  travel still use the outline-font letters' areas; File › Open / drop of a `.vcfont`.
 - **E8.1c The font editor.** `embroidery.font.new {name, from?: installed font, chars?: "A-Za-z0-9…"}`
   makes a font document: one artboard per letter, with guides for baseline, x-height, cap height,
   ascender and descender and the advance as the artboard's right edge (dragged to change it). With `from`,
