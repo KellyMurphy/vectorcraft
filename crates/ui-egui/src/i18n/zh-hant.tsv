@@ -4195,6 +4195,8 @@ lighting	Light	光源
 	Embroidery Libraries	刺繡資料庫
 	Add to Embroidery Library…	加入刺繡資料庫…
 	Rescan Embroidery Libraries	重新掃描刺繡資料庫
+	Appliqué	貼布繡
+	Make each selected closed shape an appliqué: placement line, stop, tack-down, stop, cover	將每個選取的封閉形狀做成貼布繡：定位線、停止、固定線、停止、覆蓋
 	Stop Before:	之前停止：
 	Place Fabric	放置布料
 	Trim Fabric	修剪布料

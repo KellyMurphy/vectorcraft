@@ -228,6 +228,25 @@ Stitch** (Sew Order panel, `embroidery.setup {minStitch}`, 0.3 mm) to the one be
 everywhere, satin columns included; a fabric can ask for longer (Leather: 1 mm). Manual stitches are sewn
 exactly as drawn.
 
+### Appliqué
+
+Appliqué sews a piece of fabric on instead of filling an area with thread. Select closed shapes and choose
+**Object › Embroidery › Appliqué** (or the **Appliqué** button in the Embroidery panel, `embroidery.applique`).
+Each shape becomes a group named Appliqué, in the shape's place, holding three stitched copies sewn in
+order in the shape's thread:
+
+1. **Placement Line**: a running stitch on the outline, showing where the fabric goes. The machine then
+   stops (**place the fabric**).
+2. **Tack-Down**: just inside the outline (**inset**, 0.8 mm), a running, zigzag or bean stitch holding the
+   fabric. The machine stops again (**trim the fabric** back to the tack-down).
+3. **Cover**: over the raw edge, centred on the outline: a satin column (**width**, 3 mm) by default, or a
+   zigzag, a bean stitch, or none. No underlay: the tack-down holds the fabric.
+
+A satin or zigzag cover must reach past the tack-down's inner side, or the trimmed edge would show; the
+command refuses a cover too narrow for its inset. The parts are ordinary stitched objects, so each can be
+edited afterwards (or its stops changed with **Stop Before**); the worksheet's thread sequence says what to do
+at each stop.
+
 ### Puff (3D foam)
 
 Set **Puff Foam** (`puff`, the foam's thickness, 1–6 mm) on a satin column, satin shape or Auto lettering
@@ -402,6 +421,7 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.libraries` | `{kind?: borders\|fabrics\|hoops\|threads}` → the embroidery library `folder`, its `libraries` (`kind`, `id`, `name`, `path`…) and the files `skipped` as unreadable |
 | `embroidery.rescanLibraries` | re-read the embroidery library folder → the same as `embroidery.libraries` |
 | `embroidery.addToLibrary` | `{path? \| data? with name?, kind?}`: copy a `.vcborder`, `.vcfabric`, `.vchoop` or `.vcthreads` file into the embroidery library (never replacing one) |
+| `embroidery.applique` | `{ids?, cover?: satin\|zigzag\|bean\|none, width?, tackDown?: running\|zigzag\|bean, inset?}`: each closed shape becomes an appliqué group (placement line, stop, tack-down, stop, cover) → `{groups: [{id, placement, tackDown, cover}]}` |
 | `embroidery.worksheet` | `{page?: a4\|letter, format?: pdf, path?}`: the production worksheet, as a new document or a PDF |
 | `embroidery.testSheet` | `{sections?: [ids]}`: a new document of calibration swatches (see Sew-out tests) → `{index, sections, swatches, skipped}` |
 | `embroidery.sewOut` | → the sew-out form: `{sewOut: {fabric, machine, notes, swatches: [{id, section, label, objects, result, notes}], counts} \| null, sections}` |

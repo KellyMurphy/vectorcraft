@@ -215,4 +215,22 @@ mod tests {
         assert!(lengths[0] > 1000.0, "{lengths:?}");
         assert_eq!(page_size(true), (215.9, 279.4));
     }
+
+    #[test]
+    fn the_thread_sequence_says_what_to_do_at_each_stop() {
+        let sheet = crate::testsheet::build(&["satinWidth".into()]).unwrap();
+        let mut plan = crate::plan(&sheet.doc);
+        let t = plan.threads.first().copied().unwrap();
+        plan.threads.push(t);
+        plan.stops = vec![crate::PlanStop { block: 1, kind: "placeFabric".into() }, crate::PlanStop { block: 1, kind: "foam".into() }];
+        let w = build(&sheet.doc, &plan, false);
+        let mut texts = vec![];
+        w.walk(|n| {
+            if let NodeKind::Text(t) = &n.kind {
+                texts.push(t.plain_text());
+            }
+        });
+        assert!(texts.iter().any(|t| t.starts_with("2.  ") && t.ends_with("(stop first: place the fabric, lay the foam)")), "{texts:?}");
+        assert!(texts.iter().any(|t| t.starts_with("1.  ") && !t.contains("stop first")), "{texts:?}");
+    }
 }

@@ -277,7 +277,7 @@ raw edge.
   (`Plan::stops`), `embroidery.info` reports them as `stops`, and the worksheet's thread sequence says
   what to do at each. The panel's Thread section has a Stop Before menu. Still to do with E8.8b: the
   stop shown in the Sew Order player and the checker's appliqué rules.
-- **E8.8b Appliqué from a shape.** `embroidery.applique {ids?, cover: "satin"|"zigzag"|"bean"|"none", width,
+- **E8.8b Appliqué from a shape (command done).** `embroidery.applique {ids?, cover: "satin"|"zigzag"|"bean"|"none", width,
   tackDown: "running"|"zigzag"|"doubleRunning", inset, allowance}` turns each closed shape into a group of
   three objects in sewing order, sharing one thread: placement line (running on the outline, then stop
   "Lay the fabric"), tack-down (inset a little inside the outline, then stop "Trim the fabric"), cover
@@ -287,6 +287,13 @@ raw edge.
   tack-down, inset, fabric colour for the preview). Stitch Preview draws the fabric piece in its colour
   under the cover. Several appliqué pieces in one design are sequenced so all placement lines come first
   where they don't overlap (one stop instead of one per piece), as an option.
+  As built (`crates/engine/src/cmd/applique.rs`): `embroidery.applique {ids?, cover: satin|zigzag|bean|none,
+  width, tackDown: running|zigzag|bean, inset}`; the group takes the shape's place and id; a satin or
+  zigzag cover too narrow to reach past the tack-down is refused; Object › Embroidery › Appliqué and an
+  Appliqué button in the panel. **Not yet:** the group doesn't remember its recipe, so there is no
+  Appliqué section to re-make it after editing the shape (the parts are edited one by one); no fabric
+  drawn in Stitch Preview; shared placement stops across pieces; the checker's appliqué rules and the
+  test sheet's appliqué section (below).
 - **E8.8c Cut files.** `embroidery.cutFile {ids?, allowance (mm, default 0), gap (3 mm), mat: "12x12in"|
   "12x24in"|{w,h}, rotate: "none"|"90"|"any", flip, format: "svg"|"dxf", path}` exports the pieces'
   outlines (grown by the allowance) **nested**: packed without overlap, the gap apart, onto as few mats as

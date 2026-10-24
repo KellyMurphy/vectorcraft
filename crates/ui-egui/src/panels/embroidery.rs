@@ -112,10 +112,20 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 widgets::dim_label(ui, tl!("The selected objects use different stitches."));
             }
         }
-        if stitched > 0 && widgets::flat_button(ui, tl!("Remove Stitches"), 110.0).on_hover_text(tl!("The selection is no longer stitched")).clicked()
-        {
-            app.run("embroidery.clear", json!({})).ok();
-        }
+        ui.horizontal(|ui| {
+            if stitched > 0
+                && widgets::flat_button(ui, tl!("Remove Stitches"), 110.0).on_hover_text(tl!("The selection is no longer stitched")).clicked()
+            {
+                app.run("embroidery.clear", json!({})).ok();
+            }
+            if widgets::flat_button(ui, tl!("Appliqué"), 90.0)
+                .on_hover_text(tl!("Make each selected closed shape an appliqué: placement line, stop, tack-down, stop, cover"))
+                .clicked()
+                && let Err(e) = app.run("embroidery.applique", json!({}))
+            {
+                app.status(e);
+            }
+        });
     }
     if stitched > 0 && unstitched == 0 {
         widgets::divider(ui);
