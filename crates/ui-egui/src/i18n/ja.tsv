@@ -4948,6 +4948,10 @@ lighting	Light	ライト
 	Embroidery Libraries	刺繍ライブラリ
 	Add to Embroidery Library…	刺繍ライブラリに追加…
 	Rescan Embroidery Libraries	刺繍ライブラリを再スキャン
+	Stop Before:	前で停止:
+	Place Fabric	布を置く
+	Trim Fabric	布を切る
+	Stop the machine before this object: to change something by hand, place appliqué fabric, or trim it	このオブジェクトの前でミシンを止めます：手作業での変更、アップリケ布の配置、または布のカットのため
 	Save a copy in your embroidery library, for any design	どのデザインでも使えるよう、刺繍ライブラリにコピーを保存
 	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	刺繍ライブラリ：どのデザインでも使えるパターンボーダー、生地、刺繍枠、糸見本帳
 @msg	no embroidery library folder here	この環境には刺繍ライブラリフォルダーがありません

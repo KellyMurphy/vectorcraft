@@ -5293,6 +5293,10 @@ theme	Appearance	Apparence
 	Embroidery Libraries	Bibliothèques de broderie
 	Add to Embroidery Library…	Ajouter à la bibliothèque de broderie…
 	Rescan Embroidery Libraries	Relire les bibliothèques de broderie
+	Stop Before:	Arrêt avant :
+	Place Fabric	Placer le tissu
+	Trim Fabric	Couper le tissu
+	Stop the machine before this object: to change something by hand, place appliqué fabric, or trim it	Arrêter la machine avant cet objet : pour changer quelque chose à la main, placer le tissu d’appliqué ou le couper
 	Save a copy in your embroidery library, for any design	Enregistrer une copie dans votre bibliothèque de broderie, pour tout motif
 	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Votre bibliothèque de broderie : bordures à motif, tissus, cadres et nuanciers de fils pour tout motif
 @msg	no embroidery library folder here	aucun dossier de bibliothèques de broderie ici

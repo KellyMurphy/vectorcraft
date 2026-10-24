@@ -5291,6 +5291,10 @@ imageTrace	Outline	Körvonal
 	Embroidery Libraries	Hímzéskönyvtárak
 	Add to Embroidery Library…	Hozzáadás a hímzéskönyvtárhoz…
 	Rescan Embroidery Libraries	Hímzéskönyvtárak újraolvasása
+	Stop Before:	Megállás előtte:
+	Place Fabric	Anyag felhelyezése
+	Trim Fabric	Anyag levágása
+	Stop the machine before this object: to change something by hand, place appliqué fabric, or trim it	A gép megállítása az objektum előtt: kézi módosításhoz, az applikációs anyag felhelyezéséhez vagy levágásához
 	Save a copy in your embroidery library, for any design	Másolat mentése a hímzéskönyvtárába, bármely tervhez
 	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Az Ön hímzéskönyvtára: szegélyminták, anyagok, hímzőrámák és cérnakártyák bármely tervhez
 @msg	no embroidery library folder here	itt nincs hímzéskönyvtár-mappa

@@ -5269,6 +5269,10 @@ mark-style	Japanese	Japanilainen
 	Embroidery Libraries	Kirjontakirjastot
 	Add to Embroidery Library…	Lisää kirjontakirjastoon…
 	Rescan Embroidery Libraries	Lue kirjontakirjastot uudelleen
+	Stop Before:	Pysäytä ennen:
+	Place Fabric	Aseta kangas
+	Trim Fabric	Leikkaa kangas
+	Stop the machine before this object: to change something by hand, place appliqué fabric, or trim it	Pysäytä kone ennen tätä objektia: jotain käsin muuttamista, applikaatiokankaan asettamista tai leikkaamista varten
 	Save a copy in your embroidery library, for any design	Tallenna kopio kirjontakirjastoosi mitä tahansa mallia varten
 	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Kirjontakirjastosi: reunuskuviot, kankaat, kehykset ja lankakartat mihin tahansa malliin
 @msg	no embroidery library folder here	täällä ei ole kirjontakirjastokansiota

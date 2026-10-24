@@ -5261,6 +5261,10 @@ theme	Appearance	Utseende
 	Embroidery Libraries	Broderibibliotek
 	Add to Embroidery Library…	Lägg till i broderibibliotek…
 	Rescan Embroidery Libraries	Läs in broderibibliotek igen
+	Stop Before:	Stopp före:
+	Place Fabric	Lägg på tyg
+	Trim Fabric	Klipp tyg
+	Stop the machine before this object: to change something by hand, place appliqué fabric, or trim it	Stoppa maskinen före det här objektet: för att ändra något för hand, lägga på applikationstyg eller klippa det
 	Save a copy in your embroidery library, for any design	Spara en kopia i ditt broderibibliotek, för alla mönster
 	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Ditt broderibibliotek: kantmönster, tyger, ramar och trådkartor för alla mönster
 @msg	no embroidery library folder here	ingen mapp för broderibibliotek här

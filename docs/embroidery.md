@@ -157,7 +157,11 @@ before a long jump and before each colour change. The **Travel** settings (the S
 
 Each object can also force a cut: **Trim Before** cuts the thread before it starts, however close it is to the
 stitch before; **Trim After** cuts it after the object ends. A thread change cuts anyway, so it never cuts
-twice. Every run of stitches that starts after a jump,
+twice. **Stop Before** (`stopBefore`: `stop`, `placeFabric` or `trimFabric`) stops the machine before the
+object for something done by hand: a plain stop, placing appliqué fabric, or trimming it. It is written as
+a colour change to the same thread (every machine format has one), or is the thread change itself when the
+thread changes there; a stop before the first object is done before the machine starts. The worksheet's
+thread sequence says what to do at each stop, and `embroidery.info` lists them as the design's `stops`. Every run of stitches that starts after a jump,
 trim or colour change goes down where the frame stopped and locks the thread with two tiny stitches (a
 tie-in); every trim is preceded by a tie-off. Manual stitches are sewn exactly as drawn, without ties.
 

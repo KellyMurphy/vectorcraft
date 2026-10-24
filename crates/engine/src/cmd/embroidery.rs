@@ -349,7 +349,7 @@ fn info_doc() -> &'static str {
     static DOC: std::sync::OnceLock<String> = std::sync::OnceLock::new();
     DOC.get_or_init(|| {
         format!(
-            "{{ids?}} → {{design: {{objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings}}, setup: {{trimJumpsOver, stitchMovesUnder}} (embroidery.setup), selection: {{stitched, unstitched, {}}} (as sewn: the document's fabric fills in what objects leave unset; each null when the stitched objects differ, or none is; type is `unknown` for settings from a newer VectorCraft)}}",
+            "{{ids?}} → {{design: {{objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings, stops: [{{block: the thread sewn after it (0 with no colour change: before the machine starts), kind: stop|placeFabric|trimFabric|foam}}]}}, setup: {{trimJumpsOver, stitchMovesUnder}} (embroidery.setup), selection: {{stitched, unstitched, {}}} (as sewn: the document's fabric fills in what objects leave unset; each null when the stitched objects differ, or none is; type is `unknown` for settings from a newer VectorCraft)}}",
             params::info_keys()
         )
     })
@@ -938,6 +938,7 @@ pub(crate) fn design(doc: &Document, plan: &Plan) -> Value {
         "widthMm": (w * 10.0).round() / 10.0,
         "heightMm": (h * 10.0).round() / 10.0,
         "warnings": plan.warnings,
+        "stops": plan.stops,
         "minutes": (vectorcraft_embroidery::sewing_seconds(plan, doc.embroidery.speed()) / 6.0).round() / 10.0,
     })
 }
@@ -1557,5 +1558,22 @@ mod tests {
         assert_eq!(parse_thread(&json!([1, 2, 300])), None);
         assert_eq!(parse_thread(&json!("#ff80")), None);
         assert_eq!(parse_thread(&json!("#ffé00")), None);
+    }
+
+    #[test]
+    fn stops_before_objects_are_set_and_reported() {
+        let mut s = Session::new();
+        s.execute("file.new", &json!({"width": 200, "height": 200})).unwrap();
+        s.execute("shape.rectangle", &json!({"x": 10, "y": 10, "width": 50, "height": 30})).unwrap();
+        s.execute("embroidery.set", &json!({"type": "running"})).unwrap();
+        s.execute("shape.rectangle", &json!({"x": 10, "y": 80, "width": 50, "height": 30})).unwrap();
+        s.execute("embroidery.set", &json!({"type": "running", "stopBefore": "placeFabric"})).unwrap();
+        let info = s.execute("embroidery.info", &json!({})).unwrap();
+        assert_eq!(info["selection"]["stopBefore"], "placeFabric");
+        assert_eq!(info["design"]["stops"], json!([{"block": 1, "kind": "placeFabric"}]));
+        assert_eq!(info["design"]["colorChanges"], 1);
+        assert!(s.execute("embroidery.set", &json!({"stopBefore": "lunch"})).is_err());
+        s.execute("embroidery.set", &json!({"stopBefore": null})).unwrap();
+        assert_eq!(s.execute("embroidery.info", &json!({})).unwrap()["design"]["stops"], json!([]));
     }
 }

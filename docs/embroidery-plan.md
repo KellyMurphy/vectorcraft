@@ -269,10 +269,14 @@ Appliqué sews a piece of fabric on instead of filling an area with thread. Publ
 a placement line, a stop to lay the fabric, a tack-down, a stop to trim the fabric, and a cover over the
 raw edge.
 
-- **E8.8a Stops as a setting.** Puff (E7.14) already writes a stop. Generalise it into `stopBefore`
-  (on any object: "stop, then sew this") with a message for the worksheet ("Lay the fabric", "Trim the
-  fabric"). Written as a colour change to the same thread in DST/EXP and as a stop in PES/JEF where the
-  format has one. The sew order, player, worksheet and checker show stops.
+- **E8.8a Stops as a setting (done).** `stopBefore` on any object (`stop`, `placeFabric`,
+  `trimFabric`), a choice so the worksheet's words stay translatable. Written as a colour change to
+  the same thread in every format (none of the four has a separate stop code we could document), or
+  as the thread change itself where the thread changes there; before the first object it is done
+  before the machine starts. Puff's foam stop goes the same way. The plan records every stop
+  (`Plan::stops`), `embroidery.info` reports them as `stops`, and the worksheet's thread sequence says
+  what to do at each. The panel's Thread section has a Stop Before menu. Still to do with E8.8b: the
+  stop shown in the Sew Order player and the checker's appliqué rules.
 - **E8.8b Appliqué from a shape.** `embroidery.applique {ids?, cover: "satin"|"zigzag"|"bean"|"none", width,
   tackDown: "running"|"zigzag"|"doubleRunning", inset, allowance}` turns each closed shape into a group of
   three objects in sewing order, sharing one thread: placement line (running on the outline, then stop

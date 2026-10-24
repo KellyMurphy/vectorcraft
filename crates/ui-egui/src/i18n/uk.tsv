@@ -4887,6 +4887,10 @@ lighting	Light	Світло
 	Embroidery Libraries	Бібліотеки вишивки
 	Add to Embroidery Library…	Додати до бібліотеки вишивки…
 	Rescan Embroidery Libraries	Повторно сканувати бібліотеки вишивки
+	Stop Before:	Зупинка перед:
+	Place Fabric	Покласти тканину
+	Trim Fabric	Обрізати тканину
+	Stop the machine before this object: to change something by hand, place appliqué fabric, or trim it	Зупинити машину перед цим об’єктом: щоб щось змінити вручну, покласти тканину аплікації або обрізати її
 	Save a copy in your embroidery library, for any design	Зберегти копію у вашій бібліотеці вишивки для будь-якого дизайну
 	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Ваша бібліотека вишивки: візерункові облямівки, тканини, п’яльця та карти ниток для будь-якого дизайну
 @msg	no embroidery library folder here	тут немає папки бібліотек вишивки

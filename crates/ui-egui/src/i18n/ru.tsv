@@ -4903,6 +4903,10 @@ lighting	Light	Свет
 	Embroidery Libraries	Библиотеки вышивки
 	Add to Embroidery Library…	Добавить в библиотеку вышивки…
 	Rescan Embroidery Libraries	Пересканировать библиотеки вышивки
+	Stop Before:	Остановка перед:
+	Place Fabric	Положить ткань
+	Trim Fabric	Обрезать ткань
+	Stop the machine before this object: to change something by hand, place appliqué fabric, or trim it	Остановить машину перед этим объектом: чтобы что-то изменить вручную, положить ткань аппликации или обрезать её
 	Save a copy in your embroidery library, for any design	Сохранить копию в вашей библиотеке вышивки для любого дизайна
 	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Ваша библиотека вышивки: узорные каймы, ткани, пяльцы и карты ниток для любого дизайна
 @msg	no embroidery library folder here	здесь нет папки библиотек вышивки

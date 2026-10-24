@@ -5128,6 +5128,10 @@ lighting	Light	光源
 	Embroidery Libraries	刺绣库
 	Add to Embroidery Library…	添加到刺绣库…
 	Rescan Embroidery Libraries	重新扫描刺绣库
+	Stop Before:	之前停止：
+	Place Fabric	放置面料
+	Trim Fabric	修剪面料
+	Stop the machine before this object: to change something by hand, place appliqué fabric, or trim it	在此对象之前停机：用于手动更改、放置贴布面料或修剪面料
 	Save a copy in your embroidery library, for any design	在刺绣库中保存一份副本，供任何设计使用
 	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	您的刺绣库：可用于任何设计的图案边框、面料、绣框和线色卡
 @msg	no embroidery library folder here	此处没有刺绣库文件夹

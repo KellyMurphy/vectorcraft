@@ -122,6 +122,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         widgets::section_header(ui, tl!("Thread"));
         thread_row(app, ui, sel);
         trim_row(app, ui, sel);
+        stop_row(app, ui, sel);
         if let Some(k) = kind {
             widgets::divider(ui);
             parameters(app, ui, k, sel);
@@ -305,6 +306,32 @@ fn trim_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
             ui.add_space(6.0);
         }
     });
+}
+
+/// A stop's name, translated (`None` for no stop).
+fn stop_label(id: Option<&str>) -> &'static str {
+    match id {
+        None => tl!("None"),
+        Some("placeFabric") => tl!("Place Fabric"),
+        Some("trimFabric") => tl!("Trim Fabric"),
+        Some(_) => tl!("Stop"),
+    }
+}
+
+/// Stop Before: none, or a stop for something done by hand before the object is sewn.
+fn stop_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
+    let ids: Vec<Option<&str>> = std::iter::once(None).chain(StitchSettings::STOPS.iter().map(|s| Some(*s))).collect();
+    let names: Vec<&str> = ids.iter().map(|id| stop_label(*id)).collect();
+    let shown = stop_label(sel["stopBefore"].as_str());
+    ui.scope(|ui| {
+        widgets::label_row(ui, tl!("Stop Before:"), LABEL_W, |ui| {
+            if let Some(id) = widgets::dropdown_names(ui, "emb-stop-before", shown, &names, 120.0).and_then(|i| ids.get(i)) {
+                set(app, json!({ "stopBefore": id }));
+            }
+        })
+    })
+    .response
+    .on_hover_text(tl!("Stop the machine before this object: to change something by hand, place appliqué fabric, or trim it"));
 }
 
 fn thread_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
@@ -584,7 +611,7 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
 }
 
 /// Settings every stitch type's panel shows above its own rows (stitch, thread, trims).
-const ALWAYS_SHOWN: [&str; 4] = ["type", "thread", "trimBefore", "trimAfter"];
+const ALWAYS_SHOWN: [&str; 5] = ["type", "thread", "trimBefore", "trimAfter", "stopBefore"];
 
 /// The settings each stitch type's own rows show; any other setting it uses
 /// ([`vectorcraft_embroidery::params::PARAMS`]) gets a generic row from [`other_settings`].

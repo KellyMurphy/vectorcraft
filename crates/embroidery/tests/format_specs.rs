@@ -101,6 +101,7 @@ fn full_stitch() -> StitchSettings {
         keep_covered: true,
         trim_before: true,
         trim_after: true,
+        stop_before: Some("placeFabric".into()),
         extra: Default::default(),
         unknown: None,
     }

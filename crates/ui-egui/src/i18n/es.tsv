@@ -5236,6 +5236,10 @@ mark-style	Japanese	Japonesas
 	Embroidery Libraries	Bibliotecas de bordado
 	Add to Embroidery Library…	Añadir a la biblioteca de bordado…
 	Rescan Embroidery Libraries	Volver a examinar las bibliotecas de bordado
+	Stop Before:	Parar antes:
+	Place Fabric	Colocar tejido
+	Trim Fabric	Recortar tejido
+	Stop the machine before this object: to change something by hand, place appliqué fabric, or trim it	Detener la máquina antes de este objeto: para cambiar algo a mano, colocar la tela del aplique o recortarla
 	Save a copy in your embroidery library, for any design	Guardar una copia en su biblioteca de bordado, para cualquier diseño
 	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Su biblioteca de bordado: bordes de patrón, tejidos, bastidores y cartas de hilos para cualquier diseño
 @msg	no embroidery library folder here	aquí no hay ninguna carpeta de bibliotecas de bordado

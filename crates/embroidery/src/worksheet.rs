@@ -137,7 +137,12 @@ pub fn build(doc: &Document, plan: &Plan, letter: bool) -> Document {
         let hex = format!("#{:02x}{:02x}{:02x}", t[0], t[1], t[2]);
         let matched = chart.and_then(|c| crate::threads::nearest(c, *t)).map(|(m, d)| format!("{} {} (ΔE {d:.1})", m.code, m.name));
         let meters = lengths.get(i).copied().unwrap_or(0.0) / 1000.0;
-        let line = format!("{}.  {hex}   {}   {meters:.1} m", i + 1, matched.unwrap_or_default());
+        let mut line = format!("{}.  {hex}   {}   {meters:.1} m", i + 1, matched.unwrap_or_default());
+        // What to do by hand when the machine stops before this thread.
+        let stops: Vec<&str> = plan.stops.iter().filter(|s| s.block == i).map(|s| stop_label(&s.kind)).collect();
+        if !stops.is_empty() {
+            line.push_str(&format!("   (stop first: {})", stops.join(", ")));
+        }
         nodes.push(text(&mut out, &line, MARGIN + 8.0, y + 5.0, 10.0));
         y += ROW;
     }
@@ -152,6 +157,16 @@ pub fn build(doc: &Document, plan: &Plan, letter: bool) -> Document {
     }
     out.layers = vec![Arc::new(layer)];
     out
+}
+
+/// What the person at the machine does at a stop of `kind` ([`crate::PlanStop`]).
+fn stop_label(kind: &str) -> &'static str {
+    match kind {
+        "foam" => "lay the foam",
+        "placeFabric" => "place the fabric",
+        "trimFabric" => "trim the fabric",
+        _ => "see the notes",
+    }
 }
 
 fn solid([r, g, b]: [u8; 3]) -> Paint {

@@ -4195,6 +4195,10 @@ lighting	Light	光源
 	Embroidery Libraries	刺繡資料庫
 	Add to Embroidery Library…	加入刺繡資料庫…
 	Rescan Embroidery Libraries	重新掃描刺繡資料庫
+	Stop Before:	之前停止：
+	Place Fabric	放置布料
+	Trim Fabric	修剪布料
+	Stop the machine before this object: to change something by hand, place appliqué fabric, or trim it	在此物件之前停機：用於手動變更、放置貼布布料或修剪布料
 	Save a copy in your embroidery library, for any design	在刺繡資料庫中儲存一份副本，供任何設計使用
 	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	您的刺繡資料庫：可用於任何設計的圖樣邊框、布料、繡框和線色卡
 @msg	no embroidery library folder here	此處沒有刺繡資料庫資料夾

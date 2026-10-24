@@ -238,6 +238,11 @@ pub struct StitchSettings {
     /// Cut the thread after the object ends.
     #[serde(default, skip_serializing_if = "crate::skip::is_default")]
     pub trim_after: bool,
+    /// Stop the machine before the object, for what [`StitchSettings::STOPS`] names: a plain
+    /// stop, placing fabric (appliqué) or trimming it. An id this version doesn't know is a plain
+    /// stop.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub stop_before: Option<String>,
     /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
     #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
     pub extra: serde_json::Map<String, serde_json::Value>,
@@ -832,6 +837,9 @@ impl StitchSettings {
     pub const PULL: std::ops::RangeInclusive<f64> = 0.0..=3.0;
     /// Allowed foam thicknesses for puff, mm.
     pub const PUFF: std::ops::RangeInclusive<f64> = 1.0..=6.0;
+    /// What a stop before an object is for ([`StitchSettings::stop_before`]): a plain stop,
+    /// placing the appliqué fabric, trimming it.
+    pub const STOPS: [&'static str; 3] = ["stop", "placeFabric", "trimFabric"];
     /// Satin spacing over foam unless set, mm (dense, so the foam doesn't show).
     pub const PUFF_SPACING: f64 = 0.25;
     /// Allowed pull compensation as a percentage of the width or row length.

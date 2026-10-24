@@ -100,6 +100,19 @@ pub struct Plan {
     /// Whether the design was cut short at [`MAX_NEEDLES`].
     #[serde(skip)]
     pub truncated: bool,
+    /// The machine's stops for something done by hand, in sewing order.
+    #[serde(skip)]
+    pub stops: Vec<PlanStop>,
+}
+
+/// A stop of a [`Plan`] for something done by hand.
+#[derive(Clone, Debug, PartialEq, Serialize)]
+pub struct PlanStop {
+    /// The colour block sewn after it ([`Plan::threads`]); block 0 with no stop before it means
+    /// before the machine starts.
+    pub block: usize,
+    /// What it is for: an id of [`StitchSettings::STOPS`], or `foam` (puff).
+    pub kind: String,
 }
 
 /// One object of a plan.
@@ -511,8 +524,12 @@ impl Builder {
             if p.trim_before {
                 self.force_trim(p.thread);
             }
+            if let Some(kind) = &p.stop {
+                self.stop(p.thread, kind);
+            }
             if p.foam && !self.foam_down {
-                self.stop_for_foam(p.thread);
+                self.foam_down = true;
+                self.stop(p.thread, "foam");
             }
             let from = match p.orient {
                 Orient::Free { start: Some(s), rotate } => Some((s, rotate)),
@@ -536,15 +553,22 @@ impl Builder {
         }
     }
 
-    /// Stop for the foam to be laid (a stop, written as a thread change to the same thread), unless
-    /// nothing has been sewn yet: then the foam goes down before the start.
-    fn stop_for_foam(&mut self, thread: [u8; 3]) {
-        self.foam_down = true;
-        let Some(at) = self.cur else { return };
-        self.trim(at);
-        self.push(at, Cmd::ColorChange);
-        self.plan.threads.push(thread);
-        self.thread = Some(thread);
+    /// Stop for `kind` (foam to lay, fabric to place or trim), sewing on in `thread` after it: a
+    /// thread change, to the same thread or the next one. Nothing sewn yet, it is done before
+    /// the start; a stop just made here serves for this one too.
+    fn stop(&mut self, thread: [u8; 3], kind: &str) {
+        let Some(at) = self.cur else {
+            self.plan.stops.push(PlanStop { block: 0, kind: kind.to_string() });
+            return;
+        };
+        if self.plan.needles.last().is_none_or(|n| n.cmd != Cmd::ColorChange) {
+            self.trim(at);
+            self.push(at, Cmd::ColorChange);
+            self.plan.threads.push(thread);
+            self.thread = Some(thread);
+        }
+        let block = self.plan.threads.len().saturating_sub(1);
+        self.plan.stops.push(PlanStop { block, kind: kind.to_string() });
     }
 
     fn force_trim(&mut self, next: [u8; 3]) {
@@ -1037,7 +1061,9 @@ fn emit(s: &StitchSettings, thread: [u8; 3], runs: Vec<Vec<Point>>, b: &mut Sewe
         (true, start) => Orient::Free { start, rotate: s.kind == StitchKind::Running },
     };
     let foam = s.puffed();
-    b.out.pieces.push(Piece { thread, runs, tie, trim_before: s.trim_before, trim_after: s.trim_after, orient, foam });
+    // The object's stop comes before its first piece.
+    let stop = if b.out.pieces.is_empty() { s.stop_before.clone() } else { None };
+    b.out.pieces.push(Piece { thread, runs, tie, trim_before: s.trim_before, trim_after: s.trim_after, orient, foam, stop });
 }
 
 /// One object's stitches: pieces in sewing order and warnings about its art. What
@@ -1061,6 +1087,8 @@ struct Piece {
     orient: Orient,
     /// Sewn over foam: the machine stops before the first such piece, for the foam to be laid.
     foam: bool,
+    /// The machine stops before it ([`StitchSettings::stop_before`]).
+    stop: Option<String>,
 }
 
 /// How a piece's runs may be entered.

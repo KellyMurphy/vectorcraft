@@ -803,6 +803,51 @@ fn objects_can_force_trims_before_and_after() {
 }
 
 #[test]
+fn objects_can_stop_the_machine_before_them() {
+    let two = |stop: Option<&str>, second: [u8; 3]| {
+        plan(&doc_with(|d| {
+            let a = stitched(d, poly(&[(0.0, 0.0), (72.0, 0.0)], false), StitchKind::Running, [0; 3]);
+            let mut b = stitched(d, poly(&[(0.0, 36.0), (72.0, 36.0)], false), StitchKind::Running, second);
+            b.extras_mut().stitch.as_mut().unwrap().stop_before = stop.map(str::to_string);
+            vec![a, b]
+        }))
+    };
+    // A stop in one thread: a colour change to the same thread, trimmed first.
+    let p = two(Some("placeFabric"), [0; 3]);
+    assert_eq!((p.stats().color_changes, p.threads.clone()), (1, vec![[0; 3], [0; 3]]));
+    assert_eq!(p.stops, vec![PlanStop { block: 1, kind: "placeFabric".into() }]);
+    let i = p.needles.iter().position(|n| n.cmd == Cmd::ColorChange).unwrap();
+    assert_eq!(p.needles[i - 1].cmd, Cmd::Trim);
+    // Into a new thread: the thread change is the stop, not a second one.
+    let p = two(Some("trimFabric"), [9, 9, 9]);
+    assert_eq!((p.stats().color_changes, p.stops.len()), (1, 1));
+    assert_eq!(p.threads, vec![[0; 3], [9, 9, 9]]);
+    // None asked for: none made.
+    assert!(two(None, [0; 3]).stops.is_empty());
+    assert_eq!(two(None, [0; 3]).stats().color_changes, 0);
+    // A stop on the first object is done before the machine starts.
+    let p = plan(&doc_with(|d| {
+        let mut a = stitched(d, poly(&[(0.0, 0.0), (72.0, 0.0)], false), StitchKind::Running, [0; 3]);
+        a.extras_mut().stitch.as_mut().unwrap().stop_before = Some("stop".into());
+        vec![a]
+    }));
+    assert_eq!((p.stats().color_changes, p.stops.clone()), (0, vec![PlanStop { block: 0, kind: "stop".into() }]));
+}
+
+#[test]
+fn stop_before_is_a_choice_of_stops() {
+    let param = crate::params::param("stopBefore").unwrap();
+    let mut s = StitchSettings::new(StitchKind::Running);
+    for id in StitchSettings::STOPS {
+        (param.set)(&mut s, &serde_json::json!(id));
+        assert_eq!(s.stop_before.as_deref(), Some(id));
+    }
+    (param.set)(&mut s, &serde_json::Value::Null);
+    assert_eq!(s.stop_before, None);
+    assert!(param.parse(&serde_json::json!("lunch")).is_err());
+}
+
+#[test]
 fn zigzag_swings_across_its_width_at_its_spacing() {
     let line = [Point::new(0.0, 0.0), Point::new(20.0, 0.0)];
     let z = generate::zigzag(&line, false, 3.0, 2.0);

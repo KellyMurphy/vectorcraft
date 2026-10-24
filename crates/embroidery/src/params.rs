@@ -421,6 +421,20 @@ pub static PARAMS: &[Param] = &[
         suits: None,
     },
     Param {
+        key: "stopBefore",
+        value: ValueKind::Choice(&StitchSettings::STOPS),
+        kinds: ALL,
+        label: "Stop Before:",
+        help: "Stop the machine before this object: to change something by hand, place appliqué fabric, or trim it",
+        doc: "stop|placeFabric|trimFabric | null (stop the machine before the object, written as a colour change to the same thread: a plain stop, placing appliqué fabric, or trimming it; the worksheet says which)",
+        nullable: true,
+        get: |s| json!(s.stop_before),
+        set: |s, v| {
+            s.stop_before = text(v).and_then(|t| StitchSettings::STOPS.iter().find(|id| id.eq_ignore_ascii_case(&t)).map(|id| id.to_string()))
+        },
+        suits: None,
+    },
+    Param {
         key: "trimAfter",
         value: ValueKind::Flag,
         kinds: ALL,
