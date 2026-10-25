@@ -5269,6 +5269,31 @@ mark-style	Japanese	Japanilainen
 	Embroidery Libraries	Kirjontakirjastot
 	Add to Embroidery Library…	Lisää kirjontakirjastoon…
 	Rescan Embroidery Libraries	Lue kirjontakirjastot uudelleen
+	A line of type below the letters, sewn from the font as it is now	Tekstirivi kirjainten alla, kirjottuna fontilla sellaisena kuin se nyt on
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	Asennettu fontti, jonka kirjaimet tulevat lukitulle mallitasolle jäljennettäviksi (tyhjä: ei mitään)
+	Ascender:	Yläpidennys:
+	Cap Height:	Versaalikorkeus:
+	Characters:	Merkit:
+	Descender:	Alapidennys:
+	Edit Font…	Muokkaa fonttia…
+	Font Editor	Fonttieditori
+	Kerning:	Parivälistys:
+	License:	Lisenssi:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Tee kirjontafontti: yksi piirtoalue kirjainta kohden, digitoitu tavallisilla pistoilla.
+	New Embroidery Font	Uusi kirjontafontti
+	Save Font…	Tallenna fontti…
+	Trace:	Jäljennä:
+	Two letters and font units: negative sets them closer	Kaksi kirjainta ja fontin yksiköitä: negatiivinen tuo ne lähemmäs
+	Update Sample	Päivitä näyte
+	x Height:	x-korkeus:
+	Embroidery Font Info	Kirjontafontin tiedot
+	Embroidery Font Kerning	Kirjontafontin parivälistys
+	Embroidery Font Sample	Kirjontafontin näyte
+	Embroidery Font Setup	Kirjontafontin asetukset
+	New Embroidery Font…	Uusi kirjontafontti…
+	Open Embroidery Font…	Avaa kirjontafontti…
+@msg	not a layer	ei ole taso
+@msg	the document has no layer	asiakirjassa ei ole tasoa
 	More Settings ({n})	Lisää asetuksia ({n})
 	{n} problems found: see Design	Ongelmia löytyi: {n} – katso Malli
 @msg	Loaded embroidery font {_1}	Kirjontafontti {_1} ladattu

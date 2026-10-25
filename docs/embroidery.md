@@ -175,6 +175,17 @@ the embroidery font and kept at its alignment. A character the font lacks is sew
 where its letter would be, with a warning; type set outside the font's size range is warned about. For
 now the canvas still draws the type in its outline font: Stitch Preview shows the embroidery letters.
 
+**Making a font.** **New Embroidery Font** (Tools tab, `embroidery.font.new`) opens a font document: one
+artboard per glyph on a shared baseline (an em is 100 mm; an artboard's width is the glyph's advance, its
+name the glyph's characters, `space` for the space), ruler guides at the ascender, cap height, x-height,
+baseline and descender, and a **Letters** layer to digitize each glyph on with the ordinary tools and stitch
+types (Satin Column between rails is the lettering stitch). Name an installed font as **Trace** and its
+letters go on a locked **Template** layer to trace over; the template is never part of the font. Widen or
+narrow an artboard to change its glyph's advance; set the name, author, licence, metrics and kerning in the
+Tools tab's Font section (`embroidery.font.setup`, `embroidery.font.kern`); **Update Sample** sets a line of
+type below the artboards sewn from the font as it is now. **Save Font…** writes the `.vcfont`
+(`embroidery.font.save`); **Edit Font…** opens one again (`embroidery.font.open`).
+
 **Ink/Stitch fonts** open as embroidery fonts too: install the ones you want by pointing VectorCraft at a
 folder of them (**Add Font Folder…** under Embroidery Font) or by putting them in the library's `fonts`
 folder, as [Installing embroidery fonts](embroidery-fonts.md) explains; `embroidery.importInkstitchFont`
@@ -488,6 +499,13 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.loadFont` | `{path? \| data? \| library?}`: load a `.vcfont` embroidery font into the document → `{id, name, glyphs, added}` |
 | `embroidery.saveFont` | `{font, path?, user?}`: write one of the document's fonts as a `.vcfont` file (`user: true`: into the embroidery library) |
 | `embroidery.removeFont` | `{font}`: remove a font from the document |
+| `embroidery.font.new` | `{name?, chars?, from?, author?, license?}`: a new embroidery font document (one artboard per glyph; `from`: an installed font to trace on a template layer) → `{index, glyphs}` |
+| `embroidery.font.open` | `{path? \| data? \| library? \| font?}`: an embroidery font as a font document, to edit |
+| `embroidery.font.info` | → the font document's `font`, `glyphs` (`chars`, `advance`, `objects`), `empty` glyphs and `kerning` |
+| `embroidery.font.setup` | `{name?, author?, license?, source?, ascender?, capHeight?, xHeight?, descender?, sizes?…}`: the font's details and metrics |
+| `embroidery.font.kern` | `{left, right, value \| null}`: a kerning pair |
+| `embroidery.font.sample` | `{text?, size?}`: a line of type below the artboards sewn from the font as it is now |
+| `embroidery.font.save` | `{path?, user?}`: write the font as a `.vcfont` file → also `glyphs`, `empty` |
 | `embroidery.importInkstitchFont` | `{path, save?, user?}`: convert an Ink/Stitch font folder and load it → `{id, name, glyphs, added, license, report: {skipped, unmapped, commands, baseline}}` |
 | `embroidery.fontFolders` | `{folders?}`: the folders searched for Ink/Stitch fonts (read in place) → `{folders, fonts, skipped}` |
 | `embroidery.worksheet` | `{page?: a4\|letter, format?: pdf, path?}`: the production worksheet, as a new document or a PDF |

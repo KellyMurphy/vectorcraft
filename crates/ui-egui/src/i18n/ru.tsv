@@ -4903,6 +4903,31 @@ lighting	Light	Свет
 	Embroidery Libraries	Библиотеки вышивки
 	Add to Embroidery Library…	Добавить в библиотеку вышивки…
 	Rescan Embroidery Libraries	Пересканировать библиотеки вышивки
+	A line of type below the letters, sewn from the font as it is now	Строка текста под буквами, вышитая шрифтом в его нынешнем виде
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	Установленный шрифт, буквы которого помещаются на заблокированный слой-шаблон для обводки (пусто: нет)
+	Ascender:	Выносной элемент вверх:
+	Cap Height:	Высота прописных:
+	Characters:	Символы:
+	Descender:	Выносной элемент вниз:
+	Edit Font…	Изменить шрифт…
+	Font Editor	Редактор шрифтов
+	Kerning:	Кернинг:
+	License:	Лицензия:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Создайте шрифт для вышивки: по монтажной области на букву, оцифрованную обычными стежками.
+	New Embroidery Font	Новый шрифт для вышивки
+	Save Font…	Сохранить шрифт…
+	Trace:	Обвести:
+	Two letters and font units: negative sets them closer	Две буквы и единицы шрифта: отрицательное значение сближает их
+	Update Sample	Обновить образец
+	x Height:	Высота x:
+	Embroidery Font Info	Сведения о шрифте для вышивки
+	Embroidery Font Kerning	Кернинг шрифта для вышивки
+	Embroidery Font Sample	Образец шрифта для вышивки
+	Embroidery Font Setup	Настройка шрифта для вышивки
+	New Embroidery Font…	Новый шрифт для вышивки…
+	Open Embroidery Font…	Открыть шрифт для вышивки…
+@msg	not a layer	это не слой
+@msg	the document has no layer	в документе нет слоя
 	More Settings ({n})	Другие настройки ({n})
 	{n} problems found: see Design	Найдено проблем: {n} — см. «Дизайн»
 @msg	Loaded embroidery font {_1}	Загружен шрифт для вышивки {_1}

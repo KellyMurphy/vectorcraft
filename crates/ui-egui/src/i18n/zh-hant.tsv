@@ -4195,6 +4195,31 @@ lighting	Light	光源
 	Embroidery Libraries	刺繡資料庫
 	Add to Embroidery Library…	加入刺繡資料庫…
 	Rescan Embroidery Libraries	重新掃描刺繡資料庫
+	A line of type below the letters, sewn from the font as it is now	字母下方的一行文字，用目前的字體繡出
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	一個已安裝的字體，其字母放在鎖定的範本圖層上供描摹（留空：無）
+	Ascender:	上伸部：
+	Cap Height:	大寫字母高度：
+	Characters:	字元：
+	Descender:	下伸部：
+	Edit Font…	編輯字體…
+	Font Editor	字體編輯器
+	Kerning:	字距微調：
+	License:	授權：
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	製作刺繡字體：每個字母一個工作區域，用一般針法數位化。
+	New Embroidery Font	新增刺繡字體
+	Save Font…	儲存字體…
+	Trace:	描摹：
+	Two letters and font units: negative sets them closer	兩個字母和字體單位：負值使它們靠近
+	Update Sample	更新樣本
+	x Height:	x 高度：
+	Embroidery Font Info	刺繡字體資訊
+	Embroidery Font Kerning	刺繡字體字距微調
+	Embroidery Font Sample	刺繡字體樣本
+	Embroidery Font Setup	刺繡字體設定
+	New Embroidery Font…	新增刺繡字體…
+	Open Embroidery Font…	開啟刺繡字體…
+@msg	not a layer	不是圖層
+@msg	the document has no layer	文件沒有圖層
 	More Settings ({n})	更多設定（{n}）
 	{n} problems found: see Design	發現 {n} 個問題：請看「設計」
 @msg	Loaded embroidery font {_1}	已載入刺繡字體 {_1}

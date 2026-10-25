@@ -5291,6 +5291,31 @@ imageTrace	Outline	Körvonal
 	Embroidery Libraries	Hímzéskönyvtárak
 	Add to Embroidery Library…	Hozzáadás a hímzéskönyvtárhoz…
 	Rescan Embroidery Libraries	Hímzéskönyvtárak újraolvasása
+	A line of type below the letters, sewn from the font as it is now	Egy sor szöveg a betűk alatt, a betűtípus jelenlegi állapotával hímezve
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	Egy telepített betűtípus, amelynek betűi zárolt sablonrétegre kerülnek átrajzoláshoz (üres: nincs)
+	Ascender:	Felső szár:
+	Cap Height:	Nagybetű-magasság:
+	Characters:	Karakterek:
+	Descender:	Alsó szár:
+	Edit Font…	Betűtípus szerkesztése…
+	Font Editor	Betűtípus-szerkesztő
+	Kerning:	Alávágás:
+	License:	Licenc:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Hímzőbetűtípus készítése: betűnként egy rajztábla, a szokásos öltésekkel digitalizálva.
+	New Embroidery Font	Új hímzőbetűtípus
+	Save Font…	Betűtípus mentése…
+	Trace:	Átrajzolás:
+	Two letters and font units: negative sets them closer	Két betű és betűtípus-egységek: a negatív közelebb hozza őket
+	Update Sample	Minta frissítése
+	x Height:	x-magasság:
+	Embroidery Font Info	Hímzőbetűtípus adatai
+	Embroidery Font Kerning	Hímzőbetűtípus alávágása
+	Embroidery Font Sample	Hímzőbetűtípus mintája
+	Embroidery Font Setup	Hímzőbetűtípus beállítása
+	New Embroidery Font…	Új hímzőbetűtípus…
+	Open Embroidery Font…	Hímzőbetűtípus megnyitása…
+@msg	not a layer	nem réteg
+@msg	the document has no layer	a dokumentumnak nincs rétege
 	More Settings ({n})	További beállítások ({n})
 	{n} problems found: see Design	{n} probléma található: lásd Terv
 @msg	Loaded embroidery font {_1}	A(z) {_1} hímzőbetűtípus betöltve

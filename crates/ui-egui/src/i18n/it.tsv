@@ -4907,6 +4907,31 @@ lighting	Light	Luce
 	Embroidery Libraries	Librerie di ricamo
 	Add to Embroidery Library…	Aggiungi alla libreria di ricamo…
 	Rescan Embroidery Libraries	Rileggi le librerie di ricamo
+	A line of type below the letters, sewn from the font as it is now	Una riga di testo sotto le lettere, ricamata con il font così com’è ora
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	Un font installato le cui lettere vanno su un livello modello bloccato da ricalcare (vuoto: nessuno)
+	Ascender:	Ascendente:
+	Cap Height:	Altezza maiuscole:
+	Characters:	Caratteri:
+	Descender:	Discendente:
+	Edit Font…	Modifica font…
+	Font Editor	Editor di font
+	Kerning:	Crenatura:
+	License:	Licenza:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Crea un font da ricamo: una tavola da disegno per lettera, digitalizzata con i punti consueti.
+	New Embroidery Font	Nuovo font da ricamo
+	Save Font…	Salva font…
+	Trace:	Ricalca:
+	Two letters and font units: negative sets them closer	Due lettere e unità del font: un valore negativo le avvicina
+	Update Sample	Aggiorna esempio
+	x Height:	Altezza x:
+	Embroidery Font Info	Informazioni sul font da ricamo
+	Embroidery Font Kerning	Crenatura del font da ricamo
+	Embroidery Font Sample	Esempio del font da ricamo
+	Embroidery Font Setup	Impostazioni del font da ricamo
+	New Embroidery Font…	Nuovo font da ricamo…
+	Open Embroidery Font…	Apri font da ricamo…
+@msg	not a layer	non è un livello
+@msg	the document has no layer	il documento non ha livelli
 	More Settings ({n})	Altre impostazioni ({n})
 	{n} problems found: see Design	{n} problemi trovati: vedi Disegno
 @msg	Loaded embroidery font {_1}	Font da ricamo {_1} caricato

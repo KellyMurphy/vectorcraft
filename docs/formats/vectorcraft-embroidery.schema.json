@@ -86,6 +86,10 @@
           }
         },
         "chart": { "type": "string", "description": "The id of the chart the design's colours are matched against." },
+        "fontEditor": {
+          "type": "object",
+          "description": "An embroidery font document's font: the fields of a .vcfont file other than format and version, its glyphs empty (they are the document's artboards)."
+        },
         "fonts": {
           "type": "array",
           "items": {

@@ -5261,6 +5261,31 @@ theme	Appearance	Utseende
 	Embroidery Libraries	Broderibibliotek
 	Add to Embroidery Library…	Lägg till i broderibibliotek…
 	Rescan Embroidery Libraries	Läs in broderibibliotek igen
+	A line of type below the letters, sewn from the font as it is now	En textrad under bokstäverna, broderad med teckensnittet som det är nu
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	Ett installerat teckensnitt vars bokstäver hamnar på ett låst mallager att rita efter (tomt: inget)
+	Ascender:	Uppstapel:
+	Cap Height:	Versalhöjd:
+	Characters:	Tecken:
+	Descender:	Nedstapel:
+	Edit Font…	Redigera teckensnitt…
+	Font Editor	Teckensnittsredigerare
+	Kerning:	Kerning:
+	License:	Licens:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Gör ett broderiteckensnitt: en rityta per bokstav, digitaliserad med de vanliga stygnen.
+	New Embroidery Font	Nytt broderiteckensnitt
+	Save Font…	Spara teckensnitt…
+	Trace:	Rita efter:
+	Two letters and font units: negative sets them closer	Två bokstäver och teckensnittsenheter: negativt flyttar dem närmare
+	Update Sample	Uppdatera prov
+	x Height:	x-höjd:
+	Embroidery Font Info	Information om broderiteckensnitt
+	Embroidery Font Kerning	Kerning för broderiteckensnitt
+	Embroidery Font Sample	Prov på broderiteckensnitt
+	Embroidery Font Setup	Inställningar för broderiteckensnitt
+	New Embroidery Font…	Nytt broderiteckensnitt…
+	Open Embroidery Font…	Öppna broderiteckensnitt…
+@msg	not a layer	inte ett lager
+@msg	the document has no layer	dokumentet har inget lager
 	More Settings ({n})	Fler inställningar ({n})
 	{n} problems found: see Design	{n} problem hittades: se Design
 @msg	Loaded embroidery font {_1}	Broderiteckensnittet {_1} har lästs in

@@ -5275,6 +5275,31 @@ theme	Appearance	Външен вид
 	Embroidery Libraries	Библиотеки за бродерия
 	Add to Embroidery Library…	Добавяне към библиотека за бродерия…
 	Rescan Embroidery Libraries	Повторно сканиране на библиотеките за бродерия
+	A line of type below the letters, sewn from the font as it is now	Ред текст под буквите, бродиран от шрифта в сегашния му вид
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	Инсталиран шрифт, чиито букви отиват на заключен шаблонен слой за прерисуване (празно: без)
+	Ascender:	Горен елемент:
+	Cap Height:	Височина на главните:
+	Characters:	Знаци:
+	Descender:	Долен елемент:
+	Edit Font…	Редактиране на шрифт…
+	Font Editor	Редактор на шрифтове
+	Kerning:	Кернинг:
+	License:	Лиценз:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Създаване на шрифт за бродерия: по една работна област за буква, дигитализирана с обичайните бодове.
+	New Embroidery Font	Нов шрифт за бродерия
+	Save Font…	Запазване на шрифт…
+	Trace:	Прерисуване:
+	Two letters and font units: negative sets them closer	Две букви и единици на шрифта: отрицателно ги сближава
+	Update Sample	Обновяване на образеца
+	x Height:	Височина на x:
+	Embroidery Font Info	Информация за шрифта за бродерия
+	Embroidery Font Kerning	Кернинг на шрифта за бродерия
+	Embroidery Font Sample	Образец на шрифта за бродерия
+	Embroidery Font Setup	Настройка на шрифта за бродерия
+	New Embroidery Font…	Нов шрифт за бродерия…
+	Open Embroidery Font…	Отваряне на шрифт за бродерия…
+@msg	not a layer	не е слой
+@msg	the document has no layer	документът няма слой
 	More Settings ({n})	Още настройки ({n})
 	{n} problems found: see Design	Намерени проблеми: {n} – вижте „Дизайн“
 @msg	Loaded embroidery font {_1}	Зареден е шрифт за бродерия {_1}

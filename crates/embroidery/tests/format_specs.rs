@@ -126,6 +126,7 @@ fn full_setup() -> EmbroiderySetup {
         charts: vec![full_chart()],
         chart: Some("full".into()),
         fonts: vec![full_font()],
+        font_editor: Some(Box::new(full_font())),
         extra: Default::default(),
     }
 }

@@ -5209,6 +5209,31 @@ mark-style	Japanese	Japonesas
 	Embroidery Libraries	Bibliotecas de Bordado
 	Add to Embroidery Library…	Adicionar à Biblioteca de Bordado…
 	Rescan Embroidery Libraries	Reexaminar Bibliotecas de Bordado
+	A line of type below the letters, sewn from the font as it is now	Uma linha de texto abaixo das letras, bordada com a fonte como está agora
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	Uma fonte instalada cujas letras vão para uma camada de modelo bloqueada para decalcar (vazio: nenhuma)
+	Ascender:	Ascendente:
+	Cap Height:	Altura das maiúsculas:
+	Characters:	Caracteres:
+	Descender:	Descendente:
+	Edit Font…	Editar Fonte…
+	Font Editor	Editor de Fontes
+	Kerning:	Kerning:
+	License:	Licença:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Crie uma fonte de bordado: uma prancheta por letra, digitalizada com os pontos comuns.
+	New Embroidery Font	Nova Fonte de Bordado
+	Save Font…	Salvar Fonte…
+	Trace:	Decalcar:
+	Two letters and font units: negative sets them closer	Duas letras e unidades da fonte: negativo as aproxima
+	Update Sample	Atualizar Amostra
+	x Height:	Altura x:
+	Embroidery Font Info	Informações da Fonte de Bordado
+	Embroidery Font Kerning	Kerning da Fonte de Bordado
+	Embroidery Font Sample	Amostra da Fonte de Bordado
+	Embroidery Font Setup	Configuração da Fonte de Bordado
+	New Embroidery Font…	Nova Fonte de Bordado…
+	Open Embroidery Font…	Abrir Fonte de Bordado…
+@msg	not a layer	não é uma camada
+@msg	the document has no layer	o documento não tem camada
 	More Settings ({n})	Mais Configurações ({n})
 	{n} problems found: see Design	{n} problemas encontrados: veja Design
 @msg	Loaded embroidery font {_1}	Fonte de bordado {_1} carregada

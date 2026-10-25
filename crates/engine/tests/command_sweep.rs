@@ -576,8 +576,16 @@ fn every_command_undoes_exactly() {
     for c in command_specs() {
         // embroidery.testSheet, worksheet and cutFile open a new document (a new tab, not an edit of
         // this one): nothing to undo.
-        if matches!(c.id, "edit.undo" | "edit.redo" | "embroidery.testSheet" | "embroidery.worksheet" | "embroidery.cutFile")
-            || c.id.starts_with("file.")
+        if matches!(
+            c.id,
+            "edit.undo"
+                | "edit.redo"
+                | "embroidery.testSheet"
+                | "embroidery.worksheet"
+                | "embroidery.cutFile"
+                | "embroidery.font.new"
+                | "embroidery.font.open"
+        ) || c.id.starts_with("file.")
             || c.id.starts_with("document.")
         {
             continue;

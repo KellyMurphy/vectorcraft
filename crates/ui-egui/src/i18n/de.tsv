@@ -4881,6 +4881,31 @@ effect	Regular	Regelmäßig
 	Embroidery Libraries	Stickereibibliotheken
 	Add to Embroidery Library…	Zur Stickereibibliothek hinzufügen…
 	Rescan Embroidery Libraries	Stickereibibliotheken neu einlesen
+	A line of type below the letters, sewn from the font as it is now	Eine Textzeile unter den Buchstaben, gestickt aus der Schrift in ihrem jetzigen Stand
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	Eine installierte Schrift, deren Buchstaben zum Nachzeichnen auf eine gesperrte Vorlagenebene kommen (leer: keine)
+	Ascender:	Oberlänge:
+	Cap Height:	Versalhöhe:
+	Characters:	Zeichen:
+	Descender:	Unterlänge:
+	Edit Font…	Schrift bearbeiten…
+	Font Editor	Schrifteditor
+	Kerning:	Unterschneidung:
+	License:	Lizenz:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Eine Stickschrift erstellen: eine Zeichenfläche je Buchstabe, mit den üblichen Stichen digitalisiert.
+	New Embroidery Font	Neue Stickschrift
+	Save Font…	Schrift speichern…
+	Trace:	Nachzeichnen:
+	Two letters and font units: negative sets them closer	Zwei Buchstaben und Schrifteinheiten: negativ rückt sie näher zusammen
+	Update Sample	Muster aktualisieren
+	x Height:	x-Höhe:
+	Embroidery Font Info	Stickschrift-Informationen
+	Embroidery Font Kerning	Unterschneidung der Stickschrift
+	Embroidery Font Sample	Muster der Stickschrift
+	Embroidery Font Setup	Stickschrift einrichten
+	New Embroidery Font…	Neue Stickschrift…
+	Open Embroidery Font…	Stickschrift öffnen…
+@msg	not a layer	keine Ebene
+@msg	the document has no layer	das Dokument hat keine Ebene
 	More Settings ({n})	Weitere Einstellungen ({n})
 	{n} problems found: see Design	{n} Probleme gefunden: siehe Design
 @msg	Loaded embroidery font {_1}	Stickschrift {_1} geladen

@@ -4898,6 +4898,31 @@ theme	Appearance	Giao diện
 	Embroidery Libraries	Thư viện thêu
 	Add to Embroidery Library…	Thêm vào thư viện thêu…
 	Rescan Embroidery Libraries	Quét lại thư viện thêu
+	A line of type below the letters, sewn from the font as it is now	Một dòng chữ dưới các chữ cái, thêu bằng phông chữ như hiện tại
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	Một phông chữ đã cài mà các chữ của nó được đặt lên lớp mẫu đã khóa để đồ theo (để trống: không có)
+	Ascender:	Phần trên:
+	Cap Height:	Chiều cao chữ hoa:
+	Characters:	Ký tự:
+	Descender:	Phần dưới:
+	Edit Font…	Sửa phông chữ…
+	Font Editor	Trình sửa phông chữ
+	Kerning:	Kerning:
+	License:	Giấy phép:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Tạo phông chữ thêu: mỗi chữ một bảng vẽ, số hóa bằng các mũi khâu thông thường.
+	New Embroidery Font	Phông chữ thêu mới
+	Save Font…	Lưu phông chữ…
+	Trace:	Đồ theo:
+	Two letters and font units: negative sets them closer	Hai chữ và đơn vị phông: số âm kéo chúng lại gần
+	Update Sample	Cập nhật mẫu
+	x Height:	Chiều cao x:
+	Embroidery Font Info	Thông tin phông chữ thêu
+	Embroidery Font Kerning	Kerning phông chữ thêu
+	Embroidery Font Sample	Mẫu phông chữ thêu
+	Embroidery Font Setup	Thiết lập phông chữ thêu
+	New Embroidery Font…	Phông chữ thêu mới…
+	Open Embroidery Font…	Mở phông chữ thêu…
+@msg	not a layer	không phải là lớp
+@msg	the document has no layer	tài liệu không có lớp nào
 	More Settings ({n})	Cài đặt khác ({n})
 	{n} problems found: see Design	Tìm thấy {n} vấn đề: xem Thiết kế
 @msg	Loaded embroidery font {_1}	Đã nạp phông chữ thêu {_1}

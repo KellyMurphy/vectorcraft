@@ -18,6 +18,7 @@ mod dst;
 mod exp;
 pub mod extract;
 pub mod fabrics;
+pub mod font_doc;
 pub mod fonts;
 pub mod generate;
 pub mod hoops;

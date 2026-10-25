@@ -449,6 +449,11 @@ pub struct EmbroiderySetup {
         serialize_with = "crate::embroidery_font::ser_fonts"
     )]
     pub fonts: Vec<crate::EmbroideryFont>,
+    /// An embroidery font document's font (`embroidery.font.new`): its details, metrics and
+    /// kerning (its glyphs are the document's artboards, read when it is saved). `None`: an
+    /// ordinary document.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub font_editor: Option<Box<crate::EmbroideryFont>>,
     /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
     #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
     pub extra: serde_json::Map<String, serde_json::Value>,
@@ -473,6 +478,7 @@ impl Default for EmbroiderySetup {
             charts: vec![],
             chart: None,
             fonts: vec![],
+            font_editor: None,
             extra: Default::default(),
         }
     }

@@ -5342,6 +5342,31 @@ swatch	Bright Violet	Felviolet
 	Embroidery Libraries	Borduurbibliotheken
 	Add to Embroidery Library…	Toevoegen aan borduurbibliotheek…
 	Rescan Embroidery Libraries	Borduurbibliotheken opnieuw inlezen
+	A line of type below the letters, sewn from the font as it is now	Een regel tekst onder de letters, geborduurd met het lettertype zoals het nu is
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	Een geïnstalleerd lettertype waarvan de letters op een vergrendelde sjabloonlaag komen om over te trekken (leeg: geen)
+	Ascender:	Stok:
+	Cap Height:	Kapitaalhoogte:
+	Characters:	Tekens:
+	Descender:	Staart:
+	Edit Font…	Lettertype bewerken…
+	Font Editor	Lettertype-editor
+	Kerning:	Spatiëring:
+	License:	Licentie:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Maak een borduurlettertype: één tekengebied per letter, gedigitaliseerd met de gewone steken.
+	New Embroidery Font	Nieuw borduurlettertype
+	Save Font…	Lettertype opslaan…
+	Trace:	Overtrekken:
+	Two letters and font units: negative sets them closer	Twee letters en lettertype-eenheden: negatief zet ze dichter bij elkaar
+	Update Sample	Voorbeeld bijwerken
+	x Height:	x-hoogte:
+	Embroidery Font Info	Info over borduurlettertype
+	Embroidery Font Kerning	Spatiëring van borduurlettertype
+	Embroidery Font Sample	Voorbeeld van borduurlettertype
+	Embroidery Font Setup	Borduurlettertype instellen
+	New Embroidery Font…	Nieuw borduurlettertype…
+	Open Embroidery Font…	Borduurlettertype openen…
+@msg	not a layer	geen laag
+@msg	the document has no layer	het document heeft geen laag
 	More Settings ({n})	Meer instellingen ({n})
 	{n} problems found: see Design	{n} problemen gevonden: zie Ontwerp
 @msg	Loaded embroidery font {_1}	Borduurlettertype {_1} geladen

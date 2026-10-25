@@ -4887,6 +4887,31 @@ lighting	Light	Світло
 	Embroidery Libraries	Бібліотеки вишивки
 	Add to Embroidery Library…	Додати до бібліотеки вишивки…
 	Rescan Embroidery Libraries	Повторно сканувати бібліотеки вишивки
+	A line of type below the letters, sewn from the font as it is now	Рядок тексту під літерами, вишитий шрифтом у його теперішньому вигляді
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	Установлений шрифт, літери якого кладуться на заблокований шар-шаблон для обведення (порожньо: немає)
+	Ascender:	Виносний елемент угору:
+	Cap Height:	Висота великих літер:
+	Characters:	Символи:
+	Descender:	Виносний елемент униз:
+	Edit Font…	Змінити шрифт…
+	Font Editor	Редактор шрифтів
+	Kerning:	Кернінг:
+	License:	Ліцензія:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Створіть шрифт для вишивки: по монтажній області на літеру, оцифровану звичайними стібками.
+	New Embroidery Font	Новий шрифт для вишивки
+	Save Font…	Зберегти шрифт…
+	Trace:	Обвести:
+	Two letters and font units: negative sets them closer	Дві літери та одиниці шрифту: від’ємне значення зближує їх
+	Update Sample	Оновити зразок
+	x Height:	Висота x:
+	Embroidery Font Info	Відомості про шрифт для вишивки
+	Embroidery Font Kerning	Кернінг шрифту для вишивки
+	Embroidery Font Sample	Зразок шрифту для вишивки
+	Embroidery Font Setup	Налаштування шрифту для вишивки
+	New Embroidery Font…	Новий шрифт для вишивки…
+	Open Embroidery Font…	Відкрити шрифт для вишивки…
+@msg	not a layer	це не шар
+@msg	the document has no layer	у документі немає шару
 	More Settings ({n})	Інші налаштування ({n})
 	{n} problems found: see Design	Знайдено проблем: {n} — див. «Дизайн»
 @msg	Loaded embroidery font {_1}	Завантажено шрифт для вишивки {_1}

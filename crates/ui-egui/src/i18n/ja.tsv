@@ -4948,6 +4948,31 @@ lighting	Light	ライト
 	Embroidery Libraries	刺繍ライブラリ
 	Add to Embroidery Library…	刺繍ライブラリに追加…
 	Rescan Embroidery Libraries	刺繍ライブラリを再スキャン
+	A line of type below the letters, sewn from the font as it is now	文字の下に、現在のフォントで縫う 1 行のテキスト
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	インストール済みフォントの文字を、トレース用にロックしたテンプレートレイヤーに置きます（空欄：なし）
+	Ascender:	アセンダー：
+	Cap Height:	キャップハイト：
+	Characters:	文字：
+	Descender:	ディセンダー：
+	Edit Font…	フォントを編集…
+	Font Editor	フォントエディター
+	Kerning:	カーニング：
+	License:	ライセンス：
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	刺繍フォントを作成：文字ごとに 1 つのアートボードに、通常のステッチでデジタイズします。
+	New Embroidery Font	新規刺繍フォント
+	Save Font…	フォントを保存…
+	Trace:	トレース：
+	Two letters and font units: negative sets them closer	2 文字とフォント単位：負の値で近づきます
+	Update Sample	サンプルを更新
+	x Height:	x ハイト：
+	Embroidery Font Info	刺繍フォントの情報
+	Embroidery Font Kerning	刺繍フォントのカーニング
+	Embroidery Font Sample	刺繍フォントのサンプル
+	Embroidery Font Setup	刺繍フォントの設定
+	New Embroidery Font…	新規刺繍フォント…
+	Open Embroidery Font…	刺繍フォントを開く…
+@msg	not a layer	レイヤーではありません
+@msg	the document has no layer	ドキュメントにレイヤーがありません
 	More Settings ({n})	その他の設定（{n}）
 	{n} problems found: see Design	問題が {n} 件見つかりました：「デザイン」を参照
 @msg	Loaded embroidery font {_1}	刺繍フォント {_1} を読み込みました

@@ -5292,6 +5292,31 @@ mark-style	Japanese	Japonské
 	Embroidery Libraries	Knihovny výšivek
 	Add to Embroidery Library…	Přidat do knihovny výšivek…
 	Rescan Embroidery Libraries	Znovu prohledat knihovny výšivek
+	A line of type below the letters, sewn from the font as it is now	Řádek textu pod písmeny, vyšitý z písma v současné podobě
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	Nainstalované písmo, jehož písmena se umístí na zamčenou vrstvu šablony k obkreslení (prázdné: žádné)
+	Ascender:	Horní dotah:
+	Cap Height:	Výška verzálek:
+	Characters:	Znaky:
+	Descender:	Dolní dotah:
+	Edit Font…	Upravit písmo…
+	Font Editor	Editor písma
+	Kerning:	Vyrovnání párů:
+	License:	Licence:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Vytvořte vyšívací písmo: jedna kreslicí plocha na písmeno, digitalizované běžnými stehy.
+	New Embroidery Font	Nové vyšívací písmo
+	Save Font…	Uložit písmo…
+	Trace:	Obkreslit:
+	Two letters and font units: negative sets them closer	Dvě písmena a jednotky písma: záporná je přiblíží
+	Update Sample	Aktualizovat ukázku
+	x Height:	Výška x:
+	Embroidery Font Info	Informace o vyšívacím písmu
+	Embroidery Font Kerning	Vyrovnání párů vyšívacího písma
+	Embroidery Font Sample	Ukázka vyšívacího písma
+	Embroidery Font Setup	Nastavení vyšívacího písma
+	New Embroidery Font…	Nové vyšívací písmo…
+	Open Embroidery Font…	Otevřít vyšívací písmo…
+@msg	not a layer	není vrstva
+@msg	the document has no layer	dokument nemá žádnou vrstvu
 	More Settings ({n})	Další nastavení ({n})
 	{n} problems found: see Design	Nalezené problémy: {n} – viz Návrh
 @msg	Loaded embroidery font {_1}	Načteno vyšívací písmo {_1}

@@ -5157,6 +5157,31 @@ mark-style	Japanese	Japońskie
 	Embroidery Libraries	Biblioteki haftu
 	Add to Embroidery Library…	Dodaj do biblioteki haftu…
 	Rescan Embroidery Libraries	Ponownie przeszukaj biblioteki haftu
+	A line of type below the letters, sewn from the font as it is now	Wiersz tekstu pod literami, wyhaftowany czcionką w obecnej postaci
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	Zainstalowana czcionka, której litery trafią na zablokowaną warstwę szablonu do odrysowania (puste: brak)
+	Ascender:	Wydłużenie górne:
+	Cap Height:	Wysokość wersalików:
+	Characters:	Znaki:
+	Descender:	Wydłużenie dolne:
+	Edit Font…	Edytuj czcionkę…
+	Font Editor	Edytor czcionek
+	Kerning:	Kerning:
+	License:	Licencja:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Utwórz czcionkę hafciarską: jeden obszar roboczy na literę, zdigitalizowaną zwykłymi ściegami.
+	New Embroidery Font	Nowa czcionka hafciarska
+	Save Font…	Zapisz czcionkę…
+	Trace:	Odrysuj:
+	Two letters and font units: negative sets them closer	Dwie litery i jednostki czcionki: wartość ujemna je zbliża
+	Update Sample	Aktualizuj próbkę
+	x Height:	Wysokość x:
+	Embroidery Font Info	Informacje o czcionce hafciarskiej
+	Embroidery Font Kerning	Kerning czcionki hafciarskiej
+	Embroidery Font Sample	Próbka czcionki hafciarskiej
+	Embroidery Font Setup	Ustawienia czcionki hafciarskiej
+	New Embroidery Font…	Nowa czcionka hafciarska…
+	Open Embroidery Font…	Otwórz czcionkę hafciarską…
+@msg	not a layer	to nie jest warstwa
+@msg	the document has no layer	dokument nie ma warstwy
 	More Settings ({n})	Więcej ustawień ({n})
 	{n} problems found: see Design	Znalezione problemy: {n} – zobacz Projekt
 @msg	Loaded embroidery font {_1}	Wczytano czcionkę hafciarską {_1}

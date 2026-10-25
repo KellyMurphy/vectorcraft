@@ -5293,6 +5293,31 @@ theme	Appearance	Apparence
 	Embroidery Libraries	Bibliothèques de broderie
 	Add to Embroidery Library…	Ajouter à la bibliothèque de broderie…
 	Rescan Embroidery Libraries	Relire les bibliothèques de broderie
+	A line of type below the letters, sewn from the font as it is now	Une ligne de texte sous les lettres, brodée avec la police telle qu’elle est maintenant
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	Une police installée dont les lettres vont sur un calque modèle verrouillé, à décalquer (vide : aucune)
+	Ascender:	Hampe montante :
+	Cap Height:	Hauteur des capitales :
+	Characters:	Caractères :
+	Descender:	Hampe descendante :
+	Edit Font…	Modifier la police…
+	Font Editor	Éditeur de polices
+	Kerning:	Crénage :
+	License:	Licence :
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Créer une police de broderie : un plan de travail par lettre, numérisée avec les points habituels.
+	New Embroidery Font	Nouvelle police de broderie
+	Save Font…	Enregistrer la police…
+	Trace:	Décalquer :
+	Two letters and font units: negative sets them closer	Deux lettres et des unités de la police : une valeur négative les rapproche
+	Update Sample	Mettre à jour l’échantillon
+	x Height:	Hauteur d’x :
+	Embroidery Font Info	Infos sur la police de broderie
+	Embroidery Font Kerning	Crénage de la police de broderie
+	Embroidery Font Sample	Échantillon de la police de broderie
+	Embroidery Font Setup	Réglages de la police de broderie
+	New Embroidery Font…	Nouvelle police de broderie…
+	Open Embroidery Font…	Ouvrir une police de broderie…
+@msg	not a layer	n’est pas un calque
+@msg	the document has no layer	le document n’a aucun calque
 	More Settings ({n})	Plus de réglages ({n})
 	{n} problems found: see Design	{n} problèmes trouvés : voir Motif
 @msg	Loaded embroidery font {_1}	Police de broderie {_1} chargée

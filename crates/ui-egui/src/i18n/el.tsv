@@ -5257,6 +5257,31 @@ effect	Points	Σημεία
 	Embroidery Libraries	Βιβλιοθήκες κεντήματος
 	Add to Embroidery Library…	Προσθήκη στη βιβλιοθήκη κεντήματος…
 	Rescan Embroidery Libraries	Επανασάρωση βιβλιοθηκών κεντήματος
+	A line of type below the letters, sewn from the font as it is now	Μια γραμμή κειμένου κάτω από τα γράμματα, κεντημένη από τη γραμματοσειρά όπως είναι τώρα
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	Μια εγκατεστημένη γραμματοσειρά, της οποίας τα γράμματα μπαίνουν σε κλειδωμένο επίπεδο προτύπου για αποτύπωση (κενό: καμία)
+	Ascender:	Ανιούσα:
+	Cap Height:	Ύψος κεφαλαίων:
+	Characters:	Χαρακτήρες:
+	Descender:	Κατιούσα:
+	Edit Font…	Επεξεργασία γραμματοσειράς…
+	Font Editor	Επεξεργαστής γραμματοσειρών
+	Kerning:	Συμπίεση ζευγών:
+	License:	Άδεια:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Δημιουργία γραμματοσειράς κεντήματος: μία επιφάνεια εργασίας ανά γράμμα, ψηφιοποιημένο με τις συνηθισμένες βελονιές.
+	New Embroidery Font	Νέα γραμματοσειρά κεντήματος
+	Save Font…	Αποθήκευση γραμματοσειράς…
+	Trace:	Αποτύπωση:
+	Two letters and font units: negative sets them closer	Δύο γράμματα και μονάδες γραμματοσειράς: αρνητική τιμή τα φέρνει πιο κοντά
+	Update Sample	Ενημέρωση δείγματος
+	x Height:	Ύψος x:
+	Embroidery Font Info	Πληροφορίες γραμματοσειράς κεντήματος
+	Embroidery Font Kerning	Συμπίεση ζευγών γραμματοσειράς κεντήματος
+	Embroidery Font Sample	Δείγμα γραμματοσειράς κεντήματος
+	Embroidery Font Setup	Ρύθμιση γραμματοσειράς κεντήματος
+	New Embroidery Font…	Νέα γραμματοσειρά κεντήματος…
+	Open Embroidery Font…	Άνοιγμα γραμματοσειράς κεντήματος…
+@msg	not a layer	δεν είναι επίπεδο
+@msg	the document has no layer	το έγγραφο δεν έχει επίπεδο
 	More Settings ({n})	Περισσότερες ρυθμίσεις ({n})
 	{n} problems found: see Design	Βρέθηκαν {n} προβλήματα: δείτε το Σχέδιο
 @msg	Loaded embroidery font {_1}	Φορτώθηκε η γραμματοσειρά κεντήματος {_1}

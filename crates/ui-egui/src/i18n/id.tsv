@@ -5299,6 +5299,31 @@ swatch	Bright Violet	Violet cerah
 	Embroidery Libraries	Pustaka sulaman
 	Add to Embroidery Library…	Tambahkan ke pustaka sulaman…
 	Rescan Embroidery Libraries	Pindai ulang pustaka sulaman
+	A line of type below the letters, sewn from the font as it is now	Sebaris teks di bawah huruf, disulam dari fon seperti sekarang
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	Fon terpasang yang hurufnya diletakkan di lapisan templat terkunci untuk dijiplak (kosong: tidak ada)
+	Ascender:	Asender:
+	Cap Height:	Tinggi huruf kapital:
+	Characters:	Karakter:
+	Descender:	Desender:
+	Edit Font…	Edit fon…
+	Font Editor	Editor fon
+	Kerning:	Kerning:
+	License:	Lisensi:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Buat fon sulaman: satu artboard per huruf, didigitalkan dengan jahitan biasa.
+	New Embroidery Font	Fon sulaman baru
+	Save Font…	Simpan fon…
+	Trace:	Jiplak:
+	Two letters and font units: negative sets them closer	Dua huruf dan satuan fon: negatif merapatkannya
+	Update Sample	Perbarui contoh
+	x Height:	Tinggi x:
+	Embroidery Font Info	Info fon sulaman
+	Embroidery Font Kerning	Kerning fon sulaman
+	Embroidery Font Sample	Contoh fon sulaman
+	Embroidery Font Setup	Pengaturan fon sulaman
+	New Embroidery Font…	Fon sulaman baru…
+	Open Embroidery Font…	Buka fon sulaman…
+@msg	not a layer	bukan lapisan
+@msg	the document has no layer	dokumen tidak memiliki lapisan
 	More Settings ({n})	Pengaturan lain ({n})
 	{n} problems found: see Design	{n} masalah ditemukan: lihat Desain
 @msg	Loaded embroidery font {_1}	Fon sulaman {_1} dimuat

@@ -196,6 +196,8 @@ fn tools(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
         extract_row(app, ui);
     }
     widgets::divider(ui);
+    font_editor(app, ui);
+    widgets::divider(ui);
     widgets::section_header(ui, tl!("Embroidery Fonts"));
     ui.horizontal_wrapped(|ui| {
         if widgets::flat_button(ui, tl!("Load Embroidery Font…"), 150.0).clicked() {
@@ -222,6 +224,163 @@ fn tools(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
             show_library_folder(app, &dir);
         }
     }
+}
+
+/// A text the panel keeps between frames (what is being typed for a command not run yet).
+fn kept(ui: &Ui, key: &str, default: &str) -> String {
+    ui.ctx().data_mut(|d| d.get_temp::<String>(egui::Id::new(("emb-font-editor", key)))).unwrap_or_else(|| default.to_string())
+}
+
+fn keep(ui: &Ui, key: &str, value: String) {
+    ui.ctx().data_mut(|d| d.insert_temp(egui::Id::new(("emb-font-editor", key)), value));
+}
+
+/// The Font Editor: a new font or one to edit; in a font document, its details, metrics, kerning,
+/// sample line and saving.
+fn font_editor(app: &mut VectorcraftApp, ui: &mut Ui) {
+    widgets::section_header(ui, tl!("Font Editor"));
+    let editing = app.session.active().and_then(|d| d.doc.embroidery.font_editor.as_deref().cloned());
+    let Some(font) = editing else {
+        widgets::dim_label(ui, tl!("Make an embroidery font: one artboard per letter, digitized with the ordinary stitches."));
+        let (mut name, mut chars, mut from) = (kept(ui, "name", "Untitled Font"), kept(ui, "chars", "A-Za-z0-9 .,!?'&-"), kept(ui, "from", ""));
+        widgets::label_row(ui, tl!("Name:"), LABEL_W, |ui| {
+            if let Some(v) = widgets::text_field(ui, "emb-font-new-name", Some(&name), 150.0, 1) {
+                name = v;
+            }
+        });
+        widgets::label_row(ui, tl!("Characters:"), LABEL_W, |ui| {
+            if let Some(v) = widgets::text_field(ui, "emb-font-new-chars", Some(&chars), 150.0, 1) {
+                chars = v;
+            }
+        });
+        ui.scope(|ui| {
+            widgets::label_row(ui, tl!("Trace:"), LABEL_W, |ui| {
+                if let Some(v) = widgets::text_field(ui, "emb-font-new-from", Some(&from), 150.0, 1) {
+                    from = v;
+                }
+            })
+        })
+        .response
+        .on_hover_text(tl!("An installed font whose letters go on a locked template layer to trace over (left empty: none)"));
+        keep(ui, "name", name.clone());
+        keep(ui, "chars", chars.clone());
+        keep(ui, "from", from.clone());
+        ui.horizontal(|ui| {
+            if widgets::flat_button(ui, tl!("New Embroidery Font"), 150.0).clicked() {
+                let mut p = json!({ "name": name, "chars": chars });
+                if !from.trim().is_empty() {
+                    p["from"] = json!(from.trim());
+                }
+                if let Err(e) = app.run("embroidery.font.new", p) {
+                    app.status(e);
+                }
+            }
+            if widgets::flat_button(ui, tl!("Edit Font…"), 90.0).clicked() {
+                crate::picks::button(app, |app| {
+                    let ext: &'static [&'static str] = &[vectorcraft_embroidery::fonts::FILE_EXT];
+                    let pick = crate::FilePick { filters: vec![("Embroidery fonts", ext)], ..Default::default() };
+                    let Some(path) = crate::picks::open(app, &pick) else { return };
+                    if let Err(e) = app.run("embroidery.font.open", json!({ "path": path })) {
+                        app.status(e);
+                    }
+                });
+            }
+        });
+        return;
+    };
+    // The font's details.
+    for (label, key, value) in [
+        (tl!("Name:"), "name", Some(font.name.clone())),
+        (tl!("Author:"), "author", font.author.clone()),
+        (tl!("License:"), "license", font.license.clone()),
+    ] {
+        widgets::label_row(ui, label, LABEL_W, |ui| {
+            if let Some(v) = widgets::text_field(ui, ("emb-font", key), Some(value.as_deref().unwrap_or("")), 150.0, 1)
+                && let Err(e) = app.run("embroidery.font.setup", json!({ key: v }))
+            {
+                app.status(e);
+            }
+        });
+    }
+    // Metrics, font units.
+    for (label, key, value) in [
+        (tl!("Ascender:"), "ascender", font.ascender),
+        (tl!("Cap Height:"), "capHeight", font.cap_height),
+        (tl!("x Height:"), "xHeight", font.x_height),
+        (tl!("Descender:"), "descender", font.descender),
+    ] {
+        widgets::label_row(ui, label, LABEL_W, |ui| {
+            if let Some(v) = widgets::mixed_field(ui, ("emb-font", key), Some(value), "", 0, FIELD_W)
+                && let Err(e) = app.run("embroidery.font.setup", json!({ key: v }))
+            {
+                app.status(e);
+            }
+        });
+    }
+    // Kerning pairs, and one to add.
+    widgets::label_row(ui, tl!("Kerning:"), LABEL_W, |ui| {
+        ui.vertical(|ui| {
+            for k in &font.kerning {
+                ui.horizontal(|ui| {
+                    ui.label(format!("{} {}  {}", k.left, k.right, k.value));
+                    if widgets::flat_button(ui, "×", 22.0).clicked() {
+                        app.run("embroidery.font.kern", json!({"left": k.left, "right": k.right, "value": null})).ok();
+                    }
+                });
+            }
+            let (mut pair, mut value) = (kept(ui, "pair", ""), kept(ui, "kern", "-50"));
+            ui.horizontal(|ui| {
+                if let Some(v) = widgets::text_field(ui, "emb-font-kern-pair", Some(&pair), 40.0, 1) {
+                    pair = v;
+                }
+                if let Some(v) = widgets::text_field(ui, "emb-font-kern-value", Some(&value), 50.0, 1) {
+                    value = v;
+                }
+                let mut chars = pair.chars();
+                if let (Some(a), Some(b), None) = (chars.next(), chars.next(), chars.next())
+                    && let Ok(v) = value.trim().parse::<f64>()
+                    && widgets::flat_button(ui, tl!("Add"), 46.0).clicked()
+                    && let Err(e) = app.run("embroidery.font.kern", json!({"left": a.to_string(), "right": b.to_string(), "value": v}))
+                {
+                    app.status(e);
+                }
+            });
+            keep(ui, "pair", pair);
+            keep(ui, "kern", value);
+            widgets::dim_label(ui, tl!("Two letters and font units: negative sets them closer"));
+        });
+    });
+    // The sample line.
+    let mut sample = kept(ui, "sample", "Sample");
+    ui.horizontal(|ui| {
+        if let Some(v) = widgets::text_field(ui, "emb-font-sample", Some(&sample), 150.0, 1) {
+            sample = v;
+        }
+        if widgets::flat_button(ui, tl!("Update Sample"), 110.0)
+            .on_hover_text(tl!("A line of type below the letters, sewn from the font as it is now"))
+            .clicked()
+            && let Err(e) = app.run("embroidery.font.sample", json!({ "text": sample }))
+        {
+            app.status(e);
+        }
+    });
+    keep(ui, "sample", sample);
+    ui.horizontal(|ui| {
+        if widgets::flat_button(ui, tl!("Save Font…"), 100.0).clicked() {
+            let file = format!("{}.{}", font.name, vectorcraft_embroidery::fonts::FILE_EXT);
+            crate::picks::button(app, move |app| {
+                if let Err(e) = crate::io::save_command_output_named(app, "embroidery.font.save", &file, json!({})) {
+                    app.status(e);
+                }
+            });
+        }
+        if app.session.embroidery_libraries.dir().is_some() && widgets::flat_button(ui, tl!("Add to Library"), 104.0).clicked() {
+            match app.run("embroidery.font.save", json!({"user": true})) {
+                Ok(_) => app.status(format!("Added {} to the embroidery library", font.name)),
+                Err(e) => app.status(e),
+            }
+        }
+    });
 }
 
 /// Load a `.vcfont` embroidery font the user picks into the document.

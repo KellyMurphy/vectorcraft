@@ -356,7 +356,7 @@ objects (shapes with settings), not needle points, so letters scale and are re-s
   Stitch Preview shows the embroidery letters); type in an embroidery font listed in the type controls'
   font menu; entry/exit joins (letters are entered nearest, as other objects); overlap removal and hidden
   travel still use the outline-font letters' areas; File › Open / drop of a `.vcfont`.
-- **E8.1c The font editor.** `embroidery.font.new {name, from?: installed font, chars?: "A-Za-z0-9…"}`
+- **E8.1c The font editor (done).** `embroidery.font.new {name, from?: installed font, chars?: "A-Za-z0-9…"}`
   makes a font document: one artboard per letter, with guides for baseline, x-height, cap height,
   ascender and descender and the advance as the artboard's right edge (dragged to change it). With `from`,
   each artboard gets the installed font's outline on a locked template layer as a tracing guide (not saved
@@ -367,6 +367,12 @@ objects (shapes with settings), not needle points, so letters scale and are re-s
   `embroidery.font.save {path}` writes the `.vcfont` (artboards → glyphs), `embroidery.font.open` opens
   one back as a font document. Validation on save: letters with no objects, objects outside the
   metrics, missing licence.
+  As built: `crates/embroidery/src/font_doc.rs` (font ⇄ font document: an em of 100 mm, one artboard per
+  glyph on a shared baseline, metric guides, a Letters layer and a locked Template layer, the font's details in
+  `document.embroidery.fontEditor`); `embroidery.font.new` (`from`: an installed font traced), `open`, `info`,
+  `setup`, `kern`, `sample` (a type object below the artboards sewn from the font as it is now), `save`; the
+  Tools tab's Font Editor section. **Not yet:** kerning by clicking two letters in the sample, entry/exit
+  points set on the canvas, a per-glyph preview grid.
 - **E8.1d A starter font.** At least one embroidery font, made with the editor by us (original work, or
   traced from an OFL font with the OFL's renaming and licence carried), published in craft-fonts with its
   licence; VectorCraft builds and runs without it (`CRAFT_FONTS` empty → no starter font, tests skip). A

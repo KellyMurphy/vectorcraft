@@ -5299,6 +5299,31 @@ swatch	Bright Violet	Kraftig violet
 	Embroidery Libraries	Broderibiblioteker
 	Add to Embroidery Library…	Føj til broderibibliotek…
 	Rescan Embroidery Libraries	Genindlæs broderibiblioteker
+	A line of type below the letters, sewn from the font as it is now	En linje tekst under bogstaverne, broderet med skrifttypen som den er nu
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	En installeret skrifttype, hvis bogstaver lægges på et låst skabelonlag at tegne efter (tomt: ingen)
+	Ascender:	Overlængde:
+	Cap Height:	Versalhøjde:
+	Characters:	Tegn:
+	Descender:	Underlængde:
+	Edit Font…	Rediger skrifttype…
+	Font Editor	Skrifttypeeditor
+	Kerning:	Knibning:
+	License:	Licens:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Lav en broderiskrifttype: ét tegnebræt pr. bogstav, digitaliseret med de almindelige sting.
+	New Embroidery Font	Ny broderiskrifttype
+	Save Font…	Gem skrifttype…
+	Trace:	Tegn efter:
+	Two letters and font units: negative sets them closer	To bogstaver og skrifttypeenheder: negativ rykker dem tættere
+	Update Sample	Opdater prøve
+	x Height:	x-højde:
+	Embroidery Font Info	Oplysninger om broderiskrifttype
+	Embroidery Font Kerning	Knibning i broderiskrifttype
+	Embroidery Font Sample	Prøve på broderiskrifttype
+	Embroidery Font Setup	Opsætning af broderiskrifttype
+	New Embroidery Font…	Ny broderiskrifttype…
+	Open Embroidery Font…	Åbn broderiskrifttype…
+@msg	not a layer	ikke et lag
+@msg	the document has no layer	dokumentet har intet lag
 	More Settings ({n})	Flere indstillinger ({n})
 	{n} problems found: see Design	{n} problemer fundet: se Design
 @msg	Loaded embroidery font {_1}	Broderiskrifttypen {_1} er indlæst

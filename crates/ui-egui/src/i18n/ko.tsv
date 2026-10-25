@@ -4882,6 +4882,31 @@ lighting	Light	광원
 	Embroidery Libraries	자수 라이브러리
 	Add to Embroidery Library…	자수 라이브러리에 추가…
 	Rescan Embroidery Libraries	자수 라이브러리 다시 검색
+	A line of type below the letters, sewn from the font as it is now	글자 아래에 현재 글꼴로 수놓는 텍스트 한 줄
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	설치된 글꼴의 글자를 따라 그리도록 잠긴 템플릿 레이어에 놓습니다(비워 두면 없음)
+	Ascender:	어센더:
+	Cap Height:	대문자 높이:
+	Characters:	문자:
+	Descender:	디센더:
+	Edit Font…	글꼴 편집…
+	Font Editor	글꼴 편집기
+	Kerning:	커닝:
+	License:	라이선스:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	자수 글꼴 만들기: 글자마다 아트보드 하나에 일반 스티치로 디지타이즈합니다.
+	New Embroidery Font	새 자수 글꼴
+	Save Font…	글꼴 저장…
+	Trace:	따라 그리기:
+	Two letters and font units: negative sets them closer	두 글자와 글꼴 단위: 음수는 가깝게 붙입니다
+	Update Sample	샘플 업데이트
+	x Height:	x 높이:
+	Embroidery Font Info	자수 글꼴 정보
+	Embroidery Font Kerning	자수 글꼴 커닝
+	Embroidery Font Sample	자수 글꼴 샘플
+	Embroidery Font Setup	자수 글꼴 설정
+	New Embroidery Font…	새 자수 글꼴…
+	Open Embroidery Font…	자수 글꼴 열기…
+@msg	not a layer	레이어가 아닙니다
+@msg	the document has no layer	문서에 레이어가 없습니다
 	More Settings ({n})	추가 설정 ({n})
 	{n} problems found: see Design	문제 {n}개 발견: 디자인 참조
 @msg	Loaded embroidery font {_1}	자수 글꼴 {_1}을(를) 불러왔습니다

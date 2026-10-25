@@ -5128,6 +5128,31 @@ lighting	Light	光源
 	Embroidery Libraries	刺绣库
 	Add to Embroidery Library…	添加到刺绣库…
 	Rescan Embroidery Libraries	重新扫描刺绣库
+	A line of type below the letters, sewn from the font as it is now	字母下方的一行文字，用当前的字体绣出
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	一个已安装的字体，其字母放在锁定的模板图层上供描摹（留空：无）
+	Ascender:	上伸部：
+	Cap Height:	大写字母高度：
+	Characters:	字符：
+	Descender:	下伸部：
+	Edit Font…	编辑字体…
+	Font Editor	字体编辑器
+	Kerning:	字距调整：
+	License:	许可证：
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	制作刺绣字体：每个字母一个画板，用常规针法数字化。
+	New Embroidery Font	新建刺绣字体
+	Save Font…	保存字体…
+	Trace:	描摹：
+	Two letters and font units: negative sets them closer	两个字母和字体单位：负值使它们靠近
+	Update Sample	更新样例
+	x Height:	x 高度：
+	Embroidery Font Info	刺绣字体信息
+	Embroidery Font Kerning	刺绣字体字距调整
+	Embroidery Font Sample	刺绣字体样例
+	Embroidery Font Setup	刺绣字体设置
+	New Embroidery Font…	新建刺绣字体…
+	Open Embroidery Font…	打开刺绣字体…
+@msg	not a layer	不是图层
+@msg	the document has no layer	文档没有图层
 	More Settings ({n})	更多设置（{n}）
 	{n} problems found: see Design	发现 {n} 个问题：请看“设计”
 @msg	Loaded embroidery font {_1}	已载入刺绣字体 {_1}
