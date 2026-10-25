@@ -122,8 +122,7 @@ pub fn document(font: &EmbroideryFont, extra: &[String], template: &dyn Fn(&str)
         let to_doc = Affine::new([u, 0.0, 0.0, -u, x, base]);
         for o in &g.objects {
             let Some(path) = fonts::outline(o) else { continue };
-            let mut n =
-                Node::path(doc.alloc_id(), PathData::from_bezpath(&(to_doc * path)), Appearance::basic(solid([40, 40, 40]), Paint::None, 0.0));
+            let mut n = Node::path(doc.alloc_id(), PathData::from_bezpath(&(to_doc * path)), look(&o.stitch));
             if o.rule.as_deref() == Some("evenodd")
                 && let NodeKind::Path { rule, .. } = &mut n.kind
             {
@@ -284,6 +283,16 @@ pub fn trace(outline: &BezPath, upem: f64, hand: crate::penstrokes::Hand) -> Vec
         .collect()
 }
 
+/// How a letter's stitch object is drawn: lines a stitch follows (a satin's rails, running and
+/// bean stitches, whose width doesn't come from the stroke) as thin lines, areas filled. Rails
+/// filled would show as wedges, or as nothing where they run straight.
+fn look(s: &vectorcraft_doc::StitchSettings) -> Appearance {
+    use vectorcraft_doc::StitchKind;
+    const INK: [u8; 3] = [40, 40, 40];
+    let line = (s.kind == StitchKind::Satin && s.rails) || matches!(s.kind, StitchKind::Running | StitchKind::Bean);
+    if line { Appearance::basic(Paint::None, solid(INK), 0.75) } else { Appearance::basic(solid(INK), Paint::None, 0.0) }
+}
+
 fn solid([r, g, b]: [u8; 3]) -> Paint {
     Paint::solid(Color::rgb8(r, g, b))
 }
@@ -345,6 +354,16 @@ mod tests {
         // The first is the downstroke.
         let first = kurbo::Shape::bounding_box(&fonts::outline(&objects[0]).unwrap());
         assert!(first.height() > first.width(), "{first:?}");
+    }
+
+    #[test]
+    fn rails_are_drawn_as_lines_and_areas_filled() {
+        use vectorcraft_doc::{StitchKind, StitchSettings};
+        let rails = StitchSettings { rails: true, ..StitchSettings::new(StitchKind::Satin) };
+        assert!(look(&rails).fill_paint().is_none() && !look(&rails).stroke_paint().is_none(), "a straight crossbar's rails show");
+        let area = StitchSettings::new(StitchKind::Fill);
+        assert!(!look(&area).fill_paint().is_none() && look(&area).stroke_paint().is_none());
+        assert!(look(&StitchSettings::new(StitchKind::Running)).fill_paint().is_none());
     }
 
     #[test]
