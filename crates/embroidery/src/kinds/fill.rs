@@ -28,7 +28,9 @@ pub(super) fn sew(i: &Input) -> Output {
                 lo = Point::new(lo.x.min(p.x), lo.y.min(p.y));
                 hi = Point::new(hi.x.max(p.x), hi.y.max(p.y));
             }
-            let segs = motifs::tiled(id, s.motif_size(), lo, hi);
+            let segs = motifs::find(i.motifs, id)
+                .filter(|m| m.kind == vectorcraft_doc::MotifKind::Carve)
+                .and_then(|m| motifs::tiled_motif(&m, s.motif_size(), lo, hi));
             if segs.is_none() {
                 out.warnings.push(format!("the motif `{id}` can't be carved here (unknown, or too small for so large a fill): plain fill"));
             }

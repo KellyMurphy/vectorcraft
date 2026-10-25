@@ -380,11 +380,11 @@ pub static PARAMS: &[Param] = &[
     },
     Param {
         key: "motif",
-        value: ValueKind::Choice(&crate::motifs::MOTIFS),
+        value: ValueKind::Id,
         kinds: &[K::Fill],
         label: "Motif:",
         help: "A motif carved into the fill",
-        doc: "diamonds|waves|circles|scales|herringbone | null (fill: a motif carved into the fill, its needle points on the motif's lines)",
+        doc: "a carve motif id: diamonds|waves|circles|scales|herringbone or one loaded into the document (embroidery.loadMotif) | null (fill: a motif carved into the fill; its needle points on the motif's lines)",
         nullable: true,
         get: |s| json!(s.motif),
         set: |s, v| s.motif = text(v),
@@ -594,7 +594,9 @@ mod tests {
         assert!(p("passes").parse(&json!(4)).is_err());
         assert!(p("passes").parse(&json!(5)).is_ok());
         assert!(p("motif").parse(&json!("Waves")).is_ok());
-        assert!(p("motif").parse(&json!("stars")).is_err());
+        // Any id here: embroidery.set checks the document (or the built-in ones) has it.
+        assert!(p("motif").parse(&json!("stars")).is_ok());
+        assert!(p("motif").parse(&json!(5)).is_err());
         assert!(p("thread").parse(&json!("#zz0000")).is_err());
         let mut s = StitchSettings::default();
         (p("angle").set)(&mut s, &json!(370.0));

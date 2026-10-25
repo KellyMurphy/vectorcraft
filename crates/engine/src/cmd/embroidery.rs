@@ -410,6 +410,10 @@ impl Edits {
     fn font(&self) -> Option<String> {
         self.0.iter().find(|(p, _)| p.key == "font").and_then(|(_, v)| v.as_str()).map(|id| id.trim().to_string())
     }
+    /// The carved motif asked for, if one is.
+    fn motif(&self) -> Option<String> {
+        self.0.iter().find(|(p, _)| p.key == "motif").and_then(|(_, v)| v.as_str()).map(|id| id.trim().to_ascii_lowercase())
+    }
 }
 
 /// The paths, compound paths and type objects `ids` stand for (groups and layers: those inside;
@@ -443,6 +447,18 @@ fn set(s: &mut Session, p: &Value) -> Result<Value> {
         if vectorcraft_embroidery::borders::find(mine, &id).is_none() {
             let ids: Vec<&str> = mine.iter().map(|p| p.id.as_str()).chain(vectorcraft_embroidery::borders::BUILTIN).collect();
             return Err(bad(SET, format!("no border pattern `{id}` (there are {}; embroidery.loadBorderPattern adds one)", ids.join(", "))));
+        }
+    }
+    if let Some(id) = edits.motif() {
+        let mine = &s.doc()?.doc.embroidery.motifs;
+        if vectorcraft_embroidery::motifs::find(mine, &id).is_none_or(|m| m.kind != vectorcraft_doc::MotifKind::Carve) {
+            let ids: Vec<&str> = mine
+                .iter()
+                .filter(|m| m.unknown.is_none() && m.kind == vectorcraft_doc::MotifKind::Carve)
+                .map(|m| m.id.as_str())
+                .chain(vectorcraft_embroidery::motifs::MOTIFS)
+                .collect();
+            return Err(bad(SET, format!("no carve motif `{id}` (there are {}; embroidery.loadMotif adds one)", ids.join(", "))));
         }
     }
     if let Some(id) = edits.font() {
@@ -579,7 +595,7 @@ fn load_border_pattern(s: &mut Session, p: &Value) -> Result<Value> {
 /// taken by a different pattern, or a starter's) a numbered one. The very same pattern already
 /// there isn't added again. → (its id, whether it was added).
 /// The bytes of the file a load command reads: `path`, else `data` (its text).
-fn file_param(p: &Value, cmd: &str) -> Result<Vec<u8>> {
+pub(crate) fn file_param(p: &Value, cmd: &str) -> Result<Vec<u8>> {
     match (str_param(p, "path"), str_param(p, "data")) {
         (Some(path), _) => super::fileio::read_file(path),
         (None, Some(text)) => Ok(text.as_bytes().to_vec()),

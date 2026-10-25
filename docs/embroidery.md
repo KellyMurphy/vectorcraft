@@ -50,7 +50,11 @@ brick pattern, 3 to 8 make tatami patterns with longer diagonals. The same menu 
 (Diamonds, Waves, Circles, Scales, Herringbone): the motif repeats across the fill, every Motif Size, and
 where its lines cross a row the needle goes down on them (the row's own needle points near them are left
 out), so the motif shows in the fill as lines of needle holes, an embossed pattern, while the fill stays
-one even layer. The motifs are drawn in code. A motif line running nearly along the rows crosses few of
+one even layer. The built-in motifs are drawn in code; more come as **motif files** (`.vcmotif`, an open
+format: [docs/formats/vcmotif.md](formats/vcmotif.md)): `embroidery.loadMotif` loads one into the document
+(kept in it, so it sews the same anywhere), and a carve motif then carves fills as the built-in ones do
+(`embroidery.set {motif}`). A motif file holds one tile and its lattice (two offsets), so its tiles can sit
+on a square, brick or hexagonal grid. A motif line running nearly along the rows crosses few of
 them, so it shows faintly (the tops of the circles at a 0° fill): turn the fill's angle to change which parts
 show strongest.
 
@@ -461,9 +465,9 @@ The starters' numbers are starting points from general digitizing practice; the 
 
 ### Libraries
 
-Border patterns, fabric profiles, hoop lists, thread charts and embroidery fonts you want in every design go
-in the **embroidery library folder**: a folder called `Embroidery` next to the preferences, with a subfolder
-for each kind (`borders`, `fabrics`, `hoops`, `threads`, `fonts`). VectorCraft reads it at start (and on
+Border patterns, motifs, fabric profiles, hoop lists, thread charts and embroidery fonts you want in every
+design go in the **embroidery library folder**: a folder called `Embroidery` next to the preferences, with a
+subfolder for each kind (`borders`, `motifs`, `fabrics`, `hoops`, `threads`, `fonts`). VectorCraft reads it at start (and on
 `embroidery.rescanLibraries`), so files can be shared just by copying them in. A save command with
 `user: true` writes there, and `embroidery.addToLibrary` copies a file in (never replacing one: a name
 already taken gets a number). `embroidery.libraries` lists what is there, and files that can't be read are
@@ -515,6 +519,10 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.loadBorderPattern` | `{path? \| data? \| library?}`: load a `.vcborder` file into the document → `{id, name, added}` |
 | `embroidery.saveBorderPattern` | `{pattern, path?, user?}`: write a pattern as a `.vcborder` file (without `path`: `{data}`; `user: true`: into the embroidery library) |
 | `embroidery.extractBorderPattern` | `{name?, period?, author?, license?, source?, ids?}`: the repeat of the selected border stitches (only those inside a selected closed shape, if any) as a new document pattern → `{id, name, period, width, stitches, repeats, error}` |
+| `embroidery.motifs` | `{}`: the document's motifs, then the built-in carve motifs, with their kind, size, lattice, credits and how many objects use them |
+| `embroidery.loadMotif` | `{path? \| data? \| library?}`: load a `.vcmotif` file into the document → `{id, name, motifKind, added}` |
+| `embroidery.saveMotif` | `{motif, path?, user?}`: write a motif as a `.vcmotif` file (without `path`: `{data}`; `user: true`: into the embroidery library) |
+| `embroidery.removeMotif` | `{motif}`: remove one of the document's motifs that nothing uses |
 | `embroidery.removeBorderPattern` | `{pattern}`: remove one of the document's patterns that nothing sews with |
 | `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm, overlap?: mm, minStitch?: mm, autoStart?, hideTravel?, speed?: stitches/min, machineFormat?: dst \| pes \| jef \| exp}`: the document's travel settings, overlap, shortest stitch, machine speed and the format the panels export |
 | `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings |

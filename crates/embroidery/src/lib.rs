@@ -611,9 +611,10 @@ pub fn plan(doc: &Document) -> Plan {
 pub fn plan_cached(doc: &Document, cache: &mut StitchCache) -> Plan {
     let overlap = doc.embroidery.overlap();
     let e = &doc.embroidery;
-    if cache.patterns != e.patterns || cache.fonts != e.fonts || cache.fabric != e.fabric || cache.overlap != overlap {
+    if cache.patterns != e.patterns || cache.motifs != e.motifs || cache.fonts != e.fonts || cache.fabric != e.fabric || cache.overlap != overlap {
         cache.entries.clear();
         cache.patterns.clone_from(&e.patterns);
+        cache.motifs.clone_from(&e.motifs);
         cache.fonts.clone_from(&e.fonts);
         cache.fabric.clone_from(&doc.embroidery.fabric);
         cache.overlap = overlap;
@@ -1221,6 +1222,7 @@ fn sew(s: &StitchSettings, thread: [u8; 3], stroke_mm: f64, paths: &[&PathData],
         paths,
         rule,
         patterns: b.patterns,
+        motifs: b.motifs,
         auto: b.auto,
         cuts: &b.cuts,
         overlap: b.overlap,
@@ -1344,6 +1346,8 @@ enum EnterAt {
 struct Sewer<'a> {
     /// The document's own border patterns ([`EmbroiderySetup::patterns`]).
     patterns: &'a [vectorcraft_doc::BorderPattern],
+    /// The document's own motifs ([`EmbroiderySetup::motifs`]).
+    motifs: &'a [vectorcraft_doc::Motif],
     /// The document's embroidery fonts ([`EmbroiderySetup::fonts`]).
     fonts: &'a [vectorcraft_doc::EmbroideryFont],
     /// The document's fabric ([`EmbroiderySetup::fabric`]), and the auto underlay it asks for.
@@ -1378,6 +1382,7 @@ impl Sewer<'_> {
 pub struct StitchCache {
     entries: HashMap<NodeId, Entry>,
     patterns: Vec<vectorcraft_doc::BorderPattern>,
+    motifs: Vec<vectorcraft_doc::Motif>,
     fonts: Vec<vectorcraft_doc::EmbroideryFont>,
     fabric: Option<Box<vectorcraft_doc::Fabric>>,
     overlap: f64,
@@ -1410,6 +1415,7 @@ impl StitchCache {
                 let cuts = cut_by.iter().filter_map(|c| cover_area(c, warp_of(warps, c.id))).collect();
                 let mut b = Sewer {
                     patterns: &self.patterns,
+                    motifs: &self.motifs,
                     fonts: &self.fonts,
                     fabric,
                     auto: fabrics::auto_underlay(fabric),

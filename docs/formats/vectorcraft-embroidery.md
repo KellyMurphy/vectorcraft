@@ -38,7 +38,7 @@ are kept but have no effect.
 | `push` | number, mm | satin, fill, auto | 0–3 | 0 |
 | `underlay` | string | satin: `none` `auto` `center` `edge` `zigzag`; satin shape: `none` `auto` `center` `edge`; fill: `none` `auto` `fill` | | `none` (programs give new objects `auto`) |
 | `stagger` | integer | fill | 2–8 | 3 |
-| `motif` | string | fill | `diamonds` `waves` `circles` `scales` `herringbone` | none |
+| `motif` | string | fill | a carve motif's id: built in `diamonds` `waves` `circles` `scales` `herringbone`, or one of `motifs` | none |
 | `motifSize` | number, mm | fill with a motif | 3–60 | 10 |
 | `pattern` | string, a border pattern id | pattern border | | `waves` |
 | `flip` | boolean | pattern border | | false |
@@ -114,6 +114,7 @@ Type objects are sewn letter by letter, each letter in its characters' colour un
 | `minStitch` | number, mm (0–2) | The shortest stitch sewn: a needle point closer than this to the one before is left out (the last point of a run moves the one before it instead). The fabric's `minStitch` is used when it is longer. Manual stitches are sewn as drawn. | 0.3 |
 | `overlap` | number, mm (0–3) | **Overlap removal.** A fill's rows under an object sewn later on top of it (a fill, satin shape or Auto object by its outline, type by its letters, a satin column along a path by its band) are cut away (its underlay too), except this far in from the covering object's edge, so the two still meet; where the covering object reaches past the fill's own edge no rim is kept. A fill with `keepCovered` keeps all its rows. | 0.5 |
 | `order` | array of object ids | The sewing order: these objects first, in this order, then any other stitched objects in paint order (bottom first). Ids of objects no longer there are ignored. | empty: paint order |
+| `motifs` | array of motifs | The motifs the document uses beyond the built-in ones, each with the fields of a [motif file](vcmotif.md#fields) other than `format`, `version` and `units`, with a non-empty `id`; stitch settings name carve motifs by `id` in `motif`, found before a built-in one with the same id. A motif a reader can't read is kept as written and not used. | empty |
 | `patterns` | array of border patterns | The border patterns the document uses beyond the starters, so it sews the same anywhere. | empty |
 | `charts` | array of thread charts, see [Thread charts](#thread-charts-charts-chart) | Thread charts loaded into the document. | empty |
 | `chart` | string, a chart's `id` | The chart the design's colours are matched against. | none |

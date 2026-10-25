@@ -65,6 +65,22 @@ pub static TEXT_DOCS: &[TextDoc] = &[
         text: include_str!("../../../docs/formats/vcborder.schema.json"),
     },
     TextDoc {
+        uri: "vectorcraft://spec/vcmotif",
+        name: "spec-vcmotif",
+        title: "Motif file (.vcmotif) specification",
+        description: "The open JSON format for embroidery motifs: one tile and its lattice, carved into fills or sewn tile by tile; fields, the tile's space and limits",
+        mime: "text/markdown",
+        text: include_str!("../../../docs/formats/vcmotif.md"),
+    },
+    TextDoc {
+        uri: "vectorcraft://spec/vcmotif.schema.json",
+        name: "spec-vcmotif-schema",
+        title: "Motif file JSON Schema",
+        description: "JSON Schema (draft 2020-12) for .vcmotif files",
+        mime: "application/schema+json",
+        text: include_str!("../../../docs/formats/vcmotif.schema.json"),
+    },
+    TextDoc {
         uri: "vectorcraft://spec/vcfont",
         name: "spec-vcfont",
         title: "Embroidery font file (.vcfont) specification",

@@ -27,6 +27,8 @@ pub struct Input<'a> {
     pub rule: FillRule,
     /// The document's border patterns.
     pub patterns: &'a [BorderPattern],
+    /// The document's motifs.
+    pub motifs: &'a [vectorcraft_doc::Motif],
     /// What an `auto` underlay becomes (the document's fabric's thresholds).
     pub auto: generate::AutoUnderlay,
     /// Areas sewn later on top of the object (fills cut them out), and how far its rows still
@@ -94,6 +96,7 @@ mod tests {
                 paths: &[&path],
                 rule: FillRule::NonZero,
                 patterns: &[],
+                motifs: &[],
                 auto: Default::default(),
                 cuts: &[],
                 overlap: 0.0,
@@ -119,6 +122,7 @@ mod tests {
             paths: &[&path],
             rule: FillRule::NonZero,
             patterns: &[],
+            motifs: &[],
             auto: Default::default(),
             cuts: &[],
             overlap: 0.0,

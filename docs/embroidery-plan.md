@@ -563,7 +563,14 @@ Carved motifs (E3) shape a tatami fill's needle points along lines. **Motif fill
 stitched tile (a star, a flower, a cross) repeated across the area as stitches of its own, the open
 fabric showing between — a light, decorative fill.
 
-- **E8.4a The format: `.vcmotif`.** Like `.vcborder`, for a tile with two repeat offsets: `id`, `name`,
+- **E8.4a The format: `.vcmotif` (done 2026-10-25).** As built: `vectorcraft_doc::Motif` (`kind`
+  stitched|carve, `size`, two `offsets`, `parts`) kept in `EmbroiderySetup::motifs` (newer ones kept
+  unread); `crates/embroidery/src/motifs.rs` reads, writes and checks files, and tiles any lattice
+  (`lattice`, `tiled_motif`), the five built-in carve motifs now data (`builtin`) laying the same tiles as
+  before; a fill's `motif` names any carve motif (checked by `embroidery.set`); `embroidery.motifs`,
+  `loadMotif`, `saveMotif`, `removeMotif`; the library's `motifs/` folder. Spec, schema, example
+  (`crosses.vcmotif`), drift tests, fuzzing. The panel's motif picker lists only the built-in ones yet
+  (E8.4b adds the document's and the library's). Planned as: Like `.vcborder`, for a tile with two repeat offsets: `id`, `name`,
   author, licence, source, `size` (mm), `offsets` (the two lattice vectors), `parts` (as `PatternPart`:
   running, bean, satin, with points), and `kind: "stitched" | "carve"`. A **carve** motif is line art used as
   a carved pattern (as today's five built-in ones, which become `.vcmotif` data generated in code), so user

@@ -79,6 +79,7 @@ fn sew(settings: &StitchSettings, path: &PathData, stroke_mm: f64, patterns: &[B
         paths: &[path],
         rule: FillRule::NonZero,
         patterns,
+        motifs: &[],
         auto: Default::default(),
         cuts: &[],
         overlap: 0.0,

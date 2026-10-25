@@ -1,0 +1,51 @@
+{
+  "format": "vectorcraft-motif",
+  "version": 1,
+  "units": "mm",
+  "id": "crosses",
+  "name": "Crosses",
+  "author": "VectorCraft contributors",
+  "license": "CC0-1.0",
+  "source": "drawn for VectorCraft",
+  "description": "Small bean-stitch crosses on a brick lattice.",
+  "kind": "stitched",
+  "size": 6,
+  "offsets": [
+    [
+      6,
+      0
+    ],
+    [
+      3,
+      5
+    ]
+  ],
+  "parts": [
+    {
+      "stitch": "bean",
+      "points": [
+        [
+          -1.5,
+          -1.5
+        ],
+        [
+          1.5,
+          1.5
+        ]
+      ]
+    },
+    {
+      "stitch": "bean",
+      "points": [
+        [
+          1.5,
+          -1.5
+        ],
+        [
+          -1.5,
+          1.5
+        ]
+      ]
+    }
+  ]
+}

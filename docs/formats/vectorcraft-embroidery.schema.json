@@ -25,7 +25,7 @@
         "push": { "type": "number", "minimum": 0, "maximum": 3, "description": "Push compensation, mm: satin columns shorter at their ends, fills shorter across their rows." },
         "underlay": { "enum": ["none", "auto", "center", "edge", "zigzag", "fill"], "default": "none", "description": "Missing means none; new objects are given auto." },
         "stagger": { "type": "integer", "minimum": 2, "maximum": 8, "description": "Fill rows before the needle holes line up again." },
-        "motif": { "enum": ["diamonds", "waves", "circles", "scales", "herringbone"], "description": "Fill: a carved motif." },
+        "motif": { "type": "string", "description": "Fill: a carve motif's id (a built-in one: diamonds, waves, circles, scales, herringbone; or one of document.embroidery.motifs)." },
         "motifSize": { "type": "number", "minimum": 3, "maximum": 60, "description": "The carved motif's repeat, mm." },
         "pattern": { "type": "string", "description": "Pattern border: a border pattern id (a starter, or one of document.embroidery.patterns)." },
         "flip": { "type": "boolean", "default": false },
@@ -63,6 +63,14 @@
             "allOf": [{ "$ref": "#/$defs/pattern" }],
             "required": ["id"],
             "properties": { "id": { "type": "string", "minLength": 1 } }
+          }
+        },
+        "motifs": {
+          "type": "array",
+          "items": {
+            "allOf": [{ "$ref": "vcmotif.schema.json" }],
+            "required": ["id"],
+            "properties": { "id": { "type": "string", "minLength": 1 }, "format": false, "version": false }
           }
         },
         "sewOut": { "$ref": "#/$defs/sewOut" },

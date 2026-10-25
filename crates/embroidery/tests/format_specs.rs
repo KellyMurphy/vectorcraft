@@ -72,6 +72,25 @@ fn full_pattern() -> BorderPattern {
     }
 }
 
+/// A motif with every field set, so its JSON has every key.
+fn full_motif() -> vectorcraft_doc::Motif {
+    let part = PatternPart { stitch: PartStitch::Bean, points: vec![[0.0, 0.0], [2.0, 2.0]], width: None, extra: Default::default() };
+    vectorcraft_doc::Motif {
+        id: "full".into(),
+        name: "Full".into(),
+        author: Some("a".into()),
+        license: Some("CC0-1.0".into()),
+        source: Some("s".into()),
+        description: Some("d".into()),
+        kind: vectorcraft_doc::MotifKind::Carve,
+        size: 4.0,
+        offsets: [[4.0, 0.0], [2.0, 4.0]],
+        parts: vec![part],
+        extra: Default::default(),
+        unknown: None,
+    }
+}
+
 /// Stitch settings with every field set away from its default, so its JSON has every key (a new
 /// field fails to compile here until it is set, and so checked against the spec).
 fn full_stitch() -> StitchSettings {
@@ -121,6 +140,7 @@ fn full_setup() -> EmbroiderySetup {
         machine_format: "pes".into(),
         order: vec![NodeId(1)],
         patterns: vec![full_pattern()],
+        motifs: vec![full_motif()],
         sew_out: Some(Box::new(full_sew_out())),
         fabric: Some(Box::new(full_fabric())),
         hoop: Some(Box::new(full_hoop())),
@@ -405,6 +425,56 @@ fn range_is(prop: &Value, range: std::ops::RangeInclusive<f64>, what: &str) {
 }
 
 #[test]
+fn vcmotif_schema_matches_the_code() {
+    let schema = json("vcmotif.schema.json");
+    let props = &schema["properties"];
+    assert_eq!(props["format"]["const"], motifs::FILE_FORMAT);
+    assert_eq!(props["version"]["maximum"].as_u64(), Some(u64::from(motifs::FILE_VERSION)));
+    // Every key a file has, and no other.
+    let file: Value = serde_json::from_str(&motifs::write_file(&full_motif()).unwrap()).unwrap();
+    assert_eq!(keys(props), keys(&file), "the schema's fields are the file's");
+    let kinds: BTreeSet<String> = [vectorcraft_doc::MotifKind::Stitched, vectorcraft_doc::MotifKind::Carve].into_iter().map(serde_name).collect();
+    assert_eq!(strings(&props["kind"]["enum"]), kinds);
+    for field in strings(&schema["required"]) {
+        if matches!(field.as_str(), "format" | "version") {
+            continue;
+        }
+        let mut v = file.clone();
+        v.as_object_mut().unwrap().remove(&field);
+        assert!(motifs::read_file(v.to_string().as_bytes()).is_err(), "a file without `{field}` is refused");
+    }
+}
+
+#[test]
+fn vcmotif_page_describes_every_field_and_the_limits() {
+    let page = read("vcmotif.md");
+    let file: Value = serde_json::from_str(&motifs::write_file(&full_motif()).unwrap()).unwrap();
+    for k in keys(&file) {
+        assert!(page.contains(&format!("`{k}`")), "vcmotif.md describes `{k}`");
+    }
+    for id in motifs::MOTIFS {
+        assert!(page.contains(&format!("`{id}`")), "vcmotif.md lists the built-in `{id}`");
+    }
+    assert_eq!(motifs::MAX_MOTIF_POINTS, 100_000, "the point limit vcmotif.md gives");
+    assert!(page.contains("100,000 points") && page.contains("200,000 line segments"), "the limits");
+    assert_eq!(motifs::MAX_SEGMENTS, 200_000);
+    assert!(page.contains(&format!("{} MB", motifs::MAX_FILE_BYTES >> 20)), "the size limit");
+}
+
+#[test]
+fn the_example_motif_reads_and_tiles() {
+    let m = motifs::read_file(read("examples/crosses.vcmotif").as_bytes()).unwrap();
+    assert_eq!((m.id.as_str(), m.kind), ("crosses", vectorcraft_doc::MotifKind::Stitched));
+    let tiles = motifs::lattice(&m, 6.0, Point::ZERO, Point::new(60.0, 40.0)).unwrap();
+    assert!(tiles.len() > 60, "{}", tiles.len());
+    // The example on the page is the example file's motif.
+    let page = read("vcmotif.md");
+    let start = page.find("```json").unwrap() + 7;
+    let end = start + page.get(start..).unwrap().find("```").unwrap();
+    assert_eq!(motifs::read_file(page.get(start..end).unwrap().as_bytes()).unwrap(), m);
+}
+
+#[test]
 fn vcborder_schema_matches_the_code() {
     let schema = json("vcborder.schema.json");
     let props = &schema["properties"];
@@ -472,7 +542,11 @@ fn embroidery_schema_matches_the_code() {
     assert!(StitchKind::ALL.iter().all(|k| serde_name(*k) == k.id()), "kinds are written by id");
     let underlays: BTreeSet<String> = Underlay::ALL.iter().map(|u| u.id().to_string()).collect();
     assert_eq!(strings(&stitch["underlay"]["enum"]), underlays);
-    assert_eq!(strings(&stitch["motif"]["enum"]), motifs::MOTIFS.iter().map(|m| m.to_string()).collect());
+    // `motif` names a built-in carve motif or one of the document's.
+    assert_eq!(stitch["motif"]["type"], "string");
+    for m in motifs::MOTIFS {
+        assert!(stitch["motif"]["description"].as_str().unwrap().contains(m), "the schema names the built-in `{m}`");
+    }
     // The settings table covers every field a document holds (`type` is the document's `kind`),
     // and its ranges and choices are the schema's.
     let table: BTreeSet<String> = params::PARAMS.iter().map(|p| if p.key == "type" { "kind".to_string() } else { p.key.to_string() }).collect();
@@ -491,8 +565,6 @@ fn embroidery_schema_matches_the_code() {
             ValueKind::Kind | ValueKind::Degrees | ValueKind::Id | ValueKind::Thread | ValueKind::Point | ValueKind::Lines => {}
         }
     }
-    // The fixed lists the table points at are the code's own.
-    assert_eq!(strings(&stitch["motif"]["enum"]), motifs::MOTIFS.iter().map(|m| m.to_string()).collect());
 
     let setup = &defs["setup"]["properties"];
     assert_eq!(keys(setup), keys(&serde_json::to_value(full_setup()).unwrap()), "the setup's fields");

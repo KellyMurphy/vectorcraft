@@ -95,8 +95,8 @@ pub use assets::ExportAsset;
 pub use corners::LiveCorners;
 pub use depth::MAX_DEPTH;
 pub use embroidery::{
-    BorderPattern, ChartThread, EmbroiderySetup, Fabric, Hoop, PartStitch, PatternPart, SewOut, SewResult, SewSwatch, StitchKind, StitchSettings,
-    ThreadChart, Underlay,
+    BorderPattern, ChartThread, EmbroiderySetup, Fabric, Hoop, Motif, MotifKind, PartStitch, PatternPart, SewOut, SewResult, SewSwatch, StitchKind,
+    StitchSettings, ThreadChart, Underlay,
 };
 pub use embroidery_font::{EmbroideryFont, FontGlyph, GlyphObject, KernPair};
 pub use graph::{

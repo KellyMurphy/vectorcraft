@@ -384,6 +384,83 @@ pub struct BorderPattern {
     pub unknown: Option<Box<serde_json::Value>>,
 }
 
+/// What a [`Motif`] is used as.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum MotifKind {
+    /// Sewn as stitches of its own, tile by tile across an area (a motif fill).
+    #[default]
+    Stitched,
+    /// Line art a fill's needle points fall on, so it shows in the fill's stitching (a carved fill,
+    /// [`StitchSettings::motif`]).
+    Carve,
+}
+
+/// A motif: one tile of a pattern that repeats both ways across an area, on a lattice (copies of
+/// the tile at every whole-number sum of its two `offsets`).
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Motif {
+    /// What [`StitchSettings::motif`] calls it (lower case letters, digits and dashes).
+    #[serde(default)]
+    pub id: String,
+    pub name: String,
+    /// Who made it, its licence (an SPDX id such as `CC0-1.0`, or text) and where it came from
+    /// (a URL, or the design it was taken from). Information only: nothing is sewn differently.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub author: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub license: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    #[serde(default)]
+    pub kind: MotifKind,
+    /// The tile's size at its own scale, mm: what a fill's motif size scales (its offsets and
+    /// points are mm at this size).
+    pub size: f64,
+    /// The lattice: the two offsets from a tile to its neighbours, mm at `size`.
+    pub offsets: [[f64; 2]; 2],
+    /// The tile's lines, in order (as a border pattern's parts), mm at `size` from its origin.
+    pub parts: Vec<PatternPart>,
+    /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
+    #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
+    pub extra: serde_json::Map<String, serde_json::Value>,
+    /// A motif from a newer VectorCraft this version can't read, kept as written (see
+    /// [`de_motifs`]). It isn't used.
+    #[serde(skip)]
+    pub unknown: Option<Box<serde_json::Value>>,
+}
+
+/// Read a document's motifs: one this version can't read is kept as written in
+/// [`Motif::unknown`], with its id and name.
+pub fn de_motifs<'de, D: serde::Deserializer<'de>>(d: D) -> Result<Vec<Motif>, D::Error> {
+    let v = Vec::<serde_json::Value>::deserialize(d)?;
+    Ok(v.into_iter()
+        .map(|v| match Motif::deserialize(&v) {
+            Ok(m) => m,
+            Err(_) => {
+                let text = |k: &str| v.get(k).and_then(serde_json::Value::as_str).unwrap_or_default().to_string();
+                Motif { id: text("id"), name: text("name"), unknown: Some(Box::new(v.clone())), ..Motif::default() }
+            }
+        })
+        .collect())
+}
+
+/// Write a document's motifs, those kept from a newer version as they were read.
+pub fn ser_motifs<S: serde::Serializer>(v: &[Motif], ser: S) -> Result<S::Ok, S::Error> {
+    use serde::ser::SerializeSeq;
+    let mut seq = ser.serialize_seq(Some(v.len()))?;
+    for m in v {
+        match &m.unknown {
+            Some(raw) => seq.serialize_element(raw)?,
+            None => seq.serialize_element(m)?,
+        }
+    }
+    seq.end()
+}
+
 /// The document's embroidery settings: how the needle travels between stitches
 /// ([`crate::Document::embroidery`]).
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -428,6 +505,10 @@ pub struct EmbroiderySetup {
     /// the same anywhere; [`StitchSettings::pattern`] names them by id.
     #[serde(skip_serializing_if = "Vec::is_empty", deserialize_with = "de_patterns", serialize_with = "ser_patterns")]
     pub patterns: Vec<BorderPattern>,
+    /// Motifs loaded into the document (from `.vcmotif` files), kept with it so it sews the same
+    /// anywhere; [`StitchSettings::motif`] names them by id.
+    #[serde(skip_serializing_if = "Vec::is_empty", deserialize_with = "de_motifs", serialize_with = "ser_motifs")]
+    pub motifs: Vec<Motif>,
     /// A sew-out test: the swatches of a test sheet (`embroidery.testSheet`) and what was seen
     /// when they were sewn.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -478,6 +559,7 @@ impl Default for EmbroiderySetup {
             machine_format: Self::DEFAULT_MACHINE_FORMAT.to_string(),
             order: vec![],
             patterns: vec![],
+            motifs: vec![],
             sew_out: None,
             fabric: None,
             hoop: None,
