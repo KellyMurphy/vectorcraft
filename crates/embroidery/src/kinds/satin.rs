@@ -10,13 +10,21 @@ pub(super) fn sew(i: &Input) -> Output {
     let s = i.settings;
     let mut out = Output::default();
     let lines = i.lines();
+    let angles = crate::angles::lines(s);
     // Capped: a wider stitch can't be sewn in one move (DST: 12.1 mm), and splitting it would put
     // a needle hole in the middle of the column.
     let drawn = s.width(i.stroke_mm);
     let w = (drawn + s.pull_for(drawn)).min(*StitchSettings::WIDTH.end());
     // Between Rails: the object's two longest subpaths are the column's edges (any
     // others crossing both are rungs), the column as wide as they are apart.
-    let rails = if s.rails { rails::find(&lines) } else { None };
+    // Stitch angle lines are rungs too.
+    let rails = if s.rails {
+        let mut with: Vec<(Vec<Point>, bool)> = lines.clone();
+        with.extend(angles.iter().map(|[a, b]| (vec![*a, *b], false)));
+        rails::find(&with)
+    } else {
+        None
+    };
     if s.rails && rails.is_none() {
         out.warnings.push("a satin set Between Rails needs two subpaths, both open or both closed: sewn along its paths instead".into());
     }
@@ -44,13 +52,13 @@ pub(super) fn sew(i: &Input) -> Output {
                 &pushed
             }
         };
-        let (under, back) = generate::satin_underlay_with(l, *closed, w, s.underlay(), &i.auto);
+        let (under, back) = generate::satin_underlay_angled(l, *closed, w, s.underlay(), &i.auto, &angles);
         // After an underlay that ends at the far end, the column is sewn back.
         let top = if back {
             let rev: Vec<Point> = l.iter().rev().copied().collect();
-            generate::satin(&rev, *closed, w, s.spacing())
+            generate::satin_angled(&rev, *closed, w, s.spacing(), &angles)
         } else {
-            generate::satin(l, *closed, w, s.spacing())
+            generate::satin_angled(l, *closed, w, s.spacing(), &angles)
         };
         // One run: the move from the underlay to the column stays inside the column.
         out.runs.push(under.into_iter().chain(top).collect());

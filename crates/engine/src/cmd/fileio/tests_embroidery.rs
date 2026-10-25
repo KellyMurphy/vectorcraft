@@ -875,3 +875,28 @@ fn type_in_an_envelope_or_with_a_warp_effect_is_sewn_bent() {
     assert!(bent.1 > flat.1 * 1.2, "{bent:?} vs {flat:?}");
     assert!((bent.0 - want.0).abs() < 1.5 && (bent.1 - want.1).abs() < 1.5, "sewn as drawn: {bent:?} vs {want:?}");
 }
+
+#[test]
+fn stitch_angle_lines_are_set_kept_and_moved() {
+    let mut s = session();
+    // A bar 200 × 20 pt (70.6 × 7.1 mm) at (10, 150).
+    s.execute("shape.rectangle", &json!({"x": 10, "y": 150, "width": 200, "height": 20})).unwrap();
+    s.execute("embroidery.set", &json!({"type": "satinShape"})).unwrap();
+    let before = s.execute("embroidery.stitches", &json!({})).unwrap();
+    s.execute("embroidery.set", &json!({"angles": [[30.0, 52.0, 40.0, 62.0]]})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["angles"], json!([[30.0, 52.0, 40.0, 62.0]]));
+    assert_ne!(s.execute("embroidery.stitches", &json!({})).unwrap(), before, "the stitches turned");
+    // Bad lines are refused.
+    for bad in [json!([[1, 2, 3]]), json!([["a", 2, 3, 4]]), json!(5), json!(vec![[0, 0, 1, 1]; 300])] {
+        assert!(s.execute("embroidery.set", &json!({ "angles": bad })).is_err(), "{bad}");
+    }
+    // The lines move with the object: 72 pt is 25.4 mm.
+    s.execute("object.move", &json!({"dx": 72, "dy": 0})).unwrap();
+    let a = info(&mut s)["selection"]["angles"][0].clone();
+    assert!((a[0].as_f64().unwrap() - 55.4).abs() < 1e-6 && (a[2].as_f64().unwrap() - 65.4).abs() < 1e-6, "{a}");
+    // One undo step each; null clears them.
+    s.execute("edit.undo", &json!({})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["angles"], json!([[30.0, 52.0, 40.0, 62.0]]));
+    s.execute("embroidery.set", &json!({"angles": null})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["angles"], json!([]));
+}

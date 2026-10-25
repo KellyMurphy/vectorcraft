@@ -5296,6 +5296,11 @@ theme	Appearance	Utseende
 	Update Monogram	Uppdatera monogram
 	Monogram…	Monogram…
 	Type on an Arc…	Text på en båge…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	Verktyget Stygnvinkel: dra över satinen för att lägga till en linje, dra i en linjes ände för att flytta den, Alt-klicka på en linje för att ta bort den
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	Linjer över satinen som bestämmer stygnens riktning där de korsar den, med gradvis övergång mellan dem (verktyget Stygnvinkel ritar dem)
+	Stitch Angle Tool	Verktyget Stygnvinkel
+	Stitch Angles:	Stygnvinklar:
+	Stitch Angle	Stygnvinkel
 	Three Equal	Tre lika
 	Two Letters	Två bokstäver
 	Trace Font	Rita efter teckensnitt

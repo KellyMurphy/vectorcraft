@@ -5334,6 +5334,11 @@ swatch	Bright Violet	Kraftig violet
 	Update Monogram	Opdater monogram
 	Monogram…	Monogram…
 	Type on an Arc…	Tekst på en bue…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	Stingvinkel-værktøjet: træk hen over satinen for at tilføje en linje, træk i en linjes ende for at flytte den, Alt-klik på en linje for at fjerne den
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	Linjer hen over satinen, der bestemmer stingenes retning, hvor de krydser den, med gradvis overgang mellem dem (Stingvinkel-værktøjet tegner dem)
+	Stitch Angle Tool	Stingvinkel-værktøj
+	Stitch Angles:	Stingvinkler:
+	Stitch Angle	Stingvinkel
 	Three Equal	Tre ens
 	Two Letters	To bogstaver
 	Trace Font	Tegn skrifttype efter

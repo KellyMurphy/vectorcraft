@@ -5271,6 +5271,11 @@ mark-style	Japanese	Japonesas
 	Update Monogram	Actualizar monograma
 	Monogram…	Monograma…
 	Type on an Arc…	Texto en arco…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	La herramienta Ángulo de puntada: arrastre a través del satén para añadir una línea, arrastre el extremo de una línea para moverla, Alt+clic en una línea para quitarla
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	Líneas a través del satén que fijan la dirección de las puntadas donde lo cruzan, con una transición gradual entre ellas (las dibuja la herramienta Ángulo de puntada)
+	Stitch Angle Tool	Herramienta Ángulo de puntada
+	Stitch Angles:	Ángulos de puntada:
+	Stitch Angle	Ángulo de puntada
 	Three Equal	Tres iguales
 	Two Letters	Dos letras
 	Trace Font	Calcar fuente

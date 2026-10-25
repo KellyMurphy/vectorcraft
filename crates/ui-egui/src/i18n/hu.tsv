@@ -5326,6 +5326,11 @@ imageTrace	Outline	Körvonal
 	Update Monogram	Monogram frissítése
 	Monogram…	Monogram…
 	Type on an Arc…	Szöveg íven…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	Az öltésszög eszköz: húzza át a szaténon vonal hozzáadásához, húzza a vonal végét az áthelyezéséhez, Alt+kattintás a vonalon az eltávolításához
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	A szaténon átfutó vonalak, amelyek ott határozzák meg az öltések irányát, ahol keresztezik, köztük fokozatos átmenettel (az öltésszög eszköz rajzolja őket)
+	Stitch Angle Tool	Öltésszög eszköz
+	Stitch Angles:	Öltésszögek:
+	Stitch Angle	Öltésszög
 	Three Equal	Három egyforma
 	Two Letters	Két betű
 	Trace Font	Betűtípus átrajzolása

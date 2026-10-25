@@ -5328,6 +5328,11 @@ theme	Appearance	Apparence
 	Update Monogram	Mettre à jour le monogramme
 	Monogram…	Monogramme…
 	Type on an Arc…	Texte en arc…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	L’outil Angle de point : faites glisser à travers le satin pour ajouter une ligne, faites glisser l’extrémité d’une ligne pour la déplacer, Alt+clic sur une ligne pour la supprimer
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	Lignes à travers le satin fixant la direction des points là où elles le croisent, avec une transition progressive entre elles (l’outil Angle de point les trace)
+	Stitch Angle Tool	Outil Angle de point
+	Stitch Angles:	Angles de point :
+	Stitch Angle	Angle de point
 	Three Equal	Trois égales
 	Two Letters	Deux lettres
 	Trace Font	Décalquer la police

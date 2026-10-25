@@ -508,7 +508,7 @@ mod tests {
     /// Sewn by pen strokes, the shape (overlapping outlines, non-zero) is left bare nowhere.
     fn bare(rects: &[Vec<Point>], hand: Hand) -> f64 {
         let pieces = crate::skeleton::strokes(rects, FillRule::NonZero);
-        let (runs, q) = crate::generate::satin_pen(rects, FillRule::NonZero, &pieces, 0.4, 0.0, false, 0.0, hand).unwrap();
+        let (runs, q) = crate::generate::satin_pen(rects, FillRule::NonZero, &pieces, 0.4, 0.0, false, 0.0, hand, &[]).unwrap();
         assert!(q.uncovered <= 0.05, "the satin itself leaves {:.1}% bare", q.uncovered * 100.0);
         crate::generate::uncovered(rects, FillRule::NonZero, &runs)
     }

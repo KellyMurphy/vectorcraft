@@ -4922,6 +4922,11 @@ lighting	Light	Світло
 	Update Monogram	Оновити монограму
 	Monogram…	Монограма…
 	Type on an Arc…	Текст по дузі…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	Інструмент «Кут стібка»: протягніть поперек атласу, щоб додати лінію, перетягніть кінець лінії, щоб перемістити її, Alt+клацання на лінії видаляє її
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	Лінії поперек атласу, що задають напрямок стібків там, де вони його перетинають, з плавним переходом між ними (їх малює інструмент «Кут стібка»)
+	Stitch Angle Tool	Інструмент «Кут стібка»
+	Stitch Angles:	Кути стібків:
+	Stitch Angle	Кут стібка
 	Three Equal	Три однакові
 	Two Letters	Дві літери
 	Trace Font	Обвести шрифт

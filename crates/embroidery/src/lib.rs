@@ -12,6 +12,7 @@
 //!   sharing `machine`'s needle moves.
 //! - `import`: a plan as editable art (one manual-stitch path per run of stitches).
 
+pub mod angles;
 pub mod borders;
 pub mod check;
 mod dst;
@@ -1194,7 +1195,8 @@ fn auto_choice(s: &StitchSettings, paths: &[&PathData], rule: FillRule, b: &Sewe
         u => u,
     };
     let least = if narrow { LETTER_COLUMN } else { 0.0 };
-    let (runs, q) = generate::satin_shape_hand(&polys, rule, t.spacing(), t.pull_for(width), underlay == Underlay::Center, least, b.hand);
+    let (runs, q) =
+        generate::satin_shape_angled(&polys, rule, t.spacing(), t.pull_for(width), underlay == Underlay::Center, least, b.hand, &angles::lines(s));
     if q.poor() || runs.is_empty() {
         return Choice::Sew(b.fabric_in(&auto_fill(s, &polys)), true);
     }

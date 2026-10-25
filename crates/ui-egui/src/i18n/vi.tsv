@@ -4933,6 +4933,11 @@ theme	Appearance	Giao diện
 	Update Monogram	Cập nhật chữ lồng
 	Monogram…	Chữ lồng…
 	Type on an Arc…	Chữ trên cung…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	Công cụ Góc mũi khâu: kéo ngang qua satin để thêm một đường, kéo đầu một đường để di chuyển nó, Alt-nhấp vào một đường để xóa nó
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	Các đường ngang qua satin đặt hướng mũi khâu tại nơi chúng cắt qua, chuyển dần giữa các đường (công cụ Góc mũi khâu vẽ chúng)
+	Stitch Angle Tool	Công cụ Góc mũi khâu
+	Stitch Angles:	Góc mũi khâu:
+	Stitch Angle	Góc mũi khâu
 	Three Equal	Ba bằng nhau
 	Two Letters	Hai chữ
 	Trace Font	Đồ theo phông chữ

@@ -4938,6 +4938,11 @@ lighting	Light	Свет
 	Update Monogram	Обновить монограмму
 	Monogram…	Монограмма…
 	Type on an Arc…	Текст по дуге…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	Инструмент «Угол стежка»: протащите поперёк атласа, чтобы добавить линию, перетащите конец линии, чтобы переместить её, Alt+щелчок по линии удаляет её
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	Линии поперёк атласа, задающие направление стежков там, где они его пересекают, с плавным переходом между ними (их рисует инструмент «Угол стежка»)
+	Stitch Angle Tool	Инструмент «Угол стежка»
+	Stitch Angles:	Углы стежков:
+	Stitch Angle	Угол стежка
 	Three Equal	Три одинаковые
 	Two Letters	Две буквы
 	Trace Font	Обвести шрифт

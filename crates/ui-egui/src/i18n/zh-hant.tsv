@@ -4230,6 +4230,11 @@ lighting	Light	光源
 	Update Monogram	更新花押字
 	Monogram…	花押字…
 	Type on an Arc…	弧形文字…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	針跡角度工具：橫跨緞紋拖曳以新增線條，拖曳線條端點以移動它，按住 Alt 鍵按一下線條以刪除它
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	橫跨緞紋的線條，在與其相交處設定針跡方向，線條之間逐漸過渡（由針跡角度工具繪製）
+	Stitch Angle Tool	針跡角度工具
+	Stitch Angles:	針跡角度：
+	Stitch Angle	針跡角度
 	Three Equal	三個等大
 	Two Letters	兩個字母
 	Trace Font	描摹字體

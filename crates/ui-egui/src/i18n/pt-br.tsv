@@ -5244,6 +5244,11 @@ mark-style	Japanese	Japonesas
 	Update Monogram	Atualizar Monograma
 	Monogram…	Monograma…
 	Type on an Arc…	Texto em Arco…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	A ferramenta Ângulo do Ponto: arraste através do cetim para adicionar uma linha, arraste a ponta de uma linha para movê-la, Alt+clique em uma linha para removê-la
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	Linhas através do cetim que definem a direção dos pontos onde o cruzam, com transição gradual entre elas (a ferramenta Ângulo do Ponto as desenha)
+	Stitch Angle Tool	Ferramenta Ângulo do Ponto
+	Stitch Angles:	Ângulos do ponto:
+	Stitch Angle	Ângulo do Ponto
 	Three Equal	Três Iguais
 	Two Letters	Duas Letras
 	Trace Font	Decalcar Fonte

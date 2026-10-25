@@ -4983,6 +4983,11 @@ lighting	Light	ライト
 	Update Monogram	モノグラムを更新
 	Monogram…	モノグラム…
 	Type on an Arc…	円弧に沿った文字…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	ステッチ角度ツール：サテンを横切るようにドラッグして線を追加、線の端をドラッグして移動、Alt キーを押しながら線をクリックして削除
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	サテンを横切る線で、交わる位置のステッチ方向を決め、線と線の間は滑らかに移り変わります（ステッチ角度ツールで描きます）
+	Stitch Angle Tool	ステッチ角度ツール
+	Stitch Angles:	ステッチ角度：
+	Stitch Angle	ステッチ角度
 	Three Equal	3 文字均等
 	Two Letters	2 文字
 	Trace Font	フォントをトレース

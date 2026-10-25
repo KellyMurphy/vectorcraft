@@ -5310,6 +5310,11 @@ theme	Appearance	Външен вид
 	Update Monogram	Обновяване на монограма
 	Monogram…	Монограм…
 	Type on an Arc…	Текст по дъга…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	Инструментът за ъгъл на бода: плъзнете през сатена, за да добавите линия; плъзнете края на линия, за да я преместите; Alt+щракване върху линия я премахва
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	Линии през сатена, задаващи посоката на бодовете там, където го пресичат, с плавен преход между тях (чертае ги инструментът за ъгъл на бода)
+	Stitch Angle Tool	Инструмент за ъгъл на бода
+	Stitch Angles:	Ъгли на бода:
+	Stitch Angle	Ъгъл на бода
 	Three Equal	Три еднакви
 	Two Letters	Две букви
 	Trace Font	Прерисуване на шрифта

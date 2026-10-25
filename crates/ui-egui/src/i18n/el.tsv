@@ -5292,6 +5292,11 @@ effect	Points	Σημεία
 	Update Monogram	Ενημέρωση μονογράμματος
 	Monogram…	Μονόγραμμα…
 	Type on an Arc…	Κείμενο σε τόξο…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	Το εργαλείο γωνίας βελονιάς: σύρετε κατά μήκος του σατέν για να προσθέσετε γραμμή, σύρετε το άκρο μιας γραμμής για να τη μετακινήσετε, Alt+κλικ σε γραμμή για να την αφαιρέσετε
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	Γραμμές κατά μήκος του σατέν που ορίζουν την κατεύθυνση των βελονιών εκεί όπου το διασχίζουν, με σταδιακή μετάβαση ανάμεσά τους (τις σχεδιάζει το εργαλείο γωνίας βελονιάς)
+	Stitch Angle Tool	Εργαλείο γωνίας βελονιάς
+	Stitch Angles:	Γωνίες βελονιάς:
+	Stitch Angle	Γωνία βελονιάς
 	Three Equal	Τρία ίσα
 	Two Letters	Δύο γράμματα
 	Trace Font	Αποτύπωση γραμματοσειράς

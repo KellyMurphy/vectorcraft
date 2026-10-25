@@ -110,6 +110,7 @@ pub static ICONS: &[(&str, &[u8])] = &[
     ("dc-live-select", include_bytes!("../../../assets/icons/dc-live-select.svg")),
     ("dc-mask-none", include_bytes!("../../../assets/icons/dc-mask-none.svg")),
     ("dc-measure", include_bytes!("../../../assets/icons/dc-measure.svg")),
+    ("dc-stitch-angle", include_bytes!("../../../assets/icons/dc-stitch-angle.svg")),
     ("dc-mesh", include_bytes!("../../../assets/icons/dc-mesh.svg")),
     ("dc-mirror-cut", include_bytes!("../../../assets/icons/dc-mirror-cut.svg")),
     ("dc-new-fill", include_bytes!("../../../assets/icons/dc-new-fill.svg")),

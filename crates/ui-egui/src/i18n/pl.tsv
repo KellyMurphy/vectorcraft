@@ -5192,6 +5192,11 @@ mark-style	Japanese	Japońskie
 	Update Monogram	Aktualizuj monogram
 	Monogram…	Monogram…
 	Type on an Arc…	Tekst na łuku…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	Narzędzie Kąt ściegu: przeciągnij w poprzek satyny, aby dodać linię, przeciągnij koniec linii, aby ją przesunąć, kliknij linię z Alt, aby ją usunąć
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	Linie w poprzek satyny ustalające kierunek ściegów tam, gdzie ją przecinają, z płynnym przejściem między nimi (rysuje je narzędzie Kąt ściegu)
+	Stitch Angle Tool	Narzędzie Kąt ściegu
+	Stitch Angles:	Kąty ściegu:
+	Stitch Angle	Kąt ściegu
 	Three Equal	Trzy równe
 	Two Letters	Dwie litery
 	Trace Font	Odrysuj czcionkę

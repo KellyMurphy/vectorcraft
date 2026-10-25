@@ -5327,6 +5327,11 @@ mark-style	Japanese	Japonské
 	Update Monogram	Aktualizovat monogram
 	Monogram…	Monogram…
 	Type on an Arc…	Text na oblouku…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	Nástroj Úhel stehu: tažením přes satén přidáte čáru, tažením konce čáry ji posunete, Alt+kliknutím na čáru ji odstraníte
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	Čáry přes satén určující směr stehů tam, kde jej protínají, s plynulým přechodem mezi nimi (kreslí je nástroj Úhel stehu)
+	Stitch Angle Tool	Nástroj Úhel stehu
+	Stitch Angles:	Úhly stehů:
+	Stitch Angle	Úhel stehu
 	Three Equal	Tři stejná
 	Two Letters	Dvě písmena
 	Trace Font	Obkreslit písmo

@@ -4916,6 +4916,11 @@ effect	Regular	Regelmäßig
 	Update Monogram	Monogramm aktualisieren
 	Monogram…	Monogramm…
 	Type on an Arc…	Text auf einem Bogen…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	Das Stichwinkel-Werkzeug: über den Satin ziehen fügt eine Linie hinzu, das Ende einer Linie ziehen verschiebt sie, Alt-Klick auf eine Linie entfernt sie
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	Linien über den Satin, die die Stichrichtung dort festlegen, wo sie ihn kreuzen, mit allmählichem Übergang dazwischen (das Stichwinkel-Werkzeug zeichnet sie)
+	Stitch Angle Tool	Stichwinkel-Werkzeug
+	Stitch Angles:	Stichwinkel:
+	Stitch Angle	Stichwinkel
 	Three Equal	Drei gleiche
 	Two Letters	Zwei Buchstaben
 	Trace Font	Schrift nachzeichnen

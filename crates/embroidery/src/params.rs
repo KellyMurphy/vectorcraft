@@ -33,6 +33,8 @@ pub enum ValueKind {
     Thread,
     /// A point, `[x, y]` mm.
     Point,
+    /// Lines, `[[x1, y1, x2, y2], …]` mm (at most [`StitchSettings::MAX_ANGLES`]).
+    Lines,
 }
 
 /// Whether a setting suits the settings it was given for; the error says why not.
@@ -82,6 +84,22 @@ fn point(v: &Value) -> Option<[f64; 2]> {
     let a = v.as_array()?;
     let (x, y) = (a.first()?.as_f64()?, a.get(1)?.as_f64()?);
     (a.len() == 2 && x.is_finite() && y.is_finite()).then_some([x, y])
+}
+fn lines(v: &Value) -> Option<Vec<[f64; 4]>> {
+    let a = v.as_array()?;
+    if a.len() > StitchSettings::MAX_ANGLES {
+        return None;
+    }
+    a.iter()
+        .map(|l| {
+            let l = l.as_array().filter(|l| l.len() == 4)?;
+            let mut out = [0.0; 4];
+            for (o, x) in out.iter_mut().zip(l) {
+                *o = x.as_f64().filter(|x| x.is_finite())?;
+            }
+            Some(out)
+        })
+        .collect()
 }
 fn flag(v: &Value) -> bool {
     v.as_bool().unwrap_or_default()
@@ -266,6 +284,18 @@ pub static PARAMS: &[Param] = &[
         nullable: true,
         get: |s| json!(s.start_at),
         set: |s, v| s.start_at = point(v),
+        suits: None,
+    },
+    Param {
+        key: "angles",
+        value: ValueKind::Lines,
+        kinds: &[K::Satin, K::SatinShape, K::Auto],
+        label: "Stitch Angles:",
+        help: "Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)",
+        doc: "[[x1 y1 x2 y2] …] mm in document space; at most 256; null or [] for none: stitch angle lines; where one crosses the satin's centre line (a column's path; a satin shape's strokes) its stitches take the line's angle to it and turn gradually between lines by distance along it; at most 60° off square; between rails they are rungs",
+        nullable: true,
+        get: |s| json!(s.angles),
+        set: |s, v| s.angles = lines(v).unwrap_or_default(),
         suits: None,
     },
     Param {
@@ -486,6 +516,7 @@ impl Param {
             ValueKind::Id => v.as_str().is_some(),
             ValueKind::Thread => parse_thread(v).is_some(),
             ValueKind::Point => point(v).is_some(),
+            ValueKind::Lines => lines(v).is_some(),
         };
         if ok { Ok(()) } else { Err(self.expected()) }
     }
@@ -511,6 +542,7 @@ impl Param {
             ValueKind::Id => format!("`{key}` must be an id{or_null}"),
             ValueKind::Thread => format!("`{key}` must be \"#rrggbb\", [r, g, b]{or_null}"),
             ValueKind::Point => format!("`{key}` must be [x, y] (mm){or_null}"),
+            ValueKind::Lines => format!("`{key}` must be [[x1, y1, x2, y2], …] (mm, at most {}){or_null}", StitchSettings::MAX_ANGLES),
         }
     }
 }

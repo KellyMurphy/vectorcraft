@@ -4942,6 +4942,11 @@ lighting	Light	Luce
 	Update Monogram	Aggiorna monogramma
 	Monogram…	Monogramma…
 	Type on an Arc…	Testo su arco…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	Lo strumento Angolo punto: trascina attraverso il satin per aggiungere una linea, trascina l’estremità di una linea per spostarla, Alt+clic su una linea per rimuoverla
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	Linee attraverso il satin che fissano la direzione dei punti dove lo attraversano, con una transizione graduale tra di esse (le disegna lo strumento Angolo punto)
+	Stitch Angle Tool	Strumento Angolo punto
+	Stitch Angles:	Angoli punto:
+	Stitch Angle	Angolo punto
 	Three Equal	Tre uguali
 	Two Letters	Due lettere
 	Trace Font	Ricalca font

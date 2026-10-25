@@ -4917,6 +4917,11 @@ lighting	Light	광원
 	Update Monogram	모노그램 업데이트
 	Monogram…	모노그램…
 	Type on an Arc…	원호 위 텍스트…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	스티치 각도 도구: 새틴을 가로질러 드래그하면 선이 추가되고, 선의 끝을 드래그하면 이동하며, Alt 키를 누른 채 선을 클릭하면 제거됩니다
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	새틴을 가로지르는 선으로, 교차하는 곳의 스티치 방향을 정하며 선 사이에서는 점차 바뀝니다(스티치 각도 도구로 그림)
+	Stitch Angle Tool	스티치 각도 도구
+	Stitch Angles:	스티치 각도:
+	Stitch Angle	스티치 각도
 	Three Equal	같은 크기 세 글자
 	Two Letters	두 글자
 	Trace Font	글꼴 따라 그리기

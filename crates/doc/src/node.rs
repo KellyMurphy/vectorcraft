@@ -1269,6 +1269,13 @@ impl Node {
         {
             dimension.transform(a);
         }
+        // So do its stitches' Start At point and angle lines.
+        if let Some(e) = self.extras_if_any()
+            && let Some(s) = &mut e.stitch
+            && (s.start_at.is_some() || !s.angles.is_empty())
+        {
+            s.transform(a);
+        }
         if !self.is_layer() {
             self.bbox_angle = crate::orient::transformed_angle(self.bbox_angle, a);
         }

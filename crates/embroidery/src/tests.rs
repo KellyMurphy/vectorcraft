@@ -1722,7 +1722,7 @@ fn report_pen_strokes() {
             }
             let pieces = crate::skeleton::strokes(&polys, FillRule::NonZero);
             let pens = crate::penstrokes::pen_strokes(&pieces, hand);
-            let q = generate::satin_pen(&polys, FillRule::NonZero, &pieces, 0.4, 0.0, false, 0.0, hand).map(|(_, q)| q);
+            let q = generate::satin_pen(&polys, FillRule::NonZero, &pieces, 0.4, 0.0, false, 0.0, hand, &[]).map(|(_, q)| q);
             let used = q.is_some_and(|q| !q.poor() && q.uncovered <= 0.05);
             line += &format!("{ch}:{}{}/{:.0} ", pens.len(), if used { "P" } else { "" }, q.map_or(0.0, |q| q.uncovered * 100.0));
         }
@@ -1754,7 +1754,7 @@ fn report_pen_bare() {
         let (a, b) = (s.points.first().unwrap(), s.points.last().unwrap());
         println!("pen ({:.1},{:.1})→({:.1},{:.1}) {} pts", a.x - x0, a.y - y0, b.x - x0, b.y - y0, s.points.len());
     }
-    let (runs, q) = generate::satin_pen(&polys, FillRule::NonZero, &pieces, 0.4, 0.0, false, 0.0, hand).unwrap();
+    let (runs, q) = generate::satin_pen(&polys, FillRule::NonZero, &pieces, 0.4, 0.0, false, 0.0, hand, &[]).unwrap();
     println!("{q:?}");
     // The satin alone (patches are the runs before it): where the patches went.
     let patches = generate::patch_bare(&polys, FillRule::NonZero, &runs[runs.len().saturating_sub(pieces.len() * 3)..], 0.4);
@@ -1763,4 +1763,91 @@ fn report_pen_bare() {
             r.iter().fold(((f64::MAX, f64::MAX), (f64::MIN, f64::MIN)), |(l, h), p| ((l.0.min(p.x), l.1.min(p.y)), (h.0.max(p.x), h.1.max(p.y))));
         println!("bare ({:.1},{:.1})–({:.1},{:.1})", lo.0 - x0, lo.1 - y0, hi.0 - x0, hi.1 - y0);
     }
+}
+
+/// The stitches of `plan` that cross most of a column `width` mm wide lying along y = `mid`: each
+/// stitch's x where it crosses the middle and its angle from square across, degrees.
+fn crossings(plan: &Plan, mid: f64, width: f64) -> Vec<(f64, f64)> {
+    let mut out = vec![];
+    for (_, run) in plan.runs() {
+        for w in run.windows(2) {
+            let d = w[1] - w[0];
+            if d.y.abs() < 0.75 * width || (w[0].y - mid) * (w[1].y - mid) > 0.0 {
+                continue;
+            }
+            let x = w[0].x + d.x * (mid - w[0].y) / d.y;
+            out.push((x, (d.x / d.y).atan().to_degrees()));
+        }
+    }
+    out.sort_by(|a, b| a.0.total_cmp(&b.0));
+    // A stitch runs from one zig to the next, so zig and zag lean a little either way of the
+    // stitch direction: each pair's average is it.
+    out.windows(2).map(|w| ((w[0].0 + w[1].0) / 2.0, (w[0].1 + w[1].1) / 2.0)).collect()
+}
+
+#[test]
+fn a_satin_column_takes_its_angle_lines_angle() {
+    // A column 4 mm wide along y = 0, 25.4 mm long; a line at 45° across its middle.
+    let line = poly(&[(0.0, 0.0), (72.0, 0.0)], false);
+    let s = StitchSettings { width: Some(4.0), angles: vec![[10.7, -2.0, 14.7, 2.0]], ..StitchSettings::new(StitchKind::Satin) };
+    let p = plan_of(line.clone(), s);
+    let c = crossings(&p, 0.0, 4.0);
+    assert!(c.len() > 20, "{}", c.len());
+    for (x, a) in &c {
+        assert!((a.abs() - 45.0).abs() < 2.0, "at {x}: {a}°");
+    }
+    // Still the column's width: the needle points stay on its edges.
+    let b = p.stats().bounds.unwrap();
+    assert!((b[3] - b[1] - 4.0).abs() < 1e-6, "{b:?}");
+    // Without lines: square across.
+    let square = plan_of(line, StitchSettings { width: Some(4.0), ..StitchSettings::new(StitchKind::Satin) });
+    let sq: Vec<_> = crossings(&square, 0.0, 4.0).into_iter().filter(|(x, _)| *x > 1.0 && *x < 24.4).collect();
+    assert!(sq.iter().all(|(_, a)| a.abs() < 1.0), "{sq:?}");
+}
+
+#[test]
+fn between_angle_lines_a_satin_turns_gradually() {
+    let line = poly(&[(0.0, 0.0), (144.0, 0.0)], false);
+    // Square at x = 5 mm, 45° at x = 45 mm.
+    let s =
+        StitchSettings { width: Some(4.0), angles: vec![[5.0, -3.0, 5.0, 3.0], [43.0, -2.0, 47.0, 2.0]], ..StitchSettings::new(StitchKind::Satin) };
+    let c = crossings(&plan_of(line, s), 0.0, 4.0);
+    let at = |x: f64| c.iter().min_by(|a, b| (a.0 - x).abs().total_cmp(&(b.0 - x).abs())).map(|c| c.1.abs()).unwrap();
+    assert!(at(3.0) < 1.0 && (at(25.0) - 22.5).abs() < 3.0 && (at(48.0) - 45.0).abs() < 2.0, "{} {} {}", at(3.0), at(25.0), at(48.0));
+    // No jumps: neighbouring stitches lean alike.
+    for w in c.windows(2) {
+        assert!((w[1].1.abs() - w[0].1.abs()).abs() < 2.0, "{w:?}");
+    }
+}
+
+#[test]
+fn a_satin_shape_takes_its_angle_lines_angle() {
+    // A bar 25.4 mm × 4 mm, its middle on y = 2 mm; a 45° line across it.
+    let mm_pt = 72.0 / 25.4;
+    let bar = poly(&[(0.0, 0.0), (72.0, 0.0), (72.0, 4.0 * mm_pt), (0.0, 4.0 * mm_pt)], true);
+    let s = StitchSettings { angles: vec![[10.7, 0.0, 14.7, 4.0]], ..StitchSettings::new(StitchKind::SatinShape) };
+    let c = crossings(&plan_of(bar.clone(), s), 2.0, 3.0);
+    let middle: Vec<_> = c.iter().filter(|(x, _)| *x > 6.0 && *x < 20.0).collect();
+    assert!(middle.len() > 10, "{}", middle.len());
+    for (x, a) in middle {
+        assert!((a.abs() - 45.0).abs() < 5.0, "at {x}: {a}°");
+    }
+}
+
+#[test]
+fn angle_lines_move_with_their_object() {
+    let mut n = Node::path(vectorcraft_doc::NodeId(1), poly(&[(0.0, 0.0), (72.0, 0.0)], false), Appearance::default_art());
+    n.extras_mut().stitch = Some(Box::new(StitchSettings {
+        angles: vec![[0.0, 0.0, 25.4, 0.0]],
+        start_at: Some([25.4, 25.4]),
+        ..StitchSettings::new(StitchKind::Satin)
+    }));
+    // 72 pt right, then twice the size about the origin.
+    n.transform(kurbo::Affine::scale(2.0) * kurbo::Affine::translate((72.0, 0.0)), false);
+    let s = n.extras().stitch.clone().unwrap();
+    let near = |a: f64, b: f64| (a - b).abs() < 1e-9;
+    let l = s.angles[0];
+    assert!(near(l[0], 50.8) && near(l[1], 0.0) && near(l[2], 101.6) && near(l[3], 0.0), "{l:?}");
+    let [x, y] = s.start_at.unwrap();
+    assert!(near(x, 101.6) && near(y, 50.8), "{x} {y}");
 }

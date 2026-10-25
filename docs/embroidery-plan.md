@@ -516,6 +516,19 @@ than Warp (Roughen, Zig Zag…) on stitched art.
 - **Tests.** Envelope and warp type sews from the distorted outline; arc text positions; every monogram
   layout keeps letters inside their boxes and stays editable; small monograms trigger the size warning.
 
+### E8.9 Stitch angle lines (asked for by the user, 2026-10-25; done)
+
+Satin had no way to set its stitch angle. **As built:** `StitchSettings.angles` (lines `[x1, y1, x2, y2]` mm,
+moved with the object by `Node::transform`, as `startAt` now is too) set through `embroidery.set {angles}`;
+`crates/embroidery/src/angles.rs` measures where lines cross a satin's centre line and mixes their angle
+(relative to the line, held to 60° off square) by distance along it. Satin columns (`generate::satin_angled`,
+blended across corners), satin shapes and Auto's satin (`satin_shape_angled`: per pen stroke and per
+centre-line piece) take it; between rails the lines are rungs. The Stitch Angle tool (`crates/tools/src/
+stitch_angle.rs`, an original icon) draws, moves and removes lines; the Stitch tab shows how many, with
+Draw and Clear. Tests: a column and a satin shape sew at a line's angle, two lines blend evenly with no
+jumps, lines move with the object, the tool's gestures. **Not yet:** angle lines for fills (fills have one
+angle), and a preview of the angle while dragging other than the stitches themselves.
+
 ### E8.4 Motif fills and extraction (L)
 
 Carved motifs (E3) shape a tatami fill's needle points along lines. **Motif fills** are different: a small

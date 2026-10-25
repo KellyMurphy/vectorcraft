@@ -1210,6 +1210,27 @@ fn other_settings(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: 
                 .response
                 .on_hover_text(help);
             }
+            // Stitch angle lines: how many, the tool that draws them, and clearing them.
+            ValueKind::Lines => {
+                let n = sel[key].as_array().map_or(0, Vec::len);
+                ui.scope(|ui| {
+                    widgets::label_row(ui, label, LABEL_W, |ui| {
+                        ui.label(if n == 0 { tl!("None").to_string() } else { n.to_string() });
+                        if widgets::flat_button(ui, tl!("Draw"), 50.0)
+                            .on_hover_text(tl!("The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it"))
+                            .clicked()
+                            && let Err(e) = app.run("tool.select", json!({"tool": "stitchAngle"}))
+                        {
+                            app.status(e);
+                        }
+                        if n > 0 && widgets::flat_button(ui, tl!("Clear"), 50.0).clicked() {
+                            set(app, json!({ key: null }));
+                        }
+                    })
+                })
+                .response
+                .on_hover_text(help);
+            }
             // The stitch type, the thread and ids have rows of their own above.
             ValueKind::Kind | ValueKind::Thread | ValueKind::Id => {}
         }

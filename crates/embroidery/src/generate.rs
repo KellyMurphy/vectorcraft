@@ -190,16 +190,20 @@ struct Zig {
     piece: Option<usize>,
     left: Option<Point>,
     right: Option<Point>,
+    /// How far the stitch turns from the normal (stitch angle lines), radians.
+    turn: f64,
 }
 
 impl Zig {
     fn new(centre: Point, normal: Vec2, piece: Option<usize>) -> Self {
-        Self { centre, normal, piece, left: None, right: None }
+        Self { centre, normal, piece, left: None, right: None, turn: 0.0 }
     }
 
-    /// Where its left (or right) side would go without an override.
+    /// Where its left (or right) side would go without an override: on the column's edge, along
+    /// the stitch's direction (turned, it reaches further to get there).
     fn side(&self, left: bool, half: f64) -> Point {
-        self.centre + self.normal * if left { half } else { -half }
+        let half = half / self.turn.cos().max(0.5);
+        self.centre + crate::angles::rotate(self.normal, self.turn) * if left { half } else { -half }
     }
 
     fn pin(&mut self, left: bool, at: Point) {
@@ -272,22 +276,43 @@ fn pieces(line: &[Point], closed: bool) -> (Vec<Vec<Point>>, bool) {
 /// corner the inner side's needle points stop at the inner miter point and the column fans
 /// round it, so the stitches neither pile up inside the turn nor leave a gap outside it.
 pub fn satin(line: &[Point], closed: bool, width: f64, spacing: f64) -> Vec<Point> {
-    column(line, closed, width, spacing, true)
+    column(line, closed, width, spacing, true, &[])
+}
+
+/// [`satin`] with stitch angle lines ([`crate::angles`]): where they cross the column they set
+/// the stitches' direction, which turns gradually between them.
+pub fn satin_angled(line: &[Point], closed: bool, width: f64, spacing: f64, angles: &[crate::angles::Line]) -> Vec<Point> {
+    column(line, closed, width, spacing, true, angles)
 }
 
 /// A zigzag `width` mm wide along `line`, a point every `spacing` mm, its inner side held at
 /// each sharp corner's inner miter point. With `fan`, the outer side sweeps round the corner in
 /// steps (a dense satin); without, one point at the outer miter turns it (an open zigzag).
-fn column(line: &[Point], closed: bool, width: f64, spacing: f64, fan: bool) -> Vec<Point> {
+fn column(line: &[Point], closed: bool, width: f64, spacing: f64, fan: bool, angles: &[crate::angles::Line]) -> Vec<Point> {
     let half = width / 2.0;
     let line = reseam(line, closed);
     let (pieces, ring) = pieces(&line, closed);
+    // Stitch angle lines, measured along the whole line (corners and all).
+    let turns = crate::angles::Turns::new(&line, angles);
+    let mut offset = 0.0;
     let mut zigs: Vec<Zig> = vec![];
     let mut corners: Vec<Corner> = vec![];
     for (k, piece) in pieces.iter().enumerate() {
         let c = resample(piece, spacing, false);
+        let mut along = offset;
+        let mut prev: Option<Point> = None;
         // The corner point a piece starts at belongs to the fan before it.
-        zigs.extend(c.iter().zip(normals(&c, ring)).skip(usize::from(k > 0)).map(|(p, n)| Zig::new(*p, n, Some(k))));
+        for (j, (p, n)) in c.iter().zip(normals(&c, ring)).enumerate() {
+            along += prev.map_or(0.0, |q| q.distance(*p));
+            prev = Some(*p);
+            if j == 0 && k > 0 {
+                continue;
+            }
+            let mut z = Zig::new(*p, n, Some(k));
+            z.turn = turns.as_ref().map_or(0.0, |t| t.at(along));
+            zigs.push(z);
+        }
+        offset += length(piece);
         let (Some(next), Some(&v)) = (pieces.get(k + 1), piece.last()) else { continue };
         let before = piece.iter().rev().find(|p| p.distance(v) > 1e-9).copied();
         let after = next.iter().find(|p| p.distance(v) > 1e-9).copied();
@@ -408,7 +433,7 @@ pub fn border(poly: &[Point], width: f64) -> Vec<Point> {
 /// diagonal stitch longer than can be sewn.
 pub fn zigzag(line: &[Point], closed: bool, width: f64, spacing: f64) -> Vec<Point> {
     let width = width.min((MAX_STITCH * MAX_STITCH - spacing * spacing).max(0.0).sqrt());
-    column(line, closed, width, spacing, false)
+    column(line, closed, width, spacing, false, &[])
 }
 
 /// What an `auto` underlay becomes, by stitch and width (mm). The fabric profile (E7.3) will set
@@ -457,11 +482,24 @@ pub fn satin_underlay(line: &[Point], closed: bool, width: f64, kind: Underlay) 
 
 /// [`satin_underlay`], `auto` picking by `auto`'s thresholds.
 pub fn satin_underlay_with(line: &[Point], closed: bool, width: f64, kind: Underlay, auto: &AutoUnderlay) -> (Vec<Point>, bool) {
+    satin_underlay_angled(line, closed, width, kind, auto, &[])
+}
+
+/// [`satin_underlay_with`] under a satin with stitch angle lines: a zigzag underlay leans as the
+/// satin over it does.
+pub fn satin_underlay_angled(
+    line: &[Point],
+    closed: bool,
+    width: f64,
+    kind: Underlay,
+    auto: &AutoUnderlay,
+    angles: &[crate::angles::Line],
+) -> (Vec<Point>, bool) {
     if kind == Underlay::Auto {
         let mut out = vec![];
         let mut back = false;
         for u in auto.satin(width) {
-            let (part, end) = satin_underlay(line, closed, width, *u);
+            let (part, end) = satin_underlay_angled(line, closed, width, *u, auto, angles);
             out.extend(part);
             back = end;
         }
@@ -481,7 +519,7 @@ pub fn satin_underlay_with(line: &[Point], closed: bool, width: f64, kind: Under
             out.extend(c.iter().zip(&n).rev().map(|(p, n)| *p - *n * half));
             (out, false)
         }
-        Underlay::Zigzag => (satin(line, closed, inner, UNDERLAY_SPACING), true),
+        Underlay::Zigzag => (satin_angled(line, closed, inner, UNDERLAY_SPACING, angles), true),
         Underlay::None | Underlay::Fill | Underlay::Auto => (vec![], false),
     }
 }
@@ -1220,13 +1258,29 @@ pub fn satin_shape_hand(
     min_width: f64,
     hand: crate::penstrokes::Hand,
 ) -> (Vec<Vec<Point>>, SatinQuality) {
+    satin_shape_angled(polys, rule, spacing, pull, underlay, min_width, hand, &[])
+}
+
+/// [`satin_shape_hand`] with stitch angle lines ([`crate::angles`]): each stroke they cross sews
+/// its stitches at their angle there, turning gradually between them.
+#[allow(clippy::too_many_arguments)]
+pub fn satin_shape_angled(
+    polys: &[Vec<Point>],
+    rule: FillRule,
+    spacing: f64,
+    pull: f64,
+    underlay: bool,
+    min_width: f64,
+    hand: crate::penstrokes::Hand,
+    angles: &[crate::angles::Line],
+) -> (Vec<Vec<Point>>, SatinQuality) {
     let strokes = crate::skeleton::strokes(polys, rule);
-    if let Some((runs, q)) = satin_pen(polys, rule, &strokes, spacing, pull, underlay, min_width, hand)
+    if let Some((runs, q)) = satin_pen(polys, rule, &strokes, spacing, pull, underlay, min_width, hand, angles)
         && pen_suits(&q)
     {
         return (runs, q);
     }
-    satin_pieces(polys, rule, strokes, spacing, pull, underlay, min_width)
+    satin_pieces(polys, rule, strokes, spacing, pull, underlay, min_width, angles)
 }
 
 /// A stretch of a pen stroke's satin: its centre points and its zigs (each a pair across it).
@@ -1241,6 +1295,7 @@ const PEN_BARE: f64 = 0.05;
 /// direction a pen draws it, zigs `spacing` apart; where it crosses a stroke drawn before, only the
 /// tuck under that stroke's edge is kept. With how many zigs there are and how many fan (one side
 /// three times the other). None when the shape has no strokes.
+#[allow(clippy::too_many_arguments)]
 pub fn pen_parts(
     polys: &[Vec<Point>],
     rule: FillRule,
@@ -1249,6 +1304,7 @@ pub fn pen_parts(
     pull: f64,
     min_width: f64,
     hand: crate::penstrokes::Hand,
+    angles: &[crate::angles::Line],
 ) -> Option<(Vec<SatinPart>, usize, usize)> {
     use crate::penstrokes::{pen_strokes, under};
     let mut pens = pen_strokes(pieces, hand);
@@ -1273,14 +1329,20 @@ pub fn pen_parts(
         };
         // The stroke's zigs, split where it runs under a stroke drawn before.
         let mut parts: Vec<SatinPart> = vec![(vec![], vec![])];
-        for ((p, n), half) in c.iter().zip(&base).zip(&h) {
+        // Stitch angle lines crossing this stroke turn its stitches.
+        let turns = crate::angles::turns(&c, &base, angles);
+        for (k, ((p, n), half)) in c.iter().zip(&base).zip(&h).enumerate() {
+            let turn = turns.as_ref().and_then(|t| t.get(k)).copied().unwrap_or(0.0);
+            let n = &crate::angles::rotate(*n, turn);
+            // Turned, a stitch reaches further to get to the edge.
+            let half = half / turn.cos().max(0.5);
             if under(*p, drawn) {
                 if parts.last().is_some_and(|(_, z)| !z.is_empty()) {
                     parts.push((vec![], vec![]));
                 }
                 continue;
             }
-            let reach = half.max(own);
+            let reach = half.max(own / turn.cos().max(0.5));
             let half = (half + pull / 2.0).max(min_width / 2.0).min(MAX_STITCH / 2.0);
             // Out to the outline, as far as the stroke's own width (more across a tip than its
             // centre line's distance to the edge says), else its width here.
@@ -1317,8 +1379,9 @@ pub fn satin_pen(
     underlay: bool,
     min_width: f64,
     hand: crate::penstrokes::Hand,
+    angles: &[crate::angles::Line],
 ) -> Option<(Vec<Vec<Point>>, SatinQuality)> {
-    let (parts, zigs, fanned) = pen_parts(polys, rule, pieces, spacing, pull, min_width, hand)?;
+    let (parts, zigs, fanned) = pen_parts(polys, rule, pieces, spacing, pull, min_width, hand, angles)?;
     let mut out = uncovered_parts(polys, rule, pieces);
     let (mut points, mut crowded) = (0usize, 0usize);
     for (centres, zig) in parts {
@@ -1356,6 +1419,7 @@ pub fn pen_suits(q: &SatinQuality) -> bool {
 
 /// Satin piece by piece of the shape's centre line (`strokes`): the way shapes that aren't
 /// written as pen strokes are sewn.
+#[allow(clippy::too_many_arguments)]
 fn satin_pieces(
     polys: &[Vec<Point>],
     rule: FillRule,
@@ -1364,6 +1428,7 @@ fn satin_pieces(
     pull: f64,
     underlay: bool,
     min_width: f64,
+    angles: &[crate::angles::Line],
 ) -> (Vec<Vec<Point>>, SatinQuality) {
     let (mut positions, mut skipped, mut points, mut crowded) = (0usize, 0usize, 0usize, 0usize);
     let (mut zigs, mut fanned) = (0usize, 0usize);
@@ -1460,6 +1525,8 @@ fn satin_pieces(
                 if w.is_empty() { 0.0 } else { w.iter().sum::<f64>() / w.len() as f64 }
             })
             .collect();
+        // Stitch angle lines crossing the stroke set its direction instead.
+        let turns = crate::angles::turns(&c, &base, angles).unwrap_or(turns);
         // One zig at `p` across direction `d`: its two needle points, or none where satin can't
         // span (no edge near on a side: inside a junction, which other strokes cover, or a blob).
         // Out to the edge each side, but not past twice the stroke's half-width `r` there (at a

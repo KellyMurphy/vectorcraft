@@ -223,6 +223,12 @@ pub struct StitchSettings {
     /// nearer end). `None`: nearest where the needle is ([`EmbroiderySetup::auto_start`]).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub start_at: Option<[f64; 2]>,
+    /// Stitch angle lines, mm in document space, each `[x1, y1, x2, y2]`: satin (a column, a
+    /// satin shape, Auto's satin) crossed by one sews its stitches at the line's angle there, and
+    /// between lines the angle turns gradually from one to the next (between rails, they are
+    /// rungs). Kept with the object as it is moved, scaled or turned.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub angles: Vec<[f64; 4]>,
     /// Puff (3D foam) embroidery: the foam's thickness, mm. A puffed satin is sewn after a stop
     /// for placing the foam, dense and with no underlay, its open ends capped, then perforated
     /// with short running stitches all round its edge so the excess foam tears away.
@@ -833,6 +839,26 @@ impl EmbroiderySetup {
 }
 
 impl StitchSettings {
+    /// The most stitch angle lines an object keeps.
+    pub const MAX_ANGLES: usize = 256;
+
+    /// Its points in document space (Start At, the angle lines) moved by `a` (document points)
+    /// with the object.
+    pub fn transform(&mut self, a: vectorcraft_geom::Affine) {
+        const PT_MM: f64 = 25.4 / 72.0;
+        let map = |x: f64, y: f64| {
+            let p = a * vectorcraft_geom::Point::new(x / PT_MM, y / PT_MM);
+            [p.x * PT_MM, p.y * PT_MM]
+        };
+        if let Some([x, y]) = self.start_at {
+            self.start_at = Some(map(x, y));
+        }
+        for l in &mut self.angles {
+            let ([x1, y1], [x2, y2]) = (map(l[0], l[1]), map(l[2], l[3]));
+            *l = [x1, y1, x2, y2];
+        }
+    }
+
     /// Allowed stitch lengths, mm: below this range the needle cuts the fabric; above it the
     /// stitch snags (and DST can't move further than 12.1 mm in one record).
     pub const LENGTH: std::ops::RangeInclusive<f64> = 0.3..=12.0;

@@ -97,6 +97,7 @@ fn full_stitch() -> StitchSettings {
         border: Some(2.0),
         rails: true,
         start_at: Some([1.0, 2.0]),
+        angles: vec![[1.0, 2.0, 3.0, 4.0]],
         puff: Some(3.0),
         keep_covered: true,
         trim_before: true,
@@ -487,7 +488,7 @@ fn embroidery_schema_matches_the_code() {
             }
             ValueKind::Choice(ids) => assert_eq!(strings(&prop["enum"]), ids.iter().map(|s| s.to_string()).collect(), "{}", p.key),
             ValueKind::Flag => assert_eq!(prop["type"], "boolean", "{}", p.key),
-            ValueKind::Kind | ValueKind::Degrees | ValueKind::Id | ValueKind::Thread | ValueKind::Point => {}
+            ValueKind::Kind | ValueKind::Degrees | ValueKind::Id | ValueKind::Thread | ValueKind::Point | ValueKind::Lines => {}
         }
     }
     // The fixed lists the table points at are the code's own.

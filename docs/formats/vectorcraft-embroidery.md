@@ -47,6 +47,7 @@ are kept but have no effect.
 | `wideOver` | number, mm | auto | 2–12, and at least `thinUnder` | 7 |
 | `border` | number, mm | fill, auto | 0.5–6 | none (auto: 2 on the shapes it fills) |
 | `rails` | boolean | satin | | false |
+| `angles` | array of `[x1, y1, x2, y2]`, mm in document space (at most 256) | satin, satin shape, auto | | none. Stitch angle lines: where one crosses the satin's centre line (a column's path, a satin shape's strokes) the stitches take its angle relative to that line, and between lines the angle turns gradually, by distance along it; before the first and after the last the nearest line's holds; at most 60° off square. Between rails they are rungs. A stroke no line crosses keeps its own direction. They move with the object. |
 | `startAt` | `[x, y]`, mm in document space | running, bean, zigzag | | none: nearest where the needle is (see `autoStart`). The path is entered at its point nearest it: a closed running path there, an open path from its nearer end. |
 | `puff` | number, mm | satin, satin shape, auto | 1–6 | none: not puffed. Puff (3D foam): see below. |
 | `keepCovered` | boolean | fill | | false: rows under objects sewn later on top are cut away (see `overlap`) |

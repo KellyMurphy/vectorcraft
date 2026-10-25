@@ -34,6 +34,7 @@ pub mod settings;
 pub mod shape;
 pub mod shaperwidget;
 pub mod slice;
+pub mod stitch_angle;
 pub mod stitch_start;
 pub mod symbolism;
 pub mod text;
@@ -790,6 +791,7 @@ pub trait Tool: Send {
 pub fn create(id: &str) -> Box<dyn Tool> {
     match id {
         "selection" => Box::new(select::SelectionTool::default()),
+        "stitchAngle" => Box::new(stitch_angle::StitchAngleTool::default()),
         "directSelection" => Box::new(direct::DirectSelectionTool::new(false)),
         "groupSelection" => Box::new(direct::DirectSelectionTool::new(true)),
         "pen" => Box::new(pen::PenTool::default()),

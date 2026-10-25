@@ -251,9 +251,9 @@ pub fn trace(outline: &BezPath, upem: f64, hand: crate::penstrokes::Hand) -> Vec
     }
     let to_font = |p: Point| Point::new(p.x / EM_MM * upem, -p.y / EM_MM * upem);
     let pieces = crate::skeleton::strokes(&polys, FillRule::NonZero);
-    let suits = crate::generate::satin_pen(&polys, FillRule::NonZero, &pieces, 0.4, 0.0, false, 0.0, hand)
+    let suits = crate::generate::satin_pen(&polys, FillRule::NonZero, &pieces, 0.4, 0.0, false, 0.0, hand, &[])
         .is_some_and(|(_, q)| crate::generate::pen_suits(&q));
-    let parts = if suits { crate::generate::pen_parts(&polys, FillRule::NonZero, &pieces, RAIL_STEP, 0.0, 0.0, hand) } else { None };
+    let parts = if suits { crate::generate::pen_parts(&polys, FillRule::NonZero, &pieces, RAIL_STEP, 0.0, 0.0, hand, &[]) } else { None };
     let Some((parts, _, _)) = parts.filter(|(p, _, _)| !p.is_empty()) else {
         // Not a letter for pen strokes: its outline, for Auto to sew.
         let path = Affine::scale(upem) * outline.clone();

@@ -5377,6 +5377,11 @@ swatch	Bright Violet	Felviolet
 	Update Monogram	Monogram bijwerken
 	Monogram…	Monogram…
 	Type on an Arc…	Tekst op een boog…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	Het steekhoekgereedschap: sleep over het satijn om een lijn toe te voegen, sleep het uiteinde van een lijn om die te verplaatsen, Alt-klik op een lijn om die te verwijderen
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	Lijnen over het satijn die de steekrichting bepalen waar ze het kruisen, met een geleidelijke overgang ertussen (het steekhoekgereedschap tekent ze)
+	Stitch Angle Tool	Steekhoekgereedschap
+	Stitch Angles:	Steekhoeken:
+	Stitch Angle	Steekhoek
 	Three Equal	Drie gelijke
 	Two Letters	Twee letters
 	Trace Font	Lettertype overtrekken

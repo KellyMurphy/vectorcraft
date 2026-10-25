@@ -5304,6 +5304,11 @@ mark-style	Japanese	Japanilainen
 	Update Monogram	Päivitä monogrammi
 	Monogram…	Monogrammi…
 	Type on an Arc…	Teksti kaarella…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	Pistokulma-työkalu: vedä satiinin poikki lisätäksesi viivan, vedä viivan päätä siirtääksesi sitä, Alt-napsauta viivaa poistaaksesi sen
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	Satiinin poikki kulkevat viivat, jotka määräävät pistojen suunnan siellä, missä ne leikkaavat sen, ja suunta vaihtuu niiden välillä vähitellen (Pistokulma-työkalu piirtää ne)
+	Stitch Angle Tool	Pistokulma-työkalu
+	Stitch Angles:	Pistokulmat:
+	Stitch Angle	Pistokulma
 	Three Equal	Kolme samankokoista
 	Two Letters	Kaksi kirjainta
 	Trace Font	Jäljennä fontti
