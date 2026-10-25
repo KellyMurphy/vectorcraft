@@ -5232,6 +5232,9 @@ mark-style	Japanese	Japonesas
 	Embroidery Font Setup	Configuração da Fonte de Bordado
 	New Embroidery Font…	Nova Fonte de Bordado…
 	Open Embroidery Font…	Abrir Fonte de Bordado…
+	Trace Embroidery Font…	Decalcar Fonte de Bordado…
+	Trace Font	Decalcar Fonte
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Digitalizar automaticamente as letras da fonte a decalcar, cada traço como uma coluna de cetim (apenas para fontes cuja licença permite derivados)
 @msg	not a layer	não é uma camada
 @msg	the document has no layer	o documento não tem camada
 	More Settings ({n})	Mais Configurações ({n})

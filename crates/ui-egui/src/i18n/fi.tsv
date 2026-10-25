@@ -5292,6 +5292,9 @@ mark-style	Japanese	Japanilainen
 	Embroidery Font Setup	Kirjontafontin asetukset
 	New Embroidery Font…	Uusi kirjontafontti…
 	Open Embroidery Font…	Avaa kirjontafontti…
+	Trace Embroidery Font…	Jäljennä kirjontafontti…
+	Trace Font	Jäljennä fontti
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Digitoi jäljennettävän fontin kirjaimet automaattisesti, jokainen kynänveto satiinipylväänä (vain fonteille, joiden lisenssi sallii johdannaiset)
 @msg	not a layer	ei ole taso
 @msg	the document has no layer	asiakirjassa ei ole tasoa
 	More Settings ({n})	Lisää asetuksia ({n})

@@ -4904,6 +4904,9 @@ effect	Regular	Regelmäßig
 	Embroidery Font Setup	Stickschrift einrichten
 	New Embroidery Font…	Neue Stickschrift…
 	Open Embroidery Font…	Stickschrift öffnen…
+	Trace Embroidery Font…	Stickschrift nachzeichnen…
+	Trace Font	Schrift nachzeichnen
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Die Buchstaben der Nachzeichnen-Schrift automatisch digitalisieren, jeden Federstrich als Satinsäule (nur für Schriften, deren Lizenz Ableitungen erlaubt)
 @msg	not a layer	keine Ebene
 @msg	the document has no layer	das Dokument hat keine Ebene
 	More Settings ({n})	Weitere Einstellungen ({n})

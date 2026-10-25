@@ -585,6 +585,7 @@ fn every_command_undoes_exactly() {
                 | "embroidery.cutFile"
                 | "embroidery.font.new"
                 | "embroidery.font.open"
+                | "embroidery.font.trace"
         ) || c.id.starts_with("file.")
             || c.id.starts_with("document.")
         {

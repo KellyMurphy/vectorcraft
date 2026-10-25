@@ -5322,6 +5322,9 @@ swatch	Bright Violet	Kraftig violet
 	Embroidery Font Setup	Opsætning af broderiskrifttype
 	New Embroidery Font…	Ny broderiskrifttype…
 	Open Embroidery Font…	Åbn broderiskrifttype…
+	Trace Embroidery Font…	Tegn broderiskrifttype efter…
+	Trace Font	Tegn skrifttype efter
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Digitaliser bogstaverne i skrifttypen at tegne efter automatisk, hvert penselstrøg en satinsøjle (kun for skrifttyper, hvis licens tillader afledte værker)
 @msg	not a layer	ikke et lag
 @msg	the document has no layer	dokumentet har intet lag
 	More Settings ({n})	Flere indstillinger ({n})

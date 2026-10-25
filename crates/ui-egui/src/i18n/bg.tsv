@@ -5298,6 +5298,9 @@ theme	Appearance	Външен вид
 	Embroidery Font Setup	Настройка на шрифта за бродерия
 	New Embroidery Font…	Нов шрифт за бродерия…
 	Open Embroidery Font…	Отваряне на шрифт за бродерия…
+	Trace Embroidery Font…	Прерисуване на шрифт за бродерия…
+	Trace Font	Прерисуване на шрифта
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Автоматично дигитализиране на буквите на шрифта за прерисуване, всеки щрих като сатенена колона (само за шрифтове, чийто лиценз позволява производни)
 @msg	not a layer	не е слой
 @msg	the document has no layer	документът няма слой
 	More Settings ({n})	Още настройки ({n})

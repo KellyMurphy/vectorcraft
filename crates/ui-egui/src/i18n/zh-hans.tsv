@@ -5151,6 +5151,9 @@ lighting	Light	光源
 	Embroidery Font Setup	刺绣字体设置
 	New Embroidery Font…	新建刺绣字体…
 	Open Embroidery Font…	打开刺绣字体…
+	Trace Embroidery Font…	描摹刺绣字体…
+	Trace Font	描摹字体
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	自动将描摹字体的字母数字化，每一笔为一条缎纹柱（仅限许可证允许衍生作品的字体）
 @msg	not a layer	不是图层
 @msg	the document has no layer	文档没有图层
 	More Settings ({n})	更多设置（{n}）

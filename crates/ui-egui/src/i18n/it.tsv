@@ -4930,6 +4930,9 @@ lighting	Light	Luce
 	Embroidery Font Setup	Impostazioni del font da ricamo
 	New Embroidery Font…	Nuovo font da ricamo…
 	Open Embroidery Font…	Apri font da ricamo…
+	Trace Embroidery Font…	Ricalca font da ricamo…
+	Trace Font	Ricalca font
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Digitalizza automaticamente le lettere del font da ricalcare, ogni tratto di penna una colonna satin (solo per font la cui licenza consente opere derivate)
 @msg	not a layer	non è un livello
 @msg	the document has no layer	il documento non ha livelli
 	More Settings ({n})	Altre impostazioni ({n})

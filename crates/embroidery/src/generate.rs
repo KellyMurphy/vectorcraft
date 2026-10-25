@@ -1222,8 +1222,7 @@ pub fn satin_shape_hand(
 ) -> (Vec<Vec<Point>>, SatinQuality) {
     let strokes = crate::skeleton::strokes(polys, rule);
     if let Some((runs, q)) = satin_pen(polys, rule, &strokes, spacing, pull, underlay, min_width, hand)
-        && !q.poor()
-        && q.uncovered <= PEN_BARE
+        && pen_suits(&q)
     {
         return (runs, q);
     }
@@ -1231,27 +1230,26 @@ pub fn satin_shape_hand(
 }
 
 /// A stretch of a pen stroke's satin: its centre points and its zigs (each a pair across it).
-type SatinPart = (Vec<Point>, Vec<(Point, Point)>);
+pub type SatinPart = (Vec<Point>, Vec<(Point, Point)>);
 
 /// Pen strokes that leave more than this bare (before patching) don't suit the shape: it is sewn
 /// piece by piece, or filled.
 const PEN_BARE: f64 = 0.05;
 
-/// Satin by pen strokes ([`crate::penstrokes`]): each stroke at its own width from end to end,
-/// through junctions, in the order and direction a pen draws it; where it crosses a stroke sewn
-/// before, only the tuck under that stroke's edge is sewn. What is still bare is filled under it.
-/// None when the shape has no strokes.
-#[allow(clippy::too_many_arguments)]
-pub fn satin_pen(
+/// A shape's pen strokes ([`crate::penstrokes`]) as the stretches of satin they sew: each stroke at
+/// its own width from end to end, through junctions and on to the edge at corners, in the order and
+/// direction a pen draws it, zigs `spacing` apart; where it crosses a stroke drawn before, only the
+/// tuck under that stroke's edge is kept. With how many zigs there are and how many fan (one side
+/// three times the other). None when the shape has no strokes.
+pub fn pen_parts(
     polys: &[Vec<Point>],
     rule: FillRule,
     pieces: &[crate::skeleton::Stroke],
     spacing: f64,
     pull: f64,
-    underlay: bool,
     min_width: f64,
     hand: crate::penstrokes::Hand,
-) -> Option<(Vec<Vec<Point>>, SatinQuality)> {
+) -> Option<(Vec<SatinPart>, usize, usize)> {
     use crate::penstrokes::{pen_strokes, under};
     let mut pens = pen_strokes(pieces, hand);
     if pens.is_empty() {
@@ -1260,8 +1258,8 @@ pub fn satin_pen(
     for pen in &mut pens {
         crate::penstrokes::carry_through(pen, spacing.max(0.1), |q| inside(polys, rule, q));
     }
-    let mut out = uncovered_parts(polys, rule, pieces);
-    let (mut points, mut crowded, mut zigs, mut fanned) = (0usize, 0usize, 0usize, 0usize);
+    let (mut zigs, mut fanned) = (0usize, 0usize);
+    let mut all: Vec<SatinPart> = vec![];
     for (i, pen) in pens.iter().enumerate() {
         let drawn = pens.get(..i).unwrap_or_default();
         let (c, h) = resample_with(&pen.points, &pen.half, spacing);
@@ -1273,7 +1271,7 @@ pub fn satin_pen(
             s.sort_by(f64::total_cmp);
             s.get(s.len() / 2).copied().unwrap_or(0.0)
         };
-        // The stroke's zigs, split where it runs under a stroke sewn before.
+        // The stroke's zigs, split where it runs under a stroke drawn before.
         let mut parts: Vec<SatinPart> = vec![(vec![], vec![])];
         for ((p, n), half) in c.iter().zip(&base).zip(&h) {
             if under(*p, drawn) {
@@ -1302,21 +1300,41 @@ pub fn satin_pen(
                 zig.push((*p - *n * l, *p + *n * r));
             }
         }
-        for (centres, zig) in parts.into_iter().filter(|(_, z)| z.len() >= 2) {
-            let (needles, crowd) = short_stitches(&zig);
-            points += needles.len();
-            crowded += crowd;
-            let mut run = vec![];
-            if underlay {
-                // A walk down the stroke's centre, then the satin back over it.
-                run.extend(running(&centres, UNDERLAY_LEN));
-                run.extend(needles.iter().rev());
-            } else {
-                run.extend(needles);
-            }
-            if run.len() > 1 {
-                out.push(split_long(&run));
-            }
+        all.extend(parts.into_iter().filter(|(_, z)| z.len() >= 2));
+    }
+    Some((all, zigs, fanned))
+}
+
+/// Satin by pen strokes ([`pen_parts`]), with a centre walk under each stretch when `underlay`.
+/// What is still bare is filled under it. None when the shape has no strokes.
+#[allow(clippy::too_many_arguments)]
+pub fn satin_pen(
+    polys: &[Vec<Point>],
+    rule: FillRule,
+    pieces: &[crate::skeleton::Stroke],
+    spacing: f64,
+    pull: f64,
+    underlay: bool,
+    min_width: f64,
+    hand: crate::penstrokes::Hand,
+) -> Option<(Vec<Vec<Point>>, SatinQuality)> {
+    let (parts, zigs, fanned) = pen_parts(polys, rule, pieces, spacing, pull, min_width, hand)?;
+    let mut out = uncovered_parts(polys, rule, pieces);
+    let (mut points, mut crowded) = (0usize, 0usize);
+    for (centres, zig) in parts {
+        let (needles, crowd) = short_stitches(&zig);
+        points += needles.len();
+        crowded += crowd;
+        let mut run = vec![];
+        if underlay {
+            // A walk down the stroke's centre, then the satin back over it.
+            run.extend(running(&centres, UNDERLAY_LEN));
+            run.extend(needles.iter().rev());
+        } else {
+            run.extend(needles);
+        }
+        if run.len() > 1 {
+            out.push(split_long(&run));
         }
     }
     if out.is_empty() {
@@ -1329,6 +1347,11 @@ pub fn satin_pen(
     }
     let frac = |n: usize, of: usize| if of == 0 { 0.0 } else { n as f64 / of as f64 };
     Some((out, SatinQuality { skipped: 0.0, crowded: frac(crowded, points), fanned: frac(fanned, zigs), uncovered: bare }))
+}
+
+/// Whether pen strokes suit a shape whose pen satin came out as `q`.
+pub fn pen_suits(q: &SatinQuality) -> bool {
+    !q.poor() && q.uncovered <= PEN_BARE
 }
 
 /// Satin piece by piece of the shape's centre line (`strokes`): the way shapes that aren't

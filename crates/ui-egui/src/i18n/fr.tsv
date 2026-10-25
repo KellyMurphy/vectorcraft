@@ -5316,6 +5316,9 @@ theme	Appearance	Apparence
 	Embroidery Font Setup	Réglages de la police de broderie
 	New Embroidery Font…	Nouvelle police de broderie…
 	Open Embroidery Font…	Ouvrir une police de broderie…
+	Trace Embroidery Font…	Décalquer une police de broderie…
+	Trace Font	Décalquer la police
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Numériser automatiquement les lettres de la police à décalquer, chaque trait de plume en colonne de satin (seulement pour les polices dont la licence autorise les dérivés)
 @msg	not a layer	n’est pas un calque
 @msg	the document has no layer	le document n’a aucun calque
 	More Settings ({n})	Plus de réglages ({n})

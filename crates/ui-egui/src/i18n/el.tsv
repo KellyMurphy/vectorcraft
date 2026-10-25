@@ -5280,6 +5280,9 @@ effect	Points	Σημεία
 	Embroidery Font Setup	Ρύθμιση γραμματοσειράς κεντήματος
 	New Embroidery Font…	Νέα γραμματοσειρά κεντήματος…
 	Open Embroidery Font…	Άνοιγμα γραμματοσειράς κεντήματος…
+	Trace Embroidery Font…	Αποτύπωση γραμματοσειράς κεντήματος…
+	Trace Font	Αποτύπωση γραμματοσειράς
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Αυτόματη ψηφιοποίηση των γραμμάτων της γραμματοσειράς αποτύπωσης, κάθε πινελιά μια στήλη σατέν (μόνο για γραμματοσειρές των οποίων η άδεια επιτρέπει παράγωγα)
 @msg	not a layer	δεν είναι επίπεδο
 @msg	the document has no layer	το έγγραφο δεν έχει επίπεδο
 	More Settings ({n})	Περισσότερες ρυθμίσεις ({n})

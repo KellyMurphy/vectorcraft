@@ -5180,6 +5180,9 @@ mark-style	Japanese	Japońskie
 	Embroidery Font Setup	Ustawienia czcionki hafciarskiej
 	New Embroidery Font…	Nowa czcionka hafciarska…
 	Open Embroidery Font…	Otwórz czcionkę hafciarską…
+	Trace Embroidery Font…	Odrysuj czcionkę hafciarską…
+	Trace Font	Odrysuj czcionkę
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Automatycznie zdigitalizuj litery czcionki do odrysowania, każde pociągnięcie pióra jako kolumna satynowa (tylko dla czcionek, których licencja pozwala na utwory zależne)
 @msg	not a layer	to nie jest warstwa
 @msg	the document has no layer	dokument nie ma warstwy
 	More Settings ({n})	Więcej ustawień ({n})

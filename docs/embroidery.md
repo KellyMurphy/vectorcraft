@@ -186,6 +186,15 @@ Tools tab's Font section (`embroidery.font.setup`, `embroidery.font.kern`); **Up
 type below the artboards sewn from the font as it is now. **Save Font…** writes the `.vcfont`
 (`embroidery.font.save`); **Edit Font…** opens one again (`embroidery.font.open`).
 
+**Tracing a font.** **Trace Font** (`embroidery.font.trace`) digitizes the **Trace** font automatically
+into a new font document: each letter is put back together into pen strokes, as Satin Shape sews type
+(downstrokes first, then crossbars and arms tucked under them; script fonts follow the letter's flow), and
+each stroke becomes a satin column between two rails, which scale with the letter. A letter pen strokes
+don't suit is kept as its outline, sewn Auto. The metrics come from the font's own H, x, d and p, the
+advances from its letters, and the original stays on the template layer to compare. Check and touch up the
+letters, then save. A traced font is a derivative of the font traced: trace only fonts whose licence allows
+that (the SIL Open Font License does, under a new name without its Reserved Font Names, with the OFL kept).
+
 **Ink/Stitch fonts** open as embroidery fonts too: install the ones you want by pointing VectorCraft at a
 folder of them (**Add Font Folder…** under Embroidery Font) or by putting them in the library's `fonts`
 folder, as [Installing embroidery fonts](embroidery-fonts.md) explains; `embroidery.importInkstitchFont`
@@ -500,6 +509,7 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.saveFont` | `{font, path?, user?}`: write one of the document's fonts as a `.vcfont` file (`user: true`: into the embroidery library) |
 | `embroidery.removeFont` | `{font}`: remove a font from the document |
 | `embroidery.font.new` | `{name?, chars?, from?, author?, license?}`: a new embroidery font document (one artboard per glyph; `from`: an installed font to trace on a template layer) → `{index, glyphs}` |
+| `embroidery.font.trace` | `{from, chars?, name?, author?, license?}`: an installed font digitized automatically into a font document (pen strokes as satin columns between rails) → `{index, glyphs, traced, outlines}` |
 | `embroidery.font.open` | `{path? \| data? \| library? \| font?}`: an embroidery font as a font document, to edit |
 | `embroidery.font.info` | → the font document's `font`, `glyphs` (`chars`, `advance`, `objects`), `empty` glyphs and `kerning` |
 | `embroidery.font.setup` | `{name?, author?, license?, source?, ascender?, capHeight?, xHeight?, descender?, sizes?…}`: the font's details and metrics |

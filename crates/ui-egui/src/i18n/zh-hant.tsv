@@ -4218,6 +4218,9 @@ lighting	Light	光源
 	Embroidery Font Setup	刺繡字體設定
 	New Embroidery Font…	新增刺繡字體…
 	Open Embroidery Font…	開啟刺繡字體…
+	Trace Embroidery Font…	描摹刺繡字體…
+	Trace Font	描摹字體
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	自動將描摹字體的字母數位化，每一筆為一條緞紋柱（僅限授權允許衍生作品的字體）
 @msg	not a layer	不是圖層
 @msg	the document has no layer	文件沒有圖層
 	More Settings ({n})	更多設定（{n}）

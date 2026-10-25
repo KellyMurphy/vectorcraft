@@ -4905,6 +4905,9 @@ lighting	Light	광원
 	Embroidery Font Setup	자수 글꼴 설정
 	New Embroidery Font…	새 자수 글꼴…
 	Open Embroidery Font…	자수 글꼴 열기…
+	Trace Embroidery Font…	자수 글꼴 따라 그리기…
+	Trace Font	글꼴 따라 그리기
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	따라 그릴 글꼴의 글자를 자동으로 디지타이즈하여 획마다 새틴 기둥으로 만듭니다(파생물을 허용하는 라이선스의 글꼴만)
 @msg	not a layer	레이어가 아닙니다
 @msg	the document has no layer	문서에 레이어가 없습니다
 	More Settings ({n})	추가 설정 ({n})

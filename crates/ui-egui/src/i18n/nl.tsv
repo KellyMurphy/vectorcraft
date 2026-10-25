@@ -5365,6 +5365,9 @@ swatch	Bright Violet	Felviolet
 	Embroidery Font Setup	Borduurlettertype instellen
 	New Embroidery Font…	Nieuw borduurlettertype…
 	Open Embroidery Font…	Borduurlettertype openen…
+	Trace Embroidery Font…	Borduurlettertype overtrekken…
+	Trace Font	Lettertype overtrekken
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	De letters van het over te trekken lettertype automatisch digitaliseren, elke penstreek een satijnkolom (alleen voor lettertypen waarvan de licentie afgeleide werken toestaat)
 @msg	not a layer	geen laag
 @msg	the document has no layer	het document heeft geen laag
 	More Settings ({n})	Meer instellingen ({n})

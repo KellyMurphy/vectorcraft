@@ -275,6 +275,14 @@ fn font_editor(app: &mut VectorcraftApp, ui: &mut Ui) {
                     app.status(e);
                 }
             }
+            if !from.trim().is_empty()
+                && widgets::flat_button(ui, tl!("Trace Font"), 80.0)
+                    .on_hover_text(tl!("Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)"))
+                    .clicked()
+                && let Err(e) = app.run("embroidery.font.trace", json!({ "from": from.trim(), "chars": chars }))
+            {
+                app.status(e);
+            }
             if widgets::flat_button(ui, tl!("Edit Font…"), 90.0).clicked() {
                 crate::picks::button(app, |app| {
                     let ext: &'static [&'static str] = &[vectorcraft_embroidery::fonts::FILE_EXT];

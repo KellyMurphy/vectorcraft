@@ -4921,6 +4921,9 @@ theme	Appearance	Giao diện
 	Embroidery Font Setup	Thiết lập phông chữ thêu
 	New Embroidery Font…	Phông chữ thêu mới…
 	Open Embroidery Font…	Mở phông chữ thêu…
+	Trace Embroidery Font…	Đồ theo phông chữ thêu…
+	Trace Font	Đồ theo phông chữ
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Tự động số hóa các chữ của phông để đồ theo, mỗi nét bút một cột satin (chỉ với phông có giấy phép cho phép tác phẩm phái sinh)
 @msg	not a layer	không phải là lớp
 @msg	the document has no layer	tài liệu không có lớp nào
 	More Settings ({n})	Cài đặt khác ({n})

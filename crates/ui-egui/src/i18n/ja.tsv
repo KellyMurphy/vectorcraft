@@ -4971,6 +4971,9 @@ lighting	Light	ライト
 	Embroidery Font Setup	刺繍フォントの設定
 	New Embroidery Font…	新規刺繍フォント…
 	Open Embroidery Font…	刺繍フォントを開く…
+	Trace Embroidery Font…	刺繍フォントをトレース…
+	Trace Font	フォントをトレース
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	トレースするフォントの文字を自動でデジタイズし、各ストロークをサテンコラムにします（派生物を許可するライセンスのフォントのみ）
 @msg	not a layer	レイヤーではありません
 @msg	the document has no layer	ドキュメントにレイヤーがありません
 	More Settings ({n})	その他の設定（{n}）

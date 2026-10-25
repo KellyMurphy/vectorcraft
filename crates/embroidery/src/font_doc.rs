@@ -219,6 +219,71 @@ pub fn font(doc: &Document) -> Result<EmbroideryFont, String> {
     Ok(font)
 }
 
+/// Rails are sampled this far apart along a stroke when a letter is traced, mm at the editor's em.
+const RAIL_STEP: f64 = 1.0;
+
+/// `outline`'s subpaths as closed polygons, flattened finely.
+fn flatten(outline: &BezPath) -> Vec<Vec<Point>> {
+    let mut polys: Vec<Vec<Point>> = vec![];
+    kurbo::flatten(outline.elements().iter().copied(), 0.02, |el| match el {
+        kurbo::PathEl::MoveTo(p) => polys.push(vec![p]),
+        kurbo::PathEl::LineTo(p) => {
+            if let Some(last) = polys.last_mut() {
+                last.push(p);
+            }
+        }
+        _ => {}
+    });
+    polys.retain(|p| p.len() >= 3);
+    polys
+}
+
+/// A letter traced into an embroidery glyph's objects: `outline` (em units, y up) put back together
+/// into pen strokes ([`crate::penstrokes`], written in `hand`), each stretch a satin column between
+/// two rails, which scale with the letter, in the order a pen draws it; a letter pen strokes don't
+/// suit is kept as its outline, sewn Auto. Font units of `upem` per em.
+pub fn trace(outline: &BezPath, upem: f64, hand: crate::penstrokes::Hand) -> Vec<GlyphObject> {
+    // Em units (y up) → mm at the editor's em (y down), where the satin is worked out.
+    let to_mm = Affine::new([EM_MM, 0.0, 0.0, -EM_MM, 0.0, 0.0]);
+    let polys = flatten(&(to_mm * outline.clone()));
+    if polys.is_empty() {
+        return vec![];
+    }
+    let to_font = |p: Point| Point::new(p.x / EM_MM * upem, -p.y / EM_MM * upem);
+    let pieces = crate::skeleton::strokes(&polys, FillRule::NonZero);
+    let suits = crate::generate::satin_pen(&polys, FillRule::NonZero, &pieces, 0.4, 0.0, false, 0.0, hand)
+        .is_some_and(|(_, q)| crate::generate::pen_suits(&q));
+    let parts = if suits { crate::generate::pen_parts(&polys, FillRule::NonZero, &pieces, RAIL_STEP, 0.0, 0.0, hand) } else { None };
+    let Some((parts, _, _)) = parts.filter(|(p, _, _)| !p.is_empty()) else {
+        // Not a letter for pen strokes: its outline, for Auto to sew.
+        let path = Affine::scale(upem) * outline.clone();
+        return vec![GlyphObject {
+            path: path.to_svg(),
+            stitch: vectorcraft_doc::StitchSettings::new(vectorcraft_doc::StitchKind::Auto),
+            ..Default::default()
+        }];
+    };
+    parts
+        .into_iter()
+        .map(|(_, zig)| {
+            let rail = |side: &dyn Fn(&(Point, Point)) -> Point| {
+                let mut b = BezPath::new();
+                for (k, z) in zig.iter().enumerate() {
+                    let p = to_font(side(z));
+                    if k == 0 { b.move_to(p) } else { b.line_to(p) }
+                }
+                b
+            };
+            let mut path = rail(&|z| z.0);
+            path.extend(rail(&|z| z.1));
+            let mut stitch = vectorcraft_doc::StitchSettings::new(vectorcraft_doc::StitchKind::Satin);
+            stitch.rails = true;
+            stitch.underlay = vectorcraft_doc::Underlay::Auto;
+            GlyphObject { path: path.to_svg(), stitch, ..Default::default() }
+        })
+        .collect()
+}
+
 fn solid([r, g, b]: [u8; 3]) -> Paint {
     Paint::solid(Color::rgb8(r, g, b))
 }
@@ -255,6 +320,31 @@ mod tests {
             }
         }
         assert_eq!((back.name.as_str(), back.kerning.len()), (f.name.as_str(), f.kerning.len()));
+    }
+
+    #[test]
+    fn a_traced_t_is_two_satin_columns_between_rails() {
+        // A T in em units, y up: a stem and a crossbar as one outline.
+        let mut b = BezPath::new();
+        for (k, (x, y)) in [(0.05, 0.7), (0.55, 0.7), (0.55, 0.6), (0.35, 0.6), (0.35, 0.0), (0.25, 0.0), (0.25, 0.6), (0.05, 0.6)].iter().enumerate()
+        {
+            if k == 0 { b.move_to((*x, *y)) } else { b.line_to((*x, *y)) }
+        }
+        b.close_path();
+        let objects = trace(&b, 1000.0, crate::penstrokes::Hand::Print);
+        // The downstroke, then the crossbar's two arms either side of it (the crossing left out).
+        assert!(objects.len() >= 2, "{}", objects.len());
+        assert!(objects.iter().all(|o| o.stitch.kind == vectorcraft_doc::StitchKind::Satin && o.stitch.rails));
+        // Each is two rails, within the letter.
+        for o in &objects {
+            let p = fonts::outline(o).unwrap();
+            assert_eq!(p.elements().iter().filter(|e| matches!(e, kurbo::PathEl::MoveTo(_))).count(), 2);
+            let bb = kurbo::Shape::bounding_box(&p);
+            assert!(bb.x0 >= 40.0 && bb.x1 <= 560.0 && bb.y0 >= -10.0 && bb.y1 <= 710.0, "{bb:?}");
+        }
+        // The first is the downstroke.
+        let first = kurbo::Shape::bounding_box(&fonts::outline(&objects[0]).unwrap());
+        assert!(first.height() > first.width(), "{first:?}");
     }
 
     #[test]

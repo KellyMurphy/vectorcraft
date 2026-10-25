@@ -4926,6 +4926,9 @@ lighting	Light	Свет
 	Embroidery Font Setup	Настройка шрифта для вышивки
 	New Embroidery Font…	Новый шрифт для вышивки…
 	Open Embroidery Font…	Открыть шрифт для вышивки…
+	Trace Embroidery Font…	Обвести шрифт для вышивки…
+	Trace Font	Обвести шрифт
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Автоматически оцифровать буквы шрифта для обводки, каждый штрих пера — атласная колонна (только для шрифтов, лицензия которых разрешает производные)
 @msg	not a layer	это не слой
 @msg	the document has no layer	в документе нет слоя
 	More Settings ({n})	Другие настройки ({n})

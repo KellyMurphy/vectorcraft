@@ -5284,6 +5284,9 @@ theme	Appearance	Utseende
 	Embroidery Font Setup	Inställningar för broderiteckensnitt
 	New Embroidery Font…	Nytt broderiteckensnitt…
 	Open Embroidery Font…	Öppna broderiteckensnitt…
+	Trace Embroidery Font…	Rita efter broderiteckensnitt…
+	Trace Font	Rita efter teckensnitt
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Digitalisera bokstäverna i teckensnittet att rita efter automatiskt, varje pennstreck en satinkolumn (bara för teckensnitt vars licens tillåter bearbetningar)
 @msg	not a layer	inte ett lager
 @msg	the document has no layer	dokumentet har inget lager
 	More Settings ({n})	Fler inställningar ({n})

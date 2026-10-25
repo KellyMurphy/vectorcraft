@@ -5315,6 +5315,9 @@ mark-style	Japanese	Japonské
 	Embroidery Font Setup	Nastavení vyšívacího písma
 	New Embroidery Font…	Nové vyšívací písmo…
 	Open Embroidery Font…	Otevřít vyšívací písmo…
+	Trace Embroidery Font…	Obkreslit vyšívací písmo…
+	Trace Font	Obkreslit písmo
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Automaticky digitalizovat písmena písma k obkreslení, každý tah pera jako saténový sloupec (jen u písem, jejichž licence dovoluje odvozená díla)
 @msg	not a layer	není vrstva
 @msg	the document has no layer	dokument nemá žádnou vrstvu
 	More Settings ({n})	Další nastavení ({n})

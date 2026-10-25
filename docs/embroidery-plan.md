@@ -376,7 +376,12 @@ objects (shapes with settings), not needle points, so letters scale and are re-s
 - **E8.1d A starter font.** At least one embroidery font, made with the editor by us (original work, or
   traced from an OFL font with the OFL's renaming and licence carried), published in craft-fonts with its
   licence; VectorCraft builds and runs without it (`CRAFT_FONTS` empty → no starter font, tests skip). A
-  satin sans for 5–25 mm is the most useful first one. **Needs a decision** (below).
+  satin sans for 5–25 mm is the most useful first one. Decided: traced from an OFL font (decision 5).
+  **The tracer is done:** `embroidery.font.trace {from, chars?, name?, author?, license?}` (Tools tab,
+  **Trace Font**) turns an installed font's letters into satin columns between rails by pen strokes
+  (`font_doc::trace`, on `generate::pen_parts`), outlines sewn Auto where pen strokes don't suit, metrics
+  from H/x/d/p. **Still to do:** trace the chosen OFL sans, touch it up, sew it out (G2) and publish it in
+  craft-fonts (asks the user first: it is a push to another repository).
 - **E8.1e Ink/Stitch embroidery fonts** (asked for by the user, 2026-10-23; **done**, see *As built* at the end). Ink/Stitch has a large
   library of embroidery fonts, many under the OFL, and its users make their own. VectorCraft opens them as
   embroidery fonts, so they can be set as type, edited in the font editor and saved as `.vcfont`.

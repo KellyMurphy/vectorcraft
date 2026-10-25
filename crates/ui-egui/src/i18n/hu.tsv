@@ -5314,6 +5314,9 @@ imageTrace	Outline	Körvonal
 	Embroidery Font Setup	Hímzőbetűtípus beállítása
 	New Embroidery Font…	Új hímzőbetűtípus…
 	Open Embroidery Font…	Hímzőbetűtípus megnyitása…
+	Trace Embroidery Font…	Hímzőbetűtípus átrajzolása…
+	Trace Font	Betűtípus átrajzolása
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Az átrajzolandó betűtípus betűinek automatikus digitalizálása, minden tollvonás egy szaténoszlop (csak olyan betűtípusokhoz, amelyek licence megengedi a származékos műveket)
 @msg	not a layer	nem réteg
 @msg	the document has no layer	a dokumentumnak nincs rétege
 	More Settings ({n})	További beállítások ({n})

@@ -30,6 +30,15 @@ pub fn specs() -> Vec<CommandSpec> {
             new_font
         ),
         cmd!(
+            "embroidery.font.trace",
+            "Trace Embroidery Font…",
+            ["Window", "Embroidery"],
+            None,
+            "{from: an installed font's family, chars?: the characters (A-Za-z0-9 and some punctuation), name?: the new font's name (the family's with Stitch), author?, license?} digitize an installed font automatically into an embroidery font document, in a new tab: each letter put back together into pen strokes (as Satin Shape sews type) and each stroke made a satin column between two rails, which scale with the letter; a letter pen strokes don't suit is kept as its outline, sewn Auto. The original stays on the template layer to compare, and the font records it as its source. The traced font is a derivative of the one traced: use only fonts whose licence allows that (the OFL does, under another name, with the OFL kept) → {index, glyphs, traced (letters as satin columns), outlines (letters kept as outlines)}",
+            always,
+            trace_font
+        ),
+        cmd!(
             "embroidery.font.open",
             "Open Embroidery Font…",
             ["Window", "Embroidery"],
@@ -130,6 +139,57 @@ fn new_font(s: &mut Session, p: &Value) -> Result<Value> {
     let glyphs = doc.artboards.len();
     let index = s.add_document(doc, None);
     Ok(json!({"index": index, "glyphs": glyphs}))
+}
+
+fn trace_font(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.font.trace";
+    let from =
+        str_param(p, "from").map(str::trim).filter(|f| !f.is_empty()).ok_or_else(|| bad(C, "`from` (an installed font's family) is missing"))?;
+    if !vectorcraft_text::FontDb::global().has_family(from) {
+        return Err(bad(C, format!("no installed font `{from}` to trace (see text.fonts)")));
+    }
+    let chars = font_doc::chars(str_param(p, "chars").unwrap_or("A-Za-z0-9 .!?&-"));
+    if chars.is_empty() {
+        return Err(bad(C, "`chars` names no characters"));
+    }
+    let name = str_param(p, "name").map(str::trim).filter(|n| !n.is_empty()).map_or_else(|| format!("{from} Stitch"), str::to_string);
+    let hand = vectorcraft_embroidery::penstrokes::hand_of(from, "");
+    const UPEM: f64 = 1000.0;
+    // The font's own metrics, from its letters.
+    let top = |c: &str| template_outline(from, c).map(|(o, _)| kurbo::Shape::bounding_box(&o)).filter(|b| b.height() > 0.0);
+    let cap = top("H").map_or(0.7, |b| b.y1);
+    let x_height = top("x").map_or(cap * 0.7, |b| b.y1);
+    let ascender = top("d").map_or(cap * 1.05, |b| b.y1).max(cap);
+    let descender = top("p").map_or(-0.2, |b| b.y0).min(0.0);
+    let mut glyphs = vec![];
+    let (mut traced, mut outlines) = (0usize, 0usize);
+    for c in &chars {
+        let Some((outline, advance)) = template_outline(from, c) else { continue };
+        let objects = font_doc::trace(&outline, UPEM, hand);
+        if objects.iter().any(|o| o.stitch.rails) {
+            traced += 1;
+        } else if !objects.is_empty() {
+            outlines += 1;
+        }
+        glyphs.push(vectorcraft_doc::FontGlyph { chars: c.clone(), advance: advance * UPEM, objects, ..Default::default() });
+    }
+    let font = EmbroideryFont {
+        id: vectorcraft_embroidery::borders::slug(&name),
+        name,
+        author: str_param(p, "author").map(str::to_string),
+        license: str_param(p, "license").map(str::to_string),
+        source: Some(format!("traced from {from}")),
+        units_per_em: UPEM,
+        ascender: ascender * UPEM,
+        descender: descender * UPEM,
+        cap_height: cap * UPEM,
+        x_height: x_height * UPEM,
+        glyphs,
+        ..EmbroideryFont::default()
+    };
+    let doc = font_doc::document(&font, &[], &|c| template_outline(from, c));
+    let index = s.add_document(doc, None);
+    Ok(json!({"index": index, "glyphs": font.glyphs.len(), "traced": traced, "outlines": outlines}))
 }
 
 fn open_font(s: &mut Session, p: &Value) -> Result<Value> {
@@ -372,6 +432,32 @@ mod tests {
         // And it opens again for editing.
         let r = s.execute("embroidery.font.open", &json!({ "data": saved["data"] })).unwrap();
         assert_eq!(r["glyphs"], 2);
+    }
+
+    /// Tracing an installed font (skipped where none of these is installed).
+    #[test]
+    fn an_installed_font_traces_into_satin_columns() {
+        let Some(family) = ["Arial", "Liberation Sans", "DejaVu Sans"].into_iter().find(|f| vectorcraft_text::FontDb::global().has_family(f)) else {
+            return;
+        };
+        let mut s = Session::new();
+        let r = s.execute("embroidery.font.trace", &json!({"from": family, "chars": "HITLE"})).unwrap();
+        assert_eq!(r["glyphs"], 5, "{r}");
+        assert!(r["traced"].as_u64().unwrap() >= 4, "{r}");
+        assert!(s.set_active(r["index"].as_u64().unwrap() as usize));
+        let f = built(&s, "test").unwrap();
+        let h = f.glyph("H").unwrap();
+        // Two stems and the crossbar between them (the crossbar may sew as two arms tucked in).
+        assert!(h.objects.len() >= 3 && h.objects.iter().all(|o| o.stitch.rails), "{}", h.objects.len());
+        // It sews, as type in the new font.
+        let saved = s.execute("embroidery.font.save", &json!({})).unwrap();
+        let mut other = Session::new();
+        other.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
+        other.execute("embroidery.loadFont", &json!({ "data": saved["data"] })).unwrap();
+        other.execute("text.create", &json!({"x": 10, "y": 60, "text": "HELLO", "size": 48})).unwrap();
+        other.execute("embroidery.set", &json!({"type": "auto", "font": f.id})).unwrap();
+        let info = other.execute("embroidery.info", &json!({})).unwrap();
+        assert!(info["design"]["stitches"].as_u64().unwrap() > 300, "{info}");
     }
 
     #[test]

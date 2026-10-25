@@ -4910,6 +4910,9 @@ lighting	Light	Світло
 	Embroidery Font Setup	Налаштування шрифту для вишивки
 	New Embroidery Font…	Новий шрифт для вишивки…
 	Open Embroidery Font…	Відкрити шрифт для вишивки…
+	Trace Embroidery Font…	Обвести шрифт для вишивки…
+	Trace Font	Обвести шрифт
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Автоматично оцифрувати літери шрифту для обведення, кожен штрих пера — атласна колона (лише для шрифтів, ліцензія яких дозволяє похідні)
 @msg	not a layer	це не шар
 @msg	the document has no layer	у документі немає шару
 	More Settings ({n})	Інші налаштування ({n})
