@@ -4972,6 +4972,19 @@ lighting	Light	ライト
 	New Embroidery Font…	新規刺繍フォント…
 	Open Embroidery Font…	刺繍フォントを開く…
 	Trace Embroidery Font…	刺繍フォントをトレース…
+	Frame:	フレーム：
+	Letters as live type placed by the layout, each still editable, with an optional frame	レイアウトに沿って配置したライブテキストの文字（それぞれ編集可能）と、任意のフレーム
+	Letters:	文字：
+	Monogram	モノグラム
+	No Frame	フレームなし
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	選択したポイント文字を、その位置を通る円弧に沿わせます：上側の上、または下側の下を左から右へ
+	Satin Ring	サテンリング
+	Type on an Arc	円弧に沿った文字
+	Update Monogram	モノグラムを更新
+	Monogram…	モノグラム…
+	Type on an Arc…	円弧に沿った文字…
+	Three Equal	3 文字均等
+	Two Letters	2 文字
 	Trace Font	フォントをトレース
 	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	トレースするフォントの文字を自動でデジタイズし、各ストロークをサテンコラムにします（派生物を許可するライセンスのフォントのみ）
 @msg	not a layer	レイヤーではありません

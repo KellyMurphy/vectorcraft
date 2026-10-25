@@ -5152,6 +5152,19 @@ lighting	Light	光源
 	New Embroidery Font…	新建刺绣字体…
 	Open Embroidery Font…	打开刺绣字体…
 	Trace Embroidery Font…	描摹刺绣字体…
+	Frame:	边框：
+	Letters as live type placed by the layout, each still editable, with an optional frame	按版式放置的实时文字字母（每个仍可编辑），可选边框
+	Letters:	字母：
+	Monogram	花押字
+	No Frame	无边框
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	将所选点文字放到经过其位置的圆弧上：沿顶部上方，或沿底部下方从左到右阅读
+	Satin Ring	缎纹环
+	Type on an Arc	弧形文字
+	Update Monogram	更新花押字
+	Monogram…	花押字…
+	Type on an Arc…	弧形文字…
+	Three Equal	三个等大
+	Two Letters	两个字母
 	Trace Font	描摹字体
 	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	自动将描摹字体的字母数字化，每一笔为一条缎纹柱（仅限许可证允许衍生作品的字体）
 @msg	not a layer	不是图层

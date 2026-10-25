@@ -5299,6 +5299,19 @@ theme	Appearance	Външен вид
 	New Embroidery Font…	Нов шрифт за бродерия…
 	Open Embroidery Font…	Отваряне на шрифт за бродерия…
 	Trace Embroidery Font…	Прерисуване на шрифт за бродерия…
+	Frame:	Рамка:
+	Letters as live type placed by the layout, each still editable, with an optional frame	Букви като жив текст, подредени по оформлението, всяка още редактируема, с рамка по избор
+	Letters:	Букви:
+	Monogram	Монограм
+	No Frame	Без рамка
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	Поставяне на избрания точков текст върху дъга от окръжност през мястото му: над горната част или под долната, четим отляво надясно
+	Satin Ring	Сатенен пръстен
+	Type on an Arc	Текст по дъга
+	Update Monogram	Обновяване на монограма
+	Monogram…	Монограм…
+	Type on an Arc…	Текст по дъга…
+	Three Equal	Три еднакви
+	Two Letters	Две букви
 	Trace Font	Прерисуване на шрифта
 	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Автоматично дигитализиране на буквите на шрифта за прерисуване, всеки щрих като сатенена колона (само за шрифтове, чийто лиценз позволява производни)
 @msg	not a layer	не е слой

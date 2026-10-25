@@ -5293,6 +5293,19 @@ mark-style	Japanese	Japanilainen
 	New Embroidery Font…	Uusi kirjontafontti…
 	Open Embroidery Font…	Avaa kirjontafontti…
 	Trace Embroidery Font…	Jäljennä kirjontafontti…
+	Frame:	Kehys:
+	Letters as live type placed by the layout, each still editable, with an optional frame	Kirjaimet elävänä tekstinä asettelun mukaan sijoitettuina, kukin yhä muokattavissa, valinnaisella kehyksellä
+	Letters:	Kirjaimet:
+	Monogram	Monogrammi
+	No Frame	Ei kehystä
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	Aseta valittu pisteteksti ympyränkaarelle sen kohdan kautta: yläpuolen yli tai alapuolen ali, vasemmalta oikealle luettavana
+	Satin Ring	Satiinirengas
+	Type on an Arc	Teksti kaarella
+	Update Monogram	Päivitä monogrammi
+	Monogram…	Monogrammi…
+	Type on an Arc…	Teksti kaarella…
+	Three Equal	Kolme samankokoista
+	Two Letters	Kaksi kirjainta
 	Trace Font	Jäljennä fontti
 	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Digitoi jäljennettävän fontin kirjaimet automaattisesti, jokainen kynänveto satiinipylväänä (vain fonteille, joiden lisenssi sallii johdannaiset)
 @msg	not a layer	ei ole taso

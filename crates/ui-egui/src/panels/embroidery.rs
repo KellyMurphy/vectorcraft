@@ -196,6 +196,8 @@ fn tools(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
         extract_row(app, ui);
     }
     widgets::divider(ui);
+    lettering(app, ui);
+    widgets::divider(ui);
     font_editor(app, ui);
     widgets::divider(ui);
     widgets::section_header(ui, tl!("Embroidery Fonts"));
@@ -224,6 +226,146 @@ fn tools(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
             show_library_folder(app, &dir);
         }
     }
+}
+
+/// Monogram layouts: `embroidery.monogram`'s ids and their names.
+fn monogram_layouts() -> [(&'static str, &'static str); 6] {
+    [
+        ("classic", tl!("Classic")),
+        ("three", tl!("Three Equal")),
+        ("two", tl!("Two Letters")),
+        ("stacked", tl!("Stacked")),
+        ("circle", tl!("Circle")),
+        ("diamond", tl!("Diamond")),
+    ]
+}
+
+/// The selected object when it is one of `embroidery.monogram`'s groups.
+fn selected_monogram(app: &VectorcraftApp) -> Option<NodeId> {
+    let d = app.session.active()?;
+    let [id] = d.selection.objects.as_slice() else { return None };
+    vectorcraft_engine::cmd::embroidery_text::is_monogram(d.doc.node(*id)?).then_some(*id)
+}
+
+/// The selected point type's bounds and baseline (`None` unless one point type is selected).
+fn selected_point_type(app: &VectorcraftApp) -> Option<(vectorcraft_geom::Rect, f64)> {
+    let d = app.session.active()?;
+    let [id] = d.selection.objects.as_slice() else { return None };
+    let n = d.doc.node(*id)?;
+    let vectorcraft_doc::NodeKind::Text(t) = &n.kind else { return None };
+    (t.kind == vectorcraft_doc::TextKind::Point).then_some(())?;
+    Some((n.geometric_bounds()?, t.xf.translation().y))
+}
+
+/// Lettering: the selected point type put on an arc, and monograms.
+fn lettering(app: &mut VectorcraftApp, ui: &mut Ui) {
+    widgets::section_header(ui, tl!("Lettering"));
+    // Type on an arc through where the selected type is.
+    let (mut radius, mut bottom) = (kept(ui, "arc-radius", "40"), kept(ui, "arc-side", "top") == "bottom");
+    ui.horizontal(|ui| {
+        dim_label_w(ui, tl!("Radius:"));
+        if let Some(v) = widgets::text_field(ui, "emb-arc-radius", Some(&radius), 50.0, 1) {
+            radius = v;
+        }
+        ui.label("mm");
+        ui.checkbox(&mut bottom, tl!("Bottom"));
+    });
+    keep(ui, "arc-radius", radius.clone());
+    keep(ui, "arc-side", if bottom { "bottom" } else { "top" }.into());
+    let point = selected_point_type(app);
+    let r_mm = radius.trim().parse::<f64>().ok().filter(|r| r.is_finite() && *r > 0.0);
+    let can = point.is_some() && r_mm.is_some();
+    if ui
+        .add_enabled(can, egui::Button::new(tl!("Type on an Arc")))
+        .on_hover_text(tl!(
+            "Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right"
+        ))
+        .clicked()
+        && let (Some((b, baseline)), Some(r)) = (point, r_mm)
+    {
+        let r = r / vectorcraft_embroidery::PT_MM;
+        // The arc's top passes along the type's baseline; its bottom along the type's top.
+        let cy = if bottom { b.y0 - r } else { baseline + r };
+        let p = json!({"cx": b.center().x, "cy": cy, "radius": r, "side": if bottom { "bottom" } else { "top" }});
+        if let Err(e) = app.run("embroidery.textArc", p) {
+            app.status(e);
+        }
+    }
+    ui.add_space(4.0);
+    // A monogram, or the selected one laid out again: selecting one shows its recipe.
+    let editing = selected_monogram(app);
+    if let Some(id) = editing
+        && kept(ui, "mono-for", "") != id.0.to_string()
+        && let Some(n) = app.session.active().and_then(|d| d.doc.node(id))
+    {
+        use vectorcraft_engine::cmd::embroidery_text::recipe;
+        for (key, field) in [("monogram-letters", "mono-letters"), ("monogram-layout", "mono-layout"), ("monogram-frame", "mono-frame")] {
+            if let Some(v) = recipe(n, key) {
+                keep(ui, field, v);
+            }
+        }
+        keep(ui, "mono-for", id.0.to_string());
+    }
+    let (mut letters, mut layout, mut frame) = (kept(ui, "mono-letters", "ABC"), kept(ui, "mono-layout", "classic"), kept(ui, "mono-frame", "none"));
+    widgets::label_row(ui, tl!("Letters:"), LABEL_W, |ui| {
+        if let Some(v) = widgets::text_field(ui, "emb-mono-letters", Some(&letters), 60.0, 1) {
+            letters = v;
+        }
+    });
+    widgets::label_row(ui, tl!("Layout:"), LABEL_W, |ui| {
+        let layouts = monogram_layouts();
+        let current = layouts.iter().find(|(id, _)| *id == layout).map_or("", |(_, n)| n);
+        if let Some(id) = widgets::combo(ui, "emb-mono-layout", current, 150.0, false, |ui| {
+            let mut chosen = None;
+            for (id, name) in layouts {
+                if widgets::menu_item_name(ui, name, true, layout == id) {
+                    chosen = Some(id.to_string());
+                }
+            }
+            chosen
+        }) {
+            layout = id;
+        }
+    });
+    widgets::label_row(ui, tl!("Frame:"), LABEL_W, |ui| {
+        let name = |id: &str| match id {
+            "none" => tl!("No Frame").to_string(),
+            "satin" => tl!("Satin Ring").to_string(),
+            id => vectorcraft_embroidery::borders::builtin(id).map_or_else(|| id.to_string(), |b| b.name),
+        };
+        if let Some(id) = widgets::combo(ui, "emb-mono-frame", &name(&frame), 150.0, false, |ui| {
+            let mut chosen = None;
+            for id in ["none", "satin"].into_iter().chain(vectorcraft_embroidery::borders::BUILTIN) {
+                if widgets::menu_item_name(ui, &name(id), true, frame == id) {
+                    chosen = Some(id.to_string());
+                }
+            }
+            chosen
+        }) {
+            frame = id;
+        }
+    });
+    let label = if editing.is_some() { tl!("Update Monogram") } else { tl!("Monogram") };
+    if widgets::flat_button(ui, label, 120.0)
+        .on_hover_text(tl!("Letters as live type placed by the layout, each still editable, with an optional frame"))
+        .clicked()
+    {
+        let mut p = json!({"letters": letters, "layout": layout, "frame": frame});
+        if let Some(id) = editing {
+            p["id"] = json!(id.0);
+        }
+        if let Err(e) = app.run("embroidery.monogram", p) {
+            app.status(e);
+        }
+    }
+    keep(ui, "mono-letters", letters);
+    keep(ui, "mono-layout", layout);
+    keep(ui, "mono-frame", frame);
+}
+
+/// A dim label at the panel's label width.
+fn dim_label_w(ui: &mut Ui, text: &str) {
+    ui.add_sized(vec2(LABEL_W, 18.0), egui::Label::new(egui::RichText::new(text).color(Tokens::get(ui.ctx()).text_dim)));
 }
 
 /// A text the panel keeps between frames (what is being typed for a command not run yet).

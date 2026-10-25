@@ -5233,6 +5233,19 @@ mark-style	Japanese	Japonesas
 	New Embroidery Font…	Nova Fonte de Bordado…
 	Open Embroidery Font…	Abrir Fonte de Bordado…
 	Trace Embroidery Font…	Decalcar Fonte de Bordado…
+	Frame:	Moldura:
+	Letters as live type placed by the layout, each still editable, with an optional frame	Letras como texto dinâmico posicionadas pelo layout, cada uma ainda editável, com uma moldura opcional
+	Letters:	Letras:
+	Monogram	Monograma
+	No Frame	Sem Moldura
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	Colocar o texto de ponto selecionado em um arco de círculo que passa por onde ele está: por cima do topo ou por baixo da base, lido da esquerda para a direita
+	Satin Ring	Anel de Cetim
+	Type on an Arc	Texto em Arco
+	Update Monogram	Atualizar Monograma
+	Monogram…	Monograma…
+	Type on an Arc…	Texto em Arco…
+	Three Equal	Três Iguais
+	Two Letters	Duas Letras
 	Trace Font	Decalcar Fonte
 	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Digitalizar automaticamente as letras da fonte a decalcar, cada traço como uma coluna de cetim (apenas para fontes cuja licença permite derivados)
 @msg	not a layer	não é uma camada

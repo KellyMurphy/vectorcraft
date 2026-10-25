@@ -5316,6 +5316,19 @@ mark-style	Japanese	Japonské
 	New Embroidery Font…	Nové vyšívací písmo…
 	Open Embroidery Font…	Otevřít vyšívací písmo…
 	Trace Embroidery Font…	Obkreslit vyšívací písmo…
+	Frame:	Rámeček:
+	Letters as live type placed by the layout, each still editable, with an optional frame	Písmena jako živý text umístěný podle rozvržení, každé stále upravitelné, s volitelným rámečkem
+	Letters:	Písmena:
+	Monogram	Monogram
+	No Frame	Bez rámečku
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	Umístit vybraný bodový text na kruhový oblouk procházející jeho místem: přes horní část, nebo pod spodní, čtený zleva doprava
+	Satin Ring	Saténový kroužek
+	Type on an Arc	Text na oblouku
+	Update Monogram	Aktualizovat monogram
+	Monogram…	Monogram…
+	Type on an Arc…	Text na oblouku…
+	Three Equal	Tři stejná
+	Two Letters	Dvě písmena
 	Trace Font	Obkreslit písmo
 	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Automaticky digitalizovat písmena písma k obkreslení, každý tah pera jako saténový sloupec (jen u písem, jejichž licence dovoluje odvozená díla)
 @msg	not a layer	není vrstva

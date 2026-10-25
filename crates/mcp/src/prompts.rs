@@ -363,6 +363,9 @@ vectorcraft://guide/embroidery for every stitch type and setting.
 Method:
 1. Make the art: draw_shape, draw_path or add_text (type is stitched live, letter by letter),
    or open_file a DST to start from an existing design. Scale it to {size} with transform.
+   Curved badge lettering: run_command embroidery.textArc (type on a circle arc, top or
+   bottom), or bend art in an envelope (object.envelope.makeWithWarp): stitches follow the
+   distortion. Monograms: run_command embroidery.monogram {letters, layout, frame}.
 2. run_command embroidery.set {type: {stitch}} on the selection. auto picks per shape (per
    letter for type): bean outline for thin strokes, satin shape in between, fill with a satin
    border for wide shapes. Tune the type's settings (length, spacing, width, angle, underlay,

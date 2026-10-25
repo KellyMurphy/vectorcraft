@@ -5323,6 +5323,19 @@ swatch	Bright Violet	Kraftig violet
 	New Embroidery Font…	Ny broderiskrifttype…
 	Open Embroidery Font…	Åbn broderiskrifttype…
 	Trace Embroidery Font…	Tegn broderiskrifttype efter…
+	Frame:	Ramme:
+	Letters as live type placed by the layout, each still editable, with an optional frame	Bogstaver som levende tekst placeret efter layoutet, hver stadig redigerbar, med en valgfri ramme
+	Letters:	Bogstaver:
+	Monogram	Monogram
+	No Frame	Ingen ramme
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	Placer den valgte punkttekst på en cirkelbue gennem dens plads: over toppen eller under bunden, læst fra venstre mod højre
+	Satin Ring	Satinring
+	Type on an Arc	Tekst på en bue
+	Update Monogram	Opdater monogram
+	Monogram…	Monogram…
+	Type on an Arc…	Tekst på en bue…
+	Three Equal	Tre ens
+	Two Letters	To bogstaver
 	Trace Font	Tegn skrifttype efter
 	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Digitaliser bogstaverne i skrifttypen at tegne efter automatisk, hvert penselstrøg en satinsøjle (kun for skrifttyper, hvis licens tillader afledte værker)
 @msg	not a layer	ikke et lag

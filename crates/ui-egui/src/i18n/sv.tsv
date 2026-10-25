@@ -5285,6 +5285,19 @@ theme	Appearance	Utseende
 	New Embroidery Font…	Nytt broderiteckensnitt…
 	Open Embroidery Font…	Öppna broderiteckensnitt…
 	Trace Embroidery Font…	Rita efter broderiteckensnitt…
+	Frame:	Ram:
+	Letters as live type placed by the layout, each still editable, with an optional frame	Bokstäver som levande text placerade enligt layouten, var och en fortfarande redigerbar, med en valfri ram
+	Letters:	Bokstäver:
+	Monogram	Monogram
+	No Frame	Ingen ram
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	Placera den markerade punkttexten på en cirkelbåge genom dess plats: över toppen eller under botten, läst från vänster till höger
+	Satin Ring	Satinring
+	Type on an Arc	Text på en båge
+	Update Monogram	Uppdatera monogram
+	Monogram…	Monogram…
+	Type on an Arc…	Text på en båge…
+	Three Equal	Tre lika
+	Two Letters	Två bokstäver
 	Trace Font	Rita efter teckensnitt
 	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Digitalisera bokstäverna i teckensnittet att rita efter automatiskt, varje pennstreck en satinkolumn (bara för teckensnitt vars licens tillåter bearbetningar)
 @msg	not a layer	inte ett lager

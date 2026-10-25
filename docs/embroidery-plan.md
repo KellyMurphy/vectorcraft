@@ -486,6 +486,20 @@ not hidden under them; the script hand is told by the font's name only.
 
 ### E8.2 Monograms and text effects (M)
 
+**As built (2026-10-25, done):** E8.2a: the sewer pushes each object's art through the envelopes it sits in
+(`EnvelopeMap`, innermost first, the envelope's Fidelity) and its own Warp effects (`warp_point`, the
+effects' reference box), in the order Distort Appearance sets, before sewing: paths, compound paths, type
+letter by letter and embroidery-font letters alike (`crates/embroidery/src/warp.rs`); the stitch cache
+also keys on the envelopes, so editing one re-sews its art; other geometry effects warn. `embroidery.textArc`
+(type on a path round a 300° arc centred at the top or bottom; bottom type a cap height further out so both
+lines share the band). E8.2b: `embroidery.monogram` with six layouts as data (`LAYOUTS`: letter boxes in
+monogram heights), letters fitted to their boxes by their ink, a satin or border-pattern frame, the recipe
+kept in the group's object data (`monogram-*` keys) for **Update Monogram**; the Tools tab's Lettering
+section. Tests: stitches inside a warp envelope match the expanded envelope's size (paths and type), a
+Warp effect bends type's stitches, editing the envelope re-sews; arc positions; every layout keeps its
+letters in their boxes; re-layout in place; a small monogram warns. **Not yet:** geometry effects other
+than Warp (Roughen, Zig Zag…) on stitched art.
+
 - **E8.2a Arc and envelope text.** Check that type in an envelope (Object › Envelope Distort,
   `crates/engine/src/cmd/live.rs`) and type with a warp effect is sewn from its distorted outlines, and
   fix it where it isn't (the sewer must use the live result, not the undistorted letters). Add

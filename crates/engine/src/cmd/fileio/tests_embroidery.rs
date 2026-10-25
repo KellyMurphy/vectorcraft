@@ -814,3 +814,64 @@ fn the_worksheet_opens_or_comes_back_as_a_pdf() {
     assert!(s.doc().unwrap().doc.title.ends_with("worksheet"));
     assert!(s.execute("embroidery.worksheet", &json!({"page": "a3"})).is_err());
 }
+
+/// The width and height of the stitches the document sews, mm.
+fn stitched_size(s: &Session) -> (f64, f64) {
+    let plan = vectorcraft_embroidery::plan(&s.doc().unwrap().doc);
+    let stitches = plan.needles.iter().filter(|n| n.cmd == vectorcraft_embroidery::Cmd::Stitch);
+    let (lo, hi) =
+        stitches.fold(((f64::MAX, f64::MAX), (f64::MIN, f64::MIN)), |(lo, hi), n| ((lo.0.min(n.x), lo.1.min(n.y)), (hi.0.max(n.x), hi.1.max(n.y))));
+    (hi.0 - lo.0, hi.1 - lo.1)
+}
+
+/// The size of the art envelope `id` draws (its content expanded as the canvas evaluates it), mm.
+fn drawn_mm(s: &mut Session, id: u64) -> (f64, f64) {
+    s.execute("select.set", &json!({"ids": [id]})).unwrap();
+    let r = s.execute("object.envelope.expand", &json!({})).unwrap();
+    let doc = &s.doc().unwrap().doc;
+    let b = doc.node(vectorcraft_doc::NodeId(r["ids"][0].as_u64().unwrap())).unwrap().geometric_bounds().unwrap();
+    s.execute("edit.undo", &json!({})).unwrap();
+    (b.width() * 25.4 / 72.0, b.height() * 25.4 / 72.0)
+}
+
+#[test]
+fn art_in_an_envelope_is_sewn_as_the_envelope_bends_it() {
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    let flat = stitched_size(&s);
+    assert!((flat.1 - 100.0 * 25.4 / 72.0).abs() < 1.5, "{flat:?}");
+    let env = s.execute("object.envelope.makeWithWarp", &json!({"style": "arc", "bend": 50})).unwrap();
+    let id = env["id"].as_u64().unwrap();
+    let (bent, want) = (stitched_size(&s), drawn_mm(&mut s, id));
+    assert!(bent.0 > flat.0 + 5.0, "the arc bends the square: {bent:?} vs {flat:?}");
+    assert!((bent.0 - want.0).abs() < 1.5 && (bent.1 - want.1).abs() < 1.5, "sewn as drawn: {bent:?} vs {want:?}");
+    // Editing the envelope sews its art again.
+    s.execute("select.set", &json!({"ids": [id]})).unwrap();
+    s.execute("object.envelope.resetWithWarp", &json!({"style": "bulge", "bend": -50})).unwrap();
+    let (again, want) = (stitched_size(&s), drawn_mm(&mut s, id));
+    assert!((again.0 - bent.0).abs() > 3.0, "{again:?} vs {bent:?}");
+    assert!((again.0 - want.0).abs() < 1.5 && (again.1 - want.1).abs() < 1.5, "{again:?} vs {want:?}");
+}
+
+#[test]
+fn type_in_an_envelope_or_with_a_warp_effect_is_sewn_bent() {
+    let mut s = session();
+    s.execute("select.none", &json!({})).unwrap();
+    s.execute("text.create", &json!({"x": 10, "y": 300, "text": "HELLO", "size": 48})).unwrap();
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    let flat = stitched_size(&s);
+    if !flat.0.is_finite() || flat.0 <= 0.0 {
+        return; // no font to lay the type out in
+    }
+    // A Warp effect on the type.
+    s.execute("effect.apply", &json!({"effect": "warp.arc", "params": {"bend": 50}})).unwrap();
+    let warped = stitched_size(&s);
+    assert!(warped.1 > flat.1 * 1.2, "{warped:?} vs {flat:?}");
+    s.execute("edit.undo", &json!({})).unwrap();
+    assert!((stitched_size(&s).1 - flat.1).abs() < 0.01);
+    // An envelope round it.
+    let env = s.execute("object.envelope.makeWithWarp", &json!({"style": "arc", "bend": 50})).unwrap();
+    let (bent, want) = (stitched_size(&s), drawn_mm(&mut s, env["id"].as_u64().unwrap()));
+    assert!(bent.1 > flat.1 * 1.2, "{bent:?} vs {flat:?}");
+    assert!((bent.0 - want.0).abs() < 1.5 && (bent.1 - want.1).abs() < 1.5, "sewn as drawn: {bent:?} vs {want:?}");
+}

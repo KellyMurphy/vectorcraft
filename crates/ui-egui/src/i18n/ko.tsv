@@ -4906,6 +4906,19 @@ lighting	Light	광원
 	New Embroidery Font…	새 자수 글꼴…
 	Open Embroidery Font…	자수 글꼴 열기…
 	Trace Embroidery Font…	자수 글꼴 따라 그리기…
+	Frame:	프레임:
+	Letters as live type placed by the layout, each still editable, with an optional frame	레이아웃에 따라 배치한 라이브 텍스트 글자(각각 편집 가능)와 선택적 프레임
+	Letters:	글자:
+	Monogram	모노그램
+	No Frame	프레임 없음
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	선택한 포인트 텍스트를 그 위치를 지나는 원호에 올립니다: 위쪽 위로, 또는 아래쪽 아래로 왼쪽에서 오른쪽으로
+	Satin Ring	새틴 링
+	Type on an Arc	원호 위 텍스트
+	Update Monogram	모노그램 업데이트
+	Monogram…	모노그램…
+	Type on an Arc…	원호 위 텍스트…
+	Three Equal	같은 크기 세 글자
+	Two Letters	두 글자
 	Trace Font	글꼴 따라 그리기
 	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	따라 그릴 글꼴의 글자를 자동으로 디지타이즈하여 획마다 새틴 기둥으로 만듭니다(파생물을 허용하는 라이선스의 글꼴만)
 @msg	not a layer	레이어가 아닙니다

@@ -4922,6 +4922,19 @@ theme	Appearance	Giao diện
 	New Embroidery Font…	Phông chữ thêu mới…
 	Open Embroidery Font…	Mở phông chữ thêu…
 	Trace Embroidery Font…	Đồ theo phông chữ thêu…
+	Frame:	Khung:
+	Letters as live type placed by the layout, each still editable, with an optional frame	Các chữ dạng văn bản sống đặt theo bố cục, mỗi chữ vẫn sửa được, kèm khung tùy chọn
+	Letters:	Chữ:
+	Monogram	Chữ lồng
+	No Frame	Không khung
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	Đặt văn bản điểm đã chọn lên một cung tròn đi qua vị trí của nó: vòng qua phía trên, hoặc phía dưới đọc từ trái sang phải
+	Satin Ring	Vòng satin
+	Type on an Arc	Chữ trên cung
+	Update Monogram	Cập nhật chữ lồng
+	Monogram…	Chữ lồng…
+	Type on an Arc…	Chữ trên cung…
+	Three Equal	Ba bằng nhau
+	Two Letters	Hai chữ
 	Trace Font	Đồ theo phông chữ
 	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Tự động số hóa các chữ của phông để đồ theo, mỗi nét bút một cột satin (chỉ với phông có giấy phép cho phép tác phẩm phái sinh)
 @msg	not a layer	không phải là lớp

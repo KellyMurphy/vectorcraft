@@ -5366,6 +5366,19 @@ swatch	Bright Violet	Felviolet
 	New Embroidery Font…	Nieuw borduurlettertype…
 	Open Embroidery Font…	Borduurlettertype openen…
 	Trace Embroidery Font…	Borduurlettertype overtrekken…
+	Frame:	Kader:
+	Letters as live type placed by the layout, each still editable, with an optional frame	Letters als live tekst geplaatst volgens de opmaak, elk nog bewerkbaar, met een optioneel kader
+	Letters:	Letters:
+	Monogram	Monogram
+	No Frame	Geen kader
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	De geselecteerde punttekst op een cirkelboog door zijn plek zetten: over de bovenkant, of onder de onderkant, van links naar rechts leesbaar
+	Satin Ring	Satijnen ring
+	Type on an Arc	Tekst op een boog
+	Update Monogram	Monogram bijwerken
+	Monogram…	Monogram…
+	Type on an Arc…	Tekst op een boog…
+	Three Equal	Drie gelijke
+	Two Letters	Twee letters
 	Trace Font	Lettertype overtrekken
 	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	De letters van het over te trekken lettertype automatisch digitaliseren, elke penstreek een satijnkolom (alleen voor lettertypen waarvan de licentie afgeleide werken toestaat)
 @msg	not a layer	geen laag

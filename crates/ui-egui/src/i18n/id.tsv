@@ -5323,6 +5323,19 @@ swatch	Bright Violet	Violet cerah
 	New Embroidery Font…	Fon sulaman baru…
 	Open Embroidery Font…	Buka fon sulaman…
 	Trace Embroidery Font…	Jiplak fon sulaman…
+	Frame:	Bingkai:
+	Letters as live type placed by the layout, each still editable, with an optional frame	Huruf sebagai teks hidup yang ditempatkan menurut tata letak, masing-masing tetap dapat diedit, dengan bingkai opsional
+	Letters:	Huruf:
+	Monogram	Monogram
+	No Frame	Tanpa bingkai
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	Letakkan teks titik terpilih pada busur lingkaran yang melewati posisinya: di atas bagian atas, atau di bawah bagian bawah dibaca dari kiri ke kanan
+	Satin Ring	Cincin satin
+	Type on an Arc	Teks pada busur
+	Update Monogram	Perbarui monogram
+	Monogram…	Monogram…
+	Type on an Arc…	Teks pada busur…
+	Three Equal	Tiga sama
+	Two Letters	Dua huruf
 	Trace Font	Jiplak fon
 	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Digitalkan huruf fon jiplakan secara otomatis, tiap goresan pena menjadi kolom satin (hanya untuk fon yang lisensinya mengizinkan turunan)
 @msg	not a layer	bukan lapisan

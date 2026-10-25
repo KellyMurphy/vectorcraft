@@ -5181,6 +5181,19 @@ mark-style	Japanese	Japońskie
 	New Embroidery Font…	Nowa czcionka hafciarska…
 	Open Embroidery Font…	Otwórz czcionkę hafciarską…
 	Trace Embroidery Font…	Odrysuj czcionkę hafciarską…
+	Frame:	Ramka:
+	Letters as live type placed by the layout, each still editable, with an optional frame	Litery jako edytowalny tekst rozmieszczone według układu, każda nadal edytowalna, z opcjonalną ramką
+	Letters:	Litery:
+	Monogram	Monogram
+	No Frame	Bez ramki
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	Umieść zaznaczony tekst punktowy na łuku okręgu przechodzącym przez jego miejsce: nad górą lub pod dołem, czytany od lewej do prawej
+	Satin Ring	Satynowy pierścień
+	Type on an Arc	Tekst na łuku
+	Update Monogram	Aktualizuj monogram
+	Monogram…	Monogram…
+	Type on an Arc…	Tekst na łuku…
+	Three Equal	Trzy równe
+	Two Letters	Dwie litery
 	Trace Font	Odrysuj czcionkę
 	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Automatycznie zdigitalizuj litery czcionki do odrysowania, każde pociągnięcie pióra jako kolumna satynowa (tylko dla czcionek, których licencja pozwala na utwory zależne)
 @msg	not a layer	to nie jest warstwa

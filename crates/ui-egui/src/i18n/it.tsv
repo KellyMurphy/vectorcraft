@@ -4931,6 +4931,19 @@ lighting	Light	Luce
 	New Embroidery Font…	Nuovo font da ricamo…
 	Open Embroidery Font…	Apri font da ricamo…
 	Trace Embroidery Font…	Ricalca font da ricamo…
+	Frame:	Cornice:
+	Letters as live type placed by the layout, each still editable, with an optional frame	Lettere come testo modificabile disposte secondo il layout, ognuna ancora modificabile, con una cornice facoltativa
+	Letters:	Lettere:
+	Monogram	Monogramma
+	No Frame	Nessuna cornice
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	Metti il testo selezionato su un arco di cerchio che passa dove si trova: sopra la parte superiore, o sotto quella inferiore leggendo da sinistra a destra
+	Satin Ring	Anello satin
+	Type on an Arc	Testo su arco
+	Update Monogram	Aggiorna monogramma
+	Monogram…	Monogramma…
+	Type on an Arc…	Testo su arco…
+	Three Equal	Tre uguali
+	Two Letters	Due lettere
 	Trace Font	Ricalca font
 	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Digitalizza automaticamente le lettere del font da ricalcare, ogni tratto di penna una colonna satin (solo per font la cui licenza consente opere derivate)
 @msg	not a layer	non è un livello

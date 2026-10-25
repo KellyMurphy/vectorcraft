@@ -4905,6 +4905,19 @@ effect	Regular	Regelmäßig
 	New Embroidery Font…	Neue Stickschrift…
 	Open Embroidery Font…	Stickschrift öffnen…
 	Trace Embroidery Font…	Stickschrift nachzeichnen…
+	Frame:	Rahmen:
+	Letters as live type placed by the layout, each still editable, with an optional frame	Buchstaben als Live-Text, nach dem Layout platziert, jeder weiter bearbeitbar, mit optionalem Rahmen
+	Letters:	Buchstaben:
+	Monogram	Monogramm
+	No Frame	Kein Rahmen
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	Den ausgewählten Punkttext auf einen Kreisbogen durch seine Stelle setzen: über die Oberseite oder unter die Unterseite, von links nach rechts lesbar
+	Satin Ring	Satinring
+	Type on an Arc	Text auf einem Bogen
+	Update Monogram	Monogramm aktualisieren
+	Monogram…	Monogramm…
+	Type on an Arc…	Text auf einem Bogen…
+	Three Equal	Drei gleiche
+	Two Letters	Zwei Buchstaben
 	Trace Font	Schrift nachzeichnen
 	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Die Buchstaben der Nachzeichnen-Schrift automatisch digitalisieren, jeden Federstrich als Satinsäule (nur für Schriften, deren Lizenz Ableitungen erlaubt)
 @msg	not a layer	keine Ebene

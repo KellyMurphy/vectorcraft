@@ -5315,6 +5315,19 @@ imageTrace	Outline	Körvonal
 	New Embroidery Font…	Új hímzőbetűtípus…
 	Open Embroidery Font…	Hímzőbetűtípus megnyitása…
 	Trace Embroidery Font…	Hímzőbetűtípus átrajzolása…
+	Frame:	Keret:
+	Letters as live type placed by the layout, each still editable, with an optional frame	Betűk élő szövegként az elrendezés szerint elhelyezve, mindegyik szerkeszthető marad, választható kerettel
+	Letters:	Betűk:
+	Monogram	Monogram
+	No Frame	Nincs keret
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	A kijelölt pontszöveg körívre helyezése a helyén át: a teteje fölött vagy az alja alatt, balról jobbra olvasva
+	Satin Ring	Szatén gyűrű
+	Type on an Arc	Szöveg íven
+	Update Monogram	Monogram frissítése
+	Monogram…	Monogram…
+	Type on an Arc…	Szöveg íven…
+	Three Equal	Három egyforma
+	Two Letters	Két betű
 	Trace Font	Betűtípus átrajzolása
 	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Az átrajzolandó betűtípus betűinek automatikus digitalizálása, minden tollvonás egy szaténoszlop (csak olyan betűtípusokhoz, amelyek licence megengedi a származékos műveket)
 @msg	not a layer	nem réteg

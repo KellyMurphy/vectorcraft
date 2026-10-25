@@ -4911,6 +4911,19 @@ lighting	Light	Світло
 	New Embroidery Font…	Новий шрифт для вишивки…
 	Open Embroidery Font…	Відкрити шрифт для вишивки…
 	Trace Embroidery Font…	Обвести шрифт для вишивки…
+	Frame:	Рамка:
+	Letters as live type placed by the layout, each still editable, with an optional frame	Літери як редагований текст, розташовані за макетом, кожна лишається редагованою, з рамкою на вибір
+	Letters:	Літери:
+	Monogram	Монограма
+	No Frame	Без рамки
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	Покласти вибраний текст з точки на дугу кола, що проходить через його місце: над верхом або під низом, читаний зліва направо
+	Satin Ring	Атласне кільце
+	Type on an Arc	Текст по дузі
+	Update Monogram	Оновити монограму
+	Monogram…	Монограма…
+	Type on an Arc…	Текст по дузі…
+	Three Equal	Три однакові
+	Two Letters	Дві літери
 	Trace Font	Обвести шрифт
 	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Автоматично оцифрувати літери шрифту для обведення, кожен штрих пера — атласна колона (лише для шрифтів, ліцензія яких дозволяє похідні)
 @msg	not a layer	це не шар

@@ -154,6 +154,30 @@ and travels between them instead of jumping: by a straight run of stitches where
 (the rows sewn next cover it), else along the outline (up to 40 mm), stepping off and back on in straight
 lines inside the shape. Only where neither works does the needle jump (and trim).
 
+**Distorted art is sewn as it is drawn.** An object inside an envelope (Object › Envelope Distort: a warp,
+a mesh or a top object, nested ones too) and one with a Warp effect (Effect › Warp) is sewn from its
+distorted outlines, type letter by letter, so curved and bulged lettering sews as the canvas shows it. The
+envelope's Fidelity sets how finely curves are followed; with its Distort Appearance option on, the object's
+Warp effects apply before the envelope, else after it, as on the canvas. Type in an embroidery font bends
+the same way: its letters' stitch objects are distorted as shapes before they are sewn. Other geometry
+effects (Roughen, Zig Zag, Offset Path…) aren't sewn yet: the stitches follow the shape without them, with
+a warning.
+
+**Type on an arc.** **Type on an Arc** (Tools tab › Lettering, `embroidery.textArc`) puts the selected
+point type on a circle arc through where it is (or sets new words with `text`), for badge lettering in one
+step: **Top** reads left to right over the top with the letters standing outward, **Bottom** reads left
+to right under the bottom, upright. The radius is the lettering band's inner edge, so a top and a bottom
+line of one size share the band. The result is ordinary type on a path, edited as any other.
+
+**Monograms.** **Monogram** (Tools tab › Lettering, `embroidery.monogram`) sets two or three letters as a
+group of live point type, one object per letter, each placed and sized to fill its box in a layout:
+**Classic** (a large centre initial between two smaller), **Three Equal**, **Two Letters**, **Stacked**,
+**Circle** and **Diamond** (the outer letters shorter, to sit in that frame). The frame is optional: a 2 mm
+satin ring, or a border pattern round the letters (a circle, a diamond for the Diamond layout). The
+group keeps its recipe (letters, layout, height, frame) in its object data, so selecting a monogram shows
+it in the panel and **Update Monogram** lays it out again in place with what changed. The checker's
+small-type warning covers a monogram's letters like any type.
+
 ### Embroidery fonts
 
 An **embroidery font** is lettering digitized for embroidery: each letter is a set of stitch objects (outlines
@@ -509,6 +533,8 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.saveFont` | `{font, path?, user?}`: write one of the document's fonts as a `.vcfont` file (`user: true`: into the embroidery library) |
 | `embroidery.removeFont` | `{font}`: remove a font from the document |
 | `embroidery.font.new` | `{name?, chars?, from?, author?, license?}`: a new embroidery font document (one artboard per glyph; `from`: an installed font to trace on a template layer) → `{index, glyphs}` |
+| `embroidery.textArc` | `{text?, cx, cy, radius, side?: top\|bottom, size?, font?, style?, color?, tracking?, stitch?: auto\|none}`: type on a circle arc (pt), or the selected point type put on one → `{id}` |
+| `embroidery.monogram` | `{letters, layout?: classic\|three\|two\|stacked\|circle\|diamond, cx?, cy?, height?, font?, style?, color?, frame?: none\|satin\|pattern id, stitch?, id?}`: a monogram group of live type (with `id`: that monogram laid out again) → `{id, letters, frame?}` |
 | `embroidery.font.trace` | `{from, chars?, name?, author?, license?}`: an installed font digitized automatically into a font document (pen strokes as satin columns between rails) → `{index, glyphs, traced, outlines}` |
 | `embroidery.font.open` | `{path? \| data? \| library? \| font?}`: an embroidery font as a font document, to edit |
 | `embroidery.font.info` | → the font document's `font`, `glyphs` (`chars`, `advance`, `objects`), `empty` glyphs and `kerning` |

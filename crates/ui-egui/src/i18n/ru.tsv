@@ -4927,6 +4927,19 @@ lighting	Light	Свет
 	New Embroidery Font…	Новый шрифт для вышивки…
 	Open Embroidery Font…	Открыть шрифт для вышивки…
 	Trace Embroidery Font…	Обвести шрифт для вышивки…
+	Frame:	Рамка:
+	Letters as live type placed by the layout, each still editable, with an optional frame	Буквы как редактируемый текст, расположенные по макету, каждая остаётся редактируемой, с рамкой по выбору
+	Letters:	Буквы:
+	Monogram	Монограмма
+	No Frame	Без рамки
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	Поместить выбранный текст из точки на дугу окружности, проходящую через его место: над верхом или под низом, читаемый слева направо
+	Satin Ring	Атласное кольцо
+	Type on an Arc	Текст по дуге
+	Update Monogram	Обновить монограмму
+	Monogram…	Монограмма…
+	Type on an Arc…	Текст по дуге…
+	Three Equal	Три одинаковые
+	Two Letters	Две буквы
 	Trace Font	Обвести шрифт
 	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Автоматически оцифровать буквы шрифта для обводки, каждый штрих пера — атласная колонна (только для шрифтов, лицензия которых разрешает производные)
 @msg	not a layer	это не слой

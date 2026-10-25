@@ -5317,6 +5317,19 @@ theme	Appearance	Apparence
 	New Embroidery Font…	Nouvelle police de broderie…
 	Open Embroidery Font…	Ouvrir une police de broderie…
 	Trace Embroidery Font…	Décalquer une police de broderie…
+	Frame:	Cadre :
+	Letters as live type placed by the layout, each still editable, with an optional frame	Des lettres en texte modifiable placées selon la disposition, chacune toujours modifiable, avec un cadre facultatif
+	Letters:	Lettres :
+	Monogram	Monogramme
+	No Frame	Sans cadre
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	Placer le texte de point sélectionné sur un arc de cercle passant par sa position : par-dessus le haut, ou sous le bas en lisant de gauche à droite
+	Satin Ring	Anneau satin
+	Type on an Arc	Texte en arc
+	Update Monogram	Mettre à jour le monogramme
+	Monogram…	Monogramme…
+	Type on an Arc…	Texte en arc…
+	Three Equal	Trois égales
+	Two Letters	Deux lettres
 	Trace Font	Décalquer la police
 	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Numériser automatiquement les lettres de la police à décalquer, chaque trait de plume en colonne de satin (seulement pour les polices dont la licence autorise les dérivés)
 @msg	not a layer	n’est pas un calque

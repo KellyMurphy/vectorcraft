@@ -39,6 +39,7 @@ pub mod rails;
 pub mod skeleton;
 pub mod testsheet;
 pub mod threads;
+mod warp;
 pub mod worksheet;
 
 use std::collections::HashMap;
@@ -302,10 +303,10 @@ struct Hiders {
 }
 
 impl Hiders {
-    fn new(items: &[&Arc<Node>]) -> Self {
+    fn new(items: &[&Arc<Node>], warps: &Warps) -> Self {
         let mut h = Hiders::default();
         for (i, n) in items.iter().enumerate() {
-            let Some(cut) = hide_area(n) else { continue };
+            let Some(cut) = hide_area(n, warp_of(warps, n.id)) else { continue };
             let (mut lo, mut hi) = (Point::new(f64::INFINITY, f64::INFINITY), Point::new(f64::NEG_INFINITY, f64::NEG_INFINITY));
             for p in cut.polys.iter().flatten() {
                 lo = Point::new(lo.x.min(p.x), lo.y.min(p.y));
@@ -349,17 +350,12 @@ fn cell(p: Point) -> (i64, i64) {
 
 /// The area a fill or satin shape covers, which hides travel sewn before it (`None`: anything
 /// else, and puffed objects, whose foam is laid after).
-fn hide_area(n: &Node) -> Option<generate::Cut> {
+fn hide_area(n: &Node, warp: warp::Warp) -> Option<generate::Cut> {
     let s = n.extras().stitch.as_deref()?;
     if s.unknown.is_some() || s.puffed() || !matches!(s.kind, StitchKind::Fill | StitchKind::SatinShape) {
         return None;
     }
-    let (paths, rule): (Vec<PathData>, FillRule) = match &n.kind {
-        NodeKind::Path { path, rule, .. } => (vec![path.clone()], *rule),
-        NodeKind::Compound { children, rule } => (children.iter().filter_map(|c| c.path_data().cloned()).collect(), *rule),
-        NodeKind::Text(t) => (glyph_parts(t).into_iter().map(|(_, p)| p).collect(), FillRule::NonZero),
-        _ => return None,
-    };
+    let (paths, rule) = art(n, warp)?;
     let polys: Vec<Vec<Point>> = paths.iter().flat_map(generate::polylines).filter(|(l, _)| l.len() >= 3).map(|(l, _)| l).collect();
     (!polys.is_empty()).then_some(generate::Cut { polys, rule })
 }
@@ -627,15 +623,15 @@ pub fn plan_cached(doc: &Document, cache: &mut StitchCache) -> Plan {
     // Only the objects sewn now are kept for the next plan.
     let mut next = HashMap::new();
     let mut objects = vec![];
-    let items = ordered(doc, &mut tally);
-    let covers = coverers(&items);
+    let (items, warps) = ordered(doc, &mut tally);
+    let covers = coverers(&items, &warps);
     if b.hide_travel {
-        b.hiders = Hiders::new(&items);
+        b.hiders = Hiders::new(&items, &warps);
     }
     for (i, n) in items.iter().enumerate() {
         b.index = i;
         let over: Vec<Arc<Node>> = covers.get(i).into_iter().flatten().filter_map(|j| items.get(*j).map(|c| Arc::clone(c))).collect();
-        let sewn = cache.get(n, over, &mut next);
+        let sewn = cache.get(n, over, &warps, &mut next);
         let start = b.plan.needles.len();
         b.apply(&sewn);
         objects.push(PlannedObject { id: n.id, needles: start..b.plan.needles.len(), warnings: sewn.warnings.clone() });
@@ -689,17 +685,26 @@ pub fn has_stitches(doc: &Document) -> bool {
 /// The objects `doc` sews, in the order it sews them: those in the document's sewing order
 /// ([`EmbroiderySetup::order`]) first, in that order, then the others in paint order.
 pub fn sew_order(doc: &Document) -> Vec<&Node> {
-    ordered(doc, &mut Tally::default()).into_iter().map(|n| n.as_ref()).collect()
+    ordered(doc, &mut Tally::default()).0.into_iter().map(|n| n.as_ref()).collect()
 }
 
-fn ordered<'a>(doc: &'a Document, tally: &mut Tally) -> Vec<&'a Arc<Node>> {
+/// The envelopes each sewn object inside one sits in, innermost first: its art is sewn as they
+/// distort it ([`warp`]).
+type Warps<'a> = HashMap<NodeId, Vec<&'a Arc<Node>>>;
+
+fn warp_of<'w>(warps: &'w Warps, id: NodeId) -> warp::Warp<'w> {
+    warp::Warp { envelopes: warps.get(&id).map_or(&[], Vec::as_slice) }
+}
+
+fn ordered<'a>(doc: &'a Document, tally: &mut Tally) -> (Vec<&'a Arc<Node>>, Warps<'a>) {
     let mut items: Vec<&Arc<Node>> = vec![];
+    let mut warps = Warps::new();
     for l in &doc.layers {
-        collect(l, &mut items, tally, false);
+        collect(l, &mut items, tally, false, &mut vec![], &mut warps);
     }
     let order = &doc.embroidery.order;
     if order.is_empty() {
-        return items;
+        return (items, warps);
     }
     // Listed ones first (each once, in list order), then the rest as painted.
     let mut out: Vec<&Arc<Node>> = vec![];
@@ -711,7 +716,7 @@ fn ordered<'a>(doc: &'a Document, tally: &mut Tally) -> Vec<&'a Arc<Node>> {
         }
     }
     out.extend(items.into_iter().filter(|n| !order.contains(&n.id)));
-    out
+    (out, warps)
 }
 
 /// What the walk counts for its warnings.
@@ -728,7 +733,14 @@ struct Tally {
 }
 
 /// The objects under `n` that are sewn, in paint order.
-fn collect<'a>(n: &'a Arc<Node>, items: &mut Vec<&'a Arc<Node>>, tally: &mut Tally, masked: bool) {
+fn collect<'a>(
+    n: &'a Arc<Node>,
+    items: &mut Vec<&'a Arc<Node>>,
+    tally: &mut Tally,
+    masked: bool,
+    envelopes: &mut Vec<&'a Arc<Node>>,
+    warps: &mut Warps<'a>,
+) {
     // Hidden art isn't sewn, and neither are template layers (art to trace over) nor layers that
     // don't print.
     let off = matches!(n.kind, NodeKind::Layer { template: true, .. } | NodeKind::Layer { printable: false, .. });
@@ -751,6 +763,9 @@ fn collect<'a>(n: &'a Arc<Node>, items: &mut Vec<&'a Arc<Node>>, tally: &mut Tal
         };
         if sewn {
             items.push(n);
+            if !envelopes.is_empty() {
+                warps.insert(n.id, envelopes.iter().rev().copied().collect());
+            }
             tally.clipped += usize::from(masked);
             if masked {
                 tally.ids.push((n.id, LeftOut::Masked));
@@ -758,8 +773,15 @@ fn collect<'a>(n: &'a Arc<Node>, items: &mut Vec<&'a Arc<Node>>, tally: &mut Tal
         }
     }
     if let Some(children) = n.children() {
+        let envelope = matches!(n.kind, NodeKind::Envelope { .. });
+        if envelope {
+            envelopes.push(n);
+        }
         for c in children {
-            collect(c, items, tally, masked);
+            collect(c, items, tally, masked, envelopes, warps);
+        }
+        if envelope {
+            envelopes.pop();
         }
     }
 }
@@ -767,15 +789,37 @@ fn collect<'a>(n: &'a Arc<Node>, items: &mut Vec<&'a Arc<Node>>, tally: &mut Tal
 /// Sew one stitched object.
 fn sew_node(n: &Node, b: &mut Sewer) {
     let Some(s) = n.extras().stitch.as_deref() else { return };
+    let unsewn = warp::Warp::unsewn(n);
+    if !unsewn.is_empty() {
+        b.out.warnings.push(format!("stitches follow the shape without its effects ({}): only Warp effects are sewn", unsewn.join(", ")));
+    }
     match &n.kind {
+        NodeKind::Text(t) => text(n, t, s, b),
+        _ if b.warp.bends(n) => {
+            if let Some((paths, rule)) = art(n, b.warp) {
+                object(n, s, &paths.iter().collect::<Vec<_>>(), rule, b);
+            }
+        }
         NodeKind::Path { path, rule, .. } => object(n, s, &[path], *rule, b),
         NodeKind::Compound { children, rule } => {
             let paths: Vec<&PathData> = children.iter().filter_map(|c| c.path_data()).collect();
             object(n, s, &paths, *rule, b);
         }
-        NodeKind::Text(t) => text(t, s, b),
         _ => {}
     }
+}
+
+/// The art `n` is sewn from (a path, a compound path's paths, type's letters), distorted as the
+/// canvas draws it, with its fill rule.
+fn art(n: &Node, warp: warp::Warp) -> Option<(Vec<PathData>, FillRule)> {
+    let (mut paths, rule): (Vec<PathData>, FillRule) = match &n.kind {
+        NodeKind::Path { path, rule, .. } => (vec![path.clone()], *rule),
+        NodeKind::Compound { children, rule } => (children.iter().filter_map(|c| c.path_data().cloned()).collect(), *rule),
+        NodeKind::Text(t) => return Some((letters(n, t, warp).into_iter().map(|(_, p)| p).collect(), FillRule::NonZero)),
+        _ => return None,
+    };
+    warp.apply(n, &mut paths.iter_mut().collect::<Vec<_>>());
+    Some((paths, rule))
 }
 
 /// The thread an object is sewn in (type: its first characters' colour).
@@ -950,20 +994,20 @@ pub fn auto_settings(s: &StitchSettings, width: f64) -> StitchSettings {
 
 /// Sew a type object letter by letter (its glyphs as laid out, then its underlines and
 /// strikethroughs), each in the thread of its characters' colour. Inline graphics are left out.
-fn text(t: &vectorcraft_doc::TextObject, s: &StitchSettings, b: &mut Sewer) {
+fn text(n: &Node, t: &vectorcraft_doc::TextObject, s: &StitchSettings, b: &mut Sewer) {
     let style = |run: usize| t.runs.get(run).map(|r| r.style.clone()).unwrap_or_else(|| t.first_style());
     if let Some(id) = s.font.as_deref() {
         match b.fonts.iter().find(|f| f.id == id && f.unknown.is_none()) {
             Some(font) => {
                 let font = font.clone();
-                return in_font(t, s, &font, b);
+                return in_font(n, t, s, &font, b);
             }
             None => {
                 b.out.warnings.push(format!("type is set in the embroidery font `{id}`, which the document doesn't have: sewn from its outline font"))
             }
         }
     }
-    let parts = glyph_parts(t);
+    let parts = letters(n, t, b.warp);
     // Letters are written as their face is: script faces by the flow of the pen.
     let first = t.first_style();
     b.hand = penstrokes::hand_of(&first.font_family, &first.font_style);
@@ -1031,7 +1075,7 @@ fn satin_letters(t: &vectorcraft_doc::TextObject, s: &StitchSettings, parts: &[(
 /// Type `t` sewn from embroidery font `font` (E8.1b): each letter's stitch objects with their own
 /// settings, in the colour of the run they are in unless they name a thread; characters the font
 /// lacks from the outline font, as `s` says, where the embroidery letter would be.
-fn in_font(t: &vectorcraft_doc::TextObject, s: &StitchSettings, font: &vectorcraft_doc::EmbroideryFont, b: &mut Sewer) {
+fn in_font(n: &Node, t: &vectorcraft_doc::TextObject, s: &StitchSettings, font: &vectorcraft_doc::EmbroideryFont, b: &mut Sewer) {
     let style = |run: usize| t.runs.get(run).map(|r| r.style.clone()).unwrap_or_else(|| t.first_style());
     let l = lettering::set(t, font);
     if l.as_point {
@@ -1045,33 +1089,42 @@ fn in_font(t: &vectorcraft_doc::TextObject, s: &StitchSettings, font: &vectorcra
     {
         b.out.warnings.push(format!("{} is made for capitals {lo}–{hi} mm tall; this type's are {:.1} mm", font.name, l.cap_mm));
     }
-    for p in &l.placed {
+    // The missing characters, from the outline font, moved to where they go.
+    let mut absent = vec![];
+    let mut stand_ins = vec![];
+    if !l.missing.is_empty() {
+        let db = vectorcraft_text::FontDb::global();
+        let lay = vectorcraft_text::layout(db, t);
+        for m in &l.missing {
+            let Some(g) = lay.glyphs.iter().find(|g| g.byte == m.byte) else {
+                absent.push(m.chars.clone());
+                continue;
+            };
+            let to =
+                kurbo::Affine::translate(m.pen.to_vec2()) * kurbo::Affine::rotate(m.angle - g.angle) * kurbo::Affine::translate(-g.origin.to_vec2());
+            let path = PathData::from_bezpath(&(to * g.outline.clone())).transformed(t.xf);
+            if !path.is_empty() {
+                stand_ins.push((m.run, path));
+            }
+        }
+    }
+    // Distorted together, as the canvas draws the type.
+    let mut placed: Vec<PathData> = l.placed.iter().map(|p| p.path.clone()).collect();
+    b.warp.apply(n, &mut placed.iter_mut().chain(stand_ins.iter_mut().map(|(_, p)| p)).collect::<Vec<_>>());
+    for (p, path) in l.placed.iter().zip(&placed) {
         let a = style(p.run).appearance();
         let settings = b.fabric_in(&p.object.stitch);
         let thread = thread_of(&a, &settings);
-        sew(&settings, thread, 0.0, &[&p.path], p.rule, b);
+        sew(&settings, thread, 0.0, &[path], p.rule, b);
     }
     if l.missing.is_empty() {
         return;
     }
-    // The missing characters, from the outline font, moved to where they go.
-    let db = vectorcraft_text::FontDb::global();
-    let lay = vectorcraft_text::layout(db, t);
-    let mut absent = vec![];
-    for m in &l.missing {
-        let Some(g) = lay.glyphs.iter().find(|g| g.byte == m.byte) else {
-            absent.push(m.chars.clone());
-            continue;
-        };
-        let to = kurbo::Affine::translate(m.pen.to_vec2()) * kurbo::Affine::rotate(m.angle - g.angle) * kurbo::Affine::translate(-g.origin.to_vec2());
-        let path = PathData::from_bezpath(&(to * g.outline.clone())).transformed(t.xf);
-        if path.is_empty() {
-            continue;
-        }
-        let a = style(m.run).appearance();
+    for (run, path) in &stand_ins {
+        let a = style(*run).appearance();
         let mut own = s.clone();
         own.font = None;
-        sew(&own, thread_of(&a, &own), a.stroke_width() * PT_MM, &[&path], FillRule::NonZero, b);
+        sew(&own, thread_of(&a, &own), a.stroke_width() * PT_MM, &[path], FillRule::NonZero, b);
     }
     let all: Vec<&str> = l.missing.iter().map(|m| m.chars.as_str()).collect();
     b.out.warnings.push(format!(
@@ -1082,6 +1135,16 @@ fn in_font(t: &vectorcraft_doc::TextObject, s: &StitchSettings, font: &vectorcra
     if !absent.is_empty() {
         b.out.warnings.push(format!("no outline font has {}: left out", absent.iter().map(|c| format!("`{c}`")).collect::<Vec<_>>().join(", ")));
     }
+}
+
+/// Type `n`'s letters ([`glyph_parts`]) distorted as the canvas draws them.
+fn letters(n: &Node, t: &vectorcraft_doc::TextObject, warp: warp::Warp) -> Vec<(usize, PathData)> {
+    let mut parts = glyph_parts(t);
+    if warp.bends(n) {
+        warp.apply(n, &mut parts.iter_mut().map(|(_, p)| p).collect::<Vec<_>>());
+        parts.retain(|(_, p)| !p.is_empty());
+    }
+    parts
 }
 
 /// A type object's letters as laid out (then its underlines and strikethroughs), each with the
@@ -1289,6 +1352,8 @@ struct Sewer<'a> {
     overlap: f64,
     /// How the type being sewn is written (print or script), for satin by pen strokes.
     hand: penstrokes::Hand,
+    /// What distorts the object's art ([`warp`]).
+    warp: warp::Warp<'a>,
     out: Sewn,
 }
 
@@ -1319,13 +1384,17 @@ pub struct StitchCache {
     pub sewn: usize,
 }
 
-/// A cached object: the node sewn, the objects on top of it it was cut by, and its stitches.
+/// A cached object: the node sewn, what else its stitches depend on (the objects on top of it it
+/// was cut by, and the envelopes distorting it and them), and its stitches.
 type Entry = (Arc<Node>, Vec<Arc<Node>>, Arc<Sewn>);
 
 impl StitchCache {
     /// `n`'s stitches: kept ones when `n` is the node they were sewn from and the same objects
     /// (`over`) lie on top of it, else sewn now.
-    fn get(&mut self, n: &Arc<Node>, over: Vec<Arc<Node>>, next: &mut HashMap<NodeId, Entry>) -> Arc<Sewn> {
+    fn get(&mut self, n: &Arc<Node>, cut_by: Vec<Arc<Node>>, warps: &Warps, next: &mut HashMap<NodeId, Entry>) -> Arc<Sewn> {
+        // An edited envelope sews its art again.
+        let bent = |id: NodeId| warps.get(&id).into_iter().flatten().map(|e| Arc::clone(e));
+        let over: Vec<Arc<Node>> = cut_by.iter().cloned().chain(bent(n.id)).chain(cut_by.iter().flat_map(|c| bent(c.id))).collect();
         let same = |a: &[Arc<Node>]| a.len() == over.len() && a.iter().zip(&over).all(|(p, q)| Arc::ptr_eq(p, q));
         let sewn = match self.entries.get(&n.id) {
             Some((node, was_over, sewn)) if Arc::ptr_eq(node, n) && same(was_over) => {
@@ -1336,7 +1405,7 @@ impl StitchCache {
                 self.sewn += 1;
                 // A fabric this version can't read isn't used.
                 let fabric = self.fabric.as_deref().filter(|f| f.unknown.is_none());
-                let cuts = over.iter().filter_map(|c| cover_area(c)).collect();
+                let cuts = cut_by.iter().filter_map(|c| cover_area(c, warp_of(warps, c.id))).collect();
                 let mut b = Sewer {
                     patterns: &self.patterns,
                     fonts: &self.fonts,
@@ -1345,6 +1414,7 @@ impl StitchCache {
                     cuts,
                     overlap: self.overlap,
                     hand: penstrokes::Hand::Print,
+                    warp: warp_of(warps, n.id),
                     out: Sewn::default(),
                 };
                 sew_node(n, &mut b);
@@ -1367,7 +1437,7 @@ fn covers(n: &Node) -> bool {
 
 /// For each of `items` (in sewing order) that is a fill whose covered rows are cut away, the
 /// later items that may lie on top of it (their boxes meet).
-fn coverers(items: &[&Arc<Node>]) -> Vec<Vec<usize>> {
+fn coverers(items: &[&Arc<Node>], warps: &Warps) -> Vec<Vec<usize>> {
     let fills: Vec<bool> = items
         .iter()
         .map(|n| n.extras().stitch.as_deref().is_some_and(|s| s.unknown.is_none() && s.kind == StitchKind::Fill && !s.keep_covered))
@@ -1375,7 +1445,8 @@ fn coverers(items: &[&Arc<Node>]) -> Vec<Vec<usize>> {
     if !fills.iter().any(|f| *f) {
         return vec![];
     }
-    let boxes: Vec<Option<vectorcraft_geom::Rect>> = items.iter().map(|n| n.visual_bounds()).collect();
+    // A distorted object's box isn't its art's: unknown.
+    let boxes: Vec<Option<vectorcraft_geom::Rect>> = items.iter().map(|n| n.visual_bounds().filter(|_| !warp_of(warps, n.id).bends(n))).collect();
     let can: Vec<bool> = items.iter().map(|n| covers(n)).collect();
     let meet = |a: &vectorcraft_geom::Rect, b: &vectorcraft_geom::Rect| a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
     (0..items.len())
@@ -1398,18 +1469,16 @@ fn coverers(items: &[&Arc<Node>]) -> Vec<Vec<usize>> {
 
 /// The area `n` covers when sewn on top of a fill (see [`covers`]): areas by their outlines (type:
 /// its letters), satin columns by their band.
-fn cover_area(n: &Node) -> Option<generate::Cut> {
+fn cover_area(n: &Node, warp: warp::Warp) -> Option<generate::Cut> {
     let s = n.extras().stitch.as_deref()?;
     if !covers(n) {
         return None;
     }
     let area = s.kind != StitchKind::Satin;
-    let (paths, rule): (Vec<PathData>, FillRule) = match &n.kind {
-        NodeKind::Path { path, rule, .. } => (vec![path.clone()], *rule),
-        NodeKind::Compound { children, rule } => (children.iter().filter_map(|c| c.path_data().cloned()).collect(), *rule),
-        NodeKind::Text(t) if area => (glyph_parts(t).into_iter().map(|(_, p)| p).collect(), FillRule::NonZero),
-        _ => return None,
-    };
+    if !area && matches!(n.kind, NodeKind::Text(_)) {
+        return None;
+    }
+    let (paths, rule) = art(n, warp)?;
     let lines: Vec<(Vec<Point>, bool)> = paths.iter().flat_map(generate::polylines).collect();
     if area {
         let polys: Vec<Vec<Point>> = lines.into_iter().map(|(l, _)| l).filter(|l| l.len() >= 3).collect();
