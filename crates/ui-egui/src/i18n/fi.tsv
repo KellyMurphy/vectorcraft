@@ -5293,6 +5293,10 @@ mark-style	Japanese	Japanilainen
 	New Embroidery Font…	Uusi kirjontafontti…
 	Open Embroidery Font…	Avaa kirjontafontti…
 	Trace Embroidery Font…	Jäljennä kirjontafontti…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	{family} jäljennetty: {traced} kirjainta satiinipylväinä, {kept} säilytetty ääriviivoina
+	Tracing Font	Jäljennetään fonttia
+	Tracing {family}	Jäljennetään {family}
+	{done} of {total} letters	{done}/{total} kirjainta
 	Frame:	Kehys:
 	Letters as live type placed by the layout, each still editable, with an optional frame	Kirjaimet elävänä tekstinä asettelun mukaan sijoitettuina, kukin yhä muokattavissa, valinnaisella kehyksellä
 	Letters:	Kirjaimet:

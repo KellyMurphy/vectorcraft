@@ -4972,6 +4972,10 @@ lighting	Light	ライト
 	New Embroidery Font…	新規刺繍フォント…
 	Open Embroidery Font…	刺繍フォントを開く…
 	Trace Embroidery Font…	刺繍フォントをトレース…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	{family} をトレースしました：{traced} 文字をサテンコラムに、{kept} 文字はアウトラインのまま
+	Tracing Font	フォントをトレース中
+	Tracing {family}	{family} をトレース中
+	{done} of {total} letters	{total} 文字中 {done} 文字
 	Frame:	フレーム：
 	Letters as live type placed by the layout, each still editable, with an optional frame	レイアウトに沿って配置したライブテキストの文字（それぞれ編集可能）と、任意のフレーム
 	Letters:	文字：

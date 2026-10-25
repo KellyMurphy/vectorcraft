@@ -4931,6 +4931,10 @@ lighting	Light	Luce
 	New Embroidery Font…	Nuovo font da ricamo…
 	Open Embroidery Font…	Apri font da ricamo…
 	Trace Embroidery Font…	Ricalca font da ricamo…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	{family} ricalcato: {traced} lettere come colonne satin, {kept} mantenute come contorni
+	Tracing Font	Ricalco del font
+	Tracing {family}	Ricalco di {family}
+	{done} of {total} letters	{done} di {total} lettere
 	Frame:	Cornice:
 	Letters as live type placed by the layout, each still editable, with an optional frame	Lettere come testo modificabile disposte secondo il layout, ognuna ancora modificabile, con una cornice facoltativa
 	Letters:	Lettere:

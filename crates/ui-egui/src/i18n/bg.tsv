@@ -5299,6 +5299,10 @@ theme	Appearance	Външен вид
 	New Embroidery Font…	Нов шрифт за бродерия…
 	Open Embroidery Font…	Отваряне на шрифт за бродерия…
 	Trace Embroidery Font…	Прерисуване на шрифт за бродерия…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	{family} е прерисуван: {traced} букви като сатенени колони, {kept} запазени като контури
+	Tracing Font	Прерисуване на шрифт
+	Tracing {family}	Прерисуване на {family}
+	{done} of {total} letters	{done} от {total} букви
 	Frame:	Рамка:
 	Letters as live type placed by the layout, each still editable, with an optional frame	Букви като жив текст, подредени по оформлението, всяка още редактируема, с рамка по избор
 	Letters:	Букви:

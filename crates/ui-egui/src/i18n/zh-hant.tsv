@@ -4219,6 +4219,10 @@ lighting	Light	光源
 	New Embroidery Font…	新增刺繡字體…
 	Open Embroidery Font…	開啟刺繡字體…
 	Trace Embroidery Font…	描摹刺繡字體…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	已描摹 {family}：{traced} 個字母為緞紋柱，{kept} 個保留為輪廓
+	Tracing Font	正在描摹字體
+	Tracing {family}	正在描摹 {family}
+	{done} of {total} letters	{done}/{total} 個字母
 	Frame:	邊框：
 	Letters as live type placed by the layout, each still editable, with an optional frame	依版面配置放置的即時文字字母（每個仍可編輯），可選邊框
 	Letters:	字母：

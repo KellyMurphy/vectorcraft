@@ -5285,6 +5285,10 @@ theme	Appearance	Utseende
 	New Embroidery Font…	Nytt broderiteckensnitt…
 	Open Embroidery Font…	Öppna broderiteckensnitt…
 	Trace Embroidery Font…	Rita efter broderiteckensnitt…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	{family} har ritats efter: {traced} bokstäver som satinkolumner, {kept} behållna som konturer
+	Tracing Font	Ritar efter teckensnitt
+	Tracing {family}	Ritar efter {family}
+	{done} of {total} letters	{done} av {total} bokstäver
 	Frame:	Ram:
 	Letters as live type placed by the layout, each still editable, with an optional frame	Bokstäver som levande text placerade enligt layouten, var och en fortfarande redigerbar, med en valfri ram
 	Letters:	Bokstäver:

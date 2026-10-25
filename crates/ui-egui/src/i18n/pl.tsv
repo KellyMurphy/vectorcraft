@@ -5181,6 +5181,10 @@ mark-style	Japanese	Japońskie
 	New Embroidery Font…	Nowa czcionka hafciarska…
 	Open Embroidery Font…	Otwórz czcionkę hafciarską…
 	Trace Embroidery Font…	Odrysuj czcionkę hafciarską…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	Odrysowano {family}: {traced} liter jako kolumny satynowe, {kept} zachowanych jako kontury
+	Tracing Font	Odrysowywanie czcionki
+	Tracing {family}	Odrysowywanie {family}
+	{done} of {total} letters	{done} z {total} liter
 	Frame:	Ramka:
 	Letters as live type placed by the layout, each still editable, with an optional frame	Litery jako edytowalny tekst rozmieszczone według układu, każda nadal edytowalna, z opcjonalną ramką
 	Letters:	Litery:

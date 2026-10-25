@@ -4911,6 +4911,10 @@ lighting	Light	Світло
 	New Embroidery Font…	Новий шрифт для вишивки…
 	Open Embroidery Font…	Відкрити шрифт для вишивки…
 	Trace Embroidery Font…	Обвести шрифт для вишивки…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	{family} обведено: {traced} літер атласними колонами, {kept} залишено контурами
+	Tracing Font	Обведення шрифту
+	Tracing {family}	Обведення {family}
+	{done} of {total} letters	{done} з {total} літер
 	Frame:	Рамка:
 	Letters as live type placed by the layout, each still editable, with an optional frame	Літери як редагований текст, розташовані за макетом, кожна лишається редагованою, з рамкою на вибір
 	Letters:	Літери:

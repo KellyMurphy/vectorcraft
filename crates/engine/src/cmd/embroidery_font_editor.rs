@@ -141,6 +141,50 @@ fn new_font(s: &mut Session, p: &Value) -> Result<Value> {
     Ok(json!({"index": index, "glyphs": glyphs}))
 }
 
+/// The characters `embroidery.font.trace` traces when `chars` is left out.
+pub const TRACE_CHARS: &str = "A-Za-z0-9 .!?&-";
+/// Units per em of a traced font.
+const TRACE_UPEM: f64 = 1000.0;
+/// Letters kept traced at most (each a letter's stitch objects).
+const TRACE_CACHE: usize = 4096;
+
+/// A traced letter: its stitch objects (font units) and its advance (ems).
+pub type TracedLetter = (Vec<vectorcraft_doc::GlyphObject>, f64);
+
+/// The characters `embroidery.font.trace` with params `p` traces (`chars`, else [`TRACE_CHARS`]).
+pub fn trace_chars(p: &Value) -> Vec<String> {
+    font_doc::chars(str_param(p, "chars").unwrap_or(TRACE_CHARS))
+}
+
+/// Letter `c` of installed font `family` traced into stitch objects ([`font_doc::trace`]), with
+/// its advance; `None` when the font has nothing for it. Tracing is slow (pen strokes, satin
+/// checks), so traced letters are kept: tracing a font again is quick, and the app traces a font
+/// letter by letter, showing its progress, before running `embroidery.font.trace`, which then
+/// finds them all done.
+pub fn trace_letter(family: &str, c: &str) -> Option<TracedLetter> {
+    use std::collections::HashMap;
+    use std::sync::{Mutex, OnceLock};
+    type Cache = Mutex<HashMap<(String, String), Option<TracedLetter>>>;
+    static CACHE: OnceLock<Cache> = OnceLock::new();
+    let key = (family.to_string(), c.to_string());
+    let cache = CACHE.get_or_init(Default::default);
+    if let Some(hit) = cache.lock().ok().and_then(|m| m.get(&key).cloned()) {
+        return hit;
+    }
+    let traced = template_outline(family, c).map(|(outline, advance)| {
+        let hand = vectorcraft_embroidery::penstrokes::hand_of(family, "");
+        (font_doc::trace(&outline, TRACE_UPEM, hand), advance)
+    });
+    // (A poisoned lock only means the letter isn't kept.)
+    if let Ok(mut m) = cache.lock() {
+        if m.len() >= TRACE_CACHE {
+            m.clear();
+        }
+        m.insert(key, traced.clone());
+    }
+    traced
+}
+
 fn trace_font(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "embroidery.font.trace";
     let from =
@@ -148,13 +192,12 @@ fn trace_font(s: &mut Session, p: &Value) -> Result<Value> {
     if !vectorcraft_text::FontDb::global().has_family(from) {
         return Err(bad(C, format!("no installed font `{from}` to trace (see text.fonts)")));
     }
-    let chars = font_doc::chars(str_param(p, "chars").unwrap_or("A-Za-z0-9 .!?&-"));
+    let chars = trace_chars(p);
     if chars.is_empty() {
         return Err(bad(C, "`chars` names no characters"));
     }
     let name = str_param(p, "name").map(str::trim).filter(|n| !n.is_empty()).map_or_else(|| format!("{from} Stitch"), str::to_string);
-    let hand = vectorcraft_embroidery::penstrokes::hand_of(from, "");
-    const UPEM: f64 = 1000.0;
+    const UPEM: f64 = TRACE_UPEM;
     // The font's own metrics, from its letters.
     let top = |c: &str| template_outline(from, c).map(|(o, _)| kurbo::Shape::bounding_box(&o)).filter(|b| b.height() > 0.0);
     let cap = top("H").map_or(0.7, |b| b.y1);
@@ -164,8 +207,7 @@ fn trace_font(s: &mut Session, p: &Value) -> Result<Value> {
     let mut glyphs = vec![];
     let (mut traced, mut outlines) = (0usize, 0usize);
     for c in &chars {
-        let Some((outline, advance)) = template_outline(from, c) else { continue };
-        let objects = font_doc::trace(&outline, UPEM, hand);
+        let Some((objects, advance)) = trace_letter(from, c) else { continue };
         if objects.iter().any(|o| o.stitch.rails) {
             traced += 1;
         } else if !objects.is_empty() {

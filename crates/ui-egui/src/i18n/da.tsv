@@ -5323,6 +5323,10 @@ swatch	Bright Violet	Kraftig violet
 	New Embroidery Font…	Ny broderiskrifttype…
 	Open Embroidery Font…	Åbn broderiskrifttype…
 	Trace Embroidery Font…	Tegn broderiskrifttype efter…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	{family} tegnet efter: {traced} bogstaver som satinsøjler, {kept} beholdt som konturer
+	Tracing Font	Tegner skrifttype efter
+	Tracing {family}	Tegner {family} efter
+	{done} of {total} letters	{done} af {total} bogstaver
 	Frame:	Ramme:
 	Letters as live type placed by the layout, each still editable, with an optional frame	Bogstaver som levende tekst placeret efter layoutet, hver stadig redigerbar, med en valgfri ramme
 	Letters:	Bogstaver:

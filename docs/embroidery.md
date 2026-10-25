@@ -231,7 +231,9 @@ into a new font document: each letter is put back together into pen strokes, as 
 each stroke becomes a satin column between two rails, which scale with the letter. A letter pen strokes
 don't suit is kept as its outline, sewn Auto. The metrics come from the font's own H, x, d and p, the
 advances from its letters, and the original stays on the template layer to compare. Check and touch up the
-letters, then save. A traced font is a derivative of the font traced: trace only fonts whose licence allows
+letters, then save. Tracing takes a while (a few seconds for a full alphabet): a progress window shows how
+many letters are done, with **Cancel** (or Escape), and the pointer shows the busy cursor; letters already
+traced are kept, so tracing the same font again is quick. A traced font is a derivative of the font traced: trace only fonts whose licence allows
 that (the SIL Open Font License does, under a new name without its Reserved Font Names, with the OFL kept).
 
 **Ink/Stitch fonts** open as embroidery fonts too: install the ones you want by pointing VectorCraft at a

@@ -5366,6 +5366,10 @@ swatch	Bright Violet	Felviolet
 	New Embroidery Font…	Nieuw borduurlettertype…
 	Open Embroidery Font…	Borduurlettertype openen…
 	Trace Embroidery Font…	Borduurlettertype overtrekken…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	{family} overgetrokken: {traced} letters als satijnkolommen, {kept} behouden als contouren
+	Tracing Font	Lettertype overtrekken
+	Tracing {family}	{family} overtrekken
+	{done} of {total} letters	{done} van {total} letters
 	Frame:	Kader:
 	Letters as live type placed by the layout, each still editable, with an optional frame	Letters als live tekst geplaatst volgens de opmaak, elk nog bewerkbaar, met een optioneel kader
 	Letters:	Letters:

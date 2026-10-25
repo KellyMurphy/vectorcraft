@@ -5315,6 +5315,10 @@ imageTrace	Outline	Körvonal
 	New Embroidery Font…	Új hímzőbetűtípus…
 	Open Embroidery Font…	Hímzőbetűtípus megnyitása…
 	Trace Embroidery Font…	Hímzőbetűtípus átrajzolása…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	{family} átrajzolva: {traced} betű szaténoszlopként, {kept} körvonalként megtartva
+	Tracing Font	Betűtípus átrajzolása
+	Tracing {family}	{family} átrajzolása
+	{done} of {total} letters	{done} / {total} betű
 	Frame:	Keret:
 	Letters as live type placed by the layout, each still editable, with an optional frame	Betűk élő szövegként az elrendezés szerint elhelyezve, mindegyik szerkeszthető marad, választható kerettel
 	Letters:	Betűk:

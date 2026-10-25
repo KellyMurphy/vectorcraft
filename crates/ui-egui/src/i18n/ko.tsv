@@ -4906,6 +4906,10 @@ lighting	Light	광원
 	New Embroidery Font…	새 자수 글꼴…
 	Open Embroidery Font…	자수 글꼴 열기…
 	Trace Embroidery Font…	자수 글꼴 따라 그리기…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	{family} 따라 그리기 완료: {traced}자는 새틴 기둥, {kept}자는 윤곽선으로 유지
+	Tracing Font	글꼴 따라 그리는 중
+	Tracing {family}	{family} 따라 그리는 중
+	{done} of {total} letters	{total}자 중 {done}자
 	Frame:	프레임:
 	Letters as live type placed by the layout, each still editable, with an optional frame	레이아웃에 따라 배치한 라이브 텍스트 글자(각각 편집 가능)와 선택적 프레임
 	Letters:	글자:

@@ -428,9 +428,9 @@ fn font_editor(app: &mut VectorcraftApp, ui: &mut Ui) {
                 && widgets::flat_button(ui, tl!("Trace Font"), 80.0)
                     .on_hover_text(tl!("Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)"))
                     .clicked()
-                && let Err(e) = app.run("embroidery.font.trace", json!({ "from": from.trim(), "chars": chars }))
             {
-                app.status(e);
+                // Traced a few letters a frame, with a progress window (see `font_trace`).
+                crate::font_trace::start(app, json!({ "from": from.trim(), "chars": chars }));
             }
             if widgets::flat_button(ui, tl!("Edit Font…"), 90.0).clicked() {
                 crate::picks::button(app, |app| {

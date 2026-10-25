@@ -5316,6 +5316,10 @@ mark-style	Japanese	Japonské
 	New Embroidery Font…	Nové vyšívací písmo…
 	Open Embroidery Font…	Otevřít vyšívací písmo…
 	Trace Embroidery Font…	Obkreslit vyšívací písmo…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	{family} obkresleno: {traced} písmen jako saténové sloupce, {kept} ponecháno jako obrysy
+	Tracing Font	Obkreslování písma
+	Tracing {family}	Obkresluje se {family}
+	{done} of {total} letters	{done} z {total} písmen
 	Frame:	Rámeček:
 	Letters as live type placed by the layout, each still editable, with an optional frame	Písmena jako živý text umístěný podle rozvržení, každé stále upravitelné, s volitelným rámečkem
 	Letters:	Písmena:

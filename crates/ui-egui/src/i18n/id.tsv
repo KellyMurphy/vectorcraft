@@ -5323,6 +5323,10 @@ swatch	Bright Violet	Violet cerah
 	New Embroidery Font…	Fon sulaman baru…
 	Open Embroidery Font…	Buka fon sulaman…
 	Trace Embroidery Font…	Jiplak fon sulaman…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	{family} dijiplak: {traced} huruf sebagai kolom satin, {kept} dipertahankan sebagai garis luar
+	Tracing Font	Menjiplak fon
+	Tracing {family}	Menjiplak {family}
+	{done} of {total} letters	{done} dari {total} huruf
 	Frame:	Bingkai:
 	Letters as live type placed by the layout, each still editable, with an optional frame	Huruf sebagai teks hidup yang ditempatkan menurut tata letak, masing-masing tetap dapat diedit, dengan bingkai opsional
 	Letters:	Huruf:

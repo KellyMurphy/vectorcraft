@@ -22,7 +22,7 @@ mod draw2;
 mod edit;
 mod effectcmd;
 pub(crate) mod embroidery;
-pub(crate) mod embroidery_font_editor;
+pub mod embroidery_font_editor;
 pub(crate) mod embroidery_fonts;
 pub mod embroidery_lib;
 pub mod embroidery_text;

@@ -5281,6 +5281,10 @@ effect	Points	Σημεία
 	New Embroidery Font…	Νέα γραμματοσειρά κεντήματος…
 	Open Embroidery Font…	Άνοιγμα γραμματοσειράς κεντήματος…
 	Trace Embroidery Font…	Αποτύπωση γραμματοσειράς κεντήματος…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	Η {family} αποτυπώθηκε: {traced} γράμματα ως στήλες σατέν, {kept} κρατήθηκαν ως περιγράμματα
+	Tracing Font	Αποτύπωση γραμματοσειράς
+	Tracing {family}	Αποτύπωση της {family}
+	{done} of {total} letters	{done} από {total} γράμματα
 	Frame:	Πλαίσιο:
 	Letters as live type placed by the layout, each still editable, with an optional frame	Γράμματα ως ζωντανό κείμενο τοποθετημένα κατά τη διάταξη, το καθένα επεξεργάσιμο, με προαιρετικό πλαίσιο
 	Letters:	Γράμματα:

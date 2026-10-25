@@ -4905,6 +4905,10 @@ effect	Regular	Regelmäßig
 	New Embroidery Font…	Neue Stickschrift…
 	Open Embroidery Font…	Stickschrift öffnen…
 	Trace Embroidery Font…	Stickschrift nachzeichnen…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	{family} nachgezeichnet: {traced} Buchstaben als Satinsäulen, {kept} als Umrisse behalten
+	Tracing Font	Schrift wird nachgezeichnet
+	Tracing {family}	{family} wird nachgezeichnet
+	{done} of {total} letters	{done} von {total} Buchstaben
 	Frame:	Rahmen:
 	Letters as live type placed by the layout, each still editable, with an optional frame	Buchstaben als Live-Text, nach dem Layout platziert, jeder weiter bearbeitbar, mit optionalem Rahmen
 	Letters:	Buchstaben:

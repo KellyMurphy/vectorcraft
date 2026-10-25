@@ -5233,6 +5233,10 @@ mark-style	Japanese	Japonesas
 	New Embroidery Font…	Nova Fonte de Bordado…
 	Open Embroidery Font…	Abrir Fonte de Bordado…
 	Trace Embroidery Font…	Decalcar Fonte de Bordado…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	{family} decalcada: {traced} letras como colunas de cetim, {kept} mantidas como contornos
+	Tracing Font	Decalcando Fonte
+	Tracing {family}	Decalcando {family}
+	{done} of {total} letters	{done} de {total} letras
 	Frame:	Moldura:
 	Letters as live type placed by the layout, each still editable, with an optional frame	Letras como texto dinâmico posicionadas pelo layout, cada uma ainda editável, com uma moldura opcional
 	Letters:	Letras:

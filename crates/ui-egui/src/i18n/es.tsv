@@ -5260,6 +5260,10 @@ mark-style	Japanese	Japonesas
 	New Embroidery Font…	Nueva fuente de bordado…
 	Open Embroidery Font…	Abrir fuente de bordado…
 	Trace Embroidery Font…	Calcar fuente de bordado…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	{family} calcada: {traced} letras como columnas de satén, {kept} conservadas como contornos
+	Tracing Font	Calcando fuente
+	Tracing {family}	Calcando {family}
+	{done} of {total} letters	{done} de {total} letras
 	Frame:	Marco:
 	Letters as live type placed by the layout, each still editable, with an optional frame	Letras como texto vivo colocadas según el diseño, cada una aún editable, con un marco opcional
 	Letters:	Letras:

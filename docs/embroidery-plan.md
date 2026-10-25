@@ -529,6 +529,34 @@ Draw and Clear. Tests: a column and a satin shape sew at a line's angle, two lin
 jumps, lines move with the object, the tool's gestures. **Not yet:** angle lines for fills (fills have one
 angle), and a preview of the angle while dragging other than the stitches themselves.
 
+### E8.10 AI-assisted digitizing guidance (optional; planned, asked for by the user 2026-10-25)
+
+An **optional** helper for tracing fonts (and later any art): a language model with vision gives
+*guidance* per letter, never stitches. The programmatic tracer (E8.1d) stays the default and works
+without it; nothing here is needed to use VectorCraft, and nothing is sent anywhere unless the user turns it
+on.
+
+- **E8.10a Per-letter digitizing plans (useful without AI).** A plan format for a glyph, kept in the
+  `.vcfont`: its strokes as an ordered list of skeleton pieces (by number) with their direction; the stitch
+  kind per region (satin column, satin shape, fill, running for hairlines); stitch angle lines (E8.9) as
+  points along a numbered stroke; at each junction which stroke goes over and how far the other tucks under;
+  serifs merged, separate or dropped; underlay; entry and exit ends. The tracer writes plans, the font
+  editor shows and edits them, and the font is rebuilt from them. Spec, schema, drift test, fuzzing.
+- **E8.10b The experiment, through MCP first.** An MCP prompt and a resource that render a letter's
+  outline with its skeleton pieces numbered and measured, and a command that takes a plan back. Any MCP
+  client (Claude Desktop, Claude Code) can then digitize a font letter by letter. Compare AI plans with
+  the tracer's on a set of fonts (sans, serif, slab, heavy display, script) by the satin quality numbers
+  (bare fabric, crowding, fanning), side-by-side previews and sew-outs. E8.10c goes ahead only if AI plans
+  are clearly better.
+- **E8.10c In the app (if E8.10b shows a gain).** Preferences › AI Assist: off by default; a provider
+  (Anthropic, OpenAI, Gemini) and the user's own API key, kept in the system credential store, never in
+  documents or preferences files; **Assist** per letter or per font in the font editor. Each answer is a
+  plan in a fixed JSON schema, checked and built by VectorCraft; one round of feedback (the stitch preview
+  and the quality numbers sent back for a revision); a plan that fails the checks or scores worse than the
+  tracer's is not used. Cost per font shown before it runs; the plan is kept, so a font is paid for once.
+  Web: providers that allow requests from a browser page only. Licences: it sends pictures of a font's
+  outlines to the provider, so it asks first and says to use only fonts the user may process that way.
+
 ### E8.4 Motif fills and extraction (L)
 
 Carved motifs (E3) shape a tatami fill's needle points along lines. **Motif fills** are different: a small

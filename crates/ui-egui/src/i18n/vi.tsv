@@ -4922,6 +4922,10 @@ theme	Appearance	Giao diện
 	New Embroidery Font…	Phông chữ thêu mới…
 	Open Embroidery Font…	Mở phông chữ thêu…
 	Trace Embroidery Font…	Đồ theo phông chữ thêu…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	Đã đồ theo {family}: {traced} chữ thành cột satin, {kept} giữ dạng đường viền
+	Tracing Font	Đang đồ theo phông chữ
+	Tracing {family}	Đang đồ theo {family}
+	{done} of {total} letters	{done} trên {total} chữ
 	Frame:	Khung:
 	Letters as live type placed by the layout, each still editable, with an optional frame	Các chữ dạng văn bản sống đặt theo bố cục, mỗi chữ vẫn sửa được, kèm khung tùy chọn
 	Letters:	Chữ:

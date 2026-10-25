@@ -28,6 +28,7 @@ mod edit_toolbar;
 pub mod find_font;
 pub mod floating;
 pub mod font_menu;
+pub mod font_trace;
 mod free_transform;
 pub mod graphics;
 pub mod i18n;
@@ -448,6 +449,8 @@ pub struct VectorcraftApp {
     pub background: background::Background,
     /// Documents being read off the UI thread ([`opening`]).
     pub opening: opening::Opening,
+    /// Trace Font in progress ([`font_trace`]).
+    pub font_trace: Option<font_trace::FontTrace>,
     /// Data Recovery's timer and startup question ([`recovery`]).
     pub recovery: recovery::Timer,
     /// Modifiers the keyboard holds (from the host's input), given back after synthetic input.
@@ -552,6 +555,7 @@ impl VectorcraftApp {
             paste_chord: Default::default(),
             background: Default::default(),
             opening: Default::default(),
+            font_trace: None,
             recovery: Default::default(),
             host_modifiers: Default::default(),
             synthetic_modifiers: false,
@@ -1174,6 +1178,7 @@ impl VectorcraftApp {
         background::poll(self);
         screen_color::poll(self, ctx);
         opening::poll(self);
+        font_trace::poll(self, ctx);
         #[cfg(not(target_arch = "wasm32"))]
         self.tick_link_updates(ctx, now);
         if !self.background.jobs.is_empty() || !self.opening.pending.is_empty() {

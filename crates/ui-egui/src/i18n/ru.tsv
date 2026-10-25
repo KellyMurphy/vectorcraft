@@ -4927,6 +4927,10 @@ lighting	Light	Свет
 	New Embroidery Font…	Новый шрифт для вышивки…
 	Open Embroidery Font…	Открыть шрифт для вышивки…
 	Trace Embroidery Font…	Обвести шрифт для вышивки…
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	{family} обведён: {traced} букв атласными колоннами, {kept} оставлено контурами
+	Tracing Font	Обводка шрифта
+	Tracing {family}	Обводка {family}
+	{done} of {total} letters	{done} из {total} букв
 	Frame:	Рамка:
 	Letters as live type placed by the layout, each still editable, with an optional frame	Буквы как редактируемый текст, расположенные по макету, каждая остаётся редактируемой, с рамкой по выбору
 	Letters:	Буквы:
