@@ -203,7 +203,7 @@ now the canvas still draws the type in its outline font: Stitch Preview shows th
 artboard per glyph on a shared baseline (an em is 100 mm; an artboard's width is the glyph's advance, its
 name the glyph's characters, `space` for the space), ruler guides at the ascender, cap height, x-height,
 baseline and descender, and a **Letters** layer to digitize each glyph on with the ordinary tools and stitch
-types (Satin Column between rails is the lettering stitch). Name an installed font as **Trace** and its
+types (Satin Column between rails is the lettering stitch). Pick an installed font as **Trace** (from the font menu) and its
 letters go on a locked **Template** layer to trace over; the template is never part of the font. Widen or
 narrow an artboard to change its glyph's advance; set the name, author, licence, metrics and kerning in the
 Tools tab's Font section (`embroidery.font.setup`, `embroidery.font.kern`); **Update Sample** sets a line of

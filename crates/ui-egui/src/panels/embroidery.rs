@@ -397,8 +397,15 @@ fn font_editor(app: &mut VectorcraftApp, ui: &mut Ui) {
         });
         ui.scope(|ui| {
             widgets::label_row(ui, tl!("Trace:"), LABEL_W, |ui| {
-                if let Some(v) = widgets::text_field(ui, "emb-font-new-from", Some(&from), 150.0, 1) {
-                    from = v;
+                // An installed font, picked from the font menu (typing a family's name exactly is
+                // too easy to get wrong).
+                let current = if from.is_empty() { tl!("None") } else { from.as_str() };
+                let pick = crate::font_menu::font_menu(ui, "emb-font-new-from", current, 180.0, None, crate::font_menu::MenuLook::of(app));
+                if let Some((family, _)) = crate::font_menu::picked(app, pick) {
+                    from = family;
+                }
+                if !from.is_empty() && widgets::flat_button(ui, "×", 22.0).on_hover_text(tl!("None")).clicked() {
+                    from.clear();
                 }
             })
         })
