@@ -56,8 +56,9 @@ impl Harness {
         self.texts.iter().find(|(s, _)| s == text).map(|(_, r)| *r).unwrap_or_else(|| panic!("missing text {text:?}"))
     }
 
+    /// Return the rectangle of the widget drawn under `Id::unique(id)` in the revolve test harness.
     fn response(&self, id: impl std::hash::Hash + std::fmt::Debug) -> Rect {
-        self.ctx.read_response(Id::new(id)).unwrap().rect
+        self.ctx.read_response(Id::unique(id)).unwrap().rect
     }
 
     fn click(&mut self, p: Pos2) {
@@ -90,7 +91,7 @@ fn values_labels_sliders_and_reset_dots_change_the_live_effect_in_one_undo_step(
     let before = h.app.session.doc().unwrap().doc.clone();
     h.settle();
     assert!(!h.rect("Advanced").is_negative(), "Advanced is visible without scrolling in a normal window");
-    let panel = h.ctx.memory(|m| m.area_rect(Id::new(("dialog", "effect")).with("revolve"))).unwrap();
+    let panel = h.ctx.memory(|m| m.area_rect(Id::unique(("dialog", "effect")).with("revolve"))).unwrap();
     // Cap adds one 28-point row to the shared dialog's previous 540-point bound.
     assert!(panel.width() < 420.0 && panel.height() < 570.0, "compact controls with Cap: {panel:?}");
     let label = h.rect("Rotation X");
@@ -156,7 +157,7 @@ fn lighting_tab_shows_light_fields_and_keeps_the_dialog_compact() {
     for label in ["Shading", "Color", "Intensity", "Height", "Softness", "Ambient Light", "Light behind the object"] {
         assert!(Rect::from_min_size(Pos2::ZERO, h.screen).contains_rect(h.rect(label)));
     }
-    let panel = h.ctx.memory(|m| m.area_rect(Id::new(("dialog", "effect")).with("revolve"))).unwrap();
+    let panel = h.ctx.memory(|m| m.area_rect(Id::unique(("dialog", "effect")).with("revolve"))).unwrap();
     assert!(panel.width() < 420.0 && panel.height() < 570.0, "compact lighting controls with light management: {panel:?}");
     h.drag(h.rect("Height").center(), vec2(24.0, 0.0));
     assert_ne!(h.value("lightHeight"), 30.0);
@@ -220,7 +221,7 @@ fn advanced_visibility_option_is_saved_resettable_and_leaves_preview_geometry_co
     let mut h = Harness::new(vec2(1280.0, 1000.0));
     h.settle();
     h.click(h.rect("Advanced").center());
-    let panel = h.ctx.memory(|m| m.area_rect(Id::new(("dialog", "effect")).with("revolve"))).unwrap();
+    let panel = h.ctx.memory(|m| m.area_rect(Id::unique(("dialog", "effect")).with("revolve"))).unwrap();
     h.frame(vec![
         Event::PointerMoved(panel.center()),
         Event::MouseWheel {
@@ -228,6 +229,7 @@ fn advanced_visibility_option_is_saved_resettable_and_leaves_preview_geometry_co
             delta: vec2(0.0, -220.0),
             phase: egui::TouchPhase::Move,
             modifiers: Default::default(),
+            source: egui::MouseWheelSource::Unknown,
         },
     ]);
     h.settle();
@@ -300,10 +302,10 @@ fn extrude_bevel_options_enable_with_a_bevel_shape() {
     let mut h = Harness::with("M100 100 L200 100 L200 200 L100 200 Z", vectorcraft_effects::EXTRUDE, vec2(1400.0, 1000.0));
     h.settle();
     let width = h.response(("revolve-reset", "bevelWidth"));
-    assert!(!h.ctx.read_response(Id::new(("revolve-reset", "bevelWidth"))).unwrap().enabled(), "no bevel: its sizes are off");
+    assert!(!h.ctx.read_response(Id::unique(("revolve-reset", "bevelWidth"))).unwrap().enabled(), "no bevel: its sizes are off");
     h.app.ui.dialog.as_mut().unwrap().fields.insert("bevel".into(), json!("rounded"));
     h.settle();
-    assert!(h.ctx.read_response(Id::new(("revolve-reset", "bevelWidth"))).unwrap().enabled());
+    assert!(h.ctx.read_response(Id::unique(("revolve-reset", "bevelWidth"))).unwrap().enabled());
     assert_eq!(h.response(("revolve-reset", "bevelWidth")), width);
 }
 
@@ -435,6 +437,66 @@ fn light_list_stops_at_ten_and_cancel_restores_the_source() {
     let d = h.app.ui.dialog.as_ref().unwrap();
     assert_eq!(d.fields["lights"].as_array().unwrap().len(), 10);
     assert_eq!(d.fields["__light"], 9);
+    dialogs::cancel(&mut h.app);
+    assert_eq!(h.app.session.doc().unwrap().doc, before);
+}
+
+#[test]
+fn lighting_presets_preview_custom_edits_reset_and_commit_as_one_undo_step() {
+    for effect in [REVOLVE, EXTRUDE, INFLATE, vectorcraft_effects::ROTATE] {
+        let mut h = Harness::with("M100 100L200 100L200 200L100 200Z", effect, vec2(1280.0, 900.0));
+        let before = h.app.session.doc().unwrap().doc.clone();
+        h.settle();
+        h.click(h.rect("Lighting").center());
+        let view = h.app.ui.dialog.as_ref().unwrap().fields["rotationX"].clone();
+        h.click(h.rect("Standard").center());
+        h.click(h.rect("Right").center());
+        assert_eq!(h.value("lightRotation"), 0.0);
+        assert_eq!(h.app.ui.dialog.as_ref().unwrap().fields["rotationX"], view);
+        h.drag(h.rect("Height").center(), vec2(20.0, 0.0));
+        assert!(!h.rect("Custom").is_negative());
+        h.click(h.rect("Custom").center());
+        h.click(h.rect("Diffuse").center());
+        assert_eq!(h.value("lightSoftness"), 100.0);
+        assert_eq!(h.value("ambient"), 35.0);
+        h.click(h.rect("Add Light").center());
+        assert!(!h.rect("Custom").is_negative());
+        h.click(h.rect("Custom").center());
+        h.click(h.rect("Top Left").center());
+        let d = h.app.ui.dialog.as_ref().unwrap();
+        assert!(d.fields["lights"].is_null());
+        assert_eq!(d.fields["__light"], 0);
+        assert_eq!(d.f64("lightRotation", 0.0), 135.0);
+        h.click(h.response("revolve-reset-all").center());
+        assert!(!h.rect("Standard").is_negative());
+        h.click(h.rect("Standard").center());
+        h.click(h.rect("Right").center());
+        dialogs::confirm(&mut h.app).unwrap();
+        h.app.run("edit.undo", json!({})).unwrap();
+        assert_eq!(h.app.session.doc().unwrap().doc, before);
+    }
+}
+
+#[test]
+fn lighting_presets_cancel_restores_an_existing_custom_light_rig() {
+    let mut h = Harness::new(vec2(1280.0, 900.0));
+    h.settle();
+    dialogs::confirm(&mut h.app).unwrap();
+    h.app
+        .run(
+            "effect.setParams",
+            json!({"index":0,"item":null,"params":{
+                "ambient":19,"lights":[{"color":"#ff8040"},{"color":"#4080ff"}]
+            }}),
+        )
+        .unwrap();
+    let before = h.app.session.doc().unwrap().doc.clone();
+    h.app.run("effect.dialog", json!({"effect":REVOLVE,"index":0,"item":null})).unwrap();
+    h.settle();
+    h.click(h.rect("Lighting").center());
+    h.click(h.rect("Custom").center());
+    h.click(h.rect("Right").center());
+    assert_ne!(h.app.session.doc().unwrap().doc, before);
     dialogs::cancel(&mut h.app);
     assert_eq!(h.app.session.doc().unwrap().doc, before);
 }

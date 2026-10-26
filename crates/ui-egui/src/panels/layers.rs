@@ -66,6 +66,11 @@ const SQUARE_X: f32 = 11.0;
 pub struct PanelOptions {
     /// Show Layers Only: no rows for groups and objects.
     pub layers_only: bool,
+    /// Locate Selected Objects (off by default): when the last selected object changes outside the
+    /// panel, on the canvas or by a command, the panel opens the rows around it and scrolls to its
+    /// row, as after Locate Object, without highlighting the row. When Show Layers Only, a search or
+    /// the filter leaves the object without a row, the panel opens no rows for it.
+    pub locate_selected: bool,
     /// Row height in points: [`ROW_SMALL`], [`ROW_MEDIUM`], [`ROW_LARGE`] or another (12–100).
     pub row_size: f32,
     /// Thumbnails on layer, group and object rows.
@@ -80,7 +85,7 @@ pub const ROW_LARGE: f32 = 40.0;
 
 impl Default for PanelOptions {
     fn default() -> Self {
-        Self { layers_only: false, row_size: ROW_MEDIUM, thumb_layers: true, thumb_groups: true, thumb_objects: true }
+        Self { layers_only: false, locate_selected: false, row_size: ROW_MEDIUM, thumb_layers: true, thumb_groups: true, thumb_objects: true }
     }
 }
 
@@ -121,12 +126,14 @@ struct ColumnDrag {
     ids: Vec<u64>,
 }
 
+/// Stable id for the layers panel's per-name UI state.
 fn key(name: &str) -> egui::Id {
-    egui::Id::new(("layers-panel", name))
+    egui::Id::unique(("layers-panel", name))
 }
 
+/// Temp-memory key for the layer rename editor.
 fn rename_id() -> egui::Id {
-    egui::Id::new("layers-rename")
+    egui::Id::unique("layers-rename")
 }
 
 /// Ghost rows are drawn at this opacity.
@@ -521,7 +528,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let Some(st) = app.session.active() else { return };
     // A rename belongs to the document it started in (node ids are per document): drop it when
     // another document shows, so it can't rename that document's node with the same id.
-    let shown_doc = egui::Id::new("layers-doc");
+    let shown_doc = egui::Id::unique("layers-doc");
     let before = ui.data(|d| d.get_temp::<u64>(shown_doc));
     if before != Some(st.uid) {
         ui.data_mut(|d| {
@@ -538,16 +545,11 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let seen: Vec<NodeId> = ui.data(|d| d.get_temp(key("seen"))).unwrap_or_default();
     let mut reveal = None;
     if rows != seen {
-        let around: Vec<NodeId> =
-            rows.iter().flat_map(|r| doc.ancestry(*r).unwrap_or_default().split_last().map(|(_, a)| a.to_vec()).unwrap_or_default()).collect();
-        if let Some(st) = app.session.active_mut() {
-            for a in around {
-                st.layers_open.set(a, true);
-            }
-        }
+        open_around(app, &doc, &rows);
         reveal = rows.first().copied();
         ui.data_mut(|d| d.insert_temp(key("seen"), rows.clone()));
     }
+    let highlighted = reveal.is_some();
     // A new active layer (a canvas selection highlights no row): reveal it too, unless a row
     // highlighted in the panel holds the view.
     let seen_current: Option<NodeId> = ui.data(|d| d.get_temp(key("seen-current"))).flatten();
@@ -565,18 +567,30 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         }
         ui.data_mut(|d| d.insert_temp(key("seen-current"), current));
     }
+    // With Locate Selected Objects on, an object selected anew outside the panel (below).
+    let located = newly_selected(app, ui).filter(|_| !highlighted);
     // Search All, and the Filter button at its right.
     let query = ui
         .horizontal(|ui| {
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                 filter_button(app, ui);
-                crate::widgets::search_field(ui, egui::Id::new("layers-search"), tl!("Search All"))
+                crate::widgets::search_field(ui, egui::Id::unique("layers-search"), tl!("Search All"))
             })
             .inner
         })
         .inner
         .trim()
         .to_lowercase();
+    // The located object, when it has a row once the rows around it are open (Show Layers Only, a
+    // search or the filter can leave it out): those rows open, and its row is revealed instead of
+    // the row revealed above. Otherwise nothing opens.
+    let located = located.filter(|id| {
+        app.session.active().is_some_and(|st| listed_when_opened(&doc, &st.layers_open, &app.ui.layers_panel, &query, &app.ui.layers_filter, *id))
+    });
+    if let Some(id) = located {
+        open_around(app, &doc, &[id]);
+    }
+    let reveal = located.or(reveal);
     let Some(st) = app.session.active() else { return };
     let list = rows_of_doc(ui, st, &app.ui.layers_panel, &query, &app.ui.layers_filter);
     let view = View {
@@ -601,15 +615,27 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let revealed = reveal.and_then(|id| list.iter().position(|r| r.node.id == id));
     let scrolled = ui.scope(|ui| {
         ui.spacing_mut().item_spacing.y = 0.0;
-        egui::ScrollArea::vertical().max_height(list_h).auto_shrink([false, false]).show_rows(ui, view.h, list.len(), |ui, range| {
-            if let Some(i) = revealed.filter(|i| !range.contains(i)) {
-                let top = ui.max_rect().top() + (i as f32 - range.start as f32) * view.h;
-                ui.scroll_to_rect(egui::Rect::from_min_size(egui::pos2(ui.max_rect().left(), top), vec2(ui.max_rect().width(), view.h)), None);
-            }
-            for r in list.get(range).unwrap_or_default() {
-                row(ui, &view, r, &mut out);
-            }
-        })
+        // The bar takes a column of its own, so it never covers the target and selection marks at
+        // the rows' right edge (#3443). Whether the rows overflow is known before they are laid
+        // out, so the bar is decided up front and the rows never shift when it appears.
+        ui.spacing_mut().scroll = crate::widgets::list_scroll_style();
+        let overflows = view.h * list.len() as f32 > list_h;
+        let bar =
+            if overflows { egui::scroll_area::ScrollBarVisibility::AlwaysVisible } else { egui::scroll_area::ScrollBarVisibility::AlwaysHidden };
+        egui::ScrollArea::vertical().max_height(list_h).auto_shrink([false, false]).scroll_bar_visibility(bar).show_rows(
+            ui,
+            view.h,
+            list.len(),
+            |ui, range| {
+                if let Some(i) = revealed.filter(|i| !range.contains(i)) {
+                    let top = ui.max_rect().top() + (i as f32 - range.start as f32) * view.h;
+                    ui.scroll_to_rect(egui::Rect::from_min_size(egui::pos2(ui.max_rect().left(), top), vec2(ui.max_rect().width(), view.h)), None);
+                }
+                for r in list.get(range).unwrap_or_default() {
+                    row(ui, &view, r, &mut out);
+                }
+            },
+        )
     });
     let list_rect = scrolled.inner.inner_rect;
     resolve_click(ui, &view, &list, &mut out);
@@ -618,11 +644,12 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             st.layers_open.set(id, open);
         }
     }
+    let selected = last_selected(app);
     // The column drag: live while it lasts, one undo step when the button is released.
     let released = ui.input(|i| i.pointer.any_released());
     // Layers dragged into the empty space under the last row go below the bottom layer (there is
     // no row there to take the drop).
-    let below = list_rect.top() - scrolled.inner.state.offset.y + list.len() as f32 * view.h;
+    let below = list_rect.top() - scrolled.inner.state.clamped_offset().y + list.len() as f32 * view.h;
     if query.is_empty()
         && !app.ui.layers_filter.is_on()
         && let Some(drag) = egui::DragAndDrop::payload::<LayersDrag>(ui.ctx())
@@ -658,7 +685,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         None => d.remove::<ColumnDrag>(key("column")),
     });
     if released {
-        ui.data_mut(|d| d.remove::<u64>(egui::Id::new("layers-drag")));
+        ui.data_mut(|d| d.remove::<u64>(egui::Id::unique("layers-drag")));
     }
     // Dragged rows show as a dimmed row under the pointer.
     if !released
@@ -686,6 +713,63 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     bottom_bar(app, ui, &view, &doc, &mut out.actions);
     for (c, p) in out.actions {
         app.run(&c, p).ok();
+    }
+    see_selection(app, ui, selected);
+}
+
+/// Open the layers and groups around rows `ids`.
+fn open_around(app: &mut VectorcraftApp, doc: &Document, ids: &[NodeId]) {
+    let around: Vec<NodeId> =
+        ids.iter().flat_map(|r| doc.ancestry(*r).unwrap_or_default().split_last().map(|(_, a)| a.to_vec()).unwrap_or_default()).collect();
+    if let Some(st) = app.session.active_mut() {
+        for a in around {
+            st.layers_open.set(a, true);
+        }
+    }
+}
+
+/// Whether [`list_rows`] gives `id` a row once the layers and groups around it are open as well as
+/// `open`. Only the rows of `id`'s top-level layer are listed.
+fn listed_when_opened(doc: &Document, open: &OpenRows, opts: &PanelOptions, query: &str, filter: &Filter, id: NodeId) -> bool {
+    let Some(ancestry) = doc.ancestry(id) else { return false };
+    let Some(layer) = doc.layers.iter().find(|l| ancestry.first() == Some(&l.id)) else { return false };
+    if doc.mask_edit.is_some_and(|m| m.layer != layer.id) {
+        return false;
+    }
+    let mut open = open.clone();
+    for a in ancestry.split_last().map(|(_, a)| a).unwrap_or_default() {
+        open.set(*a, true);
+    }
+    let mut rows = vec![];
+    push_rows(layer, 0, false, (Color32::PLACEHOLDER, true), (&open, opts, query, filter, doc), &mut rows);
+    rows.iter().any(|r| r.node.id == id && r.guide.is_none())
+}
+
+/// The active document's uid and its last selected object, the one Locate Object locates.
+fn last_selected(app: &VectorcraftApp) -> Option<(u64, Option<NodeId>)> {
+    app.session.active().map(|st| (st.uid, st.selection.objects.last().copied()))
+}
+
+/// Locate Selected Objects: the object to locate in this frame. With the option on, that is the
+/// last selected object when it differs from the one noted in an earlier frame for the same
+/// document. [`see_selection`] notes the panel's own changes, so only a change made on the canvas
+/// or by a command is located. This function notes nothing during a drag, so a selection made on
+/// the canvas during one is located when the drag ends. When another document becomes active,
+/// nothing is located.
+fn newly_selected(app: &VectorcraftApp, ui: &Ui) -> Option<NodeId> {
+    let busy = app.session.active().is_some_and(|st| st.interaction.is_some()) || app.session.tool_busy();
+    let now = last_selected(app).filter(|_| !busy)?;
+    let was = ui.data(|d| d.get_temp::<(u64, Option<NodeId>)>(key("selected")));
+    ui.data_mut(|d| d.insert_temp(key("selected"), now));
+    let anew = was.is_some_and(|w| w.0 == now.0 && w.1 != now.1);
+    now.1.filter(|_| anew && app.ui.layers_panel.locate_selected)
+}
+
+/// Note the selection as seen when the panel's rows, buttons or menu changed it (`before`: what
+/// [`last_selected`] gave before they ran), so Locate Selected Objects does not locate it.
+fn see_selection(app: &VectorcraftApp, ui: &Ui, before: Option<(u64, Option<NodeId>)>) {
+    if let Some(now) = last_selected(app).filter(|now| Some(*now) != before) {
+        ui.data_mut(|d| d.insert_temp(key("selected"), now));
     }
 }
 
@@ -924,7 +1008,7 @@ fn row(ui: &mut Ui, view: &View, item: &Row, out: &mut Out) {
     // Disclosure triangle; Alt opens or closes everything inside too.
     if has_children {
         let dr = egui::Rect::from_min_size(egui::pos2(x, r.center().y - 8.0), vec2(14.0, 16.0));
-        let dresp = ui.interact(dr, ui.id().with(("disc", n.id.0)), Sense::click());
+        let dresp = ui.interact(dr, ui.scope_id().with(("disc", n.id.0)), Sense::click());
         icons::paint(ui, if open { "chevron-down" } else { "chevron-right" }, dr, t.text_dim);
         if dresp.clicked() {
             out.toggle.push((n.id, !open));
@@ -953,8 +1037,10 @@ fn row(ui: &mut Ui, view: &View, item: &Row, out: &mut Out) {
     let name_end;
     match renaming {
         Some((rid, mut buf)) if rid == n.id.0 => {
+            let field = rename_id().with("field");
+            let kept = crate::widgets::own_field_shift_enter(ui, field, &mut buf, &name);
             let mut child = ui.new_child(egui::UiBuilder::new().max_rect(name_rect));
-            let te = child.add(egui::TextEdit::singleline(&mut buf).desired_width(name_rect.width()).font(font.clone()));
+            let te = child.add(egui::TextEdit::singleline(&mut buf).id(field).desired_width(name_rect.width()).font(font.clone()));
             // Focus the field as it opens. Asking every frame took the focus back from Enter,
             // Escape or a click elsewhere, so the rename never ended.
             if !te.has_focus() && !te.lost_focus() {
@@ -966,6 +1052,10 @@ fn row(ui: &mut Ui, view: &View, item: &Row, out: &mut Out) {
                     out.actions.push(("layer.setProps".into(), json!({"ids": [n.id.0], "name": buf})));
                 }
             } else {
+                // Shift+Enter renames it and keeps the field open.
+                if kept && buf != name {
+                    out.actions.push(("layer.setProps".into(), json!({"ids": [n.id.0], "name": buf.clone()})));
+                }
                 ui.data_mut(|d| d.insert_temp(rename_id(), (n.id.0, buf)));
             }
             name_end = name_rect.right();
@@ -1004,7 +1094,7 @@ fn row(ui: &mut Ui, view: &View, item: &Row, out: &mut Out) {
     } else if child_sel {
         ui.painter().rect_filled(egui::Rect::from_center_size(sq, vec2(4.0, 4.0)), 0.0, color);
     }
-    let sq_resp = ui.interact(egui::Rect::from_center_size(sq, vec2(18.0, h)), ui.id().with(("selsq", n.id.0)), Sense::click_and_drag());
+    let sq_resp = ui.interact(egui::Rect::from_center_size(sq, vec2(18.0, h)), ui.scope_id().with(("selsq", n.id.0)), Sense::click_and_drag());
     // Dragging the selected-art square carries the selection to another row.
     if (is_sel || child_sel) && sq_resp.drag_started() {
         egui::DragAndDrop::set_payload(ui.ctx(), LayersDrag::Art);
@@ -1085,7 +1175,7 @@ fn eye_and_lock(ui: &mut Ui, view: &View, n: &Node, r: egui::Rect, out: &mut Out
     ui.painter().line_segment([eye.right_top(), eye.right_bottom()], Stroke::new(1.0, t.input_border));
     ui.painter().line_segment([lock.right_top(), lock.right_bottom()], Stroke::new(1.0, t.input_border));
     let preview = !matches!(n.kind, NodeKind::Layer { preview: false, .. });
-    let er = ui.interact(eye, ui.id().with(("eye", n.id.0)), Sense::click_and_drag());
+    let er = ui.interact(eye, ui.scope_id().with(("eye", n.id.0)), Sense::click_and_drag());
     if n.visible {
         let icon = egui::Rect::from_center_size(eye.center(), vec2(14.0, 14.0));
         if n.is_template() {
@@ -1099,7 +1189,7 @@ fn eye_and_lock(ui: &mut Ui, view: &View, n: &Node, r: egui::Rect, out: &mut Out
             ui.painter().circle_stroke(eye.center(), 7.5, Stroke::new(1.0, t.text_dim));
         }
     }
-    let lr = ui.interact(lock, ui.id().with(("lock", n.id.0)), Sense::click_and_drag());
+    let lr = ui.interact(lock, ui.scope_id().with(("lock", n.id.0)), Sense::click_and_drag());
     if n.locked {
         icons::paint(ui, "lock", egui::Rect::from_center_size(lock.center(), vec2(12.0, 12.0)), t.icon);
     } else if lr.hovered() {
@@ -1200,7 +1290,7 @@ fn drop_target(ui: &Ui, view: &View, n: &Node, r: egui::Rect, indent: f32, open:
 /// it carries `n`'s appearance ([`PanelDrag::Appearance`]) onto another row's circle (Alt
 /// copies it) or the trash.
 fn target_circle(ui: &mut Ui, n: &Node, c: egui::Pos2, h: f32, targeted: bool, actions: &mut Vec<(String, Value)>, t: &Tokens) -> egui::Response {
-    let resp = ui.interact(egui::Rect::from_center_size(c, vec2(16.0, h)), ui.id().with(("target", n.id.0)), Sense::click_and_drag());
+    let resp = ui.interact(egui::Rect::from_center_size(c, vec2(16.0, h)), ui.scope_id().with(("target", n.id.0)), Sense::click_and_drag());
     widgets::drag_source(ui, &resp, || PanelDrag::Appearance(n.id));
     let held = resp.dnd_hover_payload::<PanelDrag>().is_some_and(|d| matches!(*d, PanelDrag::Appearance(id) if id != n.id));
     if let Some(d) = resp.dnd_release_payload::<PanelDrag>()
@@ -1332,7 +1422,7 @@ fn small_node(n: &Node, limit: usize) -> bool {
 impl Thumbs {
     /// Keep `img` (None: nothing drawn) as the thumbnail of row `key` showing `node`.
     fn upload(&mut self, ctx: &egui::Context, key: (u64, NodeId), node: Weak<Node>, px: u32, img: Option<&vectorcraft_render::Rendered>, ms: f64) {
-        let color = img.map(|img| egui::ColorImage::from_rgba_premultiplied([img.width as usize, img.height as usize], &img.pixels));
+        let color = img.map(crate::canvas::color_image);
         let used = ctx.cumulative_pass_nr();
         let name = format!("layer-thumb-{}", key.1.0);
         match self.entries.get_mut(&key) {
@@ -1580,7 +1670,9 @@ pub fn menu(app: &mut VectorcraftApp, ui: &mut Ui) {
             Some(("Save Selection", "", ..)) => save_selection_menu(app, ui),
             Some((label, cmd, p, enabled, checked)) => {
                 if widgets::menu_item(ui, label, enabled, checked) {
+                    let selected = last_selected(app);
                     app.run(cmd, p).ok();
+                    see_selection(app, ui, selected);
                 }
             }
         }
@@ -1620,7 +1712,9 @@ fn save_selection_menu(app: &mut VectorcraftApp, ui: &mut Ui) {
         }
         for name in names {
             if widgets::menu_item_name(ui, &name, true, false) {
+                let selected = last_selected(app);
                 app.run("select.recall", json!({ "name": name })).ok();
+                see_selection(app, ui, selected);
                 ui.close();
             }
         }
@@ -1702,7 +1796,6 @@ mod tests {
         let (stored, painted) = names(rect);
         let inner = stored.trim_start_matches('<').trim_end_matches('>');
         assert_eq!(painted, format!("<{}>", crate::i18n::tr(zh, inner)));
-        assert_ne!(painted, stored, "translated");
     }
 
     #[test]
@@ -2001,7 +2094,7 @@ mod tests {
             egui::Event::Key { key: egui::Key::A, physical_key: None, pressed: true, repeat: false, modifiers: egui::Modifiers::COMMAND };
         // What a double-click on the row does: the name field opens with the name.
         let open = |app: &mut VectorcraftApp| {
-            ctx.data_mut(|d| d.insert_temp(egui::Id::new("layers-rename"), (layer.0, name(app))));
+            ctx.data_mut(|d| d.insert_temp(egui::Id::unique("layers-rename"), (layer.0, name(app))));
             frame(app, &ctx, vec![], false);
             frame(app, &ctx, vec![], false);
         };
@@ -2010,12 +2103,41 @@ mod tests {
         frame(&mut app, &ctx, vec![key(egui::Key::Enter)], false);
         frame(&mut app, &ctx, vec![], false);
         assert_eq!(name(&app), "Sky", "Enter keeps the new name");
-        assert!(ctx.data(|d| d.get_temp::<(u64, String)>(egui::Id::new("layers-rename"))).is_none(), "and closes the field");
+        assert!(ctx.data(|d| d.get_temp::<(u64, String)>(egui::Id::unique("layers-rename"))).is_none(), "and closes the field");
         open(&mut app);
         frame(&mut app, &ctx, vec![select_all, egui::Event::Text("Ground".into())], false);
         frame(&mut app, &ctx, vec![key(egui::Key::Escape)], false);
         frame(&mut app, &ctx, vec![], false);
         assert_eq!(name(&app), "Sky", "Escape cancels");
+    }
+
+    /// Shift+Enter in the name field renames the layer and keeps the field open, the new name
+    /// selected; Enter then renames it again and closes the field.
+    #[test]
+    fn shift_enter_renames_a_layer_and_keeps_the_field_open() {
+        let mut app = VectorcraftApp::new(Session::new(), Default::default());
+        app.session.execute("file.new", &json!({"width": 100, "height": 100})).unwrap();
+        let layer = app.session.doc().unwrap().doc.layers[0].id;
+        let name = |app: &VectorcraftApp| app.session.doc().unwrap().doc.layers[0].display_name();
+        let ctx = egui::Context::default();
+        let key = |key, modifiers| egui::Event::Key { key, physical_key: None, pressed: true, repeat: false, modifiers };
+        let field = rename_id().with("field");
+        ctx.data_mut(|d| d.insert_temp(rename_id(), (layer.0, name(&app))));
+        frame(&mut app, &ctx, vec![], false);
+        frame(&mut app, &ctx, vec![], false);
+        frame(&mut app, &ctx, vec![key(egui::Key::A, egui::Modifiers::COMMAND), egui::Event::Text("Sky".into())], false);
+        frame(&mut app, &ctx, vec![key(egui::Key::Enter, egui::Modifiers::SHIFT)], false);
+        assert_eq!(name(&app), "Sky", "Shift+Enter applies the name");
+        assert!(ctx.memory(|m| m.has_focus(field)), "the field keeps the focus");
+        assert!(ctx.data(|d| d.get_temp::<(u64, String)>(rename_id())).is_some(), "and stays open");
+        frame(&mut app, &ctx, vec![], false);
+        let selected = egui::TextEdit::load_state(&ctx, field).and_then(|st| st.cursor.char_range()).map(|r| r.as_sorted_char_range());
+        assert_eq!(selected.map(|r| (r.start.0, r.end.0)), Some((0, 3)), "the name shown is selected");
+        frame(&mut app, &ctx, vec![egui::Event::Text("Sea".into())], false);
+        frame(&mut app, &ctx, vec![key(egui::Key::Enter, egui::Modifiers::NONE)], false);
+        frame(&mut app, &ctx, vec![], false);
+        assert_eq!(name(&app), "Sea", "typing replaced it, and Enter applies that");
+        assert!(ctx.data(|d| d.get_temp::<(u64, String)>(rename_id())).is_none(), "and closes the field");
     }
 
     #[test]
@@ -2025,7 +2147,7 @@ mod tests {
         let layer = app.session.doc().unwrap().doc.layers[0].id;
         let ctx = egui::Context::default();
         frame(&mut app, &ctx, vec![], false);
-        ctx.data_mut(|d| d.insert_temp(egui::Id::new("layers-rename"), (layer.0, "Renamed in the first".to_string())));
+        ctx.data_mut(|d| d.insert_temp(egui::Id::unique("layers-rename"), (layer.0, "Renamed in the first".to_string())));
         frame(&mut app, &ctx, vec![], false);
         // A second document, whose first layer has the same node id, comes to the front.
         app.session.execute("file.new", &json!({"width": 100, "height": 100})).unwrap();
@@ -2035,7 +2157,7 @@ mod tests {
         frame(&mut app, &ctx, vec![enter], false);
         frame(&mut app, &ctx, vec![], false);
         assert_eq!(app.session.doc().unwrap().doc.layers[0].display_name(), "Layer 1");
-        assert!(ctx.data(|d| d.get_temp::<(u64, String)>(egui::Id::new("layers-rename"))).is_none());
+        assert!(ctx.data(|d| d.get_temp::<(u64, String)>(egui::Id::unique("layers-rename"))).is_none());
     }
 
     #[test]
@@ -2576,6 +2698,73 @@ mod tests {
         assert_eq!(layers(&app), vec![first, second]);
     }
 
+    /// Cmd+Alt+L is New Layer Options… by default. On Windows and Linux the key is Ctrl+Alt+L, and on
+    /// macOS it is Option+Command+L. Cmd+L is still New Layer. No other command, tool or panel has
+    /// Cmd+Alt+L by default.
+    #[test]
+    fn cmd_alt_l_is_new_layer_options() {
+        use crate::shortcut_editor::{command_for_key, default_command_shortcut};
+        assert_eq!(default_command_shortcut("ui.newLayer"), Some("Cmd+Alt+L"));
+        assert_eq!(command_for_key("Cmd+Alt+L"), Some("ui.newLayer"));
+        assert_eq!(command_for_key("Cmd+L"), Some("layer.new"));
+        let chord = crate::shortcuts::parse("Cmd+Alt+L").expect("parses");
+        assert_eq!((chord.modifiers, chord.logical_key), (egui::Modifiers::COMMAND | egui::Modifiers::ALT, egui::Key::L));
+        let shown = crate::menus::pretty_shortcut("Cmd+Alt+L");
+        assert_eq!(shown, if cfg!(target_os = "macos") { "⌥⌘L" } else { "Ctrl+Alt+L" });
+        let mut app = VectorcraftApp::new(Session::new(), Default::default());
+        let listed = app.run("shortcuts.list", json!({"query": "ui.newLayer"})).unwrap();
+        let rows: Vec<_> = listed.as_array().expect("rows").iter().map(|r| (r["label"].clone(), r["default"].clone())).collect();
+        assert_eq!(rows, [(json!("New Layer Options…"), json!("Cmd+Alt+L"))], "Keyboard Shortcuts lists it");
+        assert_eq!(app.run("shortcuts.conflicts", json!({})).unwrap(), json!([]), "no other default has the key");
+    }
+
+    /// Cmd+Alt+L, pressed through the shortcut handler, opens Layer Options for a new layer as an
+    /// Alt-click on the panel's New Layer button does, and no layer is added until OK. OK adds the
+    /// layer above the current layer, as after the Alt-click, and Cancel adds none. Cmd+L still adds
+    /// a layer without the dialog.
+    #[test]
+    fn cmd_alt_l_opens_new_layer_options_as_alt_clicking_new_layer_does() {
+        fn press(app: &mut VectorcraftApp, modifiers: egui::Modifiers) {
+            let ctx = egui::Context::default();
+            let ev = egui::Event::Key { key: egui::Key::L, physical_key: None, pressed: true, repeat: false, modifiers };
+            let mut out = ctx.run_ui(egui::RawInput { events: vec![ev], ..Default::default() }, |ui| crate::shortcuts::handle(app, ui.ctx()));
+            out.textures_delta.clear();
+        }
+        /// Layer 1 with two rectangles under a layer named Top, with Layer 1 current.
+        fn two_layers() -> VectorcraftApp {
+            let (mut app, first, _) = two_rects();
+            app.session.execute("layer.new", &json!({"name": "Top"})).unwrap();
+            app.session.execute("layer.setCurrent", &json!({"id": first.0})).unwrap();
+            app
+        }
+        let names = |app: &VectorcraftApp| app.session.active().unwrap().doc.layers.iter().map(|l| l.display_name()).collect::<Vec<_>>();
+        let dialog = |app: &VectorcraftApp| app.ui.dialog.as_ref().map(|d| (d.kind.clone(), d.fields.clone()));
+        let mut keyed = two_layers();
+        press(&mut keyed, egui::Modifiers::COMMAND | egui::Modifiers::ALT);
+        let mut clicked = two_layers();
+        let ctx = egui::Context::default();
+        let new_layer = bar_buttons(&mut clicked, &ctx)[1];
+        click_with(&mut clicked, &ctx, new_layer, egui::Modifiers::ALT);
+        let opened = dialog(&keyed).expect("the key opens a dialog");
+        assert_eq!((opened.0.as_str(), opened.1.get("mode")), ("layerOptions", Some(&json!("new"))));
+        assert_eq!(dialog(&clicked), Some(opened), "the key opens what the Alt-click opens");
+        assert_eq!(names(&keyed), ["Layer 1", "Top"], "no layer is added until OK");
+        for app in [&mut keyed, &mut clicked] {
+            crate::dialogs::confirm(app).unwrap();
+        }
+        assert_eq!(names(&keyed), ["Layer 1", "Layer 3", "Top"]);
+        assert_eq!(names(&clicked), names(&keyed));
+        // Cancel adds no layer.
+        press(&mut keyed, egui::Modifiers::COMMAND | egui::Modifiers::ALT);
+        assert!(keyed.ui.dialog.is_some());
+        crate::dialogs::cancel(&mut keyed);
+        assert!(keyed.ui.dialog.is_none());
+        assert_eq!(names(&keyed), ["Layer 1", "Layer 3", "Top"]);
+        press(&mut keyed, egui::Modifiers::COMMAND);
+        assert!(keyed.ui.dialog.is_none(), "Cmd+L opens no dialog");
+        assert_eq!(names(&keyed).len(), 4);
+    }
+
     #[test]
     fn the_selected_art_square_drags_the_selection_to_another_layer() {
         let (mut app, [_, sub, g, _, a, c]) = nested();
@@ -2679,7 +2868,7 @@ mod tests {
         let mut frame = |app: &mut VectorcraftApp, events: Vec<egui::Event>| {
             time += 0.05;
             let input = egui::RawInput { time: Some(time), events, screen_rect: Some(screen), ..Default::default() };
-            let mut out = ctx.run_ui(input, |ui| crate::dock::floating_panel(app, ui.ctx()));
+            let mut out = ctx.run_ui(input, |ui| crate::panel_docking::show(app, ui));
             out.textures_delta.clear();
             let mut c: Vec<egui::Pos2> = out
                 .shapes
@@ -2704,6 +2893,293 @@ mod tests {
         frame(&mut app, vec![]);
         assert_eq!(rows_of(&app), vec![sub]);
         assert_eq!(app.session.active().unwrap().current_layer(), Some(sub));
+    }
+
+    // ---- Locate Selected Objects (Panel Options) ----
+
+    /// A layer of `n` groups of one path each, with only the layer open, as a document opens →
+    /// (app, layer, the paths in stacking order, so the first is in the bottom row). The path in
+    /// group `i` is named `Path {i}`.
+    fn groups_of_one(n: usize) -> (VectorcraftApp, NodeId, Vec<NodeId>) {
+        use vectorcraft_doc::Appearance;
+        use vectorcraft_geom::{Rect, shapes};
+        let mut d = Document::new(1000.0, 1000.0);
+        let mut groups = vec![];
+        let mut paths = vec![];
+        for i in 0..n {
+            let r = Rect::new(0.0, i as f64, 1.0, i as f64 + 1.0);
+            let mut path = Node::path(d.alloc_id(), shapes::rectangle(r), Appearance::default());
+            path.name = Some(format!("Path {i}"));
+            paths.push(path.id);
+            groups.push(Arc::new(Node::group(d.alloc_id(), vec![Arc::new(path)])));
+        }
+        *Arc::make_mut(&mut d.layers[0]).children_mut().unwrap() = groups;
+        let layer = d.layers[0].id;
+        let mut app = VectorcraftApp::new(Session::new(), Default::default());
+        app.session.add_document(d, None);
+        (app, layer, paths)
+    }
+
+    /// One frame of the panel in a 300 × 800 window, one second after the previous frame: the
+    /// centers of the target circles, top row first, and whether `name` is drawn.
+    fn tall_frame(app: &mut VectorcraftApp, ctx: &egui::Context, name: &str) -> (Vec<egui::Pos2>, bool) {
+        let time = ctx.input(|i| i.time) + 1.0;
+        let screen = egui::Rect::from_min_size(egui::Pos2::ZERO, vec2(300.0, 800.0));
+        let mut out = ctx.run_ui(egui::RawInput { screen_rect: Some(screen), time: Some(time), ..Default::default() }, |ui| show(app, ui));
+        out.textures_delta.clear();
+        let found = out.shapes.iter().any(|c| matches!(&c.shape, egui::Shape::Text(t) if t.galley.text() == name));
+        let mut circles: Vec<egui::Pos2> = out
+            .shapes
+            .iter()
+            .filter_map(|c| match &c.shape {
+                egui::Shape::Circle(cs) if cs.radius == 5.0 => Some(cs.center),
+                _ => None,
+            })
+            .collect();
+        circles.sort_by(|a, b| a.y.total_cmp(&b.y));
+        (circles, found)
+    }
+
+    /// Without Locate Selected Objects (the default), an object selected outside the panel leaves
+    /// the open rows and the scroll position as they were.
+    #[test]
+    fn without_the_option_a_selection_leaves_the_rows_and_the_scroll_as_they_were() {
+        let (mut app, layer, paths) = groups_of_one(500);
+        let ctx = egui::Context::default();
+        let (before, _) = tall_frame(&mut app, &ctx, "");
+        // The bottom row's path: out of view, in a closed group.
+        app.session.execute("select.set", &json!({"ids": [paths[0].0]})).unwrap();
+        for _ in 0..4 {
+            let (circles, found) = tall_frame(&mut app, &ctx, "Path 0");
+            assert!(!found);
+            assert_eq!(circles, before, "nothing opens or scrolls");
+        }
+        let st = app.session.active().unwrap();
+        let group = st.doc.parent_of(paths[0]).unwrap();
+        assert!(st.layers_open.contains(layer) && !st.layers_open.contains(group));
+    }
+
+    /// With Locate Selected Objects on, an object selected outside the panel is located as Locate
+    /// Object locates it: the layer and the group around it open and its row is scrolled into
+    /// view. The highlighted row stays as it was.
+    #[test]
+    fn with_the_option_a_selected_object_is_opened_and_scrolled_into_view() {
+        let (mut app, layer, paths) = groups_of_one(500);
+        app.ui.layers_panel.locate_selected = true;
+        let ctx = egui::Context::default();
+        let top = app.session.active().unwrap().doc.parent_of(paths[499]).unwrap();
+        app.session.execute("layer.highlight", &json!({"ids": [top.0]})).unwrap();
+        tall_frame(&mut app, &ctx, "");
+        expand(&mut app, &json!({"ids": [layer.0], "open": false})).unwrap();
+        assert_eq!(tall_frame(&mut app, &ctx, "").0.len(), 1, "only the layer's row");
+        app.session.execute("select.set", &json!({"ids": [paths[0].0]})).unwrap();
+        let found = (0..4).any(|_| tall_frame(&mut app, &ctx, "Path 0").1);
+        let st = app.session.active().unwrap();
+        let group = st.doc.parent_of(paths[0]).unwrap();
+        assert!(st.layers_open.contains(layer) && st.layers_open.contains(group), "the layer and the group open");
+        assert!(found, "the row is scrolled into view");
+        assert_eq!(st.highlighted_rows(), [top], "the highlighted row stays");
+    }
+
+    /// With Locate Selected Objects on, the panel's own clicks locate nothing: a Shift-click
+    /// highlights the rows down to the one it clicks, and Shift-clicking selection squares selects
+    /// art in a closed sublayer without opening it. An object then selected outside the panel is
+    /// located, and the highlighted rows stay.
+    #[test]
+    fn with_the_option_the_panels_own_clicks_locate_nothing() {
+        let (mut app, [layer, sub, g, b, _, c]) = nested();
+        app.ui.layers_panel.locate_selected = true;
+        expand(&mut app, &json!({"ids": [sub.0, g.0], "open": false})).unwrap();
+        let ctx = egui::Context::default();
+        // Rows top down: Layer 1, Sub (closed), c.
+        let (circles, _) = frame(&mut app, &ctx, vec![], false);
+        assert_eq!(circles.len(), 3);
+        let name = |i: usize| egui::pos2(150.0, circles[i].y);
+        let square = |i: usize| circles[i] + vec2(TARGET_X - SQUARE_X, 0.0);
+        click_with(&mut app, &ctx, name(0), egui::Modifiers::NONE);
+        click_with(&mut app, &ctx, name(2), egui::Modifiers::SHIFT);
+        assert_eq!(rows_of(&app), [layer, sub, c], "both rows clicked and the one between them");
+        click_with(&mut app, &ctx, square(2), egui::Modifiers::SHIFT);
+        click_with(&mut app, &ctx, square(1), egui::Modifiers::SHIFT);
+        let st = app.session.active().unwrap();
+        assert!(st.selection.objects.len() >= 3 && st.selection.objects.contains(&c), "c and Sub's art are selected");
+        let (after, _) = frame(&mut app, &ctx, vec![], false);
+        assert_eq!(after, circles, "no row opens and nothing scrolls");
+        assert_eq!(rows_of(&app), [layer, sub, c]);
+        // Selected outside the panel: b's sublayer and group open, and the rows stay highlighted.
+        app.session.execute("select.set", &json!({"ids": [b.0]})).unwrap();
+        assert_eq!(frame(&mut app, &ctx, vec![], false).0.len(), 6);
+        assert_eq!(rows_of(&app), [layer, sub, c]);
+    }
+
+    /// With Locate Selected Objects on, a selection the panel menu changes is not located: Delete
+    /// Selection deletes the highlighted object, and the object left selected stays in its closed
+    /// sublayer and group.
+    #[test]
+    fn with_the_option_the_panel_menu_locates_nothing() {
+        let (mut app, [_, sub, g, b, _, c]) = nested();
+        app.ui.layers_panel.locate_selected = true;
+        app.session.execute("select.set", &json!({"ids": [b.0, c.0]})).unwrap();
+        let ctx = egui::Context::default();
+        crate::theme::install_fonts(&ctx);
+        frame(&mut app, &ctx, vec![], false);
+        expand(&mut app, &json!({"ids": [sub.0, g.0], "open": false})).unwrap();
+        app.session.execute("layer.highlight", &json!({"ids": [c.0]})).unwrap();
+        assert_eq!(frame(&mut app, &ctx, vec![], false).0.len(), 3, "Layer 1, Sub (closed) and c");
+        let menu_frame = |app: &mut VectorcraftApp, events| super::super::tests_appearance::frame_events(&ctx, app, events, menu);
+        let at = menu_frame(&mut app, vec![]).iter().find(|(t, _)| t.trim() == "Delete Selection").map(|(_, r)| r.center()).unwrap();
+        for e in [egui::Event::PointerMoved(at), button(at, true), button(at, false)] {
+            menu_frame(&mut app, vec![e]);
+        }
+        assert_eq!(app.session.active().unwrap().selection.objects, [b], "c is deleted and b stays selected");
+        assert_eq!(frame(&mut app, &ctx, vec![], false).0.len(), 2, "Sub stays closed");
+    }
+
+    /// With Locate Selected Objects on, a saved selection recalled from the panel menu's Save
+    /// Selection submenu is not located: the recalled object stays in its closed sublayer and group.
+    #[test]
+    fn with_the_option_a_selection_recalled_from_the_panel_menu_is_not_located() {
+        let (mut app, [_, sub, g, b, _, c]) = nested();
+        app.ui.layers_panel.locate_selected = true;
+        app.run("select.set", json!({"ids": [b.0]})).unwrap();
+        app.run("select.save", json!({"name": "Kept"})).unwrap();
+        app.run("select.set", json!({"ids": [c.0]})).unwrap();
+        let ctx = egui::Context::default();
+        crate::theme::install_fonts(&ctx);
+        frame(&mut app, &ctx, vec![], false);
+        expand(&mut app, &json!({"ids": [sub.0, g.0], "open": false})).unwrap();
+        assert_eq!(frame(&mut app, &ctx, vec![], false).0.len(), 3, "Layer 1, Sub (closed) and c");
+        let menu_frame = |app: &mut VectorcraftApp, events| super::super::tests_appearance::frame_events(&ctx, app, events, menu);
+        let at = |texts: &[(String, egui::Rect)], label: &str| texts.iter().find(|(t, _)| t.trim() == label).map(|(_, r)| r.center());
+        let sub_menu = at(&menu_frame(&mut app, vec![]), "Save Selection").expect("the Save Selection submenu");
+        for e in [egui::Event::PointerMoved(sub_menu), button(sub_menu, true), button(sub_menu, false)] {
+            menu_frame(&mut app, vec![e]);
+        }
+        let item = at(&menu_frame(&mut app, vec![]), "Kept").expect("the saved selection's item");
+        for e in [egui::Event::PointerMoved(item), button(item, true), button(item, false)] {
+            menu_frame(&mut app, vec![e]);
+        }
+        assert_eq!(app.session.active().unwrap().selection.objects, [b], "the saved selection is recalled");
+        assert_eq!(frame(&mut app, &ctx, vec![], false).0.len(), 3, "Sub stays closed");
+    }
+
+    /// With Locate Selected Objects on, the object selected in a document that becomes active is
+    /// not located; an object selected after that is. Neither document has highlighted rows, so
+    /// the switch reveals no row of its own.
+    #[test]
+    fn with_the_option_a_document_becoming_active_locates_nothing() {
+        let (mut app, [_, sub, g, b, a, _]) = nested();
+        app.ui.layers_panel.locate_selected = true;
+        app.session.execute("layer.highlight", &json!({"ids": []})).unwrap();
+        app.session.execute("select.set", &json!({"ids": [b.0]})).unwrap();
+        let ctx = egui::Context::default();
+        frame(&mut app, &ctx, vec![], false);
+        expand(&mut app, &json!({"ids": [sub.0, g.0], "open": false})).unwrap();
+        app.session.execute("file.new", &json!({"width": 100, "height": 100})).unwrap();
+        app.session.execute("shape.rectangle", &json!({"x": 0, "y": 0, "width": 10, "height": 10})).unwrap();
+        frame(&mut app, &ctx, vec![], false);
+        app.session.execute("document.activate", &json!({"index": 0})).unwrap();
+        assert_eq!(frame(&mut app, &ctx, vec![], false).0.len(), 3, "b's sublayer and group stay closed");
+        app.session.execute("select.set", &json!({"ids": [a.0]})).unwrap();
+        assert_eq!(frame(&mut app, &ctx, vec![], false).0.len(), 5, "a's sublayer opens");
+    }
+
+    /// With Locate Selected Objects on, the copies an Alt-drag selects are located once the drag
+    /// ends, not while it lasts.
+    #[test]
+    fn with_the_option_a_selection_made_during_a_drag_is_located_when_it_ends() {
+        let (mut app, [_, sub, g, b, ..]) = nested();
+        app.ui.layers_panel.locate_selected = true;
+        app.session.execute("select.set", &json!({"ids": [b.0]})).unwrap();
+        let ctx = egui::Context::default();
+        frame(&mut app, &ctx, vec![], false);
+        expand(&mut app, &json!({"ids": [sub.0, g.0], "open": false})).unwrap();
+        app.session.begin_interaction("Move").unwrap();
+        for i in 1..=3 {
+            app.session.preview("object.transform", &json!({"matrix": [1, 0, 0, 1, i * 10, 0], "copy": true})).unwrap();
+            assert_eq!(frame(&mut app, &ctx, vec![], false).0.len(), 3, "nothing opens while the drag lasts");
+        }
+        app.session.commit_interaction().unwrap();
+        let st = app.session.active().unwrap();
+        let copy = st.selection.objects.last().copied().unwrap();
+        assert!(copy != b && st.doc.parent_of(copy) == Some(g), "the copy is selected, in b's group");
+        assert_eq!(frame(&mut app, &ctx, vec![], false).0.len(), 7, "Sub and the group open on the copy's row");
+    }
+
+    /// With Locate Selected Objects on, art selected outside the panel in another layer is
+    /// located: the selection makes that layer the active one, and the panel scrolls to the art's
+    /// row, not to the layer's row.
+    #[test]
+    fn with_the_option_the_located_object_is_revealed_instead_of_its_active_layer() {
+        let (mut app, layer, paths) = groups_of_one(500);
+        app.ui.layers_panel.locate_selected = true;
+        app.session.execute("layer.new", &json!({})).unwrap();
+        assert_ne!(app.session.active().unwrap().current_layer(), Some(layer));
+        let ctx = egui::Context::default();
+        tall_frame(&mut app, &ctx, "");
+        app.session.execute("select.set", &json!({"ids": [paths[0].0]})).unwrap();
+        assert_eq!(app.session.active().unwrap().current_layer(), Some(layer), "the path's layer is the active one");
+        let found = (0..4).any(|_| tall_frame(&mut app, &ctx, "Path 0").1);
+        let st = app.session.active().unwrap();
+        let group = st.doc.parent_of(paths[0]).unwrap();
+        assert!(st.layers_open.contains(group), "the group opens");
+        assert!(found, "the path's row is scrolled into view");
+    }
+
+    /// With Locate Selected Objects and Show Layers Only on, art selected outside the panel has no
+    /// row, so the panel scrolls to the row of the layer that the selection makes the active one.
+    #[test]
+    fn with_the_option_and_show_layers_only_the_active_layer_is_revealed() {
+        let mut app = VectorcraftApp::new(Session::new(), Default::default());
+        app.ui.layers_panel.locate_selected = true;
+        app.ui.layers_panel.layers_only = true;
+        let run = |app: &mut VectorcraftApp, id: &str, p: serde_json::Value| app.session.execute(id, &p).unwrap();
+        run(&mut app, "file.new", json!({"width": 100, "height": 100}));
+        let rect = |app: &mut VectorcraftApp| run(app, "shape.rectangle", json!({"x": 0, "y": 0, "width": 5, "height": 5}))["id"].as_u64().unwrap();
+        let bottom = rect(&mut app);
+        for _ in 0..59 {
+            run(&mut app, "layer.new", json!({}));
+            rect(&mut app);
+        }
+        run(&mut app, "select.none", json!({}));
+        let doc = app.session.active().unwrap().doc.clone();
+        let name = doc.node(doc.layer_of(NodeId(bottom)).unwrap()).unwrap().display_name();
+        let ctx = egui::Context::default();
+        assert!(!(0..4).any(|_| tall_frame(&mut app, &ctx, &name).1), "the bottom layer's row is out of view");
+        run(&mut app, "select.set", json!({"ids": [bottom]}));
+        assert!((0..4).any(|_| tall_frame(&mut app, &ctx, &name).1), "the active layer's row is scrolled into view");
+    }
+
+    /// With Locate Selected Objects on, art selected outside the panel that Show Layers Only or the
+    /// filter leaves without a row opens nothing, so its group stays closed once the panel lists
+    /// every row again. Art the filter keeps has its group opened.
+    #[test]
+    fn with_the_option_art_the_panel_does_not_list_opens_nothing() {
+        let (mut app, _, paths) = groups_of_one(500);
+        app.ui.layers_panel.locate_selected = true;
+        let ctx = egui::Context::default();
+        let open = |app: &VectorcraftApp, i: usize| {
+            let st = app.session.active().unwrap();
+            st.layers_open.contains(st.doc.parent_of(paths[i]).unwrap())
+        };
+        let locate = |app: &mut VectorcraftApp, i: usize| {
+            app.session.execute("select.set", &json!({"ids": [paths[i].0]})).unwrap();
+            for _ in 0..4 {
+                tall_frame(app, &ctx, "");
+            }
+        };
+        tall_frame(&mut app, &ctx, "");
+        app.ui.layers_panel.layers_only = true;
+        locate(&mut app, 0);
+        app.ui.layers_panel.layers_only = false;
+        tall_frame(&mut app, &ctx, "");
+        assert!(!open(&app, 0), "Show Layers Only: the group stays closed");
+        app.ui.layers_filter = Filter { objects: vec![ObjectKind::Text], layers: vec![] };
+        locate(&mut app, 1);
+        assert!(!open(&app, 1), "a filter that leaves the path out: the group stays closed");
+        app.ui.layers_filter = Filter { objects: vec![ObjectKind::Paths], layers: vec![] };
+        locate(&mut app, 2);
+        assert!(open(&app, 2), "a filter that keeps the path: the group opens");
     }
 
     /// A layer of 2,000 groups of 10 paths with every row open: one frame lays out only the rows

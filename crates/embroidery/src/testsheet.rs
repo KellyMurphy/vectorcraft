@@ -112,6 +112,10 @@ pub fn build(ids: &[String]) -> Result<Sheet, String> {
             rect: Rect::new(left / PT_MM, 0.0, (left + FIELD_MM) / PT_MM, FIELD_MM / PT_MM),
             show_center_mark: true,
             show_cross_hairs: false,
+            locked: false,
+            show_video_safe_areas: false,
+            video_ruler_pixel_aspect_ratio: 1.0,
+            color: None,
         });
         sections.push(SheetSection { id: section.id, name: section.name, artboard: index, swatches: swatches.len() });
         record.swatches.extend(swatches);

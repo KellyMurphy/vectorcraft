@@ -21,7 +21,7 @@ const TOGGLE_W: f32 = 38.0;
 fn form(app: &mut VectorcraftApp, ctx: &egui::Context) -> Value {
     let Some(st) = app.session.active() else { return Value::Null };
     let key = (st.uid, st.revision);
-    let id = egui::Id::new("sew-out-form");
+    let id = egui::Id::unique("sew-out-form");
     if let Some((k, v)) = ctx.data(|d| d.get_temp::<((u64, u64), Value)>(id))
         && k == key
     {

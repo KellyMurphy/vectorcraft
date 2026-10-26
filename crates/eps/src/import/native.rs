@@ -30,7 +30,7 @@ use std::collections::BTreeSet;
 use std::sync::Arc;
 
 use vectorcraft_color::BlendMode;
-use vectorcraft_doc::{AppearanceItem, Document, Node, NodeId, NodeKind, Scaling, TextKind};
+use vectorcraft_doc::{AppearanceItem, Document, Node, NodeId, NodeKind, Scaling, TextKind, Unit};
 use vectorcraft_geom::{Affine, PathData, Point, Rect, Vec2};
 
 use super::Imported;
@@ -234,6 +234,8 @@ fn fill_slots(
             let frame = ai::slot_frame(n.name.as_deref());
             let state = (n.opacity, n.blend, n.isolate, n.knockout);
             let transparent = see_through(n);
+            // An art style read onto the slot (fills, strokes and effects round the characters) is the type's.
+            let styled = (!n.appearance.items.is_empty() || !n.appearance.effects.is_empty()).then(|| n.appearance.clone());
             let replacement = match content.next() {
                 Some(Content::Page(parts)) if !parts.is_empty() => {
                     // The page's type (and the strokes round it) take the slot's place as they are.
@@ -286,6 +288,11 @@ fn fill_slots(
                         made.push((story, frame, text.id));
                     }
                     text.visible = visible;
+                    // Type with an art style is what the page draws as the style's look: it is seen.
+                    let seen = seen || styled.is_some();
+                    if let Some(appearance) = styled {
+                        text.appearance = appearance;
+                    }
                     // Type the page shows is kept; other made type is weighed against the page.
                     text.name = if seen { name.cloned() } else { Some(format!("{MADE}{}", name.map_or("", String::as_str))) };
                     let extra: Vec<Arc<Node>> = extra.iter().map(|p| reid(doc, p)).collect();
@@ -473,11 +480,17 @@ fn join_pieces(parts: &mut Vec<Arc<Node>>, lines: &[(String, Point)]) {
     });
 }
 
-/// Do the regions of made type cover most of `object`?
-fn covered(object: &[Arc<Node>], content: &[Content]) -> bool {
+/// Do the regions of made type in the slots that `keep` takes cover most of `object`?
+fn covered(object: &[Arc<Node>], content: &[Content], keep: impl Fn(usize) -> bool) -> bool {
     let Some(r) = extent(object) else { return false };
-    let inside: f64 =
-        content.iter().filter_map(|c| if let Content::Made(_, Some(region), ..) = c { Some(region.intersect(r).area()) } else { None }).sum();
+    let inside: f64 = content
+        .iter()
+        .enumerate()
+        .filter_map(|(k, c)| match c {
+            Content::Made(_, Some(region), ..) => Some(region.intersect(r).area()).filter(|a| *a > 0.0 && keep(k)),
+            _ => None,
+        })
+        .sum();
     inside >= 0.5 * r.area().max(1e-9)
 }
 
@@ -543,7 +556,7 @@ fn plan(
                         region = path.bounds();
                     }
                     TextKind::OnPath { path: on, .. } => {
-                        *on = path.clone();
+                        *on = closed_where_ends_meet(path.clone());
                         region = path.bounds().map(|r| r.inflate(size * 1.5, size * 1.5));
                     }
                     TextKind::Point => {}
@@ -570,7 +583,7 @@ fn plan(
     // The file's text document is trusted where it agrees with the page about something (its lines
     // start where the page's type does, or the page has type where it lays type out), or where the
     // page has no type to disagree with.
-    let in_region = |object: &[Arc<Node>]| covered(object, &content);
+    let in_region = |object: &[Arc<Node>]| covered(object, &content, |_| true);
     let trusted = owner.iter().any(Option::is_some) || shown.is_empty() || shown.iter().any(|o| in_region(o));
     if !trusted {
         content.iter_mut().for_each(|c| *c = Content::Empty);
@@ -589,8 +602,33 @@ fn plan(
                     .is_some_and(|l| !words.is_empty() && words.iter().all(|w| l.iter().any(|(text, _)| letters(text).contains(w.as_str()))))
         })
     };
+    // The letters of each slot's story, in lower case.
+    let spelled: Vec<String> = stories.iter().map(|s| s.as_ref().map(|s| letters(s.text()).to_ascii_lowercase()).unwrap_or_default()).collect();
+    // For each slot: is its made type where `object` is, with the letters of one of `object`'s texts in
+    // its story? All are false unless such slots have the letters of every text between them.
+    let spelling = |object: &[Arc<Node>], content: &[Content]| -> Vec<bool> {
+        let r = extent(object);
+        let words: Vec<String> = object
+            .iter()
+            .filter_map(|n| if let NodeKind::Text(t) = &n.kind { Some(letters(&t.plain_text()).to_ascii_lowercase()) } else { None })
+            .filter(|w| !w.is_empty())
+            .collect();
+        let has = |k: usize| spelled.get(k).is_some_and(|s| words.is_empty() || words.iter().any(|w| s.contains(w.as_str())));
+        let near: Vec<bool> = content
+            .iter()
+            .enumerate()
+            .map(|(k, c)| match (c, r) {
+                (Content::Made(_, Some(region), ..), Some(r)) => region.intersect(r).area() > 0.0 && has(k),
+                _ => false,
+            })
+            .collect();
+        let every = words.iter().all(|w| near.iter().zip(&spelled).any(|(n, s)| *n && s.contains(w.as_str())));
+        if every { near } else { vec![] }
+    };
     let mut spare: Vec<Vec<Arc<Node>>> = vec![];
     for (j, object) in shown.iter().enumerate() {
+        let spells = spelling(object, &content);
+        let spells = |k: usize| spells.get(k).copied().unwrap_or(false);
         match owner.get(j).copied().flatten().filter(|_| trusted) {
             // The type of a text object the layers hide: the layers have it, hidden, so the page's
             // isn't another text object's.
@@ -601,12 +639,13 @@ fn plan(
                 Some(c) => *c = Content::Page(object.clone()),
                 None => {}
             },
-            // What lies where made type is, is that type as the page draws it.
-            None if covered(object, &content) => {
+            // What lies where made type is and has that type's letters is that type as the page draws it.
+            None if covered(object, &content, spells) => {
                 let r = extent(object).unwrap_or(Rect::ZERO);
-                for c in &mut content {
+                for (k, c) in content.iter_mut().enumerate() {
                     if let Content::Made(_, Some(region), seen, _) = c
                         && !region.intersect(r).is_zero_area()
+                        && spells(k)
                     {
                         *seen = true;
                     }
@@ -801,6 +840,10 @@ struct PageView {
     page: vectorcraft_render::Rendered,
     /// Where the page's own type is, in its pixels.
     page_type: Vec<Rect>,
+    /// Where objects read with their art style lie, in its pixels: the page has Illustrator's
+    /// rendering of the style there, the layers VectorCraft's live effects, and the two aren't
+    /// held to look alike.
+    restyled: Vec<Rect>,
     layers: vectorcraft_render::Renderer,
     scale: f64,
     samples: u32,
@@ -816,7 +859,18 @@ impl PageView {
         let page = comparison_render(&mut vectorcraft_render::Renderer::new(), frame.page, ra, scale, samples);
         let mut page_type = vec![];
         type_areas(&frame.page.layers, ra, scale, &mut page_type);
-        Self { page, page_type, layers: vectorcraft_render::Renderer::new(), scale, samples }
+        Self { page, page_type, restyled: vec![], layers: vectorcraft_render::Renderer::new(), scale, samples }
+    }
+
+    /// Leave the drawn looks in `looks` (on `region`, the page's area in the layers' document) out
+    /// of the comparisons ([`Structure::restyled`](ai::Structure)).
+    fn restyled(&mut self, looks: &[Rect], region: Rect) {
+        let s = self.scale;
+        self.restyled = looks
+            .iter()
+            .map(|r| r.inflate(OUTLINE_REACH, OUTLINE_REACH))
+            .map(|r| Rect::new((r.x0 - region.x0) * s, (r.y0 - region.y0) * s, (r.x1 - region.x0) * s, (r.y1 - region.y0) * s))
+            .collect();
     }
 
     /// How `b` on `rb` (a rectangle the page's size) draws differently from the page ([`compared`]).
@@ -827,7 +881,7 @@ impl PageView {
         let y = comparison_render(&mut self.layers, b, rb, self.scale, self.samples);
         let mut areas = self.page_type.clone();
         type_areas(&b.layers, rb, self.scale, &mut areas);
-        compared(&self.page, &y, &areas)
+        compared(&self.page, &y, &areas, &self.restyled)
     }
 
     /// The share (0 to 1) of the pixels where `b` on `rb` draws another colour than the page
@@ -858,19 +912,22 @@ fn difference(a: &Document, ra: Rect, b: &Document, rb: Rect) -> Difference {
     let mut areas = vec![];
     type_areas(&a.layers, ra, scale, &mut areas);
     type_areas(&b.layers, rb, scale, &mut areas);
-    compared(&x, &y, &areas)
+    compared(&x, &y, &areas, &[])
 }
 
 /// How two drawings of the same size differ, each drawn on nothing and seen on white, away from
-/// the type in `areas` (pixels). Pixels are compared by lightness, and by whether they are inked
+/// the type in `areas` (pixels), pixels in `skip` counting as alike. Pixels are compared by lightness, and by whether they are inked
 /// at all ([`differ`]): the page of an RGB document is written in the colours' CMYK equivalents,
 /// and what the comparison looks for is art that is missing or out of place.
-fn compared(x: &vectorcraft_render::Rendered, y: &vectorcraft_render::Rendered, areas: &[Rect]) -> Difference {
+fn compared(x: &vectorcraft_render::Rendered, y: &vectorcraft_render::Rendered, areas: &[Rect], skip: &[Rect]) -> Difference {
     if x.width == 0 || x.height == 0 || x.width != y.width || x.height != y.height {
         return Difference { any: 1.0, art: 1.0, solid: 1.0 };
     }
-    let differs: Vec<bool> = x.pixels.as_chunks::<4>().0.iter().zip(y.pixels.as_chunks::<4>().0).map(|(p, q)| differ(p, q)).collect();
     let (w, h) = (x.width as usize, x.height as usize);
+    // Pixels in `skip` count as alike.
+    let skipped = in_areas(skip, w, h);
+    let differs: Vec<bool> =
+        x.pixels.as_chunks::<4>().0.iter().zip(y.pixels.as_chunks::<4>().0).zip(&skipped).map(|((p, q), s)| !*s && differ(p, q)).collect();
     let at = |i: usize, j: usize| j.checked_mul(w).and_then(|row| row.checked_add(i)).and_then(|k| differs.get(k)).copied().unwrap_or(false);
     let typed = in_areas(areas, w, h);
     let art = differs.iter().zip(&typed).filter(|(d, t)| **d && !**t).count();
@@ -970,7 +1027,8 @@ struct Frame<'a> {
 fn build(data: &[u8], visible: Option<&Document>, page: Page, outlined: bool, trust: bool, unit: f64) -> Result<(Document, Vec<String>), String> {
     // An EPS (its page is its art) draws a Large Canvas page at full size; a `.ai` keeps its art
     // space, as its PDF part may (#2031).
-    let Structure { mut doc, to_doc, bbox, artboard, template, hidden_unread, slot_names, warnings } = ai::read(data, matches!(page, Page::Art))?;
+    let Structure { mut doc, to_doc, bbox, artboard, template, hidden_unread, slot_names, restyled, warnings } =
+        ai::read(data, matches!(page, Page::Art))?;
     // Editing data in the units of the page's user space ([`in_units`]) is compared with the page
     // scaled down to those units, and the document read from it is scaled up by `unit`.
     let board = artboard.map(|a| to_doc.transform_rect_bbox(a));
@@ -994,7 +1052,18 @@ fn build(data: &[u8], visible: Option<&Document>, page: Page, outlined: bool, tr
         // scale, which `to_doc` carries, so its art and the page reach the same size (#2031).
         let rect = to_doc.transform_rect_bbox(art_box);
         if (rect.width() - page_rect.width()).abs() > 0.5 || (rect.height() - page_rect.height()).abs() > 0.5 {
-            return Err("its editing data is for a different page".into());
+            // Both sizes in points as the fields show them, and the editing data's page to the
+            // file's as a scale (1:10 is a tenth of its size) when its sides are in proportion and
+            // the scale doesn't round to 1:1.
+            let n = |v: f64| Unit::Points.number(v);
+            let (w, h, pw, ph) = (n(rect.width()), n(rect.height()), n(page_rect.width()), n(page_rect.height()));
+            let k = page_rect.width() / rect.width();
+            let factor = n(k.max(1.0 / k));
+            if k.is_finite() && k > 0.0 && (rect.height() * k - page_rect.height()).abs() <= 0.5 && factor != "1" {
+                let scale = if k >= 1.0 { format!("1:{factor}") } else { format!("{factor}:1") };
+                return Err(format!("its editing data is for a {w} × {h} pt page, the file's {pw} × {ph} pt page at {scale}"));
+            }
+            return Err(format!("its editing data is for a {w} × {h} pt page, not the file's {pw} × {ph} pt page"));
         }
         // The page's area in the layers' document, and the page's type moved there.
         let shift = Affine::translate(Vec2::new(rect.x0 - page_rect.x0, rect.y0 - page_rect.y0));
@@ -1110,6 +1179,7 @@ fn build(data: &[u8], visible: Option<&Document>, page: Page, outlined: bool, tr
     match frame {
         Some(frame) => {
             let mut view = PageView::new(&frame);
+            view.restyled(&restyled, frame.rect);
             let unseen = prune_unseen(&frame, &mut view, &mut doc);
             if unseen > 0 {
                 notes.push(format!("{unseen} {UNSEEN_TEXT}"));
@@ -1284,9 +1354,9 @@ fn compare(frame: &Frame<'_>, view: &mut PageView, layered: &Document) -> Result
 /// hidden ones too), groups, compound paths, clipping groups and artboards, with the text and the
 /// strokes around it of the page. When the file has no editing copy, `visible` as it was; when it
 /// has one that can't be used, `visible` with a warning that says why.
-pub(super) fn layered(ps: &[u8], visible: Imported) -> Imported {
+pub(super) fn layered(ps: &[u8], visible: Imported, trust: bool) -> Imported {
     let Some(data) = editing_copy(ps) else { return visible };
-    let result = data.and_then(|data| build(&data, Some(&visible.document), Page::Art, false, false, 1.0));
+    let result = data.and_then(|data| build(&data, Some(&visible.document), Page::Art, false, trust, 1.0));
     match result {
         Ok((document, mut warnings)) => {
             for w in &visible.warnings {
@@ -1308,34 +1378,50 @@ pub(super) fn layered(ps: &[u8], visible: Imported) -> Imported {
 /// its editing copy (`private`, the joined `AIPrivateData` or `AIPDFPrivateData` streams) instead,
 /// as [`layered`] reads an EPS: with the layers and objects of the file, its artboards (with the
 /// PDF part's bleed), and the art that lies outside them, which its PDF part doesn't have.
-/// `warnings` are the notes of reading the PDF part; the notes returned are those, and the layers'.
-/// The flag returned is `true` when the document is the one read from the layers; else the document
-/// is `visible`, its pages moved by `place_pages` when the layers can't be read. `outlined`: the
-/// PDF part's type was read as outlines (a file whose type shows then comes in as its PDF part).
+/// `warnings` are the notes of reading the PDF part; the notes returned are those, then the layers'
+/// notes, or a note saying why the layers weren't read when the editing data can't be decompressed
+/// or its layers can't be read. The flag returned is `true` when the document is the one read from
+/// the layers; else the document is `visible`, its pages moved by `place_pages` when the editing
+/// data was decompressed but its layers can't be read. `outlined`: the PDF part's type was read as
+/// outlines (a file whose type shows then comes in as its PDF part).
 /// `trust`: layers that draw differently from the PDF part are used all the same, with a warning.
 /// `unit`: the size in points of a unit of the PDF part's user space, its first page's `UserUnit`,
 /// by which its art came in scaled. Editing data whose artboard matches the page only in those
 /// units comes in `unit` times as large, and so does the artboard layout `place_pages` takes from
 /// it.
 pub fn layered_ai(private: &[u8], visible: Document, warnings: Vec<String>, outlined: bool, trust: bool, unit: f64) -> (Document, Vec<String>, bool) {
-    let Ok(data) = ai::decode_private(private) else { return (visible, warnings, false) };
+    let unread = |mut all: Vec<String>, why: &str| {
+        all.push(format!("{LAYERS_UNREAD} from its editing data ({why}): they come from its PDF part"));
+        all
+    };
+    let data = match ai::decode_private(private) {
+        Ok(data) => data,
+        Err(why) => return (visible, unread(warnings, &why), false),
+    };
     if !has_layers(&data) {
         return (visible, warnings, false);
     }
+    // The PDF part, its pages placed and named as the editing data's artboards are, when the
+    // layers can't be used (`why`).
+    let from_pdf_part = |mut visible: Document, warnings: Vec<String>, why: &str| {
+        place_pages(&ai::artboards(&data), &mut visible, unit);
+        let mut all = unread(warnings, why);
+        all.extend(ai::variables(&data).note());
+        (visible, all, false)
+    };
     match build(&data, Some(&visible), Page::Artboard, outlined, trust, unit) {
+        // An image too large for the editing data's reader would be missing from the layers, while
+        // the PDF part has it: the file comes in as its PDF part instead (#1479).
+        Ok((_, notes)) if notes.iter().any(|n| n == ai::IMAGE_TOO_LARGE) => {
+            from_pdf_part(visible, warnings, "an image is too large to read from them")
+        }
         Ok((mut done, notes)) => {
             done.setup.bleed = visible.setup.bleed;
             let mut all = warnings;
             all.extend(notes.into_iter().filter(|n| !all.contains(n)).collect::<Vec<_>>());
             (done, all, true)
         }
-        Err(why) => {
-            let mut all = warnings;
-            all.push(format!("{LAYERS_UNREAD} from its editing data ({why}): they come from its PDF part"));
-            let mut visible = visible;
-            place_pages(&ai::artboards(&data), &mut visible, unit);
-            (visible, all, false)
-        }
+        Err(why) => from_pdf_part(visible, warnings, &why),
     }
 }
 
@@ -1555,6 +1641,7 @@ mod tests {
                 xf: Affine::scale(1.0 / 1.6),
                 link: None,
                 placement: Default::default(),
+                pixels: None,
             })),
         );
         page.insert(Some(page.layers[0].id), usize::MAX, image).unwrap();
@@ -1563,12 +1650,57 @@ mod tests {
         let mut renderer = vectorcraft_render::Renderer::new();
         let a = comparison_render(&mut renderer, &page, rect, 0.4, 1);
         let b = comparison_render(&mut vectorcraft_render::Renderer::new(), &vector, rect, 0.4, 1);
-        assert!(compared(&a, &b, &[]).solid > MAX_SOLID_DIFFERENCE, "the old point sampling falsely refused this page");
+        assert!(compared(&a, &b, &[], &[]).solid > MAX_SOLID_DIFFERENCE, "the old point sampling falsely refused this page");
         let frame = Frame { page: &page, page_rect: rect, rect, whole: false };
         let mut view = PageView::new(&frame);
         assert!(compare(&frame, &mut view, &vector).is_ok());
         assert!(compare(&frame, &mut view, &Document::new(1000.0, 500.0)).is_err(), "missing artwork remains an error");
         let shifted = Rect::new(0.0, 0.0, 500.0, 500.0);
         assert!(view.difference(&vector, shifted).any > MAX_DIFFERENCE, "wrong framing remains an error");
+    }
+}
+
+/// `path` with each open subpath whose last anchor lies on its first (within a thousandth of a
+/// point) closed there: the object's own path of type round a closed path is written open, ending
+/// on its start, and type on an open path stops at its end, so it had no room to run past it.
+fn closed_where_ends_meet(mut path: PathData) -> PathData {
+    for sp in &mut path.subpaths {
+        let (Some(first), Some(last)) = (sp.anchors.first(), sp.anchors.last()) else { continue };
+        if sp.closed || sp.anchors.len() < 3 || first.p.distance(last.p) >= 1e-3 {
+            continue;
+        }
+        if let Some(l) = sp.anchors.pop()
+            && let Some(a0) = sp.anchors.first_mut()
+        {
+            a0.h_in = l.h_in;
+        }
+        sp.closed = true;
+    }
+    path
+}
+
+#[cfg(test)]
+mod closed_ends_tests {
+    use super::*;
+
+    /// A path drawn round to its start (the last anchor on the first) is closed there, its first
+    /// anchor taking the last one's incoming handle; one whose ends are apart stays open.
+    #[test]
+    fn a_path_ending_on_its_start_is_closed() {
+        let mut bp = kurbo::BezPath::new();
+        bp.move_to((100.0, 0.0));
+        bp.curve_to((100.0, 55.0), (55.0, 100.0), (0.0, 100.0));
+        bp.curve_to((-55.0, 100.0), (-100.0, 55.0), (-100.0, 0.0));
+        bp.curve_to((-100.0, -55.0), (-55.0, -100.0), (0.0, -100.0));
+        bp.curve_to((55.0, -100.0), (100.0, -55.0), (100.0, 0.0001));
+        let closed = closed_where_ends_meet(PathData::from_bezpath(&bp));
+        let sp = &closed.subpaths[0];
+        assert!(sp.closed && sp.anchors.len() == 4, "{sp:?}");
+        assert_eq!(sp.anchors[0].h_in, Point::new(100.0, -55.0));
+        let mut open = kurbo::BezPath::new();
+        open.move_to((0.0, 0.0));
+        open.line_to((50.0, 0.0));
+        open.line_to((50.0, 50.0));
+        assert!(!closed_where_ends_meet(PathData::from_bezpath(&open)).subpaths[0].closed);
     }
 }

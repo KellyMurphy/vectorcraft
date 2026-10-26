@@ -336,6 +336,10 @@ fn cut_file(s: &mut Session, p: &Value) -> Result<Value> {
         rect: vectorcraft_geom::Rect::new(left / PT_MM, 0.0, (left + mat.0) / PT_MM, mat.1 / PT_MM),
         show_center_mark: false,
         show_cross_hairs: false,
+        locked: false,
+        show_video_safe_areas: false,
+        video_ruler_pixel_aspect_ratio: 1.0,
+        color: None,
     };
     let title = format!("{} cut file", doc.title);
     let new_doc = |boards: &[usize]| -> Document {

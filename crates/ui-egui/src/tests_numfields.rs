@@ -45,6 +45,37 @@ fn a_focused_field_follows_a_value_changed_from_outside() {
     assert_eq!(frame(50.0, vec![button(away, false)]).0, None);
 }
 
+/// A field with steps of its own (the Pencil's Fidelity, #3328): ↑/↓ take them instead of whole
+/// numbers, ten at once with Shift, and Ctrl/Cmd steps as plainly as no modifier does.
+#[test]
+fn a_stepped_field_takes_its_own_steps() {
+    let ctx = egui::Context::default();
+    crate::theme::install_fonts(&ctx);
+    let mut time = 0.0;
+    let mut frame = |value: f64, events: Vec<Event>| {
+        time += 0.05;
+        let screen_rect = Some(Rect::from_min_size(Pos2::ZERO, vec2(400.0, 200.0)));
+        let mut got = (None, Rect::NOTHING);
+        let mut out = ctx.run_ui(egui::RawInput { events, time: Some(time), screen_rect, focused: true, ..Default::default() }, |ui| {
+            got.0 = widgets::range_field_stepped(ui, "f", value, 0.01..=100.0, "pt", 2, 80.0, |v, n| ((v + 0.01 * n) * 100.0).round() / 100.0);
+            got.1 = ui.min_rect();
+        });
+        out.textures_delta.clear();
+        got
+    };
+    let key = |key, modifiers| Event::Key { key, physical_key: None, pressed: true, repeat: false, modifiers };
+    let button = |pos, pressed| Event::PointerButton { pos, button: PointerButton::Primary, pressed, modifiers: Modifiers::NONE };
+    let at = frame(0.02, vec![]).1.center();
+    frame(0.02, vec![Event::PointerMoved(at), button(at, true)]);
+    frame(0.02, vec![button(at, false)]);
+    assert_eq!(frame(0.02, vec![key(Key::ArrowUp, Modifiers::NONE)]).0, Some(0.03), "↑ takes one of its steps, not a whole point");
+    assert_eq!(frame(0.03, vec![key(Key::ArrowDown, Modifiers::NONE)]).0, Some(0.02));
+    assert_eq!(frame(0.02, vec![key(Key::ArrowUp, Modifiers::SHIFT)]).0, Some(0.12), "Shift takes ten");
+    assert_eq!(frame(0.12, vec![key(Key::ArrowUp, Modifiers::COMMAND)]).0, Some(0.13), "Cmd takes one");
+    // The steps stop at the field's range.
+    assert_eq!(frame(0.01, vec![key(Key::ArrowDown, Modifiers::NONE)]).0, None, "nothing below 0.01");
+}
+
 /// #1692: a hex field that the focus only passes through shows the color as it is now and commits
 /// nothing. Tab out of an edited field gives the hex field after it the focus in the frame the edit
 /// is committed, and the color changes after the hex field is drawn, as in the Color Picker.
@@ -59,7 +90,7 @@ fn a_hex_field_passed_through_with_tab_commits_nothing() {
     let draw = |ui: &mut egui::Ui| {
         let [r, g, b] = rgb.get();
         let red = widgets::plain_field(ui, "red", r, "", 0, 80.0);
-        hex_id.set(ui.id().with("hex"));
+        hex_id.set(ui.scope_id().with("hex"));
         hex.set(widgets::hex_field(ui, "hex", &format!("{:02X}{:02X}{:02X}", r as u8, g as u8, b as u8)));
         blue.set(widgets::plain_field(ui, "blue", b, "", 0, 80.0));
         red
@@ -174,6 +205,56 @@ fn a_gap_field_passed_through_with_tab_commits_nothing() {
     }
 }
 
+/// #3497: committing a visible dash field must not replace an extended pattern with six values.
+/// Passing through the next field without typing must not commit anything else.
+#[test]
+fn dash_tab_and_enter_commits_preserve_the_unshown_pattern_tail() {
+    use crate::panels::stroke::{dash_fields, edited_dash_pattern};
+    for end in [key(Key::Tab, Modifiers::NONE), enter()] {
+        let original = vec![12.0, 6.0, 2.0, 3.0, 4.0, 5.0, 20.0, 10.0];
+        let pattern = RefCell::new(original.clone());
+        let edits = RefCell::new([None; 6]);
+        let draw = |ui: &mut egui::Ui| {
+            let fields = dash_fields(&pattern.borrow());
+            for (i, value) in fields.iter().enumerate() {
+                edits.borrow_mut()[i] = widgets::opt_field(ui, ("dash", i), *value, Unit::Points, 40.0);
+            }
+            None
+        };
+        let step = |f: &mut Field, events: Vec<Event>| {
+            f.frame(events, &draw);
+            let mut fields = dash_fields(&pattern.borrow());
+            let mut changed = false;
+            for (field, edit) in fields.iter_mut().zip(edits.borrow_mut().iter_mut()) {
+                if let Some(value) = edit.take() {
+                    *field = value;
+                    changed = true;
+                }
+            }
+            if changed {
+                let next = edited_dash_pattern(&fields, &pattern.borrow());
+                *pattern.borrow_mut() = next;
+            }
+            changed
+        };
+        let mut f = Field::new();
+        let tab = || key(Key::Tab, Modifiers::NONE);
+        for events in [vec![], vec![tab()], vec![], vec![tab()], vec![]] {
+            assert!(!step(&mut f, events));
+        }
+        assert_eq!(*pattern.borrow(), original, "tabbing without editing changes nothing");
+        // Shift+Tab back to the first dash, replace it, then commit with Tab or Enter.
+        for events in [vec![key(Key::Tab, Modifiers::SHIFT)], vec![], vec![Event::Text("14".into())]] {
+            assert!(!step(&mut f, events));
+        }
+        assert!(step(&mut f, vec![end]));
+        assert!(!step(&mut f, vec![]));
+        assert_eq!(*pattern.borrow(), vec![14.0, 6.0, 2.0, 3.0, 4.0, 5.0, 20.0, 10.0]);
+        assert!(!step(&mut f, vec![tab()]));
+        assert!(!step(&mut f, vec![]));
+    }
+}
+
 /// Headless frames of one field: its rect and id as last drawn.
 struct Field {
     ctx: egui::Context,
@@ -197,7 +278,7 @@ impl Field {
         let input = egui::RawInput { events, time: Some(self.time), screen_rect, focused: self.focused, ..Default::default() };
         let mut got = None;
         let mut out = self.ctx.run_ui(input, |ui| {
-            self.id.set(ui.id().with("f"));
+            self.id.set(ui.scope_id().with("f"));
             got = draw(ui);
             self.rect.set(ui.min_rect());
         });
@@ -356,7 +437,7 @@ fn shift_enter_applies_the_value_and_keeps_the_field_active() {
     let color = RefCell::new(String::from("FF8000"));
     let draw = |ui: &mut egui::Ui| {
         text.set(widgets::text_field(ui, "f", Some("Name"), 120.0, 1).or(text.take()));
-        hex_id.set(ui.id().with("hex"));
+        hex_id.set(ui.scope_id().with("hex"));
         let shown = color.borrow().clone();
         let applied = widgets::hex_field(ui, "hex", &shown);
         if let Some(h) = &applied {
@@ -447,14 +528,93 @@ fn arrow_keys_step_a_focused_field() {
         (Key::ArrowUp, Modifiers::NONE, 5.0),
         (Key::ArrowUp, Modifiers::SHIFT, 15.0),
         (Key::ArrowDown, Modifiers::COMMAND, 14.9),
-        (Key::ArrowDown, Modifiers::NONE, 13.9),
+        (Key::ArrowDown, Modifiers::NONE, 14.0),
     ] {
         assert!(f.frame(vec![key(k, mods)], &draw).is_some(), "{k:?} {mods:?}");
         assert!((mm.get() - want).abs() < 1e-6, "{k:?} {mods:?}: {}", mm.get());
     }
-    assert_eq!(f.selection(), Some((0, "13.9 mm".len())), "the new value is selected");
+    assert_eq!(f.selection(), Some((0, "14 mm".len())), "the new value is selected");
     // Enter after the steps commits nothing more.
     assert_eq!(f.frame(vec![enter()], &draw), None);
+}
+
+/// #2881, #2793: ↑/↓ and the wheel step a fractional value to the next whole unit in their
+/// direction (5.1 mm: up to 6, down to 5), and Ctrl/Cmd steps to the next tenth; Shift adds or takes
+/// ten and keeps the fraction. In each field's own unit: millimeters, points, percent, degrees.
+#[test]
+fn steps_go_to_the_next_whole_unit_or_tenth() {
+    use egui::MouseWheelUnit::Line;
+    let u = Unit::Millimeters;
+    let mm = Cell::new(0.0);
+    let mm_field = |ui: &mut egui::Ui| widgets::num_field(ui, "f", Some(u.to_pt(mm.get())), u, 80.0).inspect(|&v| mm.set(u.from_pt(v)));
+    let mut f = Field::new();
+    f.frame(vec![], &mm_field);
+    f.frame(f.click(1), &mm_field);
+    f.frame(vec![], &mm_field);
+    let at = f.rect.get().center();
+    // From `from` (set from outside, which the focused field follows), the value `events` give.
+    let mut step = |from: f64, events: Vec<Event>| {
+        mm.set(from);
+        f.frame(vec![], &mm_field);
+        assert!(f.frame(events, &mm_field).is_some(), "from {from}");
+        // The field shows the new value before the next one is set.
+        f.frame(vec![], &mm_field);
+        mm.get()
+    };
+    let arrow = |k, mods| vec![key(k, mods)];
+    let turn = |dy, mods| wheel(at, Line, dy, mods);
+    for (from, events, want) in [
+        (5.1, arrow(Key::ArrowUp, Modifiers::NONE), 6.0),
+        (5.1, arrow(Key::ArrowDown, Modifiers::NONE), 5.0),
+        (5.0, arrow(Key::ArrowUp, Modifiers::NONE), 6.0),
+        (5.0, arrow(Key::ArrowDown, Modifiers::NONE), 4.0),
+        (-2.5, arrow(Key::ArrowUp, Modifiers::NONE), -2.0),
+        (-2.5, arrow(Key::ArrowDown, Modifiers::NONE), -3.0),
+        (5.13, arrow(Key::ArrowUp, Modifiers::COMMAND), 5.2),
+        (5.13, arrow(Key::ArrowDown, Modifiers::COMMAND), 5.1),
+        (5.1, arrow(Key::ArrowUp, Modifiers::SHIFT), 15.1),
+        (5.1, arrow(Key::ArrowDown, Modifiers::SHIFT), -4.9),
+        (5.1, vec![key(Key::ArrowUp, Modifiers::NONE), key(Key::ArrowUp, Modifiers::NONE)], 7.0),
+        // Several presses in one frame step in the order they came.
+        (5.1, vec![key(Key::ArrowUp, Modifiers::NONE), key(Key::ArrowDown, Modifiers::NONE)], 5.0),
+        (5.13, vec![key(Key::ArrowUp, Modifiers::NONE), key(Key::ArrowUp, Modifiers::COMMAND)], 6.1),
+        (24.8, turn(1.0, Modifiers::NONE), 25.0),
+        (24.8, turn(-1.0, Modifiers::NONE), 24.0),
+        (24.8, turn(2.0, Modifiers::NONE), 26.0),
+        (24.8, turn(-2.0, Modifiers::NONE), 23.0),
+        (24.0, turn(1.0, Modifiers::NONE), 25.0),
+        (24.83, turn(1.0, Modifiers::COMMAND), 24.9),
+        (24.8, turn(1.0, Modifiers::SHIFT), 34.8),
+    ] {
+        let got = step(from, events);
+        assert!((got - want).abs() < 1e-6, "{from} mm to {got}, not {want}");
+    }
+    // A points field steps whole points.
+    let pt = Cell::new(12.25);
+    let pt_field = |ui: &mut egui::Ui| widgets::num_field(ui, "f", Some(pt.get()), Unit::Points, 80.0).inspect(|&v| pt.set(v));
+    let mut f = Field::new();
+    f.frame(vec![], &pt_field);
+    f.frame(f.click(1), &pt_field);
+    f.frame(vec![], &pt_field);
+    assert_eq!(f.frame(vec![key(Key::ArrowUp, Modifiers::NONE)], &pt_field), Some(13.0));
+    // Percent and degree fields step whole percents and degrees.
+    for suffix in ["%", "°"] {
+        let mut f = Field::new();
+        let value = Cell::new(37.5);
+        let plain = |ui: &mut egui::Ui| widgets::plain_field(ui, "f", value.get(), suffix, 2, 80.0).inspect(|&v| value.set(v));
+        f.frame(vec![], &plain);
+        f.frame(f.click(1), &plain);
+        f.frame(vec![], &plain);
+        for (k, mods, want) in [
+            (Key::ArrowDown, Modifiers::NONE, 37.0),
+            (Key::ArrowUp, Modifiers::NONE, 38.0),
+            (Key::ArrowUp, Modifiers::COMMAND, 38.1),
+            (Key::ArrowUp, Modifiers::NONE, 39.0),
+        ] {
+            assert_eq!(f.frame(vec![key(k, mods)], &plain), Some(want), "{suffix} {k:?} {mods:?}");
+            f.frame(vec![], &plain);
+        }
+    }
 }
 
 /// Plain fields (degrees, percent, counts) step too, at their precision.
@@ -479,7 +639,10 @@ fn arrow_keys_step_plain_fields() {
 
 /// A wheel turn of `dy` (`unit`s, up positive) with `modifiers`, the pointer at `at`.
 fn wheel(at: Pos2, unit: egui::MouseWheelUnit, dy: f32, modifiers: Modifiers) -> Vec<Event> {
-    vec![Event::PointerMoved(at), Event::MouseWheel { unit, delta: vec2(0.0, dy), phase: egui::TouchPhase::Move, modifiers }]
+    vec![
+        Event::PointerMoved(at),
+        Event::MouseWheel { unit, delta: vec2(0.0, dy), phase: egui::TouchPhase::Move, modifiers, source: egui::MouseWheelSource::Unknown },
+    ]
 }
 
 /// The mouse wheel over a focused numeric field steps it as ↑/↓ do (#485): a notch a step, Shift
@@ -498,17 +661,17 @@ fn the_wheel_steps_a_focused_field_under_the_pointer() {
     f.frame(f.click(1), &draw);
     f.frame(vec![], &draw);
     for (dy, mods, want) in
-        [(1.0, Modifiers::NONE, 5.0), (2.0, Modifiers::SHIFT, 25.0), (-1.0, Modifiers::COMMAND, 24.9), (-1.0, Modifiers::NONE, 23.9)]
+        [(1.0, Modifiers::NONE, 5.0), (2.0, Modifiers::SHIFT, 25.0), (-1.0, Modifiers::COMMAND, 24.9), (-1.0, Modifiers::NONE, 24.0)]
     {
         assert!(f.frame(wheel(at, Line, dy, mods), &draw).is_some(), "{dy} {mods:?}");
         assert!((mm.get() - want).abs() < 1e-6, "{dy} {mods:?}: {}", mm.get());
     }
-    assert_eq!(f.selection(), Some((0, "23.9 mm".len())), "the new value is selected");
+    assert_eq!(f.selection(), Some((0, "24 mm".len())), "the new value is selected");
     // Points: a step for each line's worth, what is left carried to the next turn.
     let line = f.ctx.options(|o| o.input_options.line_scroll_speed);
     assert_eq!(f.frame(wheel(at, Point, line * 0.6, Modifiers::NONE), &draw), None);
     assert!(f.frame(wheel(at, Point, line * 0.6, Modifiers::NONE), &draw).is_some());
-    assert!((mm.get() - 24.9).abs() < 1e-6, "{}", mm.get());
+    assert!((mm.get() - 25.0).abs() < 1e-6, "{}", mm.get());
     assert_eq!(f.frame(wheel(Pos2::new(390.0, 190.0), Line, 1.0, Modifiers::NONE), &draw), None, "the pointer elsewhere");
     // Plain fields (degrees, percent, counts) too.
     let mut f = Field::new();
@@ -532,7 +695,7 @@ fn the_wheel_scrolls_the_panel_unless_over_the_focused_field() {
                 ui.add_space(600.0);
                 v
             });
-            offset.set(out.state.offset.y);
+            offset.set(out.state.clamped_offset().y);
             out.inner
         };
         f.frame(vec![], &draw);

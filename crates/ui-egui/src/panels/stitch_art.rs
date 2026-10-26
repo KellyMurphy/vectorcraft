@@ -39,7 +39,7 @@ impl Thumb {
 
     /// Made for `key` once, then kept.
     fn cached(ctx: &egui::Context, key: &str, make: impl FnOnce() -> Thumb) -> Thumb {
-        let id = egui::Id::new(("stitch-art", key));
+        let id = egui::Id::unique(("stitch-art", key));
         if let Some(t) = ctx.data(|d| d.get_temp::<Thumb>(id)) {
             return t;
         }

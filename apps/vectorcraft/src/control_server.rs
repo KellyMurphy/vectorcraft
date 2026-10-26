@@ -67,8 +67,29 @@ pub fn start(port: u16, ctx: egui::Context) -> Receiver<ControlRequest> {
         }
     };
     eprintln!("vectorcraft: control server listening on 127.0.0.1:{port}");
+    #[cfg(target_os = "macos")]
+    keep_answering();
     std::thread::spawn(move || accept_loop(listener, tx, ctx));
     rx
+}
+
+/// The activity the control channel holds on macOS: work the user asked for, which may let the
+/// system sleep when idle, with full timer precision. Without it, App Nap lowers every thread to
+/// the lowest priority within about a minute of the window no longer being visible.
+#[cfg(target_os = "macos")]
+fn activity_options() -> objc2_foundation::NSActivityOptions {
+    use objc2_foundation::NSActivityOptions;
+    NSActivityOptions::UserInitiatedAllowingIdleSystemSleep | NSActivityOptions::LatencyCritical
+}
+
+/// Begins the control channel's activity. It lasts until the process ends.
+#[cfg(target_os = "macos")]
+fn keep_answering() {
+    use objc2_foundation::{NSProcessInfo, NSString};
+    let reason = NSString::from_str("Answering control requests");
+    let activity = NSProcessInfo::processInfo().beginActivityWithOptions_reason(activity_options(), &reason);
+    // The token is never released or passed to `endActivity`, so the activity lasts for the process's lifetime.
+    std::mem::forget(activity);
 }
 
 fn accept_loop(listener: TcpListener, tx: Sender<ControlRequest>, ctx: egui::Context) {
@@ -275,6 +296,14 @@ mod tests {
         ConnectionTimeouts { idle: Duration::from_millis(150), line: Duration::from_millis(120), write: Duration::from_millis(150) }
     }
 
+    /// The short line deadline, with idle and reply budgets longer than the tests' 3 s waits. On a
+    /// busy machine either thread can pause for more than 150 ms between connecting and sending, or
+    /// between starting a reply and writing it, and a short budget then closes the connection with no
+    /// reply.
+    fn line_timeouts() -> ConnectionTimeouts {
+        ConnectionTimeouts { idle: Duration::from_secs(10), write: Duration::from_secs(10), ..short_timeouts() }
+    }
+
     fn socket_fixture(
         timeouts: ConnectionTimeouts,
         handle: impl FnMut(String, Value) -> Option<Value> + Send + 'static,
@@ -323,7 +352,7 @@ mod tests {
     /// A line that stalls is refused in words a client's author can act on, not the system's.
     #[test]
     fn stalled_control_line_is_refused_with_the_reason() {
-        let (mut client, done, worker) = socket_fixture(short_timeouts(), |_, _| panic!("incomplete requests must not execute"));
+        let (mut client, done, worker) = socket_fixture(line_timeouts(), |_, _| panic!("incomplete requests must not execute"));
         client.write_all(b"{\"method\":").unwrap();
         let mut line = String::new();
         BufReader::new(client.try_clone().unwrap()).read_line(&mut line).unwrap();
@@ -398,7 +427,7 @@ mod tests {
 
     #[test]
     fn buffered_partial_control_line_also_expires() {
-        let (mut client, done, worker) = socket_fixture(short_timeouts(), |_, _| Some(json!({"ok": true})));
+        let (mut client, done, worker) = socket_fixture(line_timeouts(), |_, _| Some(json!({"ok": true})));
         client.write_all(b"{\"id\":1,\"method\":\"inspect\"}\n{").unwrap();
         let mut line = String::new();
         BufReader::new(client.try_clone().unwrap()).read_line(&mut line).unwrap();
@@ -641,5 +670,18 @@ mod tests {
         BufReader::new(&mut extra).read_line(&mut line).unwrap();
         assert!(line.contains("too many control connections"), "{line}");
         drop(held);
+    }
+
+    // A test process is not an app that App Nap applies to, so this checks the activity the
+    // channel asks for; the throttling itself shows only in a running app with its window hidden.
+    #[cfg(target_os = "macos")]
+    #[test]
+    fn the_control_channel_keeps_the_app_at_full_priority_on_macos() {
+        use objc2_foundation::NSActivityOptions;
+        let options = activity_options();
+        assert!(options.contains(NSActivityOptions::LatencyCritical), "without it App Nap still lowers the priority to 20");
+        assert!(options.contains(NSActivityOptions::UserInitiatedAllowingIdleSystemSleep));
+        assert!(!options.contains(NSActivityOptions::IdleSystemSleepDisabled), "the channel must not keep the Mac awake");
+        keep_answering();
     }
 }

@@ -579,6 +579,57 @@ fn outline_view_draws_paths_from_kept_geometry() {
     }
 }
 
+/// An Image Trace object listed in `trace_source` draws its source image on screen whatever its
+/// View, also inside a group whose raster effect a renderer keeps; without the list, and in
+/// exports, it draws its result. A group that is not an Image Trace object draws its members.
+#[test]
+fn trace_source_draws_the_source_image_of_the_listed_objects() {
+    use vectorcraft_doc::{ImageBlob, ImageObject};
+    let img = image::RgbaImage::from_pixel(1, 1, image::Rgba([255, 0, 0, 255]));
+    let mut png = vec![];
+    img.write_to(&mut std::io::Cursor::new(&mut png), image::ImageFormat::Png).unwrap();
+    let mut d = Document::new(100.0, 100.0);
+    d.images.insert("red".into(), ImageBlob::new("image/png", png));
+    // A group at `x`: the hidden red source image, then a blue traced square over it.
+    let group = |d: &mut Document, x: f64, traced: bool| {
+        let xf = Affine::translate((x, 10.0)) * Affine::scale(20.0);
+        let im = ImageObject { key: "red".into(), width: 1, height: 1, xf, link: None, placement: Default::default(), pixels: None };
+        let mut source = Node::new(d.alloc_id(), NodeKind::Image(Box::new(im)));
+        source.visible = false;
+        let shape = rect_node(d, Rect::new(x, 10.0, x + 20.0, 30.0), Paint::solid(Color::rgb(0.0, 0.0, 1.0)), Paint::None, 0.0);
+        let mut g = Node::group(d.alloc_id(), vec![Arc::new(source), Arc::new(shape)]);
+        if traced {
+            g.extras_mut().trace = Some(Box::new(serde_json::json!({ "view": "tracingResult" })));
+        }
+        g
+    };
+    let plain = group(&mut d, 10.0, true);
+    let blurred = group(&mut d, 40.0, true);
+    let other = group(&mut d, 70.0, false);
+    let ids = Arc::new(vec![plain.id, blurred.id, other.id]);
+    let mut holder = Node::group(d.alloc_id(), vec![Arc::new(blurred)]);
+    holder.appearance.effects.push(vectorcraft_doc::Effect { id: "blur.gaussian".into(), params: serde_json::json!({ "radius": 1 }), visible: true });
+    let l = d.layers[0].id;
+    for n in [plain, holder, other] {
+        d.insert(Some(l), usize::MAX, n).unwrap();
+    }
+    let screen = RenderOptions { trace_views: true, background: Some([255; 4]), ..Default::default() };
+    let held = RenderOptions { trace_source: Some(ids.clone()), ..screen.clone() };
+    let export = RenderOptions { trace_source: Some(ids), background: Some([255; 4]), ..Default::default() };
+    let red = |p: [u8; 4]| p[0] > 200 && p[2] < 60;
+    let blue = |p: [u8; 4]| p[2] > 200 && p[0] < 60;
+    let mut kept = Renderer::new();
+    for (opts, source) in [(&screen, false), (&held, true), (&screen, false), (&export, false)] {
+        for r in [kept.render(&d, 100, 100, Affine::IDENTITY, opts), Renderer::new().render(&d, 100, 100, Affine::IDENTITY, opts)] {
+            for (x, what) in [(20, "the Image Trace object"), (50, "the one in the blurred group")] {
+                let p = r.pixel(x, 20);
+                assert!(if source { red(p) } else { blue(p) }, "{what} with trace_source {source}: {p:?}");
+            }
+            assert!(blue(r.pixel(80, 20)), "the plain group draws its square: {:?}", r.pixel(80, 20));
+        }
+    }
+}
+
 #[test]
 fn artboards_white_on_pasteboard() {
     let d = Document::new(50.0, 50.0);
@@ -662,6 +713,34 @@ fn opacity_mask_without_clip_and_inverted() {
     let img = Renderer::new().render(&masked_doc(true, true), 100, 100, Affine::IDENTITY, &opts);
     assert_eq!(img.pixel(30, 50), [255, 255, 255, 255], "inverted white → hidden");
     assert_eq!(img.pixel(80, 50), [255, 0, 0, 255], "inverted clip background → visible");
+}
+
+/// #3580: each opacity mask is rendered over its object's pixels, not over the whole frame. 300
+/// masked 4 × 4 pt squares on a 1000 × 1000 page draw offscreen in proportion to their bounds, and
+/// still draw where their masks show them.
+#[test]
+fn small_masks_render_over_their_objects_only() {
+    let mut d = Document::new(1000.0, 1000.0);
+    let l = d.layers[0].id;
+    for i in 0..300 {
+        let (x, y) = (10.0 + (i % 30) as f64 * 30.0, 10.0 + (i / 30) as f64 * 30.0);
+        let square = Rect::new(x, y, x + 4.0, y + 4.0);
+        let mut n = rect_node(&mut d, square, Paint::solid(Color::rgb(1.0, 0.0, 0.0)), Paint::None, 0.0);
+        let white = rect_node(&mut d, square, Paint::solid(Color::WHITE), Paint::None, 0.0);
+        n.extras_mut().mask = Some(Box::new(vectorcraft_doc::OpacityMask::new(white, true)));
+        d.insert(Some(l), usize::MAX, n).unwrap();
+    }
+    let mut r = Renderer::new();
+    r.threads = 0;
+    let opts = RenderOptions { background: Some([255, 255, 255, 255]), ..Default::default() };
+    OFFSCREEN_PIXELS.with(|n| n.set(0));
+    let img = r.render(&d, 1000, 1000, Affine::IDENTITY, &opts);
+    let px = OFFSCREEN_PIXELS.with(|n| n.get());
+    // Each square's region is at most 4 + 2 × 2 margin + 1 rounding pixels a side, mask and content.
+    assert!(px <= 300 * 2 * 9 * 9, "{px} offscreen pixels for 300 masked 4 × 4 squares");
+    assert_eq!(img.pixel(12, 12), [255, 0, 0, 255]);
+    assert_eq!(img.pixel(12 + 29 * 30, 12 + 9 * 30), [255, 0, 0, 255]);
+    assert_eq!(img.pixel(20, 20), [255, 255, 255, 255]);
 }
 
 #[test]
@@ -805,7 +884,7 @@ fn images_take_their_nearest_pixel_without_smoothing() {
     let mut d = Document::new(40.0, 20.0);
     d.images.insert("bw".into(), ImageBlob::new("image/png", png));
     let id = d.alloc_id();
-    let im = ImageObject { key: "bw".into(), width: 2, height: 1, xf: Affine::scale(20.0), link: None, placement: Default::default() };
+    let im = ImageObject { key: "bw".into(), width: 2, height: 1, xf: Affine::scale(20.0), link: None, placement: Default::default(), pixels: None };
     d.insert(Some(d.layers[0].id), 0, Node::new(id, NodeKind::Image(Box::new(im)))).unwrap();
     // How many pixels across the image are neither black nor white.
     let greys = |smooth_images| {
@@ -877,7 +956,8 @@ fn a_gray_image_draws_its_gray_levels() {
     let mut d = Document::new(40.0, 20.0);
     d.images.insert("gray".into(), ImageBlob::new("image/png", png));
     let id = d.alloc_id();
-    let im = ImageObject { key: "gray".into(), width: 2, height: 1, xf: Affine::scale(20.0), link: None, placement: Default::default() };
+    let im =
+        ImageObject { key: "gray".into(), width: 2, height: 1, xf: Affine::scale(20.0), link: None, placement: Default::default(), pixels: None };
     d.insert(Some(d.layers[0].id), 0, Node::new(id, NodeKind::Image(Box::new(im)))).unwrap();
     let r = Renderer::new().render(&d, 40, 20, Affine::IDENTITY, &RenderOptions { smooth_images: false, ..Default::default() });
     assert_eq!((r.pixel(5, 10), r.pixel(35, 10)), ([40, 40, 40, 255], [200, 200, 200, 255]));
@@ -921,6 +1001,70 @@ fn supersampled_art_leaves_no_seam_between_shapes_that_meet() {
     assert_eq!(supersample_factor(40_000, 10), None);
 }
 
+/// A supersampled render draws Outline view's lines one output pixel wide, as an unsupersampled
+/// one does, instead of a quarter of a pixel: the line down x = 50.5 draws darker than 64 of 255
+/// either way, and no wider than one pixel. So do the outlines of type and a dotted guide along
+/// y = 90.5.
+#[test]
+fn supersampled_outlines_stay_one_pixel_wide() {
+    let _fonts = crate::tests_fontchange::fonts_steady();
+    let mut d = Document::new(100.0, 100.0);
+    let style = vectorcraft_doc::text::CharStyle { size: 30.0, ..Default::default() };
+    let text = vectorcraft_doc::text::TextObject::point(vectorcraft_geom::Point::new(60.0, 80.0), "H", style);
+    let t = Node::new(d.alloc_id(), NodeKind::Text(Box::new(text)));
+    d.insert(Some(d.layers[0].id), 0, t).unwrap();
+    let n = rect_node(&mut d, Rect::new(20.0, 20.0, 50.5, 80.0), Paint::solid(Color::rgb(1.0, 0.0, 0.0)), Paint::None, 0.0);
+    d.insert(Some(d.layers[0].id), 0, n).unwrap();
+    let mut guide = Node::path(d.alloc_id(), shapes::line(Point::new(5.0, 90.5), Point::new(95.0, 90.5)), Appearance::default());
+    if let NodeKind::Path { guide, .. } = &mut guide.kind {
+        *guide = true;
+    }
+    d.insert(Some(d.layers[0].id), 1, guide).unwrap();
+    let draw = |supersample: bool| {
+        let opts = RenderOptions {
+            background: Some([255, 255, 255, 255]),
+            outline: true,
+            guide: ([0, 0, 0], true),
+            precise: true,
+            supersample,
+            ..Default::default()
+        };
+        Renderer::new().render(&d, 100, 100, Affine::IDENTITY, &opts)
+    };
+    let darkest = |r: &Rendered| (48..=52).map(|x| r.pixel(x, 50)[0]).min().unwrap();
+    assert!(darkest(&draw(false)) < 64, "unsupersampled: {}", darkest(&draw(false)));
+    assert!(darkest(&draw(true)) < 64, "supersampled: {}", darkest(&draw(true)));
+    let type_darkest = |r: &Rendered| (56..=95).flat_map(|x| (45..=85).map(move |y| (x, y))).map(|(x, y)| r.pixel(x, y)[0]).min().unwrap();
+    assert!(type_darkest(&draw(false)) < 64, "unsupersampled type: {}", type_darkest(&draw(false)));
+    assert!(type_darkest(&draw(true)) < 64, "supersampled type: {}", type_darkest(&draw(true)));
+    let guide_darkest = |r: &Rendered| (10..=90).flat_map(|x| (89..=92).map(move |y| (x, y))).map(|(x, y)| r.pixel(x, y)[0]).min().unwrap();
+    assert!(guide_darkest(&draw(false)) < 64, "unsupersampled guide: {}", guide_darkest(&draw(false)));
+    assert!(guide_darkest(&draw(true)) < 64, "supersampled guide: {}", guide_darkest(&draw(true)));
+    // One pixel wide, not wider: across each line, the pixels darker than `dark` are one pixel. The
+    // path lies on pixel centers; the type's stems do not, and the guide's dots are 1.5 pixels
+    // wide, so their edges are softer.
+    let widest = |values: Vec<u8>, dark: u8| {
+        let mut runs = vec![0usize];
+        for v in values {
+            if v < dark {
+                *runs.last_mut().unwrap() += 1;
+            } else if runs.last() != Some(&0) {
+                runs.push(0);
+            }
+        }
+        runs.into_iter().max().unwrap()
+    };
+    for supersample in [false, true] {
+        let r = draw(supersample);
+        let row = |y: u32, xs: std::ops::RangeInclusive<u32>| xs.map(|x| r.pixel(x, y)[0]).collect::<Vec<_>>();
+        assert_eq!(widest(row(50, 44..=56), 200), 1, "path, supersample {supersample}: {:?}", row(50, 44..=56));
+        // Below the H's crossbar, across its two stems.
+        assert_eq!(widest(row(76, 56..=95), 128), 1, "type, supersample {supersample}: {:?}", row(76, 56..=95));
+        let guide = (10..=90).map(|x| widest((86..=95).map(|y| r.pixel(x, y)[0]).collect(), 128)).max().unwrap();
+        assert_eq!(guide, 1, "guide, supersample {supersample}");
+    }
+}
+
 /// #1613: a zero-length subpath (`m` then `L` to the same point, as `.ai` files write dots) is a
 /// dot as wide as the stroke: a disc under a round cap, a square under a projecting one, nothing
 /// under a butt cap (PDF 32000-1 8.5.3.2, SVG 2 "Path data" zero-length segments).
@@ -955,4 +1099,38 @@ fn zero_length_subpaths_draw_dots_with_their_cap() {
     }
     let butt = dots(vectorcraft_doc::LineCap::Butt);
     assert_eq!(butt.pixels.iter().filter(|&&p| p != 255).count(), 0, "a butt cap draws no dot");
+}
+
+/// #2788: a dashed solid stroke is one paint, so its object opacity folds into its colour instead
+/// of compositing a viewport-wide layer; the result matches the layered one, overlapping dashes
+/// included.
+#[test]
+fn dashed_stroke_opacity_folds_into_its_colour() {
+    let dashed = |d: &mut Document, object: f32, stroke: f32| {
+        let mut n = rect_node(d, Rect::new(20.0, 20.0, 80.0, 60.0), Paint::None, Paint::solid(Color::rgb(0.2, 0.4, 0.9)), 6.0);
+        let st = n.appearance.stroke_mut().unwrap();
+        st.dash = Some(vectorcraft_doc::Dash { pattern: vec![4.0, 1.0], ..Default::default() });
+        st.cap = vectorcraft_doc::LineCap::Round;
+        st.opacity = stroke;
+        n.opacity = object;
+        n
+    };
+    let doc = |object: f32, stroke: f32| {
+        let mut d = Document::new(100.0, 100.0);
+        let n = dashed(&mut d, object, stroke);
+        let l = d.layers[0].id;
+        d.insert(Some(l), 0, n).unwrap();
+        d
+    };
+    let mut d = Document::new(100.0, 100.0);
+    assert_eq!(painted_items(&dashed(&mut d, 0.6, 1.0)), 1, "a dashed stroke takes the folded fast path");
+    let mut brushed = dashed(&mut d, 0.6, 1.0);
+    brushed.appearance.stroke_mut().unwrap().brush = Some("Calligraphic".into());
+    assert_ne!(painted_items(&brushed), 1, "a dashed brush stroke draws its pieces one by one: no folding");
+    let folded = render(&doc(0.6, 1.0));
+    let layered = render(&doc(1.0, 0.6));
+    assert_ne!(folded.pixel(20, 40), [255, 255, 255, 255], "the stroke is drawn");
+    for (a, b) in folded.pixels.chunks(4).zip(layered.pixels.chunks(4)) {
+        assert!(a.iter().zip(b).all(|(x, y)| (*x as i32 - *y as i32).abs() <= 1), "folded {a:?} vs layered {b:?}");
+    }
 }

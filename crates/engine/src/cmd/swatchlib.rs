@@ -155,17 +155,20 @@ impl<L: LibraryFile> Libraries<L> {
     }
 
     /// Re-read the library files of the user library folder (unreadable ones are skipped). The
-    /// folder is the app's own: automation roots don't apply to it ([`crate::file_access`]).
+    /// folder is the app's own: automation roots don't apply to it ([`crate::file_access`]). Each
+    /// file is read inside [`crate::guard::catch_panic`], and a file whose reading panics is
+    /// skipped too.
     pub fn rescan(&mut self) {
         self.extra.retain(|e| e.info.category != "user");
         self.skipped.clear();
         let Some(dir) = self.user_dir.clone() else { return };
         for path in library_files(&dir, L::EXTS) {
             let file = file_name(&path);
-            let lib = crate::file_access::unconfined(|| read_file(&path)).map_err(|e| e.to_string()).and_then(|b| L::read(&b, stem(&file)));
-            match lib {
+            let read = || crate::file_access::unconfined(|| read_file(&path)).map_err(|e| e.to_string()).and_then(|b| L::read(&b, stem(&file)));
+            // A reader that panics on a damaged file skips it like any unreadable one.
+            match crate::guard::catch_panic(read).unwrap_or_else(|msg| Err(format!("internal error: {msg}"))) {
                 Ok(lib) => {
-                    let info = LibraryInfo { id: format!("user/{file}"), name: lib.name().to_string(), category: "user" };
+                    let info = LibraryInfo { id: format!("user/{file}"), name: library_tab_name(&file, lib.name()), category: "user" };
                     self.extra.push(Extra { info, path: Some(path), lib: Arc::new(lib) });
                 }
                 Err(e) => self.skipped.push((path, e)),
@@ -256,7 +259,7 @@ impl<L: LibraryFile> Libraries<L> {
         if let Some(e) = path.and_then(user) {
             return Ok((e.info.clone(), e.lib.clone()));
         }
-        let info = LibraryInfo { id: format!("loaded/{}", path.unwrap_or(&file)), name: lib.name().to_string(), category: "loaded" };
+        let info = LibraryInfo { id: format!("loaded/{}", path.unwrap_or(&file)), name: library_tab_name(&file, lib.name()), category: "loaded" };
         let lib = Arc::new(lib);
         self.extra.retain(|x| x.info.id != info.id);
         self.extra.push(Extra { info: info.clone(), path: path.map(str::to_string), lib: lib.clone() });
@@ -286,7 +289,15 @@ impl<L: LibraryFile> Libraries<L> {
             .map(|e| (e.path.clone(), e.lib.clone()))
             .ok_or_else(|| bad(cmd, format!("`{id}` isn't a loaded library")))?;
         let (file, bytes) = match source.filter(|p| L::EXTS.contains(&extension(p).as_str())) {
-            Some(p) => (file_name(&p), read_file(&p)?),
+            Some(p) => {
+                let ext = extension(&p);
+                let base = file_name(&p);
+                // A sandbox copy of an import often lands as tmp….tmp.acb (#2996): store it under the
+                // book title. A normal .acb path keeps its file name so the tab matches Illustrator
+                // (#3395).
+                let file = if temporary_library_file_name(&base) { library_file_name(lib.name(), &ext) } else { base };
+                (file, read_file(&p)?)
+            }
             None => (library_file_name(lib.name(), ext), encode(&lib)?),
         };
         let (info, lib, written) = self.store(&dir, &file, &bytes, cmd)?;
@@ -336,6 +347,19 @@ impl<L: LibraryFile> Libraries<L> {
         };
         Ok((info, lib, written.is_some()))
     }
+}
+
+/// A library file name that looks like a host temporary (e.g. macOS `tmp1F2C.tmp.acb`).
+fn temporary_library_file_name(name: &str) -> bool {
+    let lower = name.to_ascii_lowercase();
+    lower.contains(".tmp.")
+}
+
+/// The name library panels and menus show: color books (.acb) use the file name without its
+/// extension (Illustrator), except when the path is a host temporary (#2996), then the book title.
+fn library_tab_name(file: &str, lib_name: &str) -> String {
+    let base = file_name(file);
+    if extension(&base) == "acb" && !temporary_library_file_name(&base) { stem(&base).to_string() } else { lib_name.to_string() }
 }
 
 /// The file name of library `name` with extension `ext`: characters file systems reject become

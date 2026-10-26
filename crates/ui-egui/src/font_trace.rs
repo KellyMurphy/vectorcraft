@@ -65,7 +65,7 @@ pub fn poll(app: &mut VectorcraftApp, ctx: &egui::Context) {
     let family = job.family.clone();
     ctx.set_cursor_icon(egui::CursorIcon::Progress);
     ctx.request_repaint();
-    let cancel = crate::dialogs::modal::show(ctx, tl!("Tracing Font"), egui::Id::new("font-trace-progress"), 0.0, 16, |ui| {
+    let cancel = crate::dialogs::modal::show(ctx, tl!("Tracing Font"), egui::Id::unique("font-trace-progress"), 0.0, 16, |ui| {
         ui.set_width(320.0);
         crate::dialogs::modal::heading(ui, &crate::i18n::fmt(tl!("Tracing {family}"), &[("family", &family)]));
         ui.add_space(6.0);

@@ -33,7 +33,7 @@ struct Drawn {
 
 /// The objects as sewn, from the plan (kept per plan, since a plan outlives many frames).
 fn drawn(ctx: &egui::Context, memo: &crate::canvas::StitchMemo) -> std::sync::Arc<Vec<Drawn>> {
-    let key = egui::Id::new(("sew-order-drawn", std::sync::Arc::as_ptr(&memo.plan) as usize));
+    let key = egui::Id::unique(("sew-order-drawn", std::sync::Arc::as_ptr(&memo.plan) as usize));
     if let Some(d) = ctx.data(|d| d.get_temp::<std::sync::Arc<Vec<Drawn>>>(key)) {
         return d;
     }
@@ -66,7 +66,7 @@ fn drawn(ctx: &egui::Context, memo: &crate::canvas::StitchMemo) -> std::sync::Ar
 fn order(app: &mut VectorcraftApp, ctx: &egui::Context) -> Value {
     let Some(st) = app.session.active() else { return Value::Null };
     let key = (st.uid, st.revision);
-    let id = egui::Id::new("sew-order-info");
+    let id = egui::Id::unique("sew-order-info");
     if let Some((k, v)) = ctx.data(|d| d.get_temp::<((u64, u64), Value)>(id))
         && k == key
     {
@@ -147,7 +147,7 @@ struct Needles {
 /// The player's stitches, kept per plan.
 fn needles(ctx: &egui::Context, memo: &crate::canvas::StitchMemo) -> std::sync::Arc<Needles> {
     use vectorcraft_embroidery::Cmd;
-    let key = egui::Id::new(("sew-player-needles", std::sync::Arc::as_ptr(&memo.plan) as usize));
+    let key = egui::Id::unique(("sew-player-needles", std::sync::Arc::as_ptr(&memo.plan) as usize));
     if let Some(n) = ctx.data(|d| d.get_temp::<std::sync::Arc<Needles>>(key)) {
         return n;
     }

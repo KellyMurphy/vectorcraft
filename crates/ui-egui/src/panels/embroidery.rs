@@ -28,7 +28,7 @@ fn info(app: &mut VectorcraftApp, ctx: &egui::Context) -> Value {
     let Some(st) = app.session.active() else { return Value::Null };
     let sel = &st.selection.objects;
     let key: Key = (st.uid, st.revision, sel.len(), sel.first().copied(), sel.last().copied());
-    let id = egui::Id::new("embroidery-info");
+    let id = egui::Id::unique("embroidery-info");
     if let Some((k, v)) = ctx.data(|d| d.get_temp::<(Key, Value)>(id))
         && k == key
     {
@@ -81,7 +81,7 @@ const TABS: [&str; 3] = ["Stitch", "Design", "Tools"];
 
 /// Which tab is open (kept between sessions).
 fn tab_id() -> egui::Id {
-    egui::Id::new("embroidery-panel-tab")
+    egui::Id::unique("embroidery-panel-tab")
 }
 
 pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
@@ -370,11 +370,11 @@ fn dim_label_w(ui: &mut Ui, text: &str) {
 
 /// A text the panel keeps between frames (what is being typed for a command not run yet).
 fn kept(ui: &Ui, key: &str, default: &str) -> String {
-    ui.ctx().data_mut(|d| d.get_temp::<String>(egui::Id::new(("emb-font-editor", key)))).unwrap_or_else(|| default.to_string())
+    ui.ctx().data_mut(|d| d.get_temp::<String>(egui::Id::unique(("emb-font-editor", key)))).unwrap_or_else(|| default.to_string())
 }
 
 fn keep(ui: &Ui, key: &str, value: String) {
-    ui.ctx().data_mut(|d| d.insert_temp(egui::Id::new(("emb-font-editor", key)), value));
+    ui.ctx().data_mut(|d| d.insert_temp(egui::Id::unique(("emb-font-editor", key)), value));
 }
 
 /// The Font Editor: a new font or one to edit; in a font document, its details, metrics, kerning,
@@ -435,7 +435,7 @@ fn font_editor(app: &mut VectorcraftApp, ui: &mut Ui) {
             if widgets::flat_button(ui, tl!("Edit Font…"), 90.0).clicked() {
                 crate::picks::button(app, |app| {
                     let ext: &'static [&'static str] = &[vectorcraft_embroidery::fonts::FILE_EXT];
-                    let pick = crate::FilePick { filters: vec![("Embroidery fonts", ext)], ..Default::default() };
+                    let pick = crate::FilePick { filters: vec![crate::FilePick::filter("Embroidery fonts", ext)], ..Default::default() };
                     let Some(path) = crate::picks::open(app, &pick) else { return };
                     if let Err(e) = app.run("embroidery.font.open", json!({ "path": path })) {
                         app.status(e);
@@ -548,7 +548,7 @@ fn load_font(app: &mut VectorcraftApp) {
     }
     crate::picks::button(app, |app| {
         let ext: &'static [&'static str] = &[vectorcraft_embroidery::fonts::FILE_EXT];
-        let pick = crate::FilePick { filters: vec![("Embroidery fonts", ext)], ..Default::default() };
+        let pick = crate::FilePick { filters: vec![crate::FilePick::filter("Embroidery fonts", ext)], ..Default::default() };
         let Some(path) = crate::picks::open(app, &pick) else { return };
         match app.run("embroidery.loadFont", json!({ "path": path })) {
             Ok(r) => app.status(format!("Loaded embroidery font {}", r["name"].as_str().unwrap_or_default())),
@@ -640,7 +640,7 @@ fn picture_picker(
     let cols = 3;
     let size = vec2(96.0, 72.0);
     egui::Popup::menu(&resp)
-        .id(egui::Id::new(("picture-picker", id)))
+        .id(egui::Id::unique(("picture-picker", id)))
         .show(|ui| {
             ui.set_min_width(size.x * cols as f32 + 12.0);
             ui.spacing_mut().item_spacing = vec2(4.0, 4.0);
@@ -1341,7 +1341,7 @@ fn load_pattern(app: &mut VectorcraftApp) {
     }
     crate::picks::button(app, |app| {
         let ext: &'static [&'static str] = &[vectorcraft_embroidery::borders::FILE_EXT];
-        let pick = crate::FilePick { filters: vec![("Border patterns", ext)], ..Default::default() };
+        let pick = crate::FilePick { filters: vec![crate::FilePick::filter("Border patterns", ext)], ..Default::default() };
         let Some(path) = crate::picks::open(app, &pick) else { return };
         load_pattern_from(app, json!({ "path": path }));
     });
@@ -1526,7 +1526,7 @@ fn load_chart(app: &mut VectorcraftApp) {
     }
     crate::picks::button(app, |app| {
         let ext: &'static [&'static str] = &[vectorcraft_embroidery::threads::FILE_EXT];
-        let pick = crate::FilePick { filters: vec![("Thread charts", ext)], ..Default::default() };
+        let pick = crate::FilePick { filters: vec![crate::FilePick::filter("Thread charts", ext)], ..Default::default() };
         let Some(path) = crate::picks::open(app, &pick) else { return };
         if let Err(e) = app.run("embroidery.loadThreadChart", json!({ "path": path })) {
             app.status(e);
@@ -1649,7 +1649,7 @@ fn load_fabric(app: &mut VectorcraftApp) {
     }
     crate::picks::button(app, |app| {
         let ext: &'static [&'static str] = &[vectorcraft_embroidery::fabrics::FILE_EXT];
-        let pick = crate::FilePick { filters: vec![("Fabric profiles", ext)], ..Default::default() };
+        let pick = crate::FilePick { filters: vec![crate::FilePick::filter("Fabric profiles", ext)], ..Default::default() };
         let Some(path) = crate::picks::open(app, &pick) else { return };
         if let Err(e) = app.run("embroidery.loadFabric", json!({ "path": path })) {
             app.status(e);

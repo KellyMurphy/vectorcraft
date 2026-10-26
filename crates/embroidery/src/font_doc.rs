@@ -117,6 +117,10 @@ pub fn document(font: &EmbroideryFont, extra: &[String], template: &dyn Fn(&str)
             rect: Rect::new(x, 0.0, x + width, height),
             show_center_mark: false,
             show_cross_hairs: false,
+            locked: false,
+            show_video_safe_areas: false,
+            video_ruler_pixel_aspect_ratio: 1.0,
+            color: None,
         });
         // Font units (y up from the baseline) → this artboard (points, y down).
         let to_doc = Affine::new([u, 0.0, 0.0, -u, x, base]);

@@ -162,7 +162,7 @@ fn built_in_effect(id: &str) -> bool {
 
 /// [`effect_label`] as shown: a built-in effect's in the UI language (an `@id` row for the
 /// effect's id wins over the plain row of its English label), a plug-in's as it is.
-fn shown_effect_label(id: &str) -> String {
+pub(crate) fn shown_effect_label(id: &str) -> String {
     match catalog().iter().find(|c| c.0 == id) {
         Some(c) => crate::i18n::t_id(id, &c.1).to_string(),
         None => effect_label(id),
@@ -194,7 +194,7 @@ fn row(ui: &mut Ui, selected: bool) -> (Rect, egui::Response) {
 fn eye(ui: &mut Ui, r: Rect, id: impl std::hash::Hash + std::fmt::Debug, on: bool, enabled: bool) -> bool {
     let t = Tokens::get(ui.ctx());
     let er = Rect::from_center_size(pos2(r.left() + EYE_W / 2.0, r.center().y), vec2(16.0, 16.0));
-    let resp = ui.interact(er, ui.id().with(id), if enabled { Sense::click() } else { Sense::hover() });
+    let resp = ui.interact(er, ui.scope_id().with(id), if enabled { Sense::click() } else { Sense::hover() });
     let col = if !enabled {
         t.text_disabled
     } else if resp.hovered() {
@@ -209,7 +209,7 @@ fn eye(ui: &mut Ui, r: Rect, id: impl std::hash::Hash + std::fmt::Debug, on: boo
 fn chevron(ui: &mut Ui, r: Rect, id: impl std::hash::Hash + std::fmt::Debug, open: bool) -> bool {
     let t = Tokens::get(ui.ctx());
     let cr = Rect::from_center_size(pos2(r.left() + EYE_W + 12.0, r.center().y), vec2(12.0, 12.0));
-    let resp = ui.interact(cr, ui.id().with(id), Sense::click());
+    let resp = ui.interact(cr, ui.scope_id().with(id), Sense::click());
     icons::paint(ui, if open { "chevron-down" } else { "chevron-right" }, cr, if resp.hovered() { t.text_strong } else { t.icon });
     resp.clicked()
 }
@@ -232,7 +232,7 @@ fn link(ui: &mut Ui, pos: egui::Pos2, id: impl std::hash::Hash + std::fmt::Debug
     let t = Tokens::get(ui.ctx());
     let galley = ui.painter().layout_no_wrap(s.to_string(), egui::FontId::proportional(12.5), t.text_strong);
     let r = Rect::from_min_size(pos2(pos.x, pos.y - galley.size().y / 2.0), galley.size());
-    let resp = ui.interact(r, ui.id().with(id), Sense::click());
+    let resp = ui.interact(r, ui.scope_id().with(id), Sense::click());
     ui.painter().galley(r.min, galley, t.text_strong);
     let mut x = r.left();
     while x < r.right() {
@@ -292,7 +292,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
 /// The object row's thumbnail drags this object's appearance onto art ([`PanelDrag::Appearance`];
 /// a chip of its fill follows the pointer).
 fn thumbnail_drag(ui: &mut Ui, th: Rect, id: NodeId) {
-    let resp = ui.interact(th, ui.id().with("ap-thumb"), Sense::drag()).on_hover_text(tl!("Drag onto art to apply this appearance"));
+    let resp = ui.interact(th, ui.scope_id().with("ap-thumb"), Sense::drag()).on_hover_text(tl!("Drag onto art to apply this appearance"));
     widgets::drag_source(ui, &resp, || PanelDrag::Appearance(id));
     if resp.dragged() {
         ui.ctx().set_cursor_icon(egui::CursorIcon::Grabbing);
@@ -441,7 +441,7 @@ fn stack(app: &mut VectorcraftApp, ui: &mut Ui, n: &Node, sel: Sel, object_row: 
         let cr = Rect::from_min_size(pos2(r.left() + EYE_W + 76.0, r.center().y - 9.0), vec2(18.0, 18.0));
         chip(ui, cr, paint);
         let cresp = ui
-            .interact(cr.expand(2.0), ui.id().with(("ap-chip", i)), Sense::click())
+            .interact(cr.expand(2.0), ui.scope_id().with(("ap-chip", i)), Sense::click())
             .on_hover_text(tl!("Click to choose a swatch, Shift-click to mix a colour"));
         let mixer = cresp.clicked() && ui.input(|inp| inp.modifiers.shift);
         if mixer {
@@ -454,7 +454,8 @@ fn stack(app: &mut VectorcraftApp, ui: &mut Ui, n: &Node, sel: Sel, object_row: 
         if let AppearanceItem::Stroke(st) = it {
             let fr = Rect::from_min_size(pos2(r.left() + EYE_W + 104.0, r.center().y - 12.0), vec2(56.0, 24.0));
             let mut child = ui.new_child(egui::UiBuilder::new().max_rect(fr).layout(egui::Layout::left_to_right(egui::Align::Center)));
-            if let Some(w) = widgets::num_field(&mut child, ("ap-w", i), Some(st.width), app.session.stroke_unit(), 56.0) {
+            if let Some(w) = widgets::num_field_named(&mut child, ("ap-w", i), Some(tl!("Weight:")), Some(st.width), app.session.stroke_unit(), 56.0)
+            {
                 app.run("appearance.setItem", json!({"index": i, "weight": w})).ok();
             }
             stroke_notes(ui, Rect::from_min_max(pos2(fr.right() + 6.0, r.top()), pos2(r.right() - 4.0, r.bottom())), st);
@@ -625,15 +626,20 @@ fn contents_row(app: &mut VectorcraftApp, ui: &mut Ui, n: &Node, label: &str, se
             chip(ui, cr, n.proxy_paint(stroke, None).map_or(&Paint::None, |(p, ..)| p));
         }
     }
-    let resp =
-        resp.on_hover_text(if characters { tl!("Double-click to edit the characters' paint") } else { tl!("Double-click to target the contents") });
+    // An image's row has no members to target.
+    let image = matches!(n.kind, vectorcraft_doc::NodeKind::Image(_));
+    let resp = if image {
+        resp
+    } else {
+        resp.on_hover_text(if characters { tl!("Double-click to edit the characters' paint") } else { tl!("Double-click to target the contents") })
+    };
     if resp.clicked() || resp.double_clicked() {
         select_row(app, ui.ctx(), Sel::Contents);
     }
     if resp.double_clicked() {
         if characters {
             app.ui.open_panel = Some("color".into());
-        } else {
+        } else if !image {
             app.run("appearance.targetContents", json!({})).ok();
         }
     }
@@ -734,79 +740,108 @@ fn effect_editor(app: &mut VectorcraftApp, ui: &mut Ui, item: Option<usize>, k: 
     let mut change: Option<(String, Value)> = None;
     let mut edit = false;
     let built_in = built_in_effect(&e.id);
+    // A plug-in effect's parameters are labelled, measured and shown as its manifest says.
+    let plugin = vectorcraft_plugins::effect::installed(&e.id);
+    let manifest = plugin.as_ref().map(|p| p.manifest());
+    let visible = manifest.map(|m| m.visible(&params));
     let (unit, relative) = (app.session.general_unit(), params.get("relative").and_then(Value::as_bool).unwrap_or(false));
+    let cmyk = app.session.active().is_some_and(|s| s.doc.color_mode == vectorcraft_doc::ColorMode::Cmyk);
     egui::Frame::NONE.fill(t.panel_darker).inner_margin(egui::Margin { left: (EYE_W + 12.0) as i8, right: 6, top: 4, bottom: 4 }).show(ui, |ui| {
         ui.spacing_mut().item_spacing.y = 3.0;
         if params.is_empty() {
             widgets::dim_label(ui, tl!("No options"));
         }
         for (key, v) in &params {
+            if visible.as_ref().is_some_and(|v| !v.contains(key.as_str())) {
+                continue;
+            }
+            let ui_keys = manifest.and_then(|m| m.param(key)).map(|p| &p.ui);
             ui.horizontal(|ui| {
-                let label = param_label(key, built_in);
-                ui.add_sized(vec2(84.0, 22.0), egui::Label::new(egui::RichText::new(label.as_str()).size(11.5).color(t.text)).truncate());
-                if e.id == "stylize.dropShadow" && key == "shade" {
-                    let cur = v.as_str().unwrap_or_default();
-                    for (label, value) in crate::dialogs::SHADES {
-                        if widgets::radio(ui, label, cur.eq_ignore_ascii_case(value), true) && !cur.eq_ignore_ascii_case(value) {
+                let label = ui_keys.and_then(|u| u.label.clone()).unwrap_or_else(|| param_label(key, built_in));
+                let label_node =
+                    ui.add_sized(vec2(84.0, 22.0), egui::Label::new(egui::RichText::new(label.as_str()).size(11.5).color(t.text)).truncate());
+                let label_node = if let Some(help) = ui_keys.and_then(|u| u.help.as_deref()) { label_node.on_hover_text(help) } else { label_node };
+                // The row's actual label node names its fields, including a plug-in's plain text
+                // and number fields (egui 0.37's strict a11y gate).
+                ui.label_inputs_by(label_node.id, |ui| {
+                    if e.id == "stylize.dropShadow" && key == "shade" {
+                        let cur = v.as_str().unwrap_or_default();
+                        for (label, value) in crate::dialogs::SHADES {
+                            if widgets::radio(ui, label, cur.eq_ignore_ascii_case(value), true) && !cur.eq_ignore_ascii_case(value) {
+                                change = Some((key.clone(), json!(value)));
+                            }
+                        }
+                        return;
+                    }
+                    if let Some(options) = crate::dialogs::shown_choices(&e.id, key, &params, cmyk) {
+                        let cur = v.as_str().unwrap_or_default();
+                        let shown = options.iter().find(|(_, value)| value == cur).map_or(cur, |(label, _)| label.as_str());
+                        let labels: Vec<&str> = options.iter().map(|(label, _)| label.as_str()).collect();
+                        if let Some((_, value)) = widgets::dropdown_names(ui, ("fx-choice", item, k, key.as_str()), shown, &labels, 90.0)
+                            .and_then(|i| options.get(i))
+                            .filter(|(_, value)| value != cur)
+                        {
                             change = Some((key.clone(), json!(value)));
                         }
+                        return;
                     }
-                    return;
-                }
-                if let Some(options) = crate::dialogs::shown_choices(&e.id, key, &params) {
-                    let cur = v.as_str().unwrap_or_default();
-                    let shown = options.iter().find(|(_, value)| value == cur).map_or(cur, |(label, _)| label.as_str());
-                    let labels: Vec<&str> = options.iter().map(|(label, _)| label.as_str()).collect();
-                    if let Some((_, value)) = widgets::dropdown_names(ui, ("fx-choice", item, k, key.as_str()), shown, &labels, 90.0)
-                        .and_then(|i| options.get(i))
-                        .filter(|(_, value)| value != cur)
+                    // A plug-in's number list is typed as its dialog's is: "45, 135".
+                    if let Some(spec) = manifest.and_then(|m| m.param(key)).map(|p| &p.spec)
+                        && matches!(spec, vectorcraft_plugins::manifest::ParamSpec::NumberList { .. })
                     {
-                        change = Some((key.clone(), json!(value)));
+                        let typed = widgets::exact_text_field(ui, ("fx", item, k, key.as_str()), &crate::dialogs::number_list_text(v), 90.0);
+                        if let Some(list) = typed.and_then(|text| crate::dialogs::read_number_list(&text, spec)) {
+                            change = Some((key.clone(), list));
+                        }
+                        if let Some(unit) = ui_keys.and_then(|u| u.unit.as_deref()) {
+                            widgets::dim_label(ui, unit);
+                        }
+                        return;
                     }
-                    return;
-                }
-                // Only our own effects show a `mode` parameter as the blend mode dropdown; a plug-in's `mode` stays a plain field.
-                if built_in && let Some(cur) = widgets::blend_param(key, v) {
-                    if let Some(m) = widgets::blend_param_dropdown(ui, ("fx-blend", item, k, key.as_str()), cur) {
-                        change = Some((key.clone(), m));
+                    // Only our own effects show a `mode` parameter as the blend mode dropdown; a plug-in's `mode` stays a plain field.
+                    if built_in && let Some(cur) = widgets::blend_param(key, v) {
+                        if let Some(m) = widgets::blend_param_dropdown(ui, ("fx-blend", item, k, key.as_str()), cur) {
+                            change = Some((key.clone(), m));
+                        }
+                        return;
                     }
-                    return;
-                }
-                match v {
-                    Value::Bool(b) => {
-                        if widgets::check_box(ui, &label, *b, true) {
-                            change = Some((key.clone(), json!(!b)));
+                    match v {
+                        Value::Bool(b) => {
+                            if widgets::check_box(ui, &label, *b, true) {
+                                change = Some((key.clone(), json!(!b)));
+                            }
+                        }
+                        Value::Number(n) => {
+                            let (x, id) = (n.as_f64().unwrap_or(0.0), ("fx", item, k, key.as_str()));
+                            let suffix = ui_keys.and_then(|u| u.unit.as_deref()).map(crate::dialogs::unit_suffix).unwrap_or_default();
+                            let nx = if vectorcraft_effects::is_length(&e.id, key, relative) {
+                                widgets::num_field(ui, id, Some(x), unit, 70.0)
+                            } else {
+                                widgets::plain_field(ui, id, x, &suffix, 2, 70.0)
+                            };
+                            if let Some(nx) = nx {
+                                change = Some((key.clone(), json!(nx)));
+                            }
+                        }
+                        // Glass's loaded texture shows its size; its dialog's Load Texture… replaces it.
+                        Value::String(s) if key == vectorcraft_effects::pixel::TEXTURE_IMAGE => {
+                            let size = vectorcraft_effects::pixel::texture(s).map(|t| t.size());
+                            widgets::dim_label(ui, &size.map_or_else(String::new, |(w, h)| format!("{w} × {h} px")));
+                        }
+                        Value::String(s) => {
+                            if let Some(typed) = widgets::exact_text_field(ui, ("fx", item, k, key.as_str()), s, 90.0) {
+                                change = Some((key.clone(), json!(typed)));
+                            }
+                        }
+                        // Free Distort's corners are dragged in its dialog.
+                        _ if e.id == crate::dialogs::free_distort::FREE_DISTORT => {
+                            edit |= widgets::flat_button(ui, tl!("Edit…"), 48.0).clicked();
+                        }
+                        other => {
+                            widgets::dim_label(ui, &other.to_string());
                         }
                     }
-                    Value::Number(n) => {
-                        let (x, id) = (n.as_f64().unwrap_or(0.0), ("fx", item, k, key.as_str()));
-                        let nx = if vectorcraft_effects::is_length(&e.id, key, relative) {
-                            widgets::num_field(ui, id, Some(x), unit, 70.0)
-                        } else {
-                            widgets::plain_field(ui, id, x, "", 2, 70.0)
-                        };
-                        if let Some(nx) = nx {
-                            change = Some((key.clone(), json!(nx)));
-                        }
-                    }
-                    // Glass's loaded texture shows its size; its dialog's Load Texture… replaces it.
-                    Value::String(s) if key == vectorcraft_effects::pixel::TEXTURE_IMAGE => {
-                        let size = vectorcraft_effects::pixel::texture(s).map(|t| t.size());
-                        widgets::dim_label(ui, &size.map_or_else(String::new, |(w, h)| format!("{w} × {h} px")));
-                    }
-                    Value::String(s) => {
-                        if let Some(typed) = widgets::exact_text_field(ui, ("fx", item, k, key.as_str()), s, 90.0) {
-                            change = Some((key.clone(), json!(typed)));
-                        }
-                    }
-                    // Free Distort's corners are dragged in its dialog.
-                    _ if e.id == crate::dialogs::free_distort::FREE_DISTORT => {
-                        edit |= widgets::flat_button(ui, tl!("Edit…"), 48.0).clicked();
-                    }
-                    other => {
-                        widgets::dim_label(ui, &other.to_string());
-                    }
-                }
+                });
             });
         }
     });
@@ -1158,6 +1193,46 @@ mod tests {
         assert!(texts.iter().any(|s| s == "screen") && !texts.iter().any(|s| s == "Screen"), "{texts:?}");
     }
 
+    /// A plug-in effect's editor labels its parameters, shows their units and leaves out those whose
+    /// `visibleWhen` isn't met, as the effect's dialog does, and reads a typed number list the same
+    /// way.
+    #[test]
+    fn a_plug_in_effect_s_editor_follows_its_manifest() {
+        use vectorcraft_plugins::wat as tpl;
+        let params = r#"{"outline":{"type":"bool","default":true,"label":"Outline"},
+            "spacing":{"type":"number","min":0.1,"max":10,"default":1.5,"label":"Spacing","unit":"mm","help":"Distance between the lines."},
+            "angles":{"type":"numberList","min":0,"max":360,"default":[45,135],"minItems":1,"maxItems":4,"unit":"°"},
+            "width":{"type":"number","min":0,"max":10,"default":0.5,"label":"Width","unit":"pt","visibleWhen":{"outline":[true]}}}"#;
+        let src = tpl::module(&tpl::manifest("test.ui.inlinekeys", "effect", params), tpl::ECHO, "", 1);
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        app.run("plugin.install", json!({"dataBase64": vectorcraft_format::base64_encode(&wat::parse_str(src).unwrap())})).unwrap();
+        app.run("file.new", json!({"width": 100, "height": 100})).unwrap();
+        let id = app.run("shape.rectangle", json!({"x": 0, "y": 0, "width": 20, "height": 20})).unwrap()["id"].as_u64().unwrap();
+        app.run("effect.apply", json!({"effect": "plugin.test.ui.inlinekeys"})).unwrap();
+        let ctx = egui::Context::default();
+        crate::theme::install_fonts(&ctx);
+        set_pstate(&ctx, "ap-fx-open-None-0", true);
+        let texts = shown_texts(&mut app, &ctx);
+        for shown in ["Spacing", "1.5 mm", "Angles", "45, 135", "°", "Width", "0.5 pt"] {
+            assert!(texts.iter().any(|s| s == shown), "no {shown:?} in {texts:?}");
+        }
+        assert!(!texts.iter().any(|s| s == "spacing" || s == "width"), "the labels replace the names: {texts:?}");
+        // Without the outline, its width isn't shown.
+        app.run("effect.setParams", json!({"item": null, "index": 0, "params": {"outline": false}})).unwrap();
+        let texts = shown_texts(&mut app, &ctx);
+        assert!(!texts.iter().any(|s| s == "Width") && texts.iter().any(|s| s == "Spacing"), "{texts:?}");
+        // A list typed in the field: separated by a semicolon and a space, and clamped.
+        click_text(&mut app, &ctx, "45, 135");
+        let key = |key, modifiers| egui::Event::Key { key, physical_key: None, pressed: true, repeat: false, modifiers };
+        panel_frame(&mut app, &ctx, vec![key(egui::Key::A, egui::Modifiers::COMMAND)]);
+        panel_frame(&mut app, &ctx, vec![egui::Event::Text("10; 400 20".into())]);
+        panel_frame(&mut app, &ctx, vec![key(egui::Key::Enter, egui::Modifiers::NONE)]);
+        panel_frame(&mut app, &ctx, vec![]);
+        let angles = app.session.doc().unwrap().doc.node(NodeId(id)).unwrap().appearance.effects[0].params["angles"].clone();
+        assert_eq!(angles, json!([10.0, 360.0, 20.0]));
+        app.run("plugin.remove", json!({"id": "test.ui.inlinekeys"})).unwrap();
+    }
+
     /// Glass with a loaded texture lists Loaded Texture in its Texture menu, as its dialog does.
     #[test]
     fn the_effect_editor_lists_a_loaded_glass_texture() {
@@ -1174,6 +1249,60 @@ mod tests {
         click_text(&mut app, &ctx, "Frosted");
         let st = app.session.doc().unwrap();
         assert_eq!(st.doc.node(id).unwrap().appearance.effects[0].params["texture"], json!("frosted"));
+    }
+
+    /// The choices that their dialogs list in their own bodies are dropdowns with those dialogs'
+    /// labels too: Revolve's edge, Extrude & Bevel's bevel, Warp's orientation, Rasterize's
+    /// options and the channel of Levels and Curves. A pick sends the dialog's value as one undo
+    /// step.
+    #[test]
+    fn the_effect_editor_picks_choices_their_own_dialogs_list() {
+        for (effect, key, shown, pick, value) in [
+            ("threeD.revolve", "edge", "Left", "Right", "right"),
+            ("threeD.extrude", "bevel", "None", "Rounded", "rounded"),
+            ("warp.arc", "orientation", "Horizontal", "Vertical", "vertical"),
+            ("rasterize", "colorModel", "RGB", "Grayscale", "grayscale"),
+            ("rasterize", "background", "Transparent", "White", "white"),
+            ("rasterize", "antiAlias", "Art Optimized", "Type Optimized", "type"),
+            ("adjust.levels", "channel", "RGB", "Red", "red"),
+            ("adjust.curves", "channel", "RGB", "Blue", "blue"),
+        ] {
+            let (mut app, ctx, id) = editing(effect);
+            let texts = shown_texts(&mut app, &ctx);
+            assert!(texts.iter().any(|s| s == shown), "{effect} {key}: {texts:?}");
+            let undo = app.session.doc().unwrap().history.undo.len();
+            click_text(&mut app, &ctx, shown);
+            click_text(&mut app, &ctx, pick);
+            let st = app.session.doc().unwrap();
+            assert_eq!(st.doc.node(id).unwrap().appearance.effects[0].params[key], json!(value), "{effect} {key}");
+            assert_eq!(st.history.undo.len(), undo + 1, "{effect} {key}");
+            assert!(shown_texts(&mut app, &ctx).iter().any(|s| s == pick), "{effect} {key}");
+        }
+    }
+
+    /// Those choices read as their dialogs show them in the UI language: in French, the channel's
+    /// RGB as the "effect" row translates it, and in Spanish, Extrude & Bevel's Rounded as the "3d"
+    /// row does, not the plain row. Rasterize names the document's color mode.
+    #[test]
+    fn the_effect_editor_shows_those_choices_as_their_dialogs_do() {
+        let fr = crate::i18n::Lang::from_code("fr").unwrap();
+        crate::i18n::set_current(fr);
+        let (mut app, ctx, _) = editing("adjust.levels");
+        let texts = shown_texts(&mut app, &ctx);
+        let rgb = crate::i18n::tr_ctx(fr, "effect", "RGB");
+        assert!(texts.iter().any(|s| s == rgb), "{rgb}: {texts:?}");
+        let es = crate::i18n::Lang::from_code("es").unwrap();
+        crate::i18n::set_current(es);
+        let (mut app, ctx, _) = editing("threeD.extrude");
+        app.run("effect.setParams", json!({"item": null, "index": 0, "params": {"bevel": "rounded"}})).unwrap();
+        let rounded = crate::i18n::tr_ctx(es, "3d", "Rounded");
+        assert_ne!(rounded, crate::i18n::tr(es, "Rounded"));
+        assert!(shown_texts(&mut app, &ctx).iter().any(|s| s == rounded), "{rounded}");
+        crate::i18n::set_current(crate::i18n::Lang::EN);
+        let (mut app, ctx, _) = editing("rasterize");
+        app.run("file.documentColorMode", json!({"mode": "cmyk"})).unwrap();
+        let texts = shown_texts(&mut app, &ctx);
+        assert!(texts.iter().any(|s| s == "CMYK") && !texts.iter().any(|s| s == "document"), "{texts:?}");
     }
 
     #[test]
@@ -1337,6 +1466,22 @@ mod tests {
     }
 
     #[test]
+    fn images_show_a_contents_row_with_new_fills_and_strokes_below_it() {
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        let run = |app: &mut VectorcraftApp, id: &str, p: Value| app.session.execute(id, &p).unwrap();
+        run(&mut app, "file.new", json!({"width": 100, "height": 100}));
+        let rows = |t: Vec<String>| t.into_iter().filter(|t| ["Fill:", "Stroke:", "Contents"].contains(&t.as_str())).collect::<Vec<_>>();
+        let mut png = vec![];
+        image::RgbaImage::from_pixel(4, 4, image::Rgba([255, 0, 0, 255]))
+            .write_to(&mut std::io::Cursor::new(&mut png), image::ImageFormat::Png)
+            .unwrap();
+        run(&mut app, "file.place", json!({"name": "red.png", "dataBase64": vectorcraft_format::base64_encode(&png)}));
+        assert_eq!(rows(frame(&mut app)), ["Contents"]);
+        run(&mut app, "appearance.addStroke", json!({}));
+        assert_eq!(rows(frame(&mut app)), ["Contents", "Stroke:"]);
+    }
+
+    #[test]
     fn drops_move_items_across_the_contents_row_and_the_row_itself() {
         use vectorcraft_doc::FillLayer;
         // A group [F0 | F1 F2]: the Contents row sits above item 0.
@@ -1390,5 +1535,32 @@ mod tests {
         for want in ["No Selection: Fancy".to_string(), effect_label("stylize.dropShadow"), "Opacity: 50%".into(), "Dashed".into()] {
             assert!(shown.contains(&want), "{want} in {shown:?}");
         }
+    }
+
+    /// Both stroke rows expose named Weight inputs, and the drop-shadow effect names its Blur input and
+    /// Color radio button.
+    #[test]
+    fn inline_stroke_weight_and_effect_fields_are_named() {
+        use egui_kittest::kittest::Queryable;
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        app.run("file.new", json!({"width": 100, "height": 100})).unwrap();
+        app.run("shape.rectangle", json!({"x": 0, "y": 0, "width": 20, "height": 20})).unwrap();
+        app.run("appearance.addStroke", json!({})).unwrap();
+        app.run("effect.apply", json!({"effect": "stylize.dropShadow"})).unwrap();
+        let mut first = true;
+        let mut h = egui_kittest::Harness::builder().with_size(egui::vec2(360.0, 760.0)).with_accessibility_check(false).build_ui_state(
+            move |ui, app: &mut VectorcraftApp| {
+                if std::mem::replace(&mut first, false) {
+                    crate::theme::install_fonts(ui.ctx());
+                    set_pstate(ui.ctx(), "ap-fx-open-None-0", true);
+                }
+                show(app, ui);
+            },
+            app,
+        );
+        h.run_steps(4);
+        assert_eq!(h.get_all_by_role_and_label(egui::accesskit::Role::TextInput, "Weight:").count(), 2, "both stroke rows are named");
+        let _ = h.get_by_role_and_label(egui::accesskit::Role::TextInput, "Blur");
+        let _ = h.get_by_role_and_label(egui::accesskit::Role::RadioButton, "Color");
     }
 }

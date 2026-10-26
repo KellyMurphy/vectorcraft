@@ -116,6 +116,54 @@ fn pencil_alt_closes_path() {
     assert!(ps[0].1.is_closed());
 }
 
+/// #3799: with Shift held, a wavy Pencil drag draws one straight segment at 45° steps from the
+/// Constrain Angle (here 30°: a drag at about 60° comes out at 75°).
+#[test]
+fn pencil_with_shift_draws_a_straight_line() {
+    let mut s = session();
+    s.execute("prefs.set", &json!({"key": "constrainAngle", "value": 30})).unwrap();
+    let v = view();
+    let shift = Mods { shift: true, ..Default::default() };
+    s.select_tool("pencil", v).unwrap();
+    s.pointer(&PointerEvent::new(PointerKind::Down, 100.0, 400.0).with_mods(shift), v).unwrap();
+    for (x, y) in [(120.0, 380.0), (125.0, 330.0), (160.0, 320.0), (150.0, 313.4)] {
+        s.pointer(&PointerEvent::new(PointerKind::Drag, x, y).with_mods(shift), v).unwrap();
+    }
+    s.pointer(&PointerEvent::new(PointerKind::Up, 150.0, 313.4).with_mods(shift), v).unwrap();
+    let ps = paths(&s);
+    assert_eq!(ps.len(), 1);
+    let sp = &ps[0].1.subpaths[0];
+    assert_eq!(sp.anchors.len(), 2, "{sp:?}");
+    assert!(sp.anchors.iter().all(|a| a.h_in == a.p && a.h_out == a.p), "no handles: {sp:?}");
+    let (a, b) = (sp.anchors[0].p, sp.anchors[1].p);
+    assert!(a.distance(Point::new(100.0, 400.0)) < 1e-6, "{a:?}");
+    let angle = (-(b.y - a.y)).atan2(b.x - a.x).to_degrees();
+    assert!((angle - 75.0).abs() < 1e-6, "{angle}");
+}
+
+/// #3799: with Alt held from the press to the release, a wavy Pencil drag draws one open straight
+/// segment from the press point to the release point, at the angle the pointer took.
+#[test]
+fn pencil_with_alt_draws_an_open_straight_line() {
+    let mut s = session();
+    let v = view();
+    let alt = Mods { alt: true, ..Default::default() };
+    s.select_tool("pencil", v).unwrap();
+    s.pointer(&PointerEvent::new(PointerKind::Down, 100.0, 400.0).with_mods(alt), v).unwrap();
+    for (x, y) in [(120.0, 380.0), (125.0, 330.0), (160.0, 320.0), (170.0, 333.0)] {
+        s.pointer(&PointerEvent::new(PointerKind::Drag, x, y).with_mods(alt), v).unwrap();
+    }
+    s.pointer(&PointerEvent::new(PointerKind::Up, 170.0, 333.0).with_mods(alt), v).unwrap();
+    let ps = paths(&s);
+    assert_eq!(ps.len(), 1);
+    assert!(!ps[0].1.is_closed());
+    let sp = &ps[0].1.subpaths[0];
+    assert_eq!(sp.anchors.len(), 2, "{sp:?}");
+    assert!(sp.anchors.iter().all(|a| a.h_in == a.p && a.h_out == a.p), "no handles: {sp:?}");
+    assert!(sp.anchors[0].p.distance(Point::new(100.0, 400.0)) < 1e-6, "{sp:?}");
+    assert!(sp.anchors[1].p.distance(Point::new(170.0, 333.0)) < 1e-6, "{sp:?}");
+}
+
 #[test]
 fn pencil_continues_selected_open_path() {
     let mut s = session();
@@ -128,6 +176,146 @@ fn pencil_continues_selected_open_path() {
     let last = p.subpaths[0].anchors.last().unwrap().p;
     assert!(last.distance(Point::new(300.0, 160.0)) < 1e-6);
     assert_eq!(p.subpaths[0].anchors[0].p, Point::new(100.0, 100.0));
+}
+
+/// Connect two paths: with two open paths selected, a Pencil stroke from an end of one to an end
+/// of the other joins them into one path, the first one's, in one undo step. A path that is not
+/// selected is not joined.
+#[test]
+fn pencil_connects_two_selected_paths_from_an_end_of_one_to_an_end_of_the_other() {
+    let stroke = [(201.0, 101.0), (230.0, 130.0), (270.0, 180.0), (299.0, 199.0)];
+    // The stroke ends on the second path's start, then on its end.
+    for (b_from, b_to) in [((300.0, 200.0), (400.0, 200.0)), ((400.0, 200.0), (300.0, 200.0))] {
+        let mut s = session();
+        let a = line(&mut s, 100.0, 100.0, 200.0, 100.0);
+        let b = line(&mut s, b_from.0, b_from.1, b_to.0, b_to.1);
+        s.execute("select.set", &json!({"ids": [a.0, b.0]})).unwrap();
+        s.select_tool("pencil", view()).unwrap();
+        assert_eq!(gesture(&mut s, &stroke, Mods::default()), 1, "{b_from:?}: one undo step");
+        let ps = paths(&s);
+        assert_eq!(ps.len(), 1, "{b_from:?}: the second path is joined on");
+        assert_eq!(ps[0].0, a);
+        let sp = &ps[0].1.subpaths[0];
+        assert!(!sp.closed);
+        assert_eq!(sp.anchors[0].p, Point::new(100.0, 100.0));
+        assert_eq!(sp.anchors[sp.anchors.len() - 1].p, Point::new(400.0, 200.0), "{b_from:?}");
+        assert_eq!(sp.anchors.iter().filter(|x| x.p == Point::new(300.0, 200.0)).count(), 1, "{b_from:?}: one anchor where they meet");
+        assert_eq!(s.doc().unwrap().selection.objects, vec![a]);
+    }
+    // The second path is not selected: the first is continued and the second left as it was.
+    let mut s = session();
+    let a = line(&mut s, 100.0, 100.0, 200.0, 100.0);
+    let b = line(&mut s, 300.0, 200.0, 400.0, 200.0);
+    s.execute("select.set", &json!({"ids": [a.0]})).unwrap();
+    drag(&mut s, "pencil", &stroke, Mods::default());
+    assert_eq!(paths(&s).len(), 2);
+    assert_eq!(path(&s, b).anchor_count(), 2);
+    assert!(path(&s, a).anchor_count() >= 3, "continued");
+    assert!(path(&s, a).subpaths[0].anchors.iter().all(|x| x.p != Point::new(400.0, 200.0)));
+}
+
+/// `path.freehand`'s connect takes the other path's last open subpath and leaves the rest of it,
+/// whose direct-selected anchors follow their subpaths; it refuses the path it extends and an end
+/// other than "start" or "end".
+#[test]
+fn pencil_connect_keeps_the_rest_of_a_compound_path_and_refuses_the_extended_path() {
+    let mut s = session();
+    let a = line(&mut s, 100.0, 100.0, 200.0, 100.0);
+    let d = "M300 200 L400 200 M300 400 L400 400 M0 500 L50 500 L50 550 Z";
+    let bc = NodeId(s.execute("path.create", &json!({ "d": d })).unwrap()["id"].as_u64().unwrap());
+    let points = json!([[200, 100], [250, 250], [400, 400]]);
+    for end in [json!("middle"), json!(1), json!(null)] {
+        let bad = json!({"points": points, "extend": {"id": a.0, "end": "end"}, "connect": {"id": bc.0, "end": end}});
+        assert!(s.execute("path.freehand", &bad).is_err(), "{bad}");
+    }
+    assert_eq!((path(&s, a).anchor_count(), path(&s, bc).subpaths.len()), (2, 3), "refused: nothing changed");
+    s.execute("select.anchors", &json!({"id": bc.0, "anchors": [[0, 1], [1, 0], [2, 2]], "mode": "set"})).unwrap();
+    let connect = json!({"points": points, "extend": {"id": a.0, "end": "end"}, "connect": {"id": bc.0, "end": "end"}, "keepSelected": false});
+    s.execute("path.freehand", &connect).unwrap();
+    let left = path(&s, bc);
+    assert_eq!(left.subpaths.len(), 2, "the other subpaths stay");
+    assert_eq!(left.subpaths[0].anchors[0].p, Point::new(300.0, 200.0));
+    let anchors: Vec<_> = s.doc().unwrap().selection.anchors.get(&bc).into_iter().flatten().copied().collect();
+    assert_eq!(anchors, vec![(0, 1), (1, 2)], "the joined subpath's anchor goes, the closed one's moves down");
+    let sp = &path(&s, a).subpaths[0];
+    assert_eq!(sp.anchors[sp.anchors.len() - 1].p, Point::new(300.0, 400.0));
+    assert!(sp.anchors.iter().any(|x| x.p == Point::new(400.0, 400.0)));
+    assert!(s.execute("path.freehand", &json!({"points": points, "extend": {"id": a.0}, "connect": {"id": a.0}})).is_err());
+}
+
+/// With Keep selected off, a compound path whose direct-selected anchors all lie on the subpath
+/// that connect joins on is no longer selected, and Delete then has nothing to delete.
+#[test]
+fn pencil_connect_deselects_a_path_whose_selected_anchors_were_all_joined_on() {
+    let mut s = session();
+    let a = line(&mut s, 100.0, 100.0, 200.0, 100.0);
+    let d = "M300 200 L400 200 M300 400 L400 400 M0 500 L50 500 L50 550 Z";
+    let bc = NodeId(s.execute("path.create", &json!({ "d": d })).unwrap()["id"].as_u64().unwrap());
+    s.execute("select.anchors", &json!({"id": bc.0, "anchors": [[1, 0], [1, 1]], "mode": "set"})).unwrap();
+    let points = json!([[200, 100], [250, 250], [400, 400]]);
+    let connect = json!({"points": points, "extend": {"id": a.0, "end": "end"}, "connect": {"id": bc.0, "end": "end"}, "keepSelected": false});
+    s.execute("path.freehand", &connect).unwrap();
+    let sel = s.doc().unwrap().selection.clone();
+    assert!(!sel.contains(bc) && !sel.anchors.contains_key(&bc) && !sel.segments.contains_key(&bc), "{sel:?}");
+    assert!(s.execute("edit.clear", &json!({})).is_err(), "nothing selected");
+    let left = path(&s, bc);
+    assert_eq!((left.subpaths.len(), left.anchor_count()), (2, 5), "{left:?}");
+}
+
+/// Edit Selected Paths in the middle of a path (#2850): a Pencil stroke that starts and ends on a
+/// selected path replaces the section between, drawn either way; the path stays one path with
+/// its ends, and is one undo step.
+#[test]
+fn pencil_redraws_the_section_of_a_selected_path_between_its_ends() {
+    let bump = [(100.0, 101.0), (125.0, 70.0), (150.0, 60.0), (175.0, 70.0), (200.0, 101.0)];
+    for reversed in [false, true] {
+        let mut s = session();
+        let id = line(&mut s, 0.0, 100.0, 300.0, 100.0);
+        let mut pts = bump.to_vec();
+        if reversed {
+            pts.reverse();
+        }
+        let undo = undo_steps(&s);
+        drag(&mut s, "pencil", &pts, Mods::default());
+        assert_eq!(paths(&s).len(), 1, "no new object");
+        assert_eq!(undo_steps(&s), undo + 1);
+        let sp = &path(&s, id).subpaths[0];
+        assert!(!sp.closed);
+        let ps: Vec<Point> = sp.anchors.iter().map(|a| a.p).collect();
+        assert!(near(ps[0], Point::new(0.0, 100.0)) && near(*ps.last().unwrap(), Point::new(300.0, 100.0)), "{ps:?}");
+        // The section starts and ends on the line, where the stroke met it, and rises between.
+        let on = |x: f64| ps.iter().any(|p| (p.x - x).abs() < 1.5 && (p.y - 100.0).abs() < 1e-6);
+        assert!(on(100.0) && on(200.0), "{reversed}: {ps:?}");
+        let top = kurbo::Shape::bounding_box(&path(&s, id).to_bezpath()).y0;
+        assert!(top < 75.0, "the bump: top {top}");
+        assert!(ps.windows(2).all(|w| w[0].x <= w[1].x + 1.0), "in order along the line: {ps:?}");
+    }
+}
+
+/// On a closed path the stroke replaces the shorter way between where it starts and ends, and the
+/// path stays closed; a stroke that doesn't end on the path draws a new one.
+#[test]
+fn pencil_redraws_the_shorter_way_round_a_closed_path() {
+    let mut s = session();
+    let id = rect(&mut s, 0.0, 0.0, 200.0, 100.0);
+    s.execute("select.set", &json!({"ids": [id.0]})).unwrap();
+    s.execute("path.freehand", &json!({"points": [[50, 1], [80, -25], [100, -30], [120, -25], [150, 1]], "redraw": {"id": id.0, "within": 4}}))
+        .unwrap();
+    assert_eq!(paths(&s).len(), 1);
+    let sp = &path(&s, id).subpaths[0];
+    assert!(sp.closed);
+    let ps: Vec<Point> = sp.anchors.iter().map(|a| a.p).collect();
+    for corner in [(0.0, 0.0), (200.0, 0.0), (200.0, 100.0), (0.0, 100.0)] {
+        assert!(ps.iter().any(|p| near(*p, Point::new(corner.0, corner.1))), "{corner:?} kept: {ps:?}");
+    }
+    let top = kurbo::Shape::bounding_box(&path(&s, id).to_bezpath()).y0;
+    assert!(top < -20.0, "the dip: top {top}");
+    // Not ending on the path: a new path, the rectangle as it was.
+    let before = path(&s, id);
+    s.execute("path.freehand", &json!({"points": [[50, 100], [80, 150], [120, 160]], "redraw": {"id": id.0, "within": 4}})).unwrap();
+    assert_eq!(paths(&s).len(), 2);
+    assert_eq!(path(&s, id), before);
+    assert!(s.execute("path.freehand", &json!({"points": [[0, 0], [1, 1]], "redraw": {"id": id.0, "within": -1}})).is_err());
 }
 
 /// With Keep selected off, the path a stroke draws or continues is not selected afterwards, the
@@ -161,6 +349,42 @@ fn pencil_with_keep_selected_off_leaves_the_new_path_unselected() {
     drag(&mut s, "paintbrush", &wave(100.0, 300.0, 500.0), Mods::default());
     assert_eq!(paths(&s).len(), before + 1, "a new brush path");
     assert!(selected(&s).is_empty());
+}
+
+/// `fit: false` (the Pencil's preview with Live curve fitting off) joins the stroke's points with
+/// straight segments: a new path, a continued one and a redrawn section; by default the stroke is
+/// fitted.
+#[test]
+fn freehand_with_fit_off_joins_the_points_with_straight_segments() {
+    let corners = |sp: &vectorcraft_geom::SubPath| sp.anchors.iter().all(|a| a.h_in == a.p && a.h_out == a.p);
+    let at = |sp: &vectorcraft_geom::SubPath| sp.anchors.iter().map(|a| (a.p.x, a.p.y)).collect::<Vec<_>>();
+    let pts = wave(100.0, 400.0, 100.0);
+    let mut s = session();
+    let fitted = s.execute("path.freehand", &json!({"points": pts.iter().map(|p| [p.0, p.1]).collect::<Vec<_>>()})).unwrap();
+    let fitted = path(&s, NodeId(fitted["id"].as_u64().unwrap()));
+    assert!(!corners(&fitted.subpaths[0]) && fitted.subpaths[0].anchors.len() < pts.len(), "fitted by default");
+    let unfitted = s.execute("path.freehand", &json!({"points": pts.iter().map(|p| [p.0, p.1]).collect::<Vec<_>>(), "fit": false})).unwrap();
+    let sp = path(&s, NodeId(unfitted["id"].as_u64().unwrap())).subpaths[0].clone();
+    assert!(corners(&sp) && at(&sp) == pts, "{:?}", at(&sp));
+    // Continued from the end of a selected open path: the line's anchors, then the stroke's points.
+    let l = line(&mut s, 0.0, 300.0, 100.0, 300.0);
+    s.execute("select.set", &json!({"ids": [l.0]})).unwrap();
+    s.execute("path.freehand", &json!({"points": [[100, 300], [150, 330], [200, 290], [250, 320]], "extend": {"id": l.0}, "fit": false})).unwrap();
+    let sp = path(&s, l).subpaths[0].clone();
+    assert!(corners(&sp) && at(&sp) == [(0.0, 300.0), (100.0, 300.0), (150.0, 330.0), (200.0, 290.0), (250.0, 320.0)], "{:?}", at(&sp));
+    // A redrawn section: the stroke's inner points between where it meets the line.
+    let r = line(&mut s, 0.0, 500.0, 300.0, 500.0);
+    s.execute("select.set", &json!({"ids": [r.0]})).unwrap();
+    s.execute(
+        "path.freehand",
+        &json!({"points": [[100, 501], [125, 470], [150, 460], [175, 470], [200, 501]], "redraw": {"id": r.0, "within": 4}, "fit": false}),
+    )
+    .unwrap();
+    let sp = path(&s, r).subpaths[0].clone();
+    assert!(corners(&sp), "{:?}", sp.anchors);
+    let inner: Vec<_> = at(&sp).into_iter().filter(|p| p.1 < 499.0).collect();
+    assert_eq!(inner, [(125.0, 470.0), (150.0, 460.0), (175.0, 470.0)]);
+    assert!(s.execute("path.freehand", &json!({"points": [[0, 0], [1, 1]], "fit": "no"})).is_err());
 }
 
 #[test]
@@ -585,6 +809,81 @@ fn eraser_removes_small_shape_entirely() {
     assert!(paths(&s).is_empty());
 }
 
+/// The Eraser's tip is an ellipse `size` across its long axis, at `angle` counter-clockwise from
+/// horizontal, with a short axis `roundness` percent as long: a vertical drag across a square
+/// removes a band as wide as the tip is across, and a press on a horizontal line removes the
+/// tip's horizontal chord through its center.
+#[test]
+fn the_eraser_tip_takes_its_angle_and_roundness() {
+    // The area of a 100 pt square left after a vertical drag through its middle, and the length
+    // of a 200 pt line left after a press on its middle, with a 20 pt tip.
+    let erase = |tip: serde_json::Value| {
+        let mut s = session();
+        rect(&mut s, 100.0, 100.0, 100.0, 100.0);
+        line(&mut s, 300.0, 150.0, 500.0, 150.0);
+        let mut stroke = json!({"points": [[150, 50], [150, 250]], "size": 20});
+        let mut press = json!({"points": [[400, 150]], "size": 20});
+        for p in [&mut stroke, &mut press] {
+            if let (Some(p), Some(tip)) = (p.as_object_mut(), tip.as_object()) {
+                p.extend(tip.clone());
+            }
+        }
+        // With nothing selected each time, so the Eraser erases every path it touches.
+        s.execute("select.none", &json!({})).unwrap();
+        s.execute("path.eraseRegion", &stroke).unwrap();
+        s.execute("select.none", &json!({})).unwrap();
+        s.execute("path.eraseRegion", &press).unwrap();
+        let ps = paths(&s);
+        let left: f64 = ps.iter().map(|p| &p.1).filter(|p| p.is_closed()).map(area).sum();
+        let len: f64 = ps.iter().map(|p| &p.1).filter(|p| !p.is_closed()).map(|p| p.length()).sum();
+        (left, len)
+    };
+    // `band`: how wide the drag cuts; `chord`: how much of the line the press removes.
+    let close = |(left, len): (f64, f64), band: f64, chord: f64| {
+        assert!((left - (10000.0 - 100.0 * band)).abs() < 2.0 * band + 2.0, "{band} pt band: {left} left of the square");
+        assert!((len - (200.0 - chord)).abs() < 0.03 * chord + 0.02, "{chord} pt chord: {len} left of the line");
+    };
+    // Round by default: 20 pt either way.
+    close(erase(json!({})), 20.0, 20.0);
+    // The long axis horizontal: 20 pt either way.
+    close(erase(json!({"angle": 0, "roundness": 25})), 20.0, 20.0);
+    // The long axis upright: 5 pt either way.
+    close(erase(json!({"angle": 90, "roundness": 25})), 5.0, 5.0);
+    // At 45°, half axes 10 and 2.5: the band is 2·√((10² + 2.5²) / 2), about 14.58 pt, and the
+    // chord 2 / √(0.5 / 10² + 0.5 / 2.5²), about 6.86 pt.
+    close(erase(json!({"angle": 45, "roundness": 25})), 2.0 * ((100.0f64 + 6.25) / 2.0).sqrt(), 2.0 / (0.5f64 / 100.0 + 0.5 / 6.25).sqrt());
+    // A roundness past 100 is kept to 100, and one below 1 to 1.
+    close(erase(json!({"angle": 90, "roundness": 400})), 20.0, 20.0);
+    close(erase(json!({"angle": 90, "roundness": 0})), 0.2, 0.2);
+}
+
+#[test]
+fn a_narrow_eraser_finds_a_long_line_between_its_samples() {
+    // A 200 pt line from x = 300 used to be tested every 200 / 24 pt (at 400 and 408.33 near
+    // here), so a tip or a Path Eraser band that fits between two of those points missed it.
+    let left_after = |command: &str, p: serde_json::Value| {
+        let mut s = session();
+        line(&mut s, 300.0, 150.0, 500.0, 150.0);
+        s.execute(command, &p).unwrap();
+        paths(&s).iter().map(|p| p.1.length()).sum::<f64>()
+    };
+    // A 20 pt tip upright at 25%: 5 pt across the line, from 401.5 to 406.5.
+    let len = left_after("path.eraseRegion", json!({"points": [[404, 150]], "size": 20, "angle": 90, "roundness": 25}));
+    assert!((len - 195.0).abs() < 0.2, "the narrow tip left {len} pt of the line");
+    // An 8 pt Path Eraser band across the line, from 400.2 to 408.2.
+    let len = left_after("path.eraseSegments", json!({"points": [[404.2, 100], [404.2, 200]], "width": 8}));
+    assert!((len - 192.0).abs() < 0.2, "the Path Eraser left {len} pt of the line");
+    // The same line drawn as a curve whose handles both sit on its start moves slowly there and
+    // fast near its end, three times as fast as its length suggests, so 80 even steps in t put
+    // samples at 492.59 and 500 and a 5 pt tip at 496.3 sits between them.
+    let mut s = session();
+    let anchors = json!([{"x": 300, "y": 150}, {"x": 500, "y": 150, "in": [300, 150]}]);
+    s.execute("path.create", &json!({ "anchors": anchors })).unwrap();
+    s.execute("path.eraseRegion", &json!({"points": [[496.3, 150]], "size": 5})).unwrap();
+    let len = paths(&s).iter().map(|p| p.1.length()).sum::<f64>();
+    assert!((len - 195.0).abs() < 0.2, "the tip left {len} pt of the curve");
+}
+
 #[test]
 fn path_eraser_splits_selected_path() {
     let mut s = session();
@@ -762,13 +1061,17 @@ fn polar_grid_options_compound_fill_and_skew() {
     assert!(tips(&inward)[1..].iter().all(|t| t.x < 50.0), "counterclockwise of the top: {:?}", tips(&inward));
 }
 
-/// The grid options are checked: a skew is a number and a switch true or false, or the command
-/// fails without an undo step.
+/// The grid options are checked: a divider count or a skew is a number and a switch true or false,
+/// or the command fails without an undo step.
 #[test]
 fn grid_commands_reject_options_of_the_wrong_type() {
     let mut s = session();
     let size = json!({"x": 0, "y": 0, "width": 10, "height": 10});
     for (cmd, key, value) in [
+        ("shape.rectangularGrid", "rows", json!("3")),
+        ("shape.rectangularGrid", "columns", json!([4])),
+        ("shape.polarGrid", "concentric", json!(true)),
+        ("shape.polarGrid", "radial", json!("6")),
         ("shape.rectangularGrid", "rowSkew", json!("50")),
         ("shape.rectangularGrid", "columnSkew", json!(true)),
         ("shape.rectangularGrid", "frame", json!(1)),
@@ -811,6 +1114,405 @@ fn draw2_commands_reject_bad_params() {
     }
 }
 
+/// The Pencil refuses a `fidelity` or a redraw `within` given as text or as another value that is
+/// not a number, and draws or redraws nothing; null is read as the key left out.
+#[test]
+fn pencil_refuses_a_fidelity_or_within_given_as_text() {
+    let mut s = session();
+    let id = line(&mut s, 100.0, 100.0, 300.0, 100.0);
+    let stroke = json!({"points": [[100, 100], [150, 140], [200, 140], [250, 100]]});
+    refuses_a_number_given_as_text(&mut s, "path.freehand", &stroke, "fidelity");
+    for v in [json!("12"), json!([12]), json!(false)] {
+        let p = with(&stroke, json!({"redraw": {"id": id.0, "within": v}}));
+        refuses_with(&mut s, "path.freehand", &p, &format!("`within` must be a number, not {v}"));
+    }
+    let before = path(&s, id);
+    s.execute("path.freehand", &with(&stroke, json!({"fidelity": null, "redraw": {"id": id.0, "within": null}}))).unwrap();
+    assert!(path(&s, id) != before, "the stroke redraws the line within 12 pt");
+}
+
+/// The drawing tools' commands refuse a point whose x or y is not a number, such as "10" or a point
+/// written as text, and a pen pressure given as text, instead of leaving the point out or drawing it
+/// at full pressure; the document stays as it was.
+#[test]
+fn drawing_commands_refuse_a_point_or_pressure_given_as_text() {
+    let mut s = session();
+    let id = rect(&mut s, 100.0, 100.0, 100.0, 100.0);
+    s.execute("select.set", &json!({"ids": [id.0]})).unwrap();
+    let good = [json!([90, 150]), json!([150, 150]), json!([210, 150])];
+    let cmds = ["path.freehand", "path.knife", "path.eraseRegion", "path.eraseSegments", "path.smoothRegion", "path.joinScrub", "path.blob"];
+    for cmd in cmds.into_iter().chain(["path.curvature"]) {
+        for bad in [json!(["150", 150]), json!({"x": 150, "y": "150"}), json!("150, 150"), json!([150]), json!(null)] {
+            let points: Vec<_> = good.iter().cloned().chain([bad]).collect();
+            refuses_with(&mut s, cmd, &json!({"points": points}), "x and y must both be numbers");
+        }
+    }
+    for cmd in cmds {
+        for bad in [json!([150, 150, "0.5"]), json!({"x": 150, "y": 150, "pressure": "0.5"})] {
+            let points: Vec<_> = good.iter().cloned().chain([bad]).collect();
+            refuses_with(&mut s, cmd, &json!({"points": points}), "`pressure` must be a number, not \"0.5\"");
+        }
+    }
+    let pressed = json!({"points": [[100, 400], [150, 420, null], {"x": 200, "y": 400, "pressure": 0.5}], "keepSelected": false});
+    s.execute("path.freehand", &pressed).unwrap();
+}
+
+/// The Eraser, Path Eraser, Smooth, Join and Blob Brush commands refuse a size, angle, roundness,
+/// width, radius, fidelity or tolerance given as text or as another value that is not a number, and change
+/// nothing; null is read as the key left out.
+#[test]
+fn drawing_commands_refuse_a_size_given_as_text() {
+    let mut s = session();
+    let id = rect(&mut s, 100.0, 100.0, 100.0, 100.0);
+    s.execute("select.set", &json!({"ids": [id.0]})).unwrap();
+    let stroke = json!({"points": [[90, 150], [150, 150], [210, 150]]});
+    for (cmd, key) in [
+        ("path.eraseRegion", "size"),
+        ("path.eraseRegion", "angle"),
+        ("path.eraseRegion", "roundness"),
+        ("path.eraseSegments", "width"),
+        ("path.smoothRegion", "radius"),
+        ("path.smoothRegion", "fidelity"),
+        ("path.joinScrub", "tolerance"),
+        ("path.blob", "size"),
+    ] {
+        refuses_a_number_given_as_text(&mut s, cmd, &stroke, key);
+    }
+    let erased = s.execute("path.eraseRegion", &with(&stroke, json!({"size": null}))).unwrap();
+    assert_eq!(erased["ids"].as_array().map(Vec::len), Some(2), "the default 10 pt Eraser cuts the square in two: {erased}");
+}
+
+/// A path of two open subpaths, each of three anchors from x 100 to x 300 with a middle anchor that
+/// has two handles: subpath 0 at y 100, subpath 1 at y 300.
+fn two_subpaths(s: &mut Session) -> NodeId {
+    let id = curve(s);
+    let sub = |y: f64| {
+        let anchors = json!([
+            {"x": 100, "y": y, "out": [130, y - 30.0]},
+            {"x": 200, "y": y, "in": [170, y - 30.0], "out": [230, y - 30.0]},
+            {"x": 300, "y": y, "in": [270, y - 30.0]},
+        ]);
+        json!({"anchors": anchors, "closed": false})
+    };
+    s.execute("path.setAnchors", &json!({"id": id.0, "subpaths": [sub(100.0), sub(300.0)]})).unwrap();
+    id
+}
+
+/// Runs `cmd` with `p` and `key` set to each of 1.5, -1 and "1": each call fails with an error that
+/// names `key`, and the document and the undo history stay as they were.
+fn refuses_an_index_that_is_not_whole(s: &mut Session, cmd: &str, p: &serde_json::Value, key: &str) {
+    for v in [json!(1.5), json!(-1), json!("1")] {
+        let mut p = p.clone();
+        p[key] = v;
+        let before = s.doc().unwrap().doc.clone();
+        let undo = undo_steps(s);
+        let Err(e) = s.execute(cmd, &p) else { panic!("{cmd} {p} succeeded") };
+        assert!(e.to_string().contains(&format!("`{key}`")), "{cmd} {p}: {e}");
+        assert!(s.doc().unwrap().doc == before, "{cmd} {p} changed the document");
+        assert_eq!(undo_steps(s), undo, "{cmd} {p} left an undo step");
+    }
+}
+
+/// Runs `cmd` with `p` and `key` set to each of "10", [10] and true: each call fails with
+/// "`key` must be a number, not <value>", and the document and the undo history stay as they were.
+fn refuses_a_number_given_as_text(s: &mut Session, cmd: &str, p: &serde_json::Value, key: &str) {
+    for v in [json!("10"), json!([10]), json!(true)] {
+        let mut p = p.clone();
+        p[key] = v.clone();
+        let before = s.doc().unwrap().doc.clone();
+        let undo = undo_steps(s);
+        let r = s.execute(cmd, &p);
+        let want = format!("`{key}` must be a number, not {v}");
+        assert!(matches!(&r, Err(EngineError::BadParams { msg, .. }) if *msg == want), "{cmd} {p}: {r:?}");
+        assert!(s.doc().unwrap().doc == before, "{cmd} {p} changed the document");
+        assert_eq!(undo_steps(s), undo, "{cmd} {p} left an undo step");
+    }
+}
+
+/// Runs `cmd` with `p`: the call fails with `want`, and the document and the undo history stay as
+/// they were.
+fn refuses_with(s: &mut Session, cmd: &str, p: &serde_json::Value, want: &str) {
+    let before = s.doc().unwrap().doc.clone();
+    let undo = undo_steps(s);
+    let r = s.execute(cmd, p);
+    assert!(matches!(&r, Err(EngineError::BadParams { msg, .. }) if msg == want), "{cmd} {p}: {r:?}");
+    assert!(s.doc().unwrap().doc == before, "{cmd} {p} changed the document");
+    assert_eq!(undo_steps(s), undo, "{cmd} {p} left an undo step");
+}
+
+/// Runs `cmd` with `p` on path `id` (made by [`two_subpaths`]) with `subpath: 1`, without `subpath`
+/// and with `subpath: null`, undoing each: the first changes subpath 1 alone, and the others change
+/// subpath 0 alone.
+fn edits_the_subpath_given(s: &mut Session, cmd: &str, p: &serde_json::Value, id: NodeId) {
+    let before = path(s, id).subpaths;
+    for (si, p) in [(1, with(p, json!({"subpath": 1}))), (0, p.clone()), (0, with(p, json!({"subpath": null})))] {
+        s.execute(cmd, &p).unwrap();
+        let after = path(s, id).subpaths;
+        assert_eq!(after.len(), 2, "{cmd} {p}");
+        assert!(after[si] != before[si] && after[1 - si] == before[1 - si], "{cmd} {p}: {after:?}");
+        s.execute("edit.undo", &json!({})).unwrap();
+        assert_eq!(path(s, id).subpaths, before, "{cmd} {p}: undo");
+    }
+}
+
+#[test]
+fn curvature_edit_refuses_a_subpath_that_is_not_a_whole_number() {
+    let mut s = session();
+    let id = two_subpaths(&mut s);
+    let p = json!({"id": id.0, "op": "move", "anchor": 1, "x": 200, "y": 150});
+    refuses_an_index_that_is_not_whole(&mut s, "path.curvatureEdit", &p, "subpath");
+    edits_the_subpath_given(&mut s, "path.curvatureEdit", &p, id);
+}
+
+#[test]
+fn remove_anchor_refuses_a_subpath_that_is_not_a_whole_number() {
+    let mut s = session();
+    let id = two_subpaths(&mut s);
+    let p = json!({"id": id.0, "anchor": 1});
+    refuses_an_index_that_is_not_whole(&mut s, "path.removeAnchor", &p, "subpath");
+    edits_the_subpath_given(&mut s, "path.removeAnchor", &p, id);
+}
+
+#[test]
+fn convert_anchor_refuses_a_subpath_that_is_not_a_whole_number() {
+    let mut s = session();
+    let id = two_subpaths(&mut s);
+    let p = json!({"id": id.0, "anchor": 1, "to": "corner"});
+    refuses_an_index_that_is_not_whole(&mut s, "path.convertAnchor", &p, "subpath");
+    edits_the_subpath_given(&mut s, "path.convertAnchor", &p, id);
+}
+
+#[test]
+fn reshape_segment_refuses_a_subpath_that_is_not_a_whole_number() {
+    let mut s = session();
+    let id = two_subpaths(&mut s);
+    let p = json!({"id": id.0, "segment": 0, "t": 0.5, "dx": 0, "dy": 20});
+    refuses_an_index_that_is_not_whole(&mut s, "path.reshapeSegment", &p, "subpath");
+    edits_the_subpath_given(&mut s, "path.reshapeSegment", &p, id);
+}
+
+#[test]
+fn split_refuses_a_subpath_anchor_or_segment_that_is_not_a_whole_number() {
+    // A bad `anchor` beside a good `segment` is refused, and so is a bad `segment` beside a good
+    // `anchor`.
+    let mut s = session();
+    let id = two_subpaths(&mut s);
+    let at_anchor = json!({"id": id.0, "anchor": 1});
+    let at_segment = json!({"id": id.0, "segment": 0, "t": 0.5});
+    refuses_an_index_that_is_not_whole(&mut s, "path.split", &at_anchor, "subpath");
+    refuses_an_index_that_is_not_whole(&mut s, "path.split", &at_segment, "subpath");
+    refuses_an_index_that_is_not_whole(&mut s, "path.split", &at_segment, "anchor");
+    refuses_an_index_that_is_not_whole(&mut s, "path.split", &at_anchor, "segment");
+    let before = path(&s, id).subpaths;
+    for (si, p) in [(1, with(&at_anchor, json!({"subpath": 1}))), (0, at_anchor.clone()), (0, with(&at_anchor, json!({"subpath": null})))] {
+        s.execute("path.split", &p).unwrap();
+        let after = path(&s, id).subpaths;
+        // The subpath split becomes two of two anchors each, in its place.
+        let kept = if si == 1 { &after[0] } else { &after[2] };
+        assert!(after.len() == 3 && after[si].anchors.len() == 2 && after[si + 1].anchors.len() == 2, "{p}: {after:?}");
+        assert_eq!(kept, &before[1 - si], "{p}");
+        s.execute("edit.undo", &json!({})).unwrap();
+        assert_eq!(path(&s, id).subpaths, before, "{p}: undo");
+    }
+}
+
+/// A subpath, anchor or segment of 2^32 + k fails, where k names one that exists, and the document
+/// and the undo history stay as they were. A 32-bit build read the number as k.
+#[test]
+fn path_commands_refuse_a_subpath_anchor_or_segment_past_u32() {
+    let mut s = session();
+    let id = two_subpaths(&mut s);
+    let at_anchor = json!({"id": id.0, "anchor": 1});
+    let at_segment = json!({"id": id.0, "segment": 0, "t": 0.5});
+    let curvature_move = json!({"id": id.0, "op": "move", "anchor": 1, "x": 200, "y": 150});
+    let curvature_insert = json!({"id": id.0, "op": "insert", "segment": 0, "t": 0.5});
+    let convert = json!({"id": id.0, "anchor": 1, "to": "corner"});
+    let reshape = json!({"id": id.0, "segment": 0, "t": 0.5, "dx": 0, "dy": 20});
+    let handle = json!({"id": id.0, "anchor": 0, "which": "out", "x": 140, "y": 250});
+    let moved = json!({"id": id.0, "anchor": 0, "x": 140, "y": 250});
+    for (cmd, p, key) in [
+        ("path.curvatureEdit", &curvature_move, "subpath"),
+        ("path.curvatureEdit", &curvature_move, "anchor"),
+        ("path.curvatureEdit", &curvature_insert, "segment"),
+        ("path.removeAnchor", &at_anchor, "subpath"),
+        ("path.removeAnchor", &at_anchor, "anchor"),
+        ("path.convertAnchor", &convert, "subpath"),
+        ("path.convertAnchor", &convert, "anchor"),
+        ("path.reshapeSegment", &reshape, "subpath"),
+        ("path.reshapeSegment", &reshape, "segment"),
+        ("path.split", &at_anchor, "anchor"),
+        ("path.split", &at_segment, "segment"),
+        ("path.setHandle", &handle, "subpath"),
+        ("path.setHandle", &handle, "anchor"),
+        ("path.moveAnchor", &moved, "subpath"),
+        ("path.moveAnchor", &moved, "anchor"),
+        ("path.insertAnchor", &at_segment, "subpath"),
+        ("path.insertAnchor", &at_segment, "segment"),
+    ] {
+        let mut p = p.clone();
+        let k = if key == "subpath" { 1 } else { p[key].as_u64().unwrap() };
+        p[key] = json!((1u64 << 32) + k);
+        let before = s.doc().unwrap().doc.clone();
+        let undo = undo_steps(&s);
+        assert!(s.execute(cmd, &p).is_err(), "{cmd} {p} succeeded");
+        assert!(s.doc().unwrap().doc == before, "{cmd} {p} changed the document");
+        assert_eq!(undo_steps(&s), undo, "{cmd} {p} left an undo step");
+    }
+}
+
+#[test]
+fn set_handle_refuses_a_subpath_that_is_not_a_whole_number() {
+    let mut s = session();
+    let id = two_subpaths(&mut s);
+    let p = json!({"id": id.0, "anchor": 0, "which": "out", "x": 140, "y": 250});
+    refuses_an_index_that_is_not_whole(&mut s, "path.setHandle", &p, "subpath");
+    edits_the_subpath_given(&mut s, "path.setHandle", &p, id);
+}
+
+#[test]
+fn move_anchor_takes_its_handles_along_and_refuses_a_subpath_that_is_not_a_whole_number() {
+    let mut s = session();
+    let id = two_subpaths(&mut s);
+    let p = json!({"id": id.0, "anchor": 0, "x": 140, "y": 250});
+    refuses_an_index_that_is_not_whole(&mut s, "path.moveAnchor", &p, "subpath");
+    edits_the_subpath_given(&mut s, "path.moveAnchor", &p, id);
+    // The anchor lands on (x, y) and its handles keep their offsets from it.
+    s.execute("path.setHandle", &json!({"id": id.0, "anchor": 0, "which": "out", "x": 30, "y": 40})).unwrap();
+    let a = path(&s, id).subpaths[0].anchors[0];
+    s.execute("path.moveAnchor", &json!({"id": id.0, "anchor": 0, "x": a.p.x + 15.0, "y": a.p.y - 5.0})).unwrap();
+    let b = path(&s, id).subpaths[0].anchors[0];
+    assert_eq!(b.p, a.p + vectorcraft_geom::Vec2::new(15.0, -5.0));
+    assert_eq!(b.h_out - b.p, a.h_out - a.p);
+    assert_eq!(b.h_in - b.p, a.h_in - a.p);
+    assert!(s.execute("path.moveAnchor", &json!({"id": id.0, "anchor": 99, "x": 0, "y": 0})).is_err());
+}
+
+#[test]
+fn insert_anchor_refuses_a_subpath_that_is_not_a_whole_number() {
+    let mut s = session();
+    let id = two_subpaths(&mut s);
+    let p = json!({"id": id.0, "segment": 0, "t": 0.5});
+    refuses_an_index_that_is_not_whole(&mut s, "path.insertAnchor", &p, "subpath");
+    edits_the_subpath_given(&mut s, "path.insertAnchor", &p, id);
+}
+
+/// `path.reshapeSegment` refuses a `t`, `dx` or `dy` given as text or as another value that is not
+/// a number, instead of bending the segment by 0 or at its middle; `dy: 20` bends it, with a null
+/// `t` read as the middle.
+#[test]
+fn reshape_segment_refuses_a_number_given_as_text() {
+    let mut s = session();
+    let id = curve(&mut s);
+    let p = json!({"id": id.0, "segment": 0, "t": 0.5, "dx": 0, "dy": 20});
+    for key in ["t", "dx", "dy"] {
+        refuses_a_number_given_as_text(&mut s, "path.reshapeSegment", &p, key);
+    }
+    let before = path(&s, id);
+    s.execute("path.reshapeSegment", &with(&p, json!({"t": null}))).unwrap();
+    assert!(path(&s, id) != before, "the segment bends");
+}
+
+/// `path.convertAnchor` refuses an `x` or `y` given as text, and an `x` without a `y` or a `y`
+/// without an `x`, instead of converting the anchor without a handle position; both as numbers
+/// place the out handle there.
+#[test]
+fn convert_anchor_refuses_a_handle_position_given_as_text_or_alone() {
+    let mut s = session();
+    let id = curve(&mut s);
+    let p = json!({"id": id.0, "anchor": 1, "to": "smooth", "x": 330, "y": 150});
+    for key in ["x", "y"] {
+        refuses_a_number_given_as_text(&mut s, "path.convertAnchor", &p, key);
+    }
+    for lone in [json!({"y": null}), json!({"x": null}), json!({"y": null, "to": "corner"})] {
+        refuses_with(&mut s, "path.convertAnchor", &with(&p, lone), "x and y must be given together");
+    }
+    s.execute("path.convertAnchor", &p).unwrap();
+    assert_eq!(path(&s, id).subpaths[0].anchors[1].h_out, Point::new(330.0, 150.0));
+}
+
+/// The Curvature tool's edits and Add Anchor Point refuse a `t`, `x` or `y` given as text or as
+/// another value that is not a number, instead of inserting at the middle of the segment or leaving
+/// the new anchor where it was inserted.
+#[test]
+fn curvature_edit_and_insert_anchor_refuse_a_number_given_as_text() {
+    let mut s = session();
+    let id = curve(&mut s);
+    let insert = json!({"id": id.0, "op": "insert", "segment": 0, "t": 0.25});
+    let moved = json!({"id": id.0, "op": "insert", "segment": 0, "t": 0.25, "x": 150, "y": 160});
+    refuses_a_number_given_as_text(&mut s, "path.curvatureEdit", &insert, "t");
+    for key in ["x", "y"] {
+        refuses_a_number_given_as_text(&mut s, "path.curvatureEdit", &moved, key);
+        refuses_a_number_given_as_text(&mut s, "path.curvatureEdit", &json!({"id": id.0, "op": "move", "anchor": 1, "x": 300, "y": 150}), key);
+    }
+    refuses_a_number_given_as_text(&mut s, "path.insertAnchor", &json!({"id": id.0, "segment": 0, "t": 0.25}), "t");
+    s.execute("path.curvatureEdit", &moved).unwrap();
+    assert_eq!(path(&s, id).subpaths[0].anchors[1].p, Point::new(150.0, 160.0));
+    s.execute("path.insertAnchor", &json!({"id": id.0, "segment": 0, "t": null})).unwrap();
+    assert_eq!(path(&s, id).subpaths[0].anchors.len(), 4, "a null t inserts at the middle");
+}
+
+/// Move Anchors, the Reshape tool's command and Close Path refuse a number or handle given as text
+/// or as another value that is not a number, and change nothing; null is read as the key left out.
+#[test]
+fn move_anchors_reshape_and_close_refuse_a_number_given_as_text() {
+    let mut s = session();
+    let id = curve(&mut s);
+    s.execute("select.anchors", &json!({"id": id.0, "anchors": [[0, 1]]})).unwrap();
+    let nudge = json!({"dx": 10, "dy": 0});
+    for key in ["dx", "dy"] {
+        refuses_a_number_given_as_text(&mut s, "path.moveAnchors", &nudge, key);
+    }
+    let reshape = json!({"id": id.0, "x": 200, "y": 100, "dx": 0, "dy": 30, "tol": 3, "radius": 50});
+    for key in ["dx", "dy", "tol", "radius"] {
+        refuses_a_number_given_as_text(&mut s, "path.reshape", &reshape, key);
+    }
+    for h in [json!("200, 150"), json!([200]), json!([200, "150"]), json!({"x": 200, "y": 150})] {
+        refuses_with(&mut s, "path.close", &json!({"id": id.0, "in": h}), "`in` must be [x, y]");
+    }
+    let before = path(&s, id);
+    s.execute("path.moveAnchors", &json!({"dx": 10, "dy": null})).unwrap();
+    s.execute("path.reshape", &with(&reshape, json!({"radius": null}))).unwrap();
+    s.execute("path.close", &json!({"id": id.0, "in": null})).unwrap();
+    // The Reshape tool's grab adds an anchor between the two, so the moved anchor is the last.
+    let after = path(&s, id);
+    let moved = after.subpaths[0].anchors.last().map(|a| a.p.x);
+    assert!(after.subpaths[0].closed && moved == Some(before.subpaths[0].anchors[1].p.x + 10.0), "{after:?}");
+}
+
+/// Close Path, Set Handle, Move Anchors and the Pencil, Curvature, Reshape Segment and Blob Brush
+/// commands refuse an on/off option given as text or as another value that is not true or false,
+/// naming the key, and change nothing; true, false and null still work.
+#[test]
+fn path_commands_refuse_a_boolean_given_as_text() {
+    let mut s = session();
+    let id = curve(&mut s);
+    s.execute("select.anchors", &json!({"id": id.0, "anchors": [[0, 1]]})).unwrap();
+    let stroke = json!([[100, 300], [150, 340], [200, 300]]);
+    let calls = [
+        ("path.close", json!({"id": id.0, "independent": "true"}), "independent"),
+        ("path.setHandle", json!({"id": id.0, "anchor": 0, "x": 160, "y": 90, "independent": 1}), "independent"),
+        ("path.moveAnchors", json!({"dx": 10, "patterns": "true"}), "patterns"),
+        ("path.freehand", json!({"points": stroke, "closed": "true"}), "closed"),
+        ("path.freehand", json!({"points": stroke, "keepSelected": "false"}), "keepSelected"),
+        ("path.freehand", json!({"points": stroke, "fill": [true]}), "fill"),
+        ("path.curvature", json!({"points": stroke, "closed": "true"}), "closed"),
+        ("path.curvature", json!({"points": [{"x": 100, "y": 300, "corner": "true"}, [150, 340], [200, 300]]}), "corner"),
+        ("path.curvatureEdit", json!({"id": id.0, "op": "move", "anchor": 1, "x": 300, "y": 150, "corner": "true"}), "corner"),
+        ("path.reshapeSegment", json!({"id": id.0, "segment": 0, "dy": 20, "perpendicular": "true"}), "perpendicular"),
+        ("path.blob", json!({"points": stroke, "keepSelected": "true"}), "keepSelected"),
+        ("path.blob", json!({"points": stroke, "mergeOnlySelection": 1}), "mergeOnlySelection"),
+        ("path.blob", json!({"points": stroke, "merge": "false"}), "merge"),
+    ]
+    .map(|(cmd, p, key)| super::tests::not_a_switch(cmd, p, key));
+    let wrong = super::tests::not_refused(&mut s, &calls);
+    assert!(wrong.is_empty(), "not refused: {wrong:#?}");
+    s.execute("path.setHandle", &json!({"id": id.0, "anchor": 0, "x": 160, "y": 90, "independent": true})).unwrap();
+    s.execute("path.close", &json!({"id": id.0, "independent": null})).unwrap();
+    s.execute("path.freehand", &json!({"points": stroke, "closed": false, "keepSelected": null, "fill": true})).unwrap();
+    s.execute("path.blob", &json!({"points": stroke, "merge": false, "keepSelected": null, "mergeOnlySelection": false})).unwrap();
+    assert!(path(&s, id).subpaths[0].closed);
+}
+
 #[test]
 fn path_commands_refuse_a_delta_or_point_of_1e9_pt_or_more() {
     // `path.reshapeSegment` refuses a delta of 1e9 pt or longer, and `path.convertAnchor` and
@@ -847,6 +1549,33 @@ fn path_commands_refuse_a_delta_or_point_of_1e9_pt_or_more() {
         s.execute("path.reshapeSegment", &p).unwrap();
         assert!(finite(&s), "{p}: {:?}", path(&s, id));
     }
+}
+
+#[test]
+fn a_selected_curve_whose_handles_are_near_1e308_is_refused() {
+    // The canvas check measures a selected curve whose handles are near ±1e308 by its control
+    // points, so `path.create` refuses such a curve, given as anchors or as path data: the document
+    // stays as it was, with no undo step.
+    let mut s = session();
+    curve(&mut s);
+    let h = 1e308;
+    for p in [
+        json!({"anchors": [{"x": 100, "y": 100, "out": [150, h]}, {"x": 300, "y": 100, "in": [250, h]}]}),
+        json!({"anchors": [{"x": 100, "y": 100, "out": [150, -h]}, {"x": 300, "y": 100, "in": [250, h]}]}),
+        json!({"anchors": [{"x": 100, "y": 100, "out": [1.7e308, 100]}, {"x": 300, "y": 100}]}),
+        json!({"d": "M100 100 C150 1e308 250 1e308 300 100"}),
+    ] {
+        let before = s.doc().unwrap().doc.clone();
+        let undo = s.doc().unwrap().history.undo.len();
+        let e = s.execute("path.create", &p).unwrap_err().to_string();
+        assert!(e.contains("exceed the canvas"), "{p}: {e}");
+        assert!(s.doc().unwrap().doc == before, "{p} changed the document");
+        assert_eq!(s.doc().unwrap().history.undo.len(), undo, "{p} left an undo step");
+    }
+    // A curve whose handles stay on the canvas is kept.
+    let p = json!({"anchors": [{"x": 100, "y": 100, "out": [150, 3e6]}, {"x": 300, "y": 100, "in": [250, 3e6]}]});
+    let id = NodeId(s.execute("path.create", &p).unwrap()["id"].as_u64().unwrap());
+    assert!(path(&s, id).bounds().is_some_and(|b| b.y1 > 2e6));
 }
 
 /// A curve from (100, 100) to (300, 100) whose first anchor has an out handle at (150, 100).
@@ -1383,6 +2112,36 @@ fn pen_with_cmd_borrows_direct_selection_and_goes_on_drawing() {
 }
 
 #[test]
+fn cmd_alt_lends_group_selection_while_direct_selection_is_active() {
+    let (cmd, cmd_alt) = (Mods { cmd: true, ..Mods::default() }, Mods { cmd: true, alt: true, ..Mods::default() });
+    let v = view();
+    let mut s = session();
+    // Cmd+Alt while the Pen borrows Direct Selection keeps Direct Selection (Alt is copy/subtract).
+    s.select_tool("directSelection", v).unwrap();
+    s.select_tool("pen", v).unwrap();
+    s.pointer(&PointerEvent::new(PointerKind::Down, 50.0, 50.0).with_mods(cmd_alt), v).unwrap();
+    assert_eq!(s.tool_id(), "directSelection");
+    s.pointer(&PointerEvent::new(PointerKind::Up, 50.0, 50.0).with_mods(cmd_alt), v).unwrap();
+    assert_eq!(s.tool_id(), "pen");
+    // Cmd alone still lends Direct Selection.
+    s.pointer(&PointerEvent::new(PointerKind::Down, 60.0, 60.0).with_mods(cmd), v).unwrap();
+    assert_eq!(s.tool_id(), "directSelection");
+    s.pointer(&PointerEvent::new(PointerKind::Up, 60.0, 60.0).with_mods(cmd), v).unwrap();
+    // While Direct Selection is active, Cmd+Alt lends Group Selection for the gesture.
+    s.select_tool("directSelection", v).unwrap();
+    s.pointer(&PointerEvent::new(PointerKind::Down, 70.0, 70.0).with_mods(cmd_alt), v).unwrap();
+    assert_eq!(s.tool_id(), "groupSelection");
+    s.pointer(&PointerEvent::new(PointerKind::Up, 70.0, 70.0).with_mods(cmd_alt), v).unwrap();
+    assert_eq!(s.tool_id(), "directSelection");
+    // Selection last: Cmd+Alt still lends Selection, not Group Selection.
+    s.select_tool("selection", v).unwrap();
+    s.select_tool("pen", v).unwrap();
+    s.pointer(&PointerEvent::new(PointerKind::Down, 80.0, 80.0).with_mods(cmd_alt), v).unwrap();
+    assert_eq!(s.tool_id(), "selection");
+    s.pointer(&PointerEvent::new(PointerKind::Up, 80.0, 80.0).with_mods(cmd_alt), v).unwrap();
+}
+
+#[test]
 fn the_pen_drops_the_new_path_asterisk_once_a_path_is_started() {
     // The Pen's asterisk means a click starts a new path: it shows until the first anchor is
     // placed, the pen has no badge while the path is drawn, and the asterisk comes back once the
@@ -1620,9 +2379,48 @@ fn join_takes_the_paths_and_the_ends_to_join() {
         json!({"ids": [a.0, 999]}),
         json!({"ids": [a.0, r.0], "ends": ["first"]}),
         json!({"ids": [a.0, b.0], "ends": ["first", "middle"]}),
+        json!({"to": "round"}),
     ] {
         assert!(s.execute("path.join", &bad).is_err(), "{bad}");
     }
+}
+
+/// Without `ends`, the end points picked with the direct selection are the ones joined.
+#[test]
+fn join_uses_the_selected_end_points() {
+    let mut s = session();
+    let a = line(&mut s, 0.0, 0.0, 100.0, 0.0);
+    let b = line(&mut s, 110.0, 0.0, 200.0, 0.0);
+    s.execute("select.all", &json!({})).unwrap();
+    s.execute("select.anchors", &json!({"id": a.0, "anchors": [[0, 0]], "mode": "add"})).unwrap();
+    s.execute("select.anchors", &json!({"id": b.0, "anchors": [[0, 1]], "mode": "add"})).unwrap();
+    s.execute("path.join", &json!({})).unwrap();
+    let pts: Vec<(f64, f64)> = path(&s, a).subpaths[0].anchors.iter().map(|x| (x.p.x, x.p.y)).collect();
+    assert_eq!(pts, [(100.0, 0.0), (0.0, 0.0), (200.0, 0.0), (110.0, 0.0)]);
+}
+
+/// `path.join {to}` makes the joined anchor a corner or smooth point.
+#[test]
+fn join_to_corner_or_smooth_sets_the_merged_anchor() {
+    let mut s = session();
+    let r = rect(&mut s, 100.0, 100.0, 100.0, 80.0);
+    s.execute("select.anchors", &json!({"id": r.0, "anchors": [[0, 0], [0, 1]], "mode": "set"})).unwrap();
+    s.execute("path.average", &json!({"axis": "both"})).unwrap();
+    s.execute("path.join", &json!({"to": "corner"})).unwrap();
+    let a = &path(&s, r).subpaths[0].anchors[0];
+    assert_eq!(a.kind, vectorcraft_geom::AnchorKind::Corner);
+    assert_eq!((a.h_in, a.h_out), (a.p, a.p));
+    s.execute("edit.undo", &json!({})).unwrap();
+    s.execute("edit.undo", &json!({})).unwrap();
+    s.execute("path.average", &json!({"axis": "both"})).unwrap();
+    s.execute("path.join", &json!({"to": "smooth"})).unwrap();
+    let a = &path(&s, r).subpaths[0].anchors[0];
+    assert_eq!(a.kind, vectorcraft_geom::AnchorKind::Smooth);
+    let a = line(&mut s, 0.0, 0.0, 100.0, 0.0);
+    let b = line(&mut s, 100.0, 0.0, 200.0, 0.0);
+    s.execute("path.join", &json!({"ids": [a.0, b.0], "to": "smooth"})).unwrap();
+    let j = &path(&s, a).subpaths[0].anchors[1];
+    assert_eq!(j.kind, vectorcraft_geom::AnchorKind::Smooth);
 }
 
 #[test]
@@ -1761,6 +2559,26 @@ fn open_anchor_delete_preserves_curves_appearance_and_history() {
 }
 
 #[test]
+fn closed_anchor_delete_then_join_closes_with_a_line() {
+    let mut s = session();
+    let data = "M100 100C120 60 180 60 200 100C220 140 280 140 300 100C320 60 380 60 400 100C420 140 480 140 500 100C500 200 100 200 100 100Z";
+    let id = NodeId(s.execute("path.create", &json!({"d": data})).unwrap()["id"].as_u64().unwrap());
+    s.execute("select.anchors", &json!({"id": id.0, "anchors": [[0, 2]]})).unwrap();
+    s.execute("path.deleteAnchors", &json!({})).unwrap();
+    let result = path(&s, id);
+    assert_eq!(result.subpaths.len(), 1);
+    let sp = &result.subpaths[0];
+    assert!(!sp.closed);
+    assert!(!sp.anchors.first().unwrap().has_in() && !sp.anchors.last().unwrap().has_out(), "dangling handles are cleared");
+    s.execute("path.join", &json!({"ids": [id.0]})).unwrap();
+    let joined = path(&s, id);
+    let sp = &joined.subpaths[0];
+    assert!(sp.closed);
+    let closing = sp.segment(sp.segment_count() - 1);
+    assert!(closing.p1 == closing.p0 && closing.p2 == closing.p3, "closing segment is a line: {closing:?}");
+}
+
+#[test]
 fn open_anchor_delete_does_not_change_explicit_remove_anchors() {
     for command in ["path.removeAnchors", "path.removeAnchor"] {
         let mut s = session();
@@ -1838,4 +2656,118 @@ fn open_anchor_delete_after_transform_keeps_mixed_selection_atomic() {
         assert_eq!(s.doc().unwrap().doc, after);
         assert_eq!(s.doc().unwrap().selection.objects, vec![id]);
     }
+}
+
+/// The anchors of a closed, slightly wobbly blob drawn at `fidelity`: samples half a point apart,
+/// with a small tremor on top of the outline.
+fn blob_anchors(s: &mut Session, fidelity: f64) -> usize {
+    let pts: Vec<_> = (0..1200)
+        .map(|i| {
+            let a = i as f64 / 1200.0 * std::f64::consts::TAU;
+            let r = 90.0 + 12.0 * (3.0 * a).sin() + 0.15 * (97.0 * a).sin();
+            json!([400.0 + r * a.cos(), 300.0 + r * a.sin()])
+        })
+        .collect();
+    let r = s.execute("path.freehand", &json!({"points": pts, "closed": true, "fidelity": fidelity, "keepSelected": false})).unwrap();
+    path(s, NodeId(r["id"].as_u64().unwrap())).subpaths.iter().map(|sp| sp.anchors.len()).sum()
+}
+
+/// Fidelity goes down to 0.01 pt (#3328), and a lower one never keeps fewer anchors.
+#[test]
+fn pencil_fidelity_goes_down_to_a_hundredth_and_lower_keeps_more() {
+    let mut s = session();
+    let counts: Vec<_> = [0.5, 0.1, 0.05, 0.02, 0.01].into_iter().map(|f| blob_anchors(&mut s, f)).collect();
+    assert!(counts.windows(2).all(|w| w[0] <= w[1]), "{counts:?}");
+    // Below the old floor of 0.05 the stroke keeps more of itself.
+    assert!(counts[4] > counts[2], "{counts:?}");
+    // Below 0.01 is read as 0.01.
+    assert_eq!(blob_anchors(&mut s, 0.001), counts[4]);
+    assert_eq!(blob_anchors(&mut s, 0.0), counts[4]);
+}
+
+/// At Fidelity 0.01 short, one-point and repeated-point strokes still draw or are refused, never
+/// crash, and what they draw has finite anchors.
+#[test]
+fn pencil_at_the_lowest_fidelity_takes_degenerate_strokes() {
+    let mut s = session();
+    for points in [
+        json!([[10, 10]]),
+        json!([[10, 10], [10, 10]]),
+        json!([[10, 10], [10, 10], [10, 10], [10, 10]]),
+        json!([[10, 10], [10.001, 10]]),
+        json!([[10, 10], [10.004, 10.003], [10.002, 10.001], [10.006, 10]]),
+        json!([[10, 10], [20, 10], [10, 10]]),
+        json!([[10, 10], [20, 10], [20, 10], [20, 10], [30, 10]]),
+    ] {
+        for closed in [false, true] {
+            let p = json!({"points": points, "closed": closed, "fidelity": 0.01, "keepSelected": false});
+            let Ok(r) = s.execute("path.freehand", &p) else { continue };
+            let Some(id) = r["id"].as_u64() else { continue };
+            let Some(pd) = s.doc().unwrap().doc.node(NodeId(id)).and_then(|n| n.path_data().cloned()) else { continue };
+            for a in pd.subpaths.iter().flat_map(|sp| &sp.anchors) {
+                assert!([a.p, a.h_in, a.h_out].iter().all(|q| q.x.is_finite() && q.y.is_finite()), "{points} closed {closed}");
+            }
+        }
+    }
+}
+
+/// The Pencil's Fidelity option takes 0.01, and the Smooth tool's stays at 0.05 or more.
+#[test]
+fn pencil_option_takes_a_hundredth_and_smooth_keeps_its_floor() {
+    let mut s = session();
+    for (tool, want) in [("pencil", 0.01), ("paintbrush", 0.01), ("smooth", 0.05)] {
+        s.set_tool_option_cmd(&json!({"tool": tool, "values": {"fidelity": 0.001}})).unwrap();
+        assert_eq!(s.tool_options_of(tool)["fidelity"].as_f64(), Some(want), "{tool}");
+        s.set_tool_option_cmd(&json!({"tool": tool, "values": {"fidelity": 0.02}})).unwrap();
+        assert_eq!(s.tool_options_of(tool)["fidelity"].as_f64(), Some(if tool == "smooth" { 0.05 } else { 0.02 }), "{tool}");
+    }
+}
+
+/// A selected compound path (a shape with a hole) is overdrawn as its paths are: a Pencil stroke
+/// starting and ending on its outer path, or on its hole, redraws that member path, draws no new
+/// path, and leaves the compound path selected, so the next stroke redraws it too.
+#[test]
+fn pencil_redraws_a_selected_compound_path() {
+    let mut s = session();
+    s.execute("select.none", &json!({})).unwrap();
+    let ring = |cx: f64, rx: f64, ry: f64| -> Vec<serde_json::Value> {
+        (0..72)
+            .map(|i| {
+                let a = f64::from(i * 5).to_radians();
+                json!([cx + rx * a.cos(), 300.0 + ry * a.sin()])
+            })
+            .collect()
+    };
+    let outer = s.execute("path.freehand", &json!({"points": ring(400.0, 150.0, 90.0), "closed": true})).unwrap()["id"].as_u64().unwrap();
+    let hole = s.execute("path.freehand", &json!({"points": ring(380.0, 60.0, 30.0), "closed": true})).unwrap()["id"].as_u64().unwrap();
+    s.execute("select.set", &json!({"ids": [outer, hole]})).unwrap();
+    s.execute("object.compoundPath.make", &json!({})).unwrap();
+    let compound = s.doc().unwrap().selection.objects.clone();
+    assert_eq!(compound.len(), 1);
+    let members = |s: &Session| -> Vec<PathData> {
+        s.doc().unwrap().doc.node(compound[0]).unwrap().children().unwrap().iter().map(|c| c.path_data().unwrap().clone()).collect()
+    };
+    let before = members(&s);
+    let v = view();
+    s.select_tool("pencil", v).unwrap();
+    let count = |s: &Session| s.doc().unwrap().doc.layers[0].children().map_or(0, |c| c.len());
+    let stroke = |s: &mut Session, pts: &[(f64, f64)]| {
+        s.pointer(&PointerEvent::new(PointerKind::Down, pts[0].0, pts[0].1), v).unwrap();
+        for &(x, y) in &pts[1..] {
+            s.pointer(&PointerEvent::new(PointerKind::Drag, x, y), v).unwrap();
+        }
+        let l = pts[pts.len() - 1];
+        s.pointer(&PointerEvent::new(PointerKind::Up, l.0, l.1), v).unwrap();
+    };
+    // Over the outer path's right side, bowing outward: from (550, 300) round to (520, 360).
+    stroke(&mut s, &[(550.0, 300.0), (575.0, 315.0), (580.0, 335.0), (560.0, 355.0), (520.0, 360.0)]);
+    assert_eq!(count(&s), 1, "no new path");
+    assert_eq!(s.doc().unwrap().selection.objects, compound, "the compound path stays selected");
+    let after = members(&s);
+    assert!(after[0] != before[0] && after[1] == before[1], "the outer path is redrawn, the hole left alone");
+    // Then over the hole's left side: the compound path is still the one redrawn.
+    stroke(&mut s, &[(320.0, 300.0), (310.0, 290.0), (312.0, 280.0), (330.0, 274.0)]);
+    assert_eq!(count(&s), 1, "no new path");
+    assert_eq!(s.doc().unwrap().selection.objects, compound);
+    assert!(members(&s)[1] != before[1], "the hole is redrawn");
 }

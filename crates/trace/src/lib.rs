@@ -40,7 +40,8 @@
 //! parts become stroked outlines.
 //!
 //! Colour layers are traced either *abutting* (each colour's own area; shapes share edges) or
-//! *overlapping* (stacked: each layer also covers every layer above it, so no hairline gaps).
+//! *overlapping* (stacked: each layer also covers the layers above it within the areas that hold
+//! its own color, so no hairline gaps).
 #![forbid(unsafe_code)]
 
 mod centerline;
@@ -234,7 +235,8 @@ pub enum Method {
     /// Each colour traced on its own; neighbouring shapes share their edge.
     #[default]
     Abutting,
-    /// Stacked: every layer extends under the layers above it.
+    /// Stacked: every layer extends under the layers above it, within the areas that hold its own
+    /// color.
     Overlapping,
 }
 
@@ -255,7 +257,9 @@ pub enum Palette {
     #[serde(alias = "Automatic")]
     Automatic,
     /// The most used colours of a swatch library ([`TraceParams::swatches`]), at most `colors` of
-    /// them, exactly as they are.
+    /// them, exactly as they are. Each pixel takes the library color nearest in lightness and
+    /// hue, with hue and chroma counted three times as much as lightness, so that neutral tones
+    /// stay off saturated colors.
     #[serde(alias = "library", alias = "Document Library")]
     DocumentLibrary,
 }
@@ -277,8 +281,12 @@ pub struct TraceParams {
     /// Document Library: the swatch library, `"document"` (the document's swatches) or a library id
     /// or name. The caller looks its colours up into `swatches`.
     pub library: String,
+    /// Document Library with the document's swatches: the name of the color group whose colors are
+    /// used. `None` (or empty) uses every swatch. `imageTrace.make` refuses a name with any other
+    /// palette, library or mode.
+    pub color_group: Option<String>,
     /// Document Library: the library's colours (sRGB). Not saved: they are looked up from
-    /// `library` at every trace.
+    /// `library` (and `color_group`) at every trace.
     #[serde(skip)]
     pub swatches: Vec<[u8; 3]>,
     /// Paths (fidelity) 0–100: higher follows the pixels more tightly.
@@ -329,6 +337,7 @@ impl Default for TraceParams {
             colors: 6,
             color_detail: 50.0,
             library: "document".into(),
+            color_group: None,
             swatches: vec![],
             paths: 50.0,
             corners: 75.0,
@@ -484,6 +493,9 @@ pub struct TraceResult {
     /// option). Each path drawn together with those inside it, in the order they have here, paints
     /// what `paths` paints in its order.
     pub parents: Vec<Option<usize>>,
+    /// Flat Logo: the size in pixels the image was traced at when it was averaged down first;
+    /// `None` when it was traced at its own size.
+    pub worked_at: Option<(u32, u32)>,
 }
 
 impl TraceResult {
@@ -516,7 +528,7 @@ pub fn trace(img: &Raster, params: &TraceParams) -> TraceResult {
 /// colour layers are traced in parallel where threads are available.
 pub fn trace_within(img: &Raster, params: &TraceParams, max_anchors: usize) -> Result<TraceResult, TraceError> {
     let (w, h) = (img.width as usize, img.height as usize);
-    if w == 0 || h == 0 || img.rgba.len() != w * h * 4 {
+    if w == 0 || h == 0 || w.checked_mul(h).and_then(|n| n.checked_mul(4)) != Some(img.rgba.len()) {
         return Ok(TraceResult::default());
     }
     let mut out = trace_paths(img, params, max_anchors)?;
@@ -563,6 +575,10 @@ fn trace_paths(img: &Raster, params: &TraceParams, max_anchors: usize) -> Result
         rest
     });
     let (mut q, rare) = quantize::quantize_keeping(without.as_ref().unwrap_or(img), params);
+    // The semi-transparent edge of a cut-out image traces as the color beside it.
+    if matches!(params.mode, Mode::Color | Mode::Grayscale) {
+        quantize::settle_cut_edges(&mut q, img, params.mode == Mode::Grayscale);
+    }
     drop(without);
     // Each gradient is a palette entry of its own (its colour: the gradient's middle).
     let mut gradients: Vec<Option<TracedGradient>> = vec![None; q.palette.len()];
@@ -596,10 +612,11 @@ fn trace_paths(img: &Raster, params: &TraceParams, max_anchors: usize) -> Result
     order.sort_by(|a, b| counts[*b].cmp(&counts[*a]).then(a.cmp(b)));
     if params.method == Method::Overlapping {
         // Stacked layers go by lightness instead, from the largest colour's end of the scale: each
-        // layer reaches under all those above it, so where two colours meet, every layer between
-        // them in the stack ends on that same edge and shows through its anti-aliasing. Neighbours
-        // in a picture are mostly neighbours in tone, and in this order they are neighbours in the
-        // stack too (by area, an unrelated colour's edge would shine through as a hairline).
+        // layer reaches under those above it in the areas that hold its own color, so where two
+        // colours meet, every layer between them in the stack that has a pixel in that area ends
+        // on that same edge and shows through its anti-aliasing. Neighbours in a picture are
+        // mostly neighbours in tone, and in this order they are neighbours in the stack too (by
+        // area, an unrelated colour's edge would shine through as a hairline).
         let light = |i: usize| q.palette.get(i).map_or(0, |c| u32::from(c[0]) * 299 + u32::from(c[1]) * 587 + u32::from(c[2]) * 114);
         let first = order.first().copied();
         order.sort_by(|a, b| light(*a).cmp(&light(*b)).then(a.cmp(b)));
@@ -632,10 +649,17 @@ fn trace_paths(img: &Raster, params: &TraceParams, max_anchors: usize) -> Result
     // A layer takes about ten bytes a pixel of its box while it is traced (its mask, the labels
     // of its components, the stack that fills them, its edges): as many layers at a time as fit
     // in half a gigabyte, so that a large image is not traced at the cost of gigabytes.
+    // (Overlapping labels a layer's mask once more before it is traced, with its labels and stack
+    // freed before the trace starts.)
     let largest = job.boxes.iter().flatten().map(|b| (b.2 - b.0) * (b.3 - b.1)).max().unwrap_or(1).max(1);
     let at_a_time = ((512 << 20) / (largest * 10)).max(1);
     for (paths, &(_, ci)) in parallel_map_at_most(at_a_time, &layers, |&(r, ci)| job.layer(r, ci)).into_iter().zip(&layers) {
-        out.paths.extend(paths.ok_or(TraceError::TooComplex { max: max_anchors })?);
+        let paths = paths.ok_or(TraceError::TooComplex { max: max_anchors })?;
+        // A layer with no paths adds no color to the palette.
+        if paths.is_empty() {
+            continue;
+        }
+        out.paths.extend(paths);
         let color = q.palette[ci];
         if !out.palette.contains(&color) {
             out.palette.push(color);
@@ -953,6 +977,23 @@ impl Layers<'_> {
             let row = self.q.labels.get(y * w + x0..y * w + x1)?;
             mask.extend(row.iter().enumerate().map(|(k, &l)| l != TRANSPARENT && !thin.get(y * w + x0 + k).copied().unwrap_or(false) && part(l)));
         }
+        // Overlapping: a part of the mask with no pixel of this color holds only colors above it,
+        // whose own layers fill it, and is left out. The layer reaches under the colors above it
+        // only within the areas that hold its own color.
+        if overlapping {
+            let (comp, sizes) = contour::label(&mask, bw, bh);
+            let mut own = vec![false; sizes.len()];
+            for (k, &c) in comp.iter().enumerate() {
+                if self.q.labels.get((y0 + k / bw) * w + x0 + k % bw).is_some_and(|&l| l as usize == ci)
+                    && let Some(o) = own.get_mut(c as usize)
+                {
+                    *o = true;
+                }
+            }
+            for (m, &c) in mask.iter_mut().zip(&comp) {
+                *m = *m && own.get(c as usize).copied().unwrap_or(false);
+            }
+        }
         // Without Fills, areas are outlined with a 1 px stroke.
         let area_stroke = (params.strokes && !params.fills).then_some(1.0);
         let min_hole = params.noise.max(1) as i64;
@@ -982,6 +1023,21 @@ impl Layers<'_> {
             // (Each loop fitted, and whether its own outline is hard.)
             let fit = |l: &Loop| {
                 let (sp, is_hard) = fit::fit_loop(l, w, h, &|c| (self.shift(c), self.neighbour(c)), &|x, y| self.junction(x, y), &self.style)?;
+                // Every trace straightens the pieces of an outline that lie close to a line (Snap
+                // Curves To Lines straightens more of them), so the outline of a single pixel or
+                // of a region one pixel thick can have all its pieces on one chord, and the loop
+                // then has no area. Filled, such a loop paints nothing, and it is left out.
+                // Without Fills its 1 px stroke draws it, so it is kept. (`fit::fit_closed` puts
+                // back the positioned outline of a loop that is one closed piece when its fit has
+                // no area.) The area is summed about the loop's first anchor.
+                if area_stroke.is_none() {
+                    use kurbo::ParamCurveArea;
+                    let origin = sp.anchors.first()?.p.to_vec2();
+                    let area: f64 = (0..sp.segment_count()).map(|i| (kurbo::Affine::translate(-origin) * sp.segment(i)).signed_area()).sum();
+                    if area.abs() < 1e-6 {
+                        return None;
+                    }
+                }
                 hard.set(hard.get() || is_hard);
                 Some((sp, is_hard))
             };
