@@ -4906,6 +4906,14 @@ effect	Regular	Regelmäßig
 	Open Embroidery Font…	Stickschrift öffnen…
 	Trace Embroidery Font…	Stickschrift nachzeichnen…
 	Load Motif…	Motiv laden…
+	Motif Fill	Motivfüllung
+	A small stitched motif repeated across the shape, the fabric showing between.	Ein kleines gesticktes Motiv, über die Form wiederholt, der Stoff dazwischen sichtbar.
+	How large one tile of the motif is	Wie groß eine Kachel des Motivs ist
+	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Das Motiv, Kachel für Kachel über die Form gestickt (embroidery.loadMotif fügt weitere hinzu)
+	Stars	Sterne
+	Flowers	Blumen
+	Crosses	Kreuze
+	Hearts	Herzen
 	Motifs	Motive
 	Remove Motif	Motiv entfernen
 	Save Motif…	Motiv speichern…

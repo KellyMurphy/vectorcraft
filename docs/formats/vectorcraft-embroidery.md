@@ -86,6 +86,7 @@ unsewn (see [Compatibility](#compatibility)).
 | `zigzag` | An open zigzag along the path, `width` wide, a point every `spacing`. |
 | `satinShape` | Satin following a closed shape's strokes from edge to edge (lettering). |
 | `fill` | Rows of staggered running stitches covering the shape, optionally carved with a `motif` and edged with a satin `border`. |
+| `motifFill` | The stitched motif `motif` (`stars` when unset; see [vcmotif.md](vcmotif.md)) sewn tile by tile across the shape on its lattice, at `motifSize` and turned by `angle`: every whole tile inside the shape, the fabric showing between. |
 | `patternBorder` | The border pattern `pattern` repeated along the path (see [vcborder.md](vcborder.md)). |
 | `manual` | The needle goes down at every anchor point, as drawn. |
 | `auto` | Chosen per shape (per letter, for type) by stroke width: under `thinUnder` a bean outline, over `wideOver` a fill with a satin border, between them a satin shape. |

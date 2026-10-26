@@ -4928,6 +4928,14 @@ lighting	Light	Свет
 	Open Embroidery Font…	Открыть шрифт для вышивки…
 	Trace Embroidery Font…	Обвести шрифт для вышивки…
 	Load Motif…	Загрузить мотив…
+	Motif Fill	Заливка мотивом
+	A small stitched motif repeated across the shape, the fabric showing between.	Небольшой вышитый мотив, повторённый по фигуре, между ними видна ткань.
+	How large one tile of the motif is	Насколько велика одна плитка мотива
+	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Мотив, вышиваемый плитка за плиткой по фигуре (embroidery.loadMotif добавляет другие)
+	Stars	Звёзды
+	Flowers	Цветы
+	Crosses	Крестики
+	Hearts	Сердца
 	Motifs	Мотивы
 	Remove Motif	Удалить мотив
 	Save Motif…	Сохранить мотив…

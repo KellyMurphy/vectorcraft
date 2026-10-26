@@ -2599,6 +2599,7 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                         cp("Zigzag Stitch", "embroidery.set", json!({"type": "zigzag"})),
                         cp("Satin Shape", "embroidery.set", json!({"type": "satinShape"})),
                         cp("Fill", "embroidery.set", json!({"type": "fill"})),
+                        cp("Motif Fill", "embroidery.set", json!({"type": "motifFill"})),
                         cp("Pattern Border", "embroidery.set", json!({"type": "patternBorder"})),
                         cp("Manual Stitch", "embroidery.set", json!({"type": "manual"})),
                         Sep,

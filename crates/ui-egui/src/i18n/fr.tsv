@@ -5318,6 +5318,14 @@ theme	Appearance	Apparence
 	Open Embroidery Font…	Ouvrir une police de broderie…
 	Trace Embroidery Font…	Décalquer une police de broderie…
 	Load Motif…	Charger un motif…
+	Motif Fill	Remplissage à motif
+	A small stitched motif repeated across the shape, the fabric showing between.	Un petit motif brodé répété sur la forme, le tissu visible entre eux.
+	How large one tile of the motif is	La taille d’une tuile du motif
+	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Le motif brodé tuile par tuile sur la forme (embroidery.loadMotif en ajoute d’autres)
+	Stars	Étoiles
+	Flowers	Fleurs
+	Crosses	Croix
+	Hearts	Cœurs
 	Motifs	Motifs
 	Remove Motif	Supprimer le motif
 	Save Motif…	Enregistrer le motif…

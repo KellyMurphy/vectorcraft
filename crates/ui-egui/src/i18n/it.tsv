@@ -4932,6 +4932,14 @@ lighting	Light	Luce
 	Open Embroidery Font…	Apri font da ricamo…
 	Trace Embroidery Font…	Ricalca font da ricamo…
 	Load Motif…	Carica motivo…
+	Motif Fill	Riempimento a motivo
+	A small stitched motif repeated across the shape, the fabric showing between.	Un piccolo motivo ricamato ripetuto sulla forma, con il tessuto visibile in mezzo.
+	How large one tile of the motif is	Quanto è grande una tessera del motivo
+	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Il motivo ricamato tessera per tessera sulla forma (embroidery.loadMotif ne aggiunge altri)
+	Stars	Stelle
+	Flowers	Fiori
+	Crosses	Croci
+	Hearts	Cuori
 	Motifs	Motivi
 	Remove Motif	Rimuovi motivo
 	Save Motif…	Salva motivo…

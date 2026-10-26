@@ -10,6 +10,10 @@ use vectorcraft_doc::{Motif, MotifKind, PartStitch, PatternPart};
 
 /// The built-in carve motifs, by id.
 pub const MOTIFS: [&str; 5] = ["diamonds", "waves", "circles", "scales", "herringbone"];
+/// The built-in stitched motifs (for motif fills), by id.
+pub const STITCHED: [&str; 5] = ["stars", "flowers", "crosses", "hearts", "dots"];
+/// The stitched motif a motif fill sews when it names none.
+pub const DEFAULT_STITCHED: &str = "stars";
 
 /// The most motif segments one fill carves: past it the motif is left out (a huge fill or a tiny
 /// motif), with a warning.
@@ -61,9 +65,78 @@ fn tile(id: &str) -> Option<(Vec<Vec<Point>>, bool)> {
     })
 }
 
-/// A built-in motif by id (one of [`MOTIFS`]), as data: a unit tile (size 1 mm, scaled by the
-/// fill's motif size).
+/// A built-in stitched motif's tile (one of [`STITCHED`]), drawn in code: its size (mm), lattice
+/// and parts, a figure centred on the tile's origin.
+fn stitched_tile(id: &str) -> Option<(f64, [[f64; 2]; 2], Vec<PatternPart>)> {
+    use std::f64::consts::{PI, TAU};
+    let line = |stitch: PartStitch, pts: Vec<[f64; 2]>| PatternPart { stitch, points: pts, ..Default::default() };
+    let around = |n: usize, r: &dyn Fn(f64) -> f64| -> Vec<[f64; 2]> {
+        (0..=n)
+            .map(|k| {
+                let a = TAU * k as f64 / n as f64 - PI / 2.0;
+                [r(a) * a.cos(), r(a) * a.sin()]
+            })
+            .collect()
+    };
+    Some(match id {
+        // A five-pointed star outline in bean stitch.
+        "stars" => {
+            let pts: Vec<[f64; 2]> = (0..=10)
+                .map(|k| {
+                    let a = PI * k as f64 / 5.0 - PI / 2.0;
+                    let r = if k % 2 == 0 { 3.0 } else { 1.2 };
+                    [r * a.cos(), r * a.sin()]
+                })
+                .collect();
+            (8.0, [[8.0, 0.0], [4.0, 7.0]], vec![line(PartStitch::Bean, pts)])
+        }
+        // Five rounded petals round a centre, one running line.
+        "flowers" => {
+            (8.0, [[8.0, 0.0], [4.0, 7.0]], vec![line(PartStitch::Running, around(80, &|a| 1.0 + 2.0 * ((2.5 * (a + PI / 2.0)).cos()).abs()))])
+        }
+        "crosses" => (
+            7.0,
+            [[7.0, 0.0], [3.5, 6.0]],
+            vec![line(PartStitch::Bean, vec![[-1.5, -1.5], [1.5, 1.5]]), line(PartStitch::Bean, vec![[1.5, -1.5], [-1.5, 1.5]])],
+        ),
+        "hearts" => {
+            let pts: Vec<[f64; 2]> = (0..=48)
+                .map(|k| {
+                    let t = TAU * k as f64 / 48.0;
+                    let x = 16.0 * t.sin().powi(3);
+                    let y = -(13.0 * t.cos() - 5.0 * (2.0 * t).cos() - 2.0 * (3.0 * t).cos() - (4.0 * t).cos());
+                    [x * 3.0 / 16.0, (y + 2.0) * 3.0 / 16.0]
+                })
+                .collect();
+            (8.0, [[8.0, 0.0], [4.0, 7.0]], vec![line(PartStitch::Bean, pts)])
+        }
+        // A short satin bar: a dot.
+        "dots" => (
+            4.0,
+            [[4.0, 0.0], [2.0, 3.5]],
+            vec![PatternPart { stitch: PartStitch::Satin, points: vec![[-0.5, 0.0], [0.5, 0.0]], width: Some(1.6), ..Default::default() }],
+        ),
+        _ => return None,
+    })
+}
+
+/// A built-in motif by id (one of [`MOTIFS`] or [`STITCHED`]), as data: a carve motif on a unit
+/// tile (size 1 mm, scaled by the fill's motif size), a stitched one at its own size.
 pub fn builtin(id: &str) -> Option<Motif> {
+    if let Some((size, offsets, parts)) = stitched_tile(id) {
+        let name = id.get(..1).map(str::to_uppercase).unwrap_or_default() + id.get(1..).unwrap_or_default();
+        return Some(Motif {
+            id: id.to_string(),
+            name,
+            author: Some("VectorCraft contributors".into()),
+            license: Some("CC0-1.0".into()),
+            kind: MotifKind::Stitched,
+            size,
+            offsets,
+            parts,
+            ..Motif::default()
+        });
+    }
     let (lines, brick) = tile(id)?;
     let name = id.get(..1).map(str::to_uppercase).unwrap_or_default() + id.get(1..).unwrap_or_default();
     Some(Motif {
@@ -171,6 +244,18 @@ pub fn lattice(m: &Motif, size: f64, lo: Point, hi: Point) -> Option<Vec<Point>>
     Some(out)
 }
 
+/// One tile of stitched motif `m` sewn: its parts in order (as a border pattern's), scaled by `k`
+/// and put on the fabric by `place` (from the tile's space, scaled, to the page), running and bean
+/// lines in stitches `len` long, satin with zigs `spacing` apart.
+pub fn tile_run(m: &Motif, k: f64, place: &dyn Fn(Point) -> Point, len: f64, spacing: f64) -> Vec<Point> {
+    let mut pieces = vec![];
+    let map = |x: f64, y: f64| place(Point::new(x * k, y * k));
+    for part in &m.parts {
+        crate::borders::add_part(&mut pieces, part, (k, k), &map);
+    }
+    crate::borders::stitch(pieces, len, spacing)
+}
+
 /// A motif file as stored: the format header, then the motif's fields.
 #[derive(serde::Serialize, serde::Deserialize)]
 struct File {
@@ -269,7 +354,7 @@ mod tests {
 
     #[test]
     fn unknown_motifs_and_huge_tilings_are_refused() {
-        assert!(tiled("stars", 10.0, Point::ZERO, Point::new(10.0, 10.0)).is_none());
+        assert!(tiled("no-such-motif", 10.0, Point::ZERO, Point::new(10.0, 10.0)).is_none());
         assert!(tiled("circles", 0.01, Point::ZERO, Point::new(1000.0, 1000.0)).is_none());
         assert!(tiled("circles", f64::NAN, Point::ZERO, Point::new(10.0, 10.0)).is_none());
     }
@@ -313,6 +398,20 @@ mod tests {
             }
             // ...and no tile that doesn't meet the box.
             assert!(new.iter().all(meets), "{id}");
+        }
+    }
+
+    #[test]
+    fn the_stitched_starters_are_motifs_and_sew() {
+        for id in STITCHED {
+            let m = builtin(id).unwrap();
+            assert_eq!((check(&m), m.kind), (Ok(()), MotifKind::Stitched), "{id}");
+            assert!(!MOTIFS.contains(&id), "{id} isn't a carve id too");
+            let run = tile_run(&m, 1.0, &|p| p, 1.5, 0.4);
+            assert!(run.len() >= 4, "{id}: {}", run.len());
+            // The figure stays inside its own lattice cell (neighbours don't touch).
+            let reach = m.offsets.iter().map(|[x, y]| x.hypot(*y)).fold(f64::INFINITY, f64::min) / 2.0;
+            assert!(run.iter().all(|p| p.to_vec2().hypot() <= reach), "{id}");
         }
     }
 

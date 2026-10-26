@@ -5182,6 +5182,14 @@ mark-style	Japanese	Japońskie
 	Open Embroidery Font…	Otwórz czcionkę hafciarską…
 	Trace Embroidery Font…	Odrysuj czcionkę hafciarską…
 	Load Motif…	Wczytaj motyw…
+	Motif Fill	Wypełnienie motywem
+	A small stitched motif repeated across the shape, the fabric showing between.	Mały haftowany motyw powtórzony na kształcie, z widoczną tkaniną pomiędzy.
+	How large one tile of the motif is	Jak duży jest jeden kafelek motywu
+	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Motyw haftowany kafelek po kafelku na kształcie (embroidery.loadMotif dodaje kolejne)
+	Stars	Gwiazdki
+	Flowers	Kwiaty
+	Crosses	Krzyżyki
+	Hearts	Serca
 	Motifs	Motywy
 	Remove Motif	Usuń motyw
 	Save Motif…	Zapisz motyw…

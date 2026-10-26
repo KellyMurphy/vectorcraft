@@ -5294,6 +5294,14 @@ mark-style	Japanese	Japanilainen
 	Open Embroidery Font…	Avaa kirjontafontti…
 	Trace Embroidery Font…	Jäljennä kirjontafontti…
 	Load Motif…	Lataa aihe…
+	Motif Fill	Aihetäyttö
+	A small stitched motif repeated across the shape, the fabric showing between.	Pieni kirjottu aihe toistettuna muodon yli, kangas näkyvissä välissä.
+	How large one tile of the motif is	Kuinka suuri aiheen yksi laatta on
+	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Aihe kirjottuna laatta laatalta muodon yli (embroidery.loadMotif lisää muita)
+	Stars	Tähdet
+	Flowers	Kukat
+	Crosses	Ristit
+	Hearts	Sydämet
 	Motifs	Aiheet
 	Remove Motif	Poista aihe
 	Save Motif…	Tallenna aihe…

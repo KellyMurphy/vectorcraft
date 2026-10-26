@@ -464,7 +464,7 @@ fn vcmotif_page_describes_every_field_and_the_limits() {
 #[test]
 fn the_example_motif_reads_and_tiles() {
     let m = motifs::read_file(read("examples/crosses.vcmotif").as_bytes()).unwrap();
-    assert_eq!((m.id.as_str(), m.kind), ("crosses", vectorcraft_doc::MotifKind::Stitched));
+    assert_eq!((m.id.as_str(), m.kind), ("brick-crosses", vectorcraft_doc::MotifKind::Stitched));
     let tiles = motifs::lattice(&m, 6.0, Point::ZERO, Point::new(60.0, 40.0)).unwrap();
     assert!(tiles.len() > 60, "{}", tiles.len());
     // The example on the page is the example file's motif.

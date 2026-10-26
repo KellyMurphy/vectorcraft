@@ -12,6 +12,7 @@ use crate::generate;
 mod bean;
 mod fill;
 mod manual;
+mod motif_fill;
 mod pattern_border;
 mod running;
 mod satin;
@@ -69,6 +70,7 @@ pub fn sew(i: &Input) -> Output {
         StitchKind::SatinShape => satin_shape::sew(i),
         StitchKind::Fill => fill::sew(i),
         StitchKind::PatternBorder => pattern_border::sew(i),
+        StitchKind::MotifFill => motif_fill::sew(i),
         StitchKind::Manual => manual::sew(i),
     }
 }
@@ -89,7 +91,11 @@ mod tests {
     fn every_stitch_type_sews_a_plain_shape_cleanly() {
         let path = rect();
         for k in StitchKind::ALL.into_iter().filter(|k| *k != StitchKind::Auto) {
-            let settings = StitchSettings::new(k);
+            let mut settings = StitchSettings::new(k);
+            if k == StitchKind::MotifFill {
+                // A motif small enough for a 4 mm bar.
+                (settings.motif, settings.motif_size) = (Some("dots".into()), Some(4.0));
+            }
             let out = sew(&Input {
                 settings: &settings,
                 stroke_mm: 1.0,

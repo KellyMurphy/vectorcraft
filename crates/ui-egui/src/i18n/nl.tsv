@@ -5367,6 +5367,14 @@ swatch	Bright Violet	Felviolet
 	Open Embroidery Font…	Borduurlettertype openen…
 	Trace Embroidery Font…	Borduurlettertype overtrekken…
 	Load Motif…	Motief laden…
+	Motif Fill	Motiefvulling
+	A small stitched motif repeated across the shape, the fabric showing between.	Een klein geborduurd motief herhaald over de vorm, de stof zichtbaar ertussen.
+	How large one tile of the motif is	Hoe groot één tegel van het motief is
+	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Het motief tegel voor tegel over de vorm geborduurd (embroidery.loadMotif voegt meer toe)
+	Stars	Sterren
+	Flowers	Bloemen
+	Crosses	Kruisjes
+	Hearts	Harten
 	Motifs	Motieven
 	Remove Motif	Motief verwijderen
 	Save Motif…	Motief opslaan…

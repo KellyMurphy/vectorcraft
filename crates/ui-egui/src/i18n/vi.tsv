@@ -4923,6 +4923,14 @@ theme	Appearance	Giao diện
 	Open Embroidery Font…	Mở phông chữ thêu…
 	Trace Embroidery Font…	Đồ theo phông chữ thêu…
 	Load Motif…	Tải họa tiết…
+	Motif Fill	Tô bằng họa tiết
+	A small stitched motif repeated across the shape, the fabric showing between.	Một họa tiết thêu nhỏ lặp lại khắp hình, lộ vải ở giữa.
+	How large one tile of the motif is	Một ô họa tiết lớn cỡ nào
+	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Họa tiết thêu từng ô khắp hình (embroidery.loadMotif thêm họa tiết khác)
+	Stars	Ngôi sao
+	Flowers	Hoa
+	Crosses	Dấu chéo
+	Hearts	Trái tim
 	Motifs	Họa tiết
 	Remove Motif	Xóa họa tiết
 	Save Motif…	Lưu họa tiết…

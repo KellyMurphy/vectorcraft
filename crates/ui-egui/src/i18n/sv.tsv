@@ -5286,6 +5286,14 @@ theme	Appearance	Utseende
 	Open Embroidery Font…	Öppna broderiteckensnitt…
 	Trace Embroidery Font…	Rita efter broderiteckensnitt…
 	Load Motif…	Läs in motiv…
+	Motif Fill	Motivfyllning
+	A small stitched motif repeated across the shape, the fabric showing between.	Ett litet broderat motiv upprepat över formen, med tyget synligt emellan.
+	How large one tile of the motif is	Hur stor en platta av motivet är
+	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Motivet broderat platta för platta över formen (embroidery.loadMotif lägger till fler)
+	Stars	Stjärnor
+	Flowers	Blommor
+	Crosses	Kryss
+	Hearts	Hjärtan
 	Motifs	Motiv
 	Remove Motif	Ta bort motiv
 	Save Motif…	Spara motiv…

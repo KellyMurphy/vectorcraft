@@ -26,6 +26,10 @@ pub enum StitchKind {
     Fill,
     /// The needle goes down at every anchor, as drawn (imported designs).
     Manual,
+    /// A stitched motif ([`StitchSettings::motif`]) sewn tile by tile across the area on its
+    /// lattice, the fabric showing between: a light, decorative fill.
+    #[serde(rename = "motifFill")]
+    MotifFill,
     /// A border pattern ([`StitchSettings::pattern`]) repeated along the path, bending with its
     /// curves, a whole number of repeats between corners.
     #[serde(rename = "patternBorder")]
@@ -37,8 +41,18 @@ pub enum StitchKind {
 }
 
 impl StitchKind {
-    pub const ALL: [StitchKind; 9] =
-        [Self::Auto, Self::Running, Self::Bean, Self::Satin, Self::Zigzag, Self::SatinShape, Self::Fill, Self::PatternBorder, Self::Manual];
+    pub const ALL: [StitchKind; 10] = [
+        Self::Auto,
+        Self::Running,
+        Self::Bean,
+        Self::Satin,
+        Self::Zigzag,
+        Self::SatinShape,
+        Self::Fill,
+        Self::MotifFill,
+        Self::PatternBorder,
+        Self::Manual,
+    ];
 
     pub fn id(self) -> &'static str {
         match self {
@@ -50,6 +64,7 @@ impl StitchKind {
             Self::SatinShape => "satinShape",
             Self::Manual => "manual",
             Self::PatternBorder => "patternBorder",
+            Self::MotifFill => "motifFill",
             Self::Auto => "auto",
         }
     }
@@ -64,6 +79,7 @@ impl StitchKind {
             Self::SatinShape => "Satin Shape",
             Self::Manual => "Manual Stitch",
             Self::PatternBorder => "Pattern Border",
+            Self::MotifFill => "Motif Fill",
             Self::Auto => "Auto",
         }
     }
@@ -74,15 +90,15 @@ impl StitchKind {
 
     /// Stitches along the path (rather than covering its area): the thread defaults to the stroke.
     pub fn follows_path(self) -> bool {
-        !matches!(self, Self::Fill | Self::SatinShape | Self::Auto)
+        !matches!(self, Self::Fill | Self::SatinShape | Self::Auto | Self::MotifFill)
     }
 
     /// The default stitch length, mm.
     pub fn default_length(self) -> f64 {
         match self {
             Self::Fill => 4.0,
-            // Border patterns are small, curvy figures.
-            Self::PatternBorder => 1.5,
+            // Border patterns and motifs are small, curvy figures.
+            Self::PatternBorder | Self::MotifFill => 1.5,
             _ => 2.5,
         }
     }

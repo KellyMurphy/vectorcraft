@@ -4220,6 +4220,14 @@ lighting	Light	光源
 	Open Embroidery Font…	開啟刺繡字體…
 	Trace Embroidery Font…	描摹刺繡字體…
 	Load Motif…	載入圖案單元…
+	Motif Fill	圖案填色
+	A small stitched motif repeated across the shape, the fabric showing between.	小型刺繡圖案在形狀上重複排列，圖案之間露出布面。
+	How large one tile of the motif is	一個圖案單元的大小
+	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	在形狀上逐個刺繡的圖案單元（embroidery.loadMotif 可新增更多）
+	Stars	星形
+	Flowers	花朵
+	Crosses	十字
+	Hearts	心形
 	Motifs	圖案單元
 	Remove Motif	移除圖案單元
 	Save Motif…	儲存圖案單元…

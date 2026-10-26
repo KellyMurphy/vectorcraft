@@ -150,7 +150,7 @@ pub static PARAMS: &[Param] = &[
     Param {
         key: "length",
         value: ValueKind::Mm(StitchSettings::LENGTH),
-        kinds: &[K::Running, K::Bean, K::Fill, K::PatternBorder],
+        kinds: &[K::Running, K::Bean, K::Fill, K::PatternBorder, K::MotifFill],
         label: "Stitch Length:",
         help: "How long each stitch is",
         doc: "mm (stitch length, 0.3–12; running/bean 2.5, fill 4, pattern border 1.5)",
@@ -162,7 +162,7 @@ pub static PARAMS: &[Param] = &[
     Param {
         key: "spacing",
         value: ValueKind::Mm(StitchSettings::SPACING),
-        kinds: &[K::Satin, K::Zigzag, K::SatinShape, K::Fill, K::Auto, K::PatternBorder],
+        kinds: &[K::Satin, K::Zigzag, K::SatinShape, K::Fill, K::Auto, K::PatternBorder, K::MotifFill],
         label: "Density:",
         help: "Distance between zigzags or rows: smaller is denser",
         doc: "mm (satin zigzag, satin shape, zigzag stitch or fill row spacing, 0.1–10; satin and fill 0.4, zigzag 2)",
@@ -174,7 +174,7 @@ pub static PARAMS: &[Param] = &[
     Param {
         key: "angle",
         value: ValueKind::Degrees,
-        kinds: &[K::Fill],
+        kinds: &[K::Fill, K::MotifFill],
         label: "Angle:",
         help: "The direction of the fill's rows",
         doc: "degrees (fill rows, counter-clockwise)",
@@ -381,10 +381,10 @@ pub static PARAMS: &[Param] = &[
     Param {
         key: "motif",
         value: ValueKind::Id,
-        kinds: &[K::Fill],
+        kinds: &[K::Fill, K::MotifFill],
         label: "Motif:",
         help: "A motif carved into the fill",
-        doc: "a carve motif id: diamonds|waves|circles|scales|herringbone or one loaded into the document (embroidery.loadMotif) | null (fill: a motif carved into the fill; its needle points on the motif's lines)",
+        doc: "a motif id: fill: a carve motif carved into the fill (diamonds|waves|circles|scales|herringbone); motifFill: the stitched motif sewn tile by tile (stars|flowers|crosses|hearts|dots; stars); or one loaded into the document (embroidery.loadMotif) | null",
         nullable: true,
         get: |s| json!(s.motif),
         set: |s, v| s.motif = text(v),
@@ -393,7 +393,7 @@ pub static PARAMS: &[Param] = &[
     Param {
         key: "motifSize",
         value: ValueKind::Mm(StitchSettings::MOTIF_SIZE),
-        kinds: &[K::Fill],
+        kinds: &[K::Fill, K::MotifFill],
         label: "Motif Size:",
         help: "How large one repeat of the motif is",
         doc: "mm (3–60; 10)",

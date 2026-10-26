@@ -5324,6 +5324,14 @@ swatch	Bright Violet	Violet cerah
 	Open Embroidery Font…	Buka fon sulaman…
 	Trace Embroidery Font…	Jiplak fon sulaman…
 	Load Motif…	Muat motif…
+	Motif Fill	Isian motif
+	A small stitched motif repeated across the shape, the fabric showing between.	Motif sulam kecil diulang di seluruh bentuk, kain terlihat di antaranya.
+	How large one tile of the motif is	Seberapa besar satu ubin motif
+	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Motif disulam ubin demi ubin di seluruh bentuk (embroidery.loadMotif menambah lagi)
+	Stars	Bintang
+	Flowers	Bunga
+	Crosses	Silang
+	Hearts	Hati
 	Motifs	Motif
 	Remove Motif	Hapus motif
 	Save Motif…	Simpan motif…

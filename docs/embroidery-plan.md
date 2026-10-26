@@ -576,7 +576,13 @@ fabric showing between — a light, decorative fill.
   a carved pattern (as today's five built-in ones, which become `.vcmotif` data generated in code), so user
   carving patterns use the same file. Spec, schema, drift test; stored in the document like border
   patterns, listed from the library folder (E8.5).
-- **E8.4b The Motif Fill stitch.** `StitchKind::MotifFill` (a kind module): tiles laid on the lattice over the
+- **E8.4b The Motif Fill stitch (done 2026-10-25).** As built: `StitchKind::MotifFill`
+  (`kinds/motif_fill.rs`): the stitched motif (`motif`, default `stars`) tiled on its lattice at
+  `motifSize`, turned by `angle`; every whole tile inside the shape sewn, row by row back and forth, each
+  tile its own run (the needle jumps or trims between tiles). Starters drawn in code (`motifs::STITCHED`:
+  stars, flowers, crosses, hearts, dots); a pictured motif picker; `embroidery.set` refuses a carve motif
+  for a motif fill and a stitched one for a fill. **Not yet:** tiles clipped at the edge, an outline
+  running stitch, travel hidden under tiles. Planned as: `StitchKind::MotifFill` (a kind module): tiles laid on the lattice over the
   shape at a set `motif`, `motifSize`, `angle` and `motifSpacing`, each whole tile inside the shape sewn
   (tiles cut by the edge are left out, or clipped where the motif allows), joined row by row with travel
   that runs inside the shape (and under the tiles where it can, as E7.5's hidden travel does), trims where

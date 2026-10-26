@@ -436,10 +436,19 @@ fn set(s: &mut Session, p: &Value) -> Result<Value> {
     }
     // Each setting must suit the stitch every target ends up with (an underlay its type uses, a
     // width in its range).
+    // The motif each target ends up sewing must be one its stitch can use: a carve motif for a
+    // fill, a stitched one for a motif fill.
+    let mut motif_kinds = vec![];
     {
         let d = &s.doc()?.doc;
         for id in &ids {
-            edits.suits(&edits.apply(d.node(*id).and_then(|n| n.extras().stitch.as_deref())))?;
+            let after = edits.apply(d.node(*id).and_then(|n| n.extras().stitch.as_deref()));
+            edits.suits(&after)?;
+            motif_kinds.push(if after.kind == StitchKind::MotifFill {
+                vectorcraft_doc::MotifKind::Stitched
+            } else {
+                vectorcraft_doc::MotifKind::Carve
+            });
         }
     }
     if let Some(id) = edits.pattern() {
@@ -450,15 +459,23 @@ fn set(s: &mut Session, p: &Value) -> Result<Value> {
         }
     }
     if let Some(id) = edits.motif() {
+        use vectorcraft_doc::MotifKind;
         let mine = &s.doc()?.doc.embroidery.motifs;
-        if vectorcraft_embroidery::motifs::find(mine, &id).is_none_or(|m| m.kind != vectorcraft_doc::MotifKind::Carve) {
-            let ids: Vec<&str> = mine
-                .iter()
-                .filter(|m| m.unknown.is_none() && m.kind == vectorcraft_doc::MotifKind::Carve)
-                .map(|m| m.id.as_str())
-                .chain(vectorcraft_embroidery::motifs::MOTIFS)
-                .collect();
-            return Err(bad(SET, format!("no carve motif `{id}` (there are {}; embroidery.loadMotif adds one)", ids.join(", "))));
+        let found = vectorcraft_embroidery::motifs::find(mine, &id);
+        for want in motif_kinds {
+            if found.as_ref().is_none_or(|m| m.kind != want) {
+                let (what, built_in) = match want {
+                    MotifKind::Carve => ("carve", &vectorcraft_embroidery::motifs::MOTIFS),
+                    MotifKind::Stitched => ("stitched", &vectorcraft_embroidery::motifs::STITCHED),
+                };
+                let ids: Vec<&str> =
+                    mine.iter().filter(|m| m.unknown.is_none() && m.kind == want).map(|m| m.id.as_str()).chain(built_in.iter().copied()).collect();
+                let used = if want == MotifKind::Carve { "a fill carves" } else { "a motif fill sews" };
+                return Err(bad(
+                    SET,
+                    format!("no {what} motif `{id}` ({used} a {what} motif: there are {}; embroidery.loadMotif adds one)", ids.join(", ")),
+                ));
+            }
         }
     }
     if let Some(id) = edits.font() {

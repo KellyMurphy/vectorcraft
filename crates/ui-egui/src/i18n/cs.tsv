@@ -5317,6 +5317,14 @@ mark-style	Japanese	Japonské
 	Open Embroidery Font…	Otevřít vyšívací písmo…
 	Trace Embroidery Font…	Obkreslit vyšívací písmo…
 	Load Motif…	Načíst motiv…
+	Motif Fill	Výplň motivem
+	A small stitched motif repeated across the shape, the fabric showing between.	Malý vyšitý motiv opakovaný po tvaru, mezi nimi je vidět látka.
+	How large one tile of the motif is	Jak velká je jedna dlaždice motivu
+	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Motiv vyšitý dlaždici po dlaždici po tvaru (embroidery.loadMotif přidá další)
+	Stars	Hvězdy
+	Flowers	Květiny
+	Crosses	Křížky
+	Hearts	Srdce
 	Motifs	Motivy
 	Remove Motif	Odstranit motiv
 	Save Motif…	Uložit motiv…

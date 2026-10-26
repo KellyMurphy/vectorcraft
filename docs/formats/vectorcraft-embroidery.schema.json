@@ -8,7 +8,7 @@
       "title": "Stitch settings (a node's `stitch`)",
       "type": "object",
       "properties": {
-        "kind": { "enum": ["running", "bean", "satin", "zigzag", "satinShape", "fill", "patternBorder", "manual", "auto"], "default": "running" },
+        "kind": { "enum": ["running", "bean", "satin", "zigzag", "satinShape", "fill", "motifFill", "patternBorder", "manual", "auto"], "default": "running" },
         "length": { "type": "number", "minimum": 0.3, "maximum": 12, "description": "Stitch length, mm." },
         "spacing": { "type": "number", "minimum": 0.1, "maximum": 10, "description": "Satin zig or fill row spacing, mm." },
         "angle": { "type": "number", "description": "Fill row direction, degrees counter-clockwise.", "default": 0 },

@@ -18,6 +18,7 @@ Select paths or compound paths (or groups holding them) and choose **Object › 
 | Zigzag Stitch | An open zigzag along the path, swinging side to side (decorative lines, appliqué edges). Corners fan like a satin's. | `width` (3 mm; not the stroke), `spacing` (between points, 2 mm), `startAt` |
 | Satin Shape | Satin that follows a closed shape's strokes from edge to edge, curving with them (lettering, outlined type, swashes). The shape's centre lines are found automatically; each zig reaches the shape's edges either side, so thick and thin strokes keep their contrast. Patches the satin can't reach (a heavy stroke's corners and junctions) are filled with short rows under it, so no fabric is left bare; a shape satin can't cover at all (more than 15% bare, or crowded or fanned) is sewn as a fill with a satin border instead, as Auto does, with a warning (type: every letter when a quarter or more need it, so they look alike). | `spacing` (density, 0.4 mm), `pull` (0 mm), `pullPercent` (% of the stroke width, 0), `underlay` (auto, none, center, edge), `angles` (stitch angle lines; none), `puff` (3D foam thickness; none) |
 | Fill | Rows of staggered running stitches covering the shape (tatami). Holes and separate parts follow the fill rule. | `angle` (0°), `spacing` (density, 0.4 mm), `length` (4 mm), `stagger` (pattern: 2 brick, 3–8 tatami; 3), `motif` (a carved pattern: diamonds, waves, circles, scales, herringbone; none) and `motifSize` (its repeat, 3–60 mm; 10), `underlay` (auto, none, fill), `pull` and `pullPercent` (rows longer, half at each end; 0), `push` (shorter across the rows; 0 mm), `border` (a satin border over the edges, 0.5–6 mm; none), `keepCovered` (keep the rows under what is sewn on top; off) |
+| Motif Fill | A small stitched motif sewn tile by tile across the shape on its lattice, every whole tile inside the shape, the fabric showing between: a light, decorative fill. | `motif` (a stitched motif: stars, flowers, crosses, hearts, dots, or one loaded from a `.vcmotif` file; stars), `motifSize` (one tile, 3–60 mm; 10), `angle` (the lattice turned; 0°), `length` (the motif's running and bean stitches; 1.5 mm), `spacing` (its satin parts' density; 0.4 mm) |
 | Pattern Border | A border pattern repeated end to end along the path, bending with its curves (decorative borders, frames). See [Pattern borders](#pattern-borders). | `pattern` (waves, scallops, chain, diamonds; waves), `width` (the band, 1–40 mm; the pattern's own, 6 mm), `flip` (off), `length` (1.5 mm), `spacing` (satin parts, 0.4 mm) |
 | Manual Stitch | The needle goes down at every anchor, as drawn. Imported designs use it. | — |
 
@@ -72,6 +73,18 @@ shape's strokes each follow the lines that cross them (a stroke no line crosses 
 and between rails the lines are rungs. Stitches turn at most 60° from square, so none runs nearly along the
 satin. The lines belong to the object: they move, scale and rotate with it (so does Start At), and are
 `embroidery.set {angles: [[x1, y1, x2, y2], …]}` in mm in document space.
+
+### Motif fills
+
+**Motif Fill** fills a shape with a small stitched motif repeated tile by tile on its lattice (square,
+brick or hexagonal, as the motif sets), the fabric showing between: a light, decorative fill for
+backgrounds and lettering. Pick the motif in the Stitch tab (pictured): the built-in **Stars**,
+**Flowers**, **Crosses**, **Hearts** and **Dots**, or a stitched motif loaded from a `.vcmotif` file
+(`embroidery.loadMotif`, or the library's `motifs` folder). **Motif Size** sets one tile, **Angle** turns
+the lattice. Only whole tiles inside the shape are sewn, so the edge stays clean; tiles are sewn row by row,
+back and forth, each its own run, so the needle jumps (trimming as the document's travel settings say)
+rather than leaving travel stitches across the open fabric. A shape too small for one whole tile warns:
+make the motif smaller.
 
 ### Pattern borders
 

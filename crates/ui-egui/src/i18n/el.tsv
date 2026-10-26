@@ -5282,6 +5282,14 @@ effect	Points	Σημεία
 	Open Embroidery Font…	Άνοιγμα γραμματοσειράς κεντήματος…
 	Trace Embroidery Font…	Αποτύπωση γραμματοσειράς κεντήματος…
 	Load Motif…	Φόρτωση μοτίβου…
+	Motif Fill	Γέμισμα με μοτίβο
+	A small stitched motif repeated across the shape, the fabric showing between.	Ένα μικρό κεντημένο μοτίβο επαναλαμβανόμενο στο σχήμα, με το ύφασμα να φαίνεται ανάμεσα.
+	How large one tile of the motif is	Πόσο μεγάλο είναι ένα πλακίδιο του μοτίβου
+	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Το μοτίβο κεντημένο πλακίδιο-πλακίδιο στο σχήμα (το embroidery.loadMotif προσθέτει κι άλλα)
+	Stars	Αστέρια
+	Flowers	Λουλούδια
+	Crosses	Σταυροί
+	Hearts	Καρδιές
 	Motifs	Μοτίβα
 	Remove Motif	Αφαίρεση μοτίβου
 	Save Motif…	Αποθήκευση μοτίβου…

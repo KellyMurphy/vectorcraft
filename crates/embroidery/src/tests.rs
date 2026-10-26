@@ -1078,7 +1078,12 @@ fn every_stitch_kind_sews_type() {
         return;
     }
     for k in StitchKind::ALL {
-        let p = plan(&type_doc("a", 48.0, StitchSettings::new(k)));
+        let mut s = StitchSettings::new(k);
+        if k == StitchKind::MotifFill {
+            // Small enough for a letter's strokes.
+            (s.motif, s.motif_size) = (Some("dots".into()), Some(3.0));
+        }
+        let p = plan(&type_doc("a", 48.0, s));
         assert!(p.stats().stitches > 10, "{k:?}");
         assert!(p.needles.iter().all(|n| n.x.is_finite() && n.y.is_finite()));
     }

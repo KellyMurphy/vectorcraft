@@ -5300,6 +5300,14 @@ theme	Appearance	Външен вид
 	Open Embroidery Font…	Отваряне на шрифт за бродерия…
 	Trace Embroidery Font…	Прерисуване на шрифт за бродерия…
 	Load Motif…	Зареждане на мотив…
+	Motif Fill	Запълване с мотив
+	A small stitched motif repeated across the shape, the fabric showing between.	Малък бродиран мотив, повторен по формата, с видим плат между тях.
+	How large one tile of the motif is	Колко голяма е една плочка на мотива
+	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Мотивът, бродиран плочка по плочка по формата (embroidery.loadMotif добавя още)
+	Stars	Звезди
+	Flowers	Цветя
+	Crosses	Кръстчета
+	Hearts	Сърца
 	Motifs	Мотиви
 	Remove Motif	Премахване на мотив
 	Save Motif…	Запазване на мотив…

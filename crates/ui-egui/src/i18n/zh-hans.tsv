@@ -5153,6 +5153,14 @@ lighting	Light	光源
 	Open Embroidery Font…	打开刺绣字体…
 	Trace Embroidery Font…	描摹刺绣字体…
 	Load Motif…	载入图案单元…
+	Motif Fill	图案填充
+	A small stitched motif repeated across the shape, the fabric showing between.	小型刺绣图案在形状上重复排列，图案之间露出布面。
+	How large one tile of the motif is	一个图案单元的大小
+	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	在形状上逐个刺绣的图案单元（embroidery.loadMotif 可添加更多）
+	Stars	星形
+	Flowers	花朵
+	Crosses	十字
+	Hearts	心形
 	Motifs	图案单元
 	Remove Motif	移除图案单元
 	Save Motif…	存储图案单元…

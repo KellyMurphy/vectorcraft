@@ -5316,6 +5316,14 @@ imageTrace	Outline	Körvonal
 	Open Embroidery Font…	Hímzőbetűtípus megnyitása…
 	Trace Embroidery Font…	Hímzőbetűtípus átrajzolása…
 	Load Motif…	Motívum betöltése…
+	Motif Fill	Motívumos kitöltés
+	A small stitched motif repeated across the shape, the fabric showing between.	Kis hímzett motívum ismételve az alakzaton, köztük látszik az anyag.
+	How large one tile of the motif is	Mekkora a motívum egy csempéje
+	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	A motívum csempénként hímezve az alakzaton (az embroidery.loadMotif újakat ad hozzá)
+	Stars	Csillagok
+	Flowers	Virágok
+	Crosses	Keresztek
+	Hearts	Szívek
 	Motifs	Motívumok
 	Remove Motif	Motívum eltávolítása
 	Save Motif…	Motívum mentése…

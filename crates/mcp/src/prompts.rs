@@ -120,7 +120,8 @@ pub struct PromptDef {
 pub(crate) const MACHINE_FORMATS: &[&str] = &["dst", "pes", "jef", "exp"];
 
 /// Stitch types (`embroidery.set`'s `type`), a closed set kept in step with the engine (tested).
-pub(crate) const STITCH_TYPES: &[&str] = &["auto", "running", "bean", "satin", "zigzag", "satinShape", "fill", "patternBorder", "manual"];
+pub(crate) const STITCH_TYPES: &[&str] =
+    &["auto", "running", "bean", "satin", "zigzag", "satinShape", "fill", "motifFill", "patternBorder", "manual"];
 
 /// Recolour methods (`recolor.apply`'s `method`), written here because they are a closed set.
 const RECOLOR_METHODS: &[&str] = &["exact", "preserveTints", "scaleTints", "tintsShades", "hueShift"];

@@ -114,6 +114,10 @@ pub fn kind(ctx: &egui::Context, k: StitchKind) -> Thumb {
                 s.length = Some(2.2);
                 sew(&s, &block(), 1.0, &[])
             }
+            StitchKind::MotifFill => {
+                (s.motif, s.motif_size, s.length) = (Some("stars".into()), Some(5.0), Some(0.8));
+                sew(&s, &block(), 1.0, &[])
+            }
             StitchKind::PatternBorder => {
                 s.pattern = Some("diamonds".into());
                 s.width = Some(3.0);
@@ -144,6 +148,16 @@ pub fn fill_pattern(ctx: &egui::Context, stagger: u8, motif: Option<&str>) -> Th
         let (spacing, len) = if motif.is_some() { (0.55, 2.0) } else { (0.7, 2.2) };
         let runs = generate::fill_carved(&polys, FillRule::NonZero, 0.0, spacing, len, stagger, &carve).unwrap_or_default();
         Thumb::new(runs)
+    })
+}
+
+/// One tile of stitched motif `m`, about 10 mm across.
+pub fn motif(ctx: &egui::Context, m: &vectorcraft_doc::Motif) -> Thumb {
+    // The document's motifs can change: keyed by content, not just id.
+    let key = format!("motif:{}:{}:{}", m.id, m.size, m.parts.iter().map(|p| p.points.len()).sum::<usize>());
+    Thumb::cached(ctx, &key, || {
+        let k = if m.size > 0.0 { 10.0 / m.size } else { 1.0 };
+        Thumb::new(vec![motifs::tile_run(m, k, &|p| p, 1.0, 0.4)])
     })
 }
 

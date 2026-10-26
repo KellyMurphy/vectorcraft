@@ -5234,6 +5234,14 @@ mark-style	Japanese	Japonesas
 	Open Embroidery Font…	Abrir Fonte de Bordado…
 	Trace Embroidery Font…	Decalcar Fonte de Bordado…
 	Load Motif…	Carregar Motivo…
+	Motif Fill	Preenchimento de Motivo
+	A small stitched motif repeated across the shape, the fabric showing between.	Um pequeno motivo bordado repetido pela forma, com o tecido visível entre eles.
+	How large one tile of the motif is	O tamanho de um ladrilho do motivo
+	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	O motivo bordado ladrilho a ladrilho pela forma (embroidery.loadMotif adiciona mais)
+	Stars	Estrelas
+	Flowers	Flores
+	Crosses	Cruzes
+	Hearts	Corações
 	Motifs	Motivos
 	Remove Motif	Remover Motivo
 	Save Motif…	Salvar Motivo…

@@ -4907,6 +4907,14 @@ lighting	Light	광원
 	Open Embroidery Font…	자수 글꼴 열기…
 	Trace Embroidery Font…	자수 글꼴 따라 그리기…
 	Load Motif…	모티프 불러오기…
+	Motif Fill	모티프 채우기
+	A small stitched motif repeated across the shape, the fabric showing between.	작은 자수 모티프를 도형 전체에 반복하며 사이로 원단이 보입니다.
+	How large one tile of the motif is	모티프 타일 하나의 크기
+	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	도형 전체에 타일마다 수놓는 모티프(embroidery.loadMotif로 추가)
+	Stars	별
+	Flowers	꽃
+	Crosses	십자
+	Hearts	하트
 	Motifs	모티프
 	Remove Motif	모티프 제거
 	Save Motif…	모티프 저장…

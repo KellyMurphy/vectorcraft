@@ -587,6 +587,7 @@ pub(crate) fn kind_blurb(k: StitchKind) -> &'static str {
         StitchKind::SatinShape => "Satin that follows a shape's strokes from edge to edge: lettering.",
         StitchKind::Fill => "Rows of stitches covering the shape, with a pattern.",
         StitchKind::PatternBorder => "A border pattern repeated along the path.",
+        StitchKind::MotifFill => "A small stitched motif repeated across the shape, the fabric showing between.",
         StitchKind::Manual => "The needle goes down at every anchor, as drawn.",
     }
 }
@@ -687,6 +688,39 @@ fn fill_pattern_picker(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
     })
     .response
     .on_hover_text(tl!("How the needle holes line up from row to row, or a motif carved into the fill"));
+}
+
+/// Motif Fill › Motif: the stitched motifs (the built-in ones, then the document's), each as a
+/// picture.
+fn motif_fill_picker(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
+    use vectorcraft_doc::MotifKind;
+    use vectorcraft_embroidery::motifs;
+    let ctx = ui.ctx().clone();
+    let mine: Vec<vectorcraft_doc::Motif> = app
+        .session
+        .active()
+        .map(|d| d.doc.embroidery.motifs.iter().filter(|m| m.unknown.is_none() && m.kind == MotifKind::Stitched).cloned().collect())
+        .unwrap_or_default();
+    let all: Vec<vectorcraft_doc::Motif> = motifs::STITCHED.iter().filter_map(|id| motifs::builtin(id)).chain(mine).collect();
+    let entries: Vec<(String, stitch_art::Thumb)> = all
+        .iter()
+        .map(|m| {
+            let name = if motifs::STITCHED.contains(&m.id.as_str()) { motif_label(&m.id).to_string() } else { m.name.clone() };
+            (name, stitch_art::motif(&ctx, m))
+        })
+        .collect();
+    let current = sel["motif"].as_str().unwrap_or(motifs::DEFAULT_STITCHED);
+    let selected = all.iter().position(|m| m.id == current);
+    ui.scope(|ui| {
+        widgets::label_row(ui, tl!("Motif:"), LABEL_W, |ui| {
+            let (label, thumb) = selected.and_then(|i| entries.get(i)).map(|(l, th)| (l.clone(), Some(th))).unwrap_or_default();
+            if let Some(m) = picture_picker(ui, "motif-fill", &label, thumb, &entries, selected, false).and_then(|i| all.get(i)) {
+                set(app, json!({"motif": m.id}));
+            }
+        })
+    })
+    .response
+    .on_hover_text(tl!("The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)"));
 }
 
 /// The most findings the Check list shows.
@@ -928,6 +962,17 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
             underlay_row(app, ui, kind, sel);
             border_row(app, ui, sel);
         }
+        StitchKind::MotifFill => {
+            widgets::section_header(ui, tl!("Motif Fill"));
+            motif_fill_picker(app, ui, sel);
+            mm(app, ui, tl!("Motif Size:"), "motifSize", num("motifSize"), StitchSettings::MOTIF_SIZE, tl!("How large one tile of the motif is"));
+            widgets::label_row(ui, tl!("Angle:"), LABEL_W, |ui| {
+                if let Some(v) = widgets::mixed_field(ui, ("emb", "angle"), num("angle"), "°", 1, FIELD_W) {
+                    set(app, json!({"angle": v}));
+                }
+            });
+            mm(app, ui, tl!("Stitch Length:"), "length", num("length"), StitchSettings::LENGTH, tl!("How long each stitch is"));
+        }
         StitchKind::Auto => {
             widgets::section_header(ui, tl!("Auto"));
             widgets::dim_label(ui, tl!("Each shape (or letter) is stitched by how wide its strokes are."));
@@ -1124,6 +1169,7 @@ fn own_rows(kind: StitchKind) -> &'static [&'static str] {
         StitchKind::SatinShape => &["spacing", "pull", "underlay"],
         StitchKind::Fill => &["angle", "spacing", "length", "stagger", "motif", "motifSize", "underlay", "border"],
         StitchKind::PatternBorder => &["pattern", "width", "flip", "length", "spacing"],
+        StitchKind::MotifFill => &["motif", "motifSize", "angle", "length", "spacing"],
         StitchKind::Auto => &["thinUnder", "wideOver", "spacing", "pull", "border"],
         StitchKind::Manual => &[],
     }
@@ -1261,6 +1307,11 @@ fn motif_label(id: &str) -> &'static str {
         "circles" => tl!("Circles"),
         "scales" => tl!("Scales"),
         "herringbone" => tl!("Herringbone"),
+        "stars" => tl!("Stars"),
+        "flowers" => tl!("Flowers"),
+        "crosses" => tl!("Crosses"),
+        "hearts" => tl!("Hearts"),
+        "dots" => tl!("Dots"),
         _ => tl!("Motif"),
     }
 }

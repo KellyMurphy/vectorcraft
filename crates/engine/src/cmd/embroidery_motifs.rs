@@ -60,7 +60,7 @@ fn users(doc: &Document, id: &str) -> usize {
 
 fn list_motifs(s: &mut Session, _: &Value) -> Result<Value> {
     let doc = &s.doc()?.doc;
-    let built_in = motifs::MOTIFS.iter().filter_map(|id| motifs::builtin(id)).map(|m| (m, true));
+    let built_in = motifs::MOTIFS.iter().chain(&motifs::STITCHED).filter_map(|id| motifs::builtin(id)).map(|m| (m, true));
     let list: Vec<Value> = doc
         .embroidery
         .motifs
@@ -104,7 +104,7 @@ pub(crate) fn add_motif(s: &mut Session, mut m: Motif, label: &str, cmd: &str) -
     if mine.iter().any(same) || motifs::builtin(&m.id).is_some_and(|q| same(&q)) {
         return Ok((m.id, false));
     }
-    let taken = |id: &str| motifs::MOTIFS.contains(&id) || mine.iter().any(|q| q.id == id);
+    let taken = |id: &str| motifs::builtin(id).is_some() || mine.iter().any(|q| q.id == id);
     if taken(&m.id) {
         let base = m.id.clone();
         let Some(id) = (2..10_000).map(|n| format!("{base}-{n}")).find(|id| !taken(id)) else {
@@ -169,37 +169,78 @@ mod tests {
 
     /// A carve motif file: a cross on a square lattice.
     fn carve() -> String {
-        CROSSES.replace("\"stitched\"", "\"carve\"").replace("\"crosses\"", "\"carved-crosses\"")
+        CROSSES.replace("\"stitched\"", "\"carve\"").replace("\"brick-crosses\"", "\"carved-crosses\"")
     }
 
     #[test]
     fn motifs_load_list_save_and_remove() {
         let mut s = session();
         let r = s.execute("embroidery.loadMotif", &json!({"data": CROSSES})).unwrap();
-        assert_eq!((r["id"].as_str(), r["added"].as_bool(), r["motifKind"].as_str()), (Some("crosses"), Some(true), Some("stitched")));
+        assert_eq!((r["id"].as_str(), r["added"].as_bool(), r["motifKind"].as_str()), (Some("brick-crosses"), Some(true), Some("stitched")));
         // The very same one isn't added twice; a different one under the same id gets a number.
         assert_eq!(s.execute("embroidery.loadMotif", &json!({"data": CROSSES})).unwrap()["added"], false);
         let other = CROSSES.replace("\"size\": 6", "\"size\": 7");
-        assert_eq!(s.execute("embroidery.loadMotif", &json!({"data": other})).unwrap()["id"], "crosses-2");
+        assert_eq!(s.execute("embroidery.loadMotif", &json!({"data": other})).unwrap()["id"], "brick-crosses-2");
         // A built-in id is taken too.
-        let waves = CROSSES.replace("\"crosses\"", "\"waves\"");
+        let waves = CROSSES.replace("\"brick-crosses\"", "\"waves\"");
         assert_eq!(s.execute("embroidery.loadMotif", &json!({"data": waves})).unwrap()["id"], "waves-2");
         let list = s.execute("embroidery.motifs", &json!({})).unwrap();
         let ids: Vec<&str> = list["motifs"].as_array().unwrap().iter().filter_map(|m| m["id"].as_str()).collect();
-        assert_eq!(ids.first().copied(), Some("crosses"));
+        assert_eq!(ids.first().copied(), Some("brick-crosses"));
+        assert!(motifs::STITCHED.iter().all(|m| ids.contains(m)), "the stitched starters are listed: {ids:?}");
         assert!(motifs::MOTIFS.iter().all(|m| ids.contains(m)), "{ids:?}");
         // Saved, it reads back as it was.
-        let saved = s.execute("embroidery.saveMotif", &json!({"motif": "crosses"})).unwrap();
+        let saved = s.execute("embroidery.saveMotif", &json!({"motif": "brick-crosses"})).unwrap();
         let back = motifs::read_file(saved["data"].as_str().unwrap().as_bytes()).unwrap();
         assert_eq!(back.offsets, [[6.0, 0.0], [3.0, 5.0]]);
         // A built-in one saves too, as data.
         assert!(s.execute("embroidery.saveMotif", &json!({"motif": "scales"})).unwrap()["data"].as_str().unwrap().contains("vectorcraft-motif"));
         // Removed, one undo step; built-in ones stay.
-        s.execute("embroidery.removeMotif", &json!({"motif": "crosses-2"})).unwrap();
+        s.execute("embroidery.removeMotif", &json!({"motif": "brick-crosses-2"})).unwrap();
         assert!(s.execute("embroidery.removeMotif", &json!({"motif": "circles"})).is_err());
         s.execute("edit.undo", &json!({})).unwrap();
-        assert!(s.doc().unwrap().doc.embroidery.motifs.iter().any(|m| m.id == "crosses-2"));
+        assert!(s.doc().unwrap().doc.embroidery.motifs.iter().any(|m| m.id == "brick-crosses-2"));
+        // A built-in stitched motif's id is taken too.
+        let stars = CROSSES.replace("\"brick-crosses\"", "\"stars\"");
+        assert_eq!(s.execute("embroidery.loadMotif", &json!({"data": stars})).unwrap()["id"], "stars-2");
         assert!(s.execute("embroidery.loadMotif", &json!({"data": "{}"})).is_err());
+    }
+
+    /// The needle points the document sews, mm.
+    fn needles(s: &Session) -> Vec<(f64, f64)> {
+        let plan = vectorcraft_embroidery::plan(&s.doc().unwrap().doc);
+        plan.needles.iter().filter(|n| n.cmd == vectorcraft_embroidery::Cmd::Stitch).map(|n| (n.x, n.y)).collect()
+    }
+
+    #[test]
+    fn a_motif_fill_sews_whole_tiles_inside_the_shape() {
+        let mut s = session();
+        // 100 × 60 pt (35.3 × 21.2 mm) at (10, 10) pt.
+        s.execute("shape.rectangle", &json!({"x": 10, "y": 10, "width": 100, "height": 60})).unwrap();
+        s.execute("embroidery.set", &json!({"type": "motifFill"})).unwrap();
+        let info = s.execute("embroidery.info", &json!({})).unwrap();
+        assert!(info["design"]["warnings"].as_array().is_none_or(|w| w.is_empty()), "{info}");
+        let pts = needles(&s);
+        assert!(pts.len() > 100, "{}", pts.len());
+        let mm = |pt: f64| pt * 25.4 / 72.0;
+        let inside = |(x, y): &(f64, f64)| *x >= mm(10.0) - 0.1 && *x <= mm(110.0) + 0.1 && *y >= mm(10.0) - 0.1 && *y <= mm(70.0) + 0.1;
+        assert!(pts.iter().all(inside), "every stitch inside the shape");
+        // Each tile its own run: many runs, separated by jumps or trims.
+        assert!(info["design"]["jumps"].as_u64().unwrap() + info["design"]["trims"].as_u64().unwrap() >= 6, "{info}");
+        // Another stitched motif, larger: fewer stitches.
+        s.execute("embroidery.set", &json!({"motif": "crosses", "motifSize": 20})).unwrap();
+        assert!(needles(&s).len() < pts.len());
+        // A carve motif is refused; turned 45°, it still fits inside.
+        assert!(s.execute("embroidery.set", &json!({"motif": "diamonds"})).is_err());
+        s.execute("embroidery.set", &json!({"motif": "hearts", "angle": 45})).unwrap();
+        assert!(needles(&s).iter().all(inside));
+        // A loaded stitched motif sews; too big a motif for the shape warns.
+        s.execute("embroidery.loadMotif", &json!({"data": CROSSES})).unwrap();
+        s.execute("embroidery.set", &json!({"motif": "brick-crosses", "motifSize": 10})).unwrap();
+        assert!(needles(&s).len() > 50);
+        s.execute("embroidery.set", &json!({"motif": "stars", "motifSize": 60})).unwrap();
+        let info = s.execute("embroidery.info", &json!({})).unwrap();
+        assert!(info["design"]["warnings"].to_string().contains("fits"), "{info}");
     }
 
     #[test]

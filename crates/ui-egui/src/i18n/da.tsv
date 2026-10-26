@@ -5324,6 +5324,14 @@ swatch	Bright Violet	Kraftig violet
 	Open Embroidery Font…	Åbn broderiskrifttype…
 	Trace Embroidery Font…	Tegn broderiskrifttype efter…
 	Load Motif…	Indlæs motiv…
+	Motif Fill	Motivfyld
+	A small stitched motif repeated across the shape, the fabric showing between.	Et lille broderet motiv gentaget hen over formen, med stoffet synligt imellem.
+	How large one tile of the motif is	Hvor stor én flise af motivet er
+	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Motivet broderet flise for flise hen over formen (embroidery.loadMotif tilføjer flere)
+	Stars	Stjerner
+	Flowers	Blomster
+	Crosses	Kryds
+	Hearts	Hjerter
 	Motifs	Motiver
 	Remove Motif	Fjern motiv
 	Save Motif…	Gem motiv…

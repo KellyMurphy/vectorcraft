@@ -314,12 +314,12 @@ fn stretches(line: &[Point], closed: bool) -> (Vec<Vec<Point>>, bool) {
 }
 
 /// A line to sew and how: the stitch, the satin width (mm as sewn) and the points.
-type Piece = (PartStitch, f64, Vec<Point>);
+pub(crate) type Piece = (PartStitch, f64, Vec<Point>);
 
 /// Add `part`, its points put on the fabric by `map` from pattern space, to `pieces`: lines cut
 /// into short pieces first (not manual stitches, whose points are needle points), so they bend;
 /// running and bean lines joining the line before them carry it on.
-fn add_part(pieces: &mut Vec<Piece>, part: &PatternPart, scale: (f64, f64), map: &dyn Fn(f64, f64) -> Point) {
+pub(crate) fn add_part(pieces: &mut Vec<Piece>, part: &PatternPart, scale: (f64, f64), map: &dyn Fn(f64, f64) -> Point) {
     let mut line: Vec<Point> = vec![];
     for (k, &[x, y]) in part.points.iter().enumerate() {
         if part.stitch != PartStitch::Manual
@@ -349,7 +349,7 @@ fn add_part(pieces: &mut Vec<Piece>, part: &PatternPart, scale: (f64, f64), map:
 }
 
 /// The needle points of `pieces`, one after another as one run.
-fn stitch(pieces: Vec<Piece>, len: f64, spacing: f64) -> Vec<Point> {
+pub(crate) fn stitch(pieces: Vec<Piece>, len: f64, spacing: f64) -> Vec<Point> {
     let mut run: Vec<Point> = vec![];
     for (kind, width, line) in pieces {
         let pts = match kind {
