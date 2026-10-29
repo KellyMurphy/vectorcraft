@@ -678,7 +678,11 @@ Turning a customer's logo into stitches in one step, then fixing what's left by 
   finds (`pathops::pathfinder::regions`) — and it becomes a stitch object (fill, or Auto) in the current
   thread; Alt-click outlines it (running or satin). Image areas under the click are traced on the fly at the
   current colour tolerance. Each click is one undo step.
-- **E8.6c Quality pass.** Run the checker and adviser (E8.7) on the result and apply the safe fixes; a test
+- **E8.6c Quality pass (done 2026-10-29).** As built: digitize makes the adviser's fixes (E8.7) while
+  the new objects have dense spots; `the_logo_corpus_stays_within_its_scores` digitizes three code-drawn
+  logos (flat shapes, thin lines, a badge with specks) and fails if trims, stitches or warnings pass the
+  recorded budgets; photos and gradients are refused (logo mode). **Not yet:** text in the corpus, a
+  perf budget for a 1000 × 1000 px logo. Planned as: Run the checker and adviser (E8.7) on the result and apply the safe fixes; a test
   corpus of logos generated in code (flat shapes, text, thin lines, gradients refused) with a score
   (trims, stitch count, findings) tracked so changes can't make it worse.
 - **Tests.** Region counts and kinds on code-generated logos; the result sews with no error findings;

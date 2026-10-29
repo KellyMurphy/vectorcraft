@@ -466,6 +466,90 @@ mod tests {
         assert!(s.execute("embroidery.fillAt", &json!({"x": 75, "y": 75, "thread": "red"})).is_err());
     }
 
+    /// A code-drawn logo `name` of 200 × 200 px: the pixel at (x, y).
+    fn corpus_pixel(name: &str, x: u32, y: u32) -> [u8; 4] {
+        let (dx, dy) = (x as f64 - 100.0, y as f64 - 100.0);
+        let r = dx.hypot(dy);
+        let white = [255, 255, 255, 255];
+        match name {
+            // Flat shapes: a disc, a ring and a square.
+            "shapes" => match () {
+                _ if r <= 40.0 => [200, 20, 20, 255],
+                _ if (60.0..75.0).contains(&r) => [20, 120, 40, 255],
+                _ if (10..50).contains(&x) && (150..190).contains(&y) => [20, 40, 200, 255],
+                _ => white,
+            },
+            // Thin lines: a grid of 3 px bars.
+            "lines" => {
+                if (20..180).contains(&x) && (20..180).contains(&y) && (x % 40 < 3 || y % 40 < 3) {
+                    [30, 30, 30, 255]
+                } else {
+                    white
+                }
+            }
+            // A badge: a disc with a band, and a small star-like speck field.
+            _ => match () {
+                _ if (88..112).contains(&y) && (25..175).contains(&x) => [240, 200, 20, 255],
+                _ if r <= 80.0 => [20, 30, 120, 255],
+                _ if x.is_multiple_of(37) && y.is_multiple_of(41) => [20, 30, 120, 255],
+                _ => white,
+            },
+        }
+    }
+
+    fn place(s: &mut Session, r: &vectorcraft_trace::Raster) {
+        let png = r.encode_png();
+        let (w, h) = (r.width, r.height);
+        s.edit("img", |d, sel| {
+            d.images.insert("img1".into(), ImageBlob::new("image/png", png));
+            let id = d.alloc_id();
+            let l = d.default_layer();
+            let image = ImageObject {
+                key: "img1".into(),
+                width: w,
+                height: h,
+                xf: Affine::translate((50.0, 50.0)),
+                link: None,
+                placement: Default::default(),
+                pixels: None,
+            };
+            d.insert(l, 0, Node::new(id, NodeKind::Image(Box::new(image))))?;
+            sel.set([id]);
+            Ok(id)
+        })
+        .unwrap();
+    }
+
+    /// E8.6c: each corpus logo digitizes with no error findings and within its budget of trims,
+    /// stitches and warnings (recorded when it was built: lower them as digitizing improves, never
+    /// raise them to let a change through).
+    #[test]
+    fn the_logo_corpus_stays_within_its_scores() {
+        // (logo, most trims, most stitches, most warnings)
+        for (name, trims, stitches, warnings) in [("shapes", 13, 2_400, 0), ("lines", 29, 1_900, 0), ("badge", 11, 4_800, 0)] {
+            let mut s = session();
+            place(&mut s, &vectorcraft_trace::Raster::from_fn(200, 200, |x, y| corpus_pixel(name, x, y)));
+            let r = s.execute("embroidery.digitize", &json!({})).unwrap();
+            let info = s.execute("embroidery.info", &json!({})).unwrap();
+            let d = &info["design"];
+            let score = (d["trims"].as_u64().unwrap(), d["stitches"].as_u64().unwrap(), r["findings"]["warning"].as_u64().unwrap());
+            eprintln!("{name}: trims {} stitches {} warnings {} ({r})", score.0, score.1, score.2);
+            assert_eq!(r["findings"]["error"], 0, "{name}: {r}");
+            assert!(score.0 <= trims && score.1 <= stitches && score.2 <= warnings, "{name} got worse: {score:?} {r}");
+            assert!(score.1 > 100, "{name} sewed nothing: {r}");
+        }
+    }
+
+    #[test]
+    fn a_photo_or_gradient_is_refused() {
+        let mut s = session();
+        place(&mut s, &vectorcraft_trace::Raster::from_fn(200, 200, |x, y| [(x + y) as u8, x as u8, y as u8, 255]));
+        let r = s.execute("embroidery.digitize", &json!({}));
+        assert!(r.is_err(), "{r:?}");
+        // Refused, nothing changed.
+        assert_eq!(s.execute("embroidery.info", &json!({})).unwrap()["design"]["stitches"], 0);
+    }
+
     #[test]
     fn bad_params_are_refused() {
         let mut s = session();
