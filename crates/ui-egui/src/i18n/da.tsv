@@ -5960,3 +5960,6 @@ axis	Y Axis	Y-akse
 	Thins the spot to {n} needle holes; fix again to clear it	Gør stedet tyndere, {n} nålestik; ret igen for at fjerne det
 	Auto-Digitize	Autodigitaliser
 	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Vælg et logo (et billede eller en gruppe ensfarvede former): det spores, og hvert område broderes i sin farve.
+	Stitch Fill Tool	Værktøjet Broderfyld
+	Stitch Fill	Broderfyld
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Klik i et lukket område for at brodere det i dets farve; Alt-klik for at brodere omridset

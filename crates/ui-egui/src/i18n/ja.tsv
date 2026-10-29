@@ -5725,3 +5725,6 @@ axis	Y Axis	Y 軸
 	Thins the spot to {n} needle holes; fix again to clear it	その箇所を針穴 {n} まで減らします。もう一度修正すると解消します
 	Auto-Digitize	自動デジタイズ
 	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	ロゴ（画像または単色の図形のグループ）を選択してください：トレースされ、各領域がその色で刺繍されます。
+	Stitch Fill Tool	ステッチ塗りつぶしツール
+	Stitch Fill	ステッチ塗りつぶし
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it	閉じた領域の内側をクリックするとその色で刺繍します。Alt+クリックで輪郭を刺繍します

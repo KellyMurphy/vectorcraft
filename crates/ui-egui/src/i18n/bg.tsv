@@ -5945,3 +5945,6 @@ axis	Y Axis	Y ос
 	Thins the spot to {n} needle holes; fix again to clear it	Разрежда мястото до {n} пробива; поправете отново, за да го отстраните
 	Auto-Digitize	Автоматично дигитализиране
 	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Изберете лого (изображение или група едноцветни форми): то се трасира и всяка област се бродира в своя цвят.
+	Stitch Fill Tool	Инструмент „Бродиране на област“
+	Stitch Fill	Бродиране на област
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Щракнете в затворена област, за да я бродирате в нейния цвят; Alt+щракване очертава контура ѝ

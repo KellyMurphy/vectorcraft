@@ -5608,3 +5608,6 @@ axis	Y Axis	Y축
 	Thins the spot to {n} needle holes; fix again to clear it	그 지점을 바늘 구멍 {n}개로 줄입니다. 다시 수정하면 해결됩니다
 	Auto-Digitize	자동 디지타이즈
 	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	로고(이미지 또는 단색 도형 그룹)를 선택하세요. 추적된 뒤 각 영역이 해당 색으로 자수됩니다.
+	Stitch Fill Tool	스티치 채우기 도구
+	Stitch Fill	스티치 채우기
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it	닫힌 영역 안을 클릭하면 그 색으로 자수합니다. Alt-클릭하면 윤곽선을 자수합니다

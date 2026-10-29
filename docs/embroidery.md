@@ -79,6 +79,12 @@ it is. Then:
 It is all one undo step, and the result is ordinary stitch objects in a group: change any of them by
 hand. Photos and gradients don't digitize well: trace a flat-colour version.
 
+**The Stitch Fill tool** (in the toolbar with the Stitch Angle tool, or **Stitch Fill Tool** in the Tools
+tab) digitizes one area at a time: click inside any closed area, whether a shape or a region where
+shapes and paths cross (as Live Paint finds them), and it becomes a new stitch object on top, sewn Auto
+in the colour of the shape it lies in. Alt-click adds a running-stitch outline of the area instead. Each
+click is one undo step; the art under it is left as it is.
+
 ### Stitch angles
 
 A satin's stitches normally run square across it. **Stitch angle lines** set their direction instead:
@@ -590,6 +596,7 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
 | `embroidery.check` | `{ids?}` → the design checker's `findings` (`rule`, `severity`, `message`, `object`, `at` in document points), `counts` and the `rules` |
 | `embroidery.digitize` | `{id?, colors?, minArea?, keepWhite?, order?, fix?}`: a logo (image, traced image or group of filled shapes) as stitch objects, one undo step → `{id, objects, threads, merged, dropped, fixes, findings}` |
+| `embroidery.fillAt` | `{x, y, outline?, thread?}`: the closed area at a point (document points) as a new stitch object on top, Auto or a running outline (the Stitch Fill tool's click) → `{id, areaMm2, outline}` |
 | `embroidery.density` | `{min?}` → the density map: `cells` (`x`, `y`, `size` in document points, `holes`), densest first, with the `limit`, `peak` and `perMm2` |
 | `embroidery.fixes` | `{object, rule?}` → the suggested `fixes` for the checker's findings on an object (`fix`, `label`, `object` changed, `clears`, `holes` left, the `command` and `params` it runs) |
 | `embroidery.fix` | `{object, rule?, fix?}`: make a suggested fix (default the first) as one undo step → `{fix, label, object, clears, findings}` (counts after) |

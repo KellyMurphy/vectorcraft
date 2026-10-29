@@ -6015,3 +6015,6 @@ axis	Y Axis	Y tengely
 	Thins the spot to {n} needle holes; fix again to clear it	{n} szúrásra ritkítja a helyet; javítson újra a megszüntetéséhez
 	Auto-Digitize	Automatikus digitalizálás
 	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Jelöljön ki egy logót (képet vagy egyszínű alakzatok csoportját): körvonalazásra kerül, és minden terület a saját színével hímződik.
+	Stitch Fill Tool	Kitöltés hímzéssel eszköz
+	Stitch Fill	Kitöltés hímzéssel
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Kattintson egy zárt területbe, hogy a színével kihímezze; Alt-kattintással a körvonalát

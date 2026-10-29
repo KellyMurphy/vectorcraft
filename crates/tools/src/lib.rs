@@ -38,6 +38,7 @@ pub mod shape;
 pub mod shaperwidget;
 pub mod slice;
 pub mod stitch_angle;
+pub mod stitch_fill;
 pub mod stitch_start;
 pub mod symbolism;
 pub mod text;
@@ -267,6 +268,7 @@ pub fn create(id: &str) -> Box<dyn Tool> {
     match id {
         "selection" => Box::new(select::SelectionTool::default()),
         "stitchAngle" => Box::new(stitch_angle::StitchAngleTool::default()),
+        "stitchFill" => Box::new(stitch_fill::StitchFillTool),
         "directSelection" => Box::new(direct::DirectSelectionTool::new(false)),
         "groupSelection" => Box::new(direct::DirectSelectionTool::new(true)),
         "pen" => Box::new(pen::PenTool::default()),

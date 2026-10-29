@@ -6004,3 +6004,6 @@ axis	Y Axis	Y-as
 	Thins the spot to {n} needle holes; fix again to clear it	Dunt de plek uit tot {n} naaldgaten; corrigeer opnieuw om het op te lossen
 	Auto-Digitize	Automatisch digitaliseren
 	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Selecteer een logo (een afbeelding of een groep effen vormen): het wordt overgetrokken en elk vlak in zijn kleur geborduurd.
+	Stitch Fill Tool	Gereedschap Borduurvulling
+	Stitch Fill	Borduurvulling
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Klik in een gesloten vlak om het in zijn kleur te borduren; Alt-klik borduurt de omtrek

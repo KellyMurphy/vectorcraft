@@ -19,15 +19,26 @@ const MAX_REGIONS: usize = 2000;
 const MAX_FIX_ROUNDS: usize = 8;
 
 pub(crate) fn specs() -> Vec<CommandSpec> {
-    vec![cmd!(
-        "embroidery.digitize",
-        "Auto-Digitize",
-        ["Object", "Embroidery"],
-        None,
-        "{id?: an image or an Image Trace group (traced as a flat-colour logo) or a group of filled paths (default: the selection), colors?: 2-10 (the logo's colours when tracing; default found automatically), minArea?: mm² (regions smaller than this are merged into the region round them or else left unstitched; default 2), keepWhite?: false (sew white areas too: by default white is the fabric and is left out of a trace), order?: optimize|keep (optimize: the design's sewing order grouped by thread and nearest first; the default for traced art), fix?: true (make the adviser's fixes where spots come out too dense)} turn a logo into stitch objects as one undo step → {id: the group, objects (each Auto: it picks bean, satin shape or fill with a border by the area's widths as it sews), threads, merged, dropped, fixes: [labels made], findings: {error, warning, note}}",
-        has_doc,
-        digitize
-    )]
+    vec![
+        cmd!(
+            "embroidery.digitize",
+            "Auto-Digitize",
+            ["Object", "Embroidery"],
+            None,
+            "{id?: an image or an Image Trace group (traced as a flat-colour logo) or a group of filled paths (default: the selection), colors?: 2-10 (the logo's colours when tracing; default found automatically), minArea?: mm² (regions smaller than this are merged into the region round them or else left unstitched; default 2), keepWhite?: false (sew white areas too: by default white is the fabric and is left out of a trace), order?: optimize|keep (optimize: the design's sewing order grouped by thread and nearest first; the default for traced art), fix?: true (make the adviser's fixes where spots come out too dense)} turn a logo into stitch objects as one undo step → {id: the group, objects (each Auto: it picks bean, satin shape or fill with a border by the area's widths as it sews), threads, merged, dropped, fixes: [labels made], findings: {error, warning, note}}",
+            has_doc,
+            digitize
+        ),
+        cmd!(
+            "embroidery.fillAt",
+            "Stitch Fill",
+            [],
+            None,
+            "{x: document points, y: document points (a point inside a closed area: a shape or where shapes and paths cross as Live Paint finds areas), outline?: false (a running-stitch outline instead of a fill), thread?: \"#rrggbb\" (default: the colour of the top shape there)} add that area as a new stitch object on top (Auto: fill with a border or satin shape by its width; or a running outline) as one undo step; the Stitch Fill tool's click → {id, areaMm2, outline}",
+            has_doc,
+            fill_at
+        ),
+    ]
 }
 
 /// Run `f`'s commands as one undo step, all undone when it fails.
@@ -262,6 +273,86 @@ fn digitize(s: &mut Session, p: &Value) -> Result<Value> {
     })
 }
 
+/// The visible, unlocked objects of the visible, unlocked layers that can bound the area at `p`:
+/// those whose box holds it, and those whose box meets theirs (a path crossing a shape cuts it
+/// though its box may miss the point), a few rounds out.
+fn objects_at(doc: &Document, p: kurbo::Point) -> Vec<NodeId> {
+    let all: Vec<(NodeId, Rect)> = doc
+        .layers
+        .iter()
+        .filter(|l| l.visible && !l.locked)
+        .flat_map(|l| l.children().into_iter().flatten())
+        .filter(|n| n.visible && !n.locked)
+        .filter_map(|n| n.geometric_bounds().map(|b| (n.id, b.inflate(1.0, 1.0))))
+        .collect();
+    let mut keep: Vec<bool> = all.iter().map(|(_, b)| b.contains(p)).collect();
+    for _ in 0..3 {
+        let reach: Vec<Rect> = all.iter().zip(&keep).filter(|(_, k)| **k).map(|((_, b), _)| *b).collect();
+        let mut grew = false;
+        for ((_, b), k) in all.iter().zip(keep.iter_mut()) {
+            if !*k && reach.iter().any(|r| r.intersect(*b).area() > 0.0) {
+                *k = true;
+                grew = true;
+            }
+        }
+        if !grew {
+            break;
+        }
+    }
+    all.iter().zip(&keep).filter(|(_, k)| **k).map(|((id, _), _)| *id).collect()
+}
+
+fn fill_at(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.fillAt";
+    let num = |k: &str| p.get(k).and_then(Value::as_f64).filter(|v| v.is_finite() && v.abs() <= 1e7);
+    let (Some(x), Some(y)) = (num("x"), num("y")) else { return Err(bad(C, "`x` and `y` must be a point in document points")) };
+    let at = kurbo::Point::new(x, y);
+    let outline = p.get("outline").and_then(Value::as_bool).unwrap_or(false);
+    let thread = match p.get("thread") {
+        None | Some(Value::Null) => None,
+        Some(v) => Some(v.as_str().and_then(vectorcraft_embroidery::threads::parse_hex).ok_or_else(|| bad(C, "`thread` must be \"#rrggbb\""))?),
+    };
+    let doc = s.doc()?.doc.clone();
+    let roots = objects_at(&doc, at);
+    let (map, leaves) = vectorcraft_tools::builder::BuilderMap::new(&doc, &roots, false, true);
+    let Some((region, _, _)) = map.region_at(at).and_then(|i| map.regions.get(i)) else {
+        return Err(bad(C, "no closed area here: click inside a shape, or where shapes and paths enclose an area"));
+    };
+    let path = region.path.clone();
+    // The thread: given, else the fill (then stroke) of the top shape covering the area.
+    let top = region.top().and_then(|i| leaves.get(i));
+    let rgb = thread.or_else(|| {
+        top.and_then(|n| match (n.appearance.fill_paint(), n.appearance.stroke_paint()) {
+            (vectorcraft_color::Paint::Solid { color, .. }, _) | (_, vectorcraft_color::Paint::Solid { color, .. }) => {
+                let [r, g, b, _] = color.to_rgba8(1.0);
+                Some([r, g, b])
+            }
+            _ => None,
+        })
+    });
+    let rgb = rgb.unwrap_or([0, 0, 0]);
+    let paint = vectorcraft_color::Paint::solid(vectorcraft_color::Color::rgb8(rgb[0], rgb[1], rgb[2]));
+    let area = po::try_area(&path, FillRule::NonZero).unwrap_or(0.0).abs() * PT_MM * PT_MM;
+    let id = s.edit("Stitch Fill", |d, sel| {
+        let id = d.alloc_id();
+        let appearance = if outline {
+            vectorcraft_doc::Appearance::basic(vectorcraft_color::Paint::None, paint, 1.0)
+        } else {
+            vectorcraft_doc::Appearance::basic(paint, vectorcraft_color::Paint::None, 1.0)
+        };
+        let mut n = Node::path(id, path, appearance);
+        n.name = Some(if outline { "Stitch Outline".into() } else { "Stitch Fill".into() });
+        let kind = if outline { vectorcraft_doc::StitchKind::Running } else { vectorcraft_doc::StitchKind::Auto };
+        n.extras_mut().stitch = Some(Box::new(vectorcraft_doc::StitchSettings::new(kind)));
+        let layer = d.default_layer();
+        let index = d.children_mut(layer).map(|c| c.len()).unwrap_or(0);
+        d.insert(layer, index, n)?;
+        sel.set([id]);
+        Ok(id)
+    })?;
+    Ok(json!({"id": id.0, "areaMm2": (area * 100.0).round() / 100.0, "outline": outline}))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -340,6 +431,39 @@ mod tests {
         // Auto picks by width: a wide fill and a thin line.
         let plan = s.stitch_plan(&s.doc().unwrap().doc);
         assert_eq!(plan.objects.len(), 2);
+    }
+
+    #[test]
+    fn a_click_inside_crossing_shapes_stitches_just_that_area() {
+        let mut s = session();
+        // Two overlapping squares: the click lands in their overlap only.
+        s.execute("shape.rectangle", &json!({"x": 0, "y": 0, "width": 100, "height": 100})).unwrap();
+        s.execute("shape.rectangle", &json!({"x": 50, "y": 50, "width": 100, "height": 100})).unwrap();
+        let r = s.execute("embroidery.fillAt", &json!({"x": 75, "y": 75, "thread": "#123456"})).unwrap();
+        let mm = PT_MM * PT_MM;
+        assert!((r["areaMm2"].as_f64().unwrap() - 2500.0 * mm).abs() < 1.0, "{r}");
+        let id = NodeId(r["id"].as_u64().unwrap());
+        let doc = &s.doc().unwrap().doc;
+        let n = doc.node(id).unwrap();
+        assert_eq!(n.extras().stitch.as_deref().unwrap().kind, vectorcraft_doc::StitchKind::Auto);
+        assert_eq!(vectorcraft_embroidery::thread_of_node(n), [0x12, 0x34, 0x56]);
+        assert_eq!(s.doc().unwrap().selection.whole(), vec![id]);
+        // A bar crossing a disc, the click beside the bar: only the disc's part left of it.
+        let mut s2 = session();
+        s2.execute("shape.rectangle", &json!({"x": 0, "y": 0, "width": 100, "height": 100})).unwrap();
+        s2.execute("shape.rectangle", &json!({"x": 40, "y": -20, "width": 20, "height": 140})).unwrap();
+        let r2 = s2.execute("embroidery.fillAt", &json!({"x": 10, "y": 50})).unwrap();
+        assert!((r2["areaMm2"].as_f64().unwrap() - 4000.0 * mm).abs() < 1.0, "the part left of the bar: {r2}");
+        // Alt: an outline; one undo step each.
+        let r = s.execute("embroidery.fillAt", &json!({"x": 10, "y": 10, "outline": true})).unwrap();
+        let n = s.doc().unwrap().doc.node(NodeId(r["id"].as_u64().unwrap())).cloned().unwrap();
+        assert_eq!(n.extras().stitch.as_deref().unwrap().kind, vectorcraft_doc::StitchKind::Running);
+        s.execute("edit.undo", &json!({})).unwrap();
+        assert!(s.doc().unwrap().doc.node(n.id).is_none());
+        // Outside every shape, and bad params.
+        assert!(s.execute("embroidery.fillAt", &json!({"x": 300, "y": 300})).is_err());
+        assert!(s.execute("embroidery.fillAt", &json!({"x": 75})).is_err());
+        assert!(s.execute("embroidery.fillAt", &json!({"x": 75, "y": 75, "thread": "red"})).is_err());
     }
 
     #[test]

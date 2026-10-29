@@ -669,7 +669,11 @@ Turning a customer's logo into stitches in one step, then fixing what's left by 
   objects are sequenced (E7.5: by thread, then nearest), overlaps removed (E7.4), and checked (E7.7). The
   result is ordinary stitch objects in a group, fully editable. A report lists what was merged or
   dropped.
-- **E8.6b Click-to-fill and click-to-outline.** A tool (with its own cursor, per the cursor rule): click
+- **E8.6b Click-to-fill and click-to-outline (done 2026-10-29).** As built: the Stitch Fill tool
+  (`crates/tools/src/stitch_fill.rs`, the Live Paint Bucket cursor) and `embroidery.fillAt`: the region
+  under the click among the visible objects there (Shape Builder's map), added on top as Auto in the top
+  shape's colour, Alt-click a running outline; one undo step. **Not yet:** image areas traced on the fly
+  (digitize the image first), a hover highlight of the area. Planned as: A tool (with its own cursor, per the cursor rule): click
   inside any closed area formed by paths, a traced result or overlapping shapes — the regions Live Paint
   finds (`pathops::pathfinder::regions`) — and it becomes a stitch object (fill, or Auto) in the current
   thread; Alt-click outlines it (running or satin). Image areas under the click are traced on the fly at the

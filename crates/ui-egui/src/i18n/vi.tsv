@@ -5625,3 +5625,6 @@ axis	Y Axis	Trục Y
 	Thins the spot to {n} needle holes; fix again to clear it	Làm thưa chỗ đó còn {n} lỗ kim; sửa lần nữa để khắc phục
 	Auto-Digitize	Số hóa tự động
 	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Chọn một logo (ảnh hoặc nhóm hình đơn sắc): logo được dò nét và mỗi vùng được thêu bằng màu của nó.
+	Stitch Fill Tool	Công cụ Tô bằng mũi khâu
+	Stitch Fill	Tô bằng mũi khâu
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Nhấp vào bên trong một vùng kín để thêu nó bằng màu của nó; Alt-nhấp để thêu đường viền

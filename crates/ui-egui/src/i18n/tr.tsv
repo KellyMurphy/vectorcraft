@@ -5584,3 +5584,6 @@ axis	Y Axis	Y ekseni
 	Thins the spot to {n} needle holes; fix again to clear it	Noktayı {n} iğne deliğine seyreltir; gidermek için yeniden düzeltin
 	Auto-Digitize	Otomatik dijitalleştir
 	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Bir logo seçin (bir görüntü veya düz renkli şekiller grubu): izlenir ve her alan kendi renginde işlenir.
+	Stitch Fill Tool	Dikiş Dolgusu Aracı
+	Stitch Fill	Dikiş Dolgusu
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Kapalı bir alanın içine tıklayarak onu kendi renginde işleyin; Alt-tıklama ana hattını işler
