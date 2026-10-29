@@ -654,7 +654,14 @@ after it. Tests: each fix clears its finding on a code-generated design and does
 
 Turning a customer's logo into stitches in one step, then fixing what's left by hand.
 
-- **E8.6a Traced art to stitch objects.** `embroidery.digitize {id: image or traced group, colors?, minArea,
+- **E8.6a Traced art to stitch objects (done 2026-10-29).** As built: `embroidery.digitize`
+  (`crates/engine/src/cmd/embroidery_digitize.rs`; Object › Embroidery and the Tools tab): images and trace
+  groups traced in logo mode (abutting, white left out unless `keepWhite`), groups of filled shapes used as
+  they are; specks under `minArea` united into the plain path whose box holds them (else left unstitched);
+  every area Auto (its choice is made as it sews, so it follows later edits) in its colour's thread or the
+  chart's nearest; traced art's order optimized; the adviser's fixes made (E8.6c's safe fixes); one undo
+  step. **Not yet:** E8.3 fills picked by shape, a report of what was merged by name, compound specks.
+  Planned as: `embroidery.digitize {id: image or traced group, colors?, minArea,
   detail}`: Image Trace (logo mode, `crates/engine/src/cmd/buildcmds.rs`) makes flat-colour regions; small
   specks under `minArea` merge into neighbours; each region gets a stitch kind by its shape and size
   (extending Auto's choice: thin → running or bean, narrow → satin shape, wide → fill with border, and the

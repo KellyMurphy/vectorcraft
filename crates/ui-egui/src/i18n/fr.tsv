@@ -6044,3 +6044,5 @@ axis	Y Axis	Axe Y
 	No one-click fix: change the design by hand (hover the finding for how).	Aucune correction en un clic : modifiez le motif à la main (survolez le constat pour savoir comment).
 	Clears it	Le corrige
 	Thins the spot to {n} needle holes; fix again to clear it	Allège la zone à {n} piqûres ; corrigez encore pour l’éliminer
+	Auto-Digitize	Numériser automatiquement
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Sélectionnez un logo (une image ou un groupe de formes en aplat) : il est vectorisé et chaque zone brodée dans sa couleur.

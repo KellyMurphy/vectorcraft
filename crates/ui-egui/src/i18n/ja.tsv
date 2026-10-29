@@ -5723,3 +5723,5 @@ axis	Y Axis	Y 軸
 	No one-click fix: change the design by hand (hover the finding for how).	ワンクリックの修正はありません：デザインを手で変更してください（方法は項目にポインターを合わせると表示）。
 	Clears it	解消します
 	Thins the spot to {n} needle holes; fix again to clear it	その箇所を針穴 {n} まで減らします。もう一度修正すると解消します
+	Auto-Digitize	自動デジタイズ
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	ロゴ（画像または単色の図形のグループ）を選択してください：トレースされ、各領域がその色で刺繍されます。

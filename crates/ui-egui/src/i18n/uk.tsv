@@ -5641,3 +5641,5 @@ axis	Y Axis	Вісь Y
 	No one-click fix: change the design by hand (hover the finding for how).	Немає виправлення одним клацанням: змініть дизайн вручну (наведіть вказівник на знахідку, щоб дізнатися як).
 	Clears it	Усуває
 	Thins the spot to {n} needle holes; fix again to clear it	Розріджує місце до {n} проколів; виправте ще раз, щоб усунути
+	Auto-Digitize	Автоматична оцифровка
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Виділіть логотип (зображення або групу одноколірних фігур): його буде трасовано, а кожну область вишито своїм кольором.

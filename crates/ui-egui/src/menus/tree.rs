@@ -305,6 +305,8 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                         cp("Manual Stitch", "embroidery.set", json!({"type": "manual"})),
                         Sep,
                         c("Remove Stitches", "embroidery.clear"),
+                        Sep,
+                        c("Auto-Digitize", "embroidery.digitize"),
                     ],
                 ),
                 sub(

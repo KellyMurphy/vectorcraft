@@ -196,6 +196,8 @@ fn tools(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
         extract_row(app, ui);
     }
     widgets::divider(ui);
+    digitize_row(app, ui);
+    widgets::divider(ui);
     lettering(app, ui);
     widgets::divider(ui);
     font_editor(app, ui);
@@ -258,6 +260,25 @@ fn selected_point_type(app: &VectorcraftApp) -> Option<(vectorcraft_geom::Rect, 
 }
 
 /// Lettering: the selected point type put on an arc, and monograms.
+/// Auto-Digitize: the selected logo (an image, a traced image or a group of filled shapes) made
+/// into stitch objects in one step.
+fn digitize_row(app: &mut VectorcraftApp, ui: &mut Ui) {
+    widgets::section_header(ui, tl!("Auto-Digitize"));
+    widgets::dim_label(ui, tl!("Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour."));
+    if widgets::flat_button(ui, tl!("Auto-Digitize"), 120.0).clicked() {
+        match app.run("embroidery.digitize", json!({})) {
+            Ok(r) => app.status(format!(
+                "Digitized {} areas in {} threads ({} merged): {} warnings",
+                r["objects"],
+                r["threads"].as_array().map_or(0, Vec::len),
+                r["merged"],
+                r["findings"]["warning"]
+            )),
+            Err(e) => app.status(e),
+        }
+    }
+}
+
 fn lettering(app: &mut VectorcraftApp, ui: &mut Ui) {
     widgets::section_header(ui, tl!("Lettering"));
     // Type on an arc through where the selected type is.

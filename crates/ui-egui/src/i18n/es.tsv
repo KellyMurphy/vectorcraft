@@ -5987,3 +5987,5 @@ axis	Y Axis	Eje Y
 	No one-click fix: change the design by hand (hover the finding for how).	No hay corrección con un clic: cambie el diseño a mano (pase el puntero sobre el hallazgo para ver cómo).
 	Clears it	Lo resuelve
 	Thins the spot to {n} needle holes; fix again to clear it	Aclara la zona a {n} perforaciones; corrija otra vez para resolverlo
+	Auto-Digitize	Digitalizar automáticamente
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Seleccione un logotipo (una imagen o un grupo de formas de color plano): se calca y cada zona se borda en su color.

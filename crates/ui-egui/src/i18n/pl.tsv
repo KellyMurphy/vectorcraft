@@ -5879,3 +5879,5 @@ axis	Y Axis	Oś Y
 	No one-click fix: change the design by hand (hover the finding for how).	Brak poprawki jednym kliknięciem: zmień projekt ręcznie (wskaż problem, by zobaczyć jak).
 	Clears it	Usuwa problem
 	Thins the spot to {n} needle holes; fix again to clear it	Rozrzedza miejsce do {n} wkłuć; popraw ponownie, aby go usunąć
+	Auto-Digitize	Digitalizuj automatycznie
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Zaznacz logo (obraz lub grupę jednolitych kształtów): zostanie obrysowane, a każdy obszar wyhaftowany w swoim kolorze.

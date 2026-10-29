@@ -5979,3 +5979,5 @@ axis	Y Axis	Άξονας Y
 	No one-click fix: change the design by hand (hover the finding for how).	Δεν υπάρχει διόρθωση με ένα κλικ: αλλάξτε το σχέδιο με το χέρι (περάστε τον δείκτη πάνω από το εύρημα για οδηγίες).
 	Clears it	Το διορθώνει
 	Thins the spot to {n} needle holes; fix again to clear it	Αραιώνει το σημείο σε {n} τρυπήματα· διορθώστε ξανά για να φύγει
+	Auto-Digitize	Αυτόματη ψηφιοποίηση
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Επιλέξτε ένα λογότυπο (εικόνα ή ομάδα μονόχρωμων σχημάτων): ιχνηλατείται και κάθε περιοχή κεντιέται στο χρώμα της.

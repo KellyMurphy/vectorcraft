@@ -5885,3 +5885,5 @@ axis	Y Axis	Y 轴
 	No one-click fix: change the design by hand (hover the finding for how).	没有一键修正：请手动修改设计（将指针悬停在问题上查看方法）。
 	Clears it	可消除
 	Thins the spot to {n} needle holes; fix again to clear it	将该处减至 {n} 个针孔；再修正一次即可消除
+	Auto-Digitize	自动数字化
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	选择一个标志（图像或一组纯色形状）：它会被描摹，每个区域以其颜色刺绣。

@@ -5958,3 +5958,5 @@ axis	Y Axis	Sumbu Y
 	No one-click fix: change the design by hand (hover the finding for how).	Tidak ada perbaikan sekali klik: ubah desain secara manual (arahkan penunjuk ke temuan untuk caranya).
 	Clears it	Menghilangkannya
 	Thins the spot to {n} needle holes; fix again to clear it	Menipiskan titik itu menjadi {n} tusukan; perbaiki lagi untuk menghilangkannya
+	Auto-Digitize	Digitalisasi otomatis
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Pilih logo (gambar atau grup bentuk warna datar): logo dijiplak dan tiap area dibordir dengan warnanya.

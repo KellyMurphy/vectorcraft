@@ -5582,3 +5582,5 @@ axis	Y Axis	Y ekseni
 	No one-click fix: change the design by hand (hover the finding for how).	Tek tıkla düzeltme yok: tasarımı elle değiştirin (nasıl olduğunu görmek için bulgunun üzerine gelin).
 	Clears it	Giderir
 	Thins the spot to {n} needle holes; fix again to clear it	Noktayı {n} iğne deliğine seyreltir; gidermek için yeniden düzeltin
+	Auto-Digitize	Otomatik dijitalleştir
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Bir logo seçin (bir görüntü veya düz renkli şekiller grubu): izlenir ve her alan kendi renginde işlenir.

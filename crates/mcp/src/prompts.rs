@@ -386,7 +386,8 @@ Method:
    make no stitches, art a stitch can't follow…), each with its object and where it is. Fix the
    errors and warnings before going on: embroidery.fixes {object, rule} suggests fixes for
    dense spots and long stitches (tried on a copy first), embroidery.fix makes one, and
-   embroidery.density gives the density map.
+   embroidery.density gives the density map. A logo image (or flat-colour group) becomes
+   stitch objects in one step with embroidery.digitize.
 4. render_preview {stitches: true} to see the stitches in their thread colours on fabric.
    Look for gaps, long satin stitches and objects that crowd each other.
 5. Order the sewing: embroidery.order shows it; embroidery.sortByThread sews each colour

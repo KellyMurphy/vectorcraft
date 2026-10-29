@@ -6051,3 +6051,5 @@ axis	Y Axis	Y-axel
 	No one-click fix: change the design by hand (hover the finding for how).	Ingen rättelse med ett klick: ändra mönstret för hand (håll pekaren över fyndet för att se hur).
 	Clears it	Åtgärdar det
 	Thins the spot to {n} needle holes; fix again to clear it	Glesar ut stället till {n} nålstick; rätta igen för att åtgärda det
+	Auto-Digitize	Autodigitalisera
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Markera en logotyp (en bild eller en grupp enfärgade former): den spåras och varje yta broderas i sin färg.

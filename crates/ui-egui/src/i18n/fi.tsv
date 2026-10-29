@@ -6058,3 +6058,5 @@ axis	Y Axis	Y-akseli
 	No one-click fix: change the design by hand (hover the finding for how).	Ei yhden napsautuksen korjausta: muuta mallia käsin (vie osoitin havainnon päälle nähdäksesi miten).
 	Clears it	Korjaa sen
 	Thins the spot to {n} needle holes; fix again to clear it	Harventaa kohdan {n} pistoon; korjaa uudelleen poistaaksesi sen
+	Auto-Digitize	Automaattinen digitointi
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Valitse logo (kuva tai ryhmä yksivärisiä muotoja): se jäljitetään ja jokainen alue kirjotaan omalla värillään.

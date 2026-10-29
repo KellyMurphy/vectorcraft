@@ -5623,3 +5623,5 @@ axis	Y Axis	Trục Y
 	No one-click fix: change the design by hand (hover the finding for how).	Không có cách sửa một cú nhấp: hãy sửa thiết kế bằng tay (rê chuột lên vấn đề để xem cách).
 	Clears it	Khắc phục
 	Thins the spot to {n} needle holes; fix again to clear it	Làm thưa chỗ đó còn {n} lỗ kim; sửa lần nữa để khắc phục
+	Auto-Digitize	Số hóa tự động
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Chọn một logo (ảnh hoặc nhóm hình đơn sắc): logo được dò nét và mỗi vùng được thêu bằng màu của nó.

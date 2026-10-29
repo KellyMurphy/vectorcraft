@@ -6046,3 +6046,5 @@ axis	Y Axis	osa Y
 	No one-click fix: change the design by hand (hover the finding for how).	Žádná oprava jedním kliknutím: upravte návrh ručně (jak, ukáže najetí na nález).
 	Clears it	Odstraní ho
 	Thins the spot to {n} needle holes; fix again to clear it	Zředí místo na {n} vpichů; opravte znovu, aby zmizel
+	Auto-Digitize	Automaticky digitalizovat
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Vyberte logo (obrázek nebo skupinu jednobarevných tvarů): obkreslí se a každá oblast se vyšije ve své barvě.

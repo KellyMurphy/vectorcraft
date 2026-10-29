@@ -6013,3 +6013,5 @@ axis	Y Axis	Y tengely
 	No one-click fix: change the design by hand (hover the finding for how).	Nincs egykattintásos javítás: módosítsa kézzel a mintát (a találat fölé mutatva látszik, hogyan).
 	Clears it	Megszünteti
 	Thins the spot to {n} needle holes; fix again to clear it	{n} szúrásra ritkítja a helyet; javítson újra a megszüntetéséhez
+	Auto-Digitize	Automatikus digitalizálás
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Jelöljön ki egy logót (képet vagy egyszínű alakzatok csoportját): körvonalazásra kerül, és minden terület a saját színével hímződik.

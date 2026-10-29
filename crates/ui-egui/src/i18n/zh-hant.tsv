@@ -5681,3 +5681,5 @@ axis	Y Axis	Y 軸
 	No one-click fix: change the design by hand (hover the finding for how).	沒有一鍵修正：請手動修改設計（將指標停在問題上查看方法）。
 	Clears it	可消除
 	Thins the spot to {n} needle holes; fix again to clear it	將該處減至 {n} 個針孔；再修正一次即可消除
+	Auto-Digitize	自動數位化
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	選取一個標誌（影像或一組純色形狀）：它會被描圖，每個區域以其顏色刺繡。

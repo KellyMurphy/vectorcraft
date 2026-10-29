@@ -5958,3 +5958,5 @@ axis	Y Axis	Y-akse
 	No one-click fix: change the design by hand (hover the finding for how).	Ingen rettelse med ét klik: ret designet i hånden (hold over fundet for at se hvordan).
 	Clears it	Fjerner det
 	Thins the spot to {n} needle holes; fix again to clear it	Gør stedet tyndere, {n} nålestik; ret igen for at fjerne det
+	Auto-Digitize	Autodigitaliser
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Vælg et logo (et billede eller en gruppe ensfarvede former): det spores, og hvert område broderes i sin farve.

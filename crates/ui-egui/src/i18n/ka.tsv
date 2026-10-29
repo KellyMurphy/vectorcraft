@@ -5541,3 +5541,5 @@ axis	Y Axis	Y ღერძი
 	No one-click fix: change the design by hand (hover the finding for how).	ერთი დაწკაპებით შესწორება არ არის: შეცვალეთ დიზაინი ხელით (როგორ — მიიტანეთ მაჩვენებელი მიგნებასთან).
 	Clears it	აქრობს მას
 	Thins the spot to {n} needle holes; fix again to clear it	ათხელებს ადგილს {n} ჩხვლეტამდე; კვლავ შეასწორეთ მის მოსაშორებლად
+	Auto-Digitize	ავტომატური დიჯიტალიზაცია
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	აირჩიეთ ლოგო (გამოსახულება ან ერთფეროვანი ფორმების ჯგუფი): ის ტრასირდება და თითო არე საკუთარი ფერით იქარგება.

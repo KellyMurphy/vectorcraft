@@ -59,6 +59,26 @@ on a square, brick or hexagonal grid. A motif line running nearly along the rows
 them, so it shows faintly (the tops of the circles at a 0° fill): turn the fill's angle to change which parts
 show strongest.
 
+### Auto-digitizing a logo
+
+Select a logo and choose Object › Embroidery › **Auto-Digitize** (or **Auto-Digitize** in the Embroidery
+panel's Tools tab). An image, or an image already traced with Image Trace, is traced as a flat-colour logo
+(Image Trace's logo mode: at most ten colours, edges kept sharp, areas that meet without overlapping);
+white is taken for the fabric and left out unless `keepWhite` is on. A group of filled shapes is used as
+it is. Then:
+
+- areas smaller than 2 mm² (`minArea`) are merged into the area round them, or left unstitched when none
+  holds them;
+- every area is set to **Auto**, which picks a bean outline for thin areas, a satin shape for narrow ones
+  and a fill with a satin border for wide ones as it sews, so later edits are sewn the right way too;
+- each area gets the thread of its colour, the thread chart's nearest when the document has one;
+- for traced art, the design's sewing order is grouped by thread and sewn nearest first (`order: keep`
+  leaves it); traced areas don't overlap, so this never changes what lies on top;
+- the density adviser's fixes are made where spots come out too dense (`fix: false` skips them).
+
+It is all one undo step, and the result is ordinary stitch objects in a group: change any of them by
+hand. Photos and gradients don't digitize well: trace a flat-colour version.
+
 ### Stitch angles
 
 A satin's stitches normally run square across it. **Stitch angle lines** set their direction instead:
@@ -569,6 +589,7 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings |
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
 | `embroidery.check` | `{ids?}` → the design checker's `findings` (`rule`, `severity`, `message`, `object`, `at` in document points), `counts` and the `rules` |
+| `embroidery.digitize` | `{id?, colors?, minArea?, keepWhite?, order?, fix?}`: a logo (image, traced image or group of filled shapes) as stitch objects, one undo step → `{id, objects, threads, merged, dropped, fixes, findings}` |
 | `embroidery.density` | `{min?}` → the density map: `cells` (`x`, `y`, `size` in document points, `holes`), densest first, with the `limit`, `peak` and `perMm2` |
 | `embroidery.fixes` | `{object, rule?}` → the suggested `fixes` for the checker's findings on an object (`fix`, `label`, `object` changed, `clears`, `holes` left, the `command` and `params` it runs) |
 | `embroidery.fix` | `{object, rule?, fix?}`: make a suggested fix (default the first) as one undo step → `{fix, label, object, clears, findings}` (counts after) |

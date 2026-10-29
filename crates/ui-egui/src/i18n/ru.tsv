@@ -5657,3 +5657,5 @@ axis	Y Axis	Ось Y
 	No one-click fix: change the design by hand (hover the finding for how).	Нет исправления в один щелчок: измените дизайн вручную (наведите указатель на находку, чтобы узнать как).
 	Clears it	Устраняет
 	Thins the spot to {n} needle holes; fix again to clear it	Разрежает место до {n} проколов; исправьте ещё раз, чтобы устранить
+	Auto-Digitize	Автоматическая оцифровка
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Выделите логотип (изображение или группу одноцветных фигур): он будет трассирован, и каждая область вышита своим цветом.

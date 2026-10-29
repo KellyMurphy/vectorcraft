@@ -5661,3 +5661,5 @@ axis	Y Axis	Asse Y
 	No one-click fix: change the design by hand (hover the finding for how).	Nessuna correzione con un clic: modifica il disegno a mano (passa sopra il problema per sapere come).
 	Clears it	Lo risolve
 	Thins the spot to {n} needle holes; fix again to clear it	Dirada il punto a {n} fori; correggi di nuovo per risolverlo
+	Auto-Digitize	Digitalizza automaticamente
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Seleziona un logo (un’immagine o un gruppo di forme a tinta piatta): viene ricalcato e ogni area ricamata nel suo colore.
