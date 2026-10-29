@@ -5932,3 +5932,5 @@ axis	Y Axis	Y ос
 @msg	no empty artboards to delete	няма празни работни области за изтриване
 	Scale Presets	Пресети за мащаб
 	Live preview	Преглед на живо
+	Extract Motif	Извличане на мотив
+	For a fill repeating both ways: select an area with two or more repeats each way.	За пълнеж, повтарящ се в двете посоки: изберете област с поне две повторения във всяка посока.

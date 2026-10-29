@@ -30,7 +30,7 @@ sewing; when the checker finds problems, a line at the foot of the tab says how 
 **Design** shows the whole design: the fabric, hoop, machine format (DST, PES, JEF or EXP) and thread
 chart, its stitch count, size, trims and jumps and threads, a Stitch Preview switch, **Export** in the
 machine's format, the worksheet, the Sew Order and Sew-Out Test panels, and the design checker's findings.
-**Tools** holds Appliqué and its Cut File, Extract Border Pattern (for an opened design's stitches),
+**Tools** holds Appliqué and its Cut File, Extract Border Pattern and Extract Motif (for an opened design's stitches),
 embroidery fonts (Load, Import Ink/Stitch Font, Add Font Folder) and the library folder. The panel opens
 on the tab it was last left on.
 
@@ -118,6 +118,15 @@ middle of the band, so it joins end to end, and added to the document's patterns
 "extracted from" the design's name as its source. Save it as a file from the Pattern Border section. Only
 take patterns from designs you have the right to reuse. Curved stretches aren't recognized: pick a straight
 one.
+
+**Extracting a motif** works the same way for a fill that repeats both ways (a background of stars, a
+brick of crosses): select the opened design's stitches, optionally with a shape drawn over the area to take,
+and choose **Extract Motif**. The area needs two or more repeats each way. VectorCraft finds the two
+shortest shifts that move the needle points back onto needle points (the lattice; the `offsets` param sets
+it instead) and cuts out one tile, the stitches whose middles fall in one cell of it, so the tiles meet
+without gaps or doubled stitches. The tile is added to the document's motifs as a stitched motif, with
+"extracted from" the design's name as its source: pick it for a Motif Fill, or save it as a `.vcmotif` file.
+A pattern repeating only one way is a border: use Extract Border Pattern.
 
 The file format is open and documented, so other programs can make patterns too: see the
 [`.vcborder` specification](formats/vcborder.md). In short, a file is JSON holding the pattern's name,
@@ -532,6 +541,7 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.loadBorderPattern` | `{path? \| data? \| library?}`: load a `.vcborder` file into the document → `{id, name, added}` |
 | `embroidery.saveBorderPattern` | `{pattern, path?, user?}`: write a pattern as a `.vcborder` file (without `path`: `{data}`; `user: true`: into the embroidery library) |
 | `embroidery.extractBorderPattern` | `{name?, period?, author?, license?, source?, ids?}`: the repeat of the selected border stitches (only those inside a selected closed shape, if any) as a new document pattern → `{id, name, period, width, stitches, repeats, error}` |
+| `embroidery.extractMotif` | `{name?, offsets?, author?, license?, source?, ids?}`: the tile of the pattern repeating both ways in the selected manual stitches (only those inside a selected closed shape, if any) as a new document motif → `{id, name, offsets, stitches, tiles, error}` |
 | `embroidery.motifs` | `{}`: the document's motifs, then the built-in carve motifs, with their kind, size, lattice, credits and how many objects use them |
 | `embroidery.loadMotif` | `{path? \| data? \| library?}`: load a `.vcmotif` file into the document → `{id, name, motifKind, added}` |
 | `embroidery.saveMotif` | `{motif, path?, user?}`: write a motif as a `.vcmotif` file (without `path`: `{data}`; `user: true`: into the embroidery library) |

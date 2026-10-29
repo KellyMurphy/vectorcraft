@@ -6047,3 +6047,5 @@ axis	Y Axis	Y-akseli
 @msg	a {width}×{height} screenshot's byte count overflows	{width}×{height} kuvakaappauksen tavumäärä ylittää rajan
 @msg	the window's {what} ({points} points × {scale} DPI) cannot size a screenshot	ikkunan {what} ({points} pistettä × {scale} DPI) ei voi määrittää kuvakaappauksen kokoa
 	Live preview	Reaaliaikainen esikatselu
+	Extract Motif	Poimi aihe
+	For a fill repeating both ways: select an area with two or more repeats each way.	Molempiin suuntiin toistuvalle täytölle: valitse alue, jossa on vähintään kaksi toistoa kumpaankin suuntaan.

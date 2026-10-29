@@ -5947,3 +5947,5 @@ axis	Y Axis	Y-akse
 @msg	no empty artboards to delete	ingen tomme tegneflader at slette
 	Scale Presets	Skaleringsforudindstillinger
 	Live preview	Direkte forhåndsvisning
+	Extract Motif	Udtræk motiv
+	For a fill repeating both ways: select an area with two or more repeats each way.	Til et fyld, der gentages begge veje: vælg et område med mindst to gentagelser hver vej.

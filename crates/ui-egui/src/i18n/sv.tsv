@@ -6040,3 +6040,5 @@ axis	Y Axis	Y-axel
 @msg	a {width}×{height} screenshot's byte count overflows	byteantalet för en skärmbild på {width}×{height} överstiger gränsen
 @msg	the window's {what} ({points} points × {scale} DPI) cannot size a screenshot	fönstrets {what} ({points} punkter × {scale} DPI) kan inte bestämma en skärmbilds storlek
 	Live preview	Direkt förhandsgranskning
+	Extract Motif	Extrahera motiv
+	For a fill repeating both ways: select an area with two or more repeats each way.	För en fyllning som upprepas åt båda hållen: markera ett område med minst två upprepningar åt varje håll.

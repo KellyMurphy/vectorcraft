@@ -5976,3 +5976,5 @@ axis	Y Axis	Eje Y
 @msg	a {width}×{height} screenshot's byte count overflows	el número de bytes de una captura de {width}×{height} se desborda
 @msg	the window's {what} ({points} points × {scale} DPI) cannot size a screenshot	el {what} de la ventana ({points} puntos × {scale} DPI) no puede dimensionar una captura
 	Live preview	Vista previa en directo
+	Extract Motif	Extraer motivo
+	For a fill repeating both ways: select an area with two or more repeats each way.	Para un relleno que se repite en ambos sentidos: seleccione un área con dos o más repeticiones en cada sentido.

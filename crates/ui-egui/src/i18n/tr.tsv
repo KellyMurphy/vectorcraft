@@ -5571,3 +5571,5 @@ axis	Y Axis	Y ekseni
 @msg	a {width}×{height} screenshot's byte count overflows	{width}×{height} ekran görüntüsünün bayt sayısı taşıyor
 @msg	the window's {what} ({points} points × {scale} DPI) cannot size a screenshot	pencerenin {what} ({points} nokta × {scale} DPI) bir ekran görüntüsünü boyutlandıramaz
 	Live preview	Canlı önizleme
+	Extract Motif	Motif çıkar
+	For a fill repeating both ways: select an area with two or more repeats each way.	İki yönde de yinelenen bir dolgu için: her yönde en az iki tekrar içeren bir alan seçin.

@@ -6035,3 +6035,5 @@ axis	Y Axis	osa Y
 @msg	a {width}×{height} screenshot's byte count overflows	počet bajtů snímku {width}×{height} přeteče
 @msg	the window's {what} ({points} points × {scale} DPI) cannot size a screenshot	okno {what} ({points} bodů × {scale} DPI) nemůže určit velikost snímku
 	Live preview	Živý náhled
+	Extract Motif	Extrahovat motiv
+	For a fill repeating both ways: select an area with two or more repeats each way.	Pro výplň opakující se oběma směry: vyberte oblast s alespoň dvěma opakováními v každém směru.

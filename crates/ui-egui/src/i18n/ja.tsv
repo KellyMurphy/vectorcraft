@@ -5712,3 +5712,5 @@ axis	Y Axis	Y 軸
 @msg	a {width}×{height} screenshot's byte count overflows	{width}×{height} のスクリーンショットのバイト数がオーバーフローします
 @msg	the window's {what} ({points} points × {scale} DPI) cannot size a screenshot	ウィンドウの {what}（{points} ポイント × {scale} DPI）ではスクリーンショットのサイズを決められません
 	Live preview	ライブプレビュー
+	Extract Motif	モチーフを抽出
+	For a fill repeating both ways: select an area with two or more repeats each way.	縦横に繰り返す塗りの場合：各方向に2回以上の繰り返しがある範囲を選択します。

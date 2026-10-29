@@ -5630,3 +5630,5 @@ axis	Y Axis	Вісь Y
 @msg	a {width}×{height} screenshot's byte count overflows	кількість байтів знімка {width}×{height} переповнюється
 @msg	the window's {what} ({points} points × {scale} DPI) cannot size a screenshot	{what} вікна ({points} пунктів × {scale} DPI) не дозволяє задати розмір знімка
 	Live preview	Перегляд у реальному часі
+	Extract Motif	Видобути мотив
+	For a fill repeating both ways: select an area with two or more repeats each way.	Для заповнення, що повторюється в обох напрямках: виділіть область щонайменше з двома повторами в кожному напрямку.

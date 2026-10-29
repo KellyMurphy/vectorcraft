@@ -18,6 +18,7 @@ pub mod check;
 mod dst;
 mod exp;
 pub mod extract;
+pub mod extract_motif;
 pub mod fabrics;
 pub mod font_doc;
 pub mod fonts;

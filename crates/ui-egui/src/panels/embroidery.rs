@@ -191,7 +191,7 @@ fn tools(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
             app.status(e);
         }
     });
-    // A border pattern from an opened design's stitches (manual stitches).
+    // A border pattern or a motif from an opened design's stitches (manual stitches).
     if sel["type"] == json!(StitchKind::Manual.id()) {
         extract_row(app, ui);
     }
@@ -1316,8 +1316,8 @@ fn motif_label(id: &str) -> &'static str {
     }
 }
 
-/// Extract Border Pattern: the repeat of the selected border stitches, added to the document's
-/// border patterns.
+/// Extract Border Pattern and Extract Motif: the repeat of the selected border stitches, added to
+/// the document's border patterns, or the tile of the selected fill's, to its motifs.
 fn extract_row(app: &mut VectorcraftApp, ui: &mut Ui) {
     widgets::divider(ui);
     widgets::dim_label(ui, tl!("Select a straight stretch of a border with two or more repeats, or a shape drawn over it too."));
@@ -1327,6 +1327,18 @@ fn extract_row(app: &mut VectorcraftApp, ui: &mut Ui) {
                 let period = r["period"].as_f64().unwrap_or_default();
                 app.status(format!("Extracted border pattern {}: a {} mm repeat", r["name"].as_str().unwrap_or_default(), period));
             }
+            Err(e) => app.status(e),
+        }
+    }
+    widgets::dim_label(ui, tl!("For a fill repeating both ways: select an area with two or more repeats each way."));
+    if widgets::flat_button(ui, tl!("Extract Motif"), 170.0).clicked() {
+        match app.run("embroidery.extractMotif", json!({})) {
+            Ok(r) => app.status(format!(
+                "Extracted motif {}: {} stitches a tile, about {} tiles found",
+                r["name"].as_str().unwrap_or_default(),
+                r["stitches"].as_u64().unwrap_or_default(),
+                r["tiles"].as_u64().unwrap_or_default()
+            )),
             Err(e) => app.status(e),
         }
     }

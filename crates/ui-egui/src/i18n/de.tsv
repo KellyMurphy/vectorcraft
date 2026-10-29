@@ -5599,3 +5599,5 @@ axis	Y Axis	Y-Achse
 @msg	a {width}×{height} screenshot's byte count overflows	die Byteanzahl eines {width}×{height}-Screenshots läuft über
 @msg	the window's {what} ({points} points × {scale} DPI) cannot size a screenshot	die {what} des Fensters ({points} Punkte × {scale} DPI) kann keinen Screenshot bemessen
 	Live preview	Live-Vorschau
+	Extract Motif	Motiv extrahieren
+	For a fill repeating both ways: select an area with two or more repeats each way.	Für eine Füllung, die sich in beide Richtungen wiederholt: einen Bereich mit mindestens zwei Wiederholungen je Richtung auswählen.

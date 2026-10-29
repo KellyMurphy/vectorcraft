@@ -5670,3 +5670,5 @@ axis	Y Axis	Y 軸
 @msg	a {width}×{height} screenshot's byte count overflows	{width}×{height} 螢幕擷取畫面的位元組數溢出
 @msg	the window's {what} ({points} points × {scale} DPI) cannot size a screenshot	視窗的{what}（{points} 點 × {scale} DPI）無法決定螢幕擷取畫面的大小
 	Live preview	即時預覽
+	Extract Motif	擷取圖案
+	For a fill repeating both ways: select an area with two or more repeats each way.	對於雙向重複的填充：選取每個方向至少重複兩次的區域。

@@ -5968,3 +5968,5 @@ axis	Y Axis	Άξονας Y
 @msg	a {width}×{height} screenshot's byte count overflows	το πλήθος byte ενός στιγμιότυπου {width}×{height} υπερχειλίζει
 @msg	the window's {what} ({points} points × {scale} DPI) cannot size a screenshot	το {what} του παραθύρου ({points} σημεία × {scale} DPI) δεν μπορεί να καθορίσει μέγεθος στιγμιότυπου
 	Live preview	Ζωντανή προεπισκόπηση
+	Extract Motif	Εξαγωγή μοτίβου
+	For a fill repeating both ways: select an area with two or more repeats each way.	Για γέμισμα που επαναλαμβάνεται και προς τις δύο κατευθύνσεις: επιλέξτε περιοχή με δύο ή περισσότερες επαναλήψεις σε κάθε κατεύθυνση.

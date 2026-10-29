@@ -8,7 +8,7 @@ use vectorcraft_embroidery::motifs;
 
 use super::overprint::edit_counted;
 use super::swatchlib::FileData;
-use super::{CommandSpec, Result, Session, bad, cmd, has_doc, str_param};
+use super::{CommandSpec, Result, Session, bad, cmd, has_doc, leaf_targets, str_param, targets};
 
 pub(crate) fn specs() -> Vec<CommandSpec> {
     vec![
@@ -29,6 +29,15 @@ pub(crate) fn specs() -> Vec<CommandSpec> {
             "{path? | data?: the file's text | library?: an embroidery library entry (embroidery.libraries, kind motifs: its id or name)} load a .vcmotif motif file into the document (kept in it, so the document sews the same anywhere), as one undo step. Its id is the file's (else made from its name); one already taken by a different motif, or a built-in one's, gets a number (stars-2…), and a motif the document (or the built-in ones) already has is not added again → {id, name, motifKind, added}",
             has_doc,
             load_motif
+        ),
+        cmd!(
+            "embroidery.extractMotif",
+            "Extract Motif",
+            ["Window", "Embroidery"],
+            None,
+            "{ids?, name?, offsets?: [[x, y], [x, y]] (mm: the lattice; skips the search, or corrects one found), author?, license?, source? (default: the document's title)} find the motif of a pattern repeating both ways in the selected manual-stitch paths (an opened design's fill or background; with a closed unstitched path selected too, only the stitches inside it: draw one over the area to take) and add one tile, as a stitched motif, to the document's motifs (save it with embroidery.saveMotif), as one undo step. Pick an area with two or more repeats each way. Use only designs you have the right to reuse → {id, name, offsets, stitches: needle points a tile, tiles: about how many tiles the area holds, error: mm the repeats differ from the tile, median}",
+            has_doc,
+            extract_motif
         ),
         cmd!(
             "embroidery.saveMotif",
@@ -118,6 +127,54 @@ pub(crate) fn add_motif(s: &mut Session, mut m: Motif, label: &str, cmd: &str) -
         Ok(1)
     })?;
     Ok((id, true))
+}
+
+fn extract_motif(s: &mut Session, p: &Value) -> Result<Value> {
+    use vectorcraft_embroidery::{extract_motif, generate};
+    const C: &str = "embroidery.extractMotif";
+    let offsets = match p.get("offsets") {
+        None | Some(Value::Null) => None,
+        Some(v) => {
+            let pair = |w: &Value| -> Option<kurbo::Vec2> {
+                let (x, y) = (w.get(0)?.as_f64()?, w.get(1)?.as_f64()?);
+                (x.is_finite() && y.is_finite() && x.abs() <= 1000.0 && y.abs() <= 1000.0).then(|| kurbo::Vec2::new(x, y))
+            };
+            let both = v.as_array().filter(|a| a.len() == 2).and_then(|a| Some([pair(a.first()?)?, pair(a.get(1)?)?]));
+            Some(both.ok_or_else(|| bad(C, "`offsets` must be two [x, y] offsets in mm"))?)
+        }
+    };
+    let text = |key: &str| str_param(p, key).map(str::trim).filter(|t| !t.is_empty()).map(str::to_string);
+    let ids = leaf_targets(s, &targets(s, p)?)?;
+    let st = s.doc()?;
+    let doc = &st.doc;
+    // The stitches: manual-stitch paths (an opened design); the area: any other closed path
+    // selected with them, drawn over the part to take.
+    let (mut runs, mut region) = (vec![], vec![]);
+    for id in &ids {
+        let Some(n) = doc.node(*id) else { continue };
+        let Some(path) = n.path_data() else { continue };
+        if n.extras().stitch.as_deref().is_some_and(|t| t.kind == StitchKind::Manual) {
+            runs.extend(generate::manual(path));
+        } else {
+            region.extend(generate::polylines(path).into_iter().filter(|(_, closed)| *closed).map(|(l, _)| l));
+        }
+    }
+    if runs.is_empty() {
+        return Err(bad(
+            C,
+            "select the stitches of a repeating pattern (an opened design's manual stitches), and optionally a shape over the area to take",
+        ));
+    }
+    let title = st.title();
+    let name = text("name").unwrap_or_else(|| format!("{} motif", title.rsplit_once('.').map_or(title.as_str(), |(stem, _)| stem)));
+    let mut e = extract_motif::motif(&runs, (!region.is_empty()).then_some(region.as_slice()), &name, offsets).map_err(|e| bad(C, e))?;
+    e.motif.author = text("author");
+    e.motif.license = text("license");
+    e.motif.source = Some(text("source").unwrap_or_else(|| format!("extracted from {title}")));
+    let offsets = e.motif.offsets;
+    let (id, _) = add_motif(s, e.motif.clone(), "Extract Motif", C)?;
+    let r = |v: f64| (v * 100.0).round() / 100.0;
+    Ok(json!({"id": id, "name": e.motif.name, "offsets": offsets, "stitches": e.stitches, "tiles": e.tiles, "error": r(e.error)}))
 }
 
 /// The `motif` param: a motif the document can use.
@@ -241,6 +298,41 @@ mod tests {
         s.execute("embroidery.set", &json!({"motif": "stars", "motifSize": 60})).unwrap();
         let info = s.execute("embroidery.info", &json!({})).unwrap();
         assert!(info["design"]["warnings"].to_string().contains("fits"), "{info}");
+    }
+
+    #[test]
+    fn a_motif_is_extracted_from_manual_stitches_and_sews() {
+        let mut s = session();
+        // Crosses on a 7 × 6 mm brick lattice, as an opened design: one manual-stitch path.
+        let mm = 72.0 / 25.4;
+        let mut d = String::new();
+        for i in 0..6 {
+            for j in 0..6 {
+                let (ox, oy) = (40.0 + f64::from(i) * 7.0 + f64::from(j % 2) * 3.5, 40.0 + f64::from(j) * 6.0);
+                for (k, (dx, dy)) in [(-1.0, -1.0), (1.0, 1.0), (0.0, 0.0), (1.0, -1.0), (-1.0, 1.0)].iter().enumerate() {
+                    let cmd = if i == 0 && j == 0 && k == 0 { "M" } else { "L" };
+                    d.push_str(&format!("{cmd}{} {} ", (ox + dx) * mm, (oy + dy) * mm));
+                }
+            }
+        }
+        let path = s.execute("path.create", &json!({ "d": d })).unwrap();
+        s.execute("embroidery.set", &json!({"type": "manual"})).unwrap();
+        let r = s.execute("embroidery.extractMotif", &json!({"ids": [path["id"]], "name": "Crosses", "license": "CC0-1.0"})).unwrap();
+        assert_eq!(r["id"], "crosses-2", "the built-in id is taken: {r}");
+        assert!(r["error"].as_f64().unwrap() < 0.1, "{r}");
+        let m = s.doc().unwrap().doc.embroidery.motifs.iter().find(|m| m.id == "crosses-2").cloned().unwrap();
+        assert_eq!((m.kind, m.license.as_deref()), (vectorcraft_doc::MotifKind::Stitched, Some("CC0-1.0")));
+        assert!(m.source.as_deref().unwrap().starts_with("extracted from"));
+        // It sews as a motif fill.
+        s.execute("shape.rectangle", &json!({"x": 10, "y": 10, "width": 150, "height": 100})).unwrap();
+        s.execute("embroidery.set", &json!({"type": "motifFill", "motif": "crosses-2", "motifSize": 7})).unwrap();
+        assert!(needles(&s).len() > 50);
+        // One undo step; a selection with no manual stitches is refused.
+        s.execute("edit.undo", &json!({})).unwrap();
+        s.execute("edit.undo", &json!({})).unwrap();
+        s.execute("edit.undo", &json!({})).unwrap();
+        assert!(!s.doc().unwrap().doc.embroidery.motifs.iter().any(|m| m.id == "crosses-2"));
+        assert!(s.execute("embroidery.extractMotif", &json!({"ids": [], "offsets": [[1, 2]]})).is_err());
     }
 
     #[test]

@@ -588,7 +588,14 @@ fabric showing between — a light, decorative fill.
   that runs inside the shape (and under the tiles where it can, as E7.5's hidden travel does), trims where
   travel would be too long. An optional outline running stitch. Starters generated in code (stars,
   flowers, crosses, hearts, dots).
-- **E8.4c Extraction.** Extend border extraction (`crates/embroidery/src/extract.rs`, one offset) to two:
+- **E8.4c Extraction (done 2026-10-28).** As built: `embroidery.extractMotif`
+  (`crates/embroidery/src/extract_motif.rs`; Window › Embroidery and the panel's Tools tab, shown for manual
+  stitches): shifts proposed from the needle points' autocorrelation, scored by how closely the shifted
+  needle points land on needle points (the median, so a short shift along a straight stitch doesn't pass),
+  refined to 0.05 mm; the two shortest independent ones reduced to the shortest basis; one tile is the
+  stitches whose middles fall in one cell, added as a stitched motif with "extracted from" as its source.
+  An optional selected closed shape limits the area; `offsets` sets the lattice instead. **Not yet:** the
+  lattice shown on the canvas with handles (the `offsets` param stands in). Planned as: Extend border extraction (`crates/embroidery/src/extract.rs`, one offset) to two:
   select a region of an opened design's stitches; find the two shortest independent offsets at which the
   stitches lie on a shifted copy of themselves (searched over the region's autocorrelation, then refined
   as E5.5 does); show the lattice on the canvas with handles to adjust it; cut one tile, joining its edges
