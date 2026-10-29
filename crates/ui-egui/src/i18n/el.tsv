@@ -5970,3 +5970,12 @@ axis	Y Axis	Άξονας Y
 	Live preview	Ζωντανή προεπισκόπηση
 	Extract Motif	Εξαγωγή μοτίβου
 	For a fill repeating both ways: select an area with two or more repeats each way.	Για γέμισμα που επαναλαμβάνεται και προς τις δύο κατευθύνσεις: επιλέξτε περιοχή με δύο ή περισσότερες επαναλήψεις σε κάθε κατεύθυνση.
+	Stitch Density	Πυκνότητα βελονιών
+	Suggested Fixes	Προτεινόμενες διορθώσεις
+	Fix	Διόρθωση
+	Fix…	Διόρθωση…
+	Needle holes per mm²	Τρυπήματα βελόνας ανά mm²
+	over {n}: too dense	πάνω από {n}: πολύ πυκνό
+	No one-click fix: change the design by hand (hover the finding for how).	Δεν υπάρχει διόρθωση με ένα κλικ: αλλάξτε το σχέδιο με το χέρι (περάστε τον δείκτη πάνω από το εύρημα για οδηγίες).
+	Clears it	Το διορθώνει
+	Thins the spot to {n} needle holes; fix again to clear it	Αραιώνει το σημείο σε {n} τρυπήματα· διορθώστε ξανά για να φύγει

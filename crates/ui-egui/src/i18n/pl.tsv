@@ -5870,3 +5870,12 @@ axis	Y Axis	Oś Y
 	Live preview	Podgląd na żywo
 	Extract Motif	Wyodrębnij motyw
 	For a fill repeating both ways: select an area with two or more repeats each way.	Dla wypełnienia powtarzającego się w obu kierunkach: zaznacz obszar z co najmniej dwoma powtórzeniami w każdym kierunku.
+	Stitch Density	Gęstość ściegu
+	Suggested Fixes	Sugerowane poprawki
+	Fix	Popraw
+	Fix…	Popraw…
+	Needle holes per mm²	Wkłucia igły na mm²
+	over {n}: too dense	ponad {n}: zbyt gęsto
+	No one-click fix: change the design by hand (hover the finding for how).	Brak poprawki jednym kliknięciem: zmień projekt ręcznie (wskaż problem, by zobaczyć jak).
+	Clears it	Usuwa problem
+	Thins the spot to {n} needle holes; fix again to clear it	Rozrzedza miejsce do {n} wkłuć; popraw ponownie, aby go usunąć

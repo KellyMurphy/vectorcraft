@@ -5993,3 +5993,12 @@ axis	Y Axis	Y-as
 	Live preview	Live voorbeeld
 	Extract Motif	Motief extraheren
 	For a fill repeating both ways: select an area with two or more repeats each way.	Voor een vulling die zich in beide richtingen herhaalt: selecteer een gebied met twee of meer herhalingen in elke richting.
+	Stitch Density	Steekdichtheid
+	Suggested Fixes	Voorgestelde correcties
+	Fix	Corrigeren
+	Fix…	Corrigeren…
+	Needle holes per mm²	Naaldgaten per mm²
+	over {n}: too dense	boven {n}: te dicht
+	No one-click fix: change the design by hand (hover the finding for how).	Geen correctie met één klik: pas het ontwerp met de hand aan (wijs de bevinding aan om te zien hoe).
+	Clears it	Lost het op
+	Thins the spot to {n} needle holes; fix again to clear it	Dunt de plek uit tot {n} naaldgaten; corrigeer opnieuw om het op te lossen

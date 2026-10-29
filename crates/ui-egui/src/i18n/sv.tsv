@@ -6042,3 +6042,12 @@ axis	Y Axis	Y-axel
 	Live preview	Direkt förhandsgranskning
 	Extract Motif	Extrahera motiv
 	For a fill repeating both ways: select an area with two or more repeats each way.	För en fyllning som upprepas åt båda hållen: markera ett område med minst två upprepningar åt varje håll.
+	Stitch Density	Stygntäthet
+	Suggested Fixes	Föreslagna rättelser
+	Fix	Rätta
+	Fix…	Rätta…
+	Needle holes per mm²	Nålstick per mm²
+	over {n}: too dense	över {n}: för tätt
+	No one-click fix: change the design by hand (hover the finding for how).	Ingen rättelse med ett klick: ändra mönstret för hand (håll pekaren över fyndet för att se hur).
+	Clears it	Åtgärdar det
+	Thins the spot to {n} needle holes; fix again to clear it	Glesar ut stället till {n} nålstick; rätta igen för att åtgärda det

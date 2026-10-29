@@ -309,11 +309,8 @@ pub static RULES: &[Rule] = &[
         help: "Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.",
         in_plan_warnings: false,
         run: |_, plan| {
-            let cell = |p: &crate::Needle| ((p.x / DENSITY_CELL_MM).floor() as i64, (p.y / DENSITY_CELL_MM).floor() as i64);
-            let mut map: HashMap<(i64, i64), usize> = HashMap::new();
-            for n in plan.needles.iter().filter(|n| n.cmd == Cmd::Stitch && n.x.is_finite() && n.y.is_finite()) {
-                *map.entry(cell(n)).or_default() += 1;
-            }
+            let map = Density::of(plan);
+            let cell = |n: &crate::Needle| Density::cell(Point::new(n.x, n.y));
             let mut out = vec![];
             for o in &plan.objects {
                 let worst = plan
@@ -322,10 +319,10 @@ pub static RULES: &[Rule] = &[
                     .unwrap_or_default()
                     .iter()
                     .filter(|n| n.cmd == Cmd::Stitch && n.x.is_finite() && n.y.is_finite())
-                    .map(|n| (map.get(&cell(n)).copied().unwrap_or(0), cell(n)))
+                    .map(|n| (map.get(cell(n)), cell(n)))
                     .max();
-                if let Some((count, (cx, cy))) = worst.filter(|(c, _)| *c > DENSITY_MAX) {
-                    let at = Point::new((cx as f64 + 0.5) * DENSITY_CELL_MM, (cy as f64 + 0.5) * DENSITY_CELL_MM);
+                if let Some((count, spot)) = worst.filter(|(c, _)| *c > DENSITY_MAX) {
+                    let at = Density::middle(spot);
                     out.push(Finding {
                         rule: "dense",
                         severity: Severity::Warning,
@@ -493,6 +490,48 @@ fn stitches_over(plan: &Plan, o: &PlannedObject, limit: f64) -> (usize, f64, Opt
 /// The object's first stitch, if it makes one.
 fn first_stitch(plan: &Plan, o: &PlannedObject) -> Option<Point> {
     plan.needles.get(o.needles.clone())?.iter().find(|n| n.cmd == Cmd::Stitch).map(|n| Point::new(n.x, n.y))
+}
+
+/// The density map: how many needle holes go into each [`DENSITY_CELL_MM`] square of a plan.
+#[derive(Clone, Debug, Default)]
+pub struct Density {
+    pub counts: HashMap<(i64, i64), usize>,
+}
+
+impl Density {
+    /// The needle holes of `plan` (its stitches, not jumps or trims).
+    pub fn of(plan: &Plan) -> Self {
+        let mut counts: HashMap<(i64, i64), usize> = HashMap::new();
+        for n in plan.needles.iter().filter(|n| n.cmd == Cmd::Stitch && n.x.is_finite() && n.y.is_finite()) {
+            *counts.entry(Self::cell(Point::new(n.x, n.y))).or_default() += 1;
+        }
+        Self { counts }
+    }
+
+    /// The cell holding `p` (mm).
+    pub fn cell(p: Point) -> (i64, i64) {
+        ((p.x / DENSITY_CELL_MM).floor() as i64, (p.y / DENSITY_CELL_MM).floor() as i64)
+    }
+
+    /// The middle of `cell`, mm.
+    pub fn middle((cx, cy): (i64, i64)) -> Point {
+        Point::new((cx as f64 + 0.5) * DENSITY_CELL_MM, (cy as f64 + 0.5) * DENSITY_CELL_MM)
+    }
+
+    /// The needle holes in `cell`.
+    pub fn get(&self, cell: (i64, i64)) -> usize {
+        self.counts.get(&cell).copied().unwrap_or(0)
+    }
+
+    /// The most needle holes in any cell.
+    pub fn peak(&self) -> usize {
+        self.counts.values().copied().max().unwrap_or(0)
+    }
+
+    /// Needle holes per mm² for `count` holes in a cell.
+    pub fn per_mm2(count: usize) -> f64 {
+        count as f64 / (DENSITY_CELL_MM * DENSITY_CELL_MM)
+    }
 }
 
 /// Every finding of every rule on `plan` (made from `doc`), errors first, then in sewing order.

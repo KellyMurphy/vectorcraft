@@ -6037,3 +6037,12 @@ axis	Y Axis	osa Y
 	Live preview	Živý náhled
 	Extract Motif	Extrahovat motiv
 	For a fill repeating both ways: select an area with two or more repeats each way.	Pro výplň opakující se oběma směry: vyberte oblast s alespoň dvěma opakováními v každém směru.
+	Stitch Density	Hustota stehů
+	Suggested Fixes	Navrhované opravy
+	Fix	Opravit
+	Fix…	Opravit…
+	Needle holes per mm²	Vpichy jehly na mm²
+	over {n}: too dense	nad {n}: příliš husté
+	No one-click fix: change the design by hand (hover the finding for how).	Žádná oprava jedním kliknutím: upravte návrh ručně (jak, ukáže najetí na nález).
+	Clears it	Odstraní ho
+	Thins the spot to {n} needle holes; fix again to clear it	Zředí místo na {n} vpichů; opravte znovu, aby zmizel

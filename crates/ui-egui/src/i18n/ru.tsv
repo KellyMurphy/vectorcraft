@@ -5648,3 +5648,12 @@ axis	Y Axis	Ось Y
 	Live preview	Просмотр в реальном времени
 	Extract Motif	Извлечь мотив
 	For a fill repeating both ways: select an area with two or more repeats each way.	Для заливки, повторяющейся в обоих направлениях: выделите область, где в каждом направлении не меньше двух повторов.
+	Stitch Density	Плотность стежков
+	Suggested Fixes	Предлагаемые исправления
+	Fix	Исправить
+	Fix…	Исправить…
+	Needle holes per mm²	Проколы иглы на мм²
+	over {n}: too dense	больше {n}: слишком плотно
+	No one-click fix: change the design by hand (hover the finding for how).	Нет исправления в один щелчок: измените дизайн вручную (наведите указатель на находку, чтобы узнать как).
+	Clears it	Устраняет
+	Thins the spot to {n} needle holes; fix again to clear it	Разрежает место до {n} проколов; исправьте ещё раз, чтобы устранить

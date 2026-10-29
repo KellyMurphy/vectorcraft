@@ -5573,3 +5573,12 @@ axis	Y Axis	Y ekseni
 	Live preview	Canlı önizleme
 	Extract Motif	Motif çıkar
 	For a fill repeating both ways: select an area with two or more repeats each way.	İki yönde de yinelenen bir dolgu için: her yönde en az iki tekrar içeren bir alan seçin.
+	Stitch Density	Dikiş yoğunluğu
+	Suggested Fixes	Önerilen düzeltmeler
+	Fix	Düzelt
+	Fix…	Düzelt…
+	Needle holes per mm²	mm² başına iğne deliği
+	over {n}: too dense	{n} üstü: çok yoğun
+	No one-click fix: change the design by hand (hover the finding for how).	Tek tıkla düzeltme yok: tasarımı elle değiştirin (nasıl olduğunu görmek için bulgunun üzerine gelin).
+	Clears it	Giderir
+	Thins the spot to {n} needle holes; fix again to clear it	Noktayı {n} iğne deliğine seyreltir; gidermek için yeniden düzeltin

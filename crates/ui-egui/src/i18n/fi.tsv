@@ -6049,3 +6049,12 @@ axis	Y Axis	Y-akseli
 	Live preview	Reaaliaikainen esikatselu
 	Extract Motif	Poimi aihe
 	For a fill repeating both ways: select an area with two or more repeats each way.	Molempiin suuntiin toistuvalle täytölle: valitse alue, jossa on vähintään kaksi toistoa kumpaankin suuntaan.
+	Stitch Density	Pistotiheys
+	Suggested Fixes	Ehdotetut korjaukset
+	Fix	Korjaa
+	Fix…	Korjaa…
+	Needle holes per mm²	Neulanpistoja / mm²
+	over {n}: too dense	yli {n}: liian tiheä
+	No one-click fix: change the design by hand (hover the finding for how).	Ei yhden napsautuksen korjausta: muuta mallia käsin (vie osoitin havainnon päälle nähdäksesi miten).
+	Clears it	Korjaa sen
+	Thins the spot to {n} needle holes; fix again to clear it	Harventaa kohdan {n} pistoon; korjaa uudelleen poistaaksesi sen

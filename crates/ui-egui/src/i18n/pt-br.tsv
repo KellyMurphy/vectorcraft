@@ -5954,3 +5954,12 @@ axis	Y Axis	Eixo Y
 	Live preview	Visualização ao vivo
 	Extract Motif	Extrair motivo
 	For a fill repeating both ways: select an area with two or more repeats each way.	Para um preenchimento que se repete nos dois sentidos: selecione uma área com duas ou mais repetições em cada sentido.
+	Stitch Density	Densidade dos pontos
+	Suggested Fixes	Correções sugeridas
+	Fix	Corrigir
+	Fix…	Corrigir…
+	Needle holes per mm²	Furos de agulha por mm²
+	over {n}: too dense	acima de {n}: denso demais
+	No one-click fix: change the design by hand (hover the finding for how).	Nenhuma correção com um clique: altere o desenho à mão (passe o ponteiro sobre o problema para saber como).
+	Clears it	Resolve
+	Thins the spot to {n} needle holes; fix again to clear it	Afina o local para {n} furos; corrija de novo para resolver

@@ -196,6 +196,13 @@ fn run_ui_part3(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<Result<
     let r = match id {
         "view.pixelPreview" => flag(&mut app.ui.view.pixel_preview),
         "view.stitchPreview" => flag(&mut app.ui.view.stitch_preview),
+        "view.stitchDensity" => {
+            let on = !app.ui.view.stitch_density;
+            app.ui.view.stitch_density = on;
+            // The map is drawn in Stitch Preview: showing it shows the stitches too.
+            app.ui.view.stitch_preview |= on;
+            Ok(json!({ "on": on }))
+        }
         "view.trimView" => flag(&mut app.ui.view.trim_view),
         "view.cornerWidget" => flag(&mut app.ui.view.corner_widgets),
         // New View: the engine stores the current zoom, centre and rotation under the given name.

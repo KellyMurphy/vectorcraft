@@ -634,6 +634,14 @@ overlap removal (E7.4) and checker support. One commit each:
 
 ### E8.7 Density adviser (M)
 
+**Done 2026-10-29.** As built: `check::Density` (the dense rule's map), View › Stitch Density
+(`view.stitchDensity`, a heat overlay in Stitch Preview with a legend), `crates/embroidery/src/advise.rs`
+(fixes: lower-density, remove-overlap, lighter-underlay, drop-duplicate, trim-before for long stitches;
+each tried on a copy and offered when it clears the finding or thins the spot without a new finding),
+`embroidery.density`, `embroidery.fixes`, `embroidery.fix`, and a Fix… menu on the Check list. A stacked
+spot may need several fixes (each says how many holes it leaves). **Not yet:** a trim before a long
+travel between objects inside one object's run (only the move into an object is trimmed). Planned as:
+
 The checker's density map (`crates/embroidery/src/check.rs`, the density rule's cells) drawn over the
 design as a heat overlay in Stitch Preview (`view.stitchDensity`), with a legend in needle holes per
 mm². Each density finding gets a suggested fix the user can apply in one click (and `embroidery.fix

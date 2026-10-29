@@ -259,6 +259,9 @@ pub struct ViewFlags {
     /// View → Stitch Preview: the embroidery design's stitches drawn over the art.
     #[serde(default)]
     pub stitch_preview: bool,
+    /// View › Stitch Density: Stitch Preview's heat map of needle holes per mm².
+    #[serde(default)]
+    pub stitch_density: bool,
     /// View → Hide/Show Template: template layers drawn (dimmed) or left out of the canvas.
     #[serde(default = "yes")]
     pub templates: bool,
@@ -288,6 +291,7 @@ impl Default for ViewFlags {
             live_paint_gaps: false,
             hidden_chars: false,
             stitch_preview: false,
+            stitch_density: false,
             templates: true,
         }
     }

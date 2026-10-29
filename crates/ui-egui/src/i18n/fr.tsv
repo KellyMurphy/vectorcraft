@@ -6035,3 +6035,12 @@ axis	Y Axis	Axe Y
 	Live preview	Aperçu en direct
 	Extract Motif	Extraire un motif
 	For a fill repeating both ways: select an area with two or more repeats each way.	Pour un remplissage qui se répète dans les deux sens : sélectionnez une zone d’au moins deux répétitions dans chaque sens.
+	Stitch Density	Densité des points
+	Suggested Fixes	Corrections suggérées
+	Fix	Corriger
+	Fix…	Corriger…
+	Needle holes per mm²	Piqûres d’aiguille par mm²
+	over {n}: too dense	plus de {n} : trop dense
+	No one-click fix: change the design by hand (hover the finding for how).	Aucune correction en un clic : modifiez le motif à la main (survolez le constat pour savoir comment).
+	Clears it	Le corrige
+	Thins the spot to {n} needle holes; fix again to clear it	Allège la zone à {n} piqûres ; corrigez encore pour l’éliminer

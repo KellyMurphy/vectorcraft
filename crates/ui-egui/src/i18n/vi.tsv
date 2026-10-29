@@ -5614,3 +5614,12 @@ axis	Y Axis	Trục Y
 	Live preview	Xem trước trực tiếp
 	Extract Motif	Trích xuất họa tiết
 	For a fill repeating both ways: select an area with two or more repeats each way.	Với phần tô lặp lại theo cả hai chiều: chọn vùng có từ hai lần lặp trở lên mỗi chiều.
+	Stitch Density	Mật độ mũi khâu
+	Suggested Fixes	Cách sửa gợi ý
+	Fix	Sửa
+	Fix…	Sửa…
+	Needle holes per mm²	Lỗ kim trên mỗi mm²
+	over {n}: too dense	trên {n}: quá dày
+	No one-click fix: change the design by hand (hover the finding for how).	Không có cách sửa một cú nhấp: hãy sửa thiết kế bằng tay (rê chuột lên vấn đề để xem cách).
+	Clears it	Khắc phục
+	Thins the spot to {n} needle holes; fix again to clear it	Làm thưa chỗ đó còn {n} lỗ kim; sửa lần nữa để khắc phục

@@ -5949,3 +5949,12 @@ axis	Y Axis	Y-akse
 	Live preview	Direkte forhåndsvisning
 	Extract Motif	Udtræk motiv
 	For a fill repeating both ways: select an area with two or more repeats each way.	Til et fyld, der gentages begge veje: vælg et område med mindst to gentagelser hver vej.
+	Stitch Density	Stingtæthed
+	Suggested Fixes	Foreslåede rettelser
+	Fix	Ret
+	Fix…	Ret…
+	Needle holes per mm²	Nålestik pr. mm²
+	over {n}: too dense	over {n}: for tæt
+	No one-click fix: change the design by hand (hover the finding for how).	Ingen rettelse med ét klik: ret designet i hånden (hold over fundet for at se hvordan).
+	Clears it	Fjerner det
+	Thins the spot to {n} needle holes; fix again to clear it	Gør stedet tyndere, {n} nålestik; ret igen for at fjerne det

@@ -164,6 +164,12 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "",
         "{} toggle: draw the embroidery design's stitches (embroidery.stitches) over the art, on a fabric-coloured artboard",
     ),
+    (
+        "view.stitchDensity",
+        "Stitch Density",
+        "",
+        "{} toggle: in Stitch Preview (turned on with it), a heat map of the needle holes per mm² (embroidery.density), red where the design checker finds it too dense",
+    ),
     ("view.trimView", "Trim View", "", "{} toggle: hide everything outside the artboards"),
     ("view.cornerWidget", "Hide Corner Widget", "", "{} toggle the live corner widgets"),
     ("view.snapToPixel", "Snap to Pixel", "", "{} toggle: drawing and moving land on whole pixels"),

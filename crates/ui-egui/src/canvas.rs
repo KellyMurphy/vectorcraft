@@ -290,9 +290,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     }
     // View › Stitch Preview: the embroidery design on fabric over the art.
     if app.ui.view.stitch_preview {
-        let memo = stitches::stitch_plan(&app.session, &mut app.ui.stitch_cache, &doc);
-        stitches::draw_stitches(&painter, &xf, &doc, &memo.plan);
-        stitches::draw_findings(&painter, &xf, &memo.findings, &t);
+        stitches::draw_preview(app, &painter, &xf, &doc, rect, &t);
     }
     artboard_outlines(app, ui, &painter, &xf, &t);
     if app.ui.view.guides {

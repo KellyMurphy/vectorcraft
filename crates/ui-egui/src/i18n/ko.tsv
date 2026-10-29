@@ -5597,3 +5597,12 @@ axis	Y Axis	Y축
 	Live preview	실시간 미리 보기
 	Extract Motif	모티프 추출
 	For a fill repeating both ways: select an area with two or more repeats each way.	양방향으로 반복되는 채우기: 각 방향으로 두 번 이상 반복되는 영역을 선택하세요.
+	Stitch Density	스티치 밀도
+	Suggested Fixes	제안된 수정
+	Fix	수정
+	Fix…	수정…
+	Needle holes per mm²	mm²당 바늘 구멍
+	over {n}: too dense	{n} 초과: 너무 조밀함
+	No one-click fix: change the design by hand (hover the finding for how).	한 번 클릭으로 고칠 수 없음: 디자인을 직접 바꾸세요(방법은 항목 위에 포인터를 올려 보세요).
+	Clears it	해결함
+	Thins the spot to {n} needle holes; fix again to clear it	그 지점을 바늘 구멍 {n}개로 줄입니다. 다시 수정하면 해결됩니다

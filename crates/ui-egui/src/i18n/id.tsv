@@ -5949,3 +5949,12 @@ axis	Y Axis	Sumbu Y
 	Live preview	Pratinjau langsung
 	Extract Motif	Ekstrak motif
 	For a fill repeating both ways: select an area with two or more repeats each way.	Untuk isian yang berulang ke dua arah: pilih area dengan dua pengulangan atau lebih di tiap arah.
+	Stitch Density	Kepadatan jahitan
+	Suggested Fixes	Perbaikan yang disarankan
+	Fix	Perbaiki
+	Fix…	Perbaiki…
+	Needle holes per mm²	Tusukan jarum per mm²
+	over {n}: too dense	di atas {n}: terlalu padat
+	No one-click fix: change the design by hand (hover the finding for how).	Tidak ada perbaikan sekali klik: ubah desain secara manual (arahkan penunjuk ke temuan untuk caranya).
+	Clears it	Menghilangkannya
+	Thins the spot to {n} needle holes; fix again to clear it	Menipiskan titik itu menjadi {n} tusukan; perbaiki lagi untuk menghilangkannya

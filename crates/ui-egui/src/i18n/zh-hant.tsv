@@ -5672,3 +5672,12 @@ axis	Y Axis	Y 軸
 	Live preview	即時預覽
 	Extract Motif	擷取圖案
 	For a fill repeating both ways: select an area with two or more repeats each way.	對於雙向重複的填充：選取每個方向至少重複兩次的區域。
+	Stitch Density	針跡密度
+	Suggested Fixes	建議的修正
+	Fix	修正
+	Fix…	修正…
+	Needle holes per mm²	每平方公釐針孔數
+	over {n}: too dense	超過 {n}：過密
+	No one-click fix: change the design by hand (hover the finding for how).	沒有一鍵修正：請手動修改設計（將指標停在問題上查看方法）。
+	Clears it	可消除
+	Thins the spot to {n} needle holes; fix again to clear it	將該處減至 {n} 個針孔；再修正一次即可消除

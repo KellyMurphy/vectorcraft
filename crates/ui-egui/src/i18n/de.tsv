@@ -5601,3 +5601,12 @@ axis	Y Axis	Y-Achse
 	Live preview	Live-Vorschau
 	Extract Motif	Motiv extrahieren
 	For a fill repeating both ways: select an area with two or more repeats each way.	Für eine Füllung, die sich in beide Richtungen wiederholt: einen Bereich mit mindestens zwei Wiederholungen je Richtung auswählen.
+	Stitch Density	Stichdichte
+	Suggested Fixes	Vorgeschlagene Korrekturen
+	Fix	Korrigieren
+	Fix…	Korrigieren…
+	Needle holes per mm²	Nadeleinstiche pro mm²
+	over {n}: too dense	über {n}: zu dicht
+	No one-click fix: change the design by hand (hover the finding for how).	Keine Ein-Klick-Korrektur: das Design von Hand ändern (Zeiger auf den Befund zeigt, wie).
+	Clears it	Behebt es
+	Thins the spot to {n} needle holes; fix again to clear it	Dünnt die Stelle auf {n} Einstiche aus; erneut korrigieren, um es zu beheben

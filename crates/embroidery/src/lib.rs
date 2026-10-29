@@ -12,6 +12,7 @@
 //!   sharing `machine`'s needle moves.
 //! - `import`: a plan as editable art (one manual-stitch path per run of stitches).
 
+pub mod advise;
 pub mod angles;
 pub mod borders;
 pub mod check;

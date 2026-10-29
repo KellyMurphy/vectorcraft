@@ -15,6 +15,8 @@ pub struct StitchMemo {
     doc: std::sync::Arc<vectorcraft_doc::Document>,
     pub(crate) plan: std::sync::Arc<vectorcraft_embroidery::Plan>,
     pub(crate) findings: std::sync::Arc<Vec<vectorcraft_embroidery::check::Finding>>,
+    /// Needle holes per cell (View › Stitch Density).
+    pub(crate) density: std::sync::Arc<vectorcraft_embroidery::check::Density>,
 }
 
 /// The active document's stitch plan and findings, as Stitch Preview has them (made now if the
@@ -32,9 +34,85 @@ pub(super) fn stitch_plan<'a>(
     if !cache.as_ref().is_some_and(|m| std::sync::Arc::ptr_eq(&m.doc, doc)) {
         let plan = session.stitch_plan(doc);
         let findings = vectorcraft_embroidery::check::check(doc, &plan);
-        *cache = Some(StitchMemo { doc: doc.clone(), plan: std::sync::Arc::new(plan), findings: std::sync::Arc::new(findings) });
+        let density = vectorcraft_embroidery::check::Density::of(&plan);
+        *cache = Some(StitchMemo {
+            doc: doc.clone(),
+            plan: std::sync::Arc::new(plan),
+            findings: std::sync::Arc::new(findings),
+            density: std::sync::Arc::new(density),
+        });
     }
-    cache.get_or_insert_with(|| StitchMemo { doc: doc.clone(), plan: Default::default(), findings: Default::default() })
+    cache.get_or_insert_with(|| StitchMemo { doc: doc.clone(), plan: Default::default(), findings: Default::default(), density: Default::default() })
+}
+
+/// Stitch Preview over the canvas (`area`): the stitches, the density map when it is on, and the
+/// checker's findings.
+pub(super) fn draw_preview(
+    app: &mut VectorcraftApp,
+    painter: &egui::Painter,
+    xf: &Xf,
+    doc: &std::sync::Arc<vectorcraft_doc::Document>,
+    area: egui::Rect,
+    t: &Tokens,
+) {
+    let density = app.ui.view.stitch_density;
+    let memo = stitch_plan(&app.session, &mut app.ui.stitch_cache, doc);
+    draw_stitches(painter, xf, doc, &memo.plan);
+    if density {
+        draw_density(painter, xf, &memo.density, area, t);
+    }
+    draw_findings(painter, xf, &memo.findings, t);
+}
+
+/// View › Stitch Density: each cell of the density map tinted by its needle holes against the
+/// checker's limit (green when light, amber near the limit, red past it), and a legend in the
+/// canvas's corner (`area`).
+pub(super) fn draw_density(painter: &egui::Painter, xf: &Xf, density: &vectorcraft_embroidery::check::Density, area: egui::Rect, t: &Tokens) {
+    use vectorcraft_embroidery::check::{DENSITY_CELL_MM, DENSITY_MAX, Density};
+    let size = DENSITY_CELL_MM / vectorcraft_embroidery::PT_MM;
+    let shade = |holes: usize| {
+        let r = holes as f32 / DENSITY_MAX as f32;
+        let base = if r > 1.0 {
+            t.error
+        } else if r >= 0.75 {
+            t.warning
+        } else {
+            t.success
+        };
+        base.gamma_multiply((0.25 + 0.5 * r.min(1.0)).min(0.75))
+    };
+    for (&(cx, cy), &holes) in &density.counts {
+        // Cells under a quarter of the limit are left clear, so the stitches show.
+        if holes * 4 < DENSITY_MAX {
+            continue;
+        }
+        let a = xf.to_screen(Point::new(cx as f64 * size, cy as f64 * size));
+        let b = xf.to_screen(Point::new((cx + 1) as f64 * size, (cy + 1) as f64 * size));
+        let cell = egui::Rect::from_two_pos(a, b);
+        if cell.intersects(area) {
+            painter.rect_filled(cell, 0.0, shade(holes));
+        }
+    }
+    // The legend: holes per mm² at a quarter of the limit, three quarters, and past it.
+    let font = egui::FontId::proportional(11.0);
+    let mut at = area.left_bottom() + egui::vec2(10.0, -14.0);
+    let title = tl!("Needle holes per mm²");
+    let g = painter.layout_no_wrap(title.to_string(), font.clone(), t.text);
+    let rows = [(DENSITY_MAX / 4, "{n}"), (DENSITY_MAX * 3 / 4, "{n}"), (DENSITY_MAX + 1, tl!("over {n}: too dense"))];
+    let box_ = egui::Rect::from_min_size(
+        area.left_bottom() + egui::vec2(4.0, -24.0 - 16.0 * rows.len() as f32),
+        egui::vec2(g.size().x.max(130.0) + 12.0, 20.0 + 16.0 * rows.len() as f32),
+    );
+    painter.rect_filled(box_, 3.0, t.panel.gamma_multiply(0.9));
+    for (holes, label) in rows.iter().rev() {
+        let swatch = egui::Rect::from_min_size(at - egui::vec2(0.0, 5.0), egui::vec2(10.0, 10.0));
+        painter.rect_filled(swatch, 1.0, shade(*holes));
+        let per = if *holes > DENSITY_MAX { Density::per_mm2(DENSITY_MAX) } else { Density::per_mm2(*holes) };
+        let text = label.replace("{n}", &format!("{per:.1}"));
+        painter.text(at + egui::vec2(16.0, 0.0), egui::Align2::LEFT_CENTER, text, font.clone(), t.text);
+        at.y -= 16.0;
+    }
+    painter.galley(at - egui::vec2(0.0, 7.0), g, t.text);
 }
 
 /// A ring at each finding of the design checker that has a place, in its severity's colour.

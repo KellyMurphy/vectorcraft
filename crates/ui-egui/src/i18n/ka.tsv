@@ -5532,3 +5532,12 @@ axis	Y Axis	Y ღერძი
 	Live preview	ცოცხალი წინასწარი ნახვა
 	Extract Motif	მოტივის ამოღება
 	For a fill repeating both ways: select an area with two or more repeats each way.	ორივე მიმართულებით განმეორებადი შევსებისთვის: აირჩიეთ არე, სადაც თითო მიმართულებით ორი ან მეტი გამეორებაა.
+	Stitch Density	ნაკერის სიმკვრივე
+	Suggested Fixes	შემოთავაზებული შესწორებები
+	Fix	შესწორება
+	Fix…	შესწორება…
+	Needle holes per mm²	ნემსის ჩხვლეტები მმ²-ზე
+	over {n}: too dense	{n}-ზე მეტი: ზედმეტად მკვრივი
+	No one-click fix: change the design by hand (hover the finding for how).	ერთი დაწკაპებით შესწორება არ არის: შეცვალეთ დიზაინი ხელით (როგორ — მიიტანეთ მაჩვენებელი მიგნებასთან).
+	Clears it	აქრობს მას
+	Thins the spot to {n} needle holes; fix again to clear it	ათხელებს ადგილს {n} ჩხვლეტამდე; კვლავ შეასწორეთ მის მოსაშორებლად

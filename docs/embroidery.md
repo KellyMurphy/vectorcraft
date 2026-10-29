@@ -337,6 +337,24 @@ for warnings). The rules so far:
 Exporting a DST adds a line for each rule that found something to the export's warnings.
 `embroidery.check` gives the same findings to agents and scripts, each with the object and where it is.
 
+**The density adviser.** View › **Stitch Density** (it turns on Stitch Preview too) tints the design by
+needle holes per mm²: green where it is light, amber near the limit, red past it (10 per mm², the 40
+holes in a 2 × 2 mm spot that the checker counts), with a legend in the canvas's corner. A dense spot or
+long stitches in the Check list have a **Fix…** menu of suggested fixes, each tried on a copy of the
+design first and offered only when it clears the finding, or at least thins the spot, without causing a
+new one:
+
+- lower the top object's density (its row or zigzag spacing) just enough to clear the spot, up to 2.5
+  times the stitch type's usual spacing (sparser doesn't cover);
+- cut away the rows of a fill below that are covered (turn off Keep Covered);
+- a lighter underlay (zigzag to edge walk, edge walk to centre walk, else none);
+- delete an object that is a stitched copy of one below;
+- for long stitches, trim before the object.
+
+Each fix is one undo step. Where several layers stack, one fix may only thin the spot (the menu says how
+many holes it leaves): fix again. `embroidery.density` gives agents the map, `embroidery.fixes` the
+suggestions and `embroidery.fix` makes one.
+
 ### Thread charts
 
 A thread chart lists a maker's threads: code, name and colour. Load one into the document (the
@@ -551,6 +569,9 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings |
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
 | `embroidery.check` | `{ids?}` → the design checker's `findings` (`rule`, `severity`, `message`, `object`, `at` in document points), `counts` and the `rules` |
+| `embroidery.density` | `{min?}` → the density map: `cells` (`x`, `y`, `size` in document points, `holes`), densest first, with the `limit`, `peak` and `perMm2` |
+| `embroidery.fixes` | `{object, rule?}` → the suggested `fixes` for the checker's findings on an object (`fix`, `label`, `object` changed, `clears`, `holes` left, the `command` and `params` it runs) |
+| `embroidery.fix` | `{object, rule?, fix?}`: make a suggested fix (default the first) as one undo step → `{fix, label, object, clears, findings}` (counts after) |
 | `embroidery.preview` | `{scale?, artboard?}` → the artboard as Stitch Preview shows it, as a PNG (`pngBase64`); MCP's `render_preview {stitches: true}` uses it |
 | `embroidery.order` | → the stitched objects in sewing order |
 | `embroidery.reorder` | `{to: first\|earlier\|later\|last, ids?}` or `{order: [ids]}`: change the sewing order |

@@ -5714,3 +5714,12 @@ axis	Y Axis	Y 軸
 	Live preview	ライブプレビュー
 	Extract Motif	モチーフを抽出
 	For a fill repeating both ways: select an area with two or more repeats each way.	縦横に繰り返す塗りの場合：各方向に2回以上の繰り返しがある範囲を選択します。
+	Stitch Density	ステッチ密度
+	Suggested Fixes	修正の提案
+	Fix	修正
+	Fix…	修正…
+	Needle holes per mm²	1 mm² あたりの針穴数
+	over {n}: too dense	{n} 超：密すぎ
+	No one-click fix: change the design by hand (hover the finding for how).	ワンクリックの修正はありません：デザインを手で変更してください（方法は項目にポインターを合わせると表示）。
+	Clears it	解消します
+	Thins the spot to {n} needle holes; fix again to clear it	その箇所を針穴 {n} まで減らします。もう一度修正すると解消します

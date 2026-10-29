@@ -759,10 +759,58 @@ fn checks(app: &mut VectorcraftApp, ui: &mut Ui, check: &Value) {
                 app.run("select.set", json!({ "ids": [id] })).ok();
             }
         });
+        if let (Some(object), Some(rule @ ("dense" | "long-stitch"))) = (f["object"].as_u64(), f["rule"].as_str()) {
+            ui.horizontal(|ui| {
+                ui.add_space(14.0);
+                fix_menu(app, ui, object, rule);
+            });
+        }
     }
     if findings.len() > MAX_CHECK_ROWS {
         widgets::dim_label(ui, tl!("Only the first 30 are listed."));
     }
+}
+
+/// A finding's Fix menu: the adviser's suggested fixes (embroidery.fixes, worked out when the menu
+/// opens and kept while the document stays the same), each made in one click as one undo step.
+fn fix_menu(app: &mut VectorcraftApp, ui: &mut Ui, object: u64, rule: &str) {
+    let revision = app.session.active().map(|d| (d.uid, d.revision));
+    let key = egui::Id::unique(("embroidery.fixes", object, rule));
+    ui.menu_button(tl!("Fix…"), |ui| {
+        let cached = ui.data(|d| d.get_temp::<(Option<(u64, u64)>, Vec<Value>)>(key)).filter(|(r, _)| *r == revision);
+        let list = match cached {
+            Some((_, list)) => list,
+            None => {
+                let list = app
+                    .session
+                    .execute("embroidery.fixes", &json!({"object": object, "rule": rule}))
+                    .ok()
+                    .and_then(|r| r["fixes"].as_array().cloned())
+                    .unwrap_or_default();
+                ui.data_mut(|d| d.insert_temp(key, (revision, list.clone())));
+                list
+            }
+        };
+        if list.is_empty() {
+            widgets::dim_label(ui, tl!("No one-click fix: change the design by hand (hover the finding for how)."));
+        }
+        for x in &list {
+            let label = x["label"].as_str().unwrap_or_default();
+            let tip = if x["clears"] == json!(true) {
+                tl!("Clears it").to_string()
+            } else {
+                tl!("Thins the spot to {n} needle holes; fix again to clear it").replace("{n}", &x["holes"].to_string())
+            };
+            if ui.button(label).on_hover_text(tip).clicked() {
+                let fix = x["fix"].as_str().unwrap_or_default();
+                match app.run("embroidery.fix", json!({"object": object, "rule": rule, "fix": fix})) {
+                    Ok(r) => app.status(format!("{}: {} warnings left", r["label"].as_str().unwrap_or_default(), r["findings"]["warning"])),
+                    Err(e) => app.status(e),
+                }
+                ui.close();
+            }
+        }
+    });
 }
 
 fn trim_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
