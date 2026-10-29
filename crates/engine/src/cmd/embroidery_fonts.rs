@@ -13,7 +13,7 @@ use vectorcraft_embroidery::fonts;
 use super::embroidery_lib::library_entry;
 use super::overprint::edit_counted;
 use super::swatchlib::FileData;
-use super::*;
+use super::{CommandSpec, Result, Session, bad, bool_or, cmd, has_doc, str_param};
 
 pub fn specs() -> Vec<CommandSpec> {
     vec![

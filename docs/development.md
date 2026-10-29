@@ -280,8 +280,9 @@ other `sv-*` locale resolve to it), Georgian (`ka`, complete; `ka-GE` and `ka_GE
   placeholders are translated in turn (the reason after `: {e}` is often a message too). Czech, German, Greek, Spanish, French, Georgian, Hungarian, Italian, Japanese, Korean, Polish, Brazilian Portuguese, Russian, Simplified Chinese, Traditional Chinese, Swedish, Ukrainian, Vietnamese, Finnish and Turkish
   translate status and error messages (`COMPLETE_MESSAGES` in `i18n::tests`); the untranslated report lists the
   message literals the scan finds that one of them has no row for. The scan reads `Err("…")`, `Other(…)`,
-  `#[error(…)]` and `status(…)` messages, messages given to an error enum's variant (`PsError::Limit(…)`), to the
-  engine's `bad(cmd, …)`, `err(…)` or `error(…)`, and to the PDF writer's `bad(…)` or `failed(…)`
+  `#[error(…)]` and `status(…)` messages, messages given to an error enum's variant (`PsError::Limit(…)`, the reason
+  in `EngineError::Disabled(id, …)`), to the engine's `bad(cmd, …)`, `err(…)` or `error(…)`, and to the PDF writer's
+  `bad(…)` or `failed(…)`, and skips calls inside comments
   (`VECTORCRAFT_I18N_DUMP_MESSAGES=messages.txt cargo test -p vectorcraft-ui-egui dump_source_strings` lists them
   all). A missing row shows the English message. Other languages show messages in English until they add `@msg`
   rows.
@@ -448,7 +449,7 @@ Character styles cannot represent object opacity or blend modes. With Transparen
 sampling refuses a non-neutral source or target object before changing art, paint defaults,
 selection or history. Disable Transparency in Eyedropper Options to sample supported attributes
 while preserving the target object's transparency. Whole-object sampling remains unchanged.
-Regression evidence: `tests_eyedropper.rs` covers Unicode, font/paint, Undo/Redo, tool switches,
+Regression evidence: `tests/eyedropper.rs` covers Unicode, font/paint, Undo/Redo, tool switches,
 and atomic rejection of source and target opacity/blend modes; `text_range_and_brush_sampling_options_coexist`
 covers upstream brush-key sampling. Scores and estimates unchanged.
 

@@ -44,6 +44,31 @@ fn nearest_on(l: &[Point], p: Point) -> Option<(usize, Point, f64)> {
     best
 }
 
+/// Put a vertex in each line where another line's end (`ends`: the line it belongs to, and the
+/// point) lands mid-line, so the line splits there. Whether any end lands on another line.
+fn split_where_ends_touch(polys: &mut [Vec<Point>], ends: &[(usize, Point)]) -> bool {
+    let mut touched = false;
+    for (owner, p) in ends {
+        for (j, l) in polys.iter_mut().enumerate() {
+            if j == *owner {
+                continue;
+            }
+            let Some((k, q, d)) = nearest_on(l, *p) else { continue };
+            if d > MEET {
+                continue;
+            }
+            touched = true;
+            // Mid-line (not at its ends): a vertex there, so the line splits.
+            let at_end = l.first().is_some_and(|f| f.distance(q) <= MEET) || l.last().is_some_and(|e| e.distance(q) <= MEET);
+            let at_vertex = l.iter().any(|v| v.distance(q) <= 1e-6);
+            if !at_end && !at_vertex {
+                l.insert(k + 1, q);
+            }
+        }
+    }
+    touched
+}
+
 /// `lines` (polylines in mm, with whether each is closed) as the runs to sew: each connected
 /// network as one run, sewn by `stitch` (a stretch's needle points from its polyline) and, where
 /// the run sews a stretch for the first time, `bold` (the bean's repeats; the way back along a
@@ -75,25 +100,7 @@ pub fn runs(lines: &[(Vec<Point>, bool)], stitch: &dyn Fn(&[Point]) -> Vec<Point
         .filter(|(_, (_, closed))| !closed)
         .flat_map(|((i, l), _)| [l.first().copied(), l.last().copied()].into_iter().flatten().map(move |p| (i, p)))
         .collect();
-    let mut touched = false;
-    for (owner, p) in &ends {
-        for (j, l) in polys.iter_mut().enumerate() {
-            if j == *owner {
-                continue;
-            }
-            let Some((k, q, d)) = nearest_on(l, *p) else { continue };
-            if d > MEET {
-                continue;
-            }
-            touched = true;
-            // Mid-line (not at its ends): a vertex there, so the line splits.
-            let at_end = l.first().is_some_and(|f| f.distance(q) <= MEET) || l.last().is_some_and(|e| e.distance(q) <= MEET);
-            let at_vertex = l.iter().any(|v| v.distance(q) <= 1e-6);
-            if !at_end && !at_vertex {
-                l.insert(k + 1, q);
-            }
-        }
-    }
+    let mut touched = split_where_ends_touch(&mut polys, &ends);
     // Ends meeting ends count too.
     if !touched {
         touched = ends.iter().enumerate().any(|(i, (oi, p))| ends.iter().skip(i + 1).any(|(oj, q)| oi != oj && p.distance(*q) <= MEET));

@@ -7,7 +7,7 @@ use serde::Deserialize;
 use serde_json::Value;
 use vectorcraft_doc::{Document, NodeId};
 
-use super::super::*;
+use super::super::{EngineError, Result, bad};
 use super::{ArtboardPick, Encoded, FormatOption};
 
 const C: &str = "document.export";

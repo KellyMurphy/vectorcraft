@@ -12,7 +12,7 @@ use vectorcraft_doc::{BorderPattern, EmbroideryFont, Fabric, Hoop, Motif, Thread
 use vectorcraft_embroidery::{borders, fabrics, fonts, hoops, motifs, threads};
 
 use super::swatchlib::{Libraries, LibraryFile, LibraryInfo};
-use super::*;
+use super::{CommandSpec, Result, Session, bad, cmd, str_param};
 
 /// The kinds of embroidery library: id (also the subfolder's name) and file extension.
 pub const KINDS: [(&str, &str); 6] =

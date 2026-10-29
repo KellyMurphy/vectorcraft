@@ -8,7 +8,7 @@ use vectorcraft_embroidery::motifs;
 
 use super::overprint::edit_counted;
 use super::swatchlib::FileData;
-use super::*;
+use super::{CommandSpec, Result, Session, bad, cmd, has_doc, str_param};
 
 pub(crate) fn specs() -> Vec<CommandSpec> {
     vec![

@@ -9,7 +9,7 @@ use vectorcraft_embroidery::{PT_MM, font_doc, fonts};
 use super::embroidery_lib::library_entry;
 use super::overprint::edit_counted;
 use super::swatchlib::FileData;
-use super::*;
+use super::{CommandSpec, EngineError, Result, Session, bad, cmd, has_doc, str_param};
 
 /// The name of the sample line's type object.
 pub const SAMPLE: &str = "Sample";

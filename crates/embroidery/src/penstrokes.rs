@@ -68,6 +68,32 @@ struct End {
     start: bool,
 }
 
+/// Group `ends` (at the points `at` gives, a stroke's half-width `half_at` there) into junctions:
+/// ends within about a stroke's width of each other share one. Each end's junction, and how many
+/// there are.
+fn junctions(ends: &[End], at: &dyn Fn(End) -> Point, half_at: &dyn Fn(End) -> f64) -> (Vec<usize>, usize) {
+    let mut node_of: Vec<usize> = vec![usize::MAX; ends.len()];
+    let mut nodes = 0;
+    for i in 0..ends.len() {
+        if node_of.get(i) != Some(&usize::MAX) {
+            continue;
+        }
+        let (Some(&ei), n) = (ends.get(i), nodes) else { continue };
+        nodes += 1;
+        for j in i..ends.len() {
+            let Some(&ej) = ends.get(j) else { continue };
+            let reach = (half_at(ei).max(half_at(ej)) * 1.5).max(0.3);
+            if node_of.get(j) == Some(&usize::MAX)
+                && at(ei).distance(at(ej)) <= reach
+                && let Some(nj) = node_of.get_mut(j)
+            {
+                *nj = n;
+            }
+        }
+    }
+    (node_of, nodes)
+}
+
 /// `pieces` (a letter's skeleton) put back together into pen strokes, in the order they are drawn.
 pub fn pen_strokes(pieces: &[Stroke], hand: Hand) -> Vec<PenStroke> {
     let pieces: Vec<&Stroke> = pieces.iter().filter(|s| s.points.len() >= 2 && s.points.len() == s.radius.len()).collect();
@@ -92,25 +118,7 @@ pub fn pen_strokes(pieces: &[Stroke], hand: Hand) -> Vec<PenStroke> {
         let r = pieces.get(e.piece).map(|s| &s.radius);
         r.and_then(|r| if e.start { r.first() } else { r.last() }).copied().unwrap_or(0.5)
     };
-    let mut node_of: Vec<usize> = vec![usize::MAX; ends.len()];
-    let mut nodes = 0;
-    for i in 0..ends.len() {
-        if node_of.get(i) != Some(&usize::MAX) {
-            continue;
-        }
-        let (Some(&ei), n) = (ends.get(i), nodes) else { continue };
-        nodes += 1;
-        for j in i..ends.len() {
-            let Some(&ej) = ends.get(j) else { continue };
-            let reach = (half_at(ei).max(half_at(ej)) * 1.5).max(0.3);
-            if node_of.get(j) == Some(&usize::MAX)
-                && at(ei).distance(at(ej)) <= reach
-                && let Some(nj) = node_of.get_mut(j)
-            {
-                *nj = n;
-            }
-        }
-    }
+    let (node_of, nodes) = junctions(&ends, &at, &half_at);
     // The way a piece leaves its end (into the piece), over about a stroke's width.
     let leaving = |e: End| -> Vec2 {
         let Some(s) = pieces.get(e.piece) else { return Vec2::ZERO };

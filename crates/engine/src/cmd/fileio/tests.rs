@@ -185,7 +185,7 @@ fn planar_tiffs_with_more_strips_than_can_be_counted_are_too_large() {
     file[102..106].copy_from_slice(&1u32.to_le_bytes());
     let e = raster_image(&file).err().expect("refused");
     assert!(e.to_string().contains("an image of 3 × 2147483649 pixels is too large to draw"), "{e}");
-    assert!(too_large_note(&file).is_some());
+    assert!(load::too_large_note(&file).is_some());
     assert_eq!(vectorcraft_doc::cmyk::oversized_tiff(&file), Some((3, 1 << 31 | 1)));
 }
 
@@ -386,8 +386,8 @@ fn open_exts_cover_every_readable_format() {
 
 #[test]
 fn library_open_filters_list_library_formats_first() {
-    let filters: Vec<_> = library_open_filters("Swatch libraries", super::swatchlib::LIBRARY_EXTS).collect();
-    assert_eq!(filters[0], ("Swatch libraries", super::swatchlib::LIBRARY_EXTS));
+    let filters: Vec<_> = library_open_filters("Swatch libraries", crate::cmd::swatchlib::LIBRARY_EXTS).collect();
+    assert_eq!(filters[0], ("Swatch libraries", crate::cmd::swatchlib::LIBRARY_EXTS));
     assert!(filters[0].1.contains(&"ase"));
     assert_eq!(filters[1], ("All readable files", OPEN_EXTS));
 }

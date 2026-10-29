@@ -10,7 +10,7 @@ use vectorcraft_embroidery::{Plan, params};
 use super::embroidery_lib::library_entry;
 use super::overprint::edit_counted;
 use super::swatchlib::FileData;
-use super::*;
+use super::{CommandSpec, Result, Session, always, bad, cmd, has_doc, ids_param, leaf_targets, str_param, targets};
 
 const SET: &str = "embroidery.set";
 /// The most points `embroidery.stitches` returns unless asked for fewer.

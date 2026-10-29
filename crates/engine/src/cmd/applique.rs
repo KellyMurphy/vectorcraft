@@ -12,7 +12,7 @@ use serde_json::{Value, json};
 use vectorcraft_doc::{Document, Node, NodeId, NodeKind, StitchKind, StitchSettings, Underlay};
 use vectorcraft_geom::{FillRule, PathData};
 
-use super::*;
+use super::{CommandSpec, EngineError, Result, Session, bad, bool_or, cmd, has_doc, str_param, targets};
 
 const C: &str = "embroidery.applique";
 /// The group's name, and its parts' names in sewing order.

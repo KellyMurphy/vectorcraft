@@ -315,7 +315,7 @@ fn lettering(app: &mut VectorcraftApp, ui: &mut Ui) {
     widgets::label_row(ui, tl!("Layout:"), LABEL_W, |ui| {
         let layouts = monogram_layouts();
         let current = layouts.iter().find(|(id, _)| *id == layout).map_or("", |(_, n)| n);
-        if let Some(id) = widgets::combo(ui, "emb-mono-layout", current, 150.0, false, |ui| {
+        if let Some(id) = widgets::combo(ui, "emb-mono-layout", current, 150.0, |ui| {
             let mut chosen = None;
             for (id, name) in layouts {
                 if widgets::menu_item_name(ui, name, true, layout == id) {
@@ -333,7 +333,7 @@ fn lettering(app: &mut VectorcraftApp, ui: &mut Ui) {
             "satin" => tl!("Satin Ring").to_string(),
             id => vectorcraft_embroidery::borders::builtin(id).map_or_else(|| id.to_string(), |b| b.name),
         };
-        if let Some(id) = widgets::combo(ui, "emb-mono-frame", &name(&frame), 150.0, false, |ui| {
+        if let Some(id) = widgets::combo(ui, "emb-mono-frame", &name(&frame), 150.0, |ui| {
             let mut chosen = None;
             for id in ["none", "satin"].into_iter().chain(vectorcraft_embroidery::borders::BUILTIN) {
                 if widgets::menu_item_name(ui, &name(id), true, frame == id) {

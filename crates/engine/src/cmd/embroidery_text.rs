@@ -7,7 +7,7 @@ use serde_json::{Value, json};
 use vectorcraft_doc::{Node, NodeKind, StitchKind, StitchSettings, TextKind, TextObject, TextRun};
 use vectorcraft_geom::{Affine, PathData, Point, Rect};
 
-use super::*;
+use super::{CommandSpec, EngineError, Result, Session, bad, cmd, has_doc, id_param, str_param};
 
 pub(crate) fn specs() -> Vec<CommandSpec> {
     vec![
