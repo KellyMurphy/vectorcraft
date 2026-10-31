@@ -45,8 +45,8 @@ pub(super) fn stitch_plan<'a>(
     cache.get_or_insert_with(|| StitchMemo { doc: doc.clone(), plan: Default::default(), findings: Default::default(), density: Default::default() })
 }
 
-/// Stitch Preview over the canvas (`area`): the stitches, the density map when it is on, and the
-/// checker's findings.
+/// View › Stitch Preview over the canvas (`area`), when it is on: the stitches, the density map
+/// when that is on too, and the checker's findings.
 pub(super) fn draw_preview(
     app: &mut VectorcraftApp,
     painter: &egui::Painter,
@@ -55,6 +55,9 @@ pub(super) fn draw_preview(
     area: egui::Rect,
     t: &Tokens,
 ) {
+    if !app.ui.view.stitch_preview {
+        return;
+    }
     let density = app.ui.view.stitch_density;
     let memo = stitch_plan(&app.session, &mut app.ui.stitch_cache, doc);
     draw_stitches(painter, xf, doc, &memo.plan);

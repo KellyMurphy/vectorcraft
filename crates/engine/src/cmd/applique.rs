@@ -478,7 +478,9 @@ mod tests {
         let path = dir.join("cut.svg").to_string_lossy().to_string();
         let r = s.execute(CUT, &json!({"ids": [], "format": "svg", "path": path})).unwrap();
         assert_eq!(r["files"], json!([path]));
-        assert!(std::fs::read_to_string(&path).unwrap().contains("<path"));
+        // Shapes are written as SVG shapes (`<rect>`, `<ellipse>`), which cutters read as outlines.
+        let svg = std::fs::read_to_string(&path).unwrap();
+        assert!(svg.contains("<rect") && svg.contains("<ellipse"), "{svg}");
         let r = s.execute(CUT, &json!({"ids": [], "format": "dxf"})).unwrap();
         let dxf = vectorcraft_format::base64_decode(r["files"][0]["dataBase64"].as_str().unwrap()).unwrap();
         assert!(String::from_utf8_lossy(&dxf).contains("ENTITIES"));
