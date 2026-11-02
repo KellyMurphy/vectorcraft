@@ -34,6 +34,7 @@ pub(crate) mod imagemap;
 mod legacy_ai;
 mod load;
 pub(crate) use load::{MAX_RASTER_ALLOC, size_note};
+mod jp2read;
 mod metafile;
 mod naming;
 mod native;
@@ -57,6 +58,7 @@ pub use dxf::{UNSUPPORTED, Unsupported, unsupported};
 pub use encode::{ARTBOARD_PARAMS, ArtboardPick, Encoded, encode, encode_all, encode_with_warnings};
 pub(crate) use encode::{anti_alias, background, with_single_artboard};
 pub use export::export_source;
+pub(crate) use export::with_artboard_fills;
 pub(crate) use export::{export_crop, isolated};
 pub(crate) use load::check_not_lossy_overwrite;
 use load::err;
@@ -75,6 +77,7 @@ pub(crate) use native::preview_png;
 pub use native::with_compression_pref;
 pub use pdfimport::{LoadOptions, page_document};
 pub(crate) use save::job_for;
+pub(crate) use save::save as save_document;
 pub use save::{
     SAVE_FORMATS, SaveJob, SaveMode, SavePlan, StreamWrite, TEMPLATE_FORMATS, dialog_folder, export_folder, reads_option as save_reads_option,
     remembered_save_options, save_filters, save_format, save_job, save_plan, save_with, stamp_save_dates, template_filters, templates_dialog_folder,
@@ -119,10 +122,10 @@ use access::{may_read, may_write};
 pub use commands::specs;
 pub use export_names::artboard_file_names;
 pub(crate) use export_names::{default_name, merge, unique_file_names, with_black_output, write_or_return};
-use export_names::{distinct_names, write_encoded};
+use export_names::{distinct_names_by, write_encoded};
 use formats::{ARTBOARD, ARTBOARDS, RANGE, USE_ARTBOARDS, writable};
 pub use formats::{
-    BORDER_PATTERN_EXTS, DOCX_EXTS, FABRIC_EXTS, FORMATS, Format, FormatOption, HOOP_EXTS, OPEN_EXTS, PLACE_EXTS, RTF_EXTS, TEXT_EXTS,
+    BORDER_PATTERN_EXTS, DOC_EXTS, DOCX_EXTS, FABRIC_EXTS, FORMATS, Format, FormatOption, HOOP_EXTS, OPEN_EXTS, PLACE_EXTS, RTF_EXTS, TEXT_EXTS,
     THREAD_CHART_EXTS, UNASSOCIATED_EXTS, export_extensions, extension, file_stem, format, format_for_name, has_own_title, library_open_filters,
     open_filters, place_filters, plugin_formats, titled_for_export, writable_format,
 };
@@ -131,6 +134,8 @@ pub use formats::{
 mod tests;
 #[cfg(test)]
 mod tests_affinity;
+#[cfg(test)]
+mod tests_artboard_fill;
 #[cfg(test)]
 mod tests_embroidery;
 #[cfg(test)]
@@ -197,6 +202,8 @@ mod tests_psd;
 #[cfg(test)]
 mod tests_psdread;
 
+#[cfg(test)]
+mod tests_jp2read;
 #[cfg(test)]
 mod tests_pcxread;
 
