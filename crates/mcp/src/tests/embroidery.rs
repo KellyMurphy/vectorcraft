@@ -186,3 +186,24 @@ fn every_format_spec_is_a_resource() {
     }
     assert!(found >= 5);
 }
+
+/// Stitch styles over MCP: an agent saves a stitched object's settings as a style, applies it to
+/// another object, and reads the style file's specification.
+#[test]
+fn an_agent_saves_and_applies_a_stitch_style() {
+    let mut s = Server::new(Box::new(Headless::with_document()));
+    let a = run(&mut s, "shape.rectangle", json!({"x": 10, "y": 10, "width": 60, "height": 30}))["id"].clone();
+    run(&mut s, "embroidery.set", json!({"ids": [a], "type": "satin", "width": 3, "spacing": 0.35}));
+    let saved = run(&mut s, "embroidery.saveStyle", json!({"id": a, "name": "Edge"}));
+    assert_eq!(saved["id"], "edge");
+    let b = run(&mut s, "shape.ellipse", json!({"x": 100, "y": 100, "width": 50, "height": 50}))["id"].clone();
+    assert_eq!(run(&mut s, "embroidery.applyStyle", json!({"style": "edge", "ids": [b]}))["changed"], 1);
+    let info = run(&mut s, "embroidery.info", json!({"ids": [b]}));
+    assert_eq!((info["selection"]["type"].as_str(), info["selection"]["width"].as_f64()), (Some("satin"), Some(3.0)), "{info}");
+    let listed = run(&mut s, "embroidery.styles", json!({}));
+    assert_eq!(listed["styles"][0]["settings"]["spacing"], 0.35, "{listed}");
+    let file = run(&mut s, "embroidery.saveStyle", json!({"style": "edge"}));
+    assert!(file["data"].as_str().unwrap().contains("vectorcraft-stitch-style"));
+    let spec = rpc(&mut s, "resources/read", json!({"uri": "vectorcraft://spec/vcstyle"}));
+    assert!(spec["result"]["contents"][0]["text"].as_str().unwrap().starts_with("# Stitch style file"));
+}

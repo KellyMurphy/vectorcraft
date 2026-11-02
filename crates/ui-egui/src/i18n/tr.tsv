@@ -6138,3 +6138,16 @@ breakText	Glyphs	Glifler
 	Stitch Fill Tool	Dikiş Dolgusu Aracı
 	Stitch Fill	Dikiş Dolgusu
 	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Kapalı bir alanın içine tıklayarak onu kendi renginde işleyin; Alt-tıklama ana hattını işler
+	Stitch Styles	Dikiş Stilleri
+	Small Lettering	Küçük Yazı
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	5–10 mm yüksekliğinde yazı: harfler çizgi kalınlığına göre seçilir, biraz daha sık, biraz çekme telafisiyle.
+	Bold Border	Kalın Kenar
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	Otomatik alt dikişli 4 mm saten kenar, arma ve şekillerin çevresi için.
+	Light Background Fill	Hafif Arka Plan Dolgusu
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	Geniş arka planlar için seyrek dolgu: daha az dikiş, kumaş biraz görünür, alt dikiş yok.
+	Save Style	Stili Kaydet
+	Stitch Style	Dikiş Stili
+	Keep the selection's stitch settings in this document	Seçimin dikiş ayarlarını bu belgede tut
+	Save to Library	Kitaplığa Kaydet
+	Load Style File…	Stil Dosyası Yükle…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Adlandırılmış dikiş ayarı kümeleri: birini seçime uygulayın veya seçimin ayarlarını yeni bir stil olarak kaydedin

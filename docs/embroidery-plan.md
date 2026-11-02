@@ -723,7 +723,7 @@ row, tests, fuzzing for new input, spec + schema + drift test for a new format, 
 |---|---|---|---|
 | **E11.1** Run styles (**done**) | Chain, stem, backstitch and sashiko as running stitch styles | P0 | M |
 | **E11.2** Split satin (**done**) | Wide satin stitches split into shorter ones, split points staggered | P0 | M |
-| **E11.3** Stitch styles | Named sets of stitch settings, applied with one click, kept in documents and the library | P1 | M |
+| **E11.3** Stitch styles (**done**) | Named sets of stitch settings, applied with one click, kept in documents and the library | P1 | M |
 | **E11.4** Multi-hoop and hoop rotation | Rotate the design in the hoop; split a large design into hoopings with alignment marks | P1 | L |
 | **E11.5** Batch export | Write several machine formats in one export | P1 | S |
 | **E11.6** Deferred stitch generation | Regenerate stitches when an edit ends, not on every drag frame | P1 | S |
@@ -787,7 +787,17 @@ column can be any width. The checker's long-stitch warning on satin offers "Spli
 no stitch over `splitLength` in a split column, split points never in line on neighbouring zigs, widths
 from 1 to 30 mm. Test sheet: split columns at 8, 12 and 20 mm.
 
-### E11.3 Stitch styles (M)
+### E11.3 Stitch styles (M) — done 2026-11-02
+
+As built: `StitchStyle` (`Document.embroidery.styles`) keeps a `stitch` settings object; `.vcstyle` files
+([spec](formats/vcstyle.md)) are read with every setting checked as `embroidery.set` checks it. Applying a
+style replaces an object's settings but keeps what belongs to that object (start point, stitch angle
+lines, rails, trims, stops, and its thread when the style sets none). Commands `embroidery.styles`,
+`saveStyle`, `applyStyle` (also straight from the library, keeping a copy in the document), `loadStyle`,
+`removeStyle`; library kind `styles`; File › Open reads `.vcstyle`. Starters: Small Lettering (Auto, for
+type), Bold Border, Light Background Fill. The Embroidery panel's Stitch Styles menu sits by the stitch
+picker. Graphic styles keep the stitch settings of the object they are made from and stitch what they
+are applied to. The original plan:
 
 A stitch style is a named set of stitch settings: the kind and any of its parameters. Styles live in the
 document (`Document.embroidery.styles`) and in the library folder (a `styles` subfolder), saved as a

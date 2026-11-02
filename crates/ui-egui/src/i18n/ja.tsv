@@ -6313,3 +6313,16 @@ breakText	Glyphs	字形
 	The longest piece of a split stitch	分割したステッチの一片の最大の長さ
 	How the split points move from stitch to stitch, so they don't line up into a seam	分割点がステッチごとにずれる方法（縫い目の筋に並ばないように）
 	Split Satin	分割サテン
+	Stitch Styles	ステッチスタイル
+	Small Lettering	小さい文字
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	高さ 5～10 mm の文字：線幅で文字のステッチを選び、やや密に、少し縮み補正をかけます。
+	Bold Border	太い縁取り
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	自動下縫い付きの 4 mm サテン縁取り。ワッペンや図形の縁取りに。
+	Light Background Fill	軽い背景フィル
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	広い背景用の粗いフィル：ステッチが少なく、生地が少し見え、下縫いなし。
+	Save Style	スタイルを保存
+	Stitch Style	ステッチスタイル
+	Keep the selection's stitch settings in this document	選択範囲のステッチ設定をこのドキュメントに保存します
+	Save to Library	ライブラリに保存
+	Load Style File…	スタイルファイルを読み込み…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	名前付きのステッチ設定のセット：選択範囲に適用するか、選択範囲の設定を新しいスタイルとして保存します

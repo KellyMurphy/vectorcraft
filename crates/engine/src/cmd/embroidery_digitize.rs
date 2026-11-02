@@ -32,7 +32,7 @@ pub(crate) fn specs() -> Vec<CommandSpec> {
         cmd!(
             "embroidery.fillAt",
             "Stitch Fill",
-            [],
+            ["Object", "Embroidery"],
             None,
             "{x: document points, y: document points (a point inside a closed area: a shape or where shapes and paths cross as Live Paint finds areas), outline?: false (a running-stitch outline instead of a fill), thread?: \"#rrggbb\" (default: the colour of the top shape there)} add that area as a new stitch object on top (Auto: fill with a border or satin shape by its width; or a running outline) as one undo step; the Stitch Fill tool's click → {id, areaMm2, outline}",
             has_doc,

@@ -1,0 +1,17 @@
+{
+  "format": "vectorcraft-stitch-style",
+  "version": 1,
+  "units": "mm",
+  "id": "patch-border",
+  "name": "Patch Border",
+  "author": "A. Digitizer",
+  "license": "CC0-1.0",
+  "description": "A 5 mm satin edge for twill patches, split above 7 mm.",
+  "stitch": {
+    "kind": "satin",
+    "width": 5,
+    "spacing": 0.38,
+    "pull": 0.25,
+    "underlay": "auto"
+  }
+}

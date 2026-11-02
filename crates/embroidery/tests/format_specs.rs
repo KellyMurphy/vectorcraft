@@ -13,7 +13,7 @@ use vectorcraft_doc::{
     StitchSettings, Underlay,
 };
 use vectorcraft_embroidery::params::{self, ValueKind};
-use vectorcraft_embroidery::{borders, fabrics, fonts, hoops, motifs, threads};
+use vectorcraft_embroidery::{borders, fabrics, fonts, hoops, motifs, styles, threads};
 
 fn formats_dir() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../docs/formats")
@@ -152,6 +152,7 @@ fn full_setup() -> EmbroiderySetup {
         hoop: Some(Box::new(full_hoop())),
         charts: vec![full_chart()],
         chart: Some("full".into()),
+        styles: vec![full_style()],
         fonts: vec![full_font()],
         font_editor: Some(Box::new(full_font())),
         extra: Default::default(),
@@ -408,6 +409,70 @@ fn vcfabric_page_describes_every_field_and_starter() {
     let end = start + page.get(start..).unwrap().find("```").unwrap();
     let shown = fabrics::read_file(page.get(start..end).unwrap().as_bytes()).unwrap();
     assert_eq!(Fabric { author: None, license: None, description: None, ..shown }, Fabric { author: None, license: None, description: None, ..ex });
+}
+
+/// A stitch style with every field set (a new field fails to compile here until it is set).
+fn full_style() -> vectorcraft_doc::StitchStyle {
+    vectorcraft_doc::StitchStyle {
+        id: "full".into(),
+        name: "Full".into(),
+        author: Some("a".into()),
+        license: Some("CC0-1.0".into()),
+        source: Some("s".into()),
+        description: Some("d".into()),
+        stitch: StitchSettings { width: Some(3.0), ..StitchSettings::new(StitchKind::Satin) },
+        extra: Default::default(),
+        unknown: None,
+    }
+}
+
+#[test]
+fn vcstyle_schema_matches_the_code() {
+    let schema = json("vcstyle.schema.json");
+    let props = &schema["properties"];
+    assert_eq!(props["format"]["const"], styles::FILE_FORMAT);
+    assert_eq!(props["version"]["maximum"].as_u64(), Some(u64::from(styles::FILE_VERSION)));
+    let file: Value = serde_json::from_str(&styles::write_file(&full_style()).unwrap()).unwrap();
+    assert_eq!(keys(props), keys(&file), "the schema's fields are the file's");
+    assert_eq!(props["stitch"]["$ref"], "vectorcraft-embroidery.schema.json#/$defs/stitch");
+    // The document's styles have the file's fields, less the header.
+    let doc = json("vectorcraft-embroidery.schema.json");
+    assert_eq!(keys(&doc["$defs"]["style"]["properties"]), keys(&serde_json::to_value(full_style()).unwrap()));
+}
+
+#[test]
+fn vcstyle_page_describes_every_field_and_starter() {
+    let page = read("vcstyle.md");
+    let file: Value = serde_json::from_str(&styles::write_file(&full_style()).unwrap()).unwrap();
+    for k in keys(&file) {
+        assert!(page.contains(&format!("`{k}`")), "vcstyle.md describes `{k}`");
+    }
+    for id in styles::BUILTIN {
+        assert!(page.contains(&format!("`{id}`")), "vcstyle.md lists the starter `{id}`");
+    }
+    // What an object keeps is named.
+    let kept = StitchSettings {
+        start_at: Some([0.0, 0.0]),
+        angles: vec![[0.0; 4]],
+        rails: true,
+        trim_before: true,
+        trim_after: true,
+        stop_before: Some("stop".into()),
+        ..StitchSettings::new(StitchKind::Satin)
+    };
+    let all = keys(&serde_json::to_value(&kept).unwrap());
+    let style = keys(&serde_json::to_value(kept.as_style()).unwrap());
+    for k in all.difference(&style) {
+        assert!(page.contains(&format!("`{k}`")), "vcstyle.md says objects keep `{k}`");
+    }
+    assert!(page.contains(&format!("{} MB", styles::MAX_FILE_BYTES >> 20)), "the size limit");
+    // The example file reads, and the page's example is it, credits aside.
+    let ex = styles::read_file(read("examples/patch-border.vcstyle").as_bytes()).unwrap();
+    let start = page.find("```json").unwrap() + 7;
+    let end = start + page.get(start..).unwrap().find("```").unwrap();
+    let shown = styles::read_file(page.get(start..end).unwrap().as_bytes()).unwrap();
+    let plain = |s: vectorcraft_doc::StitchStyle| vectorcraft_doc::StitchStyle { author: None, license: None, description: None, ..s };
+    assert_eq!(plain(shown), plain(ex));
 }
 
 /// A sew-out record with every field set.

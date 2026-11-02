@@ -6638,3 +6638,16 @@ breakText	Glyphs	Merkit
 	The longest piece of a split stitch	Jaetun piston pisin osa
 	How the split points move from stitch to stitch, so they don't line up into a seam	Miten jakokohdat siirtyvät pistosta toiseen, jotta ne eivät asetu saumaksi
 	Split Satin	Jaettu satiini
+	Stitch Styles	Pistotyylit
+	Small Lettering	Pieni teksti
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	5–10 mm korkea teksti: kirjaimet valitaan viivan leveyden mukaan, hieman tiheämpi, hieman vetokompensaatiota.
+	Bold Border	Vahva reunus
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	4 mm satiinireunus automaattisella alusompeleella, merkkien ja muotojen reunustamiseen.
+	Light Background Fill	Kevyt taustatäyttö
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	Harva täyttö suurille taustoille: vähemmän pistoja, kangas näkyy hieman, ei alusommelta.
+	Save Style	Tallenna tyyli
+	Stitch Style	Pistotyyli
+	Keep the selection's stitch settings in this document	Säilytä valinnan pistoasetukset tässä asiakirjassa
+	Save to Library	Tallenna kirjastoon
+	Load Style File…	Lataa tyylitiedosto…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Nimettyjä pistoasetusten joukkoja: käytä yhtä valintaan tai tallenna valinnan asetukset uudeksi

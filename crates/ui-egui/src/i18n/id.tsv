@@ -6506,3 +6506,16 @@ breakText	Glyphs	Glif
 	The longest piece of a split stitch	Potongan terpanjang dari jahitan yang dipisah
 	How the split points move from stitch to stitch, so they don't line up into a seam	Bagaimana titik pemisahan bergeser dari jahitan ke jahitan agar tidak berbaris membentuk kampuh
 	Split Satin	Satin Terpisah
+	Stitch Styles	Gaya Jahitan
+	Small Lettering	Huruf Kecil
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	Teks setinggi 5–10 mm: huruf dipilih menurut lebar goresan, sedikit lebih rapat, dengan sedikit kompensasi tarikan.
+	Bold Border	Tepi Tebal
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	Tepi satin 4 mm dengan dasar otomatis, untuk membingkai emblem dan bentuk.
+	Light Background Fill	Isian Latar Ringan
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	Isian renggang untuk latar besar: lebih sedikit jahitan, kain sedikit terlihat, tanpa dasar.
+	Save Style	Simpan Gaya
+	Stitch Style	Gaya Jahitan
+	Keep the selection's stitch settings in this document	Simpan pengaturan jahitan pilihan di dokumen ini
+	Save to Library	Simpan ke Pustaka
+	Load Style File…	Muat Berkas Gaya…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Kumpulan pengaturan jahitan bernama: terapkan satu ke pilihan, atau simpan pengaturan pilihan sebagai gaya baru

@@ -6506,3 +6506,16 @@ breakText	Glyphs	Glyffer
 	The longest piece of a split stitch	Det længste stykke af et opdelt sting
 	How the split points move from stitch to stitch, so they don't line up into a seam	Hvordan opdelingspunkterne flytter sig fra sting til sting, så de ikke danner en søm
 	Split Satin	Opdelt satin
+	Stitch Styles	Stingstile
+	Small Lettering	Små bogstaver
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	Tekst 5–10 mm høj: bogstaver valgt efter stregbredde, lidt tættere, med lidt træk-kompensation.
+	Bold Border	Kraftig kant
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	En 4 mm satinkant med automatisk understing, til at kante mærker og former.
+	Light Background Fill	Let baggrundsfyld
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	Et åbent fyld til store baggrunde: færre sting, stoffet ses lidt, uden understing.
+	Save Style	Gem stil
+	Stitch Style	Stingstil
+	Keep the selection's stitch settings in this document	Behold markeringens stingindstillinger i dette dokument
+	Save to Library	Gem i bibliotek
+	Load Style File…	Indlæs stilfil…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Navngivne sæt af stingindstillinger: anvend et på markeringen, eller gem markeringens som et

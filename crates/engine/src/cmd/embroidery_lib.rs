@@ -1,5 +1,5 @@
 //! Embroidery library folders (E8.5): border patterns, motifs, fabric profiles, hoop lists, thread
-//! charts and embroidery fonts kept as files in the embroidery library folder, one subfolder per kind, so they can be
+//! charts, embroidery fonts and stitch styles kept as files in the embroidery library folder, one subfolder per kind, so they can be
 //! used in any document and shared by copying files. `embroidery.libraries` lists them, the load
 //! commands' `library` parameter copies one into the document (which keeps its own copy, so it
 //! sews the same anywhere), and the save commands' `user: true` writes one there. The desktop app
@@ -8,15 +8,22 @@
 use std::sync::Arc;
 
 use serde_json::{Value, json};
-use vectorcraft_doc::{BorderPattern, EmbroideryFont, Fabric, Hoop, Motif, ThreadChart};
-use vectorcraft_embroidery::{borders, fabrics, fonts, hoops, motifs, threads};
+use vectorcraft_doc::{BorderPattern, EmbroideryFont, Fabric, Hoop, Motif, StitchStyle, ThreadChart};
+use vectorcraft_embroidery::{borders, fabrics, fonts, hoops, motifs, styles, threads};
 
 use super::swatchlib::{Libraries, LibraryFile, LibraryInfo};
 use super::{CommandSpec, Result, Session, bad, cmd, str_param};
 
 /// The kinds of embroidery library: id (also the subfolder's name) and file extension.
-pub const KINDS: [(&str, &str); 6] =
-    [("borders", "vcborder"), ("motifs", "vcmotif"), ("fabrics", "vcfabric"), ("hoops", "vchoop"), ("threads", "vcthreads"), ("fonts", "vcfont")];
+pub const KINDS: [(&str, &str); 7] = [
+    ("borders", "vcborder"),
+    ("motifs", "vcmotif"),
+    ("fabrics", "vcfabric"),
+    ("hoops", "vchoop"),
+    ("threads", "vcthreads"),
+    ("fonts", "vcfont"),
+    ("styles", "vcstyle"),
+];
 
 impl LibraryFile for BorderPattern {
     const EXTS: &'static [&'static str] = &["vcborder"];
@@ -42,6 +49,16 @@ impl LibraryFile for Fabric {
     const EXTS: &'static [&'static str] = &["vcfabric"];
     fn read(bytes: &[u8], _: &str) -> std::result::Result<Self, String> {
         fabrics::read_file(bytes)
+    }
+    fn name(&self) -> &str {
+        &self.name
+    }
+}
+
+impl LibraryFile for StitchStyle {
+    const EXTS: &'static [&'static str] = &["vcstyle"];
+    fn read(bytes: &[u8], _: &str) -> std::result::Result<Self, String> {
+        styles::read_file(bytes)
     }
     fn name(&self) -> &str {
         &self.name
@@ -117,6 +134,7 @@ pub struct EmbroideryLibraries {
     pub hoops: Libraries<HoopList>,
     pub threads: Libraries<ThreadChart>,
     pub fonts: Libraries<EmbroideryFont>,
+    pub styles: Libraries<StitchStyle>,
 }
 
 impl EmbroideryLibraries {
@@ -134,6 +152,7 @@ impl EmbroideryLibraries {
         self.hoops.set_user_dir(sub("hoops"));
         self.threads.set_user_dir(sub("threads"));
         self.fonts.set_user_dir(sub("fonts"));
+        self.styles.set_user_dir(sub("styles"));
         self.dir = dir;
         self.font_folders = self.read_font_folders();
         self.scan_inkstitch();
@@ -213,6 +232,7 @@ impl EmbroideryLibraries {
         self.hoops.rescan();
         self.threads.rescan();
         self.fonts.rescan();
+        self.styles.rescan();
         self.scan_inkstitch();
     }
 
@@ -255,6 +275,13 @@ impl EmbroideryLibraries {
             ));
             out.extend(self.inkstitch.iter().map(|f| json!({"kind": "fonts", "id": f.id, "name": f.name, "path": f.path, "format": "inkstitch"})));
         }
+        if want("styles") {
+            out.extend(entries(
+                &self.styles,
+                "styles",
+                |st| json!({"style": st.id, "stitch": st.stitch.kind_id(), "author": st.author, "license": st.license, "source": st.source}),
+            ));
+        }
         out
     }
 
@@ -267,6 +294,7 @@ impl EmbroideryLibraries {
             ("hoops", self.hoops.skipped()),
             ("threads", self.threads.skipped()),
             ("fonts", self.fonts.skipped()),
+            ("styles", self.styles.skipped()),
         ];
         lists
             .into_iter()
@@ -345,7 +373,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Embroidery Libraries",
             ["Window", "Embroidery"],
             None,
-            "{kind?: borders|motifs|fabrics|hoops|threads|fonts (default: all)} what the embroidery library folder holds: border patterns (.vcborder), motifs (.vcmotif), fabric profiles (.vcfabric), hoop lists (.vchoop), thread charts (.vcthreads) and embroidery fonts (.vcfont), one subfolder each, as last scanned (at start, embroidery.rescanLibraries, and after a save or add). Load one into the document with the load commands' `library` (embroidery.loadBorderPattern, loadMotif, loadFabric, loadHoop, loadThreadChart, loadFont) → {folder: path | null (none here: the web, headless sessions), libraries: [{kind, id (user/<file>), name, path, and by kind: pattern, motif and motifKind, fabric, chart, font (the id it has inside), hoops: [ids], brand, threads (count), family, glyphs (count), author, license, source, supported (false: from a newer VectorCraft), format: inkstitch (an Ink/Stitch font folder, in the library's fonts/ or a font folder: embroidery.fontFolders; read in place, converted when loaded)}], skipped: [{kind, path, error}] (files that couldn't be read)}",
+            "{kind?: borders|motifs|fabrics|hoops|threads|fonts|styles (default: all)} what the embroidery library folder holds: border patterns (.vcborder), motifs (.vcmotif), fabric profiles (.vcfabric), hoop lists (.vchoop), thread charts (.vcthreads), embroidery fonts (.vcfont) and stitch styles (.vcstyle), one subfolder each, as last scanned (at start, embroidery.rescanLibraries, and after a save or add). Load one into the document with the load commands' `library` (embroidery.loadBorderPattern, loadMotif, loadFabric, loadHoop, loadThreadChart, loadFont, loadStyle; embroidery.applyStyle applies one) → {folder: path | null (none here: the web, headless sessions), libraries: [{kind, id (user/<file>), name, path, and by kind: pattern, motif and motifKind, fabric, chart, font, style (the id it has inside), stitch (a style's stitch type), hoops: [ids], brand, threads (count), family, glyphs (count), author, license, source, supported (false: from a newer VectorCraft), format: inkstitch (an Ink/Stitch font folder, in the library's fonts/ or a font folder: embroidery.fontFolders; read in place, converted when loaded)}], skipped: [{kind, path, error}] (files that couldn't be read)}",
             always,
             libraries
         ),
@@ -363,7 +391,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Add to Embroidery Library…",
             ["Window", "Embroidery"],
             None,
-            "{path? | data?: the file's text, name?: the file name of `data` (e.g. \"Rope.vcborder\"), kind?: borders|motifs|fabrics|hoops|threads|fonts (default: from the extension)} copy a .vcborder, .vcmotif, .vcfabric, .vchoop, .vcthreads or .vcfont file into the embroidery library folder, after checking it reads. A name the folder already has gets a number (\"Rope 2.vcborder\") and no file is replaced; when the folder already holds the same file, that file is used → {kind, id, name, path, copied: false when nothing was written}",
+            "{path? | data?: the file's text, name?: the file name of `data` (e.g. \"Rope.vcborder\"), kind?: borders|motifs|fabrics|hoops|threads|fonts|styles (default: from the extension)} copy a .vcborder, .vcmotif, .vcfabric, .vchoop, .vcthreads, .vcfont or .vcstyle file into the embroidery library folder, after checking it reads. A name the folder already has gets a number (\"Rope 2.vcborder\") and no file is replaced; when the folder already holds the same file, that file is used → {kind, id, name, path, copied: false when nothing was written}",
             has_library_folder,
             add_to_library
         ),
@@ -418,7 +446,7 @@ fn add_to_library(s: &mut Session, p: &Value) -> Result<Value> {
     let kind = match kind_param(p, C)? {
         Some(k) => k,
         None => KINDS.iter().find(|(_, e)| *e == ext).map(|(k, _)| *k).ok_or_else(|| {
-            bad(C, format!("`{name}` isn't a .vcborder, .vcmotif, .vcfabric, .vchoop, .vcthreads or .vcfont file (or give `kind`)"))
+            bad(C, format!("`{name}` isn't a .vcborder, .vcmotif, .vcfabric, .vchoop, .vcthreads, .vcfont or .vcstyle file (or give `kind`)"))
         })?,
     };
     // A file named for another kind (or none) is stored under this kind's extension.
@@ -431,6 +459,7 @@ fn add_to_library(s: &mut Session, p: &Value) -> Result<Value> {
         "fabrics" => l.fabrics.add_user_file(&name, &bytes, C).map(|(i, _, c)| (i, c))?,
         "hoops" => l.hoops.add_user_file(&name, &bytes, C).map(|(i, _, c)| (i, c))?,
         "fonts" => l.fonts.add_user_file(&name, &bytes, C).map(|(i, _, c)| (i, c))?,
+        "styles" => l.styles.add_user_file(&name, &bytes, C).map(|(i, _, c)| (i, c))?,
         _ => l.threads.add_user_file(&name, &bytes, C).map(|(i, _, c)| (i, c))?,
     };
     let path = match kind {
@@ -439,6 +468,7 @@ fn add_to_library(s: &mut Session, p: &Value) -> Result<Value> {
         "fabrics" => l.fabrics.path(&info.id),
         "hoops" => l.hoops.path(&info.id),
         "fonts" => l.fonts.path(&info.id),
+        "styles" => l.styles.path(&info.id),
         _ => l.threads.path(&info.id),
     };
     Ok(json!({"kind": kind, "id": info.id, "name": info.name, "path": path, "copied": copied}))

@@ -418,7 +418,7 @@ impl Edits {
 
 /// The paths, compound paths and type objects `ids` stand for (groups and layers: those inside;
 /// not the paths inside a compound path, which stitches as one), guides left out.
-fn stitchable(s: &Session, ids: &[NodeId]) -> Result<Vec<NodeId>> {
+pub(crate) fn stitchable(s: &Session, ids: &[NodeId]) -> Result<Vec<NodeId>> {
     let d = &s.doc()?.doc;
     Ok(leaf_targets(s, ids)?
         .into_iter()

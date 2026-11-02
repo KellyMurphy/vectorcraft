@@ -6603,3 +6603,16 @@ breakText	Glyphs	Глифы
 	The longest piece of a split stitch	Самая длинная часть разделённого стежка
 	How the split points move from stitch to stitch, so they don't line up into a seam	Как точки разделения смещаются от стежка к стежку, чтобы не выстраиваться в шов
 	Split Satin	Разделённая гладь
+	Stitch Styles	Стили стежков
+	Small Lettering	Мелкие надписи
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	Текст высотой 5–10 мм: буквы по толщине штриха, чуть плотнее, с небольшой компенсацией стягивания.
+	Bold Border	Толстая кайма
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	Сатиновая кайма 4 мм с автоматическим подкладочным стежком, для окантовки нашивок и фигур.
+	Light Background Fill	Лёгкая заливка фона
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	Редкая заливка для больших фонов: меньше стежков, ткань немного видна, без подкладки.
+	Save Style	Сохранить стиль
+	Stitch Style	Стиль стежков
+	Keep the selection's stitch settings in this document	Сохранить настройки стежков выделенного в этом документе
+	Save to Library	Сохранить в библиотеку
+	Load Style File…	Загрузить файл стиля…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Именованные наборы настроек стежков: примените один к выделенному или сохраните настройки выделенного как новый

@@ -6560,3 +6560,16 @@ breakText	Glyphs	Γλύφοι
 	The longest piece of a split stitch	Το μακρύτερο κομμάτι μιας διαιρεμένης βελονιάς
 	How the split points move from stitch to stitch, so they don't line up into a seam	Πώς μετακινούνται τα σημεία διαίρεσης από βελονιά σε βελονιά, ώστε να μη σχηματίζουν ραφή
 	Split Satin	Διαιρεμένο σατέν
+	Stitch Styles	Στυλ βελονιών
+	Small Lettering	Μικρά γράμματα
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	Κείμενο ύψους 5–10 mm: γράμματα κατά το πάχος της πινελιάς, λίγο πυκνότερα, με λίγη αντιστάθμιση έλξης.
+	Bold Border	Έντονο περίγραμμα
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	Σατέν περίγραμμα 4 mm με αυτόματο υπόστρωμα, για περιγράμματα σε σήματα και σχήματα.
+	Light Background Fill	Ελαφρύ γέμισμα φόντου
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	Αραιό γέμισμα για μεγάλα φόντα: λιγότερες βελονιές, το ύφασμα φαίνεται λίγο, χωρίς υπόστρωμα.
+	Save Style	Αποθήκευση στυλ
+	Stitch Style	Στυλ βελονιάς
+	Keep the selection's stitch settings in this document	Διατήρηση των ρυθμίσεων βελονιάς της επιλογής σε αυτό το έγγραφο
+	Save to Library	Αποθήκευση στη βιβλιοθήκη
+	Load Style File…	Φόρτωση αρχείου στυλ…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Ονομασμένα σύνολα ρυθμίσεων βελονιάς: εφαρμόστε ένα στην επιλογή ή αποθηκεύστε τις ρυθμίσεις της επιλογής ως νέο

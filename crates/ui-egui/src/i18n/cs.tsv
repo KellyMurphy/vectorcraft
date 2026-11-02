@@ -6627,3 +6627,16 @@ breakText	Glyphs	Glyfy
 	The longest piece of a split stitch	Nejdelší část děleného stehu
 	How the split points move from stitch to stitch, so they don't line up into a seam	Jak se body dělení posouvají od stehu ke stehu, aby se neseřadily do švu
 	Split Satin	Dělený saténový steh
+	Stitch Styles	Styly stehů
+	Small Lettering	Malé písmo
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	Text vysoký 5–10 mm: písmena vybraná podle šířky tahu, o něco hustší, s trochou kompenzace stažení.
+	Bold Border	Výrazný lem
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	Saténový lem 4 mm s automatickým podkladem, pro obrysy nášivek a tvarů.
+	Light Background Fill	Lehká výplň pozadí
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	Řídká výplň pro velká pozadí: méně stehů, látka trochu prosvítá, bez podkladu.
+	Save Style	Uložit styl
+	Stitch Style	Styl stehů
+	Keep the selection's stitch settings in this document	Ponechat nastavení stehů výběru v tomto dokumentu
+	Save to Library	Uložit do knihovny
+	Load Style File…	Načíst soubor stylu…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Pojmenované sady nastavení stehů: použijte jednu na výběr, nebo uložte nastavení výběru jako novou

@@ -529,11 +529,32 @@ The starters' numbers are starting points from general digitizing practice; the 
 (below) are how to check them on your fabric. **Save…** writes the fabric as a `.vcfabric` file to share
 ([specification](formats/vcfabric.md)).
 
+### Stitch styles
+
+A stitch style is a named set of stitch settings, the stitch type and any of its settings, applied with one
+click. The Embroidery panel's **Stitch Styles** menu (next to the stitch picker) lists the document's styles
+and three starters: **Small Lettering** (Auto, a little denser, for type 5–10 mm tall), **Bold Border** (a
+4 mm satin with automatic underlay) and **Light Background Fill** (an open fill without underlay). Picking
+one stitches the selection with it (`embroidery.applyStyle`); the style the selection already matches is
+ticked. **Save Style** keeps the selection's settings as a style in the document (`embroidery.saveStyle`;
+**Save to Library** also writes it to the embroidery library), and **Load Style File…** (or File › Open)
+reads a `.vcstyle` file ([specification](formats/vcstyle.md)).
+
+A style replaces an object's stitch settings, except what belongs to that object: its start point, stitch
+angle lines, satin rails, trims and stops, and its thread colour when the style sets none. Objects keep no
+link to the style, as with fabric profiles: changing or removing a style later doesn't change them. A style
+that names a border pattern, motif or embroidery font can only be applied where the document has it.
+
+Graphic styles (Window › Graphic Styles) carry stitch settings too: **New Graphic Style** made from a
+stitched object keeps its settings (less the same per-object ones), and applying the graphic style
+stitches the paths and type it styles, so one click gives both the look and the stitching.
+
 ### Libraries
 
-Border patterns, motifs, fabric profiles, hoop lists, thread charts and embroidery fonts you want in every
-design go in the **embroidery library folder**: a folder called `Embroidery` next to the preferences, with a
-subfolder for each kind (`borders`, `motifs`, `fabrics`, `hoops`, `threads`, `fonts`). VectorCraft reads it at start (and on
+Border patterns, motifs, fabric profiles, hoop lists, thread charts, embroidery fonts and stitch styles you
+want in every design go in the **embroidery library folder**: a folder called `Embroidery` next to the
+preferences, with a subfolder for each kind (`borders`, `motifs`, `fabrics`, `hoops`, `threads`, `fonts`,
+`styles`). VectorCraft reads it at start (and on
 `embroidery.rescanLibraries`), so files can be shared just by copying them in. A save command with
 `user: true` writes there, and `embroidery.addToLibrary` copies a file in (never replacing one: a name
 already taken gets a number). `embroidery.libraries` lists what is there, and files that can't be read are
@@ -623,9 +644,14 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.setFabric` | `{fabric?: woven\|knit\|towel\|cap\|leather\|denim\|null, name?, satinSpacing?, fillSpacing?, pull?, pullPercent?, push?, satinCenterUnder?, satinZigzagOver?, shapeEdgeOver?}`: set the document's fabric (a starter, then the settings given) |
 | `embroidery.loadFabric` | `{path? \| data? \| library?}`: a `.vcfabric` file as the document's fabric |
 | `embroidery.saveFabric` | `{fabric?, path?, user?}`: write the document's fabric (or a starter) as a `.vcfabric` file |
-| `embroidery.libraries` | `{kind?: borders\|fabrics\|hoops\|threads}` → the embroidery library `folder`, its `libraries` (`kind`, `id`, `name`, `path`…) and the files `skipped` as unreadable |
+| `embroidery.styles` | → the document's stitch `styles`, then the starters (`id`, `name`, `builtin`, `settings` as `embroidery.set` takes them), and the one the selection matches (`selected`) |
+| `embroidery.saveStyle` | `{name?, id?, description?, path?, user?}`: the selected object's stitch settings as a document style (a style of the same id is replaced); `{style, path?, user?}`: write a style as a `.vcstyle` file → `{id, name, replaced}` |
+| `embroidery.applyStyle` | `{style? \| library?, ids?}`: stitch the selection with a style's settings, keeping each object's start point, angle lines, rails, trims, stops and (unless the style sets one) thread → `{style, changed}` |
+| `embroidery.loadStyle` | `{path? \| data? \| library?}`: load a `.vcstyle` file into the document → `{id, name, added}` |
+| `embroidery.removeStyle` | `{style}`: remove one of the document's styles (objects keep their settings) |
+| `embroidery.libraries` | `{kind?: borders\|motifs\|fabrics\|hoops\|threads\|fonts\|styles}` → the embroidery library `folder`, its `libraries` (`kind`, `id`, `name`, `path`…) and the files `skipped` as unreadable |
 | `embroidery.rescanLibraries` | re-read the embroidery library folder → the same as `embroidery.libraries` |
-| `embroidery.addToLibrary` | `{path? \| data? with name?, kind?}`: copy a `.vcborder`, `.vcfabric`, `.vchoop` or `.vcthreads` file into the embroidery library (never replacing one) |
+| `embroidery.addToLibrary` | `{path? \| data? with name?, kind?}`: copy a `.vcborder`, `.vcmotif`, `.vcfabric`, `.vchoop`, `.vcthreads`, `.vcfont` or `.vcstyle` file into the embroidery library (never replacing one) |
 | `embroidery.applique` | `{ids?, cover?: satin\|zigzag\|bean\|none, width?, tackDown?: running\|zigzag\|bean, inset?}`: each closed shape becomes an appliqué group (placement line, stop, tack-down, stop, cover) → `{groups: [{id, placement, tackDown, cover}]}` |
 | `embroidery.cutFile` | `{ids?, allowance?, gap?, mat?: 12x12\|12x24\|{width, height}, margin?, rotate?: none\|quarter\|any, flip?, format?: svg\|dxf, path?}`: the appliqué pieces nested onto cutter mats → `{mats, pieces, unplaced, index \| files}` |
 | `embroidery.fonts` | → the embroidery `fonts` loaded into the document (`id`, `name`, `glyphs`, `chars`, `sizes`, licence…) |

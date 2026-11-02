@@ -6170,3 +6170,16 @@ breakText	Glyphs	გლიფები
 	Stitch Fill Tool	ნაკერით შევსების ხელსაწყო
 	Stitch Fill	ნაკერით შევსება
 	Click inside any closed area to stitch it in its colour; Alt-click to outline it	დააწკაპეთ დახურულ არეში, რომ მისი ფერით ამოქარგოთ; Alt-დაწკაპება კონტურს ქარგავს
+	Stitch Styles	ნაკერის სტილები
+	Small Lettering	პატარა წარწერა
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	5–10 მმ სიმაღლის ტექსტი: ასოები შტრიხის სისქის მიხედვით, ოდნავ მკვრივად, მცირე შეკუმშვის კომპენსაციით.
+	Bold Border	სქელი არშია
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	4 მმ ატლასის არშია ავტომატური ქვესაკერით, ემბლემებისა და ფორმების შემოსავლებად.
+	Light Background Fill	მსუბუქი ფონის შევსება
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	იშვიათი შევსება დიდი ფონისთვის: ნაკლები ნაკერი, ქსოვილი ოდნავ ჩანს, ქვესაკერის გარეშე.
+	Save Style	სტილის შენახვა
+	Stitch Style	ნაკერის სტილი
+	Keep the selection's stitch settings in this document	მონიშნულის ნაკერის პარამეტრების შენახვა ამ დოკუმენტში
+	Save to Library	ბიბლიოთეკაში შენახვა
+	Load Style File…	სტილის ფაილის ჩატვირთვა…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	ნაკერის პარამეტრების დასახელებული ნაკრებები: გამოიყენეთ ერთ-ერთი მონიშნულზე ან შეინახეთ მონიშნულის პარამეტრები ახალ სტილად

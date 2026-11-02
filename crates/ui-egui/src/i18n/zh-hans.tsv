@@ -6470,3 +6470,16 @@ breakText	Glyphs	字形
 	The longest piece of a split stitch	拆分针迹中最长的一段
 	How the split points move from stitch to stitch, so they don't line up into a seam	拆分点如何逐针移动，以免排成一道缝
 	Split Satin	拆分缎纹
+	Stitch Styles	针迹样式
+	Small Lettering	小字
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	高 5–10 毫米的文字：按笔画宽度选针迹，稍密一些，略加拉力补偿。
+	Bold Border	粗边框
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	带自动底衬的 4 毫米缎纹边框，用于勾勒徽章和图形。
+	Light Background Fill	轻背景填充
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	用于大面积背景的稀疏填充：针数更少，略露布料，无底衬。
+	Save Style	保存样式
+	Stitch Style	针迹样式
+	Keep the selection's stitch settings in this document	在此文档中保留所选对象的针迹设置
+	Save to Library	保存到库
+	Load Style File…	载入样式文件…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	命名的针迹设置组合：将其中之一应用于所选对象，或将所选对象的设置保存为新样式

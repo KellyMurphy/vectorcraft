@@ -30,7 +30,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Apply Graphic Style",
             ["Window", "Graphic Styles"],
             None,
-            "{name, add?: bool, ids?|id? (layers too), target?: \"object\"|\"contents\"} give the objects (default: the selection; a group or layer itself, its fills and strokes painting its members and its effects applying to them as one piece; target contents: the objects inside instead) the style's appearance, opacity, blend mode, isolate and knockout, and link them to it (placed gradients land at the same place relative to each object's bounds); add: true (Alt-click) adds its fills, strokes and effects on top of the existing appearance instead and unlinks. With nothing selected (and no ids) the next object drawn takes the style instead (see appearance.newArt) → {newArt: true}",
+            "{name, add?: bool, ids?|id? (layers too), target?: \"object\"|\"contents\"} give the objects (default: the selection; a group or layer itself, its fills and strokes painting its members and its effects applying to them as one piece; target contents: the objects inside instead) the style's appearance, opacity, blend mode, isolate and knockout, and link them to it (placed gradients land at the same place relative to each object's bounds); a style with stitch settings stitches the paths, compound paths and type among them too, as embroidery.applyStyle does; add: true (Alt-click) adds its fills, strokes and effects on top of the existing appearance instead and unlinks. With nothing selected (and no ids) the next object drawn takes the style instead (see appearance.newArt) → {newArt: true}",
             has_doc,
             style_apply
         ),
@@ -39,7 +39,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "New Graphic Style",
             ["Window", "Graphic Styles"],
             None,
-            "{name?, id?} a style from object `id` or the first selected object: its appearance, opacity, blend mode, isolate and knockout (a group without fills or strokes of its own lends its topmost object's, type its characters'; placed gradients are kept relative to its bounds); links the object. Names are made unique → {name}",
+            "{name?, id?} a style from object `id` or the first selected object: its appearance, opacity, blend mode, isolate, knockout and stitch settings (less what belongs to that object: its start point, stitch angle lines, rails, trims and stops) (a group without fills or strokes of its own lends its topmost object's, type its characters'; placed gradients are kept relative to its bounds); links the object. Names are made unique → {name}",
             has_doc,
             style_new
         ),
@@ -58,7 +58,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "List Graphic Styles",
             [],
             None,
-            "{} → {styles: [{id, name, fill, stroke, strokeWidth, fills, strokes, effects: [effect id…], opacity: 0..100, blend, isolate, knockout: \"on\"|\"off\"|\"neutral\", linked: [object ids]}], selected: the style the first selected object is linked to, or null, overrideCharColor}",
+            "{} → {styles: [{id, name, fill, stroke, strokeWidth, fills, strokes, effects: [effect id…], opacity: 0..100, blend, isolate, knockout: \"on\"|\"off\"|\"neutral\", stitch: the stitch type it gives objects (embroidery.set type) | null, linked: [object ids]}], selected: the style the first selected object is linked to, or null, overrideCharColor}",
             has_doc,
             style_list
         ),
@@ -259,13 +259,15 @@ fn override_chars(n: &mut Node, ap: &Appearance) {
 }
 
 /// Give `n` style `g`: its appearance (a group or layer too: its own, above its contents; type its
-/// characters' colour too with `chars`, Override Character Color) and transparency.
+/// characters' colour too with `chars`, Override Character Color), transparency and stitch
+/// settings (if it has any).
 fn style_node(n: &mut Node, g: &GraphicStyle, chars: bool) {
     n.appearance = g.appearance_on(n).into_owned().into();
     if chars {
         override_chars(n, &g.appearance);
     }
     g.apply_transparency(n);
+    g.apply_stitch(n);
 }
 
 /// Give `id` style `g` ([`style_node`]) and link it.
@@ -437,6 +439,7 @@ pub(crate) fn style_json(g: &GraphicStyle) -> Value {
         "blend": g.blend.label(),
         "isolate": g.isolate,
         "knockout": g.knockout.label(),
+        "stitch": g.stitch.as_deref().map(|t| t.kind_id()),
     })
 }
 

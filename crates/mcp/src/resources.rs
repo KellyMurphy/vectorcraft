@@ -153,6 +153,22 @@ pub static TEXT_DOCS: &[TextDoc] = &[
         text: include_str!("../../../docs/formats/vcfabric.schema.json"),
     },
     TextDoc {
+        uri: "vectorcraft://spec/vcstyle",
+        name: "spec-vcstyle",
+        title: "Stitch style file (.vcstyle) specification",
+        description: "The open JSON format for embroidery stitch styles: a named set of stitch settings, applied to objects in one step",
+        mime: "text/markdown",
+        text: include_str!("../../../docs/formats/vcstyle.md"),
+    },
+    TextDoc {
+        uri: "vectorcraft://spec/vcstyle.schema.json",
+        name: "spec-vcstyle-schema",
+        title: "Stitch style file JSON Schema",
+        description: "JSON Schema (draft 2020-12) for .vcstyle files",
+        mime: "application/schema+json",
+        text: include_str!("../../../docs/formats/vcstyle.schema.json"),
+    },
+    TextDoc {
         uri: "vectorcraft://spec/vectorcraft-embroidery",
         name: "spec-vectorcraft-embroidery",
         title: "Embroidery data in documents (specification)",

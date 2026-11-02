@@ -6195,3 +6195,16 @@ breakText	Glyphs	Glyphen
 	The longest piece of a split stitch	Das längste Stück eines geteilten Stichs
 	How the split points move from stitch to stitch, so they don't line up into a seam	Wie die Teilungspunkte von Stich zu Stich wandern, damit sie keine Naht bilden
 	Split Satin	Geteilter Satin
+	Stitch Styles	Stichstile
+	Small Lettering	Kleine Schrift
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	Text 5–10 mm hoch: Buchstaben nach Strichstärke gewählt, etwas dichter, mit etwas Zugausgleich.
+	Bold Border	Kräftiger Rand
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	Ein 4-mm-Satinrand mit automatischer Unterlage, zum Umranden von Abzeichen und Formen.
+	Light Background Fill	Leichte Hintergrundfüllung
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	Eine offene Füllung für große Hintergründe: weniger Stiche, der Stoff scheint etwas durch, keine Unterlage.
+	Save Style	Stil speichern
+	Stitch Style	Stichstil
+	Keep the selection's stitch settings in this document	Die Stich-Einstellungen der Auswahl in diesem Dokument behalten
+	Save to Library	In Bibliothek speichern
+	Load Style File…	Stildatei laden …
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Benannte Sätze von Stich-Einstellungen: einen auf die Auswahl anwenden oder die der Auswahl als neuen speichern

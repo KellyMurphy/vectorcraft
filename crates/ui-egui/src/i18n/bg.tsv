@@ -6491,3 +6491,16 @@ breakText	Glyphs	Глифи
 	The longest piece of a split stitch	Най-дългата част на разделен бод
 	How the split points move from stitch to stitch, so they don't line up into a seam	Как се местят точките на разделяне от бод на бод, за да не се подредят в шев
 	Split Satin	Разделен сатен
+	Stitch Styles	Стилове на бодовете
+	Small Lettering	Малки надписи
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	Текст с височина 5–10 mm: буквите се избират по дебелината на щриха, малко по-плътно, с малко компенсация на свиването.
+	Bold Border	Плътен кант
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	Сатенен кант 4 mm с автоматична подложка, за очертаване на емблеми и форми.
+	Light Background Fill	Лек фонов пълнеж
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	Рядък пълнеж за големи фонове: по-малко бодове, платът леко прозира, без подложка.
+	Save Style	Запазване на стила
+	Stitch Style	Стил на бодовете
+	Keep the selection's stitch settings in this document	Запазване на настройките на бодовете от избраното в този документ
+	Save to Library	Запазване в библиотеката
+	Load Style File…	Зареждане на файл със стил…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Именувани набори от настройки на бодовете: приложете един към избраното или запазете настройките на избраното като нов

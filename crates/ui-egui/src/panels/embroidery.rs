@@ -142,10 +142,14 @@ fn stitch_tab(app: &mut VectorcraftApp, ui: &mut Ui, info: &Value) {
                 widgets::dim_label(ui, tl!("The selected objects use different stitches."));
             }
         }
-        if stitched > 0 && widgets::flat_button(ui, tl!("Remove Stitches"), 110.0).on_hover_text(tl!("The selection is no longer stitched")).clicked()
-        {
-            app.run("embroidery.clear", json!({})).ok();
-        }
+        ui.horizontal(|ui| {
+            styles_menu(app, ui, kind.is_some() && stitched > 0);
+            if stitched > 0
+                && widgets::flat_button(ui, tl!("Remove Stitches"), 110.0).on_hover_text(tl!("The selection is no longer stitched")).clicked()
+            {
+                app.run("embroidery.clear", json!({})).ok();
+            }
+        });
     }
     if stitched > 0 && unstitched == 0 {
         widgets::divider(ui);
@@ -1531,6 +1535,140 @@ fn border_label(id: &str) -> &'static str {
 }
 
 /// A starter fabric's name, translated.
+/// A starter stitch style's name and description, translated (`None`: not a starter).
+fn starter_style(id: &str) -> Option<(&'static str, &'static str)> {
+    Some(match id {
+        "small-lettering" => {
+            (tl!("Small Lettering"), tl!("Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation."))
+        }
+        "bold-border" => (tl!("Bold Border"), tl!("A 4 mm satin border with automatic underlay, for outlining patches and shapes.")),
+        "light-fill" => {
+            (tl!("Light Background Fill"), tl!("An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay."))
+        }
+        _ => return None,
+    })
+}
+
+/// The Stitch Styles menu: apply a style (the document's, a starter, the library's) to the
+/// selection; with `can_save`, save the selection's settings as one; load or remove one.
+fn styles_menu(app: &mut VectorcraftApp, ui: &mut Ui, can_save: bool) {
+    ui.menu_button(tl!("Stitch Styles"), |ui| styles_list(app, ui, can_save))
+        .response
+        .on_hover_text(tl!("Named sets of stitch settings: apply one to the selection, or save the selection's as one"));
+}
+
+/// What the Stitch Styles menu holds.
+fn styles_list(app: &mut VectorcraftApp, ui: &mut Ui, can_save: bool) {
+    {
+        let list = app.session.execute("embroidery.styles", &json!({})).unwrap_or_default();
+        let selected = list["selected"].as_str().map(str::to_string);
+        let styles: Vec<Value> =
+            list["styles"].as_array().map(|a| a.iter().filter(|st| st["supported"] == json!(true)).cloned().collect()).unwrap_or_default();
+        let apply = |app: &mut VectorcraftApp, p: Value| {
+            if let Err(e) = app.run("embroidery.applyStyle", p) {
+                app.status(e);
+            }
+        };
+        for st in &styles {
+            let id = st["id"].as_str().unwrap_or_default();
+            let starter = starter_style(id).filter(|_| st["builtin"] == json!(true));
+            let name = starter.map_or_else(|| st["name"].as_str().unwrap_or(id).to_string(), |(n, _)| n.to_string());
+            let about = starter.map(|(_, a)| a.to_string()).or_else(|| st["description"].as_str().map(str::to_string));
+            let mut r = ui.selectable_label(selected.as_deref() == Some(id), name);
+            if let Some(a) = about {
+                r = r.on_hover_text(a);
+            }
+            if r.clicked() {
+                apply(app, json!({ "style": id }));
+                ui.close();
+            }
+        }
+        let libs = &app.session.embroidery_libraries.styles;
+        let library: Vec<(String, String)> =
+            libs.infos().filter(|i| i.category == "user").filter_map(|i| libs.get(&i.id)).map(|(i, st)| (i.id, st.name.clone())).collect();
+        if !library.is_empty() {
+            ui.menu_button(tl!("Library"), |ui| {
+                for (id, name) in &library {
+                    if ui.button(name).clicked() {
+                        apply(app, json!({ "library": id }));
+                        ui.close();
+                    }
+                }
+            });
+        }
+        ui.separator();
+        if can_save {
+            ui.menu_button(tl!("Save Style"), |ui| {
+                let mut name = kept(ui, "style-name", "");
+                widgets::label_row(ui, tl!("Name:"), 50.0, |ui| {
+                    ui.add(egui::TextEdit::singleline(&mut name).desired_width(140.0).hint_text(tl!("Stitch Style")));
+                });
+                keep(ui, "style-name", name.clone());
+                ui.horizontal(|ui| {
+                    let save = |app: &mut VectorcraftApp, user: bool| {
+                        let mut p = json!({ "user": user });
+                        if !name.trim().is_empty() {
+                            p["name"] = json!(name.trim());
+                        }
+                        match app.run("embroidery.saveStyle", p) {
+                            Ok(r) => app.status(format!("Saved stitch style {}", r["name"].as_str().unwrap_or_default())),
+                            Err(e) => app.status(e),
+                        }
+                    };
+                    if widgets::flat_button(ui, tl!("Save"), 60.0)
+                        .on_hover_text(tl!("Keep the selection's stitch settings in this document"))
+                        .clicked()
+                    {
+                        save(app, false);
+                        ui.close();
+                    }
+                    if app.session.embroidery_libraries.dir().is_some()
+                        && widgets::flat_button(ui, tl!("Save to Library"), 110.0)
+                            .on_hover_text(tl!("Save a copy in your embroidery library, for any design"))
+                            .clicked()
+                    {
+                        save(app, true);
+                        ui.close();
+                    }
+                });
+            });
+        }
+        if ui.button(tl!("Load Style File…")).clicked() {
+            load_style(app);
+            ui.close();
+        }
+        let mine: Vec<&Value> = styles.iter().filter(|st| st["builtin"] == json!(false)).collect();
+        if !mine.is_empty() {
+            ui.menu_button(tl!("Remove"), |ui| {
+                for st in mine {
+                    if ui.button(st["name"].as_str().unwrap_or_default()).clicked() {
+                        if let Err(e) = app.run("embroidery.removeStyle", json!({ "style": st["id"] })) {
+                            app.status(e);
+                        }
+                        ui.close();
+                    }
+                }
+            });
+        }
+    }
+}
+
+fn load_style(app: &mut VectorcraftApp) {
+    if let Some(f) = app.services.open_async.as_mut() {
+        f();
+        return;
+    }
+    crate::picks::button(app, |app| {
+        let ext: &'static [&'static str] = &[vectorcraft_embroidery::styles::FILE_EXT];
+        let pick = crate::FilePick { filters: vec![crate::FilePick::filter("Stitch styles", ext)], ..Default::default() };
+        let Some(path) = crate::picks::open(app, &pick) else { return };
+        match app.run("embroidery.loadStyle", json!({ "path": path })) {
+            Ok(r) => app.status(format!("Stitch style: {}", r["name"].as_str().unwrap_or_default())),
+            Err(e) => app.status(e),
+        }
+    });
+}
+
 fn fabric_label(id: &str) -> &'static str {
     match id {
         "woven" => tl!("Woven"),
@@ -2129,6 +2267,36 @@ mod tests {
             assert!(off.iter().any(|t| t == "Split Wide Stitches"), "{kind}: {off:?}");
             assert!(!off.iter().any(|t| t == "Split At:"), "{kind}: {off:?}");
         }
+    }
+
+    #[test]
+    fn the_styles_menu_lists_styles_and_saves_only_one_stitch() {
+        fn texts(s: &egui::Shape, out: &mut Vec<String>) {
+            match s {
+                egui::Shape::Text(t) => out.push(t.galley.text().to_string()),
+                egui::Shape::Vec(v) => v.iter().for_each(|s| texts(s, out)),
+                _ => {}
+            }
+        }
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        app.session.execute("file.new", &json!({"width": 100, "height": 100})).unwrap();
+        app.session.execute("path.create", &json!({"d": "M 10 50 L 90 50"})).unwrap();
+        app.session.execute("embroidery.set", &json!({"type": "satin", "width": 2})).unwrap();
+        app.session.execute("embroidery.saveStyle", &json!({"name": "Mine"})).unwrap();
+        let shown = |app: &mut VectorcraftApp, can_save: bool| {
+            let ctx = egui::Context::default();
+            let mut out = ctx.run_ui(egui::RawInput::default(), |ui| styles_list(app, ui, can_save));
+            out.textures_delta.clear();
+            let mut shown = vec![];
+            out.shapes.iter().for_each(|c| texts(&c.shape, &mut shown));
+            shown
+        };
+        let all = shown(&mut app, true);
+        for label in ["Mine", "Small Lettering", "Bold Border", "Light Background Fill", "Save Style", "Load Style File…", "Remove"] {
+            assert!(all.iter().any(|t| t == label), "no `{label}` in {all:?}");
+        }
+        let mixed = shown(&mut app, false);
+        assert!(!mixed.iter().any(|t| t == "Save Style"), "{mixed:?}");
     }
 
     #[test]

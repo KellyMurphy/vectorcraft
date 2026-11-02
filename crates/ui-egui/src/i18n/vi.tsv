@@ -6211,3 +6211,16 @@ breakText	Glyphs	Glyph
 	The longest piece of a split stitch	Đoạn dài nhất của một mũi được chia
 	How the split points move from stitch to stitch, so they don't line up into a seam	Cách điểm chia dịch chuyển từ mũi này sang mũi khác để không thẳng hàng thành đường may
 	Split Satin	Satin chia
+	Stitch Styles	Kiểu mũi thêu
+	Small Lettering	Chữ nhỏ
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	Chữ cao 5–10 mm: chọn mũi theo độ dày nét, dày hơn một chút, bù co nhẹ.
+	Bold Border	Viền đậm
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	Viền satin 4 mm có lót tự động, để viền huy hiệu và hình.
+	Light Background Fill	Tô nền nhẹ
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	Tô thưa cho nền lớn: ít mũi hơn, vải lộ ra một chút, không lót.
+	Save Style	Lưu kiểu
+	Stitch Style	Kiểu mũi thêu
+	Keep the selection's stitch settings in this document	Giữ thiết lập mũi thêu của vùng chọn trong tài liệu này
+	Save to Library	Lưu vào thư viện
+	Load Style File…	Tải tệp kiểu…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Các bộ thiết lập mũi thêu có tên: áp dụng một bộ cho vùng chọn, hoặc lưu thiết lập của vùng chọn thành bộ mới

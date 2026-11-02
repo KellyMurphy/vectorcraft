@@ -6155,3 +6155,16 @@ breakText	Glyphs	Glifs
 	Small to Large	De petit a gran
 	Large to Small	De gran a petit
 	Distribute Evenly	Distribueix uniformement
+	Stitch Styles	Estils de punt
+	Small Lettering	Lletres petites
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	Text de 5–10 mm d'alçada: lletres triades pel gruix del traç, una mica més denses, amb una mica de compensació d'estirada.
+	Bold Border	Vora gruixuda
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	Una vora de setí de 4 mm amb base automàtica, per perfilar escuts i formes.
+	Light Background Fill	Farciment de fons lleuger
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	Un farciment obert per a fons grans: menys punts, la tela es veu una mica, sense base.
+	Save Style	Desa l'estil
+	Stitch Style	Estil de punt
+	Keep the selection's stitch settings in this document	Conserva la configuració de punt de la selecció en aquest document
+	Save to Library	Desa a la biblioteca
+	Load Style File…	Carrega un fitxer d'estil…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Conjunts amb nom de configuració de punt: apliqueu-ne un a la selecció o deseu la de la selecció com a estil

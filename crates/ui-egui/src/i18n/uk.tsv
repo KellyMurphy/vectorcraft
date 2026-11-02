@@ -6226,3 +6226,16 @@ breakText	Glyphs	Гліфи
 	The longest piece of a split stitch	Найдовша частина поділеного стібка
 	How the split points move from stitch to stitch, so they don't line up into a seam	Як точки поділу зсуваються від стібка до стібка, щоб не шикуватися в шов
 	Split Satin	Поділена гладь
+	Stitch Styles	Стилі стібків
+	Small Lettering	Дрібні написи
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	Текст заввишки 5–10 мм: літери за товщиною штриха, трохи щільніше, з невеликою компенсацією стягування.
+	Bold Border	Товста облямівка
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	Сатинова облямівка 4 мм з автоматичним підкладним стібком, для окантовки нашивок і фігур.
+	Light Background Fill	Легка заливка тла
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	Рідка заливка для великих тел: менше стібків, тканину трохи видно, без підкладки.
+	Save Style	Зберегти стиль
+	Stitch Style	Стиль стібків
+	Keep the selection's stitch settings in this document	Зберегти налаштування стібків виділеного в цьому документі
+	Save to Library	Зберегти в бібліотеку
+	Load Style File…	Завантажити файл стилю…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Іменовані набори налаштувань стібків: застосуйте один до виділеного або збережіть налаштування виділеного як новий

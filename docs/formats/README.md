@@ -13,6 +13,7 @@ the repository read these schemas and examples, so they stay in step with the co
 | Motif (embroidery) | `.vcmotif` | [vcmotif.md](vcmotif.md) | [vcmotif.schema.json](vcmotif.schema.json) |
 | Fabric profile (embroidery) | `.vcfabric` | [vcfabric.md](vcfabric.md) | [vcfabric.schema.json](vcfabric.schema.json) |
 | Hoop list (embroidery) | `.vchoop` | [vchoop.md](vchoop.md) | [vchoop.schema.json](vchoop.schema.json) |
+| Stitch style (embroidery) | `.vcstyle` | [vcstyle.md](vcstyle.md) | [vcstyle.schema.json](vcstyle.schema.json) |
 | Thread chart (embroidery) | `.vcthreads` | [vcthreads.md](vcthreads.md) | [vcthreads.schema.json](vcthreads.schema.json) |
 | Embroidery data in documents | inside `.vectorcraft` | [vectorcraft-embroidery.md](vectorcraft-embroidery.md) | [vectorcraft-embroidery.schema.json](vectorcraft-embroidery.schema.json) |
 

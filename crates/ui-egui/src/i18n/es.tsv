@@ -6568,3 +6568,16 @@ breakText	Glyphs	Glifos
 	The longest piece of a split stitch	El tramo más largo de una puntada dividida
 	How the split points move from stitch to stitch, so they don't line up into a seam	Cómo se desplazan los puntos de división de una puntada a otra para que no se alineen en una costura
 	Split Satin	Satén dividido
+	Stitch Styles	Estilos de puntada
+	Small Lettering	Letras pequeñas
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	Texto de 5–10 mm de alto: letras elegidas según el grosor del trazo, algo más densas, con algo de compensación de tirón.
+	Bold Border	Borde grueso
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	Un borde de satén de 4 mm con base automática, para perfilar parches y formas.
+	Light Background Fill	Relleno de fondo ligero
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	Un relleno abierto para fondos grandes: menos puntadas, la tela se ve un poco, sin base.
+	Save Style	Guardar estilo
+	Stitch Style	Estilo de puntada
+	Keep the selection's stitch settings in this document	Conservar los ajustes de puntada de la selección en este documento
+	Save to Library	Guardar en la biblioteca
+	Load Style File…	Cargar archivo de estilo…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Conjuntos con nombre de ajustes de puntada: aplique uno a la selección o guarde los de la selección como uno nuevo

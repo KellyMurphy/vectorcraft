@@ -685,6 +685,10 @@ pub struct EmbroiderySetup {
     /// `None`: none).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub chart: Option<String>,
+    /// Stitch styles kept with the document (saved from objects or loaded from `.vcstyle` files):
+    /// named sets of stitch settings, applied with `embroidery.applyStyle`.
+    #[serde(skip_serializing_if = "Vec::is_empty", deserialize_with = "de_styles", serialize_with = "ser_styles")]
+    pub styles: Vec<StitchStyle>,
     /// Embroidery fonts loaded into the document (from `.vcfont` files), kept with it so its type
     /// sews the same where the font isn't installed.
     #[serde(
@@ -722,6 +726,7 @@ impl Default for EmbroiderySetup {
             hoop: None,
             charts: vec![],
             chart: None,
+            styles: vec![],
             fonts: vec![],
             font_editor: None,
             extra: Default::default(),
@@ -829,6 +834,60 @@ pub struct ThreadChart {
     /// A chart this version can't read, kept exactly as written; it isn't used.
     #[serde(skip)]
     pub unknown: Option<Box<serde_json::Value>>,
+}
+
+/// A stitch style: a named set of stitch settings (the stitch type and any of its settings),
+/// copied onto objects when it is applied ([`StitchSettings::styled`]); they keep no link to it.
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct StitchStyle {
+    /// Lower case letters, digits and dashes (`bold-border`).
+    pub id: String,
+    pub name: String,
+    /// Who made it, its licence and where it came from (information only).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub author: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub license: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub source: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    /// The settings, as an object keeps them; what belongs to one object (its start point, stitch
+    /// angle lines, rails, trims and stops) is left out ([`StitchSettings::as_style`]).
+    pub stitch: StitchSettings,
+    /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
+    #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
+    pub extra: serde_json::Map<String, serde_json::Value>,
+    /// A style this version can't read (a stitch type from a newer VectorCraft), kept exactly as
+    /// written; it can't be applied.
+    #[serde(skip)]
+    pub unknown: Option<Box<serde_json::Value>>,
+}
+
+fn de_styles<'de, D: serde::Deserializer<'de>>(d: D) -> Result<Vec<StitchStyle>, D::Error> {
+    let v = Vec::<serde_json::Value>::deserialize(d)?;
+    Ok(v.into_iter()
+        .map(|v| match StitchStyle::deserialize(&v) {
+            Ok(s) => s,
+            Err(_) => {
+                let text = |k: &str| v.get(k).and_then(serde_json::Value::as_str).unwrap_or_default().to_string();
+                StitchStyle { id: text("id"), name: text("name"), unknown: Some(Box::new(v.clone())), ..StitchStyle::default() }
+            }
+        })
+        .collect())
+}
+
+fn ser_styles<S: serde::Serializer>(v: &[StitchStyle], ser: S) -> Result<S::Ok, S::Error> {
+    use serde::ser::SerializeSeq;
+    let mut seq = ser.serialize_seq(Some(v.len()))?;
+    for st in v {
+        match &st.unknown {
+            Some(raw) => seq.serialize_element(raw)?,
+            None => seq.serialize_element(st)?,
+        }
+    }
+    seq.end()
 }
 
 /// One thread of a chart.
@@ -1167,6 +1226,31 @@ impl StitchSettings {
         Self { kind, ..Self::default() }
     }
 
+    /// These settings as a stitch style keeps them: without what belongs to one object (where it
+    /// starts, its stitch angle lines, rails, trims and stops).
+    pub fn as_style(&self) -> Self {
+        Self { start_at: None, angles: vec![], rails: false, trim_before: false, trim_after: false, stop_before: None, ..self.clone() }
+    }
+
+    /// Style settings `self` as an object whose settings were `old` takes them: the style's,
+    /// keeping the object's own start point, stitch angle lines, rails, trims and stops, and its
+    /// thread when the style sets none.
+    pub fn styled(&self, old: Option<&StitchSettings>) -> Self {
+        let mut s = self.as_style();
+        if let Some(o) = old.filter(|o| o.unknown.is_none()) {
+            s.start_at = o.start_at;
+            s.angles.clone_from(&o.angles);
+            s.rails = o.rails;
+            s.trim_before = o.trim_before;
+            s.trim_after = o.trim_after;
+            s.stop_before.clone_from(&o.stop_before);
+            if s.thread.is_none() {
+                s.thread = o.thread;
+            }
+        }
+        s
+    }
+
     /// The stitch length to sew with, mm (always within [`Self::LENGTH`]).
     pub fn length(&self) -> f64 {
         clamp(self.length, self.kind.default_length(), Self::LENGTH)
@@ -1430,6 +1514,38 @@ mod tests {
         assert!(e.patterns[0].unknown.is_none() && e.patterns[1].unknown.is_some());
         assert_eq!((e.patterns[1].id.as_str(), e.patterns[1].name.as_str()), ("lace", "Lace"));
         assert_eq!(serde_json::to_value(&e).unwrap(), setup);
+    }
+
+    #[test]
+    fn a_style_this_version_cant_read_is_kept() {
+        let setup = serde_json::json!({"trimJumpsOver": 3.0, "stitchMovesUnder": 1.0, "styles": [
+            {"id": "bold", "name": "Bold", "stitch": {"kind": "satin", "width": 4.0}},
+            {"id": "laser", "name": "Laser", "stitch": {"kind": "laserCut"}},
+        ]});
+        let e: EmbroiderySetup = serde_json::from_value(setup.clone()).expect("a strange style doesn't fail the document");
+        assert_eq!(e.styles.len(), 2);
+        assert_eq!((e.styles[0].stitch.kind, e.styles[0].unknown.is_none()), (StitchKind::Satin, true));
+        assert_eq!((e.styles[1].id.as_str(), e.styles[1].unknown.is_some()), ("laser", true));
+        assert_eq!(serde_json::to_value(&e).unwrap()["styles"], setup["styles"], "written back as read");
+    }
+
+    #[test]
+    fn a_style_keeps_each_object_its_own_placement() {
+        let style =
+            StitchSettings { width: Some(4.0), start_at: Some([1.0, 2.0]), trim_after: true, ..StitchSettings::new(StitchKind::Satin) }.as_style();
+        assert_eq!((style.start_at, style.trim_after), (None, false));
+        let old = StitchSettings {
+            thread: Some([1, 2, 3]),
+            start_at: Some([5.0, 5.0]),
+            stop_before: Some("stop".into()),
+            spacing: Some(0.2),
+            ..StitchSettings::new(StitchKind::Running)
+        };
+        let s = style.styled(Some(&old));
+        assert_eq!((s.kind, s.width, s.spacing), (StitchKind::Satin, Some(4.0), None), "the style's settings, all of them");
+        assert_eq!((s.thread, s.start_at, s.stop_before.as_deref()), (Some([1, 2, 3]), Some([5.0, 5.0]), Some("stop")));
+        let red = StitchSettings { thread: Some([255, 0, 0]), ..style };
+        assert_eq!(red.styled(Some(&old)).thread, Some([255, 0, 0]), "a style's own thread wins");
     }
 
     #[test]

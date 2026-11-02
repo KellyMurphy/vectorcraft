@@ -6660,3 +6660,16 @@ breakText	Glyphs	Glyfer
 	The longest piece of a split stitch	Den längsta biten av ett delat stygn
 	How the split points move from stitch to stitch, so they don't line up into a seam	Hur delningspunkterna flyttas från stygn till stygn, så att de inte bildar en söm
 	Split Satin	Delad satin
+	Stitch Styles	Stygnstilar
+	Small Lettering	Små bokstäver
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	Text 5–10 mm hög: bokstäver väljs efter linjebredd, lite tätare, med lite dragkompensation.
+	Bold Border	Kraftig kant
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	En 4 mm satinkant med automatiskt understygn, för att kanta märken och former.
+	Light Background Fill	Lätt bakgrundsfyllning
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	En gles fyllning för stora bakgrunder: färre stygn, tyget syns lite, inget understygn.
+	Save Style	Spara stil
+	Stitch Style	Stygnstil
+	Keep the selection's stitch settings in this document	Behåll markeringens stygninställningar i det här dokumentet
+	Save to Library	Spara i biblioteket
+	Load Style File…	Läs in stilfil…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Namngivna uppsättningar stygninställningar: använd en på markeringen, eller spara markeringens som en ny

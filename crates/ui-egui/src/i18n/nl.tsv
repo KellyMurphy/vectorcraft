@@ -6550,3 +6550,16 @@ breakText	Glyphs	Glyphs
 	The longest piece of a split stitch	Het langste stuk van een gesplitste steek
 	How the split points move from stitch to stitch, so they don't line up into a seam	Hoe de splitspunten van steek tot steek verschuiven, zodat ze geen naad vormen
 	Split Satin	Gesplitste satijn
+	Stitch Styles	Steekstijlen
+	Small Lettering	Kleine letters
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	Tekst van 5–10 mm hoog: letters gekozen op lijndikte, iets dichter, met wat trekcompensatie.
+	Bold Border	Stevige rand
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	Een satijnrand van 4 mm met automatische onderlaag, om emblemen en vormen te omranden.
+	Light Background Fill	Lichte achtergrondvulling
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	Een open vulling voor grote achtergronden: minder steken, de stof is iets zichtbaar, geen onderlaag.
+	Save Style	Stijl opslaan
+	Stitch Style	Steekstijl
+	Keep the selection's stitch settings in this document	De steekinstellingen van de selectie in dit document bewaren
+	Save to Library	Opslaan in bibliotheek
+	Load Style File…	Stijlbestand laden…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Benoemde sets steekinstellingen: pas er een toe op de selectie, of sla die van de selectie op als nieuwe

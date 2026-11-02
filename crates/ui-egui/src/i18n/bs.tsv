@@ -6080,3 +6080,16 @@ shape	Open	Otvoren
 	Small to Large	Od manjeg prema većem
 	Large to Small	Od većeg prema manjem
 	Distribute Evenly	Rasporedi ravnomjerno
+	Stitch Styles	Stilovi bodova
+	Small Lettering	Mala slova
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	Tekst visine 5–10 mm: slova se biraju prema debljini linije, malo gušće, s malo kompenzacije stezanja.
+	Bold Border	Debeli rub
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	Satenski rub od 4 mm s automatskom podlogom, za obrubljivanje amblema i oblika.
+	Light Background Fill	Lagana pozadinska ispuna
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	Rijetka ispuna za velike pozadine: manje bodova, tkanina malo proviruje, bez podloge.
+	Save Style	Sačuvaj stil
+	Stitch Style	Stil bodova
+	Keep the selection's stitch settings in this document	Zadrži postavke bodova odabranog u ovom dokumentu
+	Save to Library	Sačuvaj u biblioteku
+	Load Style File…	Učitaj datoteku stila…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Imenovani skupovi postavki bodova: primijenite jedan na odabrano ili sačuvajte postavke odabranog kao novi

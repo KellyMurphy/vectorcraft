@@ -6594,3 +6594,16 @@ breakText	Glyphs	Glifák
 	The longest piece of a split stitch	Egy osztott öltés leghosszabb darabja
 	How the split points move from stitch to stitch, so they don't line up into a seam	Hogyan tolódnak az osztáspontok öltésről öltésre, hogy ne álljanak varrattá
 	Split Satin	Osztott szatén
+	Stitch Styles	Öltésstílusok
+	Small Lettering	Kis betűk
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	5–10 mm magas szöveg: a betűk a vonalvastagság szerint, kicsit sűrűbben, kevés húzáskiegyenlítéssel.
+	Bold Border	Vastag szegély
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	4 mm-es szaténszegély automatikus alátöltéssel, felvarrók és formák körvonalazásához.
+	Light Background Fill	Könnyű háttérkitöltés
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	Ritka kitöltés nagy hátterekhez: kevesebb öltés, az anyag kissé átlátszik, alátöltés nélkül.
+	Save Style	Stílus mentése
+	Stitch Style	Öltésstílus
+	Keep the selection's stitch settings in this document	A kijelölés öltésbeállításainak megtartása ebben a dokumentumban
+	Save to Library	Mentés a könyvtárba
+	Load Style File…	Stílusfájl betöltése…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Elnevezett öltésbeállítás-készletek: alkalmazzon egyet a kijelölésre, vagy mentse a kijelölését újként

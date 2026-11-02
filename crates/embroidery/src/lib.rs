@@ -42,6 +42,7 @@ pub mod rails;
 pub mod run_styles;
 pub mod skeleton;
 pub mod split;
+pub mod styles;
 pub mod testsheet;
 pub mod threads;
 mod warp;

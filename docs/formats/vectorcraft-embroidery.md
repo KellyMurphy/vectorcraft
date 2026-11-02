@@ -161,6 +161,7 @@ Builds from before 2026-11-01 do so.
 | `patterns` | array of border patterns | The border patterns the document uses beyond the starters, so it sews the same anywhere. | empty |
 | `charts` | array of thread charts, see [Thread charts](#thread-charts-charts-chart) | Thread charts loaded into the document. | empty |
 | `chart` | string, a chart's `id` | The chart the design's colours are matched against. | none |
+| `styles` | array of stitch styles, see [Stitch styles](#stitch-styles-styles) | Stitch styles kept with the document. | empty |
 | `fontEditor` | an embroidery font | An embroidery font document's font (made by the font editor): its details, metrics and kerning, with no glyphs; its glyphs are the document's artboards, one per glyph named for its characters (`space` for the space), the baseline shared. | none: an ordinary document |
 | `fonts` | array of embroidery fonts | The embroidery fonts the document uses, each with the fields of a [font file](vcfont.md) other than `format` and `version`, so its type sews the same where the font isn't installed. A font a reader can't read is kept as written and not used. | empty |
 | `hoop` | object, see [Hoop](#hoop-hoop) | The hoop the design is sewn in: its sewing field is checked against the design and drawn in Stitch Preview. | none: nothing checked |
@@ -180,6 +181,13 @@ Each entry of `charts` has the fields of a [thread chart file](vcthreads.md#fiel
 and `version`. `chart` names the one the design's colours are matched against (see
 [Matching](vcthreads.md#matching)). Readers keep a chart they can't read exactly as written and don't use
 it.
+
+## Stitch styles (`styles`)
+
+Each entry of `styles` has the fields of a [stitch style file](vcstyle.md#fields) other than `format`,
+`version` and `units`: `id`, `name`, the credits and `stitch`. Objects don't refer to them: applying a
+style copies its settings onto objects ([Applying a style](vcstyle.md#applying-a-style)). Readers keep a
+style they can't read (a `stitch` they can't read) exactly as written and don't apply it.
 
 ## Hoop (`hoop`)
 
@@ -264,6 +272,8 @@ by a newer VectorCraft opens in an older one. A reader must:
 - **Keep a `stitch` object it can't read** (a `kind`, `underlay`, `style`, `split` or `splitPattern` value it doesn't know, or a value of the
   wrong type, such as `thread` past 255) exactly as written, not sew that object, and warn. Choosing a
   stitch for the object replaces it.
+- **Keep a style it can't read** (in `styles`, or a graphic style's `stitch`) exactly as written, and not
+  apply it.
 - **Keep a `fabric` it can't read** (a value of a type it doesn't expect) exactly as written, and sew as if
   there were none.
 - **Keep a pattern it can't read** (a part `stitch` it doesn't know) exactly as written, not sew with it,

@@ -113,3 +113,26 @@ fn adding_never_replaces_and_bad_files_are_reported() {
     assert_eq!(entries(&mut s, "threads").len(), 4);
     let _ = std::fs::remove_dir_all(dir);
 }
+
+#[test]
+fn stitch_styles_save_to_the_library_and_apply_from_it() {
+    let (mut s, dir) = with_folder("styles");
+    run(&mut s, "shape.rectangle", json!({"x": 10, "y": 10, "width": 50, "height": 20}));
+    run(&mut s, "embroidery.set", json!({"type": "satin", "width": 2.5, "spacing": 0.3}));
+    let r = run(&mut s, "embroidery.saveStyle", json!({"name": "Fine Satin", "user": true}));
+    assert_eq!(r["library"], "user/Fine Satin.vcstyle", "{r}");
+    assert!(dir.join("styles").join("Fine Satin.vcstyle").is_file());
+    let listed = entries(&mut s, "styles");
+    assert_eq!((listed.len(), listed[0]["style"].as_str(), listed[0]["stitch"].as_str()), (1, Some("fine-satin"), Some("satin")));
+    // A new document: applying the library's style keeps a copy of it there.
+    run(&mut s, "file.new", json!({"width": 100, "height": 100}));
+    run(&mut s, "shape.ellipse", json!({"x": 10, "y": 10, "width": 40, "height": 40}));
+    let r = run(&mut s, "embroidery.applyStyle", json!({"library": "Fine Satin"}));
+    assert_eq!((r["style"].as_str(), r["changed"].as_u64()), (Some("fine-satin"), Some(1)));
+    let doc = &s.doc().unwrap().doc;
+    assert_eq!(doc.embroidery.styles.iter().map(|st| st.id.as_str()).collect::<Vec<_>>(), ["fine-satin"]);
+    // Added again from a file: the very same one isn't copied.
+    let added = run(&mut s, "embroidery.addToLibrary", json!({"path": dir.join("styles").join("Fine Satin.vcstyle").to_string_lossy()}));
+    assert_eq!(added["copied"], false);
+    let _ = std::fs::remove_dir_all(&dir);
+}

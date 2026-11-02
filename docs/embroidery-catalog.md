@@ -1,6 +1,6 @@
 # Embroidery feature catalog
 
-Status: 62 features checked against the code on 2026-11-01. Done 31, partly done 16, missing 15 (estimated, by
+Status: 62 features checked against the code on 2026-11-02. Done 32, partly done 16, missing 14 (estimated, by
 reading the code and the guide, not by sewing: nothing is marked done on fabric until the sew-out gates pass).
 
 This is the feature catalog from the embroidery research (Kelly, 2026-10-16) that
@@ -20,13 +20,13 @@ to say where a feature is described; nothing is copied from any of them (the cle
 | Priority | Features | Done | Partly | Missing |
 |---|---|---|---|---|
 | P0 | 18 | 17 | 1 | 0 |
-| P1 | 26 | 13 | 9 | 4 |
+| P1 | 26 | 14 | 9 | 3 |
 | P2 | 18 | 1 | 6 | 11 |
-| **All** | **62** | **31** | **16** | **15** |
+| **All** | **62** | **32** | **16** | **14** |
 
 | Area | Features | Done | Partly | Missing |
 |---|---|---|---|---|
-| Drawing and vector editing | 11 | 7 | 3 | 1 |
+| Drawing and vector editing | 11 | 8 | 3 | 0 |
 | Stitch types and fills | 18 | 6 | 2 | 10 |
 | Lettering and monograms | 8 | 4 | 2 | 2 |
 | Quality, sequencing and automation | 12 | 9 | 2 | 1 |
@@ -36,7 +36,7 @@ to say where a feature is described; nothing is copied from any of them (the cle
 
 **Catalog gaps (E11).** The check found features, or pieces of them, that no plan step covered; they are
 now [plan phase E11](embroidery-plan.md#catalog-gaps--e11): run styles and split satin (P0, first), then
-stitch styles, multi-hoop, batch export, deferred stitch generation and centreline digitizing (P1,
+multi-hoop, batch export, deferred stitch generation and centreline digitizing (P1,
 before G1), and the P2 items after G2. Only blending thread colours across an area has no step yet.
 
 ## Drawing and vector editing
@@ -50,7 +50,7 @@ before G1), and the P2 items after G2. Only blending thread colours across an ar
 | Snap-to-object and precision grids | Align and place points exactly against other objects | Wilcom 2026 | P1 | **Done** | Smart guides, snapping, grids |
 | Offsets, borders, inflate/deflate | Generate outlines and offset copies of any shape | Wilcom Advanced Offset, Embrilliance | P1 | **Done** | Offset Path; fill satin border, Auto border |
 | Slice tools | Split an object along a line or curve into two objects | Pulse rectangle and curved slice | P1 | **Done** | Knife, Divide, Split, Split into Grid |
-| Styles and presets | Save a set of stitch properties and apply it with one click | Embrilliance QuickStyles, Wilcom Styles | P1 | **Missing** | Graphic styles don't carry stitch settings; fabric profiles set defaults only. Plan: E11.3 |
+| Styles and presets | Save a set of stitch properties and apply it with one click | Embrilliance QuickStyles, Wilcom Styles | P1 | **Done** | E11.3: stitch styles (`.vcstyle`, Stitch Styles menu, three starters), and graphic styles carry stitch settings |
 | Delayed stitch generation | Recalculate stitches only after a shape edit finishes | Embrilliance L3 | P1 | **Partly** | The stitch cache regenerates only changed objects; no "wait until the edit ends" mode. Plan: E11.6 |
 | Mirror merge, circle and matrix copy | Make symmetric, radial and grid repeats of objects | Wilcom, Brother PE-DESIGN 11 | P2 | **Partly** | Repeat (mirror, radial, grid) in the editor; not checked that live Repeat objects stitch (checked as part of E11.4) |
 | Continue digitizing | Extend an existing closed object instead of starting a new one | Wilcom 2026, Hatch | P2 | **Partly** | The pen continues open paths; closed objects can't be extended. Plan: E11.12 |
@@ -150,3 +150,4 @@ independent reader in tests.
 - 2026-11-01: features no step covered linked to the new plan phase E11.
 - 2026-11-01: run variants done (E11.1); click-to-outline was already there (E8.6b), only centreline is missing.
 - 2026-11-01: satin column done: split satin (E11.2).
+- 2026-11-02: styles and presets done: stitch styles (E11.3).

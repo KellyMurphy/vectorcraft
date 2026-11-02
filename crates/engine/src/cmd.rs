@@ -31,6 +31,7 @@ pub mod embroidery_font_editor;
 pub(crate) mod embroidery_fonts;
 pub mod embroidery_lib;
 pub(crate) mod embroidery_motifs;
+pub(crate) mod embroidery_styles;
 pub mod embroidery_text;
 pub mod expand;
 pub(crate) mod fileinfo;
@@ -349,6 +350,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(embroidery_advise::specs());
         v.extend(embroidery_digitize::specs());
         v.extend(embroidery_motifs::specs());
+        v.extend(embroidery_styles::specs());
         v.extend(shortcutset::specs());
         v.extend(importmatches::specs());
         v.extend(addons::specs());

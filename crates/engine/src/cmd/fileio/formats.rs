@@ -685,6 +685,7 @@ pub fn open_filters() -> impl Iterator<Item = (&'static str, &'static [&'static 
         .chain(std::iter::once(("Fabric profiles", FABRIC_EXTS)))
         .chain(std::iter::once(("Hoops", HOOP_EXTS)))
         .chain(std::iter::once(("Thread charts", THREAD_CHART_EXTS)))
+        .chain(std::iter::once(("Stitch styles", STITCH_STYLE_EXTS)))
         .chain(std::iter::once(("Flattener presets", crate::cmd::flatten::PRESET_EXTS)))
         .chain(std::iter::once(("PDF presets", crate::cmd::pdfcmds::PRESET_EXTS)))
         .chain(std::iter::once(("Print presets", crate::cmd::printpresets::PRESET_EXTS)))
@@ -708,6 +709,10 @@ pub const HOOP_EXTS: &[&str] = &[vectorcraft_embroidery::hoops::FILE_EXT];
 /// Embroidery thread chart files (`vectorcraft_embroidery::threads::FILE_EXT`): opening one loads it
 /// into the document.
 pub const THREAD_CHART_EXTS: &[&str] = &[vectorcraft_embroidery::threads::FILE_EXT];
+
+/// Embroidery stitch style files (`vectorcraft_embroidery::styles::FILE_EXT`): opening one loads it
+/// into the document.
+pub const STITCH_STYLE_EXTS: &[&str] = &[vectorcraft_embroidery::styles::FILE_EXT];
 
 /// Open-dialog filters for Swatch Libraries and Graphic Style Libraries Other Library… and Locate
 /// Library…. The library formats come first so Linux file portals (which grey out files that don't

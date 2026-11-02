@@ -6246,3 +6246,16 @@ breakText	Glyphs	Glifi
 	The longest piece of a split stitch	Il pezzo più lungo di un punto diviso
 	How the split points move from stitch to stitch, so they don't line up into a seam	Come si spostano i punti di divisione da un punto all'altro, perché non si allineino in una cucitura
 	Split Satin	Satin diviso
+	Stitch Styles	Stili di punto
+	Small Lettering	Scritte piccole
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	Testo alto 5–10 mm: lettere scelte in base allo spessore del tratto, un po' più fitte, con un po' di compensazione della trazione.
+	Bold Border	Bordo spesso
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	Un bordo satin da 4 mm con imbastitura automatica, per bordare toppe e forme.
+	Light Background Fill	Riempimento di sfondo leggero
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	Un riempimento rado per sfondi ampi: meno punti, il tessuto si vede un po', senza imbastitura.
+	Save Style	Salva stile
+	Stitch Style	Stile di punto
+	Keep the selection's stitch settings in this document	Mantieni le impostazioni di punto della selezione in questo documento
+	Save to Library	Salva nella libreria
+	Load Style File…	Carica file di stile…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Insiemi con nome di impostazioni di punto: applicane uno alla selezione o salva quelle della selezione come nuovo stile

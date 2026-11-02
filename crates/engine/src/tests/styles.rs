@@ -295,3 +295,35 @@ fn document_info_lists_style_names() {
     run(&mut s, "select.set", json!({"ids": [a.0]}));
     assert_eq!(run(&mut s, "document.info", json!({"selectionOnly": true}))["graphicStyleNames"], json!(["S"]));
 }
+
+#[test]
+fn a_graphic_style_carries_stitch_settings() {
+    let mut s = session();
+    let a = rect(&mut s, 10.0);
+    set_fill(&mut s, a, "#ff0000");
+    run(&mut s, "embroidery.set", json!({"type": "fill", "spacing": 0.5, "angle": 30, "startAt": [1, 1]}));
+    run(&mut s, "graphicStyle.new", json!({"name": "Red Fill"}));
+    let g = style(&s, "Red Fill");
+    let t = g.stitch.as_deref().unwrap();
+    assert_eq!((t.kind, t.spacing, t.start_at), (vectorcraft_doc::StitchKind::Fill, Some(0.5), None), "less the object's own start point");
+    let listed = run(&mut s, "graphicStyle.list", json!({}));
+    assert!(listed["styles"].as_array().unwrap().iter().any(|g| g["name"] == "Red Fill" && g["stitch"] == "fill"), "{listed}");
+    // Applied to a group: its paths are stitched too, keeping their own start points.
+    let b = rect(&mut s, 100.0);
+    run(&mut s, "embroidery.set", json!({"type": "running", "startAt": [5, 5]}));
+    let c = rect(&mut s, 200.0);
+    run(&mut s, "select.set", json!({"ids": [b.0, c.0]}));
+    let grp = NodeId(run(&mut s, "object.group", json!({}))["id"].as_u64().unwrap());
+    run(&mut s, "graphicStyle.apply", json!({"name": "Red Fill", "ids": [grp.0]}));
+    for id in [b, c] {
+        let t = node(&s, id).extras().stitch.as_deref().cloned().unwrap();
+        assert_eq!((t.kind, t.angle), (vectorcraft_doc::StitchKind::Fill, 30.0));
+    }
+    assert_eq!(node(&s, b).extras().stitch.as_deref().unwrap().start_at, Some([5.0, 5.0]));
+    // A style without stitch settings leaves stitching alone.
+    run(&mut s, "graphicStyle.apply", json!({"name": "Black Outline", "ids": [a.0]}));
+    assert_eq!(node(&s, a).extras().stitch.as_deref().unwrap().kind, vectorcraft_doc::StitchKind::Fill);
+    // Saved and read back with the document.
+    let back = vectorcraft_format::load(&vectorcraft_format::save(&s.doc().unwrap().doc, false)).unwrap();
+    assert_eq!(back.graphic_style("Red Fill").unwrap().stitch, g.stitch);
+}

@@ -6463,3 +6463,16 @@ breakText	Glyphs	Glify
 	The longest piece of a split stitch	Najdłuższy odcinek dzielonego ściegu
 	How the split points move from stitch to stitch, so they don't line up into a seam	Jak punkty podziału przesuwają się od ściegu do ściegu, aby nie układały się w szew
 	Split Satin	Dzielona satyna
+	Stitch Styles	Style ściegów
+	Small Lettering	Małe napisy
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	Tekst o wysokości 5–10 mm: litery dobrane według grubości kreski, nieco gęstsze, z niewielką kompensacją ściągania.
+	Bold Border	Gruba obwódka
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	Satynowa obwódka 4 mm z automatycznym podszyciem, do obrzeżania naszywek i kształtów.
+	Light Background Fill	Lekkie wypełnienie tła
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	Rzadkie wypełnienie dużych teł: mniej ściegów, tkanina lekko prześwituje, bez podszycia.
+	Save Style	Zapisz styl
+	Stitch Style	Styl ściegu
+	Keep the selection's stitch settings in this document	Zachowaj ustawienia ściegów zaznaczenia w tym dokumencie
+	Save to Library	Zapisz w bibliotece
+	Load Style File…	Wczytaj plik stylu…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Nazwane zestawy ustawień ściegów: zastosuj jeden do zaznaczenia lub zapisz ustawienia zaznaczenia jako nowy

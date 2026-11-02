@@ -61,10 +61,10 @@ impl StyleLibrary {
 }
 
 impl GraphicStyle {
-    /// Do both styles look the same (appearance and transparency; names and ids aside)?
+    /// Do both styles look the same (appearance, transparency and stitching; names and ids aside)?
     pub fn same_look(&self, other: &GraphicStyle) -> bool {
-        (&self.appearance, self.opacity, self.blend, self.isolate, self.knockout, self.unit_box)
-            == (&other.appearance, other.opacity, other.blend, other.isolate, other.knockout, other.unit_box)
+        (&self.appearance, self.opacity, self.blend, self.isolate, self.knockout, self.unit_box, &self.stitch)
+            == (&other.appearance, other.opacity, other.blend, other.isolate, other.knockout, other.unit_box, &other.stitch)
     }
 
     /// The style as a library holds it: no id, and its paints unlinked from swatches.

@@ -9,6 +9,7 @@ mod concurrency;
 mod conventions;
 mod distortkeys;
 mod drawopts;
+mod embroidery;
 mod exportas;
 mod fileio;
 mod freeform;

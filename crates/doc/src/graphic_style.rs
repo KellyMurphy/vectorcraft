@@ -1,4 +1,4 @@
-use super::{Appearance, Deserialize, Knockout, Node, Rect, Serialize, skip};
+use super::{Appearance, Deserialize, Knockout, Node, NodeKind, Rect, Serialize, StitchSettings, skip};
 
 /// A named graphic style (Graphic Styles panel): an appearance plus the object's transparency.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -22,6 +22,15 @@ pub struct GraphicStyle {
     /// coordinates (false).
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub unit_box: bool,
+    /// Stitch settings the style gives objects too, as a stitch style keeps them
+    /// ([`StitchSettings::as_style`]); `None`: applying it leaves stitching as it is.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::embroidery::de_stitch",
+        serialize_with = "crate::embroidery::ser_stitch"
+    )]
+    pub stitch: Option<Box<StitchSettings>>,
 }
 
 fn one() -> f32 {
@@ -47,11 +56,20 @@ impl GraphicStyle {
             isolate: false,
             knockout: Knockout::Neutral,
             unit_box: true,
+            stitch: None,
         }
     }
-    /// A style capturing `n`'s transparency and `appearance` (in unit-box space).
+    /// A style capturing `n`'s transparency, `appearance` (in unit-box space) and stitch settings.
     pub fn of(name: impl Into<String>, appearance: Appearance, n: &Node) -> Self {
-        Self { opacity: n.opacity, blend: n.blend, isolate: n.isolate, knockout: n.knockout, ..Self::new(name, appearance) }
+        let stitch = n.extras().stitch.as_deref().filter(|t| t.unknown.is_none()).map(|t| Box::new(t.as_style()));
+        Self { opacity: n.opacity, blend: n.blend, isolate: n.isolate, knockout: n.knockout, stitch, ..Self::new(name, appearance) }
+    }
+    /// Give `n` (a group or layer: the paths, compound paths and type inside it) this style's stitch
+    /// settings, when it has any this version can read ([`StitchSettings::styled`]).
+    pub fn apply_stitch(&self, n: &mut Node) {
+        if let Some(t) = self.stitch.as_deref().filter(|t| t.unknown.is_none()) {
+            stitch_into(n, t);
+        }
     }
     /// The style's appearance as object `n` takes it: placed gradients stored in unit-box space
     /// land at the same place relative to `n`'s geometric bounds.
@@ -73,6 +91,21 @@ impl GraphicStyle {
     /// Does `n` have this style's transparency?
     pub fn transparency_matches(&self, n: &Node) -> bool {
         (n.opacity, n.blend, n.isolate, n.knockout) == (self.opacity, self.blend, self.isolate, self.knockout)
+    }
+}
+
+fn stitch_into(n: &mut Node, t: &StitchSettings) {
+    match &n.kind {
+        NodeKind::Path { guide: true, .. } => {}
+        NodeKind::Path { .. } | NodeKind::Compound { .. } | NodeKind::Text(_) => {
+            let new = t.styled(n.extras().stitch.as_deref());
+            n.extras_mut().stitch = Some(Box::new(new));
+        }
+        _ => {
+            for c in n.children_mut().into_iter().flatten() {
+                stitch_into(std::sync::Arc::make_mut(c), t);
+            }
+        }
     }
 }
 
