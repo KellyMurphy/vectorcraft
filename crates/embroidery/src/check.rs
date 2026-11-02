@@ -218,7 +218,7 @@ pub static RULES: &[Rule] = &[
     Rule {
         id: "satin-width",
         label: "Satin too narrow or too wide",
-        help: "Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).",
+        help: "Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose unless split (split them, or fill the shape instead).",
         in_plan_warnings: false,
         run: |doc, plan| {
             let mut out = vec![];
@@ -230,8 +230,8 @@ pub static RULES: &[Rule] = &[
                 let w = s.width(n.appearance.stroke_width() * PT_MM);
                 let message = if w < SATIN_NARROW_MM {
                     format!("is a satin {w:.1} mm wide: too narrow to cover (use a running or bean stitch)")
-                } else if w > SATIN_WIDE_MM {
-                    format!("is a satin {w:.1} mm wide: its stitches are long and loose (fill it instead)")
+                } else if w > SATIN_WIDE_MM && !s.splits() {
+                    format!("is a satin {w:.1} mm wide: its stitches are long and loose (split them, or fill it instead)")
                 } else {
                     continue;
                 };
@@ -580,6 +580,7 @@ mod tests {
             // A wide satin (10 mm: long stitches), a fine line, and an empty path.
             let mut wide = stitched(d, poly(&[(0.0, 0.0), (200.0, 0.0)], false), StitchKind::Satin, [200, 0, 0]);
             wide.extras_mut().stitch.as_mut().unwrap().width = Some(10.0);
+            wide.extras_mut().stitch.as_mut().unwrap().split = vectorcraft_doc::Split::Off;
             let fine = stitched(d, poly(&[(0.0, 100.0), (200.0, 100.0)], false), StitchKind::Running, [0, 0, 200]);
             let empty = stitched(d, poly(&[(0.0, 200.0)], false), StitchKind::Running, [0, 0, 200]);
             vec![wide, fine, empty]
@@ -606,15 +607,17 @@ mod tests {
     fn the_production_rules_find_what_they_look_for() {
         use vectorcraft_doc::StitchSettings;
         let with = |n: &mut vectorcraft_doc::Node, s: StitchSettings| n.extras_mut().stitch = Some(Box::new(s));
-        // A 0.6 mm satin, an 11 mm satin, a dot, an open path set to fill.
+        // A 0.6 mm satin, an 11 mm satin unsplit and one split (fine), a dot, an open path set to fill.
         let d = doc_with(|d| {
             let mut thin = stitched(d, poly(&[(0.0, 0.0), (100.0, 0.0)], false), StitchKind::Satin, [0; 3]);
             with(&mut thin, StitchSettings { width: Some(0.6), ..StitchSettings::new(StitchKind::Satin) });
             let mut wide = stitched(d, poly(&[(0.0, 100.0), (100.0, 100.0)], false), StitchKind::Satin, [0; 3]);
-            with(&mut wide, StitchSettings { width: Some(11.0), ..StitchSettings::new(StitchKind::Satin) });
+            with(&mut wide, StitchSettings { width: Some(11.0), split: vectorcraft_doc::Split::Off, ..StitchSettings::new(StitchKind::Satin) });
+            let mut split = stitched(d, poly(&[(0.0, 150.0), (100.0, 150.0)], false), StitchKind::Satin, [0; 3]);
+            with(&mut split, StitchSettings { width: Some(11.0), ..StitchSettings::new(StitchKind::Satin) });
             let dot = stitched(d, poly(&[(0.0, 200.0), (1.0, 200.0)], false), StitchKind::Running, [0; 3]);
             let open = stitched(d, poly(&[(200.0, 0.0), (300.0, 0.0), (300.0, 100.0)], false), StitchKind::Fill, [0; 3]);
-            vec![thin, wide, dot, open]
+            vec![thin, wide, split, dot, open]
         });
         let found = check(&d, &crate::plan(&d));
         let n = |rule: &str| found.iter().filter(|f| f.rule == rule).count();
@@ -647,11 +650,12 @@ mod tests {
                 .collect()
         });
         assert!(!rules_found(&cut).contains(&"dense"), "{:?}", rules_found(&cut));
-        // The test sheet: only what it is made to show (long stitches; lettering down to sizes
-        // whose holes close, when a type face is there) and its many trims.
+        // The test sheet: only what it is made to show (long stitches, and a 12 mm satin unsplit
+        // to compare with split ones; lettering down to sizes whose holes close, when a type face
+        // is there) and its many trims.
         let sheet = crate::testsheet::build(&[]).unwrap();
         for rule in rules_found(&sheet.doc) {
-            assert!(matches!(rule, "long-stitch" | "travel" | "small-type"), "{rule}");
+            assert!(matches!(rule, "long-stitch" | "satin-width" | "travel" | "small-type"), "{rule}");
         }
     }
 

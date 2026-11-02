@@ -10,8 +10,8 @@ use std::sync::Arc;
 use kurbo::{Point, Shape};
 use vectorcraft_color::{Color, Paint};
 use vectorcraft_doc::{
-    Appearance, Artboard, CharStyle, Document, LayerColor, Node, NodeKind, RunStyle, SewOut, SewSwatch, StitchKind, StitchSettings, TextObject,
-    Underlay, Unit,
+    Appearance, Artboard, CharStyle, Document, LayerColor, Node, NodeKind, RunStyle, SewOut, SewSwatch, Split, SplitPattern, StitchKind,
+    StitchSettings, TextObject, Underlay, Unit,
 };
 use vectorcraft_geom::{Anchor, PathData, Rect, SubPath};
 
@@ -58,7 +58,7 @@ pub struct Section {
     sewn: &'static str,
 }
 
-pub const SECTIONS: [Section; 9] = [
+pub const SECTIONS: [Section; 10] = [
     Section { id: "satinWidth", letter: 'A', name: "Satin Width", sewn: "SATIN WIDTH MM" },
     Section { id: "satinDensity", letter: 'B', name: "Satin Density", sewn: "SATIN SPACING MM" },
     Section { id: "pullCompensation", letter: 'C', name: "Pull Compensation", sewn: "PULL COMP MM" },
@@ -67,8 +67,9 @@ pub const SECTIONS: [Section; 9] = [
     Section { id: "underlay", letter: 'F', name: "Underlay", sewn: "UNDERLAY" },
     Section { id: "lettering", letter: 'G', name: "Lettering", sewn: "LETTERING MM" },
     Section { id: "runStyles", letter: 'H', name: "Run Styles", sewn: "RUN STYLES" },
+    Section { id: "splitSatin", letter: 'I', name: "Split Satin", sewn: "SPLIT SATIN MM" },
     // Last: everything sewn after the foam is laid would sew through it.
-    Section { id: "puff", letter: 'I', name: "Puff", sewn: "PUFF 3MM FOAM" },
+    Section { id: "puff", letter: 'J', name: "Puff", sewn: "PUFF 3MM FOAM" },
 ];
 
 /// A test sheet: the document, and where its sections went.
@@ -229,6 +230,20 @@ fn cells(id: &str) -> Result<Vec<Cell>, String> {
                 Cell { w: RUN_W, h: RUN_H, label: style.id().to_ascii_uppercase(), words: format!("Running stitch: {}", style.label()), make }
             })
             .collect(),
+        // Split at the default 7 mm into pieces at most 4 mm, staggered; then 12 mm split at
+        // random, and 12 mm unsplit to compare.
+        "splitSatin" => {
+            let mut out: Vec<Cell> =
+                [8.0, 12.0, 20.0].into_iter().map(|w| satin_cell(w, satin(w), num(w), format!("Split satin {} mm wide", num(w)))).collect();
+            out.push(satin_cell(
+                12.0,
+                StitchSettings { split_pattern: SplitPattern::Random, ..satin(12.0) },
+                "RANDOM".into(),
+                "Split satin 12 mm wide, split at random".into(),
+            ));
+            out.push(satin_cell(12.0, StitchSettings { split: Split::Off, ..satin(12.0) }, "OFF".into(), "Satin 12 mm wide, not split".into()));
+            out
+        }
         "lettering" => {
             let mut out = vec![];
             for size in [4.0, 6.0, 8.0, 10.0, 15.0, 20.0] {

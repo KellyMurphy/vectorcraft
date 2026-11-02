@@ -6302,3 +6302,14 @@ breakText	Glyphs	字形
 	Slanted stitches overlapping by half: a twisted cord.	半分ずつ重なる斜めのステッチ：ねじった紐のように。
 	Each stitch forward, then half a stitch back: a heavier, smooth line.	1目進んで半目戻る：太くなめらかな線。
 	Bold dashes with gaps between them.	間隔をあけた太い破線。
+	Split:	分割：
+	Split Wide Stitches	幅の広いステッチを分割
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	「分割する幅」より広いステッチを短く分けて縫い、幅の広いコラムが引っかからないようにします（幅 30 mm まで）
+	Split At:	分割する幅：
+	Split Length:	分割の長さ：
+	Split Pattern:	分割パターン：
+	Stagger	ずらし
+	Stitches longer than this are split	これより長いステッチを分割します
+	The longest piece of a split stitch	分割したステッチの一片の最大の長さ
+	How the split points move from stitch to stitch, so they don't line up into a seam	分割点がステッチごとにずれる方法（縫い目の筋に並ばないように）
+	Split Satin	分割サテン

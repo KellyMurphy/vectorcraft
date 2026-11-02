@@ -6549,3 +6549,14 @@ breakText	Glyphs	Γλύφοι
 	Slanted stitches overlapping by half: a twisted cord.	Λοξές βελονιές που επικαλύπτονται κατά το ήμισυ: ένα στριφτό κορδόνι.
 	Each stitch forward, then half a stitch back: a heavier, smooth line.	Κάθε βελονιά μπροστά, μετά μισή βελονιά πίσω: μια πιο έντονη, ομαλή γραμμή.
 	Bold dashes with gaps between them.	Έντονες παύλες με κενά ανάμεσά τους.
+	Split:	Διαίρεση:
+	Split Wide Stitches	Διαίρεση φαρδιών βελονιών
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	Οι βελονιές πιο φαρδιές από το «Διαίρεση άνω των» ράβονται σε μικρότερα κομμάτια, ώστε οι φαρδιές στήλες να μην πιάνονται (έως 30 mm πλάτος)
+	Split At:	Διαίρεση άνω των:
+	Split Length:	Μήκος κομματιού:
+	Split Pattern:	Μοτίβο διαίρεσης:
+	Stagger	Κλιμακωτό
+	Stitches longer than this are split	Οι μακρύτερες βελονιές διαιρούνται
+	The longest piece of a split stitch	Το μακρύτερο κομμάτι μιας διαιρεμένης βελονιάς
+	How the split points move from stitch to stitch, so they don't line up into a seam	Πώς μετακινούνται τα σημεία διαίρεσης από βελονιά σε βελονιά, ώστε να μη σχηματίζουν ραφή
+	Split Satin	Διαιρεμένο σατέν

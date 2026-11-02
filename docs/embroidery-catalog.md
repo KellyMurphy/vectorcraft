@@ -1,6 +1,6 @@
 # Embroidery feature catalog
 
-Status: 62 features checked against the code on 2026-11-01. Done 30, partly done 17, missing 15 (estimated, by
+Status: 62 features checked against the code on 2026-11-01. Done 31, partly done 16, missing 15 (estimated, by
 reading the code and the guide, not by sewing: nothing is marked done on fabric until the sew-out gates pass).
 
 This is the feature catalog from the embroidery research (Kelly, 2026-10-16) that
@@ -19,20 +19,20 @@ to say where a feature is described; nothing is copied from any of them (the cle
 
 | Priority | Features | Done | Partly | Missing |
 |---|---|---|---|---|
-| P0 | 18 | 16 | 2 | 0 |
+| P0 | 18 | 17 | 1 | 0 |
 | P1 | 26 | 13 | 9 | 4 |
 | P2 | 18 | 1 | 6 | 11 |
-| **All** | **62** | **30** | **17** | **15** |
+| **All** | **62** | **31** | **16** | **15** |
 
 | Area | Features | Done | Partly | Missing |
 |---|---|---|---|---|
 | Drawing and vector editing | 11 | 7 | 3 | 1 |
-| Stitch types and fills | 18 | 5 | 3 | 10 |
+| Stitch types and fills | 18 | 6 | 2 | 10 |
 | Lettering and monograms | 8 | 4 | 2 | 2 |
 | Quality, sequencing and automation | 12 | 9 | 2 | 1 |
 | Colour, preview, output and production | 13 | 5 | 7 | 1 |
 
-**P0 left:** the two partly-done P0 features each lack one piece (run styles, the third, landed as E11.1): split stitches for wide satin columns (E11.2), and the VP3, XXX and U01 formats (E9.3).
+**P0 left:** one partly-done P0 feature: the VP3, XXX and U01 formats (E9.3). Run styles (E11.1) and split satin (E11.2) landed.
 
 **Catalog gaps (E11).** The check found features, or pieces of them, that no plan step covered; they are
 now [plan phase E11](embroidery-plan.md#catalog-gaps--e11): run styles and split satin (P0, first), then
@@ -61,7 +61,7 @@ before G1), and the P2 items after G2. Only blending thread colours across an ar
 |---|---|---|---|---|---|
 | Run variants | Single, bean, 3- and 5-pass, chain, stem, backstitch, sashiko | Embrilliance (7 run styles), Pulse | P0 | **Done** | Running with a style: single, chain, stem, backstitch, sashiko (E11.1); Bean with odd passes (3, 5…) |
 | Manual stitch | Place each needle penetration by hand | All | P0 | **Done** | Manual stitch |
-| Satin column | Two-rail satin with stitch-angle inclines, auto-incline and split stitches for wide columns | All; Ink/Stitch adds E-, S- and zigzag satin | P0 | **Partly** | Satin between rails, Satin Shape, Zigzag, stitch angle lines (E8.9). Wide columns are capped, not split. Plan: E11.2 |
+| Satin column | Two-rail satin with stitch-angle inclines, auto-incline and split stitches for wide columns | All; Ink/Stitch adds E-, S- and zigzag satin | P0 | **Done** | Satin between rails, Satin Shape, Zigzag, stitch angle lines (E8.9); wide stitches split, staggered or at random, columns up to 30 mm (E11.2) |
 | Satin border (steil) | A satin of set width that follows a single path | Pulse Steil Tool, Embrilliance | P0 | **Done** | Satin on a path; fill satin border |
 | Tatami fill with holes | Row fill that respects inner holes, with stitch length, spacing and angle | All | P0 | **Done** | Fill (tatami 2–8, brick), routing (E3.5) |
 | Programmable and carved fill editor | Edit the penetration pattern of a fill, or carve lines through it | Pulse Carved Fill Pattern Editor, Wilcom Carving Stamp | P1 | **Partly** | Built-in stagger patterns and carved motifs; no editor for the penetration pattern |
@@ -149,3 +149,4 @@ independent reader in tests.
 - 2026-11-01: added from the 2026-10-16 research notes, with each feature's status against the code.
 - 2026-11-01: features no step covered linked to the new plan phase E11.
 - 2026-11-01: run variants done (E11.1); click-to-outline was already there (E8.6b), only centreline is missing.
+- 2026-11-01: satin column done: split satin (E11.2).

@@ -6616,3 +6616,14 @@ breakText	Glyphs	Glyfy
 	Slanted stitches overlapping by half: a twisted cord.	Šikmé stehy překrývající se napůl: kroucená šňůra.
 	Each stitch forward, then half a stitch back: a heavier, smooth line.	Každý steh vpřed, pak půl stehu zpět: silnější, hladká linie.
 	Bold dashes with gaps between them.	Výrazné čárky s mezerami mezi nimi.
+	Split:	Dělení:
+	Split Wide Stitches	Dělit široké stehy
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	Stehy širší než Dělit nad se šijí po kratších částech, aby se široké sloupce nezachytávaly (šířka až 30 mm)
+	Split At:	Dělit nad:
+	Split Length:	Délka části:
+	Split Pattern:	Vzor dělení:
+	Stagger	Střídat
+	Stitches longer than this are split	Delší stehy se dělí
+	The longest piece of a split stitch	Nejdelší část děleného stehu
+	How the split points move from stitch to stitch, so they don't line up into a seam	Jak se body dělení posouvají od stehu ke stehu, aby se neseřadily do švu
+	Split Satin	Dělený saténový steh

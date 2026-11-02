@@ -165,7 +165,21 @@ impl Rails {
     /// reaching `pull` mm past the rails in all (half each side), no stitch longer than can be
     /// sewn. One run; and whether the column had to be narrowed somewhere to be sewable.
     pub fn satin(&self, spacing: f64, pull: f64, pull_percent: f64, underlay: Underlay, auto: &crate::generate::AutoUnderlay) -> (Vec<Point>, bool) {
-        let most = (MAX_STITCH - spacing).max(0.3);
+        self.satin_within(spacing, pull, pull_percent, underlay, auto, MAX_STITCH)
+    }
+
+    /// [`Self::satin`] whose stitches may be up to `span` mm long (a column [`crate::split`]
+    /// splits afterwards); narrowed only where wider than that.
+    pub fn satin_within(
+        &self,
+        spacing: f64,
+        pull: f64,
+        pull_percent: f64,
+        underlay: Underlay,
+        auto: &crate::generate::AutoUnderlay,
+        span: f64,
+    ) -> (Vec<Point>, bool) {
+        let most = (span - spacing).max(0.3);
         // The pull at a rung `len` mm long: the mm, plus the percentage of its length.
         let pull_at = |len: f64| pull + len * pull_percent / 100.0;
         let narrowed = self.pairs(spacing, 0.0).iter().any(|(p, q)| p.distance(*q) + pull_at(p.distance(*q)) > most);
@@ -209,8 +223,9 @@ impl Rails {
         }
         run.extend(short_stitches(&zig).0);
         // A wide column's underlay zigs, and the move from the underlay onto the column, are
-        // split where too long to sew at once (the column sews over them).
-        (split_long(&run), narrowed)
+        // split where too long to sew at once (the column sews over them). Wider than a stitch
+        // sews, the split satin splits them instead.
+        (if span > MAX_STITCH { run } else { split_long(&run) }, narrowed)
     }
 
     /// Add underlay `underlay` to `run`; whether it ends at the column's far end (so the column is

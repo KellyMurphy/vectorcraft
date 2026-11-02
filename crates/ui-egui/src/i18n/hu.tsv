@@ -6583,3 +6583,14 @@ breakText	Glyphs	Glifák
 	Slanted stitches overlapping by half: a twisted cord.	Ferde öltések félig átfedve: sodrott zsinór.
 	Each stitch forward, then half a stitch back: a heavier, smooth line.	Minden öltés előre, majd fél öltés vissza: erősebb, egyenletes vonal.
 	Bold dashes with gaps between them.	Erőteljes szakaszok, köztük hézaggal.
+	Split:	Osztás:
+	Split Wide Stitches	Széles öltések osztása
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	Az Osztás e fölött értéknél szélesebb öltések rövidebb darabokban készülnek, hogy a széles oszlopok ne akadjanak be (legfeljebb 30 mm szélesek)
+	Split At:	Osztás e fölött:
+	Split Length:	Darabhossz:
+	Split Pattern:	Osztási minta:
+	Stagger	Eltolt
+	Stitches longer than this are split	Az ennél hosszabb öltések osztva lesznek
+	The longest piece of a split stitch	Egy osztott öltés leghosszabb darabja
+	How the split points move from stitch to stitch, so they don't line up into a seam	Hogyan tolódnak az osztáspontok öltésről öltésre, hogy ne álljanak varrattá
+	Split Satin	Osztott szatén

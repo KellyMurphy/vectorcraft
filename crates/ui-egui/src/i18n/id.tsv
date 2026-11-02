@@ -6495,3 +6495,14 @@ breakText	Glyphs	Glif
 	Slanted stitches overlapping by half: a twisted cord.	Jahitan miring yang saling menimpa separuh: seperti tali terpilin.
 	Each stitch forward, then half a stitch back: a heavier, smooth line.	Setiap jahitan maju, lalu mundur setengah jahitan: garis yang lebih tebal dan halus.
 	Bold dashes with gaps between them.	Garis putus-putus tebal dengan jeda di antaranya.
+	Split:	Pemisahan:
+	Split Wide Stitches	Pisahkan Jahitan Lebar
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	Jahitan yang lebih lebar dari Pisahkan Di Atas dijahit dalam potongan lebih pendek agar kolom lebar tidak tersangkut (lebar hingga 30 mm)
+	Split At:	Pisahkan Di Atas:
+	Split Length:	Panjang Potongan:
+	Split Pattern:	Pola Pemisahan:
+	Stagger	Berselang
+	Stitches longer than this are split	Jahitan yang lebih panjang dari ini dipisah
+	The longest piece of a split stitch	Potongan terpanjang dari jahitan yang dipisah
+	How the split points move from stitch to stitch, so they don't line up into a seam	Bagaimana titik pemisahan bergeser dari jahitan ke jahitan agar tidak berbaris membentuk kampuh
+	Split Satin	Satin Terpisah

@@ -304,7 +304,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "New Test Sheet…",
             ["Window", "Embroidery"],
             None,
-            "{sections?: [satinWidth|satinDensity|pullCompensation|fillDensity|fillAngle|underlay|lettering|runStyles|puff] (default: all)} a new document of calibration swatches to sew on real fabric: one artboard per section, each a 100 × 100 mm design whose swatches change one setting (the others at their defaults) and are labelled in stitches. Its sew-out form (embroidery.sewOut, embroidery.recordSewOut) lists the swatches; document.export {format: dst, artboard} writes one section → {index, title, sections: [{id, name, artboard, swatches}], swatches, skipped: [{section, reason}] (lettering needs a type face)}",
+            "{sections?: [satinWidth|satinDensity|pullCompensation|fillDensity|fillAngle|underlay|lettering|runStyles|splitSatin|puff] (default: all)} a new document of calibration swatches to sew on real fabric: one artboard per section, each a 100 × 100 mm design whose swatches change one setting (the others at their defaults) and are labelled in stitches. Its sew-out form (embroidery.sewOut, embroidery.recordSewOut) lists the swatches; document.export {format: dst, artboard} writes one section → {index, title, sections: [{id, name, artboard, swatches}], swatches, skipped: [{section, reason}] (lettering needs a type face)}",
             always,
             test_sheet
         ),

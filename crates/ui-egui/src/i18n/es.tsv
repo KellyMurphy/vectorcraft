@@ -6557,3 +6557,14 @@ breakText	Glyphs	Glifos
 	Slanted stitches overlapping by half: a twisted cord.	Puntadas inclinadas que se solapan a la mitad: un cordón torcido.
 	Each stitch forward, then half a stitch back: a heavier, smooth line.	Cada puntada hacia delante y luego media puntada atrás: una línea más gruesa y uniforme.
 	Bold dashes with gaps between them.	Trazos marcados con espacios entre ellos.
+	Split:	División:
+	Split Wide Stitches	Dividir puntadas anchas
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	Las puntadas más anchas que Dividir a partir de se cosen en tramos más cortos para que las columnas anchas no se enganchen (hasta 30 mm de ancho)
+	Split At:	Dividir a partir de:
+	Split Length:	Longitud del tramo:
+	Split Pattern:	Patrón de división:
+	Stagger	Escalonado
+	Stitches longer than this are split	Las puntadas más largas se dividen
+	The longest piece of a split stitch	El tramo más largo de una puntada dividida
+	How the split points move from stitch to stitch, so they don't line up into a seam	Cómo se desplazan los puntos de división de una puntada a otra para que no se alineen en una costura
+	Split Satin	Satén dividido

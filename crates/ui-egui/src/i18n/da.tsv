@@ -6495,3 +6495,14 @@ breakText	Glyphs	Glyffer
 	Slanted stitches overlapping by half: a twisted cord.	Skrå sting, der overlapper med det halve: en snoet snor.
 	Each stitch forward, then half a stitch back: a heavier, smooth line.	Hvert sting frem, så et halvt sting tilbage: en kraftigere, jævn linje.
 	Bold dashes with gaps between them.	Kraftige streger med mellemrum imellem.
+	Split:	Opdeling:
+	Split Wide Stitches	Opdel brede sting
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	Sting bredere end Opdel over sys i kortere stykker, så brede søjler ikke hænger fast (op til 30 mm brede)
+	Split At:	Opdel over:
+	Split Length:	Stykkelængde:
+	Split Pattern:	Opdelingsmønster:
+	Stagger	Forskudt
+	Stitches longer than this are split	Længere sting opdeles
+	The longest piece of a split stitch	Det længste stykke af et opdelt sting
+	How the split points move from stitch to stitch, so they don't line up into a seam	Hvordan opdelingspunkterne flytter sig fra sting til sting, så de ikke danner en søm
+	Split Satin	Opdelt satin

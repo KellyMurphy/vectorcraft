@@ -6256,3 +6256,14 @@ breakText	Glyphs	字符
 	Slanted stitches overlapping by half: a twisted cord.	斜向針腳彼此重疊一半：如同扭繩。
 	Each stitch forward, then half a stitch back: a heavier, smooth line.	每針前進，再後退半針：更粗、更平滑的線條。
 	Bold dashes with gaps between them.	粗虛線，中間留有間隔。
+	Split:	拆分：
+	Split Wide Stitches	拆分寬針跡
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	寬於「拆分門檻」的針跡分成較短的段來繡，使寬柱不易勾線（寬度最多 30 公釐）
+	Split At:	拆分門檻：
+	Split Length:	分段長度：
+	Split Pattern:	拆分圖案：
+	Stagger	交錯
+	Stitches longer than this are split	長於此值的針跡將被拆分
+	The longest piece of a split stitch	拆分針跡中最長的一段
+	How the split points move from stitch to stitch, so they don't line up into a seam	拆分點如何逐針移動，以免排成一道縫
+	Split Satin	拆分緞紋

@@ -276,19 +276,26 @@ pub(crate) fn pieces(line: &[Point], closed: bool) -> (Vec<Vec<Point>>, bool) {
 /// corner the inner side's needle points stop at the inner miter point and the column fans
 /// round it, so the stitches neither pile up inside the turn nor leave a gap outside it.
 pub fn satin(line: &[Point], closed: bool, width: f64, spacing: f64) -> Vec<Point> {
-    column(line, closed, width, spacing, true, &[])
+    column(line, closed, width, spacing, true, &[], MAX_STITCH)
 }
 
 /// [`satin`] with stitch angle lines ([`crate::angles`]): where they cross the column they set
 /// the stitches' direction, which turns gradually between them.
 pub fn satin_angled(line: &[Point], closed: bool, width: f64, spacing: f64, angles: &[crate::angles::Line]) -> Vec<Point> {
-    column(line, closed, width, spacing, true, angles)
+    column(line, closed, width, spacing, true, angles, MAX_STITCH)
+}
+
+/// [`satin_angled`] whose stitches may be up to `span` mm long (wider than one stitch sews: a
+/// column [`crate::split`] splits afterwards).
+pub fn satin_angled_within(line: &[Point], closed: bool, width: f64, spacing: f64, angles: &[crate::angles::Line], span: f64) -> Vec<Point> {
+    column(line, closed, width, spacing, true, angles, span)
 }
 
 /// A zigzag `width` mm wide along `line`, a point every `spacing` mm, its inner side held at
 /// each sharp corner's inner miter point. With `fan`, the outer side sweeps round the corner in
-/// steps (a dense satin); without, one point at the outer miter turns it (an open zigzag).
-fn column(line: &[Point], closed: bool, width: f64, spacing: f64, fan: bool, angles: &[crate::angles::Line]) -> Vec<Point> {
+/// steps (a dense satin); without, one point at the outer miter turns it (an open zigzag). No
+/// stitch to a miter point is longer than `span`.
+fn column(line: &[Point], closed: bool, width: f64, spacing: f64, fan: bool, angles: &[crate::angles::Line], span: f64) -> Vec<Point> {
     let half = width / 2.0;
     let line = reseam(line, closed);
     let (pieces, ring) = pieces(&line, closed);
@@ -326,7 +333,7 @@ fn column(line: &[Point], closed: bool, width: f64, spacing: f64, fan: bool, ang
         // and close enough that no stitch from the outer edge to it is too long to sew.
         let bis = (n_in + n_out) * sign;
         let miter = if bis.hypot() > 0.2 { v + bis * (2.0 * half / bis.hypot2()) } else { v };
-        let reach = (3.0 * half).min(MAX_STITCH - half - spacing).max(0.0);
+        let reach = (3.0 * half).min(span - half - spacing).max(0.0);
         let miter = if miter.distance(v) > reach { v + (miter - v) * (reach / miter.distance(v)) } else { miter };
         // The fan: the outer side sweeps round the corner while the inner side holds the miter.
         let turn = n_in.dot(n_out).clamp(-1.0, 1.0).acos();
@@ -432,8 +439,13 @@ pub fn border(poly: &[Point], width: f64) -> Vec<Point> {
 /// fanning round sharp corners like a satin. The width is narrowed where it would make a
 /// diagonal stitch longer than can be sewn.
 pub fn zigzag(line: &[Point], closed: bool, width: f64, spacing: f64) -> Vec<Point> {
-    let width = width.min((MAX_STITCH * MAX_STITCH - spacing * spacing).max(0.0).sqrt());
-    column(line, closed, width, spacing, false, &[])
+    zigzag_within(line, closed, width, spacing, MAX_STITCH)
+}
+
+/// [`zigzag`] whose diagonals may be up to `span` mm long (split afterwards, [`crate::split`]).
+pub fn zigzag_within(line: &[Point], closed: bool, width: f64, spacing: f64, span: f64) -> Vec<Point> {
+    let width = width.min((span * span - spacing * spacing).max(0.0).sqrt());
+    column(line, closed, width, spacing, false, &[], span)
 }
 
 /// What an `auto` underlay becomes, by stitch and width (mm). The fabric profile (E7.3) will set

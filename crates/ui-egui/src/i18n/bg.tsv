@@ -6480,3 +6480,14 @@ breakText	Glyphs	Глифи
 	Slanted stitches overlapping by half: a twisted cord.	Наклонени бодове, застъпващи се наполовина: усукан шнур.
 	Each stitch forward, then half a stitch back: a heavier, smooth line.	Всеки бод напред, после половин бод назад: по-плътна, гладка линия.
 	Bold dashes with gaps between them.	Плътни черти с празнини между тях.
+	Split:	Разделяне:
+	Split Wide Stitches	Разделяне на широките бодове
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	Бодовете, по-широки от „Разделяне над“, се шият на по-къси части, за да не се закачат широките колони (до 30 mm ширина)
+	Split At:	Разделяне над:
+	Split Length:	Дължина на частта:
+	Split Pattern:	Шарка на разделянето:
+	Stagger	Разместване
+	Stitches longer than this are split	По-дългите бодове се разделят
+	The longest piece of a split stitch	Най-дългата част на разделен бод
+	How the split points move from stitch to stitch, so they don't line up into a seam	Как се местят точките на разделяне от бод на бод, за да не се подредят в шев
+	Split Satin	Разделен сатен

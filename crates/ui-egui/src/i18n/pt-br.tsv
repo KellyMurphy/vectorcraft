@@ -6690,3 +6690,14 @@ swatch	Yellow Green	Verde-amarelado
 	Slanted stitches overlapping by half: a twisted cord.	Pontos inclinados que se sobrepõem pela metade: um cordão torcido.
 	Each stitch forward, then half a stitch back: a heavier, smooth line.	Cada ponto para a frente e meio ponto para trás: uma linha mais marcada e uniforme.
 	Bold dashes with gaps between them.	Traços marcados com espaços entre eles.
+	Split:	Divisão:
+	Split Wide Stitches	Dividir pontos largos
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	Pontos mais largos que Dividir acima de são bordados em pedaços mais curtos, para que colunas largas não enrosquem (até 30 mm de largura)
+	Split At:	Dividir acima de:
+	Split Length:	Comprimento do pedaço:
+	Split Pattern:	Padrão de divisão:
+	Stagger	Escalonado
+	Stitches longer than this are split	Pontos mais longos são divididos
+	The longest piece of a split stitch	O pedaço mais longo de um ponto dividido
+	How the split points move from stitch to stitch, so they don't line up into a seam	Como os pontos de divisão se deslocam de um ponto para o outro, para não se alinharem em uma costura
+	Split Satin	Cetim dividido

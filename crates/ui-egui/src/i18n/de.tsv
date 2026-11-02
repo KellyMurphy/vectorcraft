@@ -6184,3 +6184,14 @@ breakText	Glyphs	Glyphen
 	Slanted stitches overlapping by half: a twisted cord.	Schräge Stiche, die sich zur Hälfte überlappen: eine gedrehte Kordel.
 	Each stitch forward, then half a stitch back: a heavier, smooth line.	Jeder Stich nach vorn, dann ein halber Stich zurück: eine kräftigere, gleichmäßige Linie.
 	Bold dashes with gaps between them.	Kräftige Striche mit Lücken dazwischen.
+	Split:	Teilen:
+	Split Wide Stitches	Breite Stiche teilen
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	Stiche, die breiter als „Teilen ab“ sind, werden in kürzeren Stücken gestickt, damit breite Säulen nicht hängen bleiben (bis 30 mm breit)
+	Split At:	Teilen ab:
+	Split Length:	Stücklänge:
+	Split Pattern:	Teilungsmuster:
+	Stagger	Versetzt
+	Stitches longer than this are split	Längere Stiche werden geteilt
+	The longest piece of a split stitch	Das längste Stück eines geteilten Stichs
+	How the split points move from stitch to stitch, so they don't line up into a seam	Wie die Teilungspunkte von Stich zu Stich wandern, damit sie keine Naht bilden
+	Split Satin	Geteilter Satin

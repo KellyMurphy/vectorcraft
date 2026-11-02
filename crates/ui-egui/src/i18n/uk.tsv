@@ -6215,3 +6215,14 @@ breakText	Glyphs	Гліфи
 	Slanted stitches overlapping by half: a twisted cord.	Похилі стібки, що перекриваються наполовину: кручений шнур.
 	Each stitch forward, then half a stitch back: a heavier, smooth line.	Кожен стібок уперед, потім пів стібка назад: щільніша, рівна лінія.
 	Bold dashes with gaps between them.	Чіткі штрихи з проміжками між ними.
+	Split:	Поділ:
+	Split Wide Stitches	Ділити широкі стібки
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	Стібки, ширші за «Ділити понад», прошиваються коротшими частинами, щоб широкі колони не чіплялися (до 30 мм завширшки)
+	Split At:	Ділити понад:
+	Split Length:	Довжина частини:
+	Split Pattern:	Візерунок поділу:
+	Stagger	Зі зсувом
+	Stitches longer than this are split	Довші стібки діляться
+	The longest piece of a split stitch	Найдовша частина поділеного стібка
+	How the split points move from stitch to stitch, so they don't line up into a seam	Як точки поділу зсуваються від стібка до стібка, щоб не шикуватися в шов
+	Split Satin	Поділена гладь

@@ -31,9 +31,13 @@ are kept but have no effect.
 | `length` | number, mm | running, bean, fill, pattern border | 0.3–12 | fill 4; pattern border 1.5; others 2.5 |
 | `spacing` | number, mm | satin, zigzag, satin shape, fill, auto, pattern border (its satin parts) | 0.1–10 | zigzag 2; others 0.4 |
 | `angle` | number, degrees counter-clockwise | fill | any | 0 |
-| `width` | number, mm | satin, zigzag; pattern border; running (chain and stem styles) | satin and zigzag 0.3–12; pattern border 1–40; running 0.2–6 | satin: the stroke width (3 without one); zigzag 3; pattern border: the pattern's own width; chain 1.5, stem 0.4 (not the stroke) |
+| `width` | number, mm | satin, zigzag; pattern border; running (chain and stem styles) | satin and zigzag 0.3–12, or 0.3–30 with `split` `auto`; pattern border 1–40; running 0.2–6 | satin: the stroke width (3 without one); zigzag 3; pattern border: the pattern's own width; chain 1.5, stem 0.4 (not the stroke) |
 | `style` | string: `single` `chain` `stem` `backstitch` `sashiko` | running | | `single`. See [Running stitch styles](#running-stitch-styles). |
 | `gap` | number, mm | running (sashiko style) | 0.5–6 | 1.5 |
+| `split` | string: `auto` `off` | satin, satin shape, zigzag | | `auto`. See [Split satin](#split-satin). |
+| `splitAt` | number, mm | satin, satin shape, zigzag (`split` `auto`) | 4–12 | 7 |
+| `splitLength` | number, mm | satin, satin shape, zigzag (`split` `auto`) | 2–8 | 4 |
+| `splitPattern` | string: `stagger` `random` | satin, satin shape, zigzag (`split` `auto`) | | `stagger` |
 | `thread` | `[r, g, b]`, each 0–255 (sRGB) | all | | the stroke's colour for stitches along the path, the fill's for fills, satin shapes and auto |
 | `pull` | number, mm | satin, satin shape, fill, auto | 0–3 | 0 |
 | `pullPercent` | number, % | satin, satin shape, fill, auto | 0–30 | 0 |
@@ -112,6 +116,24 @@ sewn on their own (a single running stitch sews them as one network).
 
 A reader that doesn't know `style` sews the line as single running stitch (and keeps the member, as
 [Compatibility](#compatibility) says). Builds from before 2026-11-01 do so.
+
+### Split satin
+
+With `split` `auto` (the default), a satin, satin shape or zigzag stitch longer than `splitAt` is sewn as
+the fewest equal pieces no longer than `splitLength` (at least two), its extra needle points on the
+stitch's line. Underlay stitches that long are split the same way. A column can then be up to 30 mm
+wide (12 mm with `split` `off`); a satin shape's stitches stay within 12 mm either way.
+
+The extra points are measured from the same side of the column on every stitch (a satin's stitches
+alternate direction) and shifted along it from one stitch to the next, as a fraction of one piece:
+
+| `splitPattern` | Shift |
+|---|---|
+| `stagger` | 0, ⅓, ⅔, repeating; with a shift, the first and last pieces are shorter (one more piece). |
+| `random` | Between 0.2 and 0.8, repeatable (the same design sews the same way), at least 0.15 from the stitch before. |
+
+A reader that doesn't know these members sews the satin unsplit, capped at 12 mm (and keeps them).
+Builds from before 2026-11-01 do so.
 
 ## Embroidery setup (`document.embroidery`)
 
@@ -229,7 +251,8 @@ Sections (each changes one setting; the others keep their defaults):
 | F | `underlay` | 5 mm satin columns with each satin underlay (`auto` included), then 18 mm fill squares with each fill underlay. |
 | G | `lettering` | The word "Hag" in auto stitches at 4, 6, 8, 10, 15 and 20 mm type sizes (left out when no type face is available). |
 | H | `runStyles` | Running stitch in each `style` (single, chain, stem, backstitch, sashiko) on a 22 × 14 mm S curve ending in a sharp corner. |
-| I | `puff` | 3 mm puff (satin over 3 mm foam) 3, 4, 5, 6 and 8 mm wide; the design stops for the foam after its title. Last, since anything sewn after the foam is laid sews through it (before 2026-11-01 it was H). |
+| I | `splitSatin` | 30 mm satin columns 8, 12 and 20 mm wide split with the defaults (staggered), 12 mm split at random, and 12 mm not split to compare. |
+| J | `puff` | 3 mm puff (satin over 3 mm foam) 3, 4, 5, 6 and 8 mm wide; the design stops for the foam after its title. Last, since anything sewn after the foam is laid sews through it (before 2026-11-01 it was H, then I). |
 
 ## Compatibility
 
@@ -238,7 +261,7 @@ by a newer VectorCraft opens in an older one. A reader must:
 
 - **Keep members it doesn't know**, in a `stitch` object, in `document.embroidery`, in a pattern, in a part, in
   `sewOut` or in a swatch, and write them back when it saves.
-- **Keep a `stitch` object it can't read** (a `kind`, `underlay` or `style` value it doesn't know, or a value of the
+- **Keep a `stitch` object it can't read** (a `kind`, `underlay`, `style`, `split` or `splitPattern` value it doesn't know, or a value of the
   wrong type, such as `thread` past 255) exactly as written, not sew that object, and warn. Choosing a
   stitch for the object replaces it.
 - **Keep a `fabric` it can't read** (a value of a type it doesn't expect) exactly as written, and sew as if

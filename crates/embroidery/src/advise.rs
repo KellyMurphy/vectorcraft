@@ -33,7 +33,7 @@ pub enum Change {
 #[derive(Clone, Debug, PartialEq)]
 pub struct Fix {
     /// What kind of fix: `lower-density`, `remove-overlap`, `lighter-underlay`, `drop-duplicate`,
-    /// `trim-before`.
+    /// `split`, `trim-before`.
     pub id: &'static str,
     /// What it does, for a menu (names its object).
     pub label: String,
@@ -284,20 +284,33 @@ fn candidates(doc: &Document, plan: &Plan, finding: &Finding) -> Vec<Vec<Fix>> {
             }
             out
         }
-        // A long stitch that is the travel into the object: cut the thread instead.
-        "long-stitch" => match finding.object.and_then(|id| settings(id).map(|s| (id, s))) {
-            Some((id, s)) if !s.trim_before => {
-                vec![vec![Fix {
+        // Long satin stitches: split them. A long stitch that is the travel into the object: cut
+        // the thread instead.
+        "long-stitch" => {
+            let Some((id, s)) = finding.object.and_then(|id| settings(id).map(|s| (id, s))) else { return vec![] };
+            let mut out = vec![];
+            if !s.splits() && matches!(s.kind, StitchKind::Satin | StitchKind::SatinShape | StitchKind::Zigzag) {
+                out.push(vec![Fix {
+                    id: "split",
+                    label: format!("Split the wide stitches of {}", name(doc, plan, id)),
+                    object: id,
+                    change: set("split", json!(vectorcraft_doc::Split::Auto.id())),
+                    clears: false,
+                    holes: None,
+                }]);
+            }
+            if !s.trim_before {
+                out.push(vec![Fix {
                     id: "trim-before",
                     label: format!("Trim before {}", name(doc, plan, id)),
                     object: id,
                     change: set("trimBefore", json!(true)),
                     clears: false,
                     holes: None,
-                }]]
+                }]);
             }
-            _ => vec![],
-        },
+            out
+        }
         _ => vec![],
     }
 }
@@ -333,6 +346,23 @@ mod tests {
             }
         }
         kinds
+    }
+
+    #[test]
+    fn long_satin_stitches_are_split() {
+        let d = doc_with(|d| {
+            let mut n = stitched(d, poly(&[(0.0, 0.0), (200.0, 0.0)], false), StitchKind::Satin, [0; 3]);
+            n.extras_mut().stitch =
+                Some(Box::new(StitchSettings { width: Some(10.0), split: vectorcraft_doc::Split::Off, ..StitchSettings::new(StitchKind::Satin) }));
+            vec![n]
+        });
+        let plan = crate::plan(&d);
+        let f = check::check(&d, &plan).into_iter().find(|f| f.rule == "long-stitch").unwrap();
+        let fix = fixes(&d, &plan, &f, &mut crate::plan).into_iter().find(|x| x.id == "split").unwrap();
+        assert!(fix.clears, "{fix:?}");
+        let changed = fix.apply(&d).unwrap();
+        let after = check::check(&changed, &crate::plan(&changed));
+        assert!(!after.iter().any(|x| x.rule == "long-stitch"), "{after:?}");
     }
 
     #[test]

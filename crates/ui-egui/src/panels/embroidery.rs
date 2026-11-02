@@ -6,7 +6,7 @@
 
 use egui::{Color32, Rect, Sense, Stroke, Ui, vec2};
 use serde_json::{Value, json};
-use vectorcraft_doc::{NodeId, RunStyle, StitchKind, StitchSettings, Underlay};
+use vectorcraft_doc::{NodeId, RunStyle, Split, SplitPattern, StitchKind, StitchSettings, Underlay};
 
 use super::{selection_len, stitch_art};
 use crate::VectorcraftApp;
@@ -1059,7 +1059,7 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
                 widgets::label_row(ui, tl!("Width:"), LABEL_W, |ui| {
                     let width = sel["width"].as_f64();
                     if let Some(v) = widgets::mixed_field(ui, ("emb", "width"), width, " mm", 2, FIELD_W) {
-                        let r = StitchSettings::WIDTH;
+                        let r = width_range(sel);
                         set(app, json!({"width": v.clamp(*r.start(), *r.end())}));
                     }
                     if width.is_none() {
@@ -1080,6 +1080,7 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
                 tl!("Sews the column this much wider, since the thread pulls the fabric in"),
             );
             underlay_row(app, ui, kind, sel);
+            split_rows(app, ui, sel);
         }
         StitchKind::Fill => {
             widgets::section_header(ui, tl!("Fill"));
@@ -1163,13 +1164,15 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
                 tl!("Sews the column this much wider, since the thread pulls the fabric in"),
             );
             underlay_row(app, ui, kind, sel);
+            split_rows(app, ui, sel);
         }
         StitchKind::Zigzag => {
             widgets::section_header(ui, tl!("Zigzag Stitch"));
             // Unset, a zigzag is 3 mm wide (it doesn't follow the stroke, drawn thin).
             let width = Some(num("width").unwrap_or(StitchSettings::DEFAULT_WIDTH));
-            mm(app, ui, tl!("Width:"), "width", width, StitchSettings::WIDTH, tl!("How wide the zigzag swings"));
+            mm(app, ui, tl!("Width:"), "width", width, width_range(sel), tl!("How wide the zigzag swings"));
             mm(app, ui, tl!("Spacing:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between the points of the zigzag"));
+            split_rows(app, ui, sel);
         }
         StitchKind::PatternBorder => {
             widgets::section_header(ui, tl!("Pattern Border"));
@@ -1307,9 +1310,9 @@ fn own_rows(kind: StitchKind) -> &'static [&'static str] {
     match kind {
         StitchKind::Running => &["style", "length", "width", "flip", "gap"],
         StitchKind::Bean => &["length", "passes"],
-        StitchKind::Satin => &["rails", "width", "spacing", "pull", "underlay"],
-        StitchKind::Zigzag => &["width", "spacing"],
-        StitchKind::SatinShape => &["spacing", "pull", "underlay"],
+        StitchKind::Satin => &["rails", "width", "spacing", "pull", "underlay", "split", "splitAt", "splitLength", "splitPattern"],
+        StitchKind::Zigzag => &["width", "spacing", "split", "splitAt", "splitLength", "splitPattern"],
+        StitchKind::SatinShape => &["spacing", "pull", "underlay", "split", "splitAt", "splitLength", "splitPattern"],
         StitchKind::Fill => &["angle", "spacing", "length", "stagger", "motif", "motifSize", "underlay", "border"],
         StitchKind::PatternBorder => &["pattern", "width", "flip", "length", "spacing"],
         StitchKind::MotifFill => &["motif", "motifSize", "angle", "length", "spacing"],
@@ -1824,6 +1827,51 @@ fn underlay_label(u: Underlay) -> &'static str {
     }
 }
 
+/// The satin or zigzag widths the selection allows: wider when its stitches are split.
+fn width_range(sel: &Value) -> std::ops::RangeInclusive<f64> {
+    if sel["split"].as_str() == Some(Split::Off.id()) { StitchSettings::WIDTH } else { StitchSettings::SPLIT_WIDTH }
+}
+
+/// Split Stitches, and with it on, where and how the stitches are split.
+fn split_rows(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
+    let split = sel["split"].as_str().and_then(Split::parse);
+    ui.horizontal(|ui| {
+        ui.add_space(LABEL_W + 8.0);
+        let on = split.map(|s| s == Split::Auto);
+        if widgets::check3_tip(
+            ui,
+            tl!("Split Wide Stitches"),
+            on,
+            true,
+            tl!("Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)"),
+        ) {
+            let to = if on == Some(true) { Split::Off } else { Split::Auto };
+            set(app, json!({"split": to.id()}));
+        }
+    });
+    if split == Some(Split::Off) {
+        return;
+    }
+    let num = |k: &str| sel[k].as_f64();
+    mm(app, ui, tl!("Split At:"), "splitAt", num("splitAt"), StitchSettings::SPLIT_AT, tl!("Stitches longer than this are split"));
+    mm(app, ui, tl!("Split Length:"), "splitLength", num("splitLength"), StitchSettings::SPLIT_LENGTH, tl!("The longest piece of a split stitch"));
+    ui.scope(|ui| {
+        widgets::label_row(ui, tl!("Split Pattern:"), LABEL_W, |ui| {
+            let labels = [tl!("Stagger"), tl!("Random")];
+            let cur = match sel["splitPattern"].as_str().and_then(SplitPattern::parse) {
+                Some(SplitPattern::Stagger) => labels[0],
+                Some(SplitPattern::Random) => labels[1],
+                None => "",
+            };
+            if let Some(p) = widgets::dropdown(ui, "emb-split-pattern", cur, &labels, 150.0).and_then(|i| SplitPattern::ALL.get(i)) {
+                set(app, json!({"splitPattern": p.id()}));
+            }
+        })
+    })
+    .response
+    .on_hover_text(tl!("How the split points move from stitch to stitch, so they don't line up into a seam"));
+}
+
 fn underlay_row(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Value) {
     let options = Underlay::for_kind(kind);
     widgets::label_row(ui, tl!("Underlay:"), LABEL_W, |ui| {
@@ -2045,6 +2093,41 @@ mod tests {
                 }
                 assert!(shown.iter().any(|t| t == p.label), "{}: no generic row for `{}` in {shown:?}", k.id(), p.key);
             }
+        }
+    }
+
+    /// Satin, satin shape and zigzag show Split Wide Stitches; its settings only while it is on.
+    #[test]
+    fn split_rows_show_while_split_is_on() {
+        fn texts(s: &egui::Shape, out: &mut Vec<String>) {
+            match s {
+                egui::Shape::Text(t) => out.push(t.galley.text().to_string()),
+                egui::Shape::Vec(v) => v.iter().for_each(|s| texts(s, out)),
+                _ => {}
+            }
+        }
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        app.session.execute("file.new", &json!({"width": 100, "height": 100})).unwrap();
+        app.session.execute("path.create", &json!({"d": "M 10 50 L 90 50"})).unwrap();
+        let shown = |app: &mut VectorcraftApp, set: Value| {
+            app.session.execute("embroidery.set", &set).unwrap();
+            let sel = app.session.execute("embroidery.info", &json!({})).unwrap()["selection"].clone();
+            let kind = sel["type"].as_str().and_then(StitchKind::parse).unwrap();
+            let ctx = egui::Context::default();
+            let mut out = ctx.run_ui(egui::RawInput::default(), |ui| parameters(app, ui, kind, &sel));
+            out.textures_delta.clear();
+            let mut shown = vec![];
+            out.shapes.iter().for_each(|c| texts(&c.shape, &mut shown));
+            shown
+        };
+        for kind in ["satin", "satinShape", "zigzag"] {
+            let on = shown(&mut app, json!({"type": kind, "split": "auto"}));
+            for label in ["Split Wide Stitches", "Split At:", "Split Length:", "Split Pattern:", "Stagger"] {
+                assert!(on.iter().any(|t| t == label), "{kind}: no `{label}` in {on:?}");
+            }
+            let off = shown(&mut app, json!({"split": "off"}));
+            assert!(off.iter().any(|t| t == "Split Wide Stitches"), "{kind}: {off:?}");
+            assert!(!off.iter().any(|t| t == "Split At:"), "{kind}: {off:?}");
         }
     }
 

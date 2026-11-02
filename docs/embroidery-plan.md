@@ -722,7 +722,7 @@ row, tests, fuzzing for new input, spec + schema + drift test for a new format, 
 | Step | What | Priority | Size |
 |---|---|---|---|
 | **E11.1** Run styles (**done**) | Chain, stem, backstitch and sashiko as running stitch styles | P0 | M |
-| **E11.2** Split satin | Wide satin stitches split into shorter ones, split points staggered | P0 | M |
+| **E11.2** Split satin (**done**) | Wide satin stitches split into shorter ones, split points staggered | P0 | M |
 | **E11.3** Stitch styles | Named sets of stitch settings, applied with one click, kept in documents and the library | P1 | M |
 | **E11.4** Multi-hoop and hoop rotation | Rotate the design in the hoop; split a large design into hoopings with alignment marks | P1 | L |
 | **E11.5** Batch export | Write several machine formats in one export | P1 | S |
@@ -767,7 +767,16 @@ Each obeys the shortest and longest stitch limits, ties in and off as runs do, a
 curved and cornered paths stays within the limits and on its side of the path; repeatable. Test sheet: a
 run-styles section.
 
-### E11.2 Split satin (M)
+### E11.2 Split satin (M) — done 2026-11-01
+
+As built: `crates/embroidery/src/split.rs` splits the finished needle points, so every satin (a column,
+between rails, a satin shape, a zigzag) and its underlay is split the same way. Split points are measured
+from the same side of the column on every stitch (a satin's stitches alternate direction); stagger shifts
+them by a third of a piece each stitch, random by 0.2–0.8 of one, at least 0.15 from the last. With split
+on, a column or zigzag can be up to 30 mm wide (12 mm off); a satin shape's stitches stay within 12 mm,
+since heavier strokes are filled anyway. The checker no longer calls a split satin over 10 mm too wide,
+and its long-stitch finding on an unsplit satin or zigzag offers Split as a fix. Test sheet section I
+(Split Satin), with Puff moved to J. The original plan:
 
 A satin stitch wider than `splitAt` (default 7 mm) is split into the fewest stitches no longer than
 `splitLength` (default 4 mm). The split points move from one zig to the next (a repeating offset, or a

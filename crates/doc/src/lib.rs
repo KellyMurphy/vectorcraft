@@ -86,7 +86,7 @@ pub use corners::LiveCorners;
 pub use depth::{MAX_DEPTH, MAX_SYMBOL_NODES};
 pub use embroidery::{
     BorderPattern, ChartThread, EmbroiderySetup, Fabric, Hoop, Motif, MotifKind, PartStitch, PatternPart, RunStyle, SewOut, SewResult, SewSwatch,
-    StitchKind, StitchSettings, ThreadChart, Underlay,
+    Split, SplitPattern, StitchKind, StitchSettings, ThreadChart, Underlay,
 };
 pub use embroidery_font::{EmbroideryFont, FontGlyph, GlyphObject, KernPair};
 pub use graph::{

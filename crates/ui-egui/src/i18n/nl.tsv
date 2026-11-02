@@ -6539,3 +6539,14 @@ breakText	Glyphs	Glyphs
 	Slanted stitches overlapping by half: a twisted cord.	Schuine steken die voor de helft overlappen: een gedraaid koord.
 	Each stitch forward, then half a stitch back: a heavier, smooth line.	Elke steek vooruit, dan een halve steek terug: een zwaardere, gladde lijn.
 	Bold dashes with gaps between them.	Krachtige streepjes met ruimte ertussen.
+	Split:	Splitsen:
+	Split Wide Stitches	Brede steken splitsen
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	Steken breder dan Splitsen boven worden in kortere stukken genaaid, zodat brede kolommen niet blijven haken (tot 30 mm breed)
+	Split At:	Splitsen boven:
+	Split Length:	Stuklengte:
+	Split Pattern:	Splitspatroon:
+	Stagger	Verspringend
+	Stitches longer than this are split	Langere steken worden gesplitst
+	The longest piece of a split stitch	Het langste stuk van een gesplitste steek
+	How the split points move from stitch to stitch, so they don't line up into a seam	Hoe de splitspunten van steek tot steek verschuiven, zodat ze geen naad vormen
+	Split Satin	Gesplitste satijn

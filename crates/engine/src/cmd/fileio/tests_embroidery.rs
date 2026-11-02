@@ -332,8 +332,8 @@ fn pattern_borders_are_set_checked_and_sewn() {
     assert!(got["design"]["warnings"].as_array().unwrap().is_empty(), "{got}");
     assert!(s.execute("embroidery.set", &json!({"pattern": "stars"})).is_err());
     assert!(s.execute("embroidery.set", &json!({"width": 41})).is_err());
-    // 20 mm suits a pattern border, not a satin.
-    assert!(s.execute("embroidery.set", &json!({"type": "satin", "width": 20})).is_err());
+    // 20 mm suits a pattern border, not a satin whose stitches aren't split.
+    assert!(s.execute("embroidery.set", &json!({"type": "satin", "width": 20, "split": "off"})).is_err());
     s.execute("embroidery.set", &json!({"pattern": null})).unwrap();
     assert_eq!(info(&mut s)["selection"]["pattern"], "waves");
 }
@@ -450,7 +450,7 @@ fn the_design_check_finds_and_places_problems() {
     let mut s = Session::new();
     s.execute("file.new", &json!({"width": 400, "height": 300})).unwrap();
     let wide = s.execute("path.create", &json!({"d": "M 20 50 L 380 50"})).unwrap()["id"].as_u64().unwrap();
-    s.execute("embroidery.set", &json!({"type": "satin", "width": 10})).unwrap();
+    s.execute("embroidery.set", &json!({"type": "satin", "width": 10, "split": "off"})).unwrap();
     s.execute("select.none", &json!({})).unwrap();
     let fine = s.execute("path.create", &json!({"d": "M 20 150 L 380 150"})).unwrap()["id"].as_u64().unwrap();
     s.execute("embroidery.set", &json!({"type": "running"})).unwrap();

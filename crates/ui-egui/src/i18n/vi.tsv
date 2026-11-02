@@ -6200,3 +6200,14 @@ breakText	Glyphs	Glyph
 	Slanted stitches overlapping by half: a twisted cord.	Các mũi xiên chồng lên nhau một nửa: như sợi dây xoắn.
 	Each stitch forward, then half a stitch back: a heavier, smooth line.	Mỗi mũi tiến lên, rồi lùi nửa mũi: đường đậm và mượt hơn.
 	Bold dashes with gaps between them.	Các nét đậm có khoảng hở xen giữa.
+	Split:	Chia:
+	Split Wide Stitches	Chia mũi rộng
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	Mũi rộng hơn Chia trên được may thành các đoạn ngắn hơn để cột rộng không bị vướng (rộng tới 30 mm)
+	Split At:	Chia trên:
+	Split Length:	Độ dài đoạn:
+	Split Pattern:	Kiểu chia:
+	Stagger	So le
+	Stitches longer than this are split	Mũi dài hơn mức này được chia
+	The longest piece of a split stitch	Đoạn dài nhất của một mũi được chia
+	How the split points move from stitch to stitch, so they don't line up into a seam	Cách điểm chia dịch chuyển từ mũi này sang mũi khác để không thẳng hàng thành đường may
+	Split Satin	Satin chia

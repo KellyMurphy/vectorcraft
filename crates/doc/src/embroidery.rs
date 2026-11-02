@@ -156,6 +156,73 @@ impl RunStyle {
     }
 }
 
+/// Whether satin stitches wider than [`StitchSettings::split_at`] are split into shorter ones.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum Split {
+    /// Split them, so the column can be up to [`StitchSettings::SPLIT_WIDTH`] wide.
+    #[default]
+    Auto,
+    /// Never split: the column is at most [`StitchSettings::WIDTH`] wide.
+    Off,
+}
+
+impl Split {
+    pub const ALL: [Split; 2] = [Self::Auto, Self::Off];
+
+    pub fn id(self) -> &'static str {
+        match self {
+            Self::Auto => "auto",
+            Self::Off => "off",
+        }
+    }
+
+    pub fn label(self) -> &'static str {
+        match self {
+            Self::Auto => "Auto",
+            Self::Off => "Off",
+        }
+    }
+
+    pub fn parse(s: &str) -> Option<Self> {
+        Self::ALL.into_iter().find(|v| v.id().eq_ignore_ascii_case(s.trim()))
+    }
+}
+
+/// Where a split satin's needle points fall from one stitch to the next, so they don't line up
+/// into a seam.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum SplitPattern {
+    /// Moved a third of a split along each stitch, repeating every three: a brick-like texture.
+    #[default]
+    Stagger,
+    /// Moved by a repeatable random amount each stitch, never in line with the stitch before.
+    Random,
+}
+
+impl SplitPattern {
+    pub const ALL: [SplitPattern; 2] = [Self::Stagger, Self::Random];
+
+    pub fn id(self) -> &'static str {
+        match self {
+            Self::Stagger => "stagger",
+            Self::Random => "random",
+        }
+    }
+
+    pub fn label(self) -> &'static str {
+        match self {
+            Self::Stagger => "Stagger",
+            Self::Random => "Random",
+        }
+    }
+
+    pub fn parse(s: &str) -> Option<Self> {
+        Self::ALL.into_iter().find(|v| v.id().eq_ignore_ascii_case(s.trim()))
+    }
+}
+
 /// Stitches sewn under the top stitches to hold the fabric and lift the top stitches.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -243,6 +310,19 @@ pub struct StitchSettings {
     /// ([`StitchSettings::DEFAULT_GAP`]).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub gap: Option<f64>,
+    /// Satin, satin shape and zigzag: whether stitches wider than `split_at` are split
+    /// ([`Split`]).
+    #[serde(default, skip_serializing_if = "crate::skip::is_default")]
+    pub split: Split,
+    /// Stitches longer than this are split, mm ([`StitchSettings::DEFAULT_SPLIT_AT`]).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub split_at: Option<f64>,
+    /// A split stitch's pieces are at most this long, mm ([`StitchSettings::DEFAULT_SPLIT_LENGTH`]).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub split_length: Option<f64>,
+    /// Where the split points fall from stitch to stitch ([`SplitPattern`]).
+    #[serde(default, skip_serializing_if = "crate::skip::is_default")]
+    pub split_pattern: SplitPattern,
     /// Thread colour as sRGB (`None`: the object's stroke for path stitches, its fill for fills).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub thread: Option<[u8; 3]>,
@@ -1067,6 +1147,14 @@ impl StitchSettings {
     /// Allowed gaps between sashiko dashes, mm.
     pub const GAP: std::ops::RangeInclusive<f64> = 0.5..=6.0;
     pub const DEFAULT_GAP: f64 = 1.5;
+    /// Allowed satin widths when stitches are split, mm.
+    pub const SPLIT_WIDTH: std::ops::RangeInclusive<f64> = 0.3..=30.0;
+    /// Allowed widths above which a satin stitch is split, mm.
+    pub const SPLIT_AT: std::ops::RangeInclusive<f64> = 4.0..=12.0;
+    pub const DEFAULT_SPLIT_AT: f64 = 7.0;
+    /// Allowed longest pieces of a split stitch, mm.
+    pub const SPLIT_LENGTH: std::ops::RangeInclusive<f64> = 2.0..=8.0;
+    pub const DEFAULT_SPLIT_LENGTH: f64 = 4.0;
     /// Zigzag stitch spacing when none is set, mm.
     pub const DEFAULT_ZIGZAG_SPACING: f64 = 2.0;
     /// Allowed pattern border widths, mm (the motif's stitches are split where they'd be longer
@@ -1107,12 +1195,33 @@ impl StitchSettings {
     }
 
     /// The satin or zigzag width, mm, given the stroke width in mm (always within
-    /// [`Self::WIDTH`]). A satin defaults to the stroke width; a zigzag, drawn on thin lines,
-    /// to [`Self::DEFAULT_WIDTH`].
+    /// [`Self::width_range`]). A satin defaults to the stroke width; a zigzag, drawn on thin
+    /// lines, to [`Self::DEFAULT_WIDTH`].
     pub fn width(&self, stroke_mm: f64) -> f64 {
         let stroke = stroke_mm.is_finite() && stroke_mm > 0.0 && self.kind != StitchKind::Zigzag;
         let fallback = if stroke { stroke_mm } else { Self::DEFAULT_WIDTH };
-        clamp(self.width, fallback, Self::WIDTH)
+        clamp(self.width, fallback, self.width_range())
+    }
+
+    /// The satin or zigzag widths allowed: up to [`Self::SPLIT_WIDTH`] when stitches are split,
+    /// else up to [`Self::WIDTH`] (one stitch can't span more).
+    pub fn width_range(&self) -> std::ops::RangeInclusive<f64> {
+        if self.splits() { Self::SPLIT_WIDTH } else { Self::WIDTH }
+    }
+
+    /// Whether wide stitches are split: satin, satin shape and zigzag with split on.
+    pub fn splits(&self) -> bool {
+        self.split == Split::Auto && matches!(self.kind, StitchKind::Satin | StitchKind::SatinShape | StitchKind::Zigzag)
+    }
+
+    /// The width above which a stitch is split, mm (always within [`Self::SPLIT_AT`]).
+    pub fn split_at(&self) -> f64 {
+        clamp(self.split_at, Self::DEFAULT_SPLIT_AT, Self::SPLIT_AT)
+    }
+
+    /// The longest piece of a split stitch, mm (always within [`Self::SPLIT_LENGTH`]).
+    pub fn split_length(&self) -> f64 {
+        clamp(self.split_length, Self::DEFAULT_SPLIT_LENGTH, Self::SPLIT_LENGTH)
     }
 
     /// The running stitch style to sew with: single for every other stitch type.

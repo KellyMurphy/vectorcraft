@@ -8,7 +8,7 @@
 use std::ops::RangeInclusive;
 
 use serde_json::{Value, json};
-use vectorcraft_doc::{RunStyle, StitchKind, StitchSettings, Underlay};
+use vectorcraft_doc::{RunStyle, Split, SplitPattern, StitchKind, StitchSettings, Underlay};
 
 /// What a setting holds, for parsing, the panel's generic row and the parameter description.
 #[derive(Clone, Debug)]
@@ -191,17 +191,17 @@ pub static PARAMS: &[Param] = &[
         kinds: &[K::Satin, K::Zigzag, K::PatternBorder, K::Running],
         label: "Width:",
         help: "How wide the column, zigzag or border is",
-        doc: "mm (satin column or zigzag, 0.3–12; satin: the stroke width, zigzag: 3; pattern border: the band, 1–40, default the pattern's own; running chain or stem: the loops or the slant, 0.2–6; chain 1.5, stem 0.4)",
+        doc: "mm (satin column or zigzag, 0.3–12, or 0.3–30 with `split` auto; satin: the stroke width, zigzag: 3; pattern border: the band, 1–40, default the pattern's own; running chain or stem: the loops or the slant, 0.2–6; chain 1.5, stem 0.4)",
         nullable: true,
         get: |s| json!(s.width),
         set: |s, v| s.width = f(v),
         // Pattern borders span 1–40 mm, chain and stem running stitch 0.2–6 mm, satins and
-        // zigzags 0.3–12 mm.
+        // zigzags 0.3–12 mm, or 0.3–30 mm split.
         suits: Some(|s| {
             let r = match s.kind {
                 K::PatternBorder => StitchSettings::PATTERN_WIDTH,
                 K::Running => StitchSettings::RUN_WIDTH,
-                _ => StitchSettings::WIDTH,
+                _ => s.width_range(),
             };
             match s.width {
                 Some(w) if !r.contains(&w) => Err(format!("`width` must be from {} to {} mm for these stitches", r.start(), r.end())),
@@ -339,6 +339,54 @@ pub static PARAMS: &[Param] = &[
         nullable: true,
         get: |s| json!(s.gap()),
         set: |s, v| s.gap = f(v),
+        suits: None,
+    },
+    Param {
+        key: "split",
+        value: ValueKind::Choice(&["auto", "off"]),
+        kinds: &[K::Satin, K::SatinShape, K::Zigzag],
+        label: "Split:",
+        help: "Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)",
+        doc: "auto|off (satin, satin shape, zigzag; auto: stitches longer than `splitAt` are split into pieces at most `splitLength` long, and a column can be up to 30 mm wide; off: at most 12 mm wide, never split; auto)",
+        nullable: true,
+        get: |s| json!(s.split.id()),
+        set: |s, v| s.split = text(v).as_deref().and_then(Split::parse).unwrap_or_default(),
+        suits: None,
+    },
+    Param {
+        key: "splitAt",
+        value: ValueKind::Mm(StitchSettings::SPLIT_AT),
+        kinds: &[K::Satin, K::SatinShape, K::Zigzag],
+        label: "Split At:",
+        help: "Stitches longer than this are split",
+        doc: "mm (split satin: stitches longer than this are split, 4–12; 7)",
+        nullable: true,
+        get: |s| json!(s.split_at()),
+        set: |s, v| s.split_at = f(v),
+        suits: None,
+    },
+    Param {
+        key: "splitLength",
+        value: ValueKind::Mm(StitchSettings::SPLIT_LENGTH),
+        kinds: &[K::Satin, K::SatinShape, K::Zigzag],
+        label: "Split Length:",
+        help: "The longest piece of a split stitch",
+        doc: "mm (split satin: the longest piece of a split stitch, 2–8; 4)",
+        nullable: true,
+        get: |s| json!(s.split_length()),
+        set: |s, v| s.split_length = f(v),
+        suits: None,
+    },
+    Param {
+        key: "splitPattern",
+        value: ValueKind::Choice(&["stagger", "random"]),
+        kinds: &[K::Satin, K::SatinShape, K::Zigzag],
+        label: "Split Pattern:",
+        help: "How the split points move from stitch to stitch, so they don't line up into a seam",
+        doc: "stagger|random (split satin; stagger: a third of a piece further each stitch, repeating every three; random: a repeatable random shift, never in line with the stitch before; stagger)",
+        nullable: true,
+        get: |s| json!(s.split_pattern.id()),
+        set: |s, v| s.split_pattern = text(v).as_deref().and_then(SplitPattern::parse).unwrap_or_default(),
         suits: None,
     },
     Param {
@@ -640,6 +688,9 @@ mod tests {
         s.underlay = Underlay::Fill;
         assert!((p("underlay").suits.unwrap())(&s).is_err());
         s.width = Some(20.0);
+        // 20 mm: too wide for one stitch, not for a split satin.
+        assert!((p("width").suits.unwrap())(&s).is_ok());
+        s.split = vectorcraft_doc::Split::Off;
         assert!((p("width").suits.unwrap())(&s).is_err());
         s.kind = K::PatternBorder;
         assert!((p("width").suits.unwrap())(&s).is_ok());

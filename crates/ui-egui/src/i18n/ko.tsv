@@ -6180,3 +6180,14 @@ breakText	Glyphs	글리프
 	Slanted stitches overlapping by half: a twisted cord.	절반씩 겹치는 비스듬한 스티치: 꼰 끈처럼.
 	Each stitch forward, then half a stitch back: a heavier, smooth line.	한 땀 앞으로, 반 땀 뒤로: 더 굵고 매끄러운 선.
 	Bold dashes with gaps between them.	사이에 간격이 있는 굵은 점선.
+	Split:	분할:
+	Split Wide Stitches	넓은 스티치 분할
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	분할 기준보다 넓은 스티치를 짧은 조각으로 나눠 박아 넓은 기둥이 걸리지 않게 합니다(최대 30mm 너비)
+	Split At:	분할 기준:
+	Split Length:	조각 길이:
+	Split Pattern:	분할 패턴:
+	Stagger	엇갈림
+	Stitches longer than this are split	이보다 긴 스티치는 분할됩니다
+	The longest piece of a split stitch	분할된 스티치의 가장 긴 조각
+	How the split points move from stitch to stitch, so they don't line up into a seam	분할점이 스티치마다 옮겨 가는 방식(이음선처럼 줄지어 서지 않도록)
+	Split Satin	분할 새틴

@@ -46,7 +46,10 @@ pub(super) fn sew(i: &Input) -> Output {
             Err(e) => out.warnings.push(e),
         }
     } else {
-        out.runs.extend(satin);
+        // Strokes wider than the split width have their stitches split (a satin shape's stitches
+        // stay within one stitch's reach, 12 mm: heavier strokes are filled, above).
+        let rule = crate::split::Rule::of(s);
+        out.runs.extend(satin.into_iter().map(|r| crate::split::run(r, rule)));
         // Over foam: the perforation, all round the shape's outline.
         if s.puffed() {
             out.runs.extend(generate::outline_perforation(&polys));

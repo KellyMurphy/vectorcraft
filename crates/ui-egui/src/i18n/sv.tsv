@@ -6649,3 +6649,14 @@ breakText	Glyphs	Glyfer
 	Slanted stitches overlapping by half: a twisted cord.	Sneda stygn som överlappar till hälften: en tvinnad snodd.
 	Each stitch forward, then half a stitch back: a heavier, smooth line.	Varje stygn framåt, sedan ett halvt stygn bakåt: en kraftigare, jämn linje.
 	Bold dashes with gaps between them.	Kraftiga streck med mellanrum emellan.
+	Split:	Delning:
+	Split Wide Stitches	Dela breda stygn
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	Stygn bredare än Dela över sys i kortare bitar, så att breda kolumner inte fastnar (upp till 30 mm breda)
+	Split At:	Dela över:
+	Split Length:	Bitlängd:
+	Split Pattern:	Delningsmönster:
+	Stagger	Förskjutet
+	Stitches longer than this are split	Längre stygn delas
+	The longest piece of a split stitch	Den längsta biten av ett delat stygn
+	How the split points move from stitch to stitch, so they don't line up into a seam	Hur delningspunkterna flyttas från stygn till stygn, så att de inte bildar en söm
+	Split Satin	Delad satin

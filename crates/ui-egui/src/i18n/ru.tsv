@@ -6592,3 +6592,14 @@ breakText	Glyphs	Глифы
 	Slanted stitches overlapping by half: a twisted cord.	Наклонные стежки, перекрывающиеся наполовину: витой шнур.
 	Each stitch forward, then half a stitch back: a heavier, smooth line.	Каждый стежок вперёд, затем полстежка назад: более плотная, ровная линия.
 	Bold dashes with gaps between them.	Чёткие штрихи с промежутками между ними.
+	Split:	Разделение:
+	Split Wide Stitches	Разделять широкие стежки
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	Стежки шире значения «Разделять свыше» прошиваются более короткими частями, чтобы широкие колонны не цеплялись (ширина до 30 мм)
+	Split At:	Разделять свыше:
+	Split Length:	Длина части:
+	Split Pattern:	Узор разделения:
+	Stagger	Со сдвигом
+	Stitches longer than this are split	Более длинные стежки разделяются
+	The longest piece of a split stitch	Самая длинная часть разделённого стежка
+	How the split points move from stitch to stitch, so they don't line up into a seam	Как точки разделения смещаются от стежка к стежку, чтобы не выстраиваться в шов
+	Split Satin	Разделённая гладь
