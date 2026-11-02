@@ -6114,3 +6114,18 @@ breakText	Glyphs	字形
 	Stitch Fill Tool	ステッチ塗りつぶしツール
 	Stitch Fill	ステッチ塗りつぶし
 	Click inside any closed area to stitch it in its colour; Alt-click to outline it	閉じた領域の内側をクリックするとその色で刺繍します。Alt+クリックで輪郭を刺繍します
+	Gap:	間隔:
+	Single	シングル
+	Stem	ステムステッチ
+	Backstitch	バックステッチ
+	Sashiko	刺し子
+	Run Styles	ランニングステッチのスタイル
+	How the line is sewn: single stitches or a hand-stitch look	線の縫い方：単一のステッチ、または手刺繍風
+	The space between sashiko dashes	刺し子の破線の間隔
+	How wide the chain's loops or the stem's slant are	チェーンのループやステムステッチの傾きの幅
+	Slant the stem stitches the other way	ステムステッチを反対側に傾けます
+	Single stitches along the path.	パスに沿った単一のステッチ。
+	Linked loops, like a hand chain stitch.	手縫いのチェーンステッチのようにつながったループ。
+	Slanted stitches overlapping by half: a twisted cord.	半分ずつ重なる斜めのステッチ：ねじった紐のように。
+	Each stitch forward, then half a stitch back: a heavier, smooth line.	1目進んで半目戻る：太くなめらかな線。
+	Bold dashes with gaps between them.	間隔をあけた太い破線。

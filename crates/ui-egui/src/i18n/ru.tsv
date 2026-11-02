@@ -6403,3 +6403,18 @@ breakText	Glyphs	Глифы
 	Stitch Fill Tool	Инструмент «Заливка стежками»
 	Stitch Fill	Заливка стежками
 	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Щёлкните внутри замкнутой области, чтобы вышить её своим цветом; Alt-щелчок вышивает контур
+	Gap:	Промежуток:
+	Single	Одиночный
+	Stem	Стебельчатый шов
+	Backstitch	Шов «назад иголку»
+	Sashiko	Сашико
+	Run Styles	Стили прямого стежка
+	How the line is sewn: single stitches or a hand-stitch look	Как прошивается линия: одиночные стежки или вид ручной вышивки
+	The space between sashiko dashes	Промежуток между штрихами сашико
+	How wide the chain's loops or the stem's slant are	Ширина петель цепочки или наклона стебельчатого шва
+	Slant the stem stitches the other way	Наклонить стебельчатые стежки в другую сторону
+	Single stitches along the path.	Одиночные стежки вдоль контура.
+	Linked loops, like a hand chain stitch.	Сцепленные петли, как в ручном тамбурном шве.
+	Slanted stitches overlapping by half: a twisted cord.	Наклонные стежки, перекрывающиеся наполовину: витой шнур.
+	Each stitch forward, then half a stitch back: a heavier, smooth line.	Каждый стежок вперёд, затем полстежка назад: более плотная, ровная линия.
+	Bold dashes with gaps between them.	Чёткие штрихи с промежутками между ними.

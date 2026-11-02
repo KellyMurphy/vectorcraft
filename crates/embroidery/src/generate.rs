@@ -255,7 +255,7 @@ fn reseam(line: &[Point], closed: bool) -> Vec<Point> {
 
 /// `line` split at its sharp corners into pieces (each ends where the next starts), and whether
 /// it is one closed ring without corners.
-fn pieces(line: &[Point], closed: bool) -> (Vec<Vec<Point>>, bool) {
+pub(crate) fn pieces(line: &[Point], closed: bool) -> (Vec<Vec<Point>>, bool) {
     let corners: Vec<usize> = (1..line.len().saturating_sub(1))
         .filter(|&i| matches!((line.get(i - 1), line.get(i), line.get(i + 1)), (Some(&a), Some(&b), Some(&c)) if is_corner(a, b, c)))
         .collect();

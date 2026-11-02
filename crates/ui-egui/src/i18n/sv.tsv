@@ -6463,3 +6463,18 @@ breakText	Glyphs	Glyfer
 	Stitch Fill Tool	Verktyget Broderifyllning
 	Stitch Fill	Broderifyllning
 	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Klicka inuti ett slutet område för att brodera det i dess färg; Alt-klicka för att brodera konturen
+	Gap:	Mellanrum:
+	Single	Enkel
+	Stem	Stjälkstygn
+	Backstitch	Efterstygn
+	Sashiko	Sashiko
+	Run Styles	Förstygnsstilar
+	How the line is sewn: single stitches or a hand-stitch look	Hur linjen sys: enstaka stygn eller ett handbroderat utseende
+	The space between sashiko dashes	Mellanrummet mellan sashiko-strecken
+	How wide the chain's loops or the stem's slant are	Hur breda kedjans öglor eller stjälkstygnets lutning är
+	Slant the stem stitches the other way	Luta stjälkstygnen åt andra hållet
+	Single stitches along the path.	Enstaka stygn längs banan.
+	Linked loops, like a hand chain stitch.	Sammanlänkade öglor, som handsydda kedjestygn.
+	Slanted stitches overlapping by half: a twisted cord.	Sneda stygn som överlappar till hälften: en tvinnad snodd.
+	Each stitch forward, then half a stitch back: a heavier, smooth line.	Varje stygn framåt, sedan ett halvt stygn bakåt: en kraftigare, jämn linje.
+	Bold dashes with gaps between them.	Kraftiga streck med mellanrum emellan.

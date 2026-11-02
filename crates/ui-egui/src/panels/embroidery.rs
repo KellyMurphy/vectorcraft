@@ -6,7 +6,7 @@
 
 use egui::{Color32, Rect, Sense, Stroke, Ui, vec2};
 use serde_json::{Value, json};
-use vectorcraft_doc::{NodeId, StitchKind, StitchSettings, Underlay};
+use vectorcraft_doc::{NodeId, RunStyle, StitchKind, StitchSettings, Underlay};
 
 use super::{selection_len, stitch_art};
 use crate::VectorcraftApp;
@@ -691,6 +691,39 @@ fn picture_picker(
         .and_then(|r| r.inner)
 }
 
+/// Running › Style: single stitches and the hand-stitch styles, each as a picture.
+fn run_style_picker(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
+    let ctx = ui.ctx().clone();
+    let entries: Vec<(String, stitch_art::Thumb)> =
+        RunStyle::ALL.iter().map(|s| (tl!(s.label()).to_string(), stitch_art::run_style(&ctx, *s))).collect();
+    let selected = sel["style"].as_str().and_then(RunStyle::parse).and_then(|s| RunStyle::ALL.iter().position(|x| *x == s));
+    ui.scope(|ui| {
+        widgets::label_row(ui, tl!("Style:"), LABEL_W, |ui| {
+            let (label, thumb) = selected.and_then(|i| entries.get(i)).map(|(l, th)| (l.clone(), Some(th))).unwrap_or_default();
+            if let Some(s) = picture_picker(ui, "run-style", &label, thumb, &entries, selected, false).and_then(|i| RunStyle::ALL.get(i)) {
+                set(app, json!({"style": s.id()}));
+            }
+        })
+    })
+    .response
+    .on_hover_text(
+        selected
+            .and_then(|i| RunStyle::ALL.get(i))
+            .map_or(tl!("How the line is sewn: single stitches or a hand-stitch look"), |s| tl!(run_style_blurb(*s))),
+    );
+}
+
+/// What a running stitch style looks like, for its tooltip.
+fn run_style_blurb(s: RunStyle) -> &'static str {
+    match s {
+        RunStyle::Single => "Single stitches along the path.",
+        RunStyle::Chain => "Linked loops, like a hand chain stitch.",
+        RunStyle::Stem => "Slanted stitches overlapping by half: a twisted cord.",
+        RunStyle::Backstitch => "Each stitch forward, then half a stitch back: a heavier, smooth line.",
+        RunStyle::Sashiko => "Bold dashes with gaps between them.",
+    }
+}
+
 /// Fill › Pattern: brick, the tatami patterns and the carved motifs, each as a picture.
 fn fill_pattern_picker(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
     let rows: Vec<u8> = StitchSettings::STAGGER.collect();
@@ -965,7 +998,38 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
     let num = |k: &str| sel[k].as_f64();
     match kind {
         StitchKind::Running | StitchKind::Bean => {
+            if kind == StitchKind::Running {
+                run_style_picker(app, ui, sel);
+            }
             mm(app, ui, tl!("Stitch Length:"), "length", num("length"), StitchSettings::LENGTH, tl!("How long each stitch is"));
+            if kind == StitchKind::Running {
+                // Each style's own settings, shown only for the styles that use them (a mixed
+                // selection shows them all).
+                let style = sel["style"].as_str().and_then(RunStyle::parse);
+                if style.is_none_or(RunStyle::has_width) {
+                    mm(
+                        app,
+                        ui,
+                        tl!("Width:"),
+                        "width",
+                        num("width"),
+                        StitchSettings::RUN_WIDTH,
+                        tl!("How wide the chain's loops or the stem's slant are"),
+                    );
+                }
+                if style.is_none_or(|s| s == RunStyle::Stem) {
+                    let flip = sel["flip"].as_bool();
+                    ui.horizontal(|ui| {
+                        ui.add_space(LABEL_W + 8.0);
+                        if widgets::check3_tip(ui, tl!("Flip"), flip, true, tl!("Slant the stem stitches the other way")) {
+                            set(app, json!({"flip": flip != Some(true)}));
+                        }
+                    });
+                }
+                if style.is_none_or(|s| s == RunStyle::Sashiko) {
+                    mm(app, ui, tl!("Gap:"), "gap", num("gap"), StitchSettings::GAP, tl!("The space between sashiko dashes"));
+                }
+            }
             if kind == StitchKind::Bean {
                 widgets::label_row(ui, tl!("Passes:"), LABEL_W, |ui| {
                     let opts = ["3", "5", "7", "9"];
@@ -1241,7 +1305,7 @@ const ALWAYS_SHOWN: [&str; 6] = ["type", "thread", "trimBefore", "trimAfter", "s
 /// ([`vectorcraft_embroidery::params::PARAMS`]) gets a generic row from [`other_settings`].
 fn own_rows(kind: StitchKind) -> &'static [&'static str] {
     match kind {
-        StitchKind::Running => &["length"],
+        StitchKind::Running => &["style", "length", "width", "flip", "gap"],
         StitchKind::Bean => &["length", "passes"],
         StitchKind::Satin => &["rails", "width", "spacing", "pull", "underlay"],
         StitchKind::Zigzag => &["width", "spacing"],

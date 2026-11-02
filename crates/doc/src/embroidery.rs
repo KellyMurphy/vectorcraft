@@ -104,6 +104,58 @@ impl StitchKind {
     }
 }
 
+/// How a running stitch sews its line: single stitches, or a machine version of a hand stitch.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum RunStyle {
+    /// Single stitches along the line.
+    #[default]
+    Single,
+    /// A row of linked loops, each one stitch length long and the width wide.
+    Chain,
+    /// Stitches slanted across the line, each starting halfway back along the last: a twisted
+    /// cord.
+    Stem,
+    /// Each stitch forward, then half a stitch back, so the line is sewn three times over.
+    Backstitch,
+    /// Dashes one stitch length long, each sewn three times, with the gap between them crossed
+    /// by one stitch.
+    Sashiko,
+}
+
+impl RunStyle {
+    pub const ALL: [RunStyle; 5] = [Self::Single, Self::Chain, Self::Stem, Self::Backstitch, Self::Sashiko];
+
+    pub fn id(self) -> &'static str {
+        match self {
+            Self::Single => "single",
+            Self::Chain => "chain",
+            Self::Stem => "stem",
+            Self::Backstitch => "backstitch",
+            Self::Sashiko => "sashiko",
+        }
+    }
+
+    pub fn label(self) -> &'static str {
+        match self {
+            Self::Single => "Single",
+            Self::Chain => "Chain",
+            Self::Stem => "Stem",
+            Self::Backstitch => "Backstitch",
+            Self::Sashiko => "Sashiko",
+        }
+    }
+
+    pub fn parse(s: &str) -> Option<Self> {
+        Self::ALL.into_iter().find(|r| r.id().eq_ignore_ascii_case(s.trim()))
+    }
+
+    /// Whether the style sews across the line, so its width matters.
+    pub fn has_width(self) -> bool {
+        matches!(self, Self::Chain | Self::Stem)
+    }
+}
+
 /// Stitches sewn under the top stitches to hold the fabric and lift the top stitches.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -180,9 +232,17 @@ pub struct StitchSettings {
     /// Fill row direction, degrees counter-clockwise from horizontal.
     #[serde(default, skip_serializing_if = "crate::skip::is_default")]
     pub angle: f64,
-    /// Satin column width, mm (`None`: the stroke width).
+    /// Satin column width, mm (`None`: the stroke width). Running stitch in the chain or stem
+    /// style: how wide the loops or the slant are ([`StitchSettings::run_width`]).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub width: Option<f64>,
+    /// Running stitch: how the line is sewn ([`RunStyle`]).
+    #[serde(default, skip_serializing_if = "crate::skip::is_default")]
+    pub style: RunStyle,
+    /// Running stitch in the sashiko style: the gap between dashes, mm
+    /// ([`StitchSettings::DEFAULT_GAP`]).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub gap: Option<f64>,
     /// Thread colour as sRGB (`None`: the object's stroke for path stitches, its fill for fills).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub thread: Option<[u8; 3]>,
@@ -215,7 +275,8 @@ pub struct StitchSettings {
     /// Pattern border: the border pattern's id (`None`: [`StitchSettings::DEFAULT_PATTERN`]).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub pattern: Option<String>,
-    /// Pattern border: the pattern mirrored across the path.
+    /// Pattern border: the pattern mirrored across the path. Running stitch in the stem style:
+    /// the stitches slanted the other way.
     #[serde(default, skip_serializing_if = "crate::skip::is_default")]
     pub flip: bool,
     /// Bean stitch: how many times each stitch is sewn (odd).
@@ -998,6 +1059,14 @@ impl StitchSettings {
     pub const DEFAULT_PASSES: u8 = 3;
     /// Satin width when the object has no stroke and no width is set, mm.
     pub const DEFAULT_WIDTH: f64 = 3.0;
+    /// Allowed chain and stem widths, mm.
+    pub const RUN_WIDTH: std::ops::RangeInclusive<f64> = 0.2..=6.0;
+    /// Chain and stem widths when none is set, mm.
+    pub const DEFAULT_CHAIN_WIDTH: f64 = 1.5;
+    pub const DEFAULT_STEM_WIDTH: f64 = 0.4;
+    /// Allowed gaps between sashiko dashes, mm.
+    pub const GAP: std::ops::RangeInclusive<f64> = 0.5..=6.0;
+    pub const DEFAULT_GAP: f64 = 1.5;
     /// Zigzag stitch spacing when none is set, mm.
     pub const DEFAULT_ZIGZAG_SPACING: f64 = 2.0;
     /// Allowed pattern border widths, mm (the motif's stitches are split where they'd be longer
@@ -1044,6 +1113,23 @@ impl StitchSettings {
         let stroke = stroke_mm.is_finite() && stroke_mm > 0.0 && self.kind != StitchKind::Zigzag;
         let fallback = if stroke { stroke_mm } else { Self::DEFAULT_WIDTH };
         clamp(self.width, fallback, Self::WIDTH)
+    }
+
+    /// The running stitch style to sew with: single for every other stitch type.
+    pub fn run_style(&self) -> RunStyle {
+        if self.kind == StitchKind::Running { self.style } else { RunStyle::Single }
+    }
+
+    /// The chain loops' or stem slant's width, mm (always within [`Self::RUN_WIDTH`]; the
+    /// stroke width is not used: running stitch is drawn on thin lines).
+    pub fn run_width(&self) -> f64 {
+        let fallback = if self.style == RunStyle::Stem { Self::DEFAULT_STEM_WIDTH } else { Self::DEFAULT_CHAIN_WIDTH };
+        clamp(self.width, fallback, Self::RUN_WIDTH)
+    }
+
+    /// The gap between sashiko dashes, mm (always within [`Self::GAP`]).
+    pub fn gap(&self) -> f64 {
+        clamp(self.gap, Self::DEFAULT_GAP, Self::GAP)
     }
 
     /// The stitch type's id, or `unknown` for settings from a newer version this one can't read.

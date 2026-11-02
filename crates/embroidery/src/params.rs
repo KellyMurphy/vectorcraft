@@ -8,7 +8,7 @@
 use std::ops::RangeInclusive;
 
 use serde_json::{Value, json};
-use vectorcraft_doc::{StitchKind, StitchSettings, Underlay};
+use vectorcraft_doc::{RunStyle, StitchKind, StitchSettings, Underlay};
 
 /// What a setting holds, for parsing, the panel's generic row and the parameter description.
 #[derive(Clone, Debug)]
@@ -185,17 +185,24 @@ pub static PARAMS: &[Param] = &[
     },
     Param {
         key: "width",
-        value: ValueKind::Mm(*StitchSettings::WIDTH.start()..=*StitchSettings::PATTERN_WIDTH.end()),
-        kinds: &[K::Satin, K::Zigzag, K::PatternBorder],
+        // The widest range any stitch takes (chain and stem start narrower than satin); `suits` checks
+        // each stitch type's own.
+        value: ValueKind::Mm(*StitchSettings::RUN_WIDTH.start()..=*StitchSettings::PATTERN_WIDTH.end()),
+        kinds: &[K::Satin, K::Zigzag, K::PatternBorder, K::Running],
         label: "Width:",
         help: "How wide the column, zigzag or border is",
-        doc: "mm (satin column or zigzag, 0.3–12; satin: the stroke width, zigzag: 3; pattern border: the band, 1–40, default the pattern's own)",
+        doc: "mm (satin column or zigzag, 0.3–12; satin: the stroke width, zigzag: 3; pattern border: the band, 1–40, default the pattern's own; running chain or stem: the loops or the slant, 0.2–6; chain 1.5, stem 0.4)",
         nullable: true,
         get: |s| json!(s.width),
         set: |s, v| s.width = f(v),
-        // Pattern borders span 1–40 mm, satins and zigzags 0.3–12 mm.
+        // Pattern borders span 1–40 mm, chain and stem running stitch 0.2–6 mm, satins and
+        // zigzags 0.3–12 mm.
         suits: Some(|s| {
-            let r = if s.kind == K::PatternBorder { StitchSettings::PATTERN_WIDTH } else { StitchSettings::WIDTH };
+            let r = match s.kind {
+                K::PatternBorder => StitchSettings::PATTERN_WIDTH,
+                K::Running => StitchSettings::RUN_WIDTH,
+                _ => StitchSettings::WIDTH,
+            };
             match s.width {
                 Some(w) if !r.contains(&w) => Err(format!("`width` must be from {} to {} mm for these stitches", r.start(), r.end())),
                 _ => Ok(()),
@@ -217,10 +224,10 @@ pub static PARAMS: &[Param] = &[
     Param {
         key: "flip",
         value: ValueKind::Flag,
-        kinds: &[K::PatternBorder],
+        kinds: &[K::PatternBorder, K::Running],
         label: "Flip",
         help: "Mirror the pattern across the path",
-        doc: "bool (pattern border: mirrored across the path)",
+        doc: "bool (pattern border: mirrored across the path; running stem: slanted the other way)",
         nullable: false,
         get: |s| json!(s.flip),
         set: |s, v| s.flip = flag(v),
@@ -308,6 +315,30 @@ pub static PARAMS: &[Param] = &[
         nullable: true,
         get: |s| json!(s.puff()),
         set: |s, v| s.puff = f(v),
+        suits: None,
+    },
+    Param {
+        key: "style",
+        value: ValueKind::Choice(&["single", "chain", "stem", "backstitch", "sashiko"]),
+        kinds: &[K::Running],
+        label: "Style:",
+        help: "How the line is sewn: single stitches or a hand-stitch look",
+        doc: "single|chain|stem|backstitch|sashiko (running; single: plain stitches; chain: linked loops `width` wide; stem: slanted overlapping stitches `width` wide; backstitch: each stitch forward then half a stitch back; sashiko: dashes sewn three times with `gap` between)",
+        nullable: true,
+        get: |s| json!(s.style.id()),
+        set: |s, v| s.style = text(v).as_deref().and_then(RunStyle::parse).unwrap_or_default(),
+        suits: None,
+    },
+    Param {
+        key: "gap",
+        value: ValueKind::Mm(StitchSettings::GAP),
+        kinds: &[K::Running],
+        label: "Gap:",
+        help: "The space between sashiko dashes",
+        doc: "mm (running sashiko: between dashes, 0.5–6; 1.5)",
+        nullable: true,
+        get: |s| json!(s.gap()),
+        set: |s, v| s.gap = f(v),
         suits: None,
     },
     Param {

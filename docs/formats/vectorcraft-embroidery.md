@@ -31,7 +31,9 @@ are kept but have no effect.
 | `length` | number, mm | running, bean, fill, pattern border | 0.3–12 | fill 4; pattern border 1.5; others 2.5 |
 | `spacing` | number, mm | satin, zigzag, satin shape, fill, auto, pattern border (its satin parts) | 0.1–10 | zigzag 2; others 0.4 |
 | `angle` | number, degrees counter-clockwise | fill | any | 0 |
-| `width` | number, mm | satin, zigzag; pattern border | satin and zigzag 0.3–12; pattern border 1–40 | satin: the stroke width (3 without one); zigzag 3; pattern border: the pattern's own width |
+| `width` | number, mm | satin, zigzag; pattern border; running (chain and stem styles) | satin and zigzag 0.3–12; pattern border 1–40; running 0.2–6 | satin: the stroke width (3 without one); zigzag 3; pattern border: the pattern's own width; chain 1.5, stem 0.4 (not the stroke) |
+| `style` | string: `single` `chain` `stem` `backstitch` `sashiko` | running | | `single`. See [Running stitch styles](#running-stitch-styles). |
+| `gap` | number, mm | running (sashiko style) | 0.5–6 | 1.5 |
 | `thread` | `[r, g, b]`, each 0–255 (sRGB) | all | | the stroke's colour for stitches along the path, the fill's for fills, satin shapes and auto |
 | `pull` | number, mm | satin, satin shape, fill, auto | 0–3 | 0 |
 | `pullPercent` | number, % | satin, satin shape, fill, auto | 0–30 | 0 |
@@ -41,7 +43,7 @@ are kept but have no effect.
 | `motif` | string | fill | a carve motif's id: built in `diamonds` `waves` `circles` `scales` `herringbone`, or one of `motifs` | none |
 | `motifSize` | number, mm | fill with a motif | 3–60 | 10 |
 | `pattern` | string, a border pattern id | pattern border | | `waves` |
-| `flip` | boolean | pattern border | | false |
+| `flip` | boolean | pattern border; running (stem style) | | false. A pattern border's pattern mirrored across the path; a stem stitch slanted to the right of the path instead of the left. |
 | `passes` | integer, odd | bean | 3–9 | 3 |
 | `thinUnder` | number, mm | auto | 0.2–3 | 1 |
 | `wideOver` | number, mm | auto | 2–12, and at least `thinUnder` | 7 |
@@ -80,7 +82,7 @@ unsewn (see [Compatibility](#compatibility)).
 
 | `kind` | What is sewn |
 |---|---|
-| `running` | Single stitches along the path. |
+| `running` | Stitches along the path: single ones, or a hand-stitch look by `style` (see [Running stitch styles](#running-stitch-styles)). |
 | `bean` | Running stitch with each stitch sewn `passes` times. |
 | `satin` | A zigzag column centred on the path, `width` wide. With `rails`, the object's two longest subpaths are the column's edges and other subpaths crossing both set the stitch direction. |
 | `zigzag` | An open zigzag along the path, `width` wide, a point every `spacing`. |
@@ -92,6 +94,24 @@ unsewn (see [Compatibility](#compatibility)).
 | `auto` | Chosen per shape (per letter, for type) by stroke width: under `thinUnder` a bean outline, over `wideOver` a fill with a satin border, between them a satin shape. |
 
 Type objects are sewn letter by letter, each letter in its characters' colour unless `thread` is set.
+
+### Running stitch styles
+
+A running stitch's `style` sews its line as a machine version of a hand stitch. Each style repeats a figure
+along the line, stretched or shrunk to a whole number of repeats between sharp corners (turns over 30°),
+where it starts again; no stitch is longer than 12 mm (longer ones are split). Lines that meet are each
+sewn on their own (a single running stitch sews them as one network).
+
+| `style` | What is sewn |
+|---|---|
+| `single` | Single stitches `length` long. |
+| `chain` | Linked loops, each `length` long and `width` wide: the loop's left side forward to its tip, its right side back to its start, then the right side again to the tip, where the next loop starts. |
+| `stem` | Stitches about `length` long slanting across a band `width` wide, from the right edge to the left edge (the reverse with `flip`), each starting halfway back along the one before. |
+| `backstitch` | A needle point every half `length`; from each, a stitch `length` long forward and half of one back, after a first half step forward and back, so every stretch is sewn three times. |
+| `sashiko` | Dashes about `length` long with gaps about `gap` long, each dash sewn forward, back and forward, each gap crossed by one stitch; the line starts and ends on a dash (a closed line without corners has a gap where it closes too). Dashes over 4 mm are sewn in several stitches to follow curves. |
+
+A reader that doesn't know `style` sews the line as single running stitch (and keeps the member, as
+[Compatibility](#compatibility) says). Builds from before 2026-11-01 do so.
 
 ## Embroidery setup (`document.embroidery`)
 
@@ -207,8 +227,9 @@ Sections (each changes one setting; the others keep their defaults):
 | D | `fillDensity` | 18 mm fill squares at row spacing 0.3, 0.4, 0.5 and 0.6 mm. |
 | E | `fillAngle` | 18 mm fill squares at 0°, 45°, 90° and 135°. |
 | F | `underlay` | 5 mm satin columns with each satin underlay (`auto` included), then 18 mm fill squares with each fill underlay. |
-| H | `puff` | 3 mm puff (satin over 3 mm foam) 3, 4, 5, 6 and 8 mm wide; the design stops for the foam after its title. |
 | G | `lettering` | The word "Hag" in auto stitches at 4, 6, 8, 10, 15 and 20 mm type sizes (left out when no type face is available). |
+| H | `runStyles` | Running stitch in each `style` (single, chain, stem, backstitch, sashiko) on a 22 × 14 mm S curve ending in a sharp corner. |
+| I | `puff` | 3 mm puff (satin over 3 mm foam) 3, 4, 5, 6 and 8 mm wide; the design stops for the foam after its title. Last, since anything sewn after the foam is laid sews through it (before 2026-11-01 it was H). |
 
 ## Compatibility
 
@@ -217,7 +238,7 @@ by a newer VectorCraft opens in an older one. A reader must:
 
 - **Keep members it doesn't know**, in a `stitch` object, in `document.embroidery`, in a pattern, in a part, in
   `sewOut` or in a swatch, and write them back when it saves.
-- **Keep a `stitch` object it can't read** (a `kind` or `underlay` value it doesn't know, or a value of the
+- **Keep a `stitch` object it can't read** (a `kind`, `underlay` or `style` value it doesn't know, or a value of the
   wrong type, such as `thread` past 255) exactly as written, not sew that object, and warn. Choosing a
   stitch for the object replaces it.
 - **Keep a `fabric` it can't read** (a value of a type it doesn't expect) exactly as written, and sew as if

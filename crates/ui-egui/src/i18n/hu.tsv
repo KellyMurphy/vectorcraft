@@ -6394,3 +6394,18 @@ breakText	Glyphs	Glifák
 	Stitch Fill Tool	Kitöltés hímzéssel eszköz
 	Stitch Fill	Kitöltés hímzéssel
 	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Kattintson egy zárt területbe, hogy a színével kihímezze; Alt-kattintással a körvonalát
+	Gap:	Hézag:
+	Single	Egyszeres
+	Stem	Száröltés
+	Backstitch	Visszaöltés
+	Sashiko	Sashiko
+	Run Styles	Előöltés-stílusok
+	How the line is sewn: single stitches or a hand-stitch look	Hogyan varrja a vonalat: egyes öltésekkel vagy kézi hímzés hatásával
+	The space between sashiko dashes	A sashiko szakaszai közötti hézag
+	How wide the chain's loops or the stem's slant are	Milyen szélesek a lánc hurkai vagy a száröltés dőlése
+	Slant the stem stitches the other way	A száröltések döntése a másik irányba
+	Single stitches along the path.	Egyes öltések a görbe mentén.
+	Linked loops, like a hand chain stitch.	Egymásba kapcsolódó hurkok, mint a kézi láncöltés.
+	Slanted stitches overlapping by half: a twisted cord.	Ferde öltések félig átfedve: sodrott zsinór.
+	Each stitch forward, then half a stitch back: a heavier, smooth line.	Minden öltés előre, majd fél öltés vissza: erősebb, egyenletes vonal.
+	Bold dashes with gaps between them.	Erőteljes szakaszok, köztük hézaggal.

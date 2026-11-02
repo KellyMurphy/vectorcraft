@@ -6009,3 +6009,18 @@ breakText	Glyphs	Glyph
 	Stitch Fill Tool	Công cụ Tô bằng mũi khâu
 	Stitch Fill	Tô bằng mũi khâu
 	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Nhấp vào bên trong một vùng kín để thêu nó bằng màu của nó; Alt-nhấp để thêu đường viền
+	Gap:	Khoảng hở:
+	Single	Đơn
+	Stem	Mũi thân cây
+	Backstitch	Mũi đột
+	Sashiko	Sashiko
+	Run Styles	Kiểu mũi lược
+	How the line is sewn: single stitches or a hand-stitch look	Cách khâu đường: mũi đơn hoặc kiểu thêu tay
+	The space between sashiko dashes	Khoảng hở giữa các nét sashiko
+	How wide the chain's loops or the stem's slant are	Độ rộng của vòng xích hoặc độ nghiêng của mũi thân cây
+	Slant the stem stitches the other way	Nghiêng các mũi thân cây sang phía bên kia
+	Single stitches along the path.	Mũi đơn dọc theo đường dẫn.
+	Linked loops, like a hand chain stitch.	Các vòng nối nhau, như mũi xích thêu tay.
+	Slanted stitches overlapping by half: a twisted cord.	Các mũi xiên chồng lên nhau một nửa: như sợi dây xoắn.
+	Each stitch forward, then half a stitch back: a heavier, smooth line.	Mỗi mũi tiến lên, rồi lùi nửa mũi: đường đậm và mượt hơn.
+	Bold dashes with gaps between them.	Các nét đậm có khoảng hở xen giữa.

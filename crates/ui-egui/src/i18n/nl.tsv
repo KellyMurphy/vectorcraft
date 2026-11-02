@@ -6356,3 +6356,18 @@ breakText	Glyphs	Glyphs
 	Stitch Fill Tool	Gereedschap Borduurvulling
 	Stitch Fill	Borduurvulling
 	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Klik in een gesloten vlak om het in zijn kleur te borduren; Alt-klik borduurt de omtrek
+	Gap:	Tussenruimte:
+	Single	Enkel
+	Stem	Stengelsteek
+	Backstitch	Achtersteek
+	Sashiko	Sashiko
+	Run Styles	Rijgsteekstijlen
+	How the line is sewn: single stitches or a hand-stitch look	Hoe de lijn wordt gestikt: losse steken of een handgeborduurde look
+	The space between sashiko dashes	De ruimte tussen de sashiko-streepjes
+	How wide the chain's loops or the stem's slant are	Hoe breed de lusjes van de ketting of de schuinte van de stengelsteek zijn
+	Slant the stem stitches the other way	De stengelsteken naar de andere kant laten hellen
+	Single stitches along the path.	Losse steken langs het pad.
+	Linked loops, like a hand chain stitch.	Aaneengeschakelde lusjes, zoals een met de hand gemaakte kettingsteek.
+	Slanted stitches overlapping by half: a twisted cord.	Schuine steken die voor de helft overlappen: een gedraaid koord.
+	Each stitch forward, then half a stitch back: a heavier, smooth line.	Elke steek vooruit, dan een halve steek terug: een zwaardere, gladde lijn.
+	Bold dashes with gaps between them.	Krachtige streepjes met ruimte ertussen.

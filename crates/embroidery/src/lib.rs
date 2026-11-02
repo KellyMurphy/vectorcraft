@@ -39,6 +39,7 @@ pub mod penstrokes;
 mod pes;
 pub mod preview;
 pub mod rails;
+pub mod run_styles;
 pub mod skeleton;
 pub mod testsheet;
 pub mod threads;

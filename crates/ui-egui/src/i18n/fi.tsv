@@ -6438,3 +6438,18 @@ breakText	Glyphs	Merkit
 	Stitch Fill Tool	Kirjo alue -työkalu
 	Stitch Fill	Kirjo alue
 	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Napsauta suljetun alueen sisällä kirjoaksesi sen sen värillä; Alt-napsautus kirjoo ääriviivan
+	Gap:	Väli:
+	Single	Yksinkertainen
+	Stem	Varsipisto
+	Backstitch	Jälkipisto
+	Sashiko	Sashiko
+	Run Styles	Etupistotyylit
+	How the line is sewn: single stitches or a hand-stitch look	Miten viiva ommellaan: yksittäiset pistot tai käsin kirjotun näköinen
+	The space between sashiko dashes	Sashiko-viivojen välinen tyhjä tila
+	How wide the chain's loops or the stem's slant are	Kuinka leveitä ketjun silmukat tai varsipiston vinous ovat
+	Slant the stem stitches the other way	Kallista varsipistot toiseen suuntaan
+	Single stitches along the path.	Yksittäiset pistot polkua pitkin.
+	Linked loops, like a hand chain stitch.	Toisiinsa liittyvät silmukat kuin käsin tehdyssä ketjupistossa.
+	Slanted stitches overlapping by half: a twisted cord.	Vinot pistot puoliksi päällekkäin: kierretty nyöri.
+	Each stitch forward, then half a stitch back: a heavier, smooth line.	Jokainen pisto eteen, sitten puoli pistoa taakse: vahvempi, tasainen viiva.
+	Bold dashes with gaps between them.	Vahvat viivat ja välit niiden välissä.

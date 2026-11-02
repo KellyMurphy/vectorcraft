@@ -10,7 +10,8 @@ use std::sync::Arc;
 use kurbo::{Point, Shape};
 use vectorcraft_color::{Color, Paint};
 use vectorcraft_doc::{
-    Appearance, Artboard, CharStyle, Document, LayerColor, Node, NodeKind, SewOut, SewSwatch, StitchKind, StitchSettings, TextObject, Underlay, Unit,
+    Appearance, Artboard, CharStyle, Document, LayerColor, Node, NodeKind, RunStyle, SewOut, SewSwatch, StitchKind, StitchSettings, TextObject,
+    Underlay, Unit,
 };
 use vectorcraft_geom::{Anchor, PathData, Rect, SubPath};
 
@@ -37,6 +38,9 @@ const LABEL_GAP: f64 = 1.5;
 const LABEL_STITCH: f64 = 1.0;
 /// Satin columns' length and fill squares' side, mm.
 const SATIN_LEN: f64 = 30.0;
+/// A run styles swatch's size, mm.
+const RUN_W: f64 = 22.0;
+const RUN_H: f64 = 14.0;
 const SQUARE: f64 = 18.0;
 /// The pull compensation marks: their length, and their gap from the column's end, mm.
 const TICK: f64 = 3.0;
@@ -54,7 +58,7 @@ pub struct Section {
     sewn: &'static str,
 }
 
-pub const SECTIONS: [Section; 8] = [
+pub const SECTIONS: [Section; 9] = [
     Section { id: "satinWidth", letter: 'A', name: "Satin Width", sewn: "SATIN WIDTH MM" },
     Section { id: "satinDensity", letter: 'B', name: "Satin Density", sewn: "SATIN SPACING MM" },
     Section { id: "pullCompensation", letter: 'C', name: "Pull Compensation", sewn: "PULL COMP MM" },
@@ -62,7 +66,9 @@ pub const SECTIONS: [Section; 8] = [
     Section { id: "fillAngle", letter: 'E', name: "Fill Angle", sewn: "FILL ANGLE" },
     Section { id: "underlay", letter: 'F', name: "Underlay", sewn: "UNDERLAY" },
     Section { id: "lettering", letter: 'G', name: "Lettering", sewn: "LETTERING MM" },
-    Section { id: "puff", letter: 'H', name: "Puff", sewn: "PUFF 3MM FOAM" },
+    Section { id: "runStyles", letter: 'H', name: "Run Styles", sewn: "RUN STYLES" },
+    // Last: everything sewn after the foam is laid would sew through it.
+    Section { id: "puff", letter: 'I', name: "Puff", sewn: "PUFF 3MM FOAM" },
 ];
 
 /// A test sheet: the document, and where its sections went.
@@ -215,6 +221,14 @@ fn cells(id: &str) -> Result<Vec<Cell>, String> {
             .into_iter()
             .map(|w| satin_cell(w, StitchSettings { puff: Some(3.0), ..satin(w) }, num(w), format!("Puff {} mm wide on 3 mm foam", num(w))))
             .collect(),
+        "runStyles" => RunStyle::ALL
+            .into_iter()
+            .map(|style| {
+                let s = StitchSettings { style, ..settings(StitchKind::Running) };
+                let make: Make = Box::new(move |d, at| vec![run_line(d, at, s.clone())]);
+                Cell { w: RUN_W, h: RUN_H, label: style.id().to_ascii_uppercase(), words: format!("Running stitch: {}", style.label()), make }
+            })
+            .collect(),
         "lettering" => {
             let mut out = vec![];
             for size in [4.0, 6.0, 8.0, 10.0, 15.0, 20.0] {
@@ -333,6 +347,22 @@ fn ticks(d: &mut Document, top: Point, width: f64) -> Node {
     }
     let mut n = Node::path(d.alloc_id(), lines(&runs, false), Appearance::basic(Paint::None, thread_paint(), 0.3 / PT_MM));
     n.extras_mut().stitch = Some(Box::new(StitchSettings { length: Some(LABEL_STITCH), ..settings(StitchKind::Running) }));
+    n
+}
+
+/// A run styles swatch from `top` (its top-left, mm): an S curve, then a sharp turn into a
+/// straight, so the style shows on curves and how it starts again at a corner.
+fn run_line(d: &mut Document, top: Point, s: StitchSettings) -> Node {
+    let curve = RUN_W * 0.7;
+    let mut pts: Vec<Point> = (0..=28)
+        .map(|k| {
+            let x = curve * k as f64 / 28.0;
+            Point::new(top.x + x, top.y + RUN_H / 2.0 + RUN_H * 0.3 * (std::f64::consts::TAU * x / curve).sin())
+        })
+        .collect();
+    pts.push(Point::new(top.x + RUN_W, top.y));
+    let mut n = Node::path(d.alloc_id(), lines(&[pts], false), Appearance::basic(Paint::None, thread_paint(), 0.3 / PT_MM));
+    n.extras_mut().stitch = Some(Box::new(s));
     n
 }
 

@@ -5990,3 +5990,18 @@ breakText	Glyphs	글리프
 	Stitch Fill Tool	스티치 채우기 도구
 	Stitch Fill	스티치 채우기
 	Click inside any closed area to stitch it in its colour; Alt-click to outline it	닫힌 영역 안을 클릭하면 그 색으로 자수합니다. Alt-클릭하면 윤곽선을 자수합니다
+	Gap:	간격:
+	Single	단일
+	Stem	스템 스티치
+	Backstitch	백 스티치
+	Sashiko	사시코
+	Run Styles	러닝 스티치 스타일
+	How the line is sewn: single stitches or a hand-stitch look	선을 바느질하는 방식: 홑 스티치 또는 손자수 느낌
+	The space between sashiko dashes	사시코 점선 사이의 간격
+	How wide the chain's loops or the stem's slant are	체인 고리의 너비 또는 스템 스티치의 기울기 너비
+	Slant the stem stitches the other way	스템 스티치를 반대쪽으로 기울입니다
+	Single stitches along the path.	패스를 따르는 홑 스티치.
+	Linked loops, like a hand chain stitch.	손으로 놓은 체인 스티치처럼 이어진 고리.
+	Slanted stitches overlapping by half: a twisted cord.	절반씩 겹치는 비스듬한 스티치: 꼰 끈처럼.
+	Each stitch forward, then half a stitch back: a heavier, smooth line.	한 땀 앞으로, 반 땀 뒤로: 더 굵고 매끄러운 선.
+	Bold dashes with gaps between them.	사이에 간격이 있는 굵은 점선.

@@ -75,8 +75,8 @@ the features needed. Many are already built:
   are actually satin (corners, rails, satin shape) and live type.
 - *Sequencing gaps "trims, ties"*: trims and ties are done. What's left is start/stop points, branching and
   travel under fills.
-- *"the 18 P0 features"*: the 62-feature catalog isn't in the repository, so the P0 list below is rebuilt from
-  the Phase 1 bullets. Add the catalog (e.g. as `plan/embroidery-catalog.md`) to check the mapping.
+- *"the 18 P0 features"*: the P0 list below was rebuilt from the Phase 1 bullets. The 62-feature catalog is
+  now in [embroidery-catalog.md](embroidery-catalog.md), with each feature's status (2026-11-01).
 - *Machine formats in Phase 3*: PES (Brother, Baby Lock), JEF (Janome) and EXP (Melco, BERNINA) are what home
   and small-shop machines read. DST alone shuts most hobbyists out, so this plan moves PES/JEF/EXP into Phase 1
   and leaves VP3 and the rest for later.
@@ -711,6 +711,141 @@ flat) with no puckering beyond the tatami swatch; the appliqué piece fits its p
 **Gate G3 (fabric):** each specialty fill on a swatch, plus a design in each new format sewn on a machine that
 reads it.
 
+## Catalog gaps — E11
+
+Checking the 62-feature catalog ([embroidery-catalog.md](embroidery-catalog.md), 2026-11-01) found features,
+or pieces of features, that no step above covers. E11 adds them. None needs a sew-out before it starts, so the
+P0 and P1 steps can run now, ahead of G1; each new stitch look gets a test sheet section and is checked on
+fabric at the next gate. Each step ships whole under the ground rules (command, panel, translations, guide
+row, tests, fuzzing for new input, spec + schema + drift test for a new format, MCP-ready).
+
+| Step | What | Priority | Size |
+|---|---|---|---|
+| **E11.1** Run styles (**done**) | Chain, stem, backstitch and sashiko as running stitch styles | P0 | M |
+| **E11.2** Split satin | Wide satin stitches split into shorter ones, split points staggered | P0 | M |
+| **E11.3** Stitch styles | Named sets of stitch settings, applied with one click, kept in documents and the library | P1 | M |
+| **E11.4** Multi-hoop and hoop rotation | Rotate the design in the hoop; split a large design into hoopings with alignment marks | P1 | L |
+| **E11.5** Batch export | Write several machine formats in one export | P1 | S |
+| **E11.6** Deferred stitch generation | Regenerate stitches when an edit ends, not on every drag frame | P1 | S |
+| **E11.7** Centreline and satin outlines | Sew a thin shape along its centre line; click-to-outline in satin as well as running | P1 | M |
+| **E11.8** Redwork | Line art sewn as one continuous run, each line at most twice | P2 | M |
+| **E11.9** Batch names | One design per name from a list | P2 | M |
+| **E11.10** Keyboard collections | Designs mapped to keys and typed like letters | P2 | S |
+| **E11.11** Design library | Browse folders of designs with thumbnails and search | P2 | M |
+| **E11.12** Line carving and closed-object continue | Carve along a drawn line through a fill; extend a closed object | P2 | M |
+| **E11.13** Hand-stitch effects | Candlewicking, fringe, eyelets, jagged edge | P2 | L |
+| **E11.14** Photo stitch | Photos to stitched shading | P2 | XL |
+| **E11.15** Specialty techniques | CutWork, faux-merrow edges, sequins, chenille (as users ask) | P2 | L each |
+
+Order: E11.1 and E11.2 first (they close P0), then E11.3, E11.4, E11.5, E11.6, E11.7. The P2 steps come
+after G2, in the order users ask for them.
+
+### E11.1 Run styles (M) — done 2026-11-01
+
+As built: `crates/embroidery/src/run_styles.rs`; `style`, `gap`, and `width` and `flip` for Running in the
+settings table; a picture picker in the panel's Running section; test sheet section H (Run Styles, with Puff
+moved to I so the foam stays last). Settled by looking at it in the app: stem stitches' return moves are short
+reverse slants (the hand stitch hides them behind the fabric, which a machine can't), so the slant is narrow
+by default (0.4 mm) and the line reads as a cord, not a zigzag; and backstitch sews each stitch `length`
+long and steps back half of one (forward stitches two lengths long cut across curves). The original plan:
+
+A `style` setting on Running: `"single"` (today's running stitch, the default), `"chain"`, `"stem"`,
+`"backstitch"` and `"sashiko"`. Triple and five-pass runs are already Bean's odd `passes`. Machine versions
+of hand stitches, generated from the path:
+
+- **Chain:** a row of small closed loops along the path, each loop sewn as a teardrop of short stitches
+  that starts where the last one ended. Settings: `length` (loop length), `width`.
+- **Stem:** short stitches slanted to one side of the path, each one overlapping the last by half its
+  length, so they read as a twisted cord. Settings: `length`, `width` (the slant's offset), `side`.
+- **Backstitch:** each stitch steps forward two lengths and back one, so every visible stitch is sewn
+  twice and the line is heavier than a single run.
+- **Sashiko:** visible dashes with gaps between them. Each dash is a triple stitch; the gap is travelled
+  by tiny stitches hidden under the next dash's first pass. Settings: `length` (dash), `gap`.
+
+Each obeys the shortest and longest stitch limits, ties in and off as runs do, and follows corners
+(a style's pattern restarts at a sharp corner, as Pattern Border's does). Tests: every style on straight,
+curved and cornered paths stays within the limits and on its side of the path; repeatable. Test sheet: a
+run-styles section.
+
+### E11.2 Split satin (M)
+
+A satin stitch wider than `splitAt` (default 7 mm) is split into the fewest stitches no longer than
+`splitLength` (default 4 mm). The split points move from one zig to the next (a repeating offset, or a
+seeded random one) so they don't line up into a visible seam. Settings on Satin, Satin Shape, satin between
+rails and Zigzag: `split: "off" | "auto"` (default auto), `splitAt`, `splitLength`, `splitPattern:
+"stagger" | "random"`. Today a wider stitch is capped at the machine's longest stitch; with split on, the
+column can be any width. The checker's long-stitch warning on satin offers "Split" as a fix (E8.7). Tests:
+no stitch over `splitLength` in a split column, split points never in line on neighbouring zigs, widths
+from 1 to 30 mm. Test sheet: split columns at 8, 12 and 20 mm.
+
+### E11.3 Stitch styles (M)
+
+A stitch style is a named set of stitch settings: the kind and any of its parameters. Styles live in the
+document (`Document.embroidery.styles`) and in the library folder (a `styles` subfolder), saved as a
+`.vcstyle` file (spec, schema, drift test). Commands: `embroidery.styles`, `embroidery.saveStyle` (from the
+selection's settings), `embroidery.applyStyle`, `embroidery.removeStyle`, `embroidery.loadStyle`. Applying a
+style copies its settings onto the selection (the object then keeps no link to the style, as fabric profiles
+do; linking can come later if asked for). The Embroidery panel gets a Styles menu with Save Style… and the
+library's entries. A few starter styles are generated in code (small lettering satin, bold border, light
+background fill). Graphic styles (the editor's) gain the stitch settings too, so a graphic style can carry
+both look and stitching.
+
+### E11.4 Multi-hoop and hoop rotation (L)
+
+- **E11.4a Rotate in hoop.** `embroidery.setup {hoopRotation: 0 | 90 | 180 | 270}` turns the design as it
+  is written to the machine, so a tall design fits a wide hoop. The hoop fit check and the export use it.
+- **E11.4b Split into hoopings.** `embroidery.splitHoops {hoop, overlap}` divides a design too big for the
+  hoop into hoopings laid out on a grid (or placed by hand on the canvas as hoop frames). Objects crossing
+  a seam are cut there, with `overlap` mm of stitching carried past the seam so the pieces meet without a
+  gap; fills cut across rows, satin cut square to the column. Each hooping gets alignment marks (running
+  stitch crosses sewn first and last, where the next hooping starts) and an optional basting box. Export
+  writes one file per hooping, in sewing order, as the per-artboard export does; the worksheet lists them.
+  Tests: every object's stitches land in exactly one hooping (plus the overlap), marks line up between
+  neighbours. Test sheet: a two-hooping design (gate G2).
+
+### E11.5 Batch export (S)
+
+`document.export {formats: ["dst", "pes", …]}`, and checkboxes in the export dialog, write the design in
+each format at once (`name.dst`, `name.pes`…), combined with the per-artboard and per-hooping export.
+
+### E11.6 Deferred stitch generation (S)
+
+A preference, **Regenerate Stitches: While Editing | When the Edit Ends**. With When the Edit Ends, a
+tool's drag shows the object's last stitches (or its outline, once the shape has moved away from them) and
+regenerates at the Commit. Large designs stay smooth to edit; the stitch cache already limits work to the
+changed objects. Budgeted in `vectorcraft-cli perf`.
+
+### E11.7 Centreline and satin outlines (M)
+
+Click-to-outline already exists (E8.6b: Alt-click with the Stitch Fill tool adds a running-stitch outline).
+The tool gains: **Satin outline:** `embroidery.fillAt {outline: "satin"}` (Alt-Shift-click) sews the edge as
+a satin border instead. **Centreline:** a click on a thin shape (a traced line,
+handwriting) adds a running or satin path along its centre line, from the skeleton code Satin Shape uses
+(`skeleton.rs`); `embroidery.digitize {lines: "centreline"}` uses it for thin traced parts.
+
+### E11.8–E11.15 (P2)
+
+- **E11.8 Redwork.** `embroidery.redwork` routes selected running lines as one continuous path that sews
+  each line at most twice (a double-run walk over the line network from `network.rs`), with no trims.
+- **E11.9 Batch names.** A type object as the template and a list of names (pasted, or a text/CSV file):
+  one design per name, as artboards or files, each fitted to the template's width and checked against the
+  hoop.
+- **E11.10 Keyboard collections.** A `.vcfont` whose glyphs are whole designs: map designs to characters,
+  then type with them using the existing lettering.
+- **E11.11 Design library.** A browser panel for folders of designs (`.vectorcraft` and machine files) with
+  thumbnails drawn by the stitch renderer and search by name, size, colours and stitch count.
+- **E11.12 Line carving and closed-object continue.** A carving line drawn over a fill shifts the
+  penetrations along it so it shows as an engraved line; the pen can extend a closed path by reopening it
+  at a picked point.
+- **E11.13 Hand-stitch effects.** Candlewicking (knot clusters along a path), fringe (loops left long for
+  cutting), eyelets (a satin ring round a hole, with a stop for cutting) and jagged-edge fills (rows whose
+  ends are randomized).
+- **E11.14 Photo stitch.** A photo reduced to a few threads, each sewn as running lines whose spacing follows
+  brightness.
+- **E11.15 Specialty techniques.** CutWork (cutting-needle paths with stops), faux-merrow patch edges (a
+  heavy satin edge for patches), sequins and chenille: each when a user who can test it asks, and only
+  where the machine format documents the codes.
+
 ## Sew-out gates
 
 Only the user can sew, so gates are batched: the E6.6 kit makes the designs, the user sews and fills in the
@@ -734,8 +869,8 @@ code), renders compared by eye, and the independent reader for each machine form
    load a palette as a `.vcthreads` chart and match colours to it on export. (a) now, (c) later, is the
    safe default.
 3. **Fabric gates.** Which machine and fabrics the gate sew-outs use.
-4. **The research catalog.** Add the 62-feature catalog to the repository (or `plan/`) so the P0/P1/P2 mapping
-   can be checked item by item.
+4. **The research catalog.** **Done (2026-11-01):** [embroidery-catalog.md](embroidery-catalog.md), checked
+   item by item. Open: whether the features no step covers yet (listed there) get steps.
 5. **The starter embroidery font (E8.1d).** (a) ship none, users digitize their own; (b) we digitize one
    original font with the editor; (c) we digitize one traced from an OFL font, renamed and under the OFL,
    in craft-fonts. (b) or (c) is needed for G2's lettering sample, unless the user sews it with an
@@ -759,5 +894,5 @@ code), renders compared by eye, and the independent reader for each machine form
 ## Order of work
 
 E5.5 and E5.6 done → E6.1–E6.6 → E7 (E7.1–E7.3 first, as the quality basics; E7.12 formats can run in
-parallel) → G1 → E8 (in the order of its table: E8.5, E8.8, E8.1, E8.2, E8.4, then E8.3 after G1, E8.7, E8.6), with E10 (E10.1–E10.2 first) alongside → G2 and GC → E9 → G3. `ROADMAP.md`'s E row and `docs/embroidery.md` are updated as each step
+parallel) → G1 → E8 (in the order of its table: E8.5, E8.8, E8.1, E8.2, E8.4, then E8.3 after G1, E8.7, E8.6), with E10 (E10.1–E10.2 first) alongside and E11's P0 and P1 steps (E11.1–E11.7) now, before G1 → G2 and GC → E9 and E11's P2 steps → G3. `ROADMAP.md`'s E row and `docs/embroidery.md` are updated as each step
 lands.

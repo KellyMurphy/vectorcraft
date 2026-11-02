@@ -100,6 +100,8 @@ fn full_stitch() -> StitchSettings {
         spacing: Some(1.0),
         angle: 10.0,
         width: Some(1.0),
+        style: vectorcraft_doc::RunStyle::Sashiko,
+        gap: Some(2.0),
         thread: Some([1, 2, 3]),
         pull: Some(1.0),
         pull_percent: Some(5.0),

@@ -6424,3 +6424,18 @@ breakText	Glyphs	Glyphes
 	Stitch Fill Tool	Outil Remplissage brodé
 	Stitch Fill	Remplissage brodé
 	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Cliquez dans une zone fermée pour la broder dans sa couleur ; Alt-clic pour broder son contour
+	Gap:	Écart :
+	Single	Simple
+	Stem	Point de tige
+	Backstitch	Point arrière
+	Sashiko	Sashiko
+	Run Styles	Styles de point droit
+	How the line is sewn: single stitches or a hand-stitch look	Comment la ligne est brodée : points simples ou aspect de broderie à la main
+	The space between sashiko dashes	L’écart entre les tirets du sashiko
+	How wide the chain's loops or the stem's slant are	Largeur des boucles de la chaînette ou de l’inclinaison du point de tige
+	Slant the stem stitches the other way	Incliner les points de tige de l’autre côté
+	Single stitches along the path.	Points simples le long du tracé.
+	Linked loops, like a hand chain stitch.	Boucles enchaînées, comme une chaînette brodée à la main.
+	Slanted stitches overlapping by half: a twisted cord.	Points inclinés qui se chevauchent à moitié : un cordon torsadé.
+	Each stitch forward, then half a stitch back: a heavier, smooth line.	Chaque point en avant, puis un demi-point en arrière : une ligne plus marquée et régulière.
+	Bold dashes with gaps between them.	Tirets marqués séparés par des espaces.

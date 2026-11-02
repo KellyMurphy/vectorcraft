@@ -140,6 +140,15 @@ pub fn kind(ctx: &egui::Context, k: StitchKind) -> Thumb {
     })
 }
 
+/// Running stitch in `style` on the S curve, big enough to tell the styles apart.
+pub fn run_style(ctx: &egui::Context, style: vectorcraft_doc::RunStyle) -> Thumb {
+    Thumb::cached(ctx, &format!("run:{}", style.id()), || {
+        // Each style at its own default width, so the picture looks as new objects sew.
+        let s = StitchSettings { style, gap: Some(1.0), length: Some(1.8), ..StitchSettings::new(StitchKind::Running) };
+        Thumb::new(sew(&s, &wave(), 1.0, &[]))
+    })
+}
+
 /// A fill pattern on a 12 × 8 mm swatch: `stagger` rows (brick, tatami…) or a carved `motif`.
 pub fn fill_pattern(ctx: &egui::Context, stagger: u8, motif: Option<&str>) -> Thumb {
     Thumb::cached(ctx, &format!("fill:{stagger}:{}", motif.unwrap_or("")), || {
