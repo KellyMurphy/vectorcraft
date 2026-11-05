@@ -17,6 +17,9 @@ use super::{CommandSpec, Result, Session, bad, cmd, has_doc};
 const MAX_REGIONS: usize = 2000;
 /// The most rounds of adviser fixes.
 const MAX_FIX_ROUNDS: usize = 8;
+/// With `lines: centreline`, parts narrower than this (mm, their typical width) are sewn along
+/// their centre lines.
+const CENTRELINE_UNDER: f64 = 2.0;
 
 pub(crate) fn specs() -> Vec<CommandSpec> {
     vec![
@@ -25,7 +28,7 @@ pub(crate) fn specs() -> Vec<CommandSpec> {
             "Auto-Digitize",
             ["Object", "Embroidery"],
             None,
-            "{id?: an image or an Image Trace group (traced as a flat-colour logo) or a group of filled paths (default: the selection), colors?: 2-10 (the logo's colours when tracing; default found automatically), minArea?: mm² (regions smaller than this are merged into the region round them or else left unstitched; default 2), keepWhite?: false (sew white areas too: by default white is the fabric and is left out of a trace), order?: optimize|keep (optimize: the design's sewing order grouped by thread and nearest first; the default for traced art), fix?: true (make the adviser's fixes where spots come out too dense)} turn a logo into stitch objects as one undo step → {id: the group, objects (each Auto: it picks bean, satin shape or fill with a border by the area's widths as it sews), threads, merged, dropped, fixes: [labels made], findings: {error, warning, note}}",
+            "{id?: an image or an Image Trace group (traced as a flat-colour logo) or a group of filled paths (default: the selection), colors?: 2-10 (the logo's colours when tracing; default found automatically), minArea?: mm² (regions smaller than this are merged into the region round them or else left unstitched; default 2), keepWhite?: false (sew white areas too: by default white is the fabric and is left out of a trace), order?: optimize|keep (optimize: the design's sewing order grouped by thread and nearest first; the default for traced art), fix?: true (make the adviser's fixes where spots come out too dense), lines?: auto|centreline (centreline: parts narrower than 2 mm, traced lines and handwriting, are sewn as one line along their centre, running stitch under 1 mm wide, else satin as wide as the part; auto: Auto sews them as their width suits)} turn a logo into stitch objects as one undo step → {id: the group, objects (each Auto: it picks bean, satin shape or fill with a border by the area's widths as it sews), threads, merged, dropped, centrelines: parts sewn along their centre lines, fixes: [labels made], findings: {error, warning, note}}",
             has_doc,
             digitize
         ),
@@ -34,7 +37,7 @@ pub(crate) fn specs() -> Vec<CommandSpec> {
             "Stitch Fill",
             ["Object", "Embroidery"],
             None,
-            "{x: document points, y: document points (a point inside a closed area: a shape or where shapes and paths cross as Live Paint finds areas), outline?: false (a running-stitch outline instead of a fill), thread?: \"#rrggbb\" (default: the colour of the top shape there)} add that area as a new stitch object on top (Auto: fill with a border or satin shape by its width; or a running outline) as one undo step; the Stitch Fill tool's click → {id, areaMm2, outline}",
+            "{x: document points, y: document points (a point inside a closed area: a shape or where shapes and paths cross as Live Paint finds areas), outline?: false|true|running|satin (sew the area's edge instead of filling it: true or running, a running-stitch outline, the tool's Alt-click; satin, a satin border, Alt-Shift-click), centreline?: false|auto|running|satin (sew a thin area, a traced line or handwriting, as one line along its centre instead, the tool's Shift-click: auto picks running stitch for a line thinner than 1 mm, else satin as wide as the area), width?: 0.3-12 mm (a satin outline's width, default 2; a satin centre line's, default the area's own width), thread?: \"#rrggbb\" (default: the colour of the top shape there)} add that area as a new stitch object on top (Auto: fill with a border or satin shape by its width; or its outline; or its centre line) as one undo step; the Stitch Fill tool's click → {id, areaMm2, outline, centreline, type: the stitch type, widthMm: a satin's width or null}",
             has_doc,
             fill_at
         ),
@@ -101,6 +104,28 @@ fn area_mm2(doc: &Document, id: NodeId) -> f64 {
 
 fn bounds(doc: &Document, id: NodeId) -> Option<Rect> {
     doc.node(id).and_then(Node::geometric_bounds)
+}
+
+/// Region `id`'s outline (a path, or a compound path's paths together) and fill rule.
+fn outline(doc: &Document, id: NodeId) -> Option<(vectorcraft_geom::PathData, FillRule)> {
+    match &doc.node(id)?.kind {
+        NodeKind::Path { path, rule, .. } => Some((path.clone(), *rule)),
+        NodeKind::Compound { children, rule } => {
+            let subpaths = children.iter().filter_map(|c| c.path_data()).flat_map(|p| p.subpaths.iter().cloned()).collect();
+            Some((vectorcraft_geom::PathData { subpaths }, *rule))
+        }
+        _ => None,
+    }
+}
+
+/// Region `id`'s centre lines and width (mm), when it is a thin line ([`CENTRELINE_UNDER`]).
+fn thin_line(doc: &Document, id: NodeId) -> Option<(vectorcraft_geom::PathData, f64)> {
+    let (path, rule) = outline(doc, id)?;
+    let polys: Vec<Vec<kurbo::Point>> = vectorcraft_embroidery::generate::polylines(&path).into_iter().map(|(l, _)| l).collect();
+    if vectorcraft_embroidery::stroke_width(&polys) >= CENTRELINE_UNDER {
+        return None;
+    }
+    centreline_path(&path, rule)
 }
 
 /// A region and its area, mm².
@@ -172,6 +197,14 @@ fn digitize(s: &mut Session, p: &Value) -> Result<Value> {
     if order.is_some_and(|o| !matches!(o, "optimize" | "keep")) {
         return Err(bad(C, "`order` must be optimize or keep"));
     }
+    let centre = match p.get("lines") {
+        None | Some(Value::Null) => false,
+        Some(v) => match v.as_str() {
+            Some("auto") => false,
+            Some("centreline") => true,
+            _ => return Err(bad(C, "`lines` must be auto or centreline")),
+        },
+    };
     let target = match p.get("id").and_then(Value::as_u64) {
         Some(id) => NodeId(id),
         None => {
@@ -216,6 +249,9 @@ fn digitize(s: &mut Session, p: &Value) -> Result<Value> {
         let doc = s.doc()?.doc.clone();
         let chart = doc.embroidery.chart.as_ref().and_then(|id| doc.embroidery.charts.iter().find(|c| &c.id == id && c.unknown.is_none()));
         let mut by_thread: Vec<(String, Vec<u64>)> = vec![];
+        // Thin parts sewn along their centre lines: (region, thread, (line, width mm)).
+        let mut lines: Vec<(NodeId, [u8; 3], (vectorcraft_geom::PathData, f64))> = vec![];
+        let mut centrelines = 0;
         for id in &ids {
             let Some(n) = doc.node(*id) else { continue };
             let rgb = match n.appearance.fill_paint() {
@@ -230,13 +266,33 @@ fn digitize(s: &mut Session, p: &Value) -> Result<Value> {
                 .and_then(|(t, _)| vectorcraft_embroidery::threads::parse_hex(&t.color))
                 .unwrap_or(rgb);
             let hex = vectorcraft_embroidery::params::hex(thread);
-            match by_thread.iter_mut().find(|(h, _)| *h == hex) {
-                Some((_, v)) => v.push(id.0),
-                None => by_thread.push((hex, vec![id.0])),
+            if !by_thread.iter().any(|(h, _)| *h == hex) {
+                by_thread.push((hex.clone(), vec![]));
+            }
+            if centre && let Some(line) = thin_line(&doc, *id) {
+                lines.push((*id, thread, line));
+            } else if let Some((_, v)) = by_thread.iter_mut().find(|(h, _)| *h == hex) {
+                v.push(id.0);
             }
         }
-        for (hex, v) in &by_thread {
+        for (hex, v) in by_thread.iter().filter(|(_, v)| !v.is_empty()) {
             s.execute("embroidery.set", &json!({"ids": v, "type": "auto", "thread": hex}))?;
+        }
+        if !lines.is_empty() {
+            s.edit("Auto-Digitize", |d, _| {
+                for (id, rgb, (path, width)) in lines.drain(..) {
+                    let Some(n) = d.node_mut(id) else { continue };
+                    let mut st = centreline_stitch(width, None);
+                    st.thread = Some(rgb);
+                    let paint = vectorcraft_color::Paint::solid(vectorcraft_color::Color::rgb8(rgb[0], rgb[1], rgb[2]));
+                    let stroke = st.width.map_or(1.0, |w| w / PT_MM);
+                    n.kind = NodeKind::Path { path, rule: FillRule::NonZero, live: None, clipping: false, guide: false };
+                    n.appearance = vectorcraft_doc::Appearance::basic(vectorcraft_color::Paint::None, paint, stroke).into();
+                    n.extras_mut().stitch = Some(Box::new(st));
+                    centrelines += 1;
+                }
+                Ok(())
+            })?;
         }
         if order.map_or(traced, |o| o == "optimize") {
             s.execute("embroidery.optimizeOrder", &json!({}))?;
@@ -267,6 +323,7 @@ fn digitize(s: &mut Session, p: &Value) -> Result<Value> {
             "threads": by_thread.iter().map(|(h, _)| h.clone()).collect::<Vec<_>>(),
             "merged": merged,
             "dropped": dropped,
+            "centrelines": centrelines,
             "fixes": made,
             "findings": {"error": count(check::Severity::Error), "warning": count(check::Severity::Warning), "note": count(check::Severity::Note)},
         }))
@@ -302,12 +359,97 @@ fn objects_at(doc: &Document, p: kurbo::Point) -> Vec<NodeId> {
     all.iter().zip(&keep).filter(|(_, k)| **k).map(|((id, _), _)| *id).collect()
 }
 
+/// How an area is sewn by `embroidery.fillAt`.
+#[derive(Clone, Copy, PartialEq)]
+enum Sew {
+    /// Auto: fill with a border, or satin shape, by its width.
+    Area,
+    /// Its edge, as running stitch or (`satin`) a satin border.
+    Outline { satin: bool },
+    /// Along its centre line: running stitch, satin, or (`None`) whichever its width suits.
+    Centreline { satin: Option<bool> },
+}
+
+/// `outline` and `centreline` from `embroidery.fillAt`'s params.
+fn sew_param(p: &Value) -> std::result::Result<Sew, &'static str> {
+    let outline = match p.get("outline") {
+        None | Some(Value::Null) | Some(Value::Bool(false)) => None,
+        Some(Value::Bool(true)) => Some(false),
+        Some(v) => match v.as_str() {
+            Some("running") => Some(false),
+            Some("satin") => Some(true),
+            _ => return Err("`outline` must be true, false, running or satin"),
+        },
+    };
+    let centre = match p.get("centreline") {
+        None | Some(Value::Null) | Some(Value::Bool(false)) => None,
+        Some(Value::Bool(true)) => Some(None),
+        Some(v) => match v.as_str() {
+            Some("auto") => Some(None),
+            Some("running") => Some(Some(false)),
+            Some("satin") => Some(Some(true)),
+            _ => return Err("`centreline` must be true, false, auto, running or satin"),
+        },
+    };
+    match (outline, centre) {
+        (Some(_), Some(_)) => Err("give `outline` or `centreline`, not both"),
+        (Some(satin), None) => Ok(Sew::Outline { satin }),
+        (None, Some(satin)) => Ok(Sew::Centreline { satin }),
+        (None, None) => Ok(Sew::Area),
+    }
+}
+
+/// The centre lines of the closed area `path` (document points) as an open path in points, and
+/// the area's width along them, mm. `None`: too small to have any.
+pub(crate) fn centreline_path(path: &vectorcraft_geom::PathData, rule: FillRule) -> Option<(vectorcraft_geom::PathData, f64)> {
+    let polys: Vec<Vec<kurbo::Point>> = vectorcraft_embroidery::generate::polylines(path).into_iter().map(|(l, _)| l).collect();
+    let lines = vectorcraft_embroidery::skeleton::centrelines(&polys, rule);
+    if lines.is_empty() {
+        return None;
+    }
+    let width = vectorcraft_embroidery::skeleton::centreline_width(&lines);
+    let subpaths = lines
+        .iter()
+        .map(|l| {
+            let pts: Vec<kurbo::Point> = l.points.iter().map(|p| kurbo::Point::new(p.x / PT_MM, p.y / PT_MM)).collect();
+            // A closed line repeats its start; the subpath closes back to it instead.
+            let pts = if l.closed { pts.split_last().map_or(pts.clone(), |(_, rest)| rest.to_vec()) } else { pts };
+            vectorcraft_geom::SubPath::polyline(&pts, l.closed)
+        })
+        .collect();
+    Some((vectorcraft_geom::PathData { subpaths }, width))
+}
+
+/// The stitch settings for sewing along a centre line `width` mm wide: running stitch when it is
+/// thinner than Auto's thinnest satin (or `satin` says so), else a satin that wide.
+pub(crate) fn centreline_stitch(width: f64, satin: Option<bool>) -> vectorcraft_doc::StitchSettings {
+    use vectorcraft_doc::{StitchKind, StitchSettings};
+    let auto = StitchSettings::new(StitchKind::Auto);
+    if satin.unwrap_or(width >= auto.auto_thresholds().0) {
+        let w = width.clamp(*StitchSettings::WIDTH.start(), *StitchSettings::WIDTH.end());
+        StitchSettings { width: Some((w * 100.0).round() / 100.0), ..StitchSettings::new(StitchKind::Satin) }
+    } else {
+        StitchSettings::new(StitchKind::Running)
+    }
+}
+
 fn fill_at(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "embroidery.fillAt";
     let num = |k: &str| p.get(k).and_then(Value::as_f64).filter(|v| v.is_finite() && v.abs() <= 1e7);
     let (Some(x), Some(y)) = (num("x"), num("y")) else { return Err(bad(C, "`x` and `y` must be a point in document points")) };
     let at = kurbo::Point::new(x, y);
-    let outline = p.get("outline").and_then(Value::as_bool).unwrap_or(false);
+    let sew = sew_param(p).map_err(|e| bad(C, e))?;
+    let width = match p.get("width") {
+        None | Some(Value::Null) => None,
+        Some(v) => {
+            let range = vectorcraft_doc::StitchSettings::WIDTH;
+            Some(
+                v.as_f64()
+                    .filter(|w| range.contains(w))
+                    .ok_or_else(|| bad(C, format!("`width` must be from {} to {} mm", range.start(), range.end())))?,
+            )
+        }
+    };
     let thread = match p.get("thread") {
         None | Some(Value::Null) => None,
         Some(v) => Some(v.as_str().and_then(vectorcraft_embroidery::threads::parse_hex).ok_or_else(|| bad(C, "`thread` must be \"#rrggbb\""))?),
@@ -333,24 +475,50 @@ fn fill_at(s: &mut Session, p: &Value) -> Result<Value> {
     let rgb = rgb.unwrap_or([0, 0, 0]);
     let paint = vectorcraft_color::Paint::solid(vectorcraft_color::Color::rgb8(rgb[0], rgb[1], rgb[2]));
     let area = po::try_area(&path, FillRule::NonZero).unwrap_or(0.0).abs() * PT_MM * PT_MM;
-    let id = s.edit("Stitch Fill", |d, sel| {
+    use vectorcraft_doc::{Appearance, StitchKind, StitchSettings};
+    let none = vectorcraft_color::Paint::None;
+    // The path sewn, its look, name and stitch.
+    let (path, appearance, name, stitch) = match sew {
+        Sew::Area => (path, Appearance::basic(paint, none, 1.0), "Stitch Fill", StitchSettings::new(StitchKind::Auto)),
+        Sew::Outline { satin: false } => (path, Appearance::basic(none, paint, 1.0), "Stitch Outline", StitchSettings::new(StitchKind::Running)),
+        Sew::Outline { satin: true } => {
+            let w = width.unwrap_or(StitchSettings::DEFAULT_BORDER);
+            let st = StitchSettings { width: Some(w), ..StitchSettings::new(StitchKind::Satin) };
+            (path, Appearance::basic(none, paint, w / PT_MM), "Satin Outline", st)
+        }
+        Sew::Centreline { satin } => {
+            let (line, measured) =
+                centreline_path(&path, FillRule::NonZero).ok_or_else(|| bad(C, "this area is too small to find its centre line"))?;
+            let mut st = centreline_stitch(measured, satin);
+            if st.kind == StitchKind::Satin && width.is_some() {
+                st.width = width;
+            }
+            let stroke = st.width.map_or(1.0, |w| w / PT_MM);
+            (line, Appearance::basic(none, paint, stroke), "Stitch Centreline", st)
+        }
+    };
+    let kind = stitch.kind;
+    let width = stitch.width;
+    let id = s.edit(name, |d, sel| {
         let id = d.alloc_id();
-        let appearance = if outline {
-            vectorcraft_doc::Appearance::basic(vectorcraft_color::Paint::None, paint, 1.0)
-        } else {
-            vectorcraft_doc::Appearance::basic(paint, vectorcraft_color::Paint::None, 1.0)
-        };
         let mut n = Node::path(id, path, appearance);
-        n.name = Some(if outline { "Stitch Outline".into() } else { "Stitch Fill".into() });
-        let kind = if outline { vectorcraft_doc::StitchKind::Running } else { vectorcraft_doc::StitchKind::Auto };
-        n.extras_mut().stitch = Some(Box::new(vectorcraft_doc::StitchSettings::new(kind)));
+        n.name = Some(name.into());
+        n.extras_mut().stitch = Some(Box::new(stitch));
         let layer = d.default_layer();
         let index = d.children_mut(layer).map(|c| c.len()).unwrap_or(0);
         d.insert(layer, index, n)?;
         sel.set([id]);
         Ok(id)
     })?;
-    Ok(json!({"id": id.0, "areaMm2": (area * 100.0).round() / 100.0, "outline": outline}))
+    let ty = kind.id();
+    Ok(json!({
+        "id": id.0,
+        "areaMm2": (area * 100.0).round() / 100.0,
+        "outline": matches!(sew, Sew::Outline { .. }),
+        "centreline": matches!(sew, Sew::Centreline { .. }),
+        "type": ty,
+        "widthMm": width,
+    }))
 }
 
 #[cfg(test)]
@@ -464,6 +632,76 @@ mod tests {
         assert!(s.execute("embroidery.fillAt", &json!({"x": 300, "y": 300})).is_err());
         assert!(s.execute("embroidery.fillAt", &json!({"x": 75})).is_err());
         assert!(s.execute("embroidery.fillAt", &json!({"x": 75, "y": 75, "thread": "red"})).is_err());
+    }
+
+    /// E11.7: a satin outline, and thin areas sewn along their centre lines.
+    #[test]
+    fn a_click_outlines_in_satin_or_follows_a_thin_areas_centre() {
+        let mm = |v: f64| v / PT_MM;
+        let mut s = session();
+        s.execute("shape.rectangle", &json!({"x": 0, "y": 0, "width": mm(40.0), "height": mm(40.0)})).unwrap();
+        let r = s.execute("embroidery.fillAt", &json!({"x": mm(20.0), "y": mm(20.0), "outline": "satin", "width": 3})).unwrap();
+        assert_eq!((r["type"].as_str(), r["widthMm"].as_f64(), r["outline"].as_bool()), (Some("satin"), Some(3.0), Some(true)), "{r}");
+        let n = s.doc().unwrap().doc.node(NodeId(r["id"].as_u64().unwrap())).cloned().unwrap();
+        assert!(matches!(n.appearance.fill_paint(), vectorcraft_color::Paint::None));
+        assert!((n.appearance.stroke_width() - mm(3.0)).abs() < 1e-6, "the stroke shows the satin's width");
+        // A thin bar (0.6 mm): running stitch along its middle; a 3 mm bar: a 3 mm satin.
+        let mut s = session();
+        s.execute("shape.rectangle", &json!({"x": mm(10.0), "y": mm(10.0), "width": mm(30.0), "height": mm(0.6)})).unwrap();
+        s.execute("shape.rectangle", &json!({"x": mm(10.0), "y": mm(30.0), "width": mm(30.0), "height": mm(3.0)})).unwrap();
+        let thin = s.execute("embroidery.fillAt", &json!({"x": mm(25.0), "y": mm(10.3), "centreline": "auto"})).unwrap();
+        assert_eq!((thin["type"].as_str(), thin["centreline"].as_bool()), (Some("running"), Some(true)), "{thin}");
+        let line = s.doc().unwrap().doc.node(NodeId(thin["id"].as_u64().unwrap())).cloned().unwrap();
+        let path = line.path_data().unwrap();
+        assert_eq!(path.subpaths.len(), 1);
+        assert!(!path.subpaths[0].closed);
+        for a in &path.subpaths[0].anchors {
+            assert!((a.p.y - mm(10.3)).abs() < mm(0.2), "on the bar's middle: {:?}", a.p);
+        }
+        let wide = s.execute("embroidery.fillAt", &json!({"x": mm(25.0), "y": mm(31.5), "centreline": true})).unwrap();
+        assert_eq!(wide["type"], "satin", "{wide}");
+        assert!((wide["widthMm"].as_f64().unwrap() - 3.0).abs() < 0.5, "{wide}");
+        let forced = s.execute("embroidery.fillAt", &json!({"x": mm(25.0), "y": mm(31.5), "centreline": "running"})).unwrap();
+        assert_eq!(forced["type"], "running");
+        let info = s.execute("embroidery.info", &json!({})).unwrap();
+        assert!(info["design"]["stitches"].as_u64().unwrap() > 20, "{info}");
+        // Bad params.
+        for p in [
+            json!({"x": mm(25.0), "y": mm(31.5), "outline": "zigzag"}),
+            json!({"x": mm(25.0), "y": mm(31.5), "centreline": 3}),
+            json!({"x": mm(25.0), "y": mm(31.5), "centreline": "auto", "outline": true}),
+            json!({"x": mm(25.0), "y": mm(31.5), "outline": "satin", "width": 40}),
+        ] {
+            assert!(s.execute("embroidery.fillAt", &p).is_err(), "{p}");
+        }
+    }
+
+    #[test]
+    fn digitize_can_sew_thin_parts_along_their_centre_lines() {
+        let mm = |v: f64| v / PT_MM;
+        let build = |s: &mut Session| {
+            let big = s.execute("shape.rectangle", &json!({"x": mm(10.0), "y": mm(10.0), "width": mm(30.0), "height": mm(20.0)})).unwrap();
+            let thin = s.execute("shape.rectangle", &json!({"x": mm(10.0), "y": mm(40.0), "width": mm(30.0), "height": mm(0.8)})).unwrap();
+            s.execute("select.set", &json!({"ids": [big["id"], thin["id"]]})).unwrap();
+            s.execute("object.group", &json!({})).unwrap();
+            NodeId(thin["id"].as_u64().unwrap())
+        };
+        let mut s = session();
+        let thin = build(&mut s);
+        let r = s.execute("embroidery.digitize", &json!({"lines": "centreline", "minArea": 0})).unwrap();
+        assert_eq!((r["objects"].as_u64(), r["centrelines"].as_u64()), (Some(2), Some(1)), "{r}");
+        let n = s.doc().unwrap().doc.node(thin).cloned().unwrap();
+        let st = n.extras().stitch.as_deref().unwrap();
+        assert_eq!(st.kind, vectorcraft_doc::StitchKind::Running);
+        assert!(n.path_data().unwrap().subpaths.iter().all(|sp| !sp.closed), "an open line now");
+        assert_eq!(r["findings"]["error"], 0, "{r}");
+        // By default, Auto sews it as an area.
+        let mut s = session();
+        let thin = build(&mut s);
+        let r = s.execute("embroidery.digitize", &json!({"minArea": 0})).unwrap();
+        assert_eq!(r["centrelines"], 0);
+        assert_eq!(s.doc().unwrap().doc.node(thin).unwrap().extras().stitch.as_deref().unwrap().kind, vectorcraft_doc::StitchKind::Auto);
+        assert!(s.execute("embroidery.digitize", &json!({"lines": "skeleton"})).is_err());
     }
 
     /// A code-drawn logo `name` of 200 × 200 px: the pixel at (x, y).

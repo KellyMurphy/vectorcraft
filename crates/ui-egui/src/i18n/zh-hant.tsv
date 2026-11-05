@@ -6241,7 +6241,6 @@ breakText	Glyphs	字符
 	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	選取一個標誌（影像或一組純色形狀）：它會被描圖，每個區域以其顏色刺繡。
 	Stitch Fill Tool	針跡填充工具
 	Stitch Fill	針跡填充
-	Click inside any closed area to stitch it in its colour; Alt-click to outline it	在任意封閉區域內按一下，以其顏色刺繡；按住 Alt 按一下則繡出輪廓
 	Single	單針
 	Stem	輪廓繡
 	Backstitch	回針繡
@@ -6280,3 +6279,6 @@ breakText	Glyphs	字符
 	Save to Library	儲存到資料庫
 	Load Style File…	載入樣式檔案…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	具名的針跡設定組合：將其中之一套用到所選物件，或將所選物件的設定儲存為新樣式
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it (Alt-Shift-click: a satin border); Shift-click to sew a thin line along its centre	在封閉區域內按一下，以其顏色刺繡；Alt+按一下刺繡其輪廓（Alt+Shift+按一下：緞紋邊框）；Shift+按一下沿細線中心縫一條線
+	Thin Lines as Centre Lines	細線依中心線縫
+	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	將窄於 2 公釐的部分（如描圖的線條與手寫字）沿其中心縫成一條線

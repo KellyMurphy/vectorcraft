@@ -578,6 +578,55 @@ pub fn strokes(polys: &[Vec<Point>], rule: FillRule) -> Vec<Stroke> {
         .collect()
 }
 
+/// How far a centre line may stray from its stroke when straightened, mm.
+const CENTRELINE_TOL: f64 = 0.05;
+
+/// A centre line to sew along (E11.7): its points (mm), whether it closes on itself, and the
+/// shape's width along it (mm: twice the median distance to the edge).
+#[derive(Clone, Debug, PartialEq)]
+pub struct Centreline {
+    pub points: Vec<Point>,
+    pub closed: bool,
+    pub width: f64,
+}
+
+impl Centreline {
+    pub fn length(&self) -> f64 {
+        self.points
+            .windows(2)
+            .map(|w| match w {
+                [a, b] => a.distance(*b),
+                _ => 0.0,
+            })
+            .sum()
+    }
+}
+
+/// The centre lines of the thin shape `polys` (mm, filled by `rule`), for sewing it as one line
+/// rather than as an area: its strokes ([`strokes`]), straightened (thinning leaves a point per
+/// pixel), longest first.
+pub fn centrelines(polys: &[Vec<Point>], rule: FillRule) -> Vec<Centreline> {
+    let mut out: Vec<Centreline> = strokes(polys, rule)
+        .into_iter()
+        .filter_map(|s| {
+            let closed = s.points.len() > 2 && s.points.first() == s.points.last();
+            let mut r: Vec<f64> = s.radius.iter().copied().filter(|r| r.is_finite()).collect();
+            r.sort_by(f64::total_cmp);
+            let width = 2.0 * r.get(r.len() / 2).copied()?;
+            let points = vectorcraft_geom::recognize::simplify(&s.points, CENTRELINE_TOL);
+            (points.len() >= 2).then_some(Centreline { points, closed, width })
+        })
+        .collect();
+    out.sort_by(|a, b| b.length().total_cmp(&a.length()));
+    out
+}
+
+/// The width of a shape sewn along `lines` (mm): their widths weighted by length.
+pub fn centreline_width(lines: &[Centreline]) -> f64 {
+    let total: f64 = lines.iter().map(Centreline::length).sum();
+    if total > 0.0 { lines.iter().map(|l| l.width * l.length()).sum::<f64>() / total } else { 0.0 }
+}
+
 /// Extend the stroke's start (`at_start`) or end toward the shape's edge.
 fn extend(s: &mut Stroke, polys: &[Vec<Point>], at_start: bool) {
     let n = s.points.len();
@@ -655,6 +704,24 @@ mod tests {
         let r = [rect(0.0, 0.0, 10.0, 4.0)];
         assert_eq!(cast(&r, Point::new(5.0, 2.0), Vec2::new(0.0, 1.0), 10.0), Some(2.0));
         assert_eq!(cast(&r, Point::new(5.0, 2.0), Vec2::new(0.0, 1.0), 1.0), None);
+    }
+
+    #[test]
+    fn a_thin_line_has_one_straight_centreline_its_width() {
+        let c = centrelines(&[rect(0.0, 0.0, 30.0, 1.0)], FillRule::NonZero);
+        assert_eq!(c.len(), 1, "{c:?}");
+        assert!(!c[0].closed);
+        assert!(c[0].points.len() <= 4, "straightened: {:?}", c[0].points);
+        assert!((c[0].width - 1.0).abs() < 0.3, "width {}", c[0].width);
+        assert!(c[0].length() > 28.0);
+        assert!((centreline_width(&c) - c[0].width).abs() < 1e-9);
+        // A ring closes; a T is longest first.
+        let ring = [rect(0.0, 0.0, 20.0, 20.0), rect(2.0, 2.0, 18.0, 18.0).into_iter().rev().collect()];
+        assert!(centrelines(&ring, FillRule::NonZero)[0].closed);
+        let t = centrelines(&[rect(0.0, 0.0, 30.0, 2.0), rect(14.0, 2.0, 16.0, 12.0)], FillRule::NonZero);
+        assert!(t.windows(2).all(|w| w[0].length() >= w[1].length()));
+        assert!(centrelines(&[], FillRule::NonZero).is_empty());
+        assert_eq!(centreline_width(&[]), 0.0);
     }
 
     #[test]

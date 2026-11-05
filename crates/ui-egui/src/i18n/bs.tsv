@@ -6093,3 +6093,6 @@ shape	Open	Otvoren
 	Save to Library	Sačuvaj u biblioteku
 	Load Style File…	Učitaj datoteku stila…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Imenovani skupovi postavki bodova: primijenite jedan na odabrano ili sačuvajte postavke odabranog kao novi
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it (Alt-Shift-click: a satin border); Shift-click to sew a thin line along its centre	Kliknite unutar zatvorenog područja da ga izvezete u njegovoj boji; Alt-klik veze njegov obris (Alt-Shift-klik: satenski rub); Shift-klik veze tanku liniju po njenoj sredini
+	Thin Lines as Centre Lines	Tanke linije po sredini
+	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	Dijelovi uži od 2 mm, poput praćenih linija i rukopisa, vezu se kao jedna linija po svojoj sredini

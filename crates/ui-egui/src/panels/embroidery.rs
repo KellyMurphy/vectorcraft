@@ -271,16 +271,22 @@ fn digitize_row(app: &mut VectorcraftApp, ui: &mut Ui) {
     widgets::dim_label(ui, tl!("Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour."));
     let row = ui.horizontal(|ui| {
         let tool = widgets::flat_button(ui, tl!("Stitch Fill Tool"), 120.0)
-            .on_hover_text(tl!("Click inside any closed area to stitch it in its colour; Alt-click to outline it"))
+            .on_hover_text(tl!(
+                "Click inside any closed area to stitch it in its colour; Alt-click to outline it (Alt-Shift-click: a satin border); Shift-click to sew a thin line along its centre"
+            ))
             .clicked();
         (widgets::flat_button(ui, tl!("Auto-Digitize"), 120.0).clicked(), tool)
     });
     let (digitize, tool) = row.inner;
+    let mut centre = kept(ui, "digitize-lines", "auto") == "centreline";
+    ui.checkbox(&mut centre, tl!("Thin Lines as Centre Lines"))
+        .on_hover_text(tl!("Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre"));
+    keep(ui, "digitize-lines", if centre { "centreline" } else { "auto" }.into());
     if tool && let Err(e) = app.run("tool.select", json!({"tool": "stitchFill"})) {
         app.status(e);
     }
     if digitize {
-        match app.run("embroidery.digitize", json!({})) {
+        match app.run("embroidery.digitize", json!({"lines": if centre { "centreline" } else { "auto" }})) {
             Ok(r) => app.status(format!(
                 "Digitized {} areas in {} threads ({} merged): {} warnings",
                 r["objects"],

@@ -727,7 +727,7 @@ row, tests, fuzzing for new input, spec + schema + drift test for a new format, 
 | **E11.4** Multi-hoop and hoop rotation | Rotate the design in the hoop; split a large design into hoopings with alignment marks | P1 | L |
 | **E11.5** Batch export | Write several machine formats in one export | P1 | S |
 | **E11.6** Deferred stitch generation | Regenerate stitches when an edit ends, not on every drag frame | P1 | S |
-| **E11.7** Centreline and satin outlines | Sew a thin shape along its centre line; click-to-outline in satin as well as running | P1 | M |
+| **E11.7** Centreline and satin outlines (**done**) | Sew a thin shape along its centre line; click-to-outline in satin as well as running | P1 | M |
 | **E11.8** Redwork | Line art sewn as one continuous run, each line at most twice | P2 | M |
 | **E11.9** Batch names | One design per name from a list | P2 | M |
 | **E11.10** Keyboard collections | Designs mapped to keys and typed like letters | P2 | S |
@@ -834,7 +834,17 @@ tool's drag shows the object's last stitches (or its outline, once the shape has
 regenerates at the Commit. Large designs stay smooth to edit; the stitch cache already limits work to the
 changed objects. Budgeted in `vectorcraft-cli perf`.
 
-### E11.7 Centreline and satin outlines (M)
+### E11.7 Centreline and satin outlines (M) — done 2026-11-04
+
+As built: `embroidery.fillAt` takes `outline: running | satin` (`true` still means running) with `width`
+(satin, default 2 mm), and `centreline: auto | running | satin`. A centre line comes from
+`skeleton::centrelines` (the skeleton strokes, straightened within 0.05 mm, each with its median width);
+the new object is an open path along it, running stitch when the area is under Auto's thin threshold
+(1 mm), else a satin as wide as the area (length-weighted mean of the strokes' widths). The Stitch Fill
+tool: Alt-click running outline, Alt-Shift-click satin outline, Shift-click centre line (no new cursor).
+`embroidery.digitize {lines: centreline}` (the panel's **Thin Lines as Centre Lines**) turns regions whose
+typical width is under 2 mm into centre-line paths in the same undo step, reported as `centrelines`. The
+original plan:
 
 Click-to-outline already exists (E8.6b: Alt-click with the Stitch Fill tool adds a running-stitch outline).
 The tool gains: **Satin outline:** `embroidery.fillAt {outline: "satin"}` (Alt-Shift-click) sews the edge as

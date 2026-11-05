@@ -6634,7 +6634,6 @@ breakText	Glyphs	Glyfer
 	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Markera en logotyp (en bild eller en grupp enfärgade former): den spåras och varje yta broderas i sin färg.
 	Stitch Fill Tool	Verktyget Broderifyllning
 	Stitch Fill	Broderifyllning
-	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Klicka inuti ett slutet område för att brodera det i dess färg; Alt-klicka för att brodera konturen
 	Single	Enkel
 	Stem	Stjälkstygn
 	Backstitch	Efterstygn
@@ -6673,3 +6672,6 @@ breakText	Glyphs	Glyfer
 	Save to Library	Spara i biblioteket
 	Load Style File…	Läs in stilfil…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Namngivna uppsättningar stygninställningar: använd en på markeringen, eller spara markeringens som en ny
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it (Alt-Shift-click: a satin border); Shift-click to sew a thin line along its centre	Klicka i ett slutet område för att brodera det i dess färg; Alt-klicka broderar dess kontur (Alt-Skift-klicka: en satinkant); Skift-klicka syr en tunn linje längs dess mitt
+	Thin Lines as Centre Lines	Tunna linjer som mittlinjer
+	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	Sy delar smalare än 2 mm, som spårade linjer och handskrift, som en enda linje längs deras mitt

@@ -6577,7 +6577,6 @@ breakText	Glyphs	Глифы
 	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Выделите логотип (изображение или группу одноцветных фигур): он будет трассирован, и каждая область вышита своим цветом.
 	Stitch Fill Tool	Инструмент «Заливка стежками»
 	Stitch Fill	Заливка стежками
-	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Щёлкните внутри замкнутой области, чтобы вышить её своим цветом; Alt-щелчок вышивает контур
 	Single	Одиночный
 	Stem	Стебельчатый шов
 	Backstitch	Шов «назад иголку»
@@ -6616,3 +6615,6 @@ breakText	Glyphs	Глифы
 	Save to Library	Сохранить в библиотеку
 	Load Style File…	Загрузить файл стиля…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Именованные наборы настроек стежков: примените один к выделенному или сохраните настройки выделенного как новый
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it (Alt-Shift-click: a satin border); Shift-click to sew a thin line along its centre	Щёлкните внутри замкнутой области, чтобы вышить её в её цвете; Alt+щелчок вышивает её контур (Alt+Shift+щелчок: атласный кант); Shift+щелчок прошивает тонкую линию по её середине
+	Thin Lines as Centre Lines	Тонкие линии по осевой
+	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	Прошивать части уже 2 мм, например обведённые линии и рукописный текст, одной линией по их середине

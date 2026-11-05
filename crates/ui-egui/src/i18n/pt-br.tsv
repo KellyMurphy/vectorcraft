@@ -6675,7 +6675,6 @@ swatch	Yellow Green	Verde-amarelado
 	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Selecione um logotipo (uma imagem ou um grupo de formas em cor chapada): ele é rastreado e cada área bordada na sua cor.
 	Stitch Fill Tool	Ferramenta Preencher com pontos
 	Stitch Fill	Preencher com pontos
-	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Clique dentro de uma área fechada para bordá-la na sua cor; Alt-clique para bordar o contorno
 	Single	Simples
 	Stem	Ponto haste
 	Backstitch	Ponto atrás
@@ -6714,3 +6713,6 @@ swatch	Yellow Green	Verde-amarelado
 	Save to Library	Salvar na biblioteca
 	Load Style File…	Carregar arquivo de estilo…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Conjuntos nomeados de configurações de ponto: aplique um à seleção ou salve as da seleção como um novo
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it (Alt-Shift-click: a satin border); Shift-click to sew a thin line along its centre	Clique dentro de uma área fechada para bordá-la na sua cor; Alt-clique borda o contorno (Alt-Shift-clique: uma borda de cetim); Shift-clique costura uma linha fina pelo centro
+	Thin Lines as Centre Lines	Linhas finas pelo centro
+	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	Costurar partes com menos de 2 mm, como linhas traçadas e letra cursiva, como uma única linha pelo centro

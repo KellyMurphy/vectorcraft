@@ -458,6 +458,13 @@ fn structured_junk() {
         ("embroidery.set", json!({"type": "patternBorder", "pattern": "x", "width": 40})),
         ("embroidery.set", json!({"type": "patternBorder", "pattern": "pattern", "width": 1})),
         ("embroidery.stitches", json!({})),
+        // E11.7: outlines and centre lines at odd points and widths.
+        ("embroidery.fillAt", json!({"x": 1e308, "y": -1e308, "centreline": "satin", "width": 1e308})),
+        ("embroidery.fillAt", json!({"x": 50, "y": 50, "centreline": "auto", "width": -1})),
+        ("embroidery.fillAt", json!({"x": 50, "y": 50, "outline": "satin", "width": "x"})),
+        ("embroidery.fillAt", json!({"x": 50, "y": 50, "outline": [1], "centreline": {"a": 1}})),
+        ("embroidery.digitize", json!({"lines": "centreline", "minArea": 0})),
+        ("embroidery.digitize", json!({"lines": 7})),
         ("embroidery.saveBorderPattern", json!({"pattern": "../../etc"})),
         ("embroidery.removeBorderPattern", json!({"pattern": 7})),
         ("object.path.simplify", json!({"level": 1e308, "tolerance": "x"})),

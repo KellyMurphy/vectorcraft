@@ -207,3 +207,26 @@ fn an_agent_saves_and_applies_a_stitch_style() {
     let spec = rpc(&mut s, "resources/read", json!({"uri": "vectorcraft://spec/vcstyle"}));
     assert!(spec["result"]["contents"][0]["text"].as_str().unwrap().starts_with("# Stitch style file"));
 }
+
+/// E11.7: an agent outlines an area in satin and sews a thin line along its centre.
+#[test]
+fn an_agent_outlines_in_satin_and_sews_along_centre_lines() {
+    let mut s = Server::new(Box::new(Headless::with_document()));
+    let pt = |mm: f64| mm / vectorcraft_embroidery::PT_MM;
+    run(&mut s, "shape.rectangle", json!({"x": pt(10.0), "y": pt(10.0), "width": pt(30.0), "height": pt(20.0)}));
+    run(&mut s, "shape.rectangle", json!({"x": pt(10.0), "y": pt(40.0), "width": pt(30.0), "height": pt(0.6)}));
+    let edge = run(&mut s, "embroidery.fillAt", json!({"x": pt(25.0), "y": pt(20.0), "outline": "satin"}));
+    assert_eq!((edge["type"].as_str(), edge["widthMm"].as_f64()), (Some("satin"), Some(2.0)), "{edge}");
+    let line = run(&mut s, "embroidery.fillAt", json!({"x": pt(25.0), "y": pt(40.3), "centreline": "auto"}));
+    assert_eq!((line["type"].as_str(), line["centreline"].as_bool()), (Some("running"), Some(true)), "{line}");
+    let info = run(&mut s, "embroidery.info", json!({}));
+    assert!(info["design"]["stitches"].as_u64().unwrap() > 50, "{info}");
+    let p = rpc(&mut s, "prompts/get", json!({"name": "embroidery", "arguments": {"stitch": "auto", "path": "out.dst"}}));
+    let text = p["result"]["messages"][0]["content"]["text"].as_str().unwrap();
+    assert!(text.contains("{lines: centreline}") && text.contains("{outline: running|satin}"), "{text}");
+    for word in ["centreline", "satin"] {
+        assert!(spec("embroidery.fillAt").params.contains(word), "{word}");
+    }
+    assert!(spec("embroidery.digitize").params.contains("lines?: auto|centreline"));
+    assert!(guide().contains("Shift-click"), "the guide tells how to sew along a centre line");
+}

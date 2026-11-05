@@ -6524,7 +6524,6 @@ breakText	Glyphs	Glyphs
 	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Selecteer een logo (een afbeelding of een groep effen vormen): het wordt overgetrokken en elk vlak in zijn kleur geborduurd.
 	Stitch Fill Tool	Gereedschap Borduurvulling
 	Stitch Fill	Borduurvulling
-	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Klik in een gesloten vlak om het in zijn kleur te borduren; Alt-klik borduurt de omtrek
 	Single	Enkel
 	Stem	Stengelsteek
 	Backstitch	Achtersteek
@@ -6563,3 +6562,6 @@ breakText	Glyphs	Glyphs
 	Save to Library	Opslaan in bibliotheek
 	Load Style File…	Stijlbestand laden…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Benoemde sets steekinstellingen: pas er een toe op de selectie, of sla die van de selectie op als nieuwe
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it (Alt-Shift-click: a satin border); Shift-click to sew a thin line along its centre	Klik in een gesloten gebied om het in zijn kleur te borduren; Alt-klik borduurt de omtrek (Alt-Shift-klik: een satijnrand); Shift-klik naait een dunne lijn langs het midden
+	Thin Lines as Centre Lines	Dunne lijnen als middellijnen
+	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	Delen smaller dan 2 mm, zoals overgetrokken lijnen en handschrift, als één lijn langs hun midden naaien

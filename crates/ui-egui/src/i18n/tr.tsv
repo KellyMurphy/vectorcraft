@@ -6137,7 +6137,6 @@ breakText	Glyphs	Glifler
 	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Bir logo seçin (bir görüntü veya düz renkli şekiller grubu): izlenir ve her alan kendi renginde işlenir.
 	Stitch Fill Tool	Dikiş Dolgusu Aracı
 	Stitch Fill	Dikiş Dolgusu
-	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Kapalı bir alanın içine tıklayarak onu kendi renginde işleyin; Alt-tıklama ana hattını işler
 	Stitch Styles	Dikiş Stilleri
 	Small Lettering	Küçük Yazı
 	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	5–10 mm yüksekliğinde yazı: harfler çizgi kalınlığına göre seçilir, biraz daha sık, biraz çekme telafisiyle.
@@ -6151,3 +6150,6 @@ breakText	Glyphs	Glifler
 	Save to Library	Kitaplığa Kaydet
 	Load Style File…	Stil Dosyası Yükle…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Adlandırılmış dikiş ayarı kümeleri: birini seçime uygulayın veya seçimin ayarlarını yeni bir stil olarak kaydedin
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it (Alt-Shift-click: a satin border); Shift-click to sew a thin line along its centre	Kendi renginde işlemek için kapalı bir alanın içine tıklayın; Alt-tıklama dış hatlarını işler (Alt-Shift-tıklama: saten kenar); Shift-tıklama ince bir çizgiyi ortasından diker
+	Thin Lines as Centre Lines	İnce Çizgileri Orta Çizgi Olarak
+	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	İzlenmiş çizgiler ve el yazısı gibi 2 mm'den dar parçaları ortalarından tek bir çizgi olarak dik

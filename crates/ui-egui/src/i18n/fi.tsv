@@ -6612,7 +6612,6 @@ breakText	Glyphs	Merkit
 	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Valitse logo (kuva tai ryhmä yksivärisiä muotoja): se jäljitetään ja jokainen alue kirjotaan omalla värillään.
 	Stitch Fill Tool	Kirjo alue -työkalu
 	Stitch Fill	Kirjo alue
-	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Napsauta suljetun alueen sisällä kirjoaksesi sen sen värillä; Alt-napsautus kirjoo ääriviivan
 	Single	Yksinkertainen
 	Stem	Varsipisto
 	Backstitch	Jälkipisto
@@ -6651,3 +6650,6 @@ breakText	Glyphs	Merkit
 	Save to Library	Tallenna kirjastoon
 	Load Style File…	Lataa tyylitiedosto…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Nimettyjä pistoasetusten joukkoja: käytä yhtä valintaan tai tallenna valinnan asetukset uudeksi
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it (Alt-Shift-click: a satin border); Shift-click to sew a thin line along its centre	Napsauta suljetun alueen sisällä kirjoaksesi sen sen värillä; Alt-napsautus kirjoo sen ääriviivan (Alt-Vaihto-napsautus: satiinireunus); Vaihto-napsautus ompelee ohuen viivan sen keskeltä
+	Thin Lines as Centre Lines	Ohuet viivat keskiviivoina
+	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	Ommellaan alle 2 mm leveät osat, kuten jäljitetyt viivat ja käsiala, yhtenä viivana niiden keskeltä

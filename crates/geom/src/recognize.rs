@@ -55,7 +55,7 @@ fn dist_to_segment(p: Point, a: Point, b: Point) -> f64 {
 }
 
 /// Douglas–Peucker simplification with bounded stack use, even for noisy strokes.
-fn simplify(pts: &[Point], tol: f64) -> Vec<Point> {
+pub fn simplify(pts: &[Point], tol: f64) -> Vec<Point> {
     if pts.len() < 3 {
         return pts.to_vec();
     }

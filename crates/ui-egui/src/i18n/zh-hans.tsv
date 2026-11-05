@@ -6444,7 +6444,6 @@ breakText	Glyphs	字形
 	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	选择一个标志（图像或一组纯色形状）：它会被描摹，每个区域以其颜色刺绣。
 	Stitch Fill Tool	针迹填充工具
 	Stitch Fill	针迹填充
-	Click inside any closed area to stitch it in its colour; Alt-click to outline it	在任意封闭区域内单击，以其颜色刺绣；按住 Alt 单击则绣出轮廓
 	Single	单针
 	Stem	轮廓绣
 	Backstitch	回针绣
@@ -6483,3 +6482,6 @@ breakText	Glyphs	字形
 	Save to Library	保存到库
 	Load Style File…	载入样式文件…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	命名的针迹设置组合：将其中之一应用于所选对象，或将所选对象的设置保存为新样式
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it (Alt-Shift-click: a satin border); Shift-click to sew a thin line along its centre	在封闭区域内单击，以其颜色刺绣；Alt+单击刺绣其轮廓（Alt+Shift+单击：缎纹边框）；Shift+单击沿细线中心缝一条线
+	Thin Lines as Centre Lines	细线按中心线缝
+	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	将窄于 2 毫米的部分（如描摹的线条和手写字）沿其中心缝成一条线

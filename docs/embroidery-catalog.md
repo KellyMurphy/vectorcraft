@@ -1,6 +1,6 @@
 # Embroidery feature catalog
 
-Status: 62 features checked against the code on 2026-11-02. Done 32, partly done 16, missing 14 (estimated, by
+Status: 62 features checked against the code on 2026-11-04. Done 33, partly done 15, missing 14 (estimated, by
 reading the code and the guide, not by sewing: nothing is marked done on fabric until the sew-out gates pass).
 
 This is the feature catalog from the embroidery research (Kelly, 2026-10-16) that
@@ -20,23 +20,23 @@ to say where a feature is described; nothing is copied from any of them (the cle
 | Priority | Features | Done | Partly | Missing |
 |---|---|---|---|---|
 | P0 | 18 | 17 | 1 | 0 |
-| P1 | 26 | 14 | 9 | 3 |
+| P1 | 26 | 15 | 8 | 3 |
 | P2 | 18 | 1 | 6 | 11 |
-| **All** | **62** | **32** | **16** | **14** |
+| **All** | **62** | **33** | **15** | **14** |
 
 | Area | Features | Done | Partly | Missing |
 |---|---|---|---|---|
 | Drawing and vector editing | 11 | 8 | 3 | 0 |
 | Stitch types and fills | 18 | 6 | 2 | 10 |
 | Lettering and monograms | 8 | 4 | 2 | 2 |
-| Quality, sequencing and automation | 12 | 9 | 2 | 1 |
+| Quality, sequencing and automation | 12 | 10 | 1 | 1 |
 | Colour, preview, output and production | 13 | 5 | 7 | 1 |
 
 **P0 left:** one partly-done P0 feature: the VP3, XXX and U01 formats (E9.3). Run styles (E11.1) and split satin (E11.2) landed.
 
 **Catalog gaps (E11).** The check found features, or pieces of them, that no plan step covered; they are
 now [plan phase E11](embroidery-plan.md#catalog-gaps--e11): run styles and split satin (P0, first), then
-multi-hoop, batch export, deferred stitch generation and centreline digitizing (P1,
+multi-hoop, batch export, deferred stitch generation and centreline digitizing (P1; centreline done,
 before G1), and the P2 items after G2. Only blending thread colours across an area has no step yet.
 
 ## Drawing and vector editing
@@ -103,7 +103,7 @@ before G1), and the P2 items after G2. Only blending thread colours across an ar
 | Density advisor | Heat map of stitches per mm², with one-click reduction | mySewnet | P1 | **Done** | E8.7: View › Stitch Density, `embroidery.fix` |
 | Small-stitch filter and corner control | Remove tiny stitches; short stitches at sharp satin corners | Embrilliance, Pulse Custom Cornering | P1 | **Done** | E7.6 shortest stitch; fanned satin corners |
 | Design checker | List problems per object (gaps, long stitches, bad shapes) | Ink/Stitch Troubleshoot Objects | P1 | **Done** | E7.7: `embroidery.check`, Check list |
-| Auto-digitize from image | Click-to-fill, click-to-outline, centreline and full auto, after colour reduction | Hatch (10 tools), Chroma, Pulse AutoDigitizer | P1 | **Partly** | Full auto, click-to-fill and click-to-outline in running stitch (Alt-click; E8.6). No centreline. Plan: E11.7 |
+| Auto-digitize from image | Click-to-fill, click-to-outline, centreline and full auto, after colour reduction | Hatch (10 tools), Chroma, Pulse AutoDigitizer | P1 | **Done** | Full auto, click-to-fill, click-to-outline in running stitch or satin (E8.6, E11.7), centreline by click (Shift-click) and in full auto (`lines: centreline`; E11.7) |
 | Stitch and runtime estimator | Stitch count, thread use, run time and a price quote | Pulse Quotation Estimator, Wilcom Estimator | P1 | **Partly** | Stitch count, sewing time and thread length on the worksheet. Bobbin use and price: E9.4 |
 | Photo stitch | Turn photos into stitched shading | Hatch PhotoStitch, Embird Sfumato, Brother, Chroma | P2 | **Missing** | E11.14 |
 | Overlap removal | Drop stitches hidden under later objects | Pulse Remove Overlap Stitches | P2 | **Done** | E7.4 |
@@ -151,3 +151,4 @@ independent reader in tests.
 - 2026-11-01: run variants done (E11.1); click-to-outline was already there (E8.6b), only centreline is missing.
 - 2026-11-01: satin column done: split satin (E11.2).
 - 2026-11-02: styles and presets done: stitch styles (E11.3).
+- 2026-11-04: auto-digitize from image done: satin outlines and centreline digitizing (E11.7).

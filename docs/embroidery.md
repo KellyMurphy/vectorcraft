@@ -71,6 +71,9 @@ it is. Then:
   holds them;
 - every area is set to **Auto**, which picks a bean outline for thin areas, a satin shape for narrow ones
   and a fill with a satin border for wide ones as it sews, so later edits are sewn the right way too;
+- with **Thin Lines as Centre Lines** on (`lines: centreline`), areas narrower than 2 mm (traced lines,
+  handwriting) are sewn instead as one line along their centre: running stitch when under 1 mm wide,
+  else a satin as wide as the area. The area becomes an open path along its centre line;
 - each area gets the thread of its colour, the thread chart's nearest when the document has one;
 - for traced art, the design's sewing order is grouped by thread and sewn nearest first (`order: keep`
   leaves it); traced areas don't overlap, so this never changes what lies on top;
@@ -82,8 +85,11 @@ hand. Photos and gradients don't digitize well: trace a flat-colour version.
 **The Stitch Fill tool** (in the toolbar with the Stitch Angle tool, or **Stitch Fill Tool** in the Tools
 tab) digitizes one area at a time: click inside any closed area, whether a shape or a region where
 shapes and paths cross (as Live Paint finds them), and it becomes a new stitch object on top, sewn Auto
-in the colour of the shape it lies in. Alt-click adds a running-stitch outline of the area instead. Each
-click is one undo step; the art under it is left as it is.
+in the colour of the shape it lies in. Alt-click adds a running-stitch outline of the area instead, and
+Alt-Shift-click a 2 mm satin border along its edge (`outline: satin`, `width` sets it). Shift-click sews
+a thin area, such as a traced line or handwriting, as one line along its centre (`centreline`): running
+stitch when it is under 1 mm wide, else a satin as wide as the area; the new object is an open path you
+can reshape. Each click is one undo step; the art under it is left as it is.
 
 ### Stitch angles
 
@@ -619,8 +625,8 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings |
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
 | `embroidery.check` | `{ids?}` → the design checker's `findings` (`rule`, `severity`, `message`, `object`, `at` in document points), `counts` and the `rules` |
-| `embroidery.digitize` | `{id?, colors?, minArea?, keepWhite?, order?, fix?}`: a logo (image, traced image or group of filled shapes) as stitch objects, one undo step → `{id, objects, threads, merged, dropped, fixes, findings}` |
-| `embroidery.fillAt` | `{x, y, outline?, thread?}`: the closed area at a point (document points) as a new stitch object on top, Auto or a running outline (the Stitch Fill tool's click) → `{id, areaMm2, outline}` |
+| `embroidery.digitize` | `{id?, colors?, minArea?, keepWhite?, order?, fix?, lines?}`: a logo (image, traced image or group of filled shapes) as stitch objects, one undo step; `lines: centreline` sews parts under 2 mm wide along their centre lines → `{id, objects, threads, merged, dropped, centrelines, fixes, findings}` |
+| `embroidery.fillAt` | `{x, y, outline?, centreline?, width?, thread?}`: the closed area at a point (document points) as a new stitch object on top: Auto, its outline (`outline: running` or `satin`), or a thin area along its centre line (`centreline: auto`, `running` or `satin`); the Stitch Fill tool's click → `{id, areaMm2, outline, centreline, type, widthMm}` |
 | `embroidery.density` | `{min?}` → the density map: `cells` (`x`, `y`, `size` in document points, `holes`), densest first, with the `limit`, `peak` and `perMm2` |
 | `embroidery.fixes` | `{object, rule?}` → the suggested `fixes` for the checker's findings on an object (`fix`, `label`, `object` changed, `clears`, `holes` left, the `command` and `params` it runs) |
 | `embroidery.fix` | `{object, rule?, fix?}`: make a suggested fix (default the first) as one undo step → `{fix, label, object, clears, findings}` (counts after) |

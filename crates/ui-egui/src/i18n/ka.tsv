@@ -6169,7 +6169,6 @@ breakText	Glyphs	გლიფები
 	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	აირჩიეთ ლოგო (გამოსახულება ან ერთფეროვანი ფორმების ჯგუფი): ის ტრასირდება და თითო არე საკუთარი ფერით იქარგება.
 	Stitch Fill Tool	ნაკერით შევსების ხელსაწყო
 	Stitch Fill	ნაკერით შევსება
-	Click inside any closed area to stitch it in its colour; Alt-click to outline it	დააწკაპეთ დახურულ არეში, რომ მისი ფერით ამოქარგოთ; Alt-დაწკაპება კონტურს ქარგავს
 	Stitch Styles	ნაკერის სტილები
 	Small Lettering	პატარა წარწერა
 	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	5–10 მმ სიმაღლის ტექსტი: ასოები შტრიხის სისქის მიხედვით, ოდნავ მკვრივად, მცირე შეკუმშვის კომპენსაციით.
@@ -6183,3 +6182,6 @@ breakText	Glyphs	გლიფები
 	Save to Library	ბიბლიოთეკაში შენახვა
 	Load Style File…	სტილის ფაილის ჩატვირთვა…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	ნაკერის პარამეტრების დასახელებული ნაკრებები: გამოიყენეთ ერთ-ერთი მონიშნულზე ან შეინახეთ მონიშნულის პარამეტრები ახალ სტილად
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it (Alt-Shift-click: a satin border); Shift-click to sew a thin line along its centre	დააწკაპუნეთ დახურულ არეში, რომ მისი ფერით ამოქარგოთ; Alt-დაწკაპუნება ქარგავს მის კონტურს (Alt-Shift-დაწკაპუნება: ატლასის არშია); Shift-დაწკაპუნება კერავს თხელ ხაზს მის შუაზე
+	Thin Lines as Centre Lines	თხელი ხაზები შუა ხაზებად
+	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	2 მმ-ზე ვიწრო ნაწილები, როგორიცაა გადახაზული ხაზები და ხელნაწერი, იკერება ერთ ხაზად მათ შუაზე

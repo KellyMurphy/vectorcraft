@@ -6168,3 +6168,6 @@ breakText	Glyphs	Glifs
 	Save to Library	Desa a la biblioteca
 	Load Style File…	Carrega un fitxer d'estil…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Conjunts amb nom de configuració de punt: apliqueu-ne un a la selecció o deseu la de la selecció com a estil
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it (Alt-Shift-click: a satin border); Shift-click to sew a thin line along its centre	Feu clic dins d'una àrea tancada per brodar-la en el seu color; Alt+clic per brodar-ne el contorn (Alt+Maj+clic: una vora de setí); Maj+clic per cosir una línia fina pel seu centre
+	Thin Lines as Centre Lines	Línies fines pel centre
+	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	Cus les parts de menys de 2 mm, com línies traçades i lletra manuscrita, com una sola línia pel seu centre

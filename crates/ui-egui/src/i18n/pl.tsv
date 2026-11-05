@@ -6437,7 +6437,6 @@ breakText	Glyphs	Glify
 	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Zaznacz logo (obraz lub grupę jednolitych kształtów): zostanie obrysowane, a każdy obszar wyhaftowany w swoim kolorze.
 	Stitch Fill Tool	Narzędzie Wypełnienie ściegiem
 	Stitch Fill	Wypełnienie ściegiem
-	Click inside any closed area to stitch it in its colour; Alt-click to outline it	Kliknij wewnątrz zamkniętego obszaru, aby wyhaftować go w jego kolorze; Alt+klik haftuje kontur
 	Single	Pojedynczy
 	Stem	Ścieg łodyżkowy
 	Backstitch	Ścieg za igłą
@@ -6476,3 +6475,6 @@ breakText	Glyphs	Glify
 	Save to Library	Zapisz w bibliotece
 	Load Style File…	Wczytaj plik stylu…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Nazwane zestawy ustawień ściegów: zastosuj jeden do zaznaczenia lub zapisz ustawienia zaznaczenia jako nowy
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it (Alt-Shift-click: a satin border); Shift-click to sew a thin line along its centre	Kliknij wewnątrz zamkniętego obszaru, aby wyhaftować go w jego kolorze; Alt+kliknięcie haftuje jego kontur (Alt+Shift+kliknięcie: obszycie satynowe); Shift+kliknięcie szyje cienką linię wzdłuż jego środka
+	Thin Lines as Centre Lines	Cienkie linie jako linie środkowe
+	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	Części węższe niż 2 mm, takie jak obrysowane linie i pismo odręczne, szyte jako jedna linia wzdłuż ich środka
