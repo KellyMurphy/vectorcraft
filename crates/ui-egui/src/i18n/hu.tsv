@@ -6612,3 +6612,6 @@ breakText	Glyphs	Glifák
 	Also Export:	Exportálás ebben is:
 	Rotate in Hoop:	Elforgatás a keretben:
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Az óramutató járásával megegyezően elforgatja a mintát a gépnek írt fájlban: egy negyedfordulat egy magas mintát is elhelyez egy széles keretben
+	Regenerate Stitches	Öltések újraszámítása
+	While Editing	Szerkesztés közben
+	When the Edit Ends	A szerkesztés végén

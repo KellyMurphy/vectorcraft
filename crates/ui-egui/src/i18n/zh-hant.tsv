@@ -6285,3 +6285,6 @@ breakText	Glyphs	字符
 	Also Export:	同時匯出：
 	Rotate in Hoop:	在繡框中旋轉:
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	寫入機器檔案時將圖案順時針旋轉：轉 90° 可讓高的圖案放進寬的繡框
+	Regenerate Stitches	重新產生針跡
+	While Editing	編輯時
+	When the Edit Ends	編輯結束時

@@ -6331,3 +6331,6 @@ breakText	Glyphs	字形
 	Also Export:	同時に書き出し:
 	Rotate in Hoop:	枠内で回転:
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	ミシン用に書き出すときにデザインを時計回りに回転します。90° 回すと縦長のデザインが横長の枠に収まります
+	Regenerate Stitches	ステッチの再生成
+	While Editing	編集中
+	When the Edit Ends	編集の終了時

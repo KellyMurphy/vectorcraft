@@ -6156,3 +6156,6 @@ breakText	Glyphs	Glifler
 	Also Export:	Ayrıca dışa aktar:
 	Rotate in Hoop:	Kasnakta Döndür:
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Makine için yazılırken deseni saat yönünde döndürür: çeyrek tur, uzun bir deseni geniş bir kasnağa sığdırır
+	Regenerate Stitches	Dikişleri yeniden oluştur
+	While Editing	Düzenlerken
+	When the Edit Ends	Düzenleme bitince

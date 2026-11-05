@@ -6209,3 +6209,6 @@ breakText	Glyphs	글리프
 	Also Export:	함께 내보내기:
 	Rotate in Hoop:	후프에서 회전:
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	기계용으로 쓸 때 디자인을 시계 방향으로 돌립니다. 90° 돌리면 세로로 긴 디자인이 가로로 넓은 후프에 맞습니다
+	Regenerate Stitches	스티치 다시 생성
+	While Editing	편집하는 동안
+	When the Edit Ends	편집이 끝날 때

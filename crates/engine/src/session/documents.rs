@@ -106,8 +106,13 @@ impl Session {
     }
 
     /// The stitch plan of `doc`, sewing again only the objects that changed since the last plan
-    /// (the Embroidery panel, Stitch Preview and the embroidery commands share it).
+    /// (the Embroidery panel, Stitch Preview and the embroidery commands share it). During a
+    /// tool's drag with Regenerate Stitches: When the Edit Ends ([`Session::stitches_deferred`]),
+    /// the active document's plan is the one from before the drag, and nothing is sewn again
+    /// until it is committed.
     pub fn stitch_plan(&self, doc: &vectorcraft_doc::Document) -> vectorcraft_embroidery::Plan {
+        let before = self.stitches_deferred().filter(|_| self.active().is_some_and(|d| std::ptr::eq(doc, &*d.doc)));
+        let doc = before.as_deref().unwrap_or(doc);
         let mut cache = self.stitch_cache.lock().unwrap_or_else(|poisoned| {
             // A plan panicked (the engine's guard caught it): its entries can't be trusted, so
             // start the cache again rather than plan without one from now on.
@@ -117,6 +122,18 @@ impl Session {
             cache
         });
         vectorcraft_embroidery::plan_cached(doc, &mut cache)
+    }
+
+    /// The active document as it was before the tool's drag in progress, when Regenerate
+    /// Stitches is When the Edit Ends (`regenerateStitches: whenEditEnds`): its stitches are the
+    /// ones shown until the drag is committed. `None` while editing regenerates, between drags,
+    /// and for dialogs' previews (the pointer isn't held on the canvas).
+    pub fn stitches_deferred(&self) -> Option<Arc<vectorcraft_doc::Document>> {
+        if self.prefs.regenerate_stitches != "whenEditEnds" || !self.pointer_held {
+            return None;
+        }
+        let d = self.active()?;
+        d.interaction.as_ref().filter(|it| !Arc::ptr_eq(&it.doc, &d.doc)).map(|it| it.doc.clone())
     }
 
     pub fn documents(&self) -> &[DocState] {

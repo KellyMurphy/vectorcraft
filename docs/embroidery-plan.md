@@ -726,7 +726,7 @@ row, tests, fuzzing for new input, spec + schema + drift test for a new format, 
 | **E11.3** Stitch styles (**done**) | Named sets of stitch settings, applied with one click, kept in documents and the library | P1 | M |
 | **E11.4** Multi-hoop and hoop rotation (E11.4a rotation **done**) | Rotate the design in the hoop; split a large design into hoopings with alignment marks | P1 | L |
 | **E11.5** Batch export (**done**) | Write several machine formats in one export | P1 | S |
-| **E11.6** Deferred stitch generation | Regenerate stitches when an edit ends, not on every drag frame | P1 | S |
+| **E11.6** Deferred stitch generation (**done**) | Regenerate stitches when an edit ends, not on every drag frame | P1 | S |
 | **E11.7** Centreline and satin outlines (**done**) | Sew a thin shape along its centre line; click-to-outline in satin as well as running | P1 | M |
 | **E11.8** Redwork | Line art sewn as one continuous run, each line at most twice | P2 | M |
 | **E11.9** Batch names | One design per name from a list | P2 | M |
@@ -841,7 +841,15 @@ plan:
 `document.export {formats: ["dst", "pes", …]}`, and checkboxes in the export dialog, write the design in
 each format at once (`name.dst`, `name.pes`…), combined with the per-artboard and per-hooping export.
 
-### E11.6 Deferred stitch generation (S)
+### E11.6 Deferred stitch generation (S) — done 2026-11-04
+
+As built: the preference `regenerateStitches` (Preferences › Performance › Regenerate Stitches: While
+Editing | When the Edit Ends). With When the Edit Ends, while a tool's drag is in progress (an interaction,
+the pointer held on the canvas) `Session::stitch_plan` of the active document plans the snapshot from
+before the drag instead, so Stitch Preview, the panel and the checks show the last stitches and nothing is
+sewn again until the commit; Stitch Preview also dashes the changed objects' outlines where they now are.
+Dialog previews and typing still regenerate. `vectorcraft-cli perf` row: one pointer move of such a drag,
+300 objects, 30 ms. The original plan:
 
 A preference, **Regenerate Stitches: While Editing | When the Edit Ends**. With When the Edit Ends, a
 tool's drag shows the object's last stitches (or its outline, once the shape has moved away from them) and

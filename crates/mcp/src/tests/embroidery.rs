@@ -258,3 +258,15 @@ fn an_agent_fits_a_large_design_to_the_hoop() {
     assert_eq!(run(&mut s, "embroidery.hoops", json!({}))["fit"], "fits");
     assert!(guide().contains("hoopRotation"), "the guide tells agents how to turn a design");
 }
+
+/// Deferred stitch generation over MCP: an agent sets when stitches are sewn again, and the guide
+/// says how.
+#[test]
+fn an_agent_sets_when_stitches_regenerate() {
+    let mut s = Server::new(Box::new(Headless::with_document()));
+    run(&mut s, "prefs.set", json!({"key": "regenerateStitches", "value": "whenEditEnds"}));
+    assert_eq!(run(&mut s, "prefs.get", json!({"key": "regenerateStitches"})), json!("whenEditEnds"));
+    let list = run(&mut s, "prefs.list", json!({})).to_string();
+    assert!(list.contains("\"regenerateStitches\"") && list.contains("Regenerate Stitches"), "prefs.list describes it");
+    assert!(guide().contains("regenerateStitches"), "the guide documents it");
+}

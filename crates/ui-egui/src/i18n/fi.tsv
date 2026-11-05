@@ -6656,3 +6656,6 @@ breakText	Glyphs	Merkit
 	Also Export:	Vie myös:
 	Rotate in Hoop:	Kierrä kehyksessä:
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Kiertää kuviota myötäpäivään, kun se kirjoitetaan koneelle: neljänneskierros sovittaa korkean kuvion leveään kehykseen
+	Regenerate Stitches	Luo pistot uudelleen
+	While Editing	Muokattaessa
+	When the Edit Ends	Kun muokkaus päättyy

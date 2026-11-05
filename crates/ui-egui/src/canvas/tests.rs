@@ -8210,3 +8210,33 @@ fn hidden_artboards_leave_a_paper_canvas_without_edges() {
     app.run("view.artboards", json!({})).unwrap();
     assert_eq!(look(&mut app), (false, true));
 }
+
+/// Regenerate Stitches: When the Edit Ends (E11.6): during a drag, Stitch Preview shows the
+/// stitches from before it and dashes the moved object's outline where it now is.
+#[test]
+fn a_drag_waiting_to_sew_dashes_the_moved_objects_outline() {
+    use vectorcraft_tools::{PointerEvent, PointerKind};
+    let mut app = VectorcraftApp::new(Session::new(), Default::default());
+    app.run("file.new", json!({"width": 400, "height": 300})).unwrap();
+    app.run("shape.rectangle", json!({"x": 50, "y": 50, "width": 100, "height": 100})).unwrap();
+    app.run("embroidery.set", json!({"type": "fill"})).unwrap();
+    app.run("view.stitchPreview", json!({})).unwrap();
+    app.session.execute("prefs.set", &json!({"key": "regenerateStitches", "value": "whenEditEnds"})).unwrap();
+    app.select_tool("selection");
+    let ctx = egui::Context::default();
+    frame(&mut app, &ctx, vec![]);
+    let accent = Tokens::get(&ctx).accent;
+    let dashes = |app: &mut VectorcraftApp| {
+        shapes(app, &ctx).iter().filter(|s| matches!(s, Shape::LineSegment { stroke, .. } if stroke.color == accent)).count()
+    };
+    let v = vectorcraft_engine::ViewInfo::default();
+    app.session.pointer(&PointerEvent::new(PointerKind::Down, 100.0, 100.0), v).unwrap();
+    app.session.pointer(&PointerEvent::new(PointerKind::Drag, 160.0, 100.0), v).unwrap();
+    assert!(app.session.stitches_deferred().is_some());
+    let waiting = dashes(&mut app);
+    // Regenerating while editing: the moved object's own stitches show, no outline.
+    app.session.execute("prefs.set", &json!({"key": "regenerateStitches", "value": "whileEditing"})).unwrap();
+    let live = dashes(&mut app);
+    assert!(waiting > live + 4, "dashed outline: {waiting} accent segments, {live} without it");
+    app.session.pointer(&PointerEvent::new(PointerKind::Up, 160.0, 100.0), v).unwrap();
+}

@@ -1934,3 +1934,44 @@ fn snap_to_glyph_options_read_set_and_reset() {
     s.execute("prefs.reset", &json!({})).unwrap();
     assert_eq!(s.execute("view.snapToGlyph.options", &json!({})).unwrap(), all);
 }
+
+/// Preferences › Performance › Regenerate Stitches (E11.6): When the Edit Ends, a drag that moves a
+/// stitched object shows the design from before it, and the stitches are sewn again at the commit.
+#[test]
+fn stitches_regenerate_when_the_edit_ends() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 400, "height": 400})).unwrap();
+    s.execute("shape.rectangle", &json!({"x": 50, "y": 50, "width": 100, "height": 100})).unwrap();
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    let v = ViewInfo::default();
+    s.select_tool("selection", v).unwrap();
+    let left = |s: &Session| {
+        let plan = s.stitch_plan(&s.doc().unwrap().doc);
+        plan.needles.iter().map(|n| n.x).fold(f64::INFINITY, f64::min)
+    };
+    let before = left(&s);
+    assert_eq!(s.prefs.regenerate_stitches, "whileEditing", "the default");
+    let drag = |s: &mut Session, dx: f64| {
+        s.pointer(&PointerEvent::new(PointerKind::Down, 100.0, 100.0), v).unwrap();
+        s.pointer(&PointerEvent::new(PointerKind::Drag, 100.0 + dx, 100.0), v).unwrap();
+    };
+    // While Editing: the drag's frames sew the moved object again.
+    drag(&mut s, 50.0);
+    assert!(s.stitches_deferred().is_none());
+    assert!(left(&s) > before + 10.0, "moved with the drag");
+    s.pointer(&PointerEvent::new(PointerKind::Up, 150.0, 100.0), v).unwrap();
+    s.execute("edit.undo", &json!({})).unwrap();
+    // When the Edit Ends: the stitches stay where they were until the drag ends.
+    set_pref(&mut s, "regenerateStitches", json!("whenEditEnds"));
+    drag(&mut s, 50.0);
+    let snapshot = s.stitches_deferred().expect("a drag in progress");
+    assert!(!std::sync::Arc::ptr_eq(&snapshot, &s.doc().unwrap().doc));
+    assert!((left(&s) - before).abs() < 1e-9, "the design from before the drag");
+    // Other documents than the active one are planned as they are.
+    let moved = vectorcraft_doc::Document::clone(&s.doc().unwrap().doc);
+    assert!(s.stitch_plan(&moved).needles.iter().map(|n| n.x).fold(f64::INFINITY, f64::min) > before + 10.0);
+    s.pointer(&PointerEvent::new(PointerKind::Up, 150.0, 100.0), v).unwrap();
+    assert!(s.stitches_deferred().is_none());
+    assert!(left(&s) > before + 10.0, "sewn again at the commit");
+    assert!(s.execute("prefs.set", &json!({"key": "regenerateStitches", "value": "sometimes"})).is_err());
+}

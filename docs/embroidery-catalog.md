@@ -1,6 +1,6 @@
 # Embroidery feature catalog
 
-Status: 62 features checked against the code on 2026-11-04. Done 34, partly done 14, missing 14 (estimated, by
+Status: 62 features checked against the code on 2026-11-04. Done 35, partly done 13, missing 14 (estimated, by
 reading the code and the guide, not by sewing: nothing is marked done on fabric until the sew-out gates pass).
 
 This is the feature catalog from the embroidery research (Kelly, 2026-10-16) that
@@ -20,13 +20,13 @@ to say where a feature is described; nothing is copied from any of them (the cle
 | Priority | Features | Done | Partly | Missing |
 |---|---|---|---|---|
 | P0 | 18 | 17 | 1 | 0 |
-| P1 | 26 | 16 | 7 | 3 |
+| P1 | 26 | 17 | 6 | 3 |
 | P2 | 18 | 1 | 6 | 11 |
-| **All** | **62** | **34** | **14** | **14** |
+| **All** | **62** | **35** | **13** | **14** |
 
 | Area | Features | Done | Partly | Missing |
 |---|---|---|---|---|
-| Drawing and vector editing | 11 | 8 | 3 | 0 |
+| Drawing and vector editing | 11 | 9 | 2 | 0 |
 | Stitch types and fills | 18 | 6 | 2 | 10 |
 | Lettering and monograms | 8 | 4 | 2 | 2 |
 | Quality, sequencing and automation | 12 | 10 | 1 | 1 |
@@ -51,7 +51,7 @@ before G1), and the P2 items after G2. Only blending thread colours across an ar
 | Offsets, borders, inflate/deflate | Generate outlines and offset copies of any shape | Wilcom Advanced Offset, Embrilliance | P1 | **Done** | Offset Path; fill satin border, Auto border |
 | Slice tools | Split an object along a line or curve into two objects | Pulse rectangle and curved slice | P1 | **Done** | Knife, Divide, Split, Split into Grid |
 | Styles and presets | Save a set of stitch properties and apply it with one click | Embrilliance QuickStyles, Wilcom Styles | P1 | **Done** | E11.3: stitch styles (`.vcstyle`, Stitch Styles menu, three starters), and graphic styles carry stitch settings |
-| Delayed stitch generation | Recalculate stitches only after a shape edit finishes | Embrilliance L3 | P1 | **Partly** | The stitch cache regenerates only changed objects; no "wait until the edit ends" mode. Plan: E11.6 |
+| Delayed stitch generation | Recalculate stitches only after a shape edit finishes | Embrilliance L3 | P1 | **Done** | The stitch cache regenerates only changed objects; E11.6: Preferences › Performance › Regenerate Stitches: When the Edit Ends waits for a drag to end |
 | Mirror merge, circle and matrix copy | Make symmetric, radial and grid repeats of objects | Wilcom, Brother PE-DESIGN 11 | P2 | **Partly** | Repeat (mirror, radial, grid) in the editor; not checked that live Repeat objects stitch (checked as part of E11.4) |
 | Continue digitizing | Extend an existing closed object instead of starting a new one | Wilcom 2026, Hatch | P2 | **Partly** | The pen continues open paths; closed objects can't be extended. Plan: E11.12 |
 
