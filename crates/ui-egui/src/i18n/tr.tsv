@@ -6152,3 +6152,6 @@ breakText	Glyphs	Glifler
 	Load Style File…	Stil Dosyası Yükle…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Adlandırılmış dikiş ayarı kümeleri: birini seçime uygulayın veya seçimin ayarlarını yeni bir stil olarak kaydedin
 	Also Export:	Ayrıca dışa aktar:
+	Regenerate Stitches	Dikişleri yeniden oluştur
+	While Editing	Düzenlerken
+	When the Edit Ends	Düzenleme bitince

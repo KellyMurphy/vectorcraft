@@ -94,6 +94,9 @@ pub const GPU_PREFERENCES: &[(&str, &str)] =
 /// (#2028, #4967).
 const LINUX_DISPLAY_SERVERS: &[(&str, &str)] =
     &[("automatic", "Automatic"), ("x11", "X11 (XWayland)"), ("x11WithPen", "X11 (XWayland) When a Pen Is Attached")];
+/// Performance › Regenerate Stitches (`regenerateStitches`): when a tool's drag sews stitched
+/// objects again ([`crate::Session::stitch_plan`]).
+pub const REGENERATE_STITCHES: &[(&str, &str)] = &[("whileEditing", "While Editing"), ("whenEditEnds", "When the Edit Ends")];
 const BLACK: &[(&str, &str)] = &[("accurate", "Display All Blacks Accurately"), ("rich", "Display All Blacks as Rich Black")];
 const BLACK_OUT: &[(&str, &str)] = &[("accurate", "Output All Blacks Accurately"), ("rich", "Output All Blacks as Rich Black")];
 
@@ -309,6 +312,7 @@ pub const PREF_SPECS: &[PrefSpec] = &[
     p!("gpuPreference", "Performance", "GPU Performance", "Graphics Processor", choice(GPU_PREFERENCES)),
     p!("historyStates", "Performance", "", "History States", int(5, 1000)),
     p!("realTimeDrawing", "Performance", "", "Real-time Drawing and Editing", bool),
+    p!("regenerateStitches", "Performance", "", "Regenerate Stitches", choice(REGENERATE_STITCHES)),
     p!("renderThreads", "Performance", "", "Render Threads (-1 = Automatic)", int(-1, 64)),
     p!("linuxDisplayServer", "Performance", "", "Linux Display Server", choice(LINUX_DISPLAY_SERVERS)),
     // File Handling

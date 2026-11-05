@@ -6652,3 +6652,6 @@ breakText	Glyphs	Merkit
 	Load Style File…	Lataa tyylitiedosto…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Nimettyjä pistoasetusten joukkoja: käytä yhtä valintaan tai tallenna valinnan asetukset uudeksi
 	Also Export:	Vie myös:
+	Regenerate Stitches	Luo pistot uudelleen
+	While Editing	Muokattaessa
+	When the Edit Ends	Kun muokkaus päättyy

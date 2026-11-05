@@ -160,6 +160,10 @@ pub struct Prefs {
     pub gpu_preference: String,
     pub history_states: u32,
     pub real_time_drawing: bool,
+    /// Performance › Regenerate Stitches: `whileEditing` sews a stitched object again on every
+    /// frame of a tool's drag; `whenEditEnds` shows the design as it was before the drag (and the
+    /// moved objects' outlines) until the drag is committed.
+    pub regenerate_stitches: String,
     /// Rasterizer worker threads; -1 = automatic.
     pub render_threads: i32,
     /// Linux: `automatic` opens the window on the session's display server, or through XWayland on
@@ -423,6 +427,7 @@ impl Default for Prefs {
             gpu_preference: s("automatic"),
             history_states: 500,
             real_time_drawing: true,
+            regenerate_stitches: s("whileEditing"),
             render_threads: -1,
             linux_display_server: s("automatic"),
             background_save: true,

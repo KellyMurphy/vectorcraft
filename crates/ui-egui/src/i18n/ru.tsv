@@ -6617,3 +6617,6 @@ breakText	Glyphs	Глифы
 	Load Style File…	Загрузить файл стиля…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Именованные наборы настроек стежков: примените один к выделенному или сохраните настройки выделенного как новый
 	Also Export:	Экспортировать также:
+	Regenerate Stitches	Пересчёт стежков
+	While Editing	Во время редактирования
+	When the Edit Ends	По окончании редактирования

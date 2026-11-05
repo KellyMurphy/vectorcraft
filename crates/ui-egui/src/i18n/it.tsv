@@ -6260,3 +6260,6 @@ breakText	Glyphs	Glifi
 	Load Style File…	Carica file di stile…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Insiemi con nome di impostazioni di punto: applicane uno alla selezione o salva quelle della selezione come nuovo stile
 	Also Export:	Esporta anche:
+	Regenerate Stitches	Rigenera punti
+	While Editing	Durante la modifica
+	When the Edit Ends	Al termine della modifica

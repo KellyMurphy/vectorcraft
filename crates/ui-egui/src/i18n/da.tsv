@@ -6520,3 +6520,6 @@ breakText	Glyphs	Glyffer
 	Load Style File…	Indlæs stilfil…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Navngivne sæt af stingindstillinger: anvend et på markeringen, eller gem markeringens som et
 	Also Export:	Eksportér også:
+	Regenerate Stitches	Genberegn sting
+	While Editing	Under redigering
+	When the Edit Ends	Når redigeringen slutter

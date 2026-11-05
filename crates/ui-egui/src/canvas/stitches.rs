@@ -20,9 +20,10 @@ pub struct StitchMemo {
 }
 
 /// The active document's stitch plan and findings, as Stitch Preview has them (made now if the
-/// document changed since), for panels that draw the design.
+/// document changed since), for panels that draw the design; during a drag whose stitches wait
+/// for it to end, the design from before it.
 pub(crate) fn stitch_memo(app: &mut VectorcraftApp) -> Option<StitchMemo> {
-    let doc = app.session.active()?.doc.clone();
+    let doc = app.session.stitches_deferred().or_else(|| Some(app.session.active()?.doc.clone()))?;
     Some(stitch_plan(&app.session, &mut app.ui.stitch_cache, &doc).clone())
 }
 
@@ -59,12 +60,34 @@ pub(super) fn draw_preview(
         return;
     }
     let density = app.ui.view.stitch_density;
-    let memo = stitch_plan(&app.session, &mut app.ui.stitch_cache, doc);
-    draw_stitches(painter, xf, doc, &memo.plan);
+    // During a tool's drag with Regenerate Stitches: When the Edit Ends, the design from before
+    // the drag, and the outlines of the stitched objects the drag changed.
+    let before = app.session.stitches_deferred();
+    let shown = before.as_ref().unwrap_or(doc);
+    let memo = stitch_plan(&app.session, &mut app.ui.stitch_cache, shown);
+    draw_stitches(painter, xf, shown, &memo.plan);
     if density {
         draw_density(painter, xf, &memo.density, area, t);
     }
     draw_findings(painter, xf, &memo.findings, t);
+    if let Some(before) = &before {
+        draw_changed_outlines(painter, xf, before, doc, t);
+    }
+}
+
+/// The stitched objects of `doc` that differ from `before` (a drag moved or reshaped them), as
+/// dashed outlines where they are now: their stitches are sewn again when the drag ends.
+fn draw_changed_outlines(painter: &egui::Painter, xf: &Xf, before: &vectorcraft_doc::Document, doc: &vectorcraft_doc::Document, t: &Tokens) {
+    let symbols = doc.symbol_boxes();
+    let stroke = Stroke::new(1.5, t.accent);
+    doc.walk(|n| {
+        if n.extras().stitch.is_none() || before.node(n.id).is_some_and(|b| std::ptr::eq(b, n)) {
+            return;
+        }
+        for line in to_screen_path(&super::outline::node_outline(n, &symbols), xf) {
+            painter.extend(Shape::dashed_line(&line, stroke, 6.0, 4.0));
+        }
+    });
 }
 
 /// View › Stitch Density: each cell of the density map tinted by its needle holes against the

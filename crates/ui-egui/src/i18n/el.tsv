@@ -6574,3 +6574,6 @@ breakText	Glyphs	Γλύφοι
 	Load Style File…	Φόρτωση αρχείου στυλ…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Ονομασμένα σύνολα ρυθμίσεων βελονιάς: εφαρμόστε ένα στην επιλογή ή αποθηκεύστε τις ρυθμίσεις της επιλογής ως νέο
 	Also Export:	Εξαγωγή και ως:
+	Regenerate Stitches	Αναδημιουργία βελονιών
+	While Editing	Κατά την επεξεργασία
+	When the Edit Ends	Όταν τελειώσει η επεξεργασία

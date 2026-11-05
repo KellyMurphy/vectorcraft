@@ -15,6 +15,8 @@ use vectorcraft_render::{RenderOptions, Renderer};
 /// Budgets for the embroidery rows, ms.
 const EMBROIDERY_PLAN_MS: f64 = 2000.0;
 const EMBROIDERY_EDIT_MS: f64 = 50.0;
+/// Budget for one pointer move of a drag with Regenerate Stitches: When the Edit Ends, ms.
+const EMBROIDERY_DRAG_MS: f64 = 30.0;
 
 /// Deterministic xorshift in 0..1.
 struct Rng(u64);
@@ -152,6 +154,39 @@ fn embroidery_rows(n: usize) -> Result<(f64, f64), String> {
         drop(s.stitch_plan(&doc));
     });
     Ok((cold, edit))
+}
+
+/// One pointer move of a Selection tool drag of one object of an `n`-object embroidery design
+/// with Regenerate Stitches: When the Edit Ends, and the stitch plan the frame draws (the
+/// design from before the drag: nothing is sewn again until the drag ends).
+fn embroidery_drag(n: usize) -> Result<f64, String> {
+    use vectorcraft_engine::tools::{Mods, PointerEvent, PointerKind};
+    use vectorcraft_geom::Vec2;
+    let design = embroidery_design(n)?;
+    let err = |e: vectorcraft_engine::EngineError| e.to_string();
+    let target = design.layers.first().and_then(|l| l.children()).and_then(|c| c.get(c.len() / 2)).ok_or("the embroidery design is empty")?;
+    let down = target.geometric_bounds().ok_or("the dragged object has no bounds")?.center();
+    let mut s = vectorcraft_engine::Session::new();
+    s.add_document(design, None);
+    s.execute("prefs.set", &json!({"key": "regenerateStitches", "value": "whenEditEnds"})).map_err(err)?;
+    let view = vectorcraft_engine::ViewInfo::default();
+    s.select_tool("selection", view).map_err(err)?;
+    drop(s.stitch_plan(&s.doc().map_err(err)?.doc));
+    let ev = |kind, dx: f64| PointerEvent { kind, pos: down + Vec2::new(dx, 0.0), mods: Mods::default(), backquote: false, pressure: 1.0 };
+    s.pointer(&ev(PointerKind::Down, 0.0), view).map_err(err)?;
+    let mut dx = 0.0;
+    let ms = median_ms(9, || {
+        dx += 3.0;
+        let _ = s.pointer(&ev(PointerKind::Drag, dx), view);
+        if let Ok(d) = s.doc() {
+            drop(s.stitch_plan(&d.doc));
+        }
+    });
+    if s.stitches_deferred().is_none() {
+        return Err("the drag didn't wait to sew its stitches".into());
+    }
+    s.pointer(&ev(PointerKind::Up, dx), view).map_err(err)?;
+    Ok(ms)
 }
 
 fn median_ms(runs: usize, mut f: impl FnMut()) -> f64 {
@@ -543,6 +578,11 @@ pub fn run(args: &[String]) -> Result<(), String> {
     });
     rows.push(("embroidery: plan, 300 objects", cold, EMBROIDERY_PLAN_MS));
     rows.push(("embroidery: re-plan after one edit", edit, EMBROIDERY_EDIT_MS));
+    let drag = embroidery_drag(300).unwrap_or_else(|e| {
+        failed = Some(e);
+        0.0
+    });
+    rows.push(("embroidery: drag move, stitches deferred", drag, EMBROIDERY_DRAG_MS));
     if let Some(e) = failed {
         return Err(e);
     }

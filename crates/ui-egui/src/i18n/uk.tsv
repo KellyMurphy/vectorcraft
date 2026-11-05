@@ -6240,3 +6240,6 @@ breakText	Glyphs	Гліфи
 	Load Style File…	Завантажити файл стилю…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Іменовані набори налаштувань стібків: застосуйте один до виділеного або збережіть налаштування виділеного як новий
 	Also Export:	Експортувати також:
+	Regenerate Stitches	Перерахунок стібків
+	While Editing	Під час редагування
+	When the Edit Ends	Після завершення редагування

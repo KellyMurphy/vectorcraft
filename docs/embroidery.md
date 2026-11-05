@@ -570,6 +570,21 @@ Loading an entry (`library` on `embroidery.loadBorderPattern`, `loadFabric`, `lo
 design sews the same on a machine without your library. Changing the library file afterwards doesn't
 change documents that already use it. The web app has no library folder.
 
+### Editing large designs
+
+Stitches are sewn again only for the objects an edit changes. On a large design even that can make a
+drag stutter, so **Preferences › Performance › Regenerate Stitches** (`prefs.set {key:
+"regenerateStitches", value: "whileEditing" | "whenEditEnds"}`) chooses when:
+
+- **While Editing** (the default): every frame of a tool's drag sews the moved or reshaped objects again,
+  so Stitch Preview and the panel follow the pointer.
+- **When the Edit Ends:** during a drag, Stitch Preview, the Embroidery panel and the design checks show
+  the design from before the drag, with the changed objects' outlines dashed where they now are. The
+  stitches are sewn again when the drag is committed (on release). Dialog previews and typed values are
+  not affected.
+
+`vectorcraft-cli perf` budgets one pointer move of such a drag on a 300-object design.
+
 ### Sew-out tests
 
 Stitch quality is only proven on fabric. **New Test Sheet…** (Sew-Out Test panel, `embroidery.testSheet`)
