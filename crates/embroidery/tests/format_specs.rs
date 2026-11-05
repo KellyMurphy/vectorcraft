@@ -150,6 +150,7 @@ fn full_setup() -> EmbroiderySetup {
         sew_out: Some(Box::new(full_sew_out())),
         fabric: Some(Box::new(full_fabric())),
         hoop: Some(Box::new(full_hoop())),
+        hoop_rotation: 90,
         charts: vec![full_chart()],
         chart: Some("full".into()),
         styles: vec![full_style()],
@@ -643,6 +644,8 @@ fn embroidery_schema_matches_the_code() {
     range_is(&setup["stitchMovesUnder"], EmbroiderySetup::STITCH_MOVES, "stitchMovesUnder");
     assert_eq!(setup["trimJumpsOver"]["default"].as_f64(), Some(EmbroiderySetup::DEFAULT_TRIM));
     assert_eq!(setup["stitchMovesUnder"]["default"].as_f64(), Some(EmbroiderySetup::DEFAULT_STITCH_MOVES));
+    let turns = setup["hoopRotation"]["description"].as_str().unwrap();
+    assert!(["0, 90, 180 or 270", "clockwise"].iter().all(|t| turns.contains(t)), "the schema gives the quarter turns");
     let sew_out = serde_json::to_value(full_sew_out()).unwrap();
     assert_eq!(keys(&defs["sewOut"]["properties"]), keys(&sew_out), "the sew-out's fields");
     let swatch = &defs["swatch"]["properties"];

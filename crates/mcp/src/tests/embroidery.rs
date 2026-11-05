@@ -207,3 +207,16 @@ fn an_agent_saves_and_applies_a_stitch_style() {
     let spec = rpc(&mut s, "resources/read", json!({"uri": "vectorcraft://spec/vcstyle"}));
     assert!(spec["result"]["contents"][0]["text"].as_str().unwrap().starts_with("# Stitch style file"));
 }
+
+/// A design bigger than the hoop over MCP: an agent turns it in the hoop to fit.
+#[test]
+fn an_agent_fits_a_large_design_to_the_hoop() {
+    let mut s = Server::new(Box::new(Headless::with_document()));
+    // 480 × 340 pt ≈ 169 × 120 mm: wider than a 130 × 180 mm hoop, fits it turned.
+    let a = run(&mut s, "shape.rectangle", json!({"x": 10, "y": 10, "width": 480, "height": 340}))["id"].clone();
+    run(&mut s, "embroidery.set", json!({"ids": [a], "type": "fill"}));
+    assert_eq!(run(&mut s, "embroidery.setHoop", json!({"hoop": "5x7"}))["fit"], "turned");
+    assert_eq!(run(&mut s, "embroidery.setup", json!({"hoopRotation": 90}))["hoopRotation"], 90);
+    assert_eq!(run(&mut s, "embroidery.hoops", json!({}))["fit"], "fits");
+    assert!(guide().contains("hoopRotation"), "the guide tells agents how to turn a design");
+}

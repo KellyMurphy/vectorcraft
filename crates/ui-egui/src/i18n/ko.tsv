@@ -6204,3 +6204,5 @@ breakText	Glyphs	글리프
 	Save to Library	라이브러리에 저장
 	Load Style File…	스타일 파일 불러오기…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	이름이 붙은 스티치 설정 묶음: 선택 항목에 적용하거나 선택 항목의 설정을 새 스타일로 저장합니다
+	Rotate in Hoop:	후프에서 회전:
+	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	기계용으로 쓸 때 디자인을 시계 방향으로 돌립니다. 90° 돌리면 세로로 긴 디자인이 가로로 넓은 후프에 맞습니다

@@ -724,7 +724,7 @@ row, tests, fuzzing for new input, spec + schema + drift test for a new format, 
 | **E11.1** Run styles (**done**) | Chain, stem, backstitch and sashiko as running stitch styles | P0 | M |
 | **E11.2** Split satin (**done**) | Wide satin stitches split into shorter ones, split points staggered | P0 | M |
 | **E11.3** Stitch styles (**done**) | Named sets of stitch settings, applied with one click, kept in documents and the library | P1 | M |
-| **E11.4** Multi-hoop and hoop rotation | Rotate the design in the hoop; split a large design into hoopings with alignment marks | P1 | L |
+| **E11.4** Multi-hoop and hoop rotation (E11.4a rotation **done**) | Rotate the design in the hoop; split a large design into hoopings with alignment marks | P1 | L |
 | **E11.5** Batch export | Write several machine formats in one export | P1 | S |
 | **E11.6** Deferred stitch generation | Regenerate stitches when an edit ends, not on every drag frame | P1 | S |
 | **E11.7** Centreline and satin outlines | Sew a thin shape along its centre line; click-to-outline in satin as well as running | P1 | M |
@@ -810,6 +810,12 @@ background fill). Graphic styles (the editor's) gain the stitch settings too, so
 both look and stitching.
 
 ### E11.4 Multi-hoop and hoop rotation (L)
+
+E11.4a done 2026-11-04. As built: `Document.embroidery.hoopRotation` (0, 90, 180 or 270, degrees
+clockwise; any other value is kept and used as 0), set by `embroidery.setup {hoopRotation}` and the
+Embroidery panel's Rotate in Hoop menu. The machine files are written turned about the middle of the
+stitches; the hoop check, `embroidery.hoops` `fit`, the panel's fit note and the worksheet judge the
+turned design, and Stitch Preview draws the hoop's field turned round the design as drawn. The plan:
 
 - **E11.4a Rotate in hoop.** `embroidery.setup {hoopRotation: 0 | 90 | 180 | 270}` turns the design as it
   is written to the machine, so a tall design fits a wide hoop. The hoop fit check and the export use it.

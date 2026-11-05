@@ -1918,6 +1918,10 @@ fn hoop_row(app: &mut VectorcraftApp, ui: &mut Ui) {
             }
         });
     }
+    let rotation = app.session.active().map_or(0, |d| d.doc.embroidery.hoop_rotation());
+    if current.is_some() || rotation != 0 {
+        rotation_row(app, ui, rotation);
+    }
     if current.is_some() {
         let fit = app.session.execute("embroidery.hoops", &json!({})).ok().and_then(|r| r["fit"].as_str().map(str::to_string));
         let t = Tokens::get(ui.ctx());
@@ -1934,6 +1938,22 @@ fn hoop_row(app: &mut VectorcraftApp, ui: &mut Ui) {
             });
         }
     }
+}
+
+/// The turn the design is given in the hoop, as written to the machine.
+fn rotation_row(app: &mut VectorcraftApp, ui: &mut Ui, rotation: u16) {
+    const TURNS: [u16; 4] = [0, 90, 180, 270];
+    let names: Vec<String> = TURNS.iter().map(|d| format!("{d}°")).collect();
+    ui.scope(|ui| {
+        widgets::label_row(ui, tl!("Rotate in Hoop:"), LABEL_W, |ui| {
+            let opts: Vec<&str> = names.iter().map(String::as_str).collect();
+            if let Some(d) = widgets::dropdown_names(ui, "emb-hoop-rotation", &format!("{rotation}°"), &opts, 150.0).and_then(|i| TURNS.get(i)) {
+                app.run("embroidery.setup", json!({ "hoopRotation": d })).ok();
+            }
+        })
+    })
+    .response
+    .on_hover_text(tl!("Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop"));
 }
 
 /// Load a fabric profile file the user picks as the document's fabric (the web: the picked file

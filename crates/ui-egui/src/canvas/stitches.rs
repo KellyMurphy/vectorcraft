@@ -159,7 +159,7 @@ pub(super) fn draw_stitches(painter: &egui::Painter, xf: &Xf, doc: &vectorcraft_
     }
     // The hoop's sewing field, centred on the design.
     if let Some(hoop) = doc.embroidery.hoop.as_ref().filter(|h| h.unknown.is_none())
-        && let Some((c, w, h)) = vectorcraft_embroidery::hoops::field(plan, hoop)
+        && let Some((c, w, h)) = vectorcraft_embroidery::hoops::field(plan, hoop, doc.embroidery.hoop_rotation())
     {
         let outline = vectorcraft_embroidery::preview::hoop_outline(c, w, h, hoop.round);
         let [r, g, b] = vectorcraft_embroidery::preview::HOOP;

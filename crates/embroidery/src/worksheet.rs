@@ -90,18 +90,22 @@ pub fn build(doc: &Document, plan: &Plan, letter: bool) -> Document {
     let (w, h) = st.bounds.map_or((0.0, 0.0), |b| (b[2] - b[0], b[3] - b[1]));
     let e = &doc.embroidery;
     let minutes = crate::sewing_seconds(plan, e.speed()) / 60.0;
+    let h_mm = h;
     let hoop = e.hoop.as_deref().filter(|h| h.unknown.is_none()).map_or_else(
         || "none chosen".to_string(),
         |h| {
             let (hw, hh) = crate::hoops::size(h);
             // Its name, with its size unless the name gives it; and whether the design fits.
             let name = if h.name.contains("mm") { h.name.clone() } else { format!("{} ({hw:.0} × {hh:.0} mm)", h.name) };
-            let fit = match crate::hoops::fit(w, st.bounds.map_or(0.0, |b| b[3] - b[1]), h) {
+            let rotation = e.hoop_rotation();
+            let (sw, sh) = crate::hoops::as_sewn(w, h_mm, rotation);
+            let fit = match crate::hoops::fit(sw, sh, h) {
                 crate::hoops::Fit::Fits => "",
                 crate::hoops::Fit::FitsTurned => ": fits only turned a quarter turn",
                 crate::hoops::Fit::TooBig => ": the design doesn't fit",
             };
-            format!("{name}{fit}")
+            let turned = if rotation == 0 { String::new() } else { format!(", the design turned {rotation}°") };
+            format!("{name}{turned}{fit}")
         },
     );
     let fabric = e.fabric.as_deref().filter(|f| f.unknown.is_none()).map_or("none chosen".to_string(), |f| f.name.clone());

@@ -44,6 +44,7 @@ mod draw2;
 mod dynamic_symbols;
 mod editcolors;
 mod effectedit;
+mod embroidery_hoopings;
 mod embroidery_lib;
 mod emptytype;
 mod envelope;

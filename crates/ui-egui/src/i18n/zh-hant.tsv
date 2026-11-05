@@ -6280,3 +6280,5 @@ breakText	Glyphs	字符
 	Save to Library	儲存到資料庫
 	Load Style File…	載入樣式檔案…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	具名的針跡設定組合：將其中之一套用到所選物件，或將所選物件的設定儲存為新樣式
+	Rotate in Hoop:	在繡框中旋轉:
+	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	寫入機器檔案時將圖案順時針旋轉：轉 90° 可讓高的圖案放進寬的繡框

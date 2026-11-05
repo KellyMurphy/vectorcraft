@@ -6326,3 +6326,5 @@ breakText	Glyphs	字形
 	Save to Library	ライブラリに保存
 	Load Style File…	スタイルファイルを読み込み…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	名前付きのステッチ設定のセット：選択範囲に適用するか、選択範囲の設定を新しいスタイルとして保存します
+	Rotate in Hoop:	枠内で回転:
+	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	ミシン用に書き出すときにデザインを時計回りに回転します。90° 回すと縦長のデザインが横長の枠に収まります

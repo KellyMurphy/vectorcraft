@@ -357,8 +357,8 @@ for warnings). The rules so far:
   lettering (other than running or bean) whose letters' holes are under 1 mm across, which close up on
   fabric. That depends on the font: Impact's holes are under 1 mm even at 15 mm. The finding gives the
   size at which they open.
-- **Design bigger than the hoop:** the design doesn't fit the document's hoop (an error), or fits only
-  turned a quarter turn.
+- **Design bigger than the hoop:** the design, as sewn (turned by Rotate in Hoop), doesn't fit the
+  document's hoop (an error), or fits only turned a quarter turn (a warning naming the turn to set).
 
 Exporting a DST adds a line for each rule that found something to the export's warnings.
 `embroidery.check` gives the same findings to agents and scripts, each with the object and where it is.
@@ -400,6 +400,12 @@ field is drawn in Stitch Preview as a dashed outline centred on the design, as m
 the panel says whether the design fits. The design checker reports a design that doesn't fit (an
 error) or fits only turned a quarter turn. The common sizes are nominal; a machine's own field can be a
 little smaller, so set its real size (`embroidery.setHoop {width, height}`) when it matters.
+
+**Rotate in Hoop** (under the Hoop menu; `embroidery.setup {hoopRotation: 0 | 90 | 180 | 270}`) turns the
+design clockwise as it is written to the machine file, about the middle of its stitches, so a tall
+design fits a wide hoop (or a cap frame) without turning the artwork. The hoop check, the panel's fit
+note and the worksheet use the turned design, and Stitch Preview draws the hoop's field turned the
+other way round the design as drawn. The rotation is saved with the document.
 
 ### Shortest stitch
 
@@ -615,7 +621,7 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.saveMotif` | `{motif, path?, user?}`: write a motif as a `.vcmotif` file (without `path`: `{data}`; `user: true`: into the embroidery library) |
 | `embroidery.removeMotif` | `{motif}`: remove one of the document's motifs that nothing uses |
 | `embroidery.removeBorderPattern` | `{pattern}`: remove one of the document's patterns that nothing sews with |
-| `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm, overlap?: mm, minStitch?: mm, autoStart?, hideTravel?, speed?: stitches/min, machineFormat?: dst \| pes \| jef \| exp}`: the document's travel settings, overlap, shortest stitch, machine speed and the format the panels export |
+| `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm, overlap?: mm, minStitch?: mm, autoStart?, hideTravel?, speed?: stitches/min, machineFormat?: dst \| pes \| jef \| exp, hoopRotation?: 0 \| 90 \| 180 \| 270}`: the document's travel settings, overlap, shortest stitch, machine speed, the format the panels export and the design's turn in the hoop |
 | `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings |
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
 | `embroidery.check` | `{ids?}` → the design checker's `findings` (`rule`, `severity`, `message`, `object`, `at` in document points), `counts` and the `rules` |
@@ -636,7 +642,7 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.removeThreadChart` | `{chart}`: remove a chart from the document |
 | `embroidery.saveThreadChart` | `{chart, path?, user?}`: write a chart as a `.vcthreads` file |
 | `embroidery.matchThreads` | `{chart?}` → each design thread colour's nearest chart thread (`code`, `name`, `threadColor`, `deltaE`) |
-| `embroidery.hoops` | → the document's `hoop` (or null), the `common` hoops, and whether the design `fit`s |
+| `embroidery.hoops` | → the document's `hoop` (or null), the `common` hoops, whether the design `fit`s (as sewn, turned by `hoopRotation`) and the `rotation` |
 | `embroidery.setHoop` | `{hoop?: 4x4\|5x7\|6x10\|8x8\|8x12\|cap\|null, name?, width?, height?, round?}`: set the document's hoop |
 | `embroidery.loadHoop` | `{path? \| data? \| library?, hoop?}`: a hoop from a `.vchoop` file as the document's |
 | `embroidery.saveHoop` | `{hoops?, path?, user?, name?}`: write the document's hoop (or common ones) as a `.vchoop` file |

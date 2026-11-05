@@ -6483,3 +6483,5 @@ breakText	Glyphs	字形
 	Save to Library	保存到库
 	Load Style File…	载入样式文件…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	命名的针迹设置组合：将其中之一应用于所选对象，或将所选对象的设置保存为新样式
+	Rotate in Hoop:	在绣框中旋转:
+	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	写入机器文件时将图案顺时针旋转：转 90° 可让高的图案放进宽的绣框

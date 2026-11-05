@@ -77,22 +77,28 @@ fn design(id: &str, doc: &Document) -> Result<(Vec<u8>, Vec<String>)> {
         return Err(bad(C, "the stitched objects make no stitches (hidden, empty or too small)"));
     }
     let mut warnings = plan.warnings.clone();
-    let bytes = match id {
+    // The design checker's findings the plan's warnings don't already give (long stitches…).
+    warnings.extend(vectorcraft_embroidery::check::summary(&vectorcraft_embroidery::check::check(doc, &plan)));
+    // Written as the machine sews it: turned in the hoop.
+    let plan = vectorcraft_embroidery::hoops::rotated(plan, doc.embroidery.hoop_rotation());
+    Ok((write(id, &plan, &doc.title, &mut warnings), warnings))
+}
+
+/// `plan` in machine format `id` (`dst`, `pes`, `jef`, `exp`), adding the writer's warnings.
+fn write(id: &str, plan: &vectorcraft_embroidery::Plan, title: &str, warnings: &mut Vec<String>) -> Vec<u8> {
+    match id {
         "pes" => {
-            let (bytes, w) = vectorcraft_embroidery::write_pes(&plan, &doc.title);
+            let (bytes, w) = vectorcraft_embroidery::write_pes(plan, title);
             warnings.extend(w);
             bytes
         }
         "jef" => {
             let t = vectorcraft_doc::metadata::now_unix().unwrap_or(0);
-            vectorcraft_embroidery::write_jef(&plan, vectorcraft_doc::metadata::civil(t))
+            vectorcraft_embroidery::write_jef(plan, vectorcraft_doc::metadata::civil(t))
         }
-        "exp" => vectorcraft_embroidery::write_exp(&plan),
-        _ => vectorcraft_embroidery::write_dst(&plan, &doc.title),
-    };
-    // The design checker's findings the plan's warnings don't already give (long stitches…).
-    warnings.extend(vectorcraft_embroidery::check::summary(&vectorcraft_embroidery::check::check(doc, &plan)));
-    Ok((bytes, warnings))
+        "exp" => vectorcraft_embroidery::write_exp(plan),
+        _ => vectorcraft_embroidery::write_dst(plan, title),
+    }
 }
 
 /// A design in machine format `id` (`dst`, `pes`, `jef`, `exp`) as a new document titled `title`.

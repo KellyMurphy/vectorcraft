@@ -6607,3 +6607,5 @@ breakText	Glyphs	Glifák
 	Save to Library	Mentés a könyvtárba
 	Load Style File…	Stílusfájl betöltése…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Elnevezett öltésbeállítás-készletek: alkalmazzon egyet a kijelölésre, vagy mentse a kijelölését újként
+	Rotate in Hoop:	Elforgatás a keretben:
+	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Az óramutató járásával megegyezően elforgatja a mintát a gépnek írt fájlban: egy negyedfordulat egy magas mintát is elhelyez egy széles keretben

@@ -678,6 +678,11 @@ pub struct EmbroiderySetup {
     /// it (`None`: no hoop chosen, nothing checked).
     #[serde(skip_serializing_if = "Option::is_none", deserialize_with = "de_hoop", serialize_with = "ser_hoop")]
     pub hoop: Option<Box<Hoop>>,
+    /// How the design is turned in the hoop as it is written to the machine, degrees clockwise:
+    /// 0, 90, 180 or 270 (a quarter turn fits a tall design in a wide hoop). Another whole number
+    /// is kept and used as 0 ([`EmbroiderySetup::hoop_rotation`]); anything else reads as 0.
+    #[serde(skip_serializing_if = "is_zero", deserialize_with = "de_rotation")]
+    pub hoop_rotation: u16,
     /// Thread charts loaded into the document (from `.vcthreads` files), kept with it.
     #[serde(skip_serializing_if = "Vec::is_empty", deserialize_with = "de_charts", serialize_with = "ser_charts")]
     pub charts: Vec<ThreadChart>,
@@ -724,6 +729,7 @@ impl Default for EmbroiderySetup {
             sew_out: None,
             fabric: None,
             hoop: None,
+            hoop_rotation: 0,
             charts: vec![],
             chart: None,
             styles: vec![],
@@ -752,6 +758,17 @@ fn is_default_min_stitch(v: &f64) -> bool {
 
 fn is_default_overlap(v: &f64) -> bool {
     *v == EmbroiderySetup::DEFAULT_OVERLAP
+}
+
+fn is_zero(v: &u16) -> bool {
+    *v == 0
+}
+
+/// Read a hoop rotation: anything but a whole number of degrees (from a newer VectorCraft, or
+/// hand-edited) reads as 0 rather than failing the document.
+fn de_rotation<'de, D: serde::Deserializer<'de>>(d: D) -> Result<u16, D::Error> {
+    let v = Option::<serde_json::Value>::deserialize(d)?;
+    Ok(v.and_then(|v| v.as_u64()).and_then(|n| u16::try_from(n).ok()).unwrap_or(0))
 }
 
 /// A fabric profile: the settings a fabric wants (density, compensation, how much underlay), used
@@ -1111,6 +1128,12 @@ impl EmbroiderySetup {
     /// The machine format to export in: the document's, or DST for one this version doesn't know.
     pub fn machine_format(&self) -> &'static str {
         Self::MACHINE_FORMATS.iter().find(|f| **f == self.machine_format).copied().unwrap_or(Self::DEFAULT_MACHINE_FORMAT)
+    }
+
+    /// The quarter turns the design is given in the hoop, degrees clockwise: 0, 90, 180 or 270
+    /// (any other value reads as 0).
+    pub fn hoop_rotation(&self) -> u16 {
+        if matches!(self.hoop_rotation, 90 | 180 | 270) { self.hoop_rotation } else { 0 }
     }
 
     /// The machine speed to estimate with, stitches per minute.
@@ -1527,6 +1550,19 @@ mod tests {
         assert_eq!((e.styles[0].stitch.kind, e.styles[0].unknown.is_none()), (StitchKind::Satin, true));
         assert_eq!((e.styles[1].id.as_str(), e.styles[1].unknown.is_some()), ("laser", true));
         assert_eq!(serde_json::to_value(&e).unwrap()["styles"], setup["styles"], "written back as read");
+    }
+
+    #[test]
+    fn a_hoop_rotation_reads_leniently() {
+        let e: EmbroiderySetup = serde_json::from_value(serde_json::json!({"hoopRotation": 90})).unwrap();
+        assert_eq!(e.hoop_rotation(), 90);
+        assert_eq!(serde_json::to_value(&e).unwrap()["hoopRotation"], 90);
+        for odd in [serde_json::json!(45), serde_json::json!(-90), serde_json::json!("left"), serde_json::json!(1e9)] {
+            let e: EmbroiderySetup = serde_json::from_value(serde_json::json!({"hoopRotation": odd})).expect("a strange rotation doesn't fail");
+            assert_eq!(e.hoop_rotation(), 0, "{odd}");
+        }
+        let e: EmbroiderySetup = serde_json::from_value(serde_json::json!({"hoopRotation": 45})).unwrap();
+        assert_eq!(serde_json::to_value(&e).unwrap()["hoopRotation"], 45, "a newer version's turn is kept");
     }
 
     #[test]

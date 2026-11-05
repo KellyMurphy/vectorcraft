@@ -77,7 +77,9 @@ pub fn document(doc: &Document, plan: &Plan) -> Document {
         from = Some(p);
     }
     // The hoop's sewing field, centred on the design.
-    if let Some((c, w, h)) = doc.embroidery.hoop.as_ref().filter(|h| h.unknown.is_none()).and_then(|hoop| crate::hoops::field(plan, hoop)) {
+    if let Some((c, w, h)) =
+        doc.embroidery.hoop.as_ref().filter(|h| h.unknown.is_none()).and_then(|hoop| crate::hoops::field(plan, hoop, doc.embroidery.hoop_rotation()))
+    {
         let round = doc.embroidery.hoop.as_ref().is_some_and(|h| h.round);
         let path = hoop_outline(c, w, h, round);
         let mut look = Appearance::basic(Paint::None, Paint::solid(Color::rgb8(HOOP[0], HOOP[1], HOOP[2])), HOOP_WIDTH_PT);
