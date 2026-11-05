@@ -1,7 +1,8 @@
 //! Embroidery files: `document.export {format: dst | pes | jef | exp}` writes the stitched objects'
 //! design ([`vectorcraft_embroidery::plan`]); `document.open` and Place read a `.dst`, `.pes`,
 //! `.jef` or `.exp` design as manual-stitch paths, a group per colour block.
-//! `artboard`/`artboards`/`range` write a design per artboard.
+//! `artboard`/`artboards`/`range` write a design per artboard; a design split into hoopings
+//! (`embroidery.splitHoops`) is written a file per hooping.
 
 use serde::Deserialize;
 use serde_json::Value;
@@ -12,22 +13,34 @@ use super::{ArtboardPick, Encoded, FormatOption};
 
 const C: &str = "document.export";
 
-/// The machine formats take no options: their stitches are the objects' own.
-pub(super) const OPTIONS: &[FormatOption] = &[];
+/// The machine formats' stitches are the objects' own; the one option picks the hoopings.
+pub(super) const OPTIONS: &[FormatOption] = &[FormatOption {
+    name: "hoopings",
+    ty: "boolean",
+    default: "true",
+    description: "a design split into hoopings (embroidery.splitHoops) is written a file per hooping, in sewing order (name-hoop1.dst…); false: the whole design in one file",
+}];
 
 #[derive(Default, Deserialize)]
 #[serde(default)]
 struct Params {
     #[serde(flatten)]
     boards: ArtboardPick,
+    hoopings: Option<bool>,
 }
 
 /// `doc`'s stitched objects as a design in machine format `id` (`dst`, `pes`, `jef`, `exp`);
 /// with `artboard`, `artboards` or `range`, a design per artboard, of the stitched objects centred
-/// on it (a test sheet's sections).
+/// on it (a test sheet's sections); split into hoopings, a design per hooping.
 pub(super) fn encode(id: &str, doc: &Document, p: &Value) -> Result<Encoded> {
     let params: Params = serde_json::from_value(p.clone()).map_err(|e| bad(C, format!("{}: {e}", id.to_uppercase())))?;
     let Some(boards) = params.boards.resolve(doc.artboards.len()).map_err(|e| bad(C, e))? else {
+        if params.hoopings != Some(false) && doc.embroidery.hoopings.is_some() {
+            return hoopings(id, doc);
+        }
+        if params.hoopings == Some(true) {
+            return Err(bad(C, "the design isn't split into hoopings (embroidery.splitHoops)"));
+        }
         let (bytes, warnings) = design(id, doc)?;
         return Ok(Encoded { warnings, ..Encoded::one(bytes) });
     };
@@ -82,6 +95,34 @@ fn design(id: &str, doc: &Document) -> Result<(Vec<u8>, Vec<String>)> {
     // Written as the machine sews it: turned in the hoop.
     let plan = vectorcraft_embroidery::hoops::rotated(plan, doc.embroidery.hoop_rotation());
     Ok((write(id, &plan, &doc.title, &mut warnings), warnings))
+}
+
+/// `doc`'s design split into its hoopings: a file in machine format `id` per hooping, in sewing
+/// order, each turned in the hoop as the whole design would be.
+fn hoopings(id: &str, doc: &Document) -> Result<Encoded> {
+    if !vectorcraft_embroidery::has_stitches(doc) {
+        return Err(bad(C, "nothing to stitch: give paths stitch settings first (Object › Embroidery, embroidery.set)"));
+    }
+    let plan = vectorcraft_embroidery::plan(doc);
+    let Some((pieces, _)) = vectorcraft_embroidery::hoopings::of_document(doc, &plan) else {
+        return Err(bad(
+            C,
+            "the design's hoopings can't be used (no hoop chosen, nothing stitched, or from a newer VectorCraft): split it again (embroidery.splitHoops), or export it whole (hoopings: false)",
+        ));
+    };
+    let mut out = Encoded { warnings: plan.warnings.clone(), ..Encoded::default() };
+    out.warnings.extend(vectorcraft_embroidery::check::summary(&vectorcraft_embroidery::check::check(doc, &plan)));
+    let rotation = doc.embroidery.hoop_rotation();
+    let mut labels = vec![];
+    for (i, piece) in pieces.into_iter().enumerate() {
+        let plan = vectorcraft_embroidery::hoops::rotated(piece.plan, rotation);
+        let title = format!("{} {}", doc.title, i + 1);
+        let bytes = write(id, &plan, &title, &mut out.warnings);
+        out.files.push((Some(i), bytes));
+        labels.push(format!("hoop{}", i + 1));
+    }
+    out.labels = Some(labels);
+    Ok(out)
 }
 
 /// `plan` in machine format `id` (`dst`, `pes`, `jef`, `exp`), adding the writer's warnings.

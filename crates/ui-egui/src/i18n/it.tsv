@@ -6267,3 +6267,12 @@ breakText	Glyphs	Glifi
 	Regenerate Stitches	Rigenera punti
 	While Editing	Durante la modifica
 	When the Edit Ends	Al termine della modifica
+	Split into {n} hoopings that each fit the hoop.	Diviso in {n} intelaiature che stanno ciascuna nel telaio.
+	Split into Hoopings	Dividi in intelaiature
+	Split the design into areas that each fit the hoop, sewn one after another with the fabric hooped again	Divide il disegno in zone che stanno ciascuna nel telaio, ricamate una dopo l'altra rintelaiando il tessuto
+	Alignment Marks	Segni di allineamento
+	Running-stitch crosses on each seam, to line the next hooping up by	Croci a punto dritto su ogni giunzione, per allinearvi l'intelaiatura successiva
+	Basting Box	Riquadro di imbastitura
+	A running-stitch box round each hooping, sewn first, to hold the fabric to the stabilizer	Un riquadro a punto dritto attorno a ogni intelaiatura, ricamato per primo, che tiene il tessuto sullo stabilizzatore
+	Join Hoopings	Unisci intelaiature
+	Sew the design in one hooping again	Ricama di nuovo il disegno in un'unica intelaiatura

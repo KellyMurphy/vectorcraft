@@ -166,6 +166,7 @@ Builds from before 2026-11-01 do so.
 | `fonts` | array of embroidery fonts | The embroidery fonts the document uses, each with the fields of a [font file](vcfont.md) other than `format` and `version`, so its type sews the same where the font isn't installed. A font a reader can't read is kept as written and not used. | empty |
 | `hoop` | object, see [Hoop](#hoop-hoop) | The hoop the design is sewn in: its sewing field is checked against the design and drawn in Stitch Preview. | none: nothing checked |
 | `hoopRotation` | integer: 0, 90, 180 or 270 | Degrees clockwise the design is turned as it is written to a machine file, about the middle of its stitches, so a tall design fits a wide hoop. The hoop check uses the turned design, and Stitch Preview draws the hoop's field turned the other way round the design as drawn. Readers use any other value as 0 and keep it as written. | 0 |
+| `hoopings` | object, see [Hoopings](#hoopings-hoopings) | The design split into a grid of hoopings, each sewn as a design of its own. | none: sewn in one hooping |
 | `fabric` | object, see [Fabric](#fabric-fabric) | The fabric the design is for: its settings fill in what objects leave unset. | none: the stitches' own defaults |
 | `sewOut` | object, see [Sew-out test](#sew-out-test-sewout) | The swatches of a test sheet and what was seen when they were sewn. | none |
 
@@ -196,6 +197,33 @@ style they can't read (a `stitch` they can't read) exactly as written and don't 
 `height` (the sewing field, mm), `round`, `machines`, `description`. The field is centred on the design's
 stitches (machines centre designs). Readers keep a `hoop` they can't read exactly as written and check
 nothing against it.
+
+## Hoopings (`hoopings`)
+
+`document.embroidery.hoopings` splits a design too big for its hoop into a grid of areas, each sewn as a
+design of its own after the fabric is hooped again (`embroidery.splitHoops`). Positions are mm in the
+stitch plan's space: document points × 25.4 / 72, y down.
+
+```json
+"hoopings": { "columns": [10, 110, 210], "rows": [5, 95], "overlap": 2, "basting": true }
+```
+
+| Member | Type | Meaning | Default |
+|---|---|---|---|
+| `columns` | array of 2 to 9 increasing numbers, mm | The columns' edges, left to right: n + 1 for n columns. The inner ones are the seams. | required |
+| `rows` | array of 2 to 9 increasing numbers, mm | The rows' edges, top to bottom, likewise. | required |
+| `overlap` | number, mm (0–10) | How far each hooping sews past its seams, so neighbouring pieces meet without a gap. | 2 |
+| `marks` | boolean | Alignment marks: two running-stitch crosses (arms 4 mm from the middle, 2 mm stitches) on each seam between two hoopings that sew something, a quarter of the seam (at most 15 mm) in from each end. The hooping sewn first sews them last; the next sews them first, so the fabric can be lined up by them. | true |
+| `basting` | boolean | A running-stitch box (5 mm stitches) 3 mm inside the hoop's field round each hooping, sewn first, to hold the fabric to the stabilizer. | false |
+
+The areas are sewn row by row from the top, each row from the left; an area with none of the design's
+stitches is left out. Each stitch (from the needle point before it to its own) belongs to the area its
+middle lies in, the outer areas reaching on without end, so every stitch is in exactly one area. A hooping
+sews the stitches of its area and those whose middle lies within `overlap` of it; a run cut at the edge of
+that is locked with a short stitch back (0.6 mm) on each side. The hoop's field is centred on each area,
+turned by `hoopRotation`, and each hooping's file is written turned like a whole design. Readers keep
+`hoopings` they can't read (or a grid that isn't 2 to 9 finite, increasing edges each way) exactly as
+written and sew the design in one hooping.
 
 ## Fabric (`fabric`)
 

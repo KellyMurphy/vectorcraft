@@ -6191,3 +6191,12 @@ breakText	Glyphs	გლიფები
 	Regenerate Stitches	ნაკერების ხელახლა შექმნა
 	While Editing	რედაქტირებისას
 	When the Edit Ends	რედაქტირების დასრულებისას
+	Split into {n} hoopings that each fit the hoop.	დაყოფილია {n} ჩარჩოში ჩასმად, თითოეული ეტევა ჩარჩოში.
+	Split into Hoopings	ჩასმებად დაყოფა
+	Split the design into areas that each fit the hoop, sewn one after another with the fabric hooped again	ყოფს დიზაინს ნაწილებად, რომელთაგან თითოეული ეტევა ჩარჩოში და იქარგება მიყოლებით, ქსოვილის ხელახლა ჩასმით
+	Alignment Marks	გასწორების ნიშნები
+	Running-stitch crosses on each seam, to line the next hooping up by	სწორი ნაკერის ჯვრები ყოველ ნაკერზე, შემდეგი ჩასმის გასასწორებლად
+	Basting Box	მონასკვის ჩარჩო
+	A running-stitch box round each hooping, sewn first, to hold the fabric to the stabilizer	სწორი ნაკერის ჩარჩო ყოველი ჩასმის გარშემო, პირველი იქარგება, ქსოვილს სტაბილიზატორზე იჭერს
+	Join Hoopings	ჩასმების გაერთიანება
+	Sew the design in one hooping again	დიზაინის ხელახლა ქარგვა ერთ ჩასმაში

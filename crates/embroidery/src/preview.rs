@@ -38,6 +38,21 @@ pub fn hoop_outline(c: Point, w: f64, h: f64, round: bool) -> PathData {
     PathData::single(SubPath { anchors, closed: true })
 }
 
+/// Where the hoop's field lies on the design `plan` of `doc`, as Stitch Preview draws it: its centre
+/// and size, mm, turned with the design. Centred on the design, or, split into hoopings, one centred
+/// on each hooping's area, in sewing order. None without a hoop.
+pub fn hoop_fields(doc: &Document, plan: &Plan) -> Vec<(Point, f64, f64)> {
+    let e = &doc.embroidery;
+    let Some(hoop) = e.hoop.as_deref().filter(|h| h.unknown.is_none()) else { return vec![] };
+    let rotation = e.hoop_rotation();
+    if let Some(areas) = e.hoopings.as_deref().and_then(crate::hoopings::areas) {
+        let (w, h) = crate::hoops::size(hoop);
+        let (w, h) = crate::hoops::as_sewn(w, h, rotation);
+        return areas.iter().map(|a| (Point::new((a[0] + a[2]) / 2.0, (a[1] + a[3]) / 2.0), w, h)).collect();
+    }
+    crate::hoops::field(plan, hoop, rotation).into_iter().collect()
+}
+
 /// `doc` with the design `plan` drawn over its art, on a layer of its own above every other.
 pub fn document(doc: &Document, plan: &Plan) -> Document {
     let mut out = doc.clone();
@@ -76,10 +91,8 @@ pub fn document(doc: &Document, plan: &Plan) -> Document {
         }
         from = Some(p);
     }
-    // The hoop's sewing field, centred on the design.
-    if let Some((c, w, h)) =
-        doc.embroidery.hoop.as_ref().filter(|h| h.unknown.is_none()).and_then(|hoop| crate::hoops::field(plan, hoop, doc.embroidery.hoop_rotation()))
-    {
+    // The hoop's sewing field, centred on the design (or on each hooping's area).
+    for (c, w, h) in hoop_fields(doc, plan) {
         let round = doc.embroidery.hoop.as_ref().is_some_and(|h| h.round);
         let path = hoop_outline(c, w, h, round);
         let mut look = Appearance::basic(Paint::None, Paint::solid(Color::rgb8(HOOP[0], HOOP[1], HOOP[2])), HOOP_WIDTH_PT);

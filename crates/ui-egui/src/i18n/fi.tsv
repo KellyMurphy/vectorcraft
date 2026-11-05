@@ -6659,3 +6659,12 @@ breakText	Glyphs	Merkit
 	Regenerate Stitches	Luo pistot uudelleen
 	While Editing	Muokattaessa
 	When the Edit Ends	Kun muokkaus päättyy
+	Split into {n} hoopings that each fit the hoop.	Jaettu {n} kehystykseen, jotka kukin mahtuvat kehykseen.
+	Split into Hoopings	Jaa kehystyksiin
+	Split the design into areas that each fit the hoop, sewn one after another with the fabric hooped again	Jakaa kuvion alueisiin, jotka kukin mahtuvat kehykseen ja kirjotaan peräkkäin kangas uudelleen kehystettynä
+	Alignment Marks	Kohdistusmerkit
+	Running-stitch crosses on each seam, to line the next hooping up by	Suorapistoristit jokaiseen saumaan, joiden mukaan seuraava kehystys kohdistetaan
+	Basting Box	Harsintakehys
+	A running-stitch box round each hooping, sewn first, to hold the fabric to the stabilizer	Suorapistokehys jokaisen kehystyksen ympärille, kirjotaan ensin, pitää kankaan tukikankaassa
+	Join Hoopings	Yhdistä kehystykset
+	Sew the design in one hooping again	Kirjo kuvio taas yhdessä kehystyksessä

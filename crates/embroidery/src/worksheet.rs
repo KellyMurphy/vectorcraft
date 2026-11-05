@@ -109,7 +109,7 @@ pub fn build(doc: &Document, plan: &Plan, letter: bool) -> Document {
         },
     );
     let fabric = e.fabric.as_deref().filter(|f| f.unknown.is_none()).map_or("none chosen".to_string(), |f| f.name.clone());
-    let facts = [
+    let mut facts = vec![
         format!("Size: {w:.1} × {h:.1} mm"),
         format!("Stitches: {}", st.stitches),
         format!("Thread changes: {}", st.color_changes),
@@ -118,6 +118,19 @@ pub fn build(doc: &Document, plan: &Plan, letter: bool) -> Document {
         format!("Fabric: {fabric}"),
         format!("Sewing time: about {minutes:.0} min at {:.0} stitches/min", e.speed()),
     ];
+    // A design split into hoopings: each in sewing order, as the export names its files.
+    if let Some((pieces, _)) = crate::hoopings::of_document(doc, plan) {
+        let overlap = e.hoopings.as_deref().map_or(0.0, crate::hoopings::overlap);
+        facts.push(format!("Hoopings: {}, sewn in this order ({overlap:.1} mm overlap)", pieces.len()));
+        const SHOWN: usize = 6;
+        for (i, p) in pieces.iter().enumerate().take(SHOWN) {
+            let (cx, cy) = ((p.area[0] + p.area[2]) / 2.0, (p.area[1] + p.area[3]) / 2.0);
+            facts.push(format!("  {}. hoop{}: {} stitches, centred at {cx:.0}, {cy:.0} mm", i + 1, i + 1, p.plan.stats().stitches));
+        }
+        if pieces.len() > SHOWN {
+            facts.push(format!("  … and {} more", pieces.len() - SHOWN));
+        }
+    }
     let x = MARGIN + PICTURE + 8.0;
     for (i, f) in facts.iter().enumerate() {
         nodes.push(text(&mut out, f, x, top + 6.0 + i as f64 * 7.0, 10.0));

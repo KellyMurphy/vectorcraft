@@ -79,6 +79,9 @@ pub struct Encoded {
     /// What joins the file's stem and the artboard name when there is a file per artboard
     /// (default `-`; EPS uses `_`, as the reference app names them).
     pub joiner: Option<&'static str>,
+    /// What names the files when there are several, in place of the artboards' names (an
+    /// embroidery design's hoopings: `hoop1`, `hoop2`…).
+    pub labels: Option<Vec<String>>,
 }
 
 impl Encoded {
@@ -101,7 +104,7 @@ impl Encoded {
                 let file = std::path::Path::new(&path[dir.len()..]);
                 let stem = file.file_stem().map(|s| s.to_string_lossy().into_owned()).unwrap_or_default();
                 let ext = file.extension().map(|e| format!(".{}", e.to_string_lossy())).unwrap_or_default();
-                let mut names = super::artboard_file_names(doc, &boards).into_iter();
+                let mut names = self.labels.clone().unwrap_or_else(|| super::artboard_file_names(doc, &boards)).into_iter();
                 files
                     .iter()
                     .map(|(b, bytes)| {

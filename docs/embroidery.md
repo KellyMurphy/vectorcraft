@@ -364,7 +364,8 @@ for warnings). The rules so far:
   fabric. That depends on the font: Impact's holes are under 1 mm even at 15 mm. The finding gives the
   size at which they open.
 - **Design bigger than the hoop:** the design, as sewn (turned by Rotate in Hoop), doesn't fit the
-  document's hoop (an error), or fits only turned a quarter turn (a warning naming the turn to set).
+  document's hoop (an error), or fits only turned a quarter turn (a warning naming the turn to set). A
+  design split into hoopings is checked hooping by hooping.
 
 Exporting a DST adds a line for each rule that found something to the export's warnings.
 `embroidery.check` gives the same findings to agents and scripts, each with the object and where it is.
@@ -412,6 +413,24 @@ design clockwise as it is written to the machine file, about the middle of its s
 design fits a wide hoop (or a cap frame) without turning the artwork. The hoop check, the panel's fit
 note and the worksheet use the turned design, and Stitch Preview draws the hoop's field turned the
 other way round the design as drawn. The rotation is saved with the document.
+
+**Split into Hoopings** (the button under the Hoop menu when the design is too big;
+`embroidery.splitHoops {hoop?, overlap?, marks?, basting?}`) splits a design too big for the hoop into a
+grid of equal areas, each small enough to fit the hoop (turned by Rotate in Hoop) with room to spare,
+sewn one after another with the fabric hooped again: row by row from the top, each row from the left
+(areas with nothing to sew are left out). Each stitch belongs to the area its middle lies in, so every
+stitch is sewn once; each hooping also sews the stitches up to **overlap** (2 mm; 0–10) past its seams
+so the pieces meet without a gap. A fill's rows are cut where they cross a seam and a satin column
+between its stitches, and each cut run is locked. **Alignment Marks** (on by default) are two
+running-stitch crosses on each seam: the hooping sewn first sews them last, and the next sews them first,
+so you can line the rehooped fabric up by them (move the design on the machine until the needle meets
+them). **Basting Box** sews a running-stitch box round each hooping's field first, to hold the fabric to
+the stabilizer. Stitch Preview draws each hooping's field, numbered in sewing order; the panel says
+whether each fits; the worksheet lists them; and exporting writes a file per hooping
+(`name-hoop1.dst`, `name-hoop2.dst`…; `hoopings: false` writes the whole design). After an edit, split
+again: the checker reports a hooping that no longer fits. **Join Hoopings**
+(`embroidery.splitHoops {clear: true}`) sews it in one hooping again. Machines centre each file in the
+hoop on its stitches (on its basting box when there is one).
 
 ### Shortest stitch
 
@@ -663,10 +682,12 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.removeThreadChart` | `{chart}`: remove a chart from the document |
 | `embroidery.saveThreadChart` | `{chart, path?, user?}`: write a chart as a `.vcthreads` file |
 | `embroidery.matchThreads` | `{chart?}` → each design thread colour's nearest chart thread (`code`, `name`, `threadColor`, `deltaE`) |
-| `embroidery.hoops` | → the document's `hoop` (or null), the `common` hoops, whether the design `fit`s (as sewn, turned by `hoopRotation`) and the `rotation` |
+| `embroidery.hoops` | → the document's `hoop` (or null), the `common` hoops, whether the design `fit`s (as sewn, turned by `hoopRotation`; `split` when split into hoopings that each fit), the `rotation` and how many `hoopings` |
 | `embroidery.setHoop` | `{hoop?: 4x4\|5x7\|6x10\|8x8\|8x12\|cap\|null, name?, width?, height?, round?}`: set the document's hoop |
 | `embroidery.loadHoop` | `{path? \| data? \| library?, hoop?}`: a hoop from a `.vchoop` file as the document's |
 | `embroidery.saveHoop` | `{hoops?, path?, user?, name?}`: write the document's hoop (or common ones) as a `.vchoop` file |
+| `embroidery.splitHoops` | `{hoop?, overlap?: mm, marks?, basting?}` or `{clear: true}`: split a design too big for the hoop into hoopings (one undo step), or sew it in one hooping again → as `embroidery.hoopings` |
+| `embroidery.hoopings` | → the document's `hoopings`: the grid's `columns` and `rows`, `overlap`, `marks`, `basting`, and the `pieces` in sewing order (`number`, `area` in mm, `stitches`, `own`, `fits`) |
 | `embroidery.fabrics` | → the document's `fabric` (or null) and the six `starters`, with their settings |
 | `embroidery.setFabric` | `{fabric?: woven\|knit\|towel\|cap\|leather\|denim\|null, name?, satinSpacing?, fillSpacing?, pull?, pullPercent?, push?, satinCenterUnder?, satinZigzagOver?, shapeEdgeOver?}`: set the document's fabric (a starter, then the settings given) |
 | `embroidery.loadFabric` | `{path? \| data? \| library?}`: a `.vcfabric` file as the document's fabric |

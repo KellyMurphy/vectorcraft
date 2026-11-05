@@ -246,7 +246,8 @@ fn an_agent_exports_several_machine_formats_at_once() {
     assert!(spec("document.export").params.contains("formats?:"));
 }
 
-/// A design bigger than the hoop over MCP: an agent turns it in the hoop to fit.
+/// A design bigger than the hoop over MCP: an agent turns it in the hoop to fit, then splits a
+/// larger one into hoopings and exports a file per hooping.
 #[test]
 fn an_agent_fits_a_large_design_to_the_hoop() {
     let mut s = Server::new(Box::new(Headless::with_document()));
@@ -257,6 +258,17 @@ fn an_agent_fits_a_large_design_to_the_hoop() {
     assert_eq!(run(&mut s, "embroidery.setup", json!({"hoopRotation": 90}))["hoopRotation"], 90);
     assert_eq!(run(&mut s, "embroidery.hoops", json!({}))["fit"], "fits");
     assert!(guide().contains("hoopRotation"), "the guide tells agents how to turn a design");
+
+    // Too big even turned: split it.
+    run(&mut s, "embroidery.setHoop", json!({"hoop": "4x4"}));
+    assert_eq!(run(&mut s, "embroidery.hoops", json!({}))["fit"], "tooBig");
+    let split = run(&mut s, "embroidery.splitHoops", json!({}));
+    let n = split["hoopings"]["pieces"].as_array().unwrap().len();
+    assert!(n >= 4, "{split}");
+    assert_eq!(run(&mut s, "embroidery.hoops", json!({}))["fit"], "split");
+    let files = run(&mut s, "document.export", json!({"format": "dst"}));
+    assert_eq!(files["files"].as_array().unwrap().len(), n, "a file per hooping");
+    assert!(guide().contains("Split into Hoopings"), "the guide tells agents how hoopings are sewn");
 }
 
 /// Deferred stitch generation over MCP: an agent sets when stitches are sewn again, and the guide

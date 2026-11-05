@@ -1929,13 +1929,16 @@ fn hoop_row(app: &mut VectorcraftApp, ui: &mut Ui) {
         rotation_row(app, ui, rotation);
     }
     if current.is_some() {
-        let fit = app.session.execute("embroidery.hoops", &json!({})).ok().and_then(|r| r["fit"].as_str().map(str::to_string));
+        let r = app.session.execute("embroidery.hoops", &json!({})).ok();
+        let fit = r.as_ref().and_then(|r| r["fit"].as_str().map(str::to_string));
+        let split = r.as_ref().and_then(|r| r["hoopings"].as_u64());
         let t = Tokens::get(ui.ctx());
         let (text, color) = match fit.as_deref() {
-            Some("fits") => (tl!("The design fits the hoop."), t.text_dim),
-            Some("turned") => (tl!("The design fits only turned a quarter turn."), t.warning),
-            Some("tooBig") => (tl!("The design is bigger than the hoop."), t.error),
-            _ => ("", t.text_dim),
+            Some("fits") => (tl!("The design fits the hoop.").to_string(), t.text_dim),
+            Some("turned") => (tl!("The design fits only turned a quarter turn.").to_string(), t.warning),
+            Some("split") => (tl!("Split into {n} hoopings that each fit the hoop.").replace("{n}", &split.unwrap_or(0).to_string()), t.text_dim),
+            Some("tooBig") => (tl!("The design is bigger than the hoop.").to_string(), t.error),
+            _ => (String::new(), t.text_dim),
         };
         if !text.is_empty() {
             ui.horizontal(|ui| {
@@ -1943,7 +1946,51 @@ fn hoop_row(app: &mut VectorcraftApp, ui: &mut Ui) {
                 ui.label(egui::RichText::new(text).size(11.5).color(color));
             });
         }
+        hoopings_row(app, ui, fit.as_deref() == Some("tooBig"));
     }
+}
+
+/// Split a design too big for the hoop into hoopings, or sew it in one again; a split design's
+/// alignment marks and basting box.
+fn hoopings_row(app: &mut VectorcraftApp, ui: &mut Ui, too_big: bool) {
+    let split = app.session.active().and_then(|d| d.doc.embroidery.hoopings.as_deref().cloned()).filter(|h| h.unknown.is_none());
+    let run = |app: &mut VectorcraftApp, p: Value| {
+        if let Err(e) = app.run("embroidery.splitHoops", p) {
+            app.status(e);
+        }
+    };
+    ui.horizontal(|ui| {
+        ui.add_space(LABEL_W + 8.0);
+        // Too big: not split yet, or grown past its hoopings since.
+        if too_big
+            && ui
+                .button(tl!("Split into Hoopings"))
+                .on_hover_text(tl!("Split the design into areas that each fit the hoop, sewn one after another with the fabric hooped again"))
+                .clicked()
+        {
+            run(app, json!({}));
+        }
+        if let Some(h) = &split {
+            let (mut marks, mut basting) = (h.marks, h.basting);
+            if ui
+                .checkbox(&mut marks, tl!("Alignment Marks"))
+                .on_hover_text(tl!("Running-stitch crosses on each seam, to line the next hooping up by"))
+                .changed()
+            {
+                run(app, json!({ "marks": marks }));
+            }
+            if ui
+                .checkbox(&mut basting, tl!("Basting Box"))
+                .on_hover_text(tl!("A running-stitch box round each hooping, sewn first, to hold the fabric to the stabilizer"))
+                .changed()
+            {
+                run(app, json!({ "basting": basting }));
+            }
+            if ui.button(tl!("Join Hoopings")).on_hover_text(tl!("Sew the design in one hooping again")).clicked() {
+                run(app, json!({ "clear": true }));
+            }
+        }
+    });
 }
 
 /// The turn the design is given in the hoop, as written to the machine.
