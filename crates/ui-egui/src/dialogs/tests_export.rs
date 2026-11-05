@@ -310,3 +310,42 @@ fn the_enter_that_closed_the_save_panel_does_not_confirm_the_options() {
     }
     vectorcraft_plugins::registry::remove("test.ui.held");
 }
+
+/// The texts the dialog layer draws (its second frame: a window's first only measures it).
+fn shown(app: &mut VectorcraftApp) -> Vec<String> {
+    fn texts(s: &egui::Shape, out: &mut Vec<String>) {
+        match s {
+            egui::Shape::Text(t) => out.push(t.galley.text().to_string()),
+            egui::Shape::Vec(v) => v.iter().for_each(|s| texts(s, out)),
+            _ => {}
+        }
+    }
+    let ctx = egui::Context::default();
+    theme::install_fonts(&ctx);
+    ctx.run_ui(Default::default(), |ui| show(app, ui.ctx())).textures_delta.clear();
+    let mut out = ctx.run_ui(Default::default(), |ui| show(app, ui.ctx()));
+    out.textures_delta.clear();
+    let mut shown = vec![];
+    out.shapes.iter().for_each(|c| texts(&c.shape, &mut shown));
+    shown
+}
+
+#[test]
+fn a_machine_format_also_exports_the_ticked_ones() {
+    let (mut app, written) = app(1);
+    app.run("embroidery.set", json!({"type": "fill"})).unwrap();
+    export_as::open(&mut app, Some("dst"), &json!({}));
+    let texts = shown(&mut app);
+    assert!(texts.iter().any(|t| t == "Also Export:"), "{texts:?}");
+    for f in ["PES", "JEF", "EXP"] {
+        assert!(texts.iter().any(|t| t == f), "{f}: {texts:?}");
+    }
+    set(&mut app, "also_pes", json!(true));
+    set(&mut app, "also_exp", json!(true));
+    confirm(&mut app).unwrap();
+    assert_eq!(names(&written), ["/out/Untitled-1.dst", "/out/Untitled-1.pes", "/out/Untitled-1.exp"]);
+    assert!(written.borrow()[1].1.starts_with(b"#PES0060"));
+    // Other formats offer no others.
+    export_as::open(&mut app, Some("png"), &json!({}));
+    assert!(!shown(&mut app).iter().any(|t| t == "Also Export:"));
+}

@@ -6483,3 +6483,4 @@ breakText	Glyphs	字形
 	Save to Library	保存到库
 	Load Style File…	载入样式文件…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	命名的针迹设置组合：将其中之一应用于所选对象，或将所选对象的设置保存为新样式
+	Also Export:	同时导出：

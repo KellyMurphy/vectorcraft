@@ -53,6 +53,9 @@ pub(super) fn serialize(s: &mut Session, p: &Value) -> Result<Value> {
 }
 
 pub(super) fn export(s: &mut Session, p: &Value) -> Result<Value> {
+    if let Some(formats) = super::batch_formats(p).map_err(|e| bad("document.export", e))? {
+        return export_formats(s, p, &formats);
+    }
     let path = str_param(p, "path");
     if let Some(path) = path {
         super::check_not_lossy_overwrite(s.doc()?, path, p, "document.export")?;
@@ -70,6 +73,46 @@ pub(super) fn export(s: &mut Session, p: &Value) -> Result<Value> {
     }
     let enc = encode_all(doc, f.id, &q)?;
     write_encoded(path, &default_name(doc, f.extensions[0]), doc, &enc, json!({ "format": f.id, "warnings": enc.warnings }))
+}
+
+/// `document.export {formats}`: the export of `p` in each of `formats`, with a path each file
+/// next to `path` named for its format (`{stem}.{ext}`). Every file it would write is checked
+/// before any is written; the other parameters (artboards, range…) apply to each format.
+fn export_formats(s: &mut Session, p: &Value, formats: &[&'static Format]) -> Result<Value> {
+    const C: &str = "document.export";
+    if p.get("format").is_some_and(|v| !v.is_null()) {
+        return Err(bad(C, "pass `format` or `formats`, not both"));
+    }
+    let path = str_param(p, "path");
+    let paths: Vec<Option<String>> = formats.iter().map(|f| path.map(|path| super::sibling_path(path, f.extensions[0]))).collect();
+    for target in paths.iter().flatten() {
+        super::check_not_lossy_overwrite(s.doc()?, target, p, C)?;
+    }
+    let (mut exports, mut files, mut warnings) = (vec![], vec![], vec![]);
+    for (f, target) in formats.iter().zip(paths) {
+        let mut q = p.clone();
+        if let Some(o) = q.as_object_mut() {
+            o.remove("formats");
+            o.insert("format".into(), json!(f.id));
+            if let Some(t) = &target {
+                o.insert("path".into(), json!(t));
+            }
+        }
+        let r = export(s, &q).map_err(|e| bad(C, format!("{}: {e}", f.id.to_uppercase())))?;
+        match r.get("files").and_then(Value::as_array).filter(|_| target.is_some()) {
+            Some(written) => files.extend(written.iter().cloned()),
+            None => files.extend(r.get("path").cloned()),
+        }
+        let label = f.id.to_uppercase();
+        warnings.extend(r["warnings"].as_array().into_iter().flatten().filter_map(Value::as_str).map(|w| json!(format!("{label}: {w}"))));
+        exports.push(r);
+    }
+    let mut out = json!({ "formats": formats.iter().map(|f| f.id).collect::<Vec<_>>(), "exports": exports, "warnings": warnings });
+    if path.is_some() {
+        out["path"] = files.first().cloned().unwrap_or(Value::Null);
+        out["files"] = json!(files);
+    }
+    Ok(out)
 }
 
 /// The document an export of `st` writes: the whole document, or with `selectedOnly` just the

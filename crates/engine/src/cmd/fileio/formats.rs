@@ -827,6 +827,41 @@ pub fn writable_format(format_param: Option<&str>, path: Option<&str>) -> std::r
     }
 }
 
+/// The most formats one `document.export {formats}` writes.
+pub const MAX_BATCH_FORMATS: usize = 16;
+
+/// The formats `formats` in `p` names (ids or extensions, as `["dst", "pes"]`), each once, in
+/// order; `None` when `p` has no `formats`.
+pub fn batch_formats(p: &Value) -> std::result::Result<Option<Vec<&'static Format>>, String> {
+    let Some(list) = p.get("formats").filter(|v| !v.is_null()) else { return Ok(None) };
+    let list = list.as_array().ok_or("`formats` must be a list of formats, as [\"dst\", \"pes\"]")?;
+    if list.is_empty() {
+        return Err("`formats` names no format".into());
+    }
+    if list.len() > MAX_BATCH_FORMATS {
+        return Err(format!("`formats` names at most {MAX_BATCH_FORMATS} formats"));
+    }
+    let mut out: Vec<&'static Format> = vec![];
+    for v in list {
+        let id = v.as_str().ok_or("each of `formats` is a format id or extension, as \"dst\"")?;
+        let f = writable_format(Some(id), None)?;
+        if !out.iter().any(|g| g.id == f.id) {
+            out.push(f);
+        }
+    }
+    Ok(Some(out))
+}
+
+/// `path` with extension `ext`: a format's extension it ends in is replaced, else `.ext` is added
+/// (`/a/Rose.dst` → `/a/Rose.pes`, `/a/Rose` → `/a/Rose.pes`).
+pub fn sibling_path(path: &str, ext: &str) -> String {
+    if format_for_name(path).is_some() {
+        std::path::Path::new(path).with_extension(ext).to_string_lossy().to_string()
+    } else {
+        format!("{path}.{ext}")
+    }
+}
+
 /// [`writable_format`] for command `cmd`.
 pub(super) fn writable(cmd: &str, format_param: Option<&str>, path: Option<&str>) -> Result<&'static Format> {
     writable_format(format_param, path).map_err(|e| bad(cmd, e))

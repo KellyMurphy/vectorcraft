@@ -108,6 +108,16 @@ fn body(_: &mut VectorcraftApp, ui: &mut egui::Ui, d: &mut Dialog) -> bool {
             }
         });
     });
+    let others = also_formats(f);
+    if !others.is_empty() {
+        ui.add_space(8.0);
+        ui.horizontal(|ui| {
+            ui.label(egui::RichText::new(tl!("Also Export:")).color(t.text_dim));
+            for id in others {
+                form::check(ui, d, &format!("also_{id}"), &id.to_uppercase());
+            }
+        });
+    }
     ui.add_space(8.0);
     let ext = f.extensions[0];
     let hint = match (use_artboards, f.id) {
@@ -118,6 +128,21 @@ fn body(_: &mut VectorcraftApp, ui: &mut egui::Ui, d: &mut Dialog) -> bool {
     };
     ui.label(egui::RichText::new(hint).color(t.text_dim).size(11.5));
     false
+}
+
+/// The formats Also Export offers next to `f`: the other machine formats when `f` is one (a
+/// design sent to several machines, or to a shop that asks for two).
+fn also_formats(f: &Format) -> Vec<&'static str> {
+    let machine = vectorcraft_doc::EmbroiderySetup::MACHINE_FORMATS;
+    if !machine.contains(&f.id) {
+        return vec![];
+    }
+    machine.iter().copied().filter(|m| *m != f.id).collect()
+}
+
+/// `f`, then the formats ticked under Also Export.
+fn chosen_formats(d: &Dialog, f: &Format) -> Vec<String> {
+    std::iter::once(f.id.to_string()).chain(also_formats(f).into_iter().filter(|id| d.bool(&format!("also_{id}"))).map(str::to_string)).collect()
 }
 
 /// Check the artboard range, pick the file, then show the format's options or write the file.
@@ -143,14 +168,16 @@ fn confirm(app: &mut VectorcraftApp, d: &Dialog) -> Result<Value, String> {
     app.ui.dialog = None;
     let path = io::export_path(app, None, f)?;
     let range = if all { "all".to_string() } else { range };
-    let r = options_or_write(app, f, plugin, path, use_artboards, all, range);
+    let formats = chosen_formats(d, f);
+    let r = options_or_write(app, f, plugin, path, use_artboards, all, range, formats);
     // The options follow the save panel: the Enter that closed it isn't theirs (as in Save As).
     super::opened_by_panel(app);
     r
 }
 
 /// After the save panel picked `path`: the options dialog of format `f` (or of its exporter
-/// plug-in), else the file written.
+/// plug-in), else the file written (in each of `formats` when Also Export adds some).
+#[allow(clippy::too_many_arguments)]
 fn options_or_write(
     app: &mut VectorcraftApp,
     f: &'static Format,
@@ -159,6 +186,7 @@ fn options_or_write(
     use_artboards: bool,
     all: bool,
     range: String,
+    formats: Vec<String>,
 ) -> Result<Value, String> {
     match f.id {
         "svg" | "svgz" => {
@@ -178,6 +206,9 @@ fn options_or_write(
             let mut params = json!({ "format": f.id, "path": path, "useArtboards": use_artboards });
             if use_artboards {
                 params["range"] = json!(range);
+            }
+            if formats.len() > 1 {
+                params["formats"] = json!(formats);
             }
             if let Some(plugin) = plugin.filter(|p| !p.manifest().params.is_empty()) {
                 plugin::open_export(app, &plugin, params);

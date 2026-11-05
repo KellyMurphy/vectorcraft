@@ -32,6 +32,9 @@ pub fn export(app: &mut VectorcraftApp, format: Option<&str>, path: Option<Strin
     // Options given as anything but an object are none: the path and format still reach the
     // encoder (an exporter plug-in is told the file it writes).
     let params = &if params.is_object() { params.clone() } else { json!({}) };
+    if let Some(formats) = fileio::batch_formats(params)? {
+        return export_formats(app, &formats, path, params);
+    }
     let f = fileio::writable_format(format, path.as_deref())?;
     let st = app.session.active().ok_or("no document")?;
     let doc = match fileio::export_source(st, params).map_err(|e| e.to_string())? {
@@ -100,6 +103,30 @@ pub fn export(app: &mut VectorcraftApp, format: Option<&str>, path: Option<Strin
         r["path"] = json!(target);
     }
     Ok(r)
+}
+
+/// [`export`] in each of `formats` (Export As › Also Export, `document.export {formats}`): one file
+/// each next to `path`, named for its format (`Rose.dst`, `Rose.pes`…) → `{formats, exports: [each
+/// export's reply], files}`.
+fn export_formats(app: &mut VectorcraftApp, formats: &[&'static fileio::Format], path: Option<String>, params: &Value) -> Result<Value, String> {
+    let first = formats.first().ok_or("no format to export to")?;
+    let path = export_path(app, path, first)?;
+    let mut one = params.clone();
+    if let Some(o) = one.as_object_mut() {
+        o.remove("formats");
+        o.remove("format");
+    }
+    let (mut exports, mut files) = (vec![], vec![]);
+    for f in formats {
+        let target = fileio::sibling_path(&path, f.extensions[0]);
+        let r = export(app, Some(f.id), Some(target.clone()), &one).map_err(|e| format!("{}: {e}", f.id.to_uppercase()))?;
+        match r["files"].as_array() {
+            Some(written) => files.extend(written.iter().cloned()),
+            None => files.push(r.get("path").cloned().unwrap_or_else(|| json!(target))),
+        }
+        exports.push(r);
+    }
+    Ok(json!({ "formats": formats.iter().map(|f| f.id).collect::<Vec<_>>(), "exports": exports, "files": files, "path": files.first() }))
 }
 
 /// The status bar's line for an export of `what` with `n` notes, the first of them `first`.

@@ -725,7 +725,7 @@ row, tests, fuzzing for new input, spec + schema + drift test for a new format, 
 | **E11.2** Split satin (**done**) | Wide satin stitches split into shorter ones, split points staggered | P0 | M |
 | **E11.3** Stitch styles (**done**) | Named sets of stitch settings, applied with one click, kept in documents and the library | P1 | M |
 | **E11.4** Multi-hoop and hoop rotation | Rotate the design in the hoop; split a large design into hoopings with alignment marks | P1 | L |
-| **E11.5** Batch export | Write several machine formats in one export | P1 | S |
+| **E11.5** Batch export (**done**) | Write several machine formats in one export | P1 | S |
 | **E11.6** Deferred stitch generation | Regenerate stitches when an edit ends, not on every drag frame | P1 | S |
 | **E11.7** Centreline and satin outlines | Sew a thin shape along its centre line; click-to-outline in satin as well as running | P1 | M |
 | **E11.8** Redwork | Line art sewn as one continuous run, each line at most twice | P2 | M |
@@ -822,7 +822,15 @@ both look and stitching.
   Tests: every object's stitches land in exactly one hooping (plus the overlap), marks line up between
   neighbours. Test sheet: a two-hooping design (gate G2).
 
-### E11.5 Batch export (S)
+### E11.5 Batch export (S) — done 2026-11-04
+
+As built: `document.export {formats: [...], path}` runs the export once per format (ids or extensions,
+each once, at most 16), every file next to `path` as `{stem}.{ext}`; the other parameters (artboards,
+range…) apply to each, so per-artboard export combines with it, and a per-hooping one will too. Every
+target is checked for a lossy overwrite before any is written. Without a path each format's design comes
+back in `exports`. Export As shows **Also Export** checkboxes for the other machine formats when a machine
+format is chosen; the app writes each through its own export (background export, progress). The original
+plan:
 
 `document.export {formats: ["dst", "pes", …]}`, and checkboxes in the export dialog, write the design in
 each format at once (`name.dst`, `name.pes`…), combined with the per-artboard and per-hooping export.

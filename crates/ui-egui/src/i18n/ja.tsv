@@ -6326,3 +6326,4 @@ breakText	Glyphs	字形
 	Save to Library	ライブラリに保存
 	Load Style File…	スタイルファイルを読み込み…
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	名前付きのステッチ設定のセット：選択範囲に適用するか、選択範囲の設定を新しいスタイルとして保存します
+	Also Export:	同時に書き出し:

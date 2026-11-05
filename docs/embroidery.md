@@ -731,6 +731,14 @@ With `artboard`, `artboards` or `range`, the export writes a design per artboard
 stitched objects whose middle lies on that artboard (a test sheet's sections, or several designs laid
 out in one document).
 
+**Several formats at once.** `document.export {formats: ["dst", "pes"], path}` writes the design in each
+format, each file next to `path` and named for its format (`Rose.dst`, `Rose.pes`), for a design sent to
+several machines or to a shop that asks for two. In Export As, choosing a machine format shows **Also
+Export** with a checkbox for each of the others. The other parameters apply to every format, so with
+`useArtboards` (or `artboard`, `artboards`, `range`) it writes a file per artboard and format. Every file
+is checked before any is written (a file this document was read from, and lost things reading, is
+refused). Without a path, each format's design comes back in `exports`. At most 16 formats.
+
 **Where the formats come from.** Each is implemented from public descriptions of it:
 [DST](https://edutechwiki.unige.ch/en/Embroidery_format_DST),
 [PES](https://edutechwiki.unige.ch/en/Embroidery_format_PES) with its
