@@ -230,3 +230,18 @@ fn an_agent_outlines_in_satin_and_sews_along_centre_lines() {
     assert!(spec("embroidery.digitize").params.contains("lines?: auto|centreline"));
     assert!(guide().contains("Shift-click"), "the guide tells how to sew along a centre line");
 }
+
+/// Batch export over MCP: one export writes the design for several machines, and the guide says
+/// how.
+#[test]
+fn an_agent_exports_several_machine_formats_at_once() {
+    let mut s = Server::new(Box::new(Headless::with_document()));
+    call(&mut s, "draw_shape", json!({"shape": "rectangle", "x": 100, "y": 100, "width": 120, "height": 80, "fill": "#1f6f8b"}));
+    run(&mut s, "embroidery.set", json!({"type": "fill"}));
+    let out = payload(&call(&mut s, "export", json!({"options": {"formats": ["dst", "pes"]}})));
+    assert_eq!(out["formats"], json!(["dst", "pes"]), "{out}");
+    let pes = vectorcraft_format::base64_decode(out["exports"][1]["dataBase64"].as_str().unwrap()).unwrap();
+    assert!(pes.starts_with(b"#PES0060"));
+    assert!(guide().contains("formats: [\"dst\", \"pes\"]"), "the guide documents batch export");
+    assert!(spec("document.export").params.contains("formats?:"));
+}

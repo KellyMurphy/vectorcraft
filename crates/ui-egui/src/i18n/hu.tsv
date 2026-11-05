@@ -6609,3 +6609,4 @@ breakText	Glyphs	Glifák
 	Click inside any closed area to stitch it in its colour; Alt-click to outline it (Alt-Shift-click: a satin border); Shift-click to sew a thin line along its centre	Kattintson egy zárt területbe, hogy a saját színében hímezze; Alt-kattintás a körvonalát hímezi (Alt-Shift-kattintás: szatén szegély); Shift-kattintás vékony vonalat varr a közepén
 	Thin Lines as Centre Lines	Vékony vonalak középvonalként
 	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	A 2 mm-nél keskenyebb részek, például a vektorizált vonalak és a kézírás, egyetlen vonalként varrva a közepükön
+	Also Export:	Exportálás ebben is:

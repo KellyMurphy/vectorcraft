@@ -1,6 +1,6 @@
 # Embroidery feature catalog
 
-Status: 62 features checked against the code on 2026-11-04. Done 33, partly done 15, missing 14 (estimated, by
+Status: 62 features checked against the code on 2026-11-04. Done 34, partly done 14, missing 14 (estimated, by
 reading the code and the guide, not by sewing: nothing is marked done on fabric until the sew-out gates pass).
 
 This is the feature catalog from the embroidery research (Kelly, 2026-10-16) that
@@ -20,9 +20,9 @@ to say where a feature is described; nothing is copied from any of them (the cle
 | Priority | Features | Done | Partly | Missing |
 |---|---|---|---|---|
 | P0 | 18 | 17 | 1 | 0 |
-| P1 | 26 | 15 | 8 | 3 |
+| P1 | 26 | 16 | 7 | 3 |
 | P2 | 18 | 1 | 6 | 11 |
-| **All** | **62** | **33** | **15** | **14** |
+| **All** | **62** | **34** | **14** | **14** |
 
 | Area | Features | Done | Partly | Missing |
 |---|---|---|---|---|
@@ -30,7 +30,7 @@ to say where a feature is described; nothing is copied from any of them (the cle
 | Stitch types and fills | 18 | 6 | 2 | 10 |
 | Lettering and monograms | 8 | 4 | 2 | 2 |
 | Quality, sequencing and automation | 12 | 10 | 1 | 1 |
-| Colour, preview, output and production | 13 | 5 | 7 | 1 |
+| Colour, preview, output and production | 13 | 6 | 6 | 1 |
 
 **P0 left:** one partly-done P0 feature: the VP3, XXX and U01 formats (E9.3). Run styles (E11.1) and split satin (E11.2) landed.
 
@@ -118,7 +118,7 @@ before G1), and the P2 items after G2. Only blending thread colours across an ar
 | Machine file formats | Read and write DST, PES, EXP, JEF, VP3, XXX and U01 at minimum | pyembroidery, all | P0 | **Partly** | DST, PES, JEF, EXP read and write (E7.12). VP3, XXX, U01: E9.3 |
 | Production worksheet and templates | PDF with colour stops, thread names, stitch count and run time; 1:1 print with centre marks | Ink/Stitch, Embrilliance, Pulse | P0 | **Done** | E7.11: `embroidery.worksheet` |
 | Realistic render and mockups | Thread-shaded view, fabric backgrounds, preview on 3D garments, real-size view | Chroma, Pulse Ambassador, mySewnet | P1 | **Partly** | Stitch Preview draws thread on fabric. Shading and garments: E9.2 |
-| Import, edit and batch export | Open stitch files for stitch-level edits; export many formats at once | Ink/Stitch, Embird, Wilcom Export Docker | P1 | **Partly** | Machine files open as editable manual-stitch paths; one design per artboard on export. Several formats at once: E11.5 |
+| Import, edit and batch export | Open stitch files for stitch-level edits; export many formats at once | Ink/Stitch, Embird, Wilcom Export Docker | P1 | **Done** | Machine files open as editable manual-stitch paths; one design per artboard on export; E11.5: several formats at once (`document.export {formats}`, Export As › Also Export) |
 | Hoops and multi-hoop | Hoop library, rotate hoop, split large designs with alignment and basting stitches | BERNINA 9, mySewnet, Embird | P1 | **Partly** | Hoop library and fit check (E7.8). No rotate or multi-hoop split. Plan: E11.4 |
 | Appliqué | Placement, tack-down and cover steps, with or without holes, plus cutter files (SVG) | All; BERNINA 9, Embrilliance | P1 | **Done** | E8.8: `embroidery.applique`, nested cut files |
 | Extensions and user content | Plugins, plus user folders for patterns, motifs, fonts and palettes | Ink/Stitch extensions, Embrilliance motif publishing | P1 | **Partly** | Library folders (E8.5). Plug-ins for stitch generators: E9.6 |

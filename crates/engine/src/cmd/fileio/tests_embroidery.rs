@@ -900,3 +900,54 @@ fn stitch_angle_lines_are_set_kept_and_moved() {
     s.execute("embroidery.set", &json!({"angles": null})).unwrap();
     assert_eq!(info(&mut s)["selection"]["angles"], json!([]));
 }
+
+#[test]
+fn several_machine_formats_export_at_once() {
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    // No path: each format's file comes back, in order, each format once.
+    let r = s.execute("document.export", &json!({"formats": ["dst", "PES", "dst", "jef"]})).unwrap();
+    assert_eq!(r["formats"], json!(["dst", "pes", "jef"]));
+    let exports = r["exports"].as_array().unwrap();
+    assert!(b64(&exports[0]).starts_with(b"LA:") && b64(&exports[1]).starts_with(b"#PES0060"), "{r}");
+    assert_eq!(exports[2]["format"], "jef");
+    // With a path: one file each beside it, named for its format.
+    let dir = std::env::temp_dir().join(format!("vc-batch-export-{}", std::process::id()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let path = dir.join("Rose.dst");
+    let r = s.execute("document.export", &json!({"formats": ["dst", "pes", "exp"], "path": path.to_str().unwrap()})).unwrap();
+    let files: Vec<String> = r["files"].as_array().unwrap().iter().map(|f| f.as_str().unwrap().to_string()).collect();
+    assert_eq!(files.len(), 3, "{r}");
+    for (f, ext) in files.iter().zip(["dst", "pes", "exp"]) {
+        assert!(f.ends_with(&format!("Rose.{ext}")), "{f}");
+        assert!(std::fs::metadata(f).unwrap().len() > 0);
+    }
+    // With the artboards: a file per artboard and format.
+    s.execute("artboard.new", &json!({"x": 500, "y": 0, "width": 400, "height": 400})).unwrap();
+    s.execute("shape.rectangle", &json!({"x": 600, "y": 10, "width": 100, "height": 100})).unwrap();
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    let two = dir.join("Two");
+    let r = s
+        .execute("document.export", &json!({"formats": ["dst", "pes"], "path": two.to_str().unwrap(), "useArtboards": true, "range": "all"}))
+        .unwrap();
+    assert_eq!(r["files"].as_array().unwrap().len(), 4, "{r}");
+    std::fs::remove_dir_all(&dir).ok();
+    // Bad lists are refused.
+    for p in [
+        json!({"formats": []}),
+        json!({"formats": "dst"}),
+        json!({"formats": ["dst", 3]}),
+        json!({"formats": ["dwg"]}),
+        json!({"formats": ["dst"], "format": "pes"}),
+        json!({"formats": vec!["dst"; MAX_BATCH_FORMATS + 1]}),
+    ] {
+        assert!(s.execute("document.export", &p).is_err(), "{p}");
+    }
+}
+
+#[test]
+fn sibling_paths_take_the_formats_extension() {
+    assert_eq!(sibling_path("Rose.dst", "pes"), "Rose.pes");
+    assert_eq!(sibling_path("Rose", "pes"), "Rose.pes");
+    assert_eq!(sibling_path("Rose.v2", "pes"), "Rose.v2.pes");
+}
