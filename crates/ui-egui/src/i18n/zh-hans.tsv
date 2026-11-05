@@ -6485,3 +6485,12 @@ breakText	Glyphs	字形
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	命名的针迹设置组合：将其中之一应用于所选对象，或将所选对象的设置保存为新样式
 	Rotate in Hoop:	在绣框中旋转:
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	写入机器文件时将图案顺时针旋转：转 90° 可让高的图案放进宽的绣框
+	Split into {n} hoopings that each fit the hoop.	已拆分为 {n} 次上框，每次都能放进绣框。
+	Split into Hoopings	拆分为多次上框
+	Split the design into areas that each fit the hoop, sewn one after another with the fabric hooped again	将图案拆分为各自能放进绣框的区域，重新上框后依次刺绣
+	Alignment Marks	对位标记
+	Running-stitch crosses on each seam, to line the next hooping up by	每条接缝上的平针十字，用于对齐下一次上框
+	Basting Box	疏缝框
+	A running-stitch box round each hooping, sewn first, to hold the fabric to the stabilizer	每次上框时先绣的平针方框，把布料固定在衬布上
+	Join Hoopings	合并上框
+	Sew the design in one hooping again	重新在一次上框中刺绣图案

@@ -24,6 +24,7 @@ pub mod fabrics;
 pub mod font_doc;
 pub mod fonts;
 pub mod generate;
+pub mod hoopings;
 pub mod hoops;
 mod import;
 pub mod inkstitch;

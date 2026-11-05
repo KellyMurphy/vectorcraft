@@ -683,6 +683,10 @@ pub struct EmbroiderySetup {
     /// is kept and used as 0 ([`EmbroiderySetup::hoop_rotation`]); anything else reads as 0.
     #[serde(skip_serializing_if = "is_zero", deserialize_with = "de_rotation")]
     pub hoop_rotation: u16,
+    /// The hoopings a design too big for its hoop is split into (`embroidery.splitHoops`); `None`:
+    /// sewn in one hooping.
+    #[serde(skip_serializing_if = "Option::is_none", deserialize_with = "de_hoopings", serialize_with = "ser_hoopings")]
+    pub hoopings: Option<Box<Hoopings>>,
     /// Thread charts loaded into the document (from `.vcthreads` files), kept with it.
     #[serde(skip_serializing_if = "Vec::is_empty", deserialize_with = "de_charts", serialize_with = "ser_charts")]
     pub charts: Vec<ThreadChart>,
@@ -730,6 +734,7 @@ impl Default for EmbroiderySetup {
             fabric: None,
             hoop: None,
             hoop_rotation: 0,
+            hoopings: None,
             charts: vec![],
             chart: None,
             styles: vec![],
@@ -976,6 +981,65 @@ pub struct Hoop {
 impl Hoop {
     /// Allowed sewing field sizes, mm.
     pub const SIZE: std::ops::RangeInclusive<f64> = 10.0..=2000.0;
+}
+
+/// A design split into hoopings, each sewn after the fabric is hooped again: a grid of areas, each
+/// sewn as a design of its own centred in the hoop (`embroidery.splitHoops`). Positions are in mm
+/// in the stitch plan's space (document points × 25.4 / 72).
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct Hoopings {
+    /// The columns' edges, left to right: n + 1 for n columns (the inner ones are the seams).
+    /// Stitches left of the first edge or right of the last belong to the outer columns.
+    pub columns: Vec<f64>,
+    /// The rows' edges, top to bottom, as `columns`.
+    pub rows: Vec<f64>,
+    /// How far each hooping sews past its seams, mm, so neighbouring pieces meet without a gap.
+    pub overlap: f64,
+    /// Running-stitch crosses on each seam: the hooping sewn first sews them last, the next one
+    /// sews them first, to line the fabric up by.
+    #[serde(skip_serializing_if = "is_true")]
+    pub marks: bool,
+    /// A running-stitch box round each hooping's field, sewn first, to hold the fabric to the
+    /// stabilizer.
+    #[serde(skip_serializing_if = "crate::skip::is_default")]
+    pub basting: bool,
+    /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
+    #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
+    pub extra: serde_json::Map<String, serde_json::Value>,
+    /// Hoopings this version can't read, kept exactly as written; they aren't used.
+    #[serde(skip)]
+    pub unknown: Option<Box<serde_json::Value>>,
+}
+
+impl Default for Hoopings {
+    fn default() -> Self {
+        Self { columns: vec![], rows: vec![], overlap: Self::DEFAULT_OVERLAP, marks: true, basting: false, extra: Default::default(), unknown: None }
+    }
+}
+
+impl Hoopings {
+    /// Allowed overlaps, mm.
+    pub const OVERLAP: std::ops::RangeInclusive<f64> = 0.0..=10.0;
+    pub const DEFAULT_OVERLAP: f64 = 2.0;
+    /// The most columns, and the most rows, a design is split into.
+    pub const MAX_SIDE: usize = 8;
+}
+
+fn de_hoopings<'de, D: serde::Deserializer<'de>>(d: D) -> Result<Option<Box<Hoopings>>, D::Error> {
+    let v = Option::<serde_json::Value>::deserialize(d)?;
+    Ok(v.map(|v| match Hoopings::deserialize(&v) {
+        Ok(h) => Box::new(h),
+        Err(_) => Box::new(Hoopings { unknown: Some(Box::new(v)), ..Hoopings::default() }),
+    }))
+}
+
+fn ser_hoopings<S: serde::Serializer>(h: &Option<Box<Hoopings>>, ser: S) -> Result<S::Ok, S::Error> {
+    match h.as_deref() {
+        Some(Hoopings { unknown: Some(raw), .. }) => raw.serialize(ser),
+        Some(h) => h.serialize(ser),
+        None => ser.serialize_none(),
+    }
 }
 
 fn de_hoop<'de, D: serde::Deserializer<'de>>(d: D) -> Result<Option<Box<Hoop>>, D::Error> {
@@ -1563,6 +1627,19 @@ mod tests {
         }
         let e: EmbroiderySetup = serde_json::from_value(serde_json::json!({"hoopRotation": 45})).unwrap();
         assert_eq!(serde_json::to_value(&e).unwrap()["hoopRotation"], 45, "a newer version's turn is kept");
+    }
+
+    #[test]
+    fn hoopings_read_leniently() {
+        let split = serde_json::json!({"columns": [0.0, 100.0, 200.0], "rows": [0.0, 150.0], "overlap": 3.0, "basting": true});
+        let e: EmbroiderySetup = serde_json::from_value(serde_json::json!({"hoopings": split.clone()})).unwrap();
+        let h = e.hoopings.as_deref().unwrap();
+        assert_eq!((h.columns.len(), h.marks, h.basting, h.unknown.is_none()), (3, true, true, true));
+        assert_eq!(serde_json::to_value(&e).unwrap()["hoopings"], split, "written back as read");
+        let newer = serde_json::json!({"frames": "by hand", "columns": "wide"});
+        let e: EmbroiderySetup = serde_json::from_value(serde_json::json!({"hoopings": newer.clone()})).unwrap();
+        assert!(e.hoopings.as_deref().unwrap().unknown.is_some());
+        assert_eq!(serde_json::to_value(&e).unwrap()["hoopings"], newer, "kept as written");
     }
 
     #[test]

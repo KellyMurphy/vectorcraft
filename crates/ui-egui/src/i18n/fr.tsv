@@ -6638,3 +6638,12 @@ breakText	Glyphs	Glyphes
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Ensembles nommés de réglages de points : appliquez-en un à la sélection, ou enregistrez ceux de la sélection comme nouveau style
 	Rotate in Hoop:	Rotation dans le cadre :
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Fait pivoter le motif dans le sens horaire à l'écriture pour la machine : un quart de tour fait tenir un motif haut dans un cadre large
+	Split into {n} hoopings that each fit the hoop.	Divisé en {n} encadrements qui tiennent chacun dans le cadre.
+	Split into Hoopings	Diviser en encadrements
+	Split the design into areas that each fit the hoop, sewn one after another with the fabric hooped again	Divise le motif en zones qui tiennent chacune dans le cadre, brodées l'une après l'autre en réencadrant le tissu
+	Alignment Marks	Repères d'alignement
+	Running-stitch crosses on each seam, to line the next hooping up by	Croix au point droit sur chaque raccord, pour aligner l'encadrement suivant
+	Basting Box	Cadre de bâti
+	A running-stitch box round each hooping, sewn first, to hold the fabric to the stabilizer	Un cadre au point droit autour de chaque encadrement, brodé en premier, qui maintient le tissu sur l'entoilage
+	Join Hoopings	Réunir les encadrements
+	Sew the design in one hooping again	Broder de nouveau le motif en un seul encadrement

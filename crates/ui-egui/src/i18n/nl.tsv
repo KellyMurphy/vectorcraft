@@ -6565,3 +6565,12 @@ breakText	Glyphs	Glyphs
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Benoemde sets steekinstellingen: pas er een toe op de selectie, of sla die van de selectie op als nieuwe
 	Rotate in Hoop:	Draaien in raam:
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Draait het ontwerp met de klok mee bij het schrijven voor de machine: een kwartslag laat een hoog ontwerp in een breed raam passen
+	Split into {n} hoopings that each fit the hoop.	Verdeeld in {n} inspanningen die elk in het raam passen.
+	Split into Hoopings	Verdelen in inspanningen
+	Split the design into areas that each fit the hoop, sewn one after another with the fabric hooped again	Verdeelt het ontwerp in delen die elk in het raam passen, na elkaar geborduurd met de stof telkens opnieuw ingespannen
+	Alignment Marks	Uitlijntekens
+	Running-stitch crosses on each seam, to line the next hooping up by	Kruisjes in rechte steek op elke naad, om de volgende inspanning op uit te lijnen
+	Basting Box	Rijgkader
+	A running-stitch box round each hooping, sewn first, to hold the fabric to the stabilizer	Een kader in rechte steek rond elke inspanning, eerst geborduurd, dat de stof op het steunvlies houdt
+	Join Hoopings	Inspanningen samenvoegen
+	Sew the design in one hooping again	Het ontwerp weer in één inspanning borduren

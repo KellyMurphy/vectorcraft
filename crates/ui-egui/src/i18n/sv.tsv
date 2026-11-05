@@ -6675,3 +6675,12 @@ breakText	Glyphs	Glyfer
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Namngivna uppsättningar stygninställningar: använd en på markeringen, eller spara markeringens som en ny
 	Rotate in Hoop:	Vrid i ramen:
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Vrider mönstret medurs när det skrivs för maskinen: ett kvarts varv får ett högt mönster att rymmas i en bred ram
+	Split into {n} hoopings that each fit the hoop.	Delat i {n} uppspänningar som var och en ryms i ramen.
+	Split into Hoopings	Dela i uppspänningar
+	Split the design into areas that each fit the hoop, sewn one after another with the fabric hooped again	Delar mönstret i områden som var och en ryms i ramen, broderade efter varandra med tyget uppspänt på nytt
+	Alignment Marks	Justeringsmärken
+	Running-stitch crosses on each seam, to line the next hooping up by	Kors i raksöm på varje skarv, att rikta nästa uppspänning efter
+	Basting Box	Tråckelram
+	A running-stitch box round each hooping, sewn first, to hold the fabric to the stabilizer	En ram i raksöm runt varje uppspänning, broderad först, som håller tyget mot mellanlägget
+	Join Hoopings	Slå ihop uppspänningar
+	Sew the design in one hooping again	Brodera mönstret i en uppspänning igen

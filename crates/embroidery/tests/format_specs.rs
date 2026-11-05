@@ -134,6 +134,41 @@ fn full_stitch() -> StitchSettings {
     }
 }
 
+/// Hoopings with every field written (marks off: written only when not the default).
+fn full_hoopings() -> vectorcraft_doc::Hoopings {
+    vectorcraft_doc::Hoopings {
+        columns: vec![0.0, 100.0, 200.0],
+        rows: vec![0.0, 90.0],
+        overlap: 3.0,
+        marks: false,
+        basting: true,
+        extra: Default::default(),
+        unknown: None,
+    }
+}
+
+#[test]
+fn hoopings_schema_and_page_match_the_code() {
+    use vectorcraft_doc::Hoopings;
+    use vectorcraft_embroidery::hoopings;
+    let schema = json("vectorcraft-embroidery.schema.json");
+    let h = &schema["$defs"]["hoopings"]["properties"];
+    assert_eq!(keys(h), keys(&serde_json::to_value(full_hoopings()).unwrap()), "the hoopings' fields");
+    range_is(&h["overlap"], Hoopings::OVERLAP, "overlap");
+    assert_eq!(h["overlap"]["default"].as_f64(), Some(Hoopings::DEFAULT_OVERLAP));
+    for edges in ["columns", "rows"] {
+        assert_eq!(h[edges]["maxItems"].as_u64(), Some(Hoopings::MAX_SIDE as u64 + 1), "{edges}");
+    }
+    let page = read("vectorcraft-embroidery.md");
+    for k in keys(h) {
+        assert!(page.contains(&format!("| `{k}` |")), "the page's hoopings table has `{k}`");
+    }
+    for (what, mm) in [("arms", hoopings::MARK_ARM), ("box", hoopings::BASTE_INSET)] {
+        assert!(page.contains(&format!("{mm:.0} mm")), "the page gives the {what}: {mm} mm");
+    }
+    assert!(page.contains(&format!("2 to {}", Hoopings::MAX_SIDE + 1)), "the page gives the grid's limits");
+}
+
 fn full_setup() -> EmbroiderySetup {
     EmbroiderySetup {
         trim_jumps_over: Some(5.0),
@@ -151,6 +186,7 @@ fn full_setup() -> EmbroiderySetup {
         fabric: Some(Box::new(full_fabric())),
         hoop: Some(Box::new(full_hoop())),
         hoop_rotation: 90,
+        hoopings: Some(Box::new(full_hoopings())),
         charts: vec![full_chart()],
         chart: Some("full".into()),
         styles: vec![full_style()],

@@ -6653,3 +6653,12 @@ breakText	Glyphs	Merkit
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Nimettyjä pistoasetusten joukkoja: käytä yhtä valintaan tai tallenna valinnan asetukset uudeksi
 	Rotate in Hoop:	Kierrä kehyksessä:
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Kiertää kuviota myötäpäivään, kun se kirjoitetaan koneelle: neljänneskierros sovittaa korkean kuvion leveään kehykseen
+	Split into {n} hoopings that each fit the hoop.	Jaettu {n} kehystykseen, jotka kukin mahtuvat kehykseen.
+	Split into Hoopings	Jaa kehystyksiin
+	Split the design into areas that each fit the hoop, sewn one after another with the fabric hooped again	Jakaa kuvion alueisiin, jotka kukin mahtuvat kehykseen ja kirjotaan peräkkäin kangas uudelleen kehystettynä
+	Alignment Marks	Kohdistusmerkit
+	Running-stitch crosses on each seam, to line the next hooping up by	Suorapistoristit jokaiseen saumaan, joiden mukaan seuraava kehystys kohdistetaan
+	Basting Box	Harsintakehys
+	A running-stitch box round each hooping, sewn first, to hold the fabric to the stabilizer	Suorapistokehys jokaisen kehystyksen ympärille, kirjotaan ensin, pitää kankaan tukikankaassa
+	Join Hoopings	Yhdistä kehystykset
+	Sew the design in one hooping again	Kirjo kuvio taas yhdessä kehystyksessä

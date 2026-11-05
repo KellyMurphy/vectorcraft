@@ -6642,3 +6642,12 @@ breakText	Glyphs	Glyfy
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Pojmenované sady nastavení stehů: použijte jednu na výběr, nebo uložte nastavení výběru jako novou
 	Rotate in Hoop:	Otočení v rámečku:
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Otočí vzor po směru hodinových ručiček při zápisu pro stroj: čtvrt otáčky vejde vysoký vzor do širokého rámečku
+	Split into {n} hoopings that each fit the hoop.	Rozděleno na {n} upnutí, z nichž se každé vejde do rámečku.
+	Split into Hoopings	Rozdělit na upnutí
+	Split the design into areas that each fit the hoop, sewn one after another with the fabric hooped again	Rozdělí vzor na části, z nichž se každá vejde do rámečku, vyšívané jedna po druhé s novým upnutím látky
+	Alignment Marks	Značky pro zarovnání
+	Running-stitch crosses on each seam, to line the next hooping up by	Křížky z rovného stehu na každém švu, podle kterých se zarovná další upnutí
+	Basting Box	Stehovací rámeček
+	A running-stitch box round each hooping, sewn first, to hold the fabric to the stabilizer	Rámeček z rovného stehu kolem každého upnutí, vyšitý první, který drží látku na stabilizátoru
+	Join Hoopings	Spojit upnutí
+	Sew the design in one hooping again	Vyšít vzor znovu v jednom upnutí

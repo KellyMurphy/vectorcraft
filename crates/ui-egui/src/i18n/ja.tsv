@@ -6328,3 +6328,12 @@ breakText	Glyphs	字形
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	名前付きのステッチ設定のセット：選択範囲に適用するか、選択範囲の設定を新しいスタイルとして保存します
 	Rotate in Hoop:	枠内で回転:
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	ミシン用に書き出すときにデザインを時計回りに回転します。90° 回すと縦長のデザインが横長の枠に収まります
+	Split into {n} hoopings that each fit the hoop.	{n} 回の枠張りに分割され、どれも枠に収まります。
+	Split into Hoopings	枠張りに分割
+	Split the design into areas that each fit the hoop, sewn one after another with the fabric hooped again	デザインを枠に収まる領域に分割し、生地を張り直しながら順に刺しゅうします
+	Alignment Marks	位置合わせマーク
+	Running-stitch crosses on each seam, to line the next hooping up by	各つなぎ目に直線縫いの十字を入れ、次の枠張りの位置合わせに使います
+	Basting Box	しつけ枠
+	A running-stitch box round each hooping, sewn first, to hold the fabric to the stabilizer	各枠張りの周りに最初に縫う直線縫いの枠。生地を接着芯に固定します
+	Join Hoopings	枠張りを結合
+	Sew the design in one hooping again	デザインを再び 1 回の枠張りで刺しゅうします

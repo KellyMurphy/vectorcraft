@@ -6609,3 +6609,12 @@ breakText	Glyphs	Glifák
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Elnevezett öltésbeállítás-készletek: alkalmazzon egyet a kijelölésre, vagy mentse a kijelölését újként
 	Rotate in Hoop:	Elforgatás a keretben:
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Az óramutató járásával megegyezően elforgatja a mintát a gépnek írt fájlban: egy negyedfordulat egy magas mintát is elhelyez egy széles keretben
+	Split into {n} hoopings that each fit the hoop.	{n} befogásra osztva, amelyek mind beférnek a keretbe.
+	Split into Hoopings	Felosztás befogásokra
+	Split the design into areas that each fit the hoop, sewn one after another with the fabric hooped again	A mintát olyan részekre osztja, amelyek egyenként beférnek a keretbe, és egymás után hímzik őket az anyag újbóli befogásával
+	Alignment Marks	Igazítójelek
+	Running-stitch crosses on each seam, to line the next hooping up by	Egyenesöltéses keresztek minden illesztésen, a következő befogás igazításához
+	Basting Box	Fércelő keret
+	A running-stitch box round each hooping, sewn first, to hold the fabric to the stabilizer	Egyenesöltéses keret minden befogás körül, elsőként hímezve, amely a stabilizátorhoz rögzíti az anyagot
+	Join Hoopings	Befogások egyesítése
+	Sew the design in one hooping again	A minta hímzése ismét egy befogásban

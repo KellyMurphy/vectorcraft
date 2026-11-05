@@ -223,7 +223,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Hoops",
             ["Window", "Embroidery"],
             None,
-            "{} the document's hoop and the common ones → {hoop: {id, name, width, height (the sewing field, mm), round, machines, description} | null (none chosen), common: [the same, for 4x4, 5x7, 6x10, 8x8, 8x12, cap], fit: fits|turned|tooBig|null (the design in the document's hoop, as sewn: turned by hoopRotation; turned: only with another quarter turn), designMm: [width, height] | null (as drawn), rotation: 0|90|180|270 (embroidery.setup's hoopRotation)}",
+            "{} the document's hoop and the common ones → {hoop: {id, name, width, height (the sewing field, mm), round, machines, description} | null (none chosen), common: [the same, for 4x4, 5x7, 6x10, 8x8, 8x12, cap], fit: fits|turned|tooBig|split|null (the design in the document's hoop, as sewn: turned by hoopRotation; turned: only with another quarter turn; split: split into hoopings that each fit — tooBig when one doesn't), designMm: [width, height] | null (as drawn), rotation: 0|90|180|270 (embroidery.setup's hoopRotation), hoopings: how many hoopings the design is split into (embroidery.splitHoops) | null}",
             has_doc,
             hoops
         ),
@@ -1194,8 +1194,16 @@ fn hoops(s: &mut Session, _: &Value) -> Result<Value> {
         }),
         _ => Value::Null,
     };
+    // A design split into hoopings fits when each hooping does.
+    let split = vectorcraft_embroidery::hoopings::of_document(doc, &plan);
+    let fit = match &split {
+        Some((pieces, hoop)) if pieces.iter().all(|p| vectorcraft_embroidery::hoopings::fits(p, hoop, rotation)) => json!("split"),
+        Some(_) => json!("tooBig"),
+        None => fit,
+    };
     let r = |v: f64| (v * 10.0).round() / 10.0;
     Ok(json!({
+        "hoopings": split.map(|(pieces, _)| pieces.len()),
         "hoop": hoop_json(doc.embroidery.hoop.as_deref()),
         "common": common,
         "fit": fit,

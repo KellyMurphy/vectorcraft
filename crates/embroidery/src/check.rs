@@ -205,8 +205,29 @@ pub static RULES: &[Rule] = &[
             let Some(b) = plan.stats().bounds else { return vec![] };
             // As the machine sews it: turned in the hoop.
             let rotation = doc.embroidery.hoop_rotation();
-            let (w, h) = crate::hoops::as_sewn(b[2] - b[0], b[3] - b[1], rotation);
             let (fw, fh) = crate::hoops::size(hoop);
+            // Split into hoopings: each must fit (an edit since the split can grow one).
+            if let Some((pieces, _)) = crate::hoopings::of_document(doc, plan) {
+                return pieces
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, p)| !crate::hoopings::fits(p, hoop, rotation))
+                    .map(|(i, p)| {
+                        let (w, h) = p.plan.stats().bounds.map_or((0.0, 0.0), |b| crate::hoops::as_sewn(b[2] - b[0], b[3] - b[1], rotation));
+                        Finding {
+                            rule: "hoop",
+                            severity: Severity::Error,
+                            message: format!(
+                                "hooping {} ({w:.0} × {h:.0} mm as sewn) doesn't fit the {fw:.0} × {fh:.0} mm hoop: split the design again",
+                                i + 1
+                            ),
+                            object: None,
+                            at: None,
+                        }
+                    })
+                    .collect();
+            }
+            let (w, h) = crate::hoops::as_sewn(b[2] - b[0], b[3] - b[1], rotation);
             let (severity, message) = match crate::hoops::fit(w, h, hoop) {
                 crate::hoops::Fit::Fits => return vec![],
                 crate::hoops::Fit::FitsTurned => (

@@ -6506,3 +6506,12 @@ breakText	Glyphs	Глифи
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Именувани набори от настройки на бодовете: приложете един към избраното или запазете настройките на избраното като нов
 	Rotate in Hoop:	Завъртане в гергефа:
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Завърта мотива по часовниковата стрелка при записа за машината: четвърт оборот побира висок мотив в широк гергеф
+	Split into {n} hoopings that each fit the hoop.	Разделен на {n} поставяния в гергефа, всяко от които се побира.
+	Split into Hoopings	Разделяне на поставяния
+	Split the design into areas that each fit the hoop, sewn one after another with the fabric hooped again	Разделя мотива на части, всяка от които се побира в гергефа, бродирани една след друга с повторно опъване на плата
+	Alignment Marks	Знаци за подравняване
+	Running-stitch crosses on each seam, to line the next hooping up by	Кръстчета от прав бод на всеки шев, по които да се подравни следващото поставяне
+	Basting Box	Рамка за тропоска
+	A running-stitch box round each hooping, sewn first, to hold the fabric to the stabilizer	Рамка от прав бод около всяко поставяне, бродирана първа, която държи плата към стабилизатора
+	Join Hoopings	Обединяване на поставянията
+	Sew the design in one hooping again	Бродиране на мотива отново в едно поставяне

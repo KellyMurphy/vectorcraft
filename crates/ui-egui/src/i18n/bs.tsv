@@ -6095,3 +6095,12 @@ shape	Open	Otvoren
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Imenovani skupovi postavki bodova: primijenite jedan na odabrano ili sačuvajte postavke odabranog kao novi
 	Rotate in Hoop:	Rotacija u obruču:
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Okreće dizajn u smjeru kazaljke na satu pri zapisivanju za mašinu: četvrtina okreta smješta visok dizajn u širok obruč
+	Split into {n} hoopings that each fit the hoop.	Podijeljeno na {n} postavljanja u obruč, svako staje u obruč.
+	Split into Hoopings	Podijeli na postavljanja
+	Split the design into areas that each fit the hoop, sewn one after another with the fabric hooped again	Dijeli dizajn na dijelove koji svaki staju u obruč, vezene jedan za drugim uz ponovno zatezanje tkanine
+	Alignment Marks	Oznake za poravnanje
+	Running-stitch crosses on each seam, to line the next hooping up by	Križići od ravnog boda na svakom spoju, za poravnanje sljedećeg postavljanja
+	Basting Box	Okvir za prošivanje
+	A running-stitch box round each hooping, sewn first, to hold the fabric to the stabilizer	Okvir od ravnog boda oko svakog postavljanja, vezen prvi, koji drži tkaninu uz stabilizator
+	Join Hoopings	Spoji postavljanja
+	Sew the design in one hooping again	Ponovo vezi dizajn u jednom postavljanju

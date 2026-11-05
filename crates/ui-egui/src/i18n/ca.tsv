@@ -6170,3 +6170,12 @@ breakText	Glyphs	Glifs
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Conjunts amb nom de configuració de punt: apliqueu-ne un a la selecció o deseu la de la selecció com a estil
 	Rotate in Hoop:	Gir al bastidor:
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Gira el disseny en sentit horari en escriure'l per a la màquina: un quart de volta fa cabre un disseny alt en un bastidor ample
+	Split into {n} hoopings that each fit the hoop.	Dividit en {n} col·locacions al bastidor que hi caben totes.
+	Split into Hoopings	Divideix en col·locacions
+	Split the design into areas that each fit the hoop, sewn one after another with the fabric hooped again	Divideix el disseny en zones que caben cadascuna al bastidor, brodades una després de l'altra tornant a tensar la tela
+	Alignment Marks	Marques d'alineació
+	Running-stitch crosses on each seam, to line the next hooping up by	Creus de punt recte a cada costura, per alinear-hi la col·locació següent
+	Basting Box	Requadre d'embastar
+	A running-stitch box round each hooping, sewn first, to hold the fabric to the stabilizer	Un requadre de punt recte al voltant de cada col·locació, brodat primer, que subjecta la tela a l'entretela
+	Join Hoopings	Uneix les col·locacions
+	Sew the design in one hooping again	Torna a brodar el disseny en una sola col·locació

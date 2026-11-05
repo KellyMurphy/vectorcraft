@@ -82,6 +82,7 @@
         "sewOut": { "$ref": "#/$defs/sewOut" },
         "fabric": { "$ref": "#/$defs/fabric" },
         "hoop": { "$ref": "vchoop.schema.json#/$defs/hoop" },
+        "hoopings": { "$ref": "#/$defs/hoopings" },
         "hoopRotation": { "type": "integer", "minimum": 0, "default": 0, "description": "Degrees clockwise the design is turned as it is written to the machine: 0, 90, 180 or 270 (readers use another value as 0 and keep it)." },
         "charts": {
           "type": "array",
@@ -118,6 +119,18 @@
             "description": "An embroidery font: the fields of a .vcfont file other than format and version (see vcfont.schema.json)."
           }
         }
+      }
+    },
+    "hoopings": {
+      "title": "Hoopings (`document.embroidery.hoopings`)",
+      "description": "A design split into a grid of hoopings, each sewn as a design of its own after the fabric is hooped again. Positions in mm in the stitch plan's space (document points × 25.4 / 72).",
+      "type": "object",
+      "properties": {
+        "columns": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 9, "description": "The columns' edges, left to right, increasing: n + 1 for n columns." },
+        "rows": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 9, "description": "The rows' edges, top to bottom, increasing: n + 1 for n rows." },
+        "overlap": { "type": "number", "minimum": 0, "maximum": 10, "default": 2, "description": "How far each hooping sews past its seams, mm." },
+        "marks": { "type": "boolean", "default": true, "description": "Alignment crosses on each seam: sewn last by the hooping before, first by the next." },
+        "basting": { "type": "boolean", "default": false, "description": "A running-stitch box round each hooping's field, sewn first." }
       }
     },
     "fabric": {

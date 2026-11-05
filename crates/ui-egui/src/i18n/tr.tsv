@@ -6153,3 +6153,12 @@ breakText	Glyphs	Glifler
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Adlandırılmış dikiş ayarı kümeleri: birini seçime uygulayın veya seçimin ayarlarını yeni bir stil olarak kaydedin
 	Rotate in Hoop:	Kasnakta Döndür:
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Makine için yazılırken deseni saat yönünde döndürür: çeyrek tur, uzun bir deseni geniş bir kasnağa sığdırır
+	Split into {n} hoopings that each fit the hoop.	Her biri kasnağa sığan {n} kasnaklamaya bölündü.
+	Split into Hoopings	Kasnaklamalara Böl
+	Split the design into areas that each fit the hoop, sewn one after another with the fabric hooped again	Deseni her biri kasnağa sığan alanlara böler; kumaş yeniden kasnaklanarak sırayla işlenir
+	Alignment Marks	Hizalama İşaretleri
+	Running-stitch crosses on each seam, to line the next hooping up by	Her birleşim yerinde, sonraki kasnaklamayı hizalamak için düz dikiş artıları
+	Basting Box	Teyel Çerçevesi
+	A running-stitch box round each hooping, sewn first, to hold the fabric to the stabilizer	Her kasnaklamanın çevresinde ilk işlenen, kumaşı tele tutturan düz dikiş çerçeve
+	Join Hoopings	Kasnaklamaları Birleştir
+	Sew the design in one hooping again	Deseni yeniden tek kasnaklamada işle

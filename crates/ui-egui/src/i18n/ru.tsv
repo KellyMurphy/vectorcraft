@@ -6618,3 +6618,12 @@ breakText	Glyphs	Глифы
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Именованные наборы настроек стежков: примените один к выделенному или сохраните настройки выделенного как новый
 	Rotate in Hoop:	Поворот в пяльцах:
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Поворачивает дизайн по часовой стрелке при записи для машины: четверть оборота помещает высокий дизайн в широкие пяльцы
+	Split into {n} hoopings that each fit the hoop.	Разделено на {n} заправок в пяльцы, каждая помещается.
+	Split into Hoopings	Разделить на заправки
+	Split the design into areas that each fit the hoop, sewn one after another with the fabric hooped again	Делит дизайн на участки, каждый из которых помещается в пяльцы, вышиваемые по очереди с перезаправкой ткани
+	Alignment Marks	Метки совмещения
+	Running-stitch crosses on each seam, to line the next hooping up by	Крестики прямой строчкой на каждом стыке, по которым совмещается следующая заправка
+	Basting Box	Наметочная рамка
+	A running-stitch box round each hooping, sewn first, to hold the fabric to the stabilizer	Рамка прямой строчкой вокруг каждой заправки, вышиваемая первой, которая держит ткань на стабилизаторе
+	Join Hoopings	Объединить заправки
+	Sew the design in one hooping again	Снова вышивать дизайн за одну заправку

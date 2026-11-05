@@ -6478,3 +6478,12 @@ breakText	Glyphs	Glify
 	Named sets of stitch settings: apply one to the selection, or save the selection's as one	Nazwane zestawy ustawień ściegów: zastosuj jeden do zaznaczenia lub zapisz ustawienia zaznaczenia jako nowy
 	Rotate in Hoop:	Obrót w tamborku:
 	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Obraca wzór zgodnie z ruchem wskazówek zegara przy zapisie dla maszyny: ćwierć obrotu mieści wysoki wzór w szerokim tamborku
+	Split into {n} hoopings that each fit the hoop.	Podzielono na {n} napięć w tamborku, z których każde się mieści.
+	Split into Hoopings	Podziel na napięcia
+	Split the design into areas that each fit the hoop, sewn one after another with the fabric hooped again	Dzieli wzór na części, z których każda mieści się w tamborku, haftowane po kolei z ponownym napięciem tkaniny
+	Alignment Marks	Znaczniki wyrównania
+	Running-stitch crosses on each seam, to line the next hooping up by	Krzyżyki ściegiem prostym na każdym łączeniu, do wyrównania kolejnego napięcia
+	Basting Box	Ramka fastrygi
+	A running-stitch box round each hooping, sewn first, to hold the fabric to the stabilizer	Ramka ściegiem prostym wokół każdego napięcia, haftowana jako pierwsza, przytrzymuje tkaninę na flizelinie
+	Join Hoopings	Połącz napięcia
+	Sew the design in one hooping again	Haftuj wzór znów w jednym napięciu
