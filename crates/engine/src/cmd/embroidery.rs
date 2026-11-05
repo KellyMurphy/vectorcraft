@@ -33,7 +33,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Embroidery Setup",
             ["Window", "Embroidery"],
             None,
-            "{trimJumpsOver?: mm (0.5–100; 3) | null (never trim on length: only thread changes and objects' trimBefore/trimAfter cut the thread), stitchMovesUnder?: mm (0–5; 1: moves to the next stitch up to this long are sewn, longer ones jump), overlap?: mm (0–3; 0.5: how far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away), minStitch?: mm (0–2; 0.3: needle points closer than this to the one before are left out; the document's fabric may ask for longer), autoStart?: bool (true: running, bean and zigzag lines without a startAt are entered nearest where the needle is), hideTravel?: bool (true: travel under a fill or satin shape sewn later is sewn there as running stitches instead of jumped and trimmed), speed?: stitches per minute (100–1500; 600: the machine's, for the sewing time estimate), machineFormat?: dst|pes|jef|exp (dst: the file format the panels' Export button writes, for the machine the design is sewn on)} the document's travel, overlap, shortest stitch, speed and machine format, as one undo step → {trimJumpsOver, stitchMovesUnder, overlap, minStitch (as sewn: the larger of the document's and its fabric's), autoStart, hideTravel, speed, machineFormat}",
+            "{trimJumpsOver?: mm (0.5–100; 3) | null (never trim on length: only thread changes and objects' trimBefore/trimAfter cut the thread), stitchMovesUnder?: mm (0–5; 1: moves to the next stitch up to this long are sewn, longer ones jump), overlap?: mm (0–3; 0.5: how far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away), minStitch?: mm (0–2; 0.3: needle points closer than this to the one before are left out; the document's fabric may ask for longer), autoStart?: bool (true: running, bean and zigzag lines without a startAt are entered nearest where the needle is), hideTravel?: bool (true: travel under a fill or satin shape sewn later is sewn there as running stitches instead of jumped and trimmed), speed?: stitches per minute (100–1500; 600: the machine's, for the sewing time estimate), machineFormat?: dst|pes|jef|exp (dst: the file format the panels' Export button writes, for the machine the design is sewn on), hoopRotation?: 0|90|180|270 (0: degrees clockwise the design is turned as it is written to the machine, so a tall design fits a wide hoop; the hoop check, Stitch Preview's hoop and the worksheet use it)} the document's travel, overlap, shortest stitch, speed, machine format and rotation in the hoop, as one undo step → {trimJumpsOver, stitchMovesUnder, overlap, minStitch (as sewn: the larger of the document's and its fabric's), autoStart, hideTravel, speed, machineFormat, hoopRotation}",
             has_doc,
             setup
         ),
@@ -223,7 +223,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Hoops",
             ["Window", "Embroidery"],
             None,
-            "{} the document's hoop and the common ones → {hoop: {id, name, width, height (the sewing field, mm), round, machines, description} | null (none chosen), common: [the same, for 4x4, 5x7, 6x10, 8x8, 8x12, cap], fit: fits|turned|tooBig|null (the design in the document's hoop; turned: only a quarter turn), designMm: [width, height] | null}",
+            "{} the document's hoop and the common ones → {hoop: {id, name, width, height (the sewing field, mm), round, machines, description} | null (none chosen), common: [the same, for 4x4, 5x7, 6x10, 8x8, 8x12, cap], fit: fits|turned|tooBig|null (the design in the document's hoop, as sewn: turned by hoopRotation; turned: only with another quarter turn), designMm: [width, height] | null (as drawn), rotation: 0|90|180|270 (embroidery.setup's hoopRotation)}",
             has_doc,
             hoops
         ),
@@ -502,7 +502,7 @@ fn set(s: &mut Session, p: &Value) -> Result<Value> {
 }
 
 fn setup_json(e: &EmbroiderySetup) -> Value {
-    json!({ "trimJumpsOver": e.trim_over(), "stitchMovesUnder": e.stitch_under(), "overlap": e.overlap(), "minStitch": e.min_stitch(), "autoStart": e.auto_start, "hideTravel": e.hide_travel, "speed": e.speed(), "machineFormat": e.machine_format() })
+    json!({ "trimJumpsOver": e.trim_over(), "stitchMovesUnder": e.stitch_under(), "overlap": e.overlap(), "minStitch": e.min_stitch(), "autoStart": e.auto_start, "hideTravel": e.hide_travel, "speed": e.speed(), "machineFormat": e.machine_format(), "hoopRotation": e.hoop_rotation() })
 }
 
 fn setup(s: &mut Session, p: &Value) -> Result<Value> {
@@ -533,6 +533,15 @@ fn setup(s: &mut Session, p: &Value) -> Result<Value> {
             Some(f) if EmbroiderySetup::MACHINE_FORMATS.contains(&f.as_str()) => new.machine_format = f,
             _ => return Err(bad(C, "`machineFormat` must be dst, pes, jef or exp")),
         }
+    }
+    if let Some(v) = p.get("hoopRotation") {
+        new.hoop_rotation = match v.as_u64() {
+            Some(0) => 0,
+            Some(90) => 90,
+            Some(180) => 180,
+            Some(270) => 270,
+            _ => return Err(bad(C, "`hoopRotation` must be 0, 90, 180 or 270 (degrees clockwise)")),
+        };
     }
     if let Some(v) = p.get("hideTravel") {
         new.hide_travel = v.as_bool().ok_or_else(|| bad(C, "`hideTravel` must be true or false"))?;
@@ -1175,7 +1184,9 @@ fn hoops(s: &mut Session, _: &Value) -> Result<Value> {
     let common: Vec<Value> = hoops::BUILTIN.iter().filter_map(|id| hoops::builtin(id)).map(|h| hoop_json(Some(&h))).collect();
     let plan = s.stitch_plan(doc);
     let size = plan.stats().bounds.map(|b| (b[2] - b[0], b[3] - b[1]));
-    let fit = match (doc.embroidery.hoop.as_ref().filter(|h| h.unknown.is_none()), size) {
+    // As the machine sews it: turned in the hoop.
+    let rotation = doc.embroidery.hoop_rotation();
+    let fit = match (doc.embroidery.hoop.as_ref().filter(|h| h.unknown.is_none()), size.map(|(w, h)| hoops::as_sewn(w, h, rotation))) {
         (Some(h), Some((w, hh))) => json!(match hoops::fit(w, hh, h) {
             hoops::Fit::Fits => "fits",
             hoops::Fit::FitsTurned => "turned",
@@ -1189,6 +1200,7 @@ fn hoops(s: &mut Session, _: &Value) -> Result<Value> {
         "common": common,
         "fit": fit,
         "designMm": size.map(|(w, h)| [r(w), r(h)]),
+        "rotation": rotation,
     }))
 }
 

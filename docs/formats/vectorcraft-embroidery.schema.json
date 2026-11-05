@@ -82,6 +82,7 @@
         "sewOut": { "$ref": "#/$defs/sewOut" },
         "fabric": { "$ref": "#/$defs/fabric" },
         "hoop": { "$ref": "vchoop.schema.json#/$defs/hoop" },
+        "hoopRotation": { "type": "integer", "minimum": 0, "default": 0, "description": "Degrees clockwise the design is turned as it is written to the machine: 0, 90, 180 or 270 (readers use another value as 0 and keep it)." },
         "charts": {
           "type": "array",
           "items": {

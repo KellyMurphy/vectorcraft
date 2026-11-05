@@ -6486,3 +6486,5 @@ breakText	Glyphs	字形
 	Thin Lines as Centre Lines	细线按中心线缝
 	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	将窄于 2 毫米的部分（如描摹的线条和手写字）沿其中心缝成一条线
 	Also Export:	同时导出：
+	Rotate in Hoop:	在绣框中旋转:
+	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	写入机器文件时将图案顺时针旋转：转 90° 可让高的图案放进宽的绣框

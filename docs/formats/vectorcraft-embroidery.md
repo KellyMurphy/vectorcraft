@@ -165,6 +165,7 @@ Builds from before 2026-11-01 do so.
 | `fontEditor` | an embroidery font | An embroidery font document's font (made by the font editor): its details, metrics and kerning, with no glyphs; its glyphs are the document's artboards, one per glyph named for its characters (`space` for the space), the baseline shared. | none: an ordinary document |
 | `fonts` | array of embroidery fonts | The embroidery fonts the document uses, each with the fields of a [font file](vcfont.md) other than `format` and `version`, so its type sews the same where the font isn't installed. A font a reader can't read is kept as written and not used. | empty |
 | `hoop` | object, see [Hoop](#hoop-hoop) | The hoop the design is sewn in: its sewing field is checked against the design and drawn in Stitch Preview. | none: nothing checked |
+| `hoopRotation` | integer: 0, 90, 180 or 270 | Degrees clockwise the design is turned as it is written to a machine file, about the middle of its stitches, so a tall design fits a wide hoop. The hoop check uses the turned design, and Stitch Preview draws the hoop's field turned the other way round the design as drawn. Readers use any other value as 0 and keep it as written. | 0 |
 | `fabric` | object, see [Fabric](#fabric-fabric) | The fabric the design is for: its settings fill in what objects leave unset. | none: the stitches' own defaults |
 | `sewOut` | object, see [Sew-out test](#sew-out-test-sewout) | The swatches of a test sheet and what was seen when they were sewn. | none |
 

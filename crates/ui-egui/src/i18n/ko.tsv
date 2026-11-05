@@ -6207,3 +6207,5 @@ breakText	Glyphs	글리프
 	Thin Lines as Centre Lines	가는 선을 중심선으로
 	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	따라 그린 선이나 손글씨처럼 2mm보다 좁은 부분을 중심을 따라 한 줄로 박음질합니다
 	Also Export:	함께 내보내기:
+	Rotate in Hoop:	후프에서 회전:
+	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	기계용으로 쓸 때 디자인을 시계 방향으로 돌립니다. 90° 돌리면 세로로 긴 디자인이 가로로 넓은 후프에 맞습니다

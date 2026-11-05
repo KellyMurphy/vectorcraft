@@ -6227,3 +6227,5 @@ breakText	Glyphs	Glyph
 	Thin Lines as Centre Lines	Đường mảnh thành đường giữa
 	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	May các phần hẹp hơn 2 mm, như đường đồ lại và chữ viết tay, thành một đường dọc theo giữa của chúng
 	Also Export:	Xuất thêm:
+	Rotate in Hoop:	Xoay trong khung:
+	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Xoay mẫu theo chiều kim đồng hồ khi ghi cho máy: xoay một phần tư vòng giúp mẫu cao vừa khung rộng

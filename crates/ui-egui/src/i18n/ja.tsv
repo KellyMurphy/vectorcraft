@@ -6329,3 +6329,5 @@ breakText	Glyphs	字形
 	Thin Lines as Centre Lines	細い線を中心線で縫う
 	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	トレースした線や手書き文字など、幅 2 mm 未満の部分を中心に沿った 1 本の線として縫います
 	Also Export:	同時に書き出し:
+	Rotate in Hoop:	枠内で回転:
+	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	ミシン用に書き出すときにデザインを時計回りに回転します。90° 回すと縦長のデザインが横長の枠に収まります

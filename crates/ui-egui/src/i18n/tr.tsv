@@ -6154,3 +6154,5 @@ breakText	Glyphs	Glifler
 	Thin Lines as Centre Lines	İnce Çizgileri Orta Çizgi Olarak
 	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	İzlenmiş çizgiler ve el yazısı gibi 2 mm'den dar parçaları ortalarından tek bir çizgi olarak dik
 	Also Export:	Ayrıca dışa aktar:
+	Rotate in Hoop:	Kasnakta Döndür:
+	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Makine için yazılırken deseni saat yönünde döndürür: çeyrek tur, uzun bir deseni geniş bir kasnağa sığdırır

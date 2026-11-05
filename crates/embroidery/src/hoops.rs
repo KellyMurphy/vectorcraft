@@ -42,12 +42,43 @@ pub fn size(h: &Hoop) -> (f64, f64) {
     (c(h.width), c(h.height))
 }
 
-/// Where the hoop's field lies around `plan`: its centre (the design's) and size, mm. None when
-/// the design has no stitches.
-pub fn field(plan: &Plan, h: &Hoop) -> Option<(Point, f64, f64)> {
+/// Whether a hoop rotation (degrees clockwise, [`vectorcraft_doc::EmbroiderySetup::hoop_rotation`])
+/// is a quarter turn: the design's width runs along the hoop's height.
+pub fn turned(rotation: u16) -> bool {
+    matches!(rotation, 90 | 270)
+}
+
+/// A design `w` × `h` mm as the machine sews it, turned `rotation` degrees.
+pub fn as_sewn(w: f64, h: f64, rotation: u16) -> (f64, f64) {
+    if turned(rotation) { (h, w) } else { (w, h) }
+}
+
+/// Where the hoop's field lies around `plan`: its centre (the design's) and size, mm, as it lies
+/// on the design: turned with the design (`rotation`, degrees clockwise), so a quarter turn swaps
+/// its sides. None when the design has no stitches.
+pub fn field(plan: &Plan, h: &Hoop, rotation: u16) -> Option<(Point, f64, f64)> {
     let b = plan.stats().bounds?;
     let (w, hh) = size(h);
+    let (w, hh) = as_sewn(w, hh, rotation);
     Some((Point::new((b[0] + b[2]) / 2.0, (b[1] + b[3]) / 2.0), w, hh))
+}
+
+/// `plan` turned `rotation` degrees clockwise (0, 90, 180 or 270; others leave it as it is) about
+/// the middle of its stitches, as it is written to the machine.
+pub fn rotated(mut plan: Plan, rotation: u16) -> Plan {
+    let Some(b) = plan.stats().bounds.filter(|_| matches!(rotation, 90 | 180 | 270)) else { return plan };
+    let (cx, cy) = ((b[0] + b[2]) / 2.0, (b[1] + b[3]) / 2.0);
+    for n in &mut plan.needles {
+        let (dx, dy) = (n.x - cx, n.y - cy);
+        // y points down: a clockwise quarter turn takes right (1, 0) to down (0, 1).
+        let (rx, ry) = match rotation {
+            90 => (-dy, dx),
+            180 => (-dx, -dy),
+            _ => (dy, -dx),
+        };
+        (n.x, n.y) = (cx + rx, cy + ry);
+    }
+    plan
 }
 
 /// How a design fits a hoop.
@@ -150,6 +181,31 @@ mod tests {
         let round = Hoop { width: 100.0, height: 100.0, round: true, ..Hoop::default() };
         assert_eq!(fit(70.0, 70.0, &round), Fit::Fits, "corners 49.5 mm out");
         assert_eq!(fit(80.0, 80.0, &round), Fit::TooBig, "corners 56.6 mm out");
+    }
+
+    #[test]
+    fn a_turned_design_turns_clockwise_about_its_middle() {
+        use crate::{Cmd, Needle};
+        let plan = Plan {
+            needles: vec![
+                Needle { x: 0.0, y: 0.0, cmd: Cmd::Stitch },
+                Needle { x: 40.0, y: 0.0, cmd: Cmd::Stitch },
+                Needle { x: 40.0, y: 10.0, cmd: Cmd::Stitch },
+            ],
+            ..Plan::default()
+        };
+        let quarter = rotated(plan.clone(), 90);
+        let b = quarter.stats().bounds.unwrap();
+        assert_eq!((b[2] - b[0], b[3] - b[1]), (10.0, 40.0), "a wide design stands tall");
+        assert_eq!((b[0] + b[2], b[1] + b[3]), (40.0, 10.0), "about its middle");
+        // Right turns to down: the first stitch (left) ends up at the top.
+        assert!(quarter.needles[0].y < quarter.needles[1].y);
+        assert_eq!(rotated(rotated(plan.clone(), 90), 270), plan);
+        assert_eq!(rotated(plan.clone(), 45), plan, "only quarter turns");
+        assert_eq!(as_sewn(40.0, 10.0, 270), (10.0, 40.0));
+        let five = builtin("5x7").unwrap();
+        let (w, h) = as_sewn(170.0, 120.0, 90);
+        assert_eq!(fit(w, h, &five), Fit::Fits, "a wide design turned fits a tall hoop");
     }
 
     #[test]

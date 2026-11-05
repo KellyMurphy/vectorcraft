@@ -6619,3 +6619,5 @@ breakText	Glyphs	Глифы
 	Thin Lines as Centre Lines	Тонкие линии по осевой
 	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	Прошивать части уже 2 мм, например обведённые линии и рукописный текст, одной линией по их середине
 	Also Export:	Экспортировать также:
+	Rotate in Hoop:	Поворот в пяльцах:
+	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Поворачивает дизайн по часовой стрелке при записи для машины: четверть оборота помещает высокий дизайн в широкие пяльцы

@@ -6654,3 +6654,5 @@ breakText	Glyphs	Merkit
 	Thin Lines as Centre Lines	Ohuet viivat keskiviivoina
 	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	Ommellaan alle 2 mm leveät osat, kuten jäljitetyt viivat ja käsiala, yhtenä viivana niiden keskeltä
 	Also Export:	Vie myös:
+	Rotate in Hoop:	Kierrä kehyksessä:
+	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Kiertää kuviota myötäpäivään, kun se kirjoitetaan koneelle: neljänneskierros sovittaa korkean kuvion leveään kehykseen

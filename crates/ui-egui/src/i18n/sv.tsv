@@ -6676,3 +6676,5 @@ breakText	Glyphs	Glyfer
 	Thin Lines as Centre Lines	Tunna linjer som mittlinjer
 	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	Sy delar smalare än 2 mm, som spårade linjer och handskrift, som en enda linje längs deras mitt
 	Also Export:	Exportera även:
+	Rotate in Hoop:	Vrid i ramen:
+	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Vrider mönstret medurs när det skrivs för maskinen: ett kvarts varv får ett högt mönster att rymmas i en bred ram

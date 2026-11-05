@@ -6610,3 +6610,5 @@ breakText	Glyphs	Glifák
 	Thin Lines as Centre Lines	Vékony vonalak középvonalként
 	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	A 2 mm-nél keskenyebb részek, például a vektorizált vonalak és a kézírás, egyetlen vonalként varrva a közepükön
 	Also Export:	Exportálás ebben is:
+	Rotate in Hoop:	Elforgatás a keretben:
+	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	Az óramutató járásával megegyezően elforgatja a mintát a gépnek írt fájlban: egy negyedfordulat egy magas mintát is elhelyez egy széles keretben

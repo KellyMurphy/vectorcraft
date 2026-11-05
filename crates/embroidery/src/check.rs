@@ -203,14 +203,25 @@ pub static RULES: &[Rule] = &[
         run: |doc, plan| {
             let Some(hoop) = doc.embroidery.hoop.as_ref().filter(|h| h.unknown.is_none()) else { return vec![] };
             let Some(b) = plan.stats().bounds else { return vec![] };
-            let (w, h) = (b[2] - b[0], b[3] - b[1]);
+            // As the machine sews it: turned in the hoop.
+            let rotation = doc.embroidery.hoop_rotation();
+            let (w, h) = crate::hoops::as_sewn(b[2] - b[0], b[3] - b[1], rotation);
             let (fw, fh) = crate::hoops::size(hoop);
             let (severity, message) = match crate::hoops::fit(w, h, hoop) {
                 crate::hoops::Fit::Fits => return vec![],
-                crate::hoops::Fit::FitsTurned => {
-                    (Severity::Warning, format!("the design ({w:.0} × {h:.0} mm) fits the {fw:.0} × {fh:.0} mm hoop only turned a quarter turn"))
-                }
-                crate::hoops::Fit::TooBig => (Severity::Error, format!("the design ({w:.0} × {h:.0} mm) doesn't fit the {fw:.0} × {fh:.0} mm hoop")),
+                crate::hoops::Fit::FitsTurned => (
+                    Severity::Warning,
+                    format!(
+                        "the design ({w:.0} × {h:.0} mm as sewn) fits the {fw:.0} × {fh:.0} mm hoop only turned a quarter turn: set Rotate in Hoop to {}°",
+                        if crate::hoops::turned(rotation) { 0 } else { 90 }
+                    ),
+                ),
+                crate::hoops::Fit::TooBig => (
+                    Severity::Error,
+                    format!(
+                        "the design ({w:.0} × {h:.0} mm as sewn) doesn't fit the {fw:.0} × {fh:.0} mm hoop: split it into hoopings, or choose a larger hoop"
+                    ),
+                ),
             };
             vec![Finding { rule: "hoop", severity, message, object: None, at: None }]
         },
