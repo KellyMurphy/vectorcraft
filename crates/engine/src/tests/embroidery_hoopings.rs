@@ -122,6 +122,25 @@ fn a_design_too_big_for_the_hoop_is_split_exported_per_hooping_and_joined() {
 }
 
 #[test]
+fn hoopings_export_in_several_formats_at_once() {
+    // Batch export (E11.5) of a split design: a file per format per hooping.
+    let mut s = fill(300.0 / vectorcraft_embroidery::PT_MM, 100.0 / vectorcraft_embroidery::PT_MM);
+    run(&mut s, "embroidery.splitHoops", json!({"hoop": "5x7"}));
+    let r = run(&mut s, "document.export", json!({"formats": ["dst", "pes"]}));
+    for (e, ext) in r["exports"].as_array().unwrap().iter().zip(["dst", "pes"]) {
+        let names: Vec<&str> = e["files"].as_array().unwrap().iter().map(|f| f["name"].as_str().unwrap()).collect();
+        assert!(names.len() == 3 && names.iter().enumerate().all(|(i, n)| n.ends_with(&format!("-hoop{}.{ext}", i + 1))), "{names:?}");
+    }
+    let dir = std::env::temp_dir().join(format!("vc-hooping-batch-{}", std::process::id()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let r = run(&mut s, "document.export", json!({"formats": ["dst", "pes"], "path": dir.join("Big.dst").to_str().unwrap()}));
+    let files = r["files"].as_array().unwrap();
+    assert_eq!(files.len(), 6, "{r}");
+    assert!(files.iter().all(|f| std::path::Path::new(f.as_str().unwrap()).exists()), "{r}");
+    std::fs::remove_dir_all(&dir).ok();
+}
+
+#[test]
 fn a_design_that_fits_isnt_split() {
     let mut s = fill(100.0, 100.0);
     run(&mut s, "embroidery.setHoop", json!({"hoop": "5x7"}));
