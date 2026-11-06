@@ -132,9 +132,9 @@ pub fn tool_definitions() -> Vec<Value> {
         tool(
             "render_preview",
             "Render a preview",
-            "Render an artboard (default the first) as inline PNG without changing the document. max_side defaults to 1024, limited to 1..4096. stitches: true draws the embroidery design as Stitch Preview shows it (stitches in their thread colours on fabric over the art).",
+            "Render an artboard (default the first) as inline PNG without changing the document. max_side defaults to 1024, limited to 1..4096. stitches: true draws the embroidery design as Stitch Preview shows it (stitches in their thread colours on fabric over the art); \"realistic\" draws it as it will look sewn (shaded thread on the fabric's texture and colour, as View › Realistic Stitches).",
             obj(
-                json!({"max_side":{"type":"integer","minimum":1,"maximum":4096},"artboard":{"type":"integer","minimum":0,"description":"0-based artboard (default 0)"},"stitches":{"type":"boolean"},"traceViews":{"type":"boolean","description":TRACE_VIEWS}}),
+                json!({"max_side":{"type":"integer","minimum":1,"maximum":4096},"artboard":{"type":"integer","minimum":0,"description":"0-based artboard (default 0)"},"stitches":{"anyOf":[{"type":"boolean"},{"type":"string","enum":["realistic"]}]},"traceViews":{"type":"boolean","description":TRACE_VIEWS}}),
                 &[],
             ),
             true,

@@ -91,8 +91,8 @@ pub use compound_shape::ShapeMode;
 pub use corners::LiveCorners;
 pub use depth::{MAX_DEPTH, MAX_SYMBOL_NODES};
 pub use embroidery::{
-    BorderPattern, ChartThread, EmbroiderySetup, Fabric, Hoop, Hoopings, Motif, MotifKind, PartStitch, PatternPart, RunStyle, SewOut, SewResult,
-    SewSwatch, Split, SplitPattern, StitchKind, StitchSettings, StitchStyle, ThreadChart, Underlay,
+    BorderPattern, ChartThread, EmbroiderySetup, Fabric, Hoop, Hoopings, Motif, MotifKind, PartStitch, PatternPart, PreviewLook, RunStyle, SewOut,
+    SewResult, SewSwatch, Split, SplitPattern, StitchKind, StitchSettings, StitchStyle, ThreadChart, Underlay,
 };
 pub use embroidery_font::{EmbroideryFont, FontGlyph, GlyphObject, KernPair};
 pub use graph::{

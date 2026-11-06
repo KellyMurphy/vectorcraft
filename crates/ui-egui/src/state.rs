@@ -271,6 +271,9 @@ pub struct ViewFlags {
     /// View › Stitch Density: Stitch Preview's heat map of needle holes per mm².
     #[serde(default)]
     pub stitch_density: bool,
+    /// View › Realistic Stitches: Stitch Preview drawn as shaded thread on a fabric texture.
+    #[serde(default)]
+    pub realistic_stitches: bool,
     /// View → Hide/Show Template: template layers drawn (dimmed) or left out of the canvas.
     #[serde(default = "yes")]
     pub templates: bool,
@@ -300,6 +303,7 @@ impl Default for ViewFlags {
             hidden_chars: false,
             stitch_preview: false,
             stitch_density: false,
+            realistic_stitches: false,
             templates: true,
         }
     }
@@ -600,6 +604,9 @@ pub struct UiState {
     /// Stitch Preview's plan and the document state it was made from.
     #[serde(skip)]
     pub stitch_cache: Option<crate::canvas::StitchMemo>,
+    /// View › Realistic Stitches' last picture of the canvas.
+    #[serde(skip)]
+    pub realistic_cache: Option<crate::canvas::RealisticFrame>,
     /// The documents (uids) whose Missing Fonts dialog waits until no dialog is open, the next one to
     /// show first ([`crate::dialogs::settle`]).
     #[serde(skip)]
@@ -1017,6 +1024,7 @@ impl Default for UiState {
             dialog_file: None,
             made_text_style: vec![],
             stitch_cache: None,
+            realistic_cache: None,
             pending_fonts: vec![],
             fonts_dialog: None,
             dialog_search: None,

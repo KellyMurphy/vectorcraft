@@ -224,6 +224,13 @@ fn run_ui_part3(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<Result<
             app.ui.view.stitch_preview |= on;
             Ok(json!({ "on": on }))
         }
+        "view.realisticStitches" => {
+            let on = !app.ui.view.realistic_stitches;
+            app.ui.view.realistic_stitches = on;
+            // Stitch Preview drawn realistically: showing it shows the stitches too.
+            app.ui.view.stitch_preview |= on;
+            Ok(json!({ "on": on }))
+        }
         "view.trimView" => flag(&mut app.ui.view.trim_view),
         "view.cornerWidget" => flag(&mut app.ui.view.corner_widgets),
         // New View: the engine stores the current zoom, centre and rotation under the given name.

@@ -169,6 +169,7 @@ Builds from before 2026-11-01 do so.
 | `hoopings` | object, see [Hoopings](#hoopings-hoopings) | The design split into a grid of hoopings, each sewn as a design of its own. | none: sewn in one hooping |
 | `fabric` | object, see [Fabric](#fabric-fabric) | The fabric the design is for: its settings fill in what objects leave unset. | none: the stitches' own defaults |
 | `sewOut` | object, see [Sew-out test](#sew-out-test-sewout) | The swatches of a test sheet and what was seen when they were sewn. | none |
+| `preview` | object, see [Realistic view](#realistic-view-preview) | How the Realistic view draws the fabric the design is sewn on. Changes nothing that is sewn. | none: as the fabric suggests |
 
 Each entry of `patterns` has the fields of a [border pattern file](vcborder.md#fields) other than `format`,
 `version` and `units`, with a non-empty `id`. Stitch settings name them by `id` in `pattern`; a document's
@@ -239,6 +240,19 @@ unset, as if the object had it:
 
 An object's Auto stitch takes them once it has picked what to sew each shape with. Readers keep unknown
 members of `fabric`.
+
+## Realistic view (`preview`)
+
+How View › Realistic Stitches and `embroidery.preview {style: realistic}` draw the fabric under the
+stitches. It is only a picture: nothing sewn depends on it.
+
+| Field | Type | Meaning | Default |
+|---|---|---|---|
+| `texture` | string: `plain`, `twill`, `denim`, `knit`, `terry`, `leather` or `felt` | The fabric's surface. | the texture of `fabric`'s starter (`knit` for knit, `terry` for towel, `twill` for cap, `leather`, `denim`), else `plain` |
+| `color` | string, `#rrggbb` | The fabric's colour. | the texture's own |
+
+Readers draw a `texture` or `color` they don't recognise as unset, and keep it, and any other member, as
+written.
 
 ## Sew-out test (`sewOut`)
 

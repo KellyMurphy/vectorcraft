@@ -188,6 +188,12 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "",
         "{} toggle: in Stitch Preview (turned on with it), a heat map of the needle holes per mm² (embroidery.density), red where the design checker finds it too dense",
     ),
+    (
+        "view.realisticStitches",
+        "Realistic Stitches",
+        "",
+        "{} toggle: Stitch Preview (turned on with it) draws the design as it will look sewn: each stitch a shaded, twisted thread with its sheen and shadow, on the fabric's texture and colour (embroidery.setup fabricTexture, fabricColor), untrimmed jumps as loose thread; the same picture as embroidery.preview {style: realistic}",
+    ),
     ("view.trimView", "Trim View", "", "{} toggle: hide everything outside the artboards"),
     ("view.cornerWidget", "Hide Corner Widget", "", "{} toggle the live corner widgets"),
     ("view.snapToPixel", "Snap to Pixel", "", "{} toggle: drawing and moving land on whole pixels"),

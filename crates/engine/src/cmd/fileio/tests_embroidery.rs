@@ -213,12 +213,12 @@ fn setup_sets_the_documents_trim_and_jump_lengths() {
     let mut s = session();
     assert_eq!(
         info(&mut s)["setup"],
-        json!({"trimJumpsOver": 3.0, "stitchMovesUnder": 1.0, "overlap": 0.5, "minStitch": 0.3, "autoStart": true, "hideTravel": true, "speed": 600.0, "machineFormat": "dst", "hoopRotation": 0})
+        json!({"trimJumpsOver": 3.0, "stitchMovesUnder": 1.0, "overlap": 0.5, "minStitch": 0.3, "autoStart": true, "hideTravel": true, "speed": 600.0, "machineFormat": "dst", "hoopRotation": 0, "fabricTexture": "plain", "fabricColor": "#ece6d6"})
     );
     let r = s.execute("embroidery.setup", &json!({"trimJumpsOver": 8, "stitchMovesUnder": 2})).unwrap();
     assert_eq!(
         r,
-        json!({"trimJumpsOver": 8.0, "stitchMovesUnder": 2.0, "overlap": 0.5, "minStitch": 0.3, "autoStart": true, "hideTravel": true, "speed": 600.0, "machineFormat": "dst", "hoopRotation": 0})
+        json!({"trimJumpsOver": 8.0, "stitchMovesUnder": 2.0, "overlap": 0.5, "minStitch": 0.3, "autoStart": true, "hideTravel": true, "speed": 600.0, "machineFormat": "dst", "hoopRotation": 0, "fabricTexture": "plain", "fabricColor": "#ece6d6"})
     );
     s.execute("embroidery.setup", &json!({"trimJumpsOver": null})).unwrap();
     assert_eq!(info(&mut s)["setup"]["trimJumpsOver"], Value::Null);

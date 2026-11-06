@@ -64,8 +64,13 @@ pub(super) fn draw_preview(
     // the drag, and the outlines of the stitched objects the drag changed.
     let before = app.session.stitches_deferred();
     let shown = before.as_ref().unwrap_or(doc);
-    let memo = stitch_plan(&app.session, &mut app.ui.stitch_cache, shown);
-    draw_stitches(painter, xf, shown, &memo.plan);
+    let memo = stitch_plan(&app.session, &mut app.ui.stitch_cache, shown).clone();
+    if app.ui.view.realistic_stitches {
+        draw_realistic(app, painter, xf, shown, &memo.plan);
+    } else {
+        draw_stitches(painter, xf, shown, &memo.plan);
+    }
+    draw_hoops(painter, xf, shown, &memo.plan);
     if density {
         draw_density(painter, xf, &memo.density, area, t);
     }
@@ -180,8 +185,24 @@ pub(super) fn draw_stitches(painter: &egui::Painter, xf: &Xf, doc: &vectorcraft_
         let pts: Vec<egui::Pos2> = run.iter().map(|p| at(p.x, p.y)).collect();
         thread_stitches(painter, &pts, Stroke::new(width, Color32::from_rgb(r, g, b)));
     }
-    // The hoop's sewing field, centred on the design; split into hoopings, one round each
-    // hooping's area, numbered in sewing order.
+    let jump = Stroke::new(JUMP_WIDTH_PT as f32, Color32::from_black_alpha(JUMP_ALPHA));
+    let mut from = None;
+    for n in &plan.needles {
+        let p = at(n.x, n.y);
+        if n.cmd == Cmd::Jump
+            && let Some(f) = from
+        {
+            painter.line_segment([f, p], jump);
+        }
+        from = Some(p);
+    }
+}
+
+/// The hoop's sewing field, centred on the design; split into hoopings, one round each hooping's
+/// area, numbered in sewing order.
+fn draw_hoops(painter: &egui::Painter, xf: &Xf, doc: &vectorcraft_doc::Document, plan: &vectorcraft_embroidery::Plan) {
+    use vectorcraft_embroidery::PT_MM;
+    let at = |x: f64, y: f64| xf.to_screen(Point::new(x / PT_MM, y / PT_MM));
     let round = doc.embroidery.hoop.as_ref().is_some_and(|h| h.round);
     let fields = vectorcraft_embroidery::preview::hoop_fields(doc, plan);
     let [r, g, b] = vectorcraft_embroidery::preview::HOOP;
@@ -195,15 +216,106 @@ pub(super) fn draw_stitches(painter: &egui::Painter, xf: &Xf, doc: &vectorcraft_
             painter.text(at(c.x, c.y), egui::Align2::CENTER_CENTER, (i + 1).to_string(), egui::FontId::proportional(18.0), hoop_color);
         }
     }
-    let jump = Stroke::new(JUMP_WIDTH_PT as f32, Color32::from_black_alpha(JUMP_ALPHA));
-    let mut from = None;
-    for n in &plan.needles {
-        let p = at(n.x, n.y);
-        if n.cmd == Cmd::Jump
-            && let Some(f) = from
-        {
-            painter.line_segment([f, p], jump);
-        }
-        from = Some(p);
+}
+
+/// How long the view must stay still before Realistic Stitches draws it again, seconds; until then
+/// the last picture is moved with the view.
+const REALISTIC_STILL: f64 = 0.15;
+
+/// What View › Realistic Stitches drew, and for which design and view.
+#[derive(Clone)]
+pub struct RealisticFrame {
+    plan: std::sync::Arc<vectorcraft_embroidery::Plan>,
+    look: vectorcraft_embroidery::realistic::Look,
+    fabric: Vec<vectorcraft_geom::Rect>,
+    xf: Xf,
+    ppp: f32,
+    texture: egui::TextureHandle,
+    /// The view last seen, and when it was first seen: the picture is drawn again once it has stayed
+    /// put for [`REALISTIC_STILL`].
+    seen: Option<(Xf, f64)>,
+}
+
+impl std::fmt::Debug for RealisticFrame {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("RealisticFrame").field("look", &self.look).field("xf", &self.xf).field("ppp", &self.ppp).finish_non_exhaustive()
     }
+}
+
+fn same_view(a: &Xf, b: &Xf) -> bool {
+    a.rect == b.rect && a.zoom == b.zoom && a.center == b.center && a.rot == b.rot
+}
+
+/// View › Realistic Stitches: the design drawn as sewn thread on the fabric's texture
+/// (`vectorcraft_embroidery::realistic`), a picture of the whole canvas. A changed design is drawn
+/// at once; a changed view once the view is still, the last picture moving with it until then.
+fn draw_realistic(
+    app: &mut VectorcraftApp,
+    painter: &egui::Painter,
+    xf: &Xf,
+    doc: &vectorcraft_doc::Document,
+    plan: &std::sync::Arc<vectorcraft_embroidery::Plan>,
+) {
+    use vectorcraft_embroidery::{PT_MM, realistic};
+    let ctx = painter.ctx().clone();
+    let ppp = ctx.pixels_per_point();
+    let now = ctx.input(|i| i.time);
+    let look = realistic::Look::of(doc);
+    let fabric: Vec<vectorcraft_geom::Rect> = doc.artboards.iter().map(|a| a.rect.scale_from_origin(PT_MM)).collect();
+    let cache = &mut app.ui.realistic_cache;
+    let design_same = cache.as_ref().is_some_and(|c| std::sync::Arc::ptr_eq(&c.plan, plan) && c.look == look && c.fabric == fabric && c.ppp == ppp);
+    let view_same = cache.as_ref().is_some_and(|c| same_view(&c.xf, xf));
+    let mut redraw = !design_same || cache.is_none();
+    if design_same
+        && !view_same
+        && let Some(c) = cache.as_mut()
+    {
+        match c.seen {
+            Some((v, since)) if same_view(&v, xf) => {
+                let left = REALISTIC_STILL - (now - since);
+                if left <= 0.0 {
+                    redraw = true;
+                } else {
+                    ctx.request_repaint_after_secs(left as f32);
+                }
+            }
+            _ => {
+                c.seen = Some((*xf, now));
+                ctx.request_repaint_after_secs(REALISTIC_STILL as f32);
+            }
+        }
+    }
+    if redraw {
+        let rect = xf.rect;
+        let (w, h) = ((rect.width() * ppp).round().max(1.0) as u32, (rect.height() * ppp).round().max(1.0) as u32);
+        let to_px = vectorcraft_geom::Affine::scale(f64::from(ppp))
+            * vectorcraft_geom::Affine::translate((-f64::from(rect.min.x), -f64::from(rect.min.y)))
+            * xf.affine()
+            * vectorcraft_geom::Affine::scale(1.0 / PT_MM);
+        let view = realistic::View { width: w, height: h, to_px, fabric: fabric.clone() };
+        match realistic::render(plan, &look, &view) {
+            Ok(img) => {
+                let color = egui::ColorImage::from_rgba_unmultiplied([img.width as usize, img.height as usize], &img.rgba);
+                let texture = match cache.take() {
+                    Some(mut c) => {
+                        c.texture.set(color, egui::TextureOptions::LINEAR);
+                        c.texture
+                    }
+                    None => ctx.load_texture("realistic-stitches", color, egui::TextureOptions::LINEAR),
+                };
+                *cache = Some(RealisticFrame { plan: plan.clone(), look, fabric, xf: *xf, ppp, texture, seen: None });
+            }
+            // Too big a canvas to draw (or a view that can't be drawn): the flat preview instead.
+            Err(_) => {
+                *cache = None;
+                draw_stitches(painter, xf, doc, plan);
+                return;
+            }
+        }
+    }
+    let Some(c) = cache.as_ref() else { return };
+    // The picture where its view put it, moved into this view.
+    let r = c.xf.rect;
+    let quad = [r.left_top(), r.right_top(), r.right_bottom(), r.left_bottom()].map(|p| xf.to_screen(c.xf.to_doc(p)));
+    super::grid::textured_quad(painter, c.texture.id(), &quad, (1.0, 1.0));
 }

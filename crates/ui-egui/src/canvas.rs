@@ -28,7 +28,7 @@ mod overlays;
 mod panes;
 mod raster;
 mod stitches;
-pub(crate) use stitches::{StitchMemo, stitch_memo, thread_stitches};
+pub(crate) use stitches::{RealisticFrame, StitchMemo, stitch_memo, thread_stitches};
 mod task_bar;
 mod tool_overlays;
 mod view;

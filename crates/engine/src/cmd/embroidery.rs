@@ -33,7 +33,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Embroidery Setup",
             ["Window", "Embroidery"],
             None,
-            "{trimJumpsOver?: mm (0.5–100; 3) | null (never trim on length: only thread changes and objects' trimBefore/trimAfter cut the thread), stitchMovesUnder?: mm (0–5; 1: moves to the next stitch up to this long are sewn, longer ones jump), overlap?: mm (0–3; 0.5: how far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away), minStitch?: mm (0–2; 0.3: needle points closer than this to the one before are left out; the document's fabric may ask for longer), autoStart?: bool (true: running, bean and zigzag lines without a startAt are entered nearest where the needle is), hideTravel?: bool (true: travel under a fill or satin shape sewn later is sewn there as running stitches instead of jumped and trimmed), speed?: stitches per minute (100–1500; 600: the machine's, for the sewing time estimate), machineFormat?: dst|pes|jef|exp (dst: the file format the panels' Export button writes, for the machine the design is sewn on), hoopRotation?: 0|90|180|270 (0: degrees clockwise the design is turned as it is written to the machine, so a tall design fits a wide hoop; the hoop check, Stitch Preview's hoop and the worksheet use it)} the document's travel, overlap, shortest stitch, speed, machine format and rotation in the hoop, as one undo step → {trimJumpsOver, stitchMovesUnder, overlap, minStitch (as sewn: the larger of the document's and its fabric's), autoStart, hideTravel, speed, machineFormat, hoopRotation}",
+            "{trimJumpsOver?: mm (0.5–100; 3) | null (never trim on length: only thread changes and objects' trimBefore/trimAfter cut the thread), stitchMovesUnder?: mm (0–5; 1: moves to the next stitch up to this long are sewn, longer ones jump), overlap?: mm (0–3; 0.5: how far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away), minStitch?: mm (0–2; 0.3: needle points closer than this to the one before are left out; the document's fabric may ask for longer), autoStart?: bool (true: running, bean and zigzag lines without a startAt are entered nearest where the needle is), hideTravel?: bool (true: travel under a fill or satin shape sewn later is sewn there as running stitches instead of jumped and trimmed), speed?: stitches per minute (100–1500; 600: the machine's, for the sewing time estimate), machineFormat?: dst|pes|jef|exp (dst: the file format the panels' Export button writes, for the machine the design is sewn on), hoopRotation?: 0|90|180|270 (0: degrees clockwise the design is turned as it is written to the machine, so a tall design fits a wide hoop; the hoop check, Stitch Preview's hoop and the worksheet use it), fabricTexture?: plain|twill|denim|knit|terry|leather|felt | null (null: the texture of the document's fabric profile or else plain: how View › Realistic Stitches draws the fabric), fabricColor?: #rrggbb | null (null: the texture's own colour: the fabric or garment the Realistic view draws)} the document's travel, overlap, shortest stitch, speed, machine format, rotation in the hoop and the Realistic view's fabric, as one undo step → {trimJumpsOver, stitchMovesUnder, overlap, minStitch (as sewn: the larger of the document's and its fabric's), autoStart, hideTravel, speed, machineFormat, hoopRotation, fabricTexture (as drawn), fabricColor (as drawn: #rrggbb)}",
             has_doc,
             setup
         ),
@@ -151,7 +151,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Render Stitch Preview",
             ["View"],
             None,
-            "{scale?: pixels per point (0.01-16; 1), artboard?: index (0)} the artboard as Stitch Preview shows it, as a PNG: the stitches in their thread colours on fabric over the art, jumps as thin lines; the document is not changed → {width, height, pngBase64}",
+            "{scale?: pixels per point (0.01-16; 1), artboard?: index (0), style?: flat|realistic (flat: as Stitch Preview shows it: the stitches in their thread colours on fabric over the art and jumps as thin lines; realistic: as View › Realistic Stitches shows it: each stitch a shaded twisted thread with its sheen and shadow on the fabric's texture and colour from embroidery.setup and untrimmed jumps as loose thread)} the artboard's design as a PNG; the document is not changed → {width, height, pngBase64}",
             has_doc,
             preview
         ),
@@ -501,8 +501,34 @@ fn set(s: &mut Session, p: &Value) -> Result<Value> {
     Ok(json!({ "changed": changed }))
 }
 
-fn setup_json(e: &EmbroiderySetup) -> Value {
-    json!({ "trimJumpsOver": e.trim_over(), "stitchMovesUnder": e.stitch_under(), "overlap": e.overlap(), "minStitch": e.min_stitch(), "autoStart": e.auto_start, "hideTravel": e.hide_travel, "speed": e.speed(), "machineFormat": e.machine_format(), "hoopRotation": e.hoop_rotation() })
+fn setup_json(doc: &Document) -> Value {
+    let e = &doc.embroidery;
+    let look = vectorcraft_embroidery::realistic::Look::of(doc);
+    json!({ "trimJumpsOver": e.trim_over(), "stitchMovesUnder": e.stitch_under(), "overlap": e.overlap(), "minStitch": e.min_stitch(), "autoStart": e.auto_start, "hideTravel": e.hide_travel, "speed": e.speed(), "machineFormat": e.machine_format(), "hoopRotation": e.hoop_rotation(), "fabricTexture": look.texture.id(), "fabricColor": hex(look.color) })
+}
+
+/// `fabricTexture` and `fabricColor` of `p` into `e`'s Realistic view look.
+fn preview_look(e: &mut EmbroiderySetup, p: &Value, c: &str) -> Result<()> {
+    use vectorcraft_embroidery::realistic::{Texture, parse_hex};
+    let mut look = e.preview.as_deref().cloned().unwrap_or_default();
+    match p.get("fabricTexture") {
+        None => {}
+        Some(Value::Null) => look.texture = None,
+        Some(v) => match v.as_str().and_then(Texture::from_id) {
+            Some(t) => look.texture = Some(t.id().to_string()),
+            None => return Err(bad(c, "`fabricTexture` must be plain, twill, denim, knit, terry, leather or felt, or null")),
+        },
+    }
+    match p.get("fabricColor") {
+        None => {}
+        Some(Value::Null) => look.color = None,
+        Some(v) => match v.as_str().and_then(parse_hex) {
+            Some(rgb) => look.color = Some(hex(rgb)),
+            None => return Err(bad(c, "`fabricColor` must be a colour as #rrggbb, or null")),
+        },
+    }
+    e.preview = (look != Default::default()).then(|| Box::new(look));
+    Ok(())
 }
 
 fn setup(s: &mut Session, p: &Value) -> Result<Value> {
@@ -561,14 +587,14 @@ fn setup(s: &mut Session, p: &Value) -> Result<Value> {
             _ => return Err(bad(C, "`overlap` must be a number from 0 to 3 (mm)")),
         }
     }
+    preview_look(&mut new, p, C)?;
     if new != s.doc()?.doc.embroidery {
-        let e = new.clone();
         edit_counted(s, "Embroidery Setup", |d| {
-            d.embroidery = e;
+            d.embroidery = new;
             Ok(1)
         })?;
     }
-    Ok(setup_json(&new))
+    Ok(setup_json(&s.doc()?.doc))
 }
 
 /// How many objects of `doc` sew pattern `id`.
@@ -1011,7 +1037,7 @@ fn info(s: &mut Session, p: &Value) -> Result<Value> {
     for param in params::PARAMS {
         selection[param.key] = same(all.iter().map(|s| (param.get)(s)));
     }
-    Ok(json!({ "design": design(doc, &plan), "setup": setup_json(&doc.embroidery), "selection": selection }))
+    Ok(json!({ "design": design(doc, &plan), "setup": setup_json(doc), "selection": selection }))
 }
 
 fn check(s: &mut Session, p: &Value) -> Result<Value> {
@@ -1569,11 +1595,51 @@ fn preview(s: &mut Session, p: &Value) -> Result<Value> {
     };
     let rect = doc.artboards.get(index).map(|a| a.rect).ok_or_else(|| bad(C, format!("no artboard {index}")))?;
     vectorcraft_render::raster_size(rect, scale).map_err(|e| bad(C, e))?;
+    let realistic = match p.get("style").map(Value::as_str) {
+        None | Some(Some("flat")) => false,
+        Some(Some("realistic")) => true,
+        Some(_) => return Err(bad(C, "`style` must be flat or realistic")),
+    };
     let plan = s.stitch_plan(doc);
-    let shown = vectorcraft_embroidery::preview::document(doc, &plan);
-    let img = vectorcraft_render::Renderer::new().render_region(&shown, rect, scale, true);
+    let img = if realistic {
+        realistic_region(doc, &plan, rect, scale).map_err(|e| bad(C, e))?
+    } else {
+        let shown = vectorcraft_embroidery::preview::document(doc, &plan);
+        vectorcraft_render::Renderer::new().render_region(&shown, rect, scale, true)
+    };
     let png = img.to_png().map_err(|e| bad(C, e))?;
     Ok(json!({"width": img.width, "height": img.height, "pngBase64": vectorcraft_format::base64_encode(&png)}))
+}
+
+/// Document region `rect` (points) of design `plan` as the Realistic view draws it, `scale` pixels
+/// per point, on the document's fabric.
+pub fn realistic_region(
+    doc: &Document,
+    plan: &vectorcraft_embroidery::Plan,
+    rect: kurbo::Rect,
+    scale: f64,
+) -> std::result::Result<vectorcraft_render::Rendered, String> {
+    use vectorcraft_embroidery::{PT_MM, realistic};
+    let (width, height) = vectorcraft_render::raster_size(rect, scale)?;
+    let mm = |r: kurbo::Rect| kurbo::Rect::new(r.x0 * PT_MM, r.y0 * PT_MM, r.x1 * PT_MM, r.y1 * PT_MM);
+    let view = realistic::View {
+        width,
+        height,
+        to_px: kurbo::Affine::scale(scale) * kurbo::Affine::translate((-rect.x0, -rect.y0)) * kurbo::Affine::scale(1.0 / PT_MM),
+        fabric: doc.artboards.iter().map(|a| mm(a.rect)).collect(),
+    };
+    let img = realistic::render(plan, &realistic::Look::of(doc), &view)?;
+    let mut pixels = img.rgba;
+    // Premultiplied, as the renderer's images are.
+    for px in pixels.as_chunks_mut::<4>().0 {
+        let a = u16::from(px[3]);
+        if a < 255 {
+            for c in &mut px[..3] {
+                *c = ((u16::from(*c) * a + 127) / 255) as u8;
+            }
+        }
+    }
+    Ok(vectorcraft_render::Rendered { width: img.width, height: img.height, pixels })
 }
 
 fn stitches(s: &mut Session, p: &Value) -> Result<Value> {

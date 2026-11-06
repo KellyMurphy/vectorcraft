@@ -40,6 +40,7 @@ pub mod penstrokes;
 mod pes;
 pub mod preview;
 pub mod rails;
+pub mod realistic;
 pub mod run_styles;
 pub mod skeleton;
 pub mod split;

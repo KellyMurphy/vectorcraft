@@ -1758,6 +1758,55 @@ fn fabric_row(app: &mut VectorcraftApp, ui: &mut Ui) {
     });
 }
 
+fn texture_label(t: vectorcraft_embroidery::realistic::Texture) -> &'static str {
+    use vectorcraft_embroidery::realistic::Texture;
+    match t {
+        Texture::Plain => tl!("Plain Weave"),
+        Texture::Twill => tl!("Twill"),
+        Texture::Denim => tl!("Denim"),
+        Texture::Knit => tl!("Knit"),
+        Texture::Terry => tl!("Terry"),
+        Texture::Leather => tl!("Leather"),
+        Texture::Felt => tl!("Felt"),
+    }
+}
+
+/// How View › Realistic Stitches draws the fabric: its texture (as the fabric profile suggests, or
+/// one chosen) and colour.
+fn look_row(app: &mut VectorcraftApp, ui: &mut Ui) {
+    use vectorcraft_embroidery::realistic::{Look, Texture};
+    let Some(doc) = app.session.active().map(|d| d.doc.clone()) else { return };
+    let look = Look::of(&doc);
+    let set = doc.embroidery.preview.as_deref().cloned().unwrap_or_default();
+    let auto = set.texture.as_deref().and_then(Texture::from_id).is_none();
+    let mut names: Vec<String> = vec![tl!("As the Fabric").to_string()];
+    names.extend(Texture::ALL.iter().map(|t| texture_label(*t).to_string()));
+    let shown = if auto { format!("{} ({})", tl!("As the Fabric"), texture_label(look.texture)) } else { texture_label(look.texture).to_string() };
+    ui.scope(|ui| {
+        widgets::label_row(ui, tl!("Fabric Look:"), LABEL_W, |ui| {
+            let opts: Vec<&str> = names.iter().map(String::as_str).collect();
+            if let Some(i) = widgets::dropdown_names(ui, "emb-look", &shown, &opts, 150.0) {
+                let texture = i.checked_sub(1).and_then(|k| Texture::ALL.get(k)).map(|t| t.id());
+                app.run("embroidery.setup", json!({ "fabricTexture": texture })).ok();
+            }
+        })
+    })
+    .response
+    .on_hover_text(tl!("How Realistic Stitches draws the fabric the design is sewn on"));
+    // Its colour, on a line of its own under the menu.
+    ui.horizontal(|ui| {
+        ui.add_space(LABEL_W + 8.0);
+        let mut rgb = look.color;
+        if ui.color_edit_button_srgb(&mut rgb).on_hover_text(tl!("The fabric's colour")).changed() {
+            let hex = format!("#{:02x}{:02x}{:02x}", rgb[0], rgb[1], rgb[2]);
+            app.run("embroidery.setup", json!({ "fabricColor": hex })).ok();
+        }
+        if set.color.is_some() && widgets::flat_button(ui, tl!("Reset"), 48.0).on_hover_text(tl!("The texture's own colour")).clicked() {
+            app.run("embroidery.setup", json!({ "fabricColor": null })).ok();
+        }
+    });
+}
+
 /// The thread chart the design's colours are matched against: none, or one loaded into the
 /// document; Load….
 fn chart_row(app: &mut VectorcraftApp, ui: &mut Ui) {
@@ -2097,6 +2146,7 @@ fn underlay_row(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &V
 fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
     widgets::section_header(ui, tl!("Design"));
     fabric_row(app, ui);
+    look_row(app, ui);
     hoop_row(app, ui);
     machine_row(app, ui);
     chart_row(app, ui);
@@ -2153,6 +2203,15 @@ fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
         let preview = app.ui.view.stitch_preview;
         if widgets::check(ui, tl!("Stitch Preview"), preview, true) {
             app.run("view.stitchPreview", json!({})).ok();
+        }
+        let realistic = preview && app.ui.view.realistic_stitches;
+        if widgets::check(ui, tl!("Realistic"), realistic, true) {
+            // Off while the preview shows turns only the realism off; on shows the preview too.
+            if realistic || !app.ui.view.realistic_stitches {
+                app.run("view.realisticStitches", json!({})).ok();
+            } else {
+                app.run("view.stitchPreview", json!({})).ok();
+            }
         }
         ui.add_space(8.0);
         let label = export_label(app);

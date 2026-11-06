@@ -446,11 +446,13 @@ fn render_preview(b: &mut dyn Backend, a: &Args) -> Result<ToolResult, String> {
         return Err("artboard is too large for a bounded preview".into());
     }
     let stitches = match a.get("stitches") {
-        None | Some(Value::Null) => false,
-        Some(v) => v.as_bool().ok_or("`stitches` must be true or false")?,
+        None | Some(Value::Null) | Some(Value::Bool(false)) => None,
+        Some(Value::Bool(true)) => Some("flat"),
+        Some(Value::String(s)) if s == "realistic" => Some("realistic"),
+        Some(_) => return Err("`stitches` must be true, false or \"realistic\"".into()),
     };
-    let r = if stitches {
-        b.call("engine.execute", json!({"command": "embroidery.preview", "params": {"scale": scale, "artboard": index}}))?
+    let r = if let Some(style) = stitches {
+        b.call("engine.execute", json!({"command": "embroidery.preview", "params": {"scale": scale, "artboard": index, "style": style}}))?
     } else {
         let mut p = json!({"scale":scale, "artboard": index});
         if trace_views {

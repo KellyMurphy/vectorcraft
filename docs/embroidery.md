@@ -370,6 +370,20 @@ for warnings). The rules so far:
 Exporting a DST adds a line for each rule that found something to the export's warnings.
 `embroidery.check` gives the same findings to agents and scripts, each with the object and where it is.
 
+**Realistic Stitches.** View › **Realistic Stitches** (it turns on Stitch Preview too; the Embroidery
+panel has a **Realistic** check beside Stitch Preview) draws the design as it will look sewn: each stitch
+a round, twisted thread lit from the upper left, so satin and fill rows catch the light by their stitch
+angle; threads cast soft shadows on the fabric and on what was sewn before them; and a jump that isn't
+trimmed shows as the loose thread it leaves. The fabric under it is drawn in code: **Plain Weave**,
+**Twill**, **Denim**, **Knit**, **Terry**, **Leather** or **Felt**, by default as the document's fabric
+profile suggests (knit for Knit, terry for Towel, twill for Cap…). Choose another, and the fabric's
+colour (a navy polo, a white towel), in the panel's **Fabric Look** row or with `embroidery.setup
+{fabricTexture, fabricColor}`; both are saved with the document and change nothing that is sewn.
+Zoomed out, fine weaves blend into an even colour rather than moiré. While the view pans or zooms the
+last picture moves with it, and the view is drawn again once it is still. `embroidery.preview {style:
+realistic}` renders the same picture as a PNG, and MCP's `render_preview {stitches: "realistic"}` shows
+it to agents.
+
 **The density adviser.** View › **Stitch Density** (it turns on Stitch Preview too) tints the design by
 needle holes per mm²: green where it is light, amber near the limit, red past it (10 per mm², the 40
 holes in a 2 × 2 mm spot that the checker counts), with a legend in the canvas's corner. A dense spot or
@@ -670,7 +684,7 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.density` | `{min?}` → the density map: `cells` (`x`, `y`, `size` in document points, `holes`), densest first, with the `limit`, `peak` and `perMm2` |
 | `embroidery.fixes` | `{object, rule?}` → the suggested `fixes` for the checker's findings on an object (`fix`, `label`, `object` changed, `clears`, `holes` left, the `command` and `params` it runs) |
 | `embroidery.fix` | `{object, rule?, fix?}`: make a suggested fix (default the first) as one undo step → `{fix, label, object, clears, findings}` (counts after) |
-| `embroidery.preview` | `{scale?, artboard?}` → the artboard as Stitch Preview shows it, as a PNG (`pngBase64`); MCP's `render_preview {stitches: true}` uses it |
+| `embroidery.preview` | `{scale?, artboard?, style?: flat\|realistic}` → the artboard as Stitch Preview (flat) or Realistic Stitches shows it, as a PNG (`pngBase64`); MCP's `render_preview {stitches: true \| "realistic"}` uses it |
 | `embroidery.order` | → the stitched objects in sewing order |
 | `embroidery.reorder` | `{to: first\|earlier\|later\|last, ids?}` or `{order: [ids]}`: change the sewing order |
 | `embroidery.sortByThread` | group the sewing order by thread colour |
@@ -723,10 +737,11 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.sewOut` | → the sew-out form: `{sewOut: {fabric, machine, notes, swatches: [{id, section, label, objects, result, notes}], counts} \| null, sections}` |
 | `embroidery.recordSewOut` | `{fabric?, machine?, notes?, results?: [{swatch, result?: pass\|fail\|untested, notes?}]}`: fill in the form, one undo step |
 | `view.stitchPreview` | toggles Stitch Preview |
+| `view.realisticStitches` | toggles Realistic Stitches (shaded thread on the fabric's texture; turns Stitch Preview on) |
 
 Agents reach all of these over MCP (`run_command`), with the `embroidery` prompt, this guide as the
 resource `vectorcraft://guide/embroidery`, the file format specifications as `vectorcraft://spec/…`, and
-`render_preview {stitches: true}` to see the design. See [mcp.md](mcp.md#embroidery).
+`render_preview {stitches: true}` to see the design (`stitches: "realistic"` to see it as sewn). See [mcp.md](mcp.md#embroidery).
 
 Allowed ranges: stitch length 0.3–12 mm, spacing 0.1–10 mm, satin and zigzag width 0.3–12 mm, pattern border width 1–40 mm, pull compensation 0–3 mm,
 stagger 2–8 rows, bean passes 3–9 (odd).

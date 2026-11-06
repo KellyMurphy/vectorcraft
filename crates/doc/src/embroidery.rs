@@ -711,6 +711,10 @@ pub struct EmbroiderySetup {
     /// ordinary document.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub font_editor: Option<Box<crate::EmbroideryFont>>,
+    /// How the Realistic view draws the fabric the design is sewn on (`None`: as the fabric
+    /// profile suggests).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub preview: Option<Box<PreviewLook>>,
     /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
     #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
     pub extra: serde_json::Map<String, serde_json::Value>,
@@ -740,6 +744,7 @@ impl Default for EmbroiderySetup {
             styles: vec![],
             fonts: vec![],
             font_editor: None,
+            preview: None,
             extra: Default::default(),
         }
     }
@@ -981,6 +986,31 @@ pub struct Hoop {
 impl Hoop {
     /// Allowed sewing field sizes, mm.
     pub const SIZE: std::ops::RangeInclusive<f64> = 10.0..=2000.0;
+}
+
+/// How the Realistic view draws the fabric (View › Realistic Stitches, `embroidery.preview` with
+/// `style: realistic`). A value this version doesn't know (a texture a newer VectorCraft added, a
+/// colour that isn't `#rrggbb`) is kept as written and drawn as unset.
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct PreviewLook {
+    /// The fabric's surface: `plain`, `twill`, `denim`, `knit`, `terry`, `leather` or `felt`
+    /// (`None`: the texture of the document's fabric profile, else plain).
+    #[serde(skip_serializing_if = "Option::is_none", deserialize_with = "de_text")]
+    pub texture: Option<String>,
+    /// The fabric's colour, `#rrggbb` (`None`: the texture's own).
+    #[serde(skip_serializing_if = "Option::is_none", deserialize_with = "de_text")]
+    pub color: Option<String>,
+    /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
+    #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
+    pub extra: serde_json::Map<String, serde_json::Value>,
+}
+
+/// Read optional text: anything else (from a newer VectorCraft, or hand-edited) reads as unset
+/// rather than failing the document.
+fn de_text<'de, D: serde::Deserializer<'de>>(d: D) -> Result<Option<String>, D::Error> {
+    let v = Option::<serde_json::Value>::deserialize(d)?;
+    Ok(v.and_then(|v| v.as_str().map(str::to_string)))
 }
 
 /// A design split into hoopings, each sewn after the fabric is hooped again: a grid of areas, each

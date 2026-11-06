@@ -47,6 +47,7 @@ mod editcolors;
 mod effectedit;
 mod embroidery_hoopings;
 mod embroidery_lib;
+mod embroidery_realistic;
 mod emptytype;
 mod envelope;
 mod envelope_distort;

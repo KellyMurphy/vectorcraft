@@ -1,6 +1,6 @@
 # Embroidery feature catalog
 
-Status: 62 features checked against the code on 2026-11-04. Done 36, partly done 12, missing 14 (estimated, by
+Status: 62 features checked against the code on 2026-11-06. Done 36, partly done 12, missing 14 (estimated, by
 reading the code and the guide, not by sewing: nothing is marked done on fabric until the sew-out gates pass).
 
 This is the feature catalog from the embroidery research (Kelly, 2026-10-16) that
@@ -117,7 +117,7 @@ before G1), and the P2 items after G2. Only blending thread colours across an ar
 | Stitch player | Replay the stitch-out at variable speed, stop by stop | Wilcom, Ink/Stitch simulator, Embrilliance | P0 | **Done** | E7.9 |
 | Machine file formats | Read and write DST, PES, EXP, JEF, VP3, XXX and U01 at minimum | pyembroidery, all | P0 | **Partly** | DST, PES, JEF, EXP read and write (E7.12). VP3, XXX, U01: E9.3 |
 | Production worksheet and templates | PDF with colour stops, thread names, stitch count and run time; 1:1 print with centre marks | Ink/Stitch, Embrilliance, Pulse | P0 | **Done** | E7.11: `embroidery.worksheet` |
-| Realistic render and mockups | Thread-shaded view, fabric backgrounds, preview on 3D garments, real-size view | Chroma, Pulse Ambassador, mySewnet | P1 | **Partly** | Stitch Preview draws thread on fabric. Shading and garments: E9.2 |
+| Realistic render and mockups | Thread-shaded view, fabric backgrounds, preview on 3D garments, real-size view | Chroma, Pulse Ambassador, mySewnet | P1 | **Partly** | View › Realistic Stitches draws shaded thread (sheen by stitch angle, shadows) on seven code-drawn fabric textures in any colour (E9.2a). Garment mockups and a real-size view: E9.2b, E9.2c |
 | Import, edit and batch export | Open stitch files for stitch-level edits; export many formats at once | Ink/Stitch, Embird, Wilcom Export Docker | P1 | **Done** | Machine files open as editable manual-stitch paths; one design per artboard on export; E11.5: several formats at once (`document.export {formats}`, Export As › Also Export) |
 | Hoops and multi-hoop | Hoop library, rotate hoop, split large designs with alignment and basting stitches | BERNINA 9, mySewnet, Embird | P1 | **Done** | Hoop library and fit check (E7.8); Rotate in Hoop and Split into Hoopings with alignment marks and basting box, a file per hooping (E11.4) |
 | Appliqué | Placement, tack-down and cover steps, with or without holes, plus cutter files (SVG) | All; BERNINA 9, Embrilliance | P1 | **Done** | E8.8: `embroidery.applique`, nested cut files |

@@ -84,6 +84,14 @@
         "hoop": { "$ref": "vchoop.schema.json#/$defs/hoop" },
         "hoopings": { "$ref": "#/$defs/hoopings" },
         "hoopRotation": { "type": "integer", "minimum": 0, "default": 0, "description": "Degrees clockwise the design is turned as it is written to the machine: 0, 90, 180 or 270 (readers use another value as 0 and keep it)." },
+        "preview": {
+          "type": "object",
+          "description": "How the Realistic view draws the fabric (a picture only: nothing sewn depends on it).",
+          "properties": {
+            "texture": { "enum": ["plain", "twill", "denim", "knit", "terry", "leather", "felt"], "description": "The fabric's surface (default: the fabric starter's texture, else plain)." },
+            "color": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$", "description": "The fabric's colour (default: the texture's own)." }
+          }
+        },
         "charts": {
           "type": "array",
           "items": {

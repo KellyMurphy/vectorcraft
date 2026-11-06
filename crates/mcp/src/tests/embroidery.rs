@@ -282,3 +282,24 @@ fn an_agent_sets_when_stitches_regenerate() {
     assert!(list.contains("\"regenerateStitches\"") && list.contains("Regenerate Stitches"), "prefs.list describes it");
     assert!(guide().contains("regenerateStitches"), "the guide documents it");
 }
+
+#[test]
+fn an_agent_sees_the_design_as_sewn_on_its_fabric() {
+    let mut s = Server::new(Box::new(Headless::with_document()));
+    call(&mut s, "draw_shape", json!({"shape": "rectangle", "x": 100, "y": 100, "width": 200, "height": 120, "fill": "#e0b020"}));
+    run(&mut s, "embroidery.set", json!({"type": "fill"}));
+    let r = run(&mut s, "embroidery.setup", json!({"fabricTexture": "denim", "fabricColor": "#203050"}));
+    assert_eq!((r["fabricTexture"].as_str(), r["fabricColor"].as_str()), (Some("denim"), Some("#203050")));
+    let flat = png(&call(&mut s, "render_preview", json!({"max_side": 300, "stitches": true})));
+    let sewn = png(&call(&mut s, "render_preview", json!({"max_side": 300, "stitches": "realistic"})));
+    assert_ne!(flat, sewn);
+    // The bare fabric in a corner is the denim's navy.
+    let c = sewn.get_pixel(3, 3).0;
+    assert!(c[2] > c[0] && c[0] < 90, "{c:?}");
+    let bad = rpc(&mut s, "tools/call", json!({"name": "render_preview", "arguments": {"stitches": "glossy"}}));
+    assert_eq!(bad["result"]["isError"], true, "{bad}");
+    for t in vectorcraft_embroidery::realistic::Texture::ALL {
+        assert!(guide().contains(t.label()), "the guide names the {} texture", t.label());
+    }
+    assert!(spec("embroidery.setup").params.contains("fabricTexture") && guide().contains("view.realisticStitches"));
+}

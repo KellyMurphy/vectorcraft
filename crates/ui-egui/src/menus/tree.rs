@@ -529,6 +529,7 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                 c("Pixel Preview", "view.pixelPreview"),
                 c("Stitch Preview", "view.stitchPreview"),
                 c("Stitch Density", "view.stitchDensity"),
+                c("Realistic Stitches", "view.realisticStitches"),
                 c("Trim View", "view.trimView"),
                 c("Presentation Mode", "view.presentation"),
                 sub(

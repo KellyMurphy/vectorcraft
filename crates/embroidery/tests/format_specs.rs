@@ -192,6 +192,11 @@ fn full_setup() -> EmbroiderySetup {
         styles: vec![full_style()],
         fonts: vec![full_font()],
         font_editor: Some(Box::new(full_font())),
+        preview: Some(Box::new(vectorcraft_doc::PreviewLook {
+            texture: Some("knit".into()),
+            color: Some("#1e2a44".into()),
+            extra: Default::default(),
+        })),
         extra: Default::default(),
     }
 }
@@ -680,6 +685,11 @@ fn embroidery_schema_matches_the_code() {
     range_is(&setup["stitchMovesUnder"], EmbroiderySetup::STITCH_MOVES, "stitchMovesUnder");
     assert_eq!(setup["trimJumpsOver"]["default"].as_f64(), Some(EmbroiderySetup::DEFAULT_TRIM));
     assert_eq!(setup["stitchMovesUnder"]["default"].as_f64(), Some(EmbroiderySetup::DEFAULT_STITCH_MOVES));
+    // The Realistic view's look: its fields, and every texture the renderer draws.
+    let look = &setup["preview"]["properties"];
+    assert_eq!(keys(look), keys(&serde_json::to_value(full_setup()).unwrap()["preview"]), "the look's fields");
+    let textures: BTreeSet<String> = vectorcraft_embroidery::realistic::Texture::ALL.iter().map(|t| t.id().to_string()).collect();
+    assert_eq!(strings(&look["texture"]["enum"]), textures, "the textures");
     let turns = setup["hoopRotation"]["description"].as_str().unwrap();
     assert!(["0, 90, 180 or 270", "clockwise"].iter().all(|t| turns.contains(t)), "the schema gives the quarter turns");
     let sew_out = serde_json::to_value(full_sew_out()).unwrap();
@@ -715,6 +725,9 @@ fn embroidery_page_describes_every_field_and_kind() {
     }
     for s in vectorcraft_embroidery::testsheet::SECTIONS {
         assert!(page.contains(&format!("`{}`", s.id)), "vectorcraft-embroidery.md lists the {} section", s.id);
+    }
+    for t in vectorcraft_embroidery::realistic::Texture::ALL {
+        assert!(page.contains(&format!("`{}`", t.id())), "vectorcraft-embroidery.md lists the {} texture", t.id());
     }
 }
 
