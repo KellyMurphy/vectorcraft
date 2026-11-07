@@ -303,3 +303,22 @@ fn an_agent_sees_the_design_as_sewn_on_its_fabric() {
     }
     assert!(spec("embroidery.setup").params.contains("fabricTexture") && guide().contains("view.realisticStitches"));
 }
+
+#[test]
+fn an_agent_shows_the_design_on_a_garment() {
+    let mut s = Server::new(Box::new(Headless::with_document()));
+    call(&mut s, "draw_shape", json!({"shape": "ellipse", "x": 100, "y": 100, "width": 120, "height": 120, "fill": "#c02020"}));
+    run(&mut s, "embroidery.set", json!({"type": "fill"}));
+    let r = run(&mut s, "embroidery.mockup", json!({"garment": "hoodie", "placement": "leftChest", "width": 400, "format": "png"}));
+    assert_eq!((r["garment"].as_str(), r["placement"].as_str()), (Some("hoodie"), Some("leftChest")), "{r}");
+    assert!(r["pngBase64"].as_str().is_some_and(|b| b.len() > 1000));
+    let m = spec("embroidery.mockup");
+    assert_eq!(m.menu, ["Object", "Embroidery"]);
+    for g in vectorcraft_embroidery::mockup::Garment::ALL {
+        assert!(m.params.contains(g.id()), "embroidery.mockup documents {}", g.id());
+        assert!(guide().contains(g.label()), "the guide names the {}", g.label());
+    }
+    for id in vectorcraft_embroidery::mockup::placement_ids() {
+        assert!(m.params.contains(id), "embroidery.mockup documents placement {id}");
+    }
+}

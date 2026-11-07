@@ -32,6 +32,7 @@ mod jef;
 pub mod kinds;
 pub mod lettering;
 mod machine;
+pub mod mockup;
 pub mod motifs;
 pub mod nest;
 pub mod network;

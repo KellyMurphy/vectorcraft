@@ -2222,13 +2222,25 @@ fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
         }
     });
     ui.add_space(2.0);
-    let r = ui
-        .add_enabled_ui(n("objects") > 0, |ui| widgets::flat_button(ui, tl!("Worksheet…"), 96.0))
-        .inner
-        .on_hover_text(tl!("A printable sheet for whoever sews the design: picture, size, threads, time and notes"));
-    if r.clicked() {
-        app.run("embroidery.worksheet", json!({})).ok();
-    }
+    ui.horizontal(|ui| {
+        let r = ui
+            .add_enabled_ui(n("objects") > 0, |ui| widgets::flat_button(ui, tl!("Worksheet…"), 96.0))
+            .inner
+            .on_hover_text(tl!("A printable sheet for whoever sews the design: picture, size, threads, time and notes"));
+        if r.clicked() {
+            app.run("embroidery.worksheet", json!({})).ok();
+        }
+        let r = ui
+            .add_enabled_ui(n("objects") > 0, |ui| widgets::flat_button(ui, tl!("Mockup…"), 96.0))
+            .inner
+            .on_hover_text(tl!("The design sewn on a T-shirt, polo shirt, hoodie, cap, tote bag or towel, at its real size"));
+        if r.clicked() {
+            // As Object › Embroidery › Garment Mockup… opens it.
+            let defaults = json!({"garment": "tshirt", "placement": "leftChest", "view": "garment"});
+            let (id, p) = crate::menus::click_target("Garment Mockup…", "embroidery.mockup", &defaults);
+            app.run(&id, p).ok();
+        }
+    });
     ui.add_space(2.0);
     ui.horizontal(|ui| {
         if widgets::flat_button(ui, tl!("Sew Order…"), 96.0)

@@ -65,6 +65,11 @@ pub(super) fn draw_preview(
     let before = app.session.stitches_deferred();
     let shown = before.as_ref().unwrap_or(doc);
     let memo = stitch_plan(&app.session, &mut app.ui.stitch_cache, shown).clone();
+    // A document with nothing stitched (a garment mockup, a worksheet) is left as drawn: the
+    // preview's fabric would only veil it.
+    if memo.plan.needles.is_empty() && memo.findings.is_empty() && before.is_none() {
+        return;
+    }
     if app.ui.view.realistic_stitches {
         draw_realistic(app, painter, xf, shown, &memo.plan);
     } else {

@@ -291,6 +291,15 @@ pub fn specs() -> Vec<CommandSpec> {
             save_fabric
         ),
         cmd!(
+            "embroidery.mockup",
+            "Garment Mockup",
+            ["Object", "Embroidery"],
+            None,
+            "{garment?: tshirt|polo|hoodie|cap|tote|towel (tshirt), placement?: leftChest|rightChest|center|lower (the garment's usual: tshirt and polo leftChest, hoodie, cap and tote center, towel lower; tshirt and hoodie also take rightChest and center, polo rightChest, towel center), view?: garment|design (garment: the whole garment; design: a close-up of the design), width?: pixels 200-4000 (1600), fabricTexture?: plain|twill|denim|knit|terry|leather|felt (the garment's own), fabricColor?: #rrggbb (the Realistic look's colour when embroidery.setup set one, else the garment's own), format?: png, path?} the design sewn on a garment drawn in code, at its real size and centred where such designs usually go, with shaded thread as Realistic Stitches draws it; a design larger than is usual there is still drawn, with a warning. Opened as a new document the garment's real size → {index, width, height, garment, placement, designSize: [w, h] mm | null, warnings}; with format png, written to path → {path, …}, or without path {pngBase64, …}",
+            has_doc,
+            mockup
+        ),
+        cmd!(
             "embroidery.worksheet",
             "Production Worksheet",
             ["Window", "Embroidery"],
@@ -1640,6 +1649,95 @@ pub fn realistic_region(
         }
     }
     Ok(vectorcraft_render::Rendered { width: img.width, height: img.height, pixels })
+}
+
+fn mockup(s: &mut Session, p: &Value) -> Result<Value> {
+    use vectorcraft_embroidery::mockup::{self, Garment};
+    use vectorcraft_embroidery::realistic::{Look, Texture, parse_hex};
+    const C: &str = "embroidery.mockup";
+    let garment = match str_param(p, "garment") {
+        None => Garment::TShirt,
+        Some(g) => Garment::from_id(g.trim()).ok_or_else(|| bad(C, "`garment` must be tshirt, polo, hoodie, cap, tote or towel"))?,
+    };
+    let placement = garment.placement(str_param(p, "placement").map(str::trim)).ok_or_else(|| {
+        let ids: Vec<&str> = garment.placements().iter().map(|pl| pl.id).collect();
+        bad(C, format!("a {} takes `placement` {}", garment.label().to_lowercase(), ids.join(" or ")))
+    })?;
+    let close_up = match str_param(p, "view") {
+        None | Some("garment") => false,
+        Some("design") => true,
+        Some(_) => return Err(bad(C, "`view` must be garment or design")),
+    };
+    let width = match p.get("width") {
+        None | Some(Value::Null) => 1600,
+        Some(v) => v
+            .as_u64()
+            .and_then(|w| u32::try_from(w).ok())
+            .filter(|w| mockup::WIDTH.contains(w))
+            .ok_or_else(|| bad(C, "`width` must be a whole number of pixels from 200 to 4000"))?,
+    };
+    let doc = s.doc()?.doc.clone();
+    let texture = match p.get("fabricTexture") {
+        None | Some(Value::Null) => garment.texture(),
+        Some(v) => v
+            .as_str()
+            .and_then(Texture::from_id)
+            .ok_or_else(|| bad(C, "`fabricTexture` must be plain, twill, denim, knit, terry, leather or felt"))?,
+    };
+    let color = match p.get("fabricColor") {
+        None | Some(Value::Null) => {
+            doc.embroidery.preview.as_deref().and_then(|l| l.color.as_deref()).and_then(parse_hex).unwrap_or_else(|| garment.default_color())
+        }
+        Some(v) => v.as_str().and_then(parse_hex).ok_or_else(|| bad(C, "`fabricColor` must be a colour as #rrggbb"))?,
+    };
+    let format = match str_param(p, "format") {
+        None => None,
+        Some(f) if f.eq_ignore_ascii_case("png") => Some(()),
+        Some(_) => return Err(bad(C, "`format` must be png (or left out: a new document)")),
+    };
+    let plan = s.stitch_plan(&doc);
+    let spec = mockup::Spec { garment, placement, look: Look { texture, color }, close_up, width };
+    let m = mockup::render(&plan, &spec).map_err(|e| bad(C, e))?;
+    let png = vectorcraft_render::Rendered { width: m.image.width, height: m.image.height, pixels: m.image.rgba }.to_png().map_err(|e| bad(C, e))?;
+    let mut out = json!({
+        "width": m.image.width,
+        "height": m.image.height,
+        "garment": garment.id(),
+        "placement": placement.id,
+        "designSize": m.design.map(|(w, h)| json!([(w * 10.0).round() / 10.0, (h * 10.0).round() / 10.0])),
+        "warnings": m.warnings,
+    });
+    if format.is_some() {
+        match str_param(p, "path") {
+            Some(path) => {
+                super::fileio::write_file(path, &png)?;
+                out["path"] = json!(path);
+            }
+            None => out["pngBase64"] = json!(vectorcraft_format::base64_encode(&png)),
+        }
+        return Ok(out);
+    }
+    // A new document the garment's real size (as much of it as is shown), the picture filling it.
+    use vectorcraft_embroidery::PT_MM;
+    let (pw, ph) = (m.view.width() / PT_MM, m.view.height() / PT_MM);
+    let mut d = Document::new(pw, ph);
+    d.title = format!("{} on a {}", doc.title, garment.label());
+    d.units = vectorcraft_doc::Unit::Millimeters;
+    d.images.insert("mockup".into(), vectorcraft_doc::ImageBlob::new("image/png", png));
+    let id = d.alloc_id();
+    let layer = d.default_layer();
+    let im = vectorcraft_doc::ImageObject {
+        key: "mockup".into(),
+        width: m.image.width,
+        height: m.image.height,
+        xf: kurbo::Affine::scale(pw / f64::from(m.image.width)),
+        link: None,
+        placement: Default::default(),
+        pixels: None,
+    };
+    d.insert(layer, 0, vectorcraft_doc::Node::new(id, NodeKind::Image(Box::new(im)))).map_err(|e| bad(C, e.to_string()))?;
+    out["index"] = json!(s.add_document(d, None));
+    Ok(out)
 }
 
 fn stitches(s: &mut Session, p: &Value) -> Result<Value> {

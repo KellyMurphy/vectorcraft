@@ -6545,3 +6545,19 @@ breakText	Glyphs	字形
 	The fabric's colour	生地の色
 	The texture's own colour	テクスチャ本来の色
 	How Realistic Stitches draws the fabric the design is sewn on	「リアルなステッチ」でデザインを縫う生地をどう描くか
+	Garment Mockup…	衣類モックアップ…
+	Garment Mockup	衣類モックアップ
+	Garment:	衣類:
+	T-Shirt	Tシャツ
+	Polo Shirt	ポロシャツ
+	Hoodie	パーカー
+	Baseball Cap	野球帽
+	Tote Bag	トートバッグ
+	Towel	タオル
+	Left Chest	左胸
+	Right Chest	右胸
+	Above the Border	ボーダーの上
+	Whole Garment	衣類全体
+	Close-Up	クローズアップ
+	Mockup…	モックアップ…
+	The design sewn on a T-shirt, polo shirt, hoodie, cap, tote bag or towel, at its real size	Tシャツ、ポロシャツ、パーカー、帽子、トートバッグ、タオルに刺繍したデザインを実寸で表示

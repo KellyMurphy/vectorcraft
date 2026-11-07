@@ -152,14 +152,14 @@ pub struct View {
 const LIGHT: [f32; 3] = [-0.45, -0.55, 0.70];
 
 /// A float RGBA canvas being drawn on (straight alpha, 0–1).
-struct Canvas {
-    w: usize,
-    h: usize,
-    px: Vec<[f32; 4]>,
+pub(crate) struct Canvas {
+    pub(crate) w: usize,
+    pub(crate) h: usize,
+    pub(crate) px: Vec<[f32; 4]>,
 }
 
 impl Canvas {
-    fn get(&mut self, x: usize, y: usize) -> Option<&mut [f32; 4]> {
+    pub(crate) fn get(&mut self, x: usize, y: usize) -> Option<&mut [f32; 4]> {
         if x >= self.w || y >= self.h {
             return None;
         }
@@ -167,7 +167,7 @@ impl Canvas {
     }
 
     /// `c` over the pixel, `a` of it.
-    fn blend(&mut self, x: usize, y: usize, c: [f32; 3], a: f32) {
+    pub(crate) fn blend(&mut self, x: usize, y: usize, c: [f32; 3], a: f32) {
         let Some(p) = self.get(x, y) else { return };
         let out_a = a + p[3] * (1.0 - a);
         if out_a <= 0.0 {
@@ -181,7 +181,7 @@ impl Canvas {
 
     /// Darken the pixel by `k` (0 none, 1 black), keeping its alpha; a shadow on bare (transparent)
     /// canvas is left out.
-    fn shade(&mut self, x: usize, y: usize, k: f32) {
+    pub(crate) fn shade(&mut self, x: usize, y: usize, k: f32) {
         let Some(p) = self.get(x, y) else { return };
         for c in p.iter_mut().take(3) {
             *c *= 1.0 - k;
@@ -213,11 +213,11 @@ pub fn render(plan: &Plan, look: &Look, view: &View) -> Result<Image, String> {
     Ok(Image { width: view.width, height: view.height, rgba })
 }
 
-fn to_u8(v: f32) -> u8 {
+pub(crate) fn to_u8(v: f32) -> u8 {
     (v.clamp(0.0, 1.0) * 255.0).round() as u8
 }
 
-fn rgb(c: [u8; 3]) -> [f32; 3] {
+pub(crate) fn rgb(c: [u8; 3]) -> [f32; 3] {
     c.map(|v| f32::from(v) / 255.0)
 }
 
@@ -233,7 +233,7 @@ fn hash(i: i64, j: i64) -> f32 {
 }
 
 /// Smooth value noise, 0–1, cells one unit wide.
-fn noise(x: f64, y: f64) -> f32 {
+pub(crate) fn noise(x: f64, y: f64) -> f32 {
     let (i, j) = (x.floor(), y.floor());
     let (fx, fy) = ((x - i) as f32, (y - j) as f32);
     let (i, j) = (i as i64, j as i64);
@@ -244,7 +244,7 @@ fn noise(x: f64, y: f64) -> f32 {
     a + (b - a) * v
 }
 
-fn smoothstep(e0: f32, e1: f32, x: f32) -> f32 {
+pub(crate) fn smoothstep(e0: f32, e1: f32, x: f32) -> f32 {
     let t = ((x - e0) / (e1 - e0)).clamp(0.0, 1.0);
     t * t * (3.0 - 2.0 * t)
 }
@@ -378,10 +378,7 @@ fn fabric(cv: &mut Canvas, look: &Look, view: &View, scale: f64) {
         return;
     }
     let inv = view.to_px.inverse();
-    let base = rgb(look.color);
-    let undyed = [0.90, 0.89, 0.86];
-    let detail = smoothstep(1.5, 4.0, (pitch(look.texture) * scale) as f32);
-    let flat = mean(look.texture);
+    let surface = Surface::new(look, scale);
     // Only the pixels the fabric's areas cover.
     let mut px_box = Rect::new(f64::MAX, f64::MAX, f64::MIN, f64::MIN);
     for r in &view.fabric {
@@ -397,12 +394,38 @@ fn fabric(cv: &mut Canvas, look: &Look, view: &View, scale: f64) {
             if !view.fabric.iter().any(|r| r.contains(p)) {
                 continue;
             }
-            let (v, tint) = if detail > 0.0 { texture_at(look.texture, p.x, p.y) } else { (flat, 0.0) };
-            let v = flat + (v - flat) * detail;
-            let tint = tint * detail.max(0.35);
-            let c = std::array::from_fn(|i| (base[i] + (undyed[i] - base[i]) * tint) * v);
-            cv.blend(x, y, c, 1.0);
+            cv.blend(x, y, surface.at(p.x, p.y), 1.0);
         }
+    }
+}
+
+/// A fabric's look at one zoom: its colour at any point, its pattern faded out where it would be
+/// finer than the pixels.
+pub(crate) struct Surface {
+    texture: Texture,
+    base: [f32; 3],
+    detail: f32,
+    flat: f32,
+}
+
+impl Surface {
+    /// `look` drawn `scale` pixels per mm.
+    pub(crate) fn new(look: &Look, scale: f64) -> Surface {
+        Surface {
+            texture: look.texture,
+            base: rgb(look.color),
+            detail: smoothstep(1.5, 4.0, (pitch(look.texture) * scale) as f32),
+            flat: mean(look.texture),
+        }
+    }
+
+    /// The colour at (x, y) mm (linear 0–1 sRGB values).
+    pub(crate) fn at(&self, x: f64, y: f64) -> [f32; 3] {
+        let undyed = [0.90, 0.89, 0.86];
+        let (v, tint) = if self.detail > 0.0 { texture_at(self.texture, x, y) } else { (self.flat, 0.0) };
+        let v = self.flat + (v - self.flat) * self.detail;
+        let tint = tint * self.detail.max(0.35);
+        std::array::from_fn(|i| (self.base[i] + (undyed[i] - self.base[i]) * tint) * v)
     }
 }
 
@@ -458,7 +481,7 @@ fn pieces(plan: &Plan, to_px: Affine) -> Vec<Piece> {
 }
 
 /// The point of segment `a`–`b` nearest `p`, as a fraction along it.
-fn nearest_t(p: [f32; 2], a: [f32; 2], d: [f32; 2], len2: f32) -> f32 {
+pub(crate) fn nearest_t(p: [f32; 2], a: [f32; 2], d: [f32; 2], len2: f32) -> f32 {
     if len2 <= 0.0 {
         return 0.0;
     }
@@ -466,7 +489,7 @@ fn nearest_t(p: [f32; 2], a: [f32; 2], d: [f32; 2], len2: f32) -> f32 {
 }
 
 /// For each row a capsule of radius `r` round `a`–`b` touches, the columns it covers.
-fn capsule_rows(a: [f32; 2], b: [f32; 2], r: f32, (w, h): (usize, usize), mut f: impl FnMut(usize, usize, usize)) {
+pub(crate) fn capsule_rows(a: [f32; 2], b: [f32; 2], r: f32, (w, h): (usize, usize), mut f: impl FnMut(usize, usize, usize)) {
     let y0 = (a[1].min(b[1]) - r - 1.0).floor().max(0.0);
     let y1 = (a[1].max(b[1]) + r + 1.0).ceil().min(h as f32);
     if y0 >= y1 {
@@ -492,7 +515,7 @@ fn capsule_rows(a: [f32; 2], b: [f32; 2], r: f32, (w, h): (usize, usize), mut f:
     }
 }
 
-fn threads(cv: &mut Canvas, plan: &Plan, to_px: Affine, scale: f32) {
+pub(crate) fn threads(cv: &mut Canvas, plan: &Plan, to_px: Affine, scale: f32) {
     let r = (THREAD_MM as f32 * scale / 2.0).max(0.35);
     // Below a pixel or so a thread's shading can't show: it is drawn flat in its colour, a little
     // darker than its lit side, which is how a design looks from across a room.

@@ -93,3 +93,52 @@ fn a_look_from_a_newer_version_is_kept_and_drawn_as_unset() {
     assert_eq!(p.texture.as_deref(), Some("velvet"));
     assert!(p.color.is_none() && p.extra.contains_key("sheen"));
 }
+
+#[test]
+fn a_garment_mockup_opens_at_real_size_with_the_design_on_it() {
+    let mut s = badge();
+    let source = s.active_index();
+    let r = run(&mut s, "embroidery.mockup", json!({"garment": "polo", "width": 600}));
+    assert_eq!((r["garment"].as_str(), r["placement"].as_str()), (Some("polo"), Some("leftChest")));
+    // The badge is 140 pt (49.4 mm) plus the satin's width: within a left chest's usual 100 mm.
+    let size = r["designSize"].as_array().unwrap();
+    assert!((50.0..60.0).contains(&size[0].as_f64().unwrap()), "{r}");
+    assert_eq!(r["warnings"], json!([]));
+    // A new document holding the picture, as wide as the garment shown (mm).
+    let index = r["index"].as_u64().unwrap() as usize;
+    assert_ne!(Some(index), source);
+    let d = &s.doc().unwrap().doc;
+    let ab = d.artboards[0].rect;
+    let w_mm = ab.width() * vectorcraft_embroidery::PT_MM;
+    assert!((700.0..900.0).contains(&w_mm), "a polo shirt is about 800 mm across the sleeves: {w_mm}");
+    assert_eq!(d.images.len(), 1);
+    assert!(d.title.contains("Polo Shirt"), "{}", d.title);
+}
+
+#[test]
+fn a_mockup_is_written_as_a_png_and_bad_choices_are_refused() {
+    let mut s = badge();
+    let r = run(&mut s, "embroidery.mockup", json!({"garment": "cap", "view": "design", "width": 300, "format": "png", "fabricColor": "#b02020"}));
+    let img = image::load_from_memory(&png(&r)).unwrap().to_rgba8();
+    assert_eq!(img.width(), 300);
+    // The badge (52 mm across) is close to a cap front's 57 mm height; the corner is red cap.
+    let c = img.get_pixel(2, img.height() / 2).0;
+    assert!(c[0] > c[1] + 40, "red cap: {c:?}");
+    assert!(r.get("index").is_none(), "no new document with format png");
+    for bad in [
+        json!({"garment": "kilt"}),
+        json!({"garment": "cap", "placement": "leftChest"}),
+        json!({"view": "back"}),
+        json!({"width": 10}),
+        json!({"fabricColor": "red"}),
+        json!({"format": "jpeg"}),
+    ] {
+        let e = s.execute("embroidery.mockup", &bad).unwrap_err().to_string();
+        assert!(e.contains("embroidery.mockup"), "{bad}: {e}");
+    }
+    // A design too big for where it goes is still drawn, with a warning.
+    run(&mut s, "select.all", json!({}));
+    run(&mut s, "object.scale", json!({"sx": 250, "sy": 250}));
+    let r = run(&mut s, "embroidery.mockup", json!({"garment": "tshirt", "width": 300, "format": "png"}));
+    assert_eq!(r["warnings"].as_array().map(Vec::len), Some(1), "{r}");
+}

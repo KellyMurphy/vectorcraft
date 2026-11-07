@@ -384,6 +384,20 @@ last picture moves with it, and the view is drawn again once it is still. `embro
 realistic}` renders the same picture as a PNG, and MCP's `render_preview {stitches: "realistic"}` shows
 it to agents.
 
+**Garment mockups.** Object › Embroidery › **Garment Mockup…** (or **Mockup…** in the Embroidery panel)
+shows the design sewn on a garment, for a customer to approve before anything is sewn: a **T-Shirt**,
+**Polo Shirt**, **Hoodie**, **Cap**, **Tote Bag** or **Towel**, each drawn in code at an adult size
+(nothing is traced from photographs). The design keeps its real size and is centred where such designs
+usually go: **Left Chest** (the wearer's left, about 95 mm from the centre line and 190 mm below the
+shoulder), **Right Chest**, **Center** (a T-shirt or hoodie front, a cap front, a tote bag) or **Above
+the Border** (a towel). Each place has the largest size usually sewn there (100 × 100 mm on a chest,
+115 × 57 mm on a cap front); a design larger than that is still drawn, with a warning. The garment has
+its own fabric (knit shirts, a twill cap, a canvas tote, a terry towel) and colour, or the colour chosen
+in **Fabric Look**; the thread is drawn as Realistic Stitches draws it. **Whole Garment** shows all of
+it; **Close-Up** shows the design and the cloth round it. The mockup opens as a new document the
+garment's real size, ready to export or print; `embroidery.mockup {garment, placement, view, width,
+fabricTexture, fabricColor, format: png, path?}` writes or returns the PNG instead.
+
 **The density adviser.** View › **Stitch Density** (it turns on Stitch Preview too) tints the design by
 needle holes per mm²: green where it is light, amber near the limit, red past it (10 per mm², the 40
 holes in a 2 × 2 mm spot that the checker counts), with a legend in the canvas's corner. A dense spot or
@@ -733,6 +747,7 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.importInkstitchFont` | `{path, save?, user?}`: convert an Ink/Stitch font folder and load it → `{id, name, glyphs, added, license, report: {skipped, unmapped, commands, baseline}}` |
 | `embroidery.fontFolders` | `{folders?}`: the folders searched for Ink/Stitch fonts (read in place) → `{folders, fonts, skipped}` |
 | `embroidery.worksheet` | `{page?: a4\|letter, format?: pdf, path?}`: the production worksheet, as a new document or a PDF |
+| `embroidery.mockup` | `{garment?: tshirt\|polo\|hoodie\|cap\|tote\|towel, placement?: leftChest\|rightChest\|center\|lower, view?: garment\|design, width?, fabricTexture?, fabricColor?, format?: png, path?}`: the design on a garment drawn in code, at real size where such designs go, as a new document or a PNG (`designSize`, `warnings` when it is bigger than usual there) |
 | `embroidery.testSheet` | `{sections?: [ids]}`: a new document of calibration swatches (see Sew-out tests) → `{index, sections, swatches, skipped}` |
 | `embroidery.sewOut` | → the sew-out form: `{sewOut: {fabric, machine, notes, swatches: [{id, section, label, objects, result, notes}], counts} \| null, sections}` |
 | `embroidery.recordSewOut` | `{fabric?, machine?, notes?, results?: [{swatch, result?: pass\|fail\|untested, notes?}]}`: fill in the form, one undo step |

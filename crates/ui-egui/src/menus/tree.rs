@@ -314,6 +314,8 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                         c("Remove Stitches", "embroidery.clear"),
                         Sep,
                         c("Auto-Digitize", "embroidery.digitize"),
+                        Sep,
+                        cp("Garment Mockup…", "embroidery.mockup", json!({"garment": "tshirt", "placement": "leftChest", "view": "garment"})),
                     ],
                 ),
                 sub(

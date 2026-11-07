@@ -134,9 +134,23 @@ fn choices(command: &str, key: &str) -> Option<form::Choices> {
         ("graph.setType", "pieLegend") => Some(PIE_LEGEND),
         ("graph.setType", "piePosition") => Some(PIE_POSITION),
         ("graph.setType", "pieSort") => Some(PIE_SORT),
+        ("embroidery.mockup", "garment") => Some(MOCKUP_GARMENTS),
+        ("embroidery.mockup", "placement") => Some(MOCKUP_PLACEMENTS),
+        ("embroidery.mockup", "view") => Some(MOCKUP_VIEWS),
         _ => None,
     }
 }
+
+/// Garment Mockup › Garment (`vectorcraft_embroidery::mockup::Garment`).
+const MOCKUP_GARMENTS: form::Choices =
+    &[("T-Shirt", "tshirt"), ("Polo Shirt", "polo"), ("Hoodie", "hoodie"), ("Baseball Cap", "cap"), ("Tote Bag", "tote"), ("Towel", "towel")];
+
+/// Garment Mockup › Placement: every garment's (each garment takes some of them).
+const MOCKUP_PLACEMENTS: form::Choices =
+    &[("Left Chest", "leftChest"), ("Right Chest", "rightChest"), ("Center", "center"), ("Above the Border", "lower")];
+
+/// Garment Mockup › View.
+const MOCKUP_VIEWS: form::Choices = &[("Whole Garment", "garment"), ("Close-Up", "design")];
 
 /// Type on a Path Options › Align to Path.
 const PATH_ALIGN: form::Choices = &[("Ascender", "ascender"), ("Descender", "descender"), ("Center", "center"), ("Baseline", "baseline")];
