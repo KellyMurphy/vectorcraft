@@ -46,12 +46,14 @@ fn a_wide_design_turned_in_the_hoop_fits_and_is_written_turned() {
     let r = run(&mut s, "embroidery.hoops", json!({}));
     assert_eq!((r["fit"].as_str(), r["rotation"].as_u64()), (Some("fits"), Some(90)));
     assert!(hoop_findings(&mut s).is_empty(), "the checker sees it turned");
-    for format in ["dst", "pes", "jef", "exp"] {
+    for format in ["dst", "pes", "jef", "exp", "vp3", "u01"] {
         let bytes = b64(&run(&mut s, "document.export", json!({"format": format})));
         let plan = match format {
             "pes" => vectorcraft_embroidery::read_pes(&bytes).unwrap(),
             "jef" => vectorcraft_embroidery::read_jef(&bytes).unwrap(),
             "exp" => vectorcraft_embroidery::read_exp(&bytes),
+            "vp3" => vectorcraft_embroidery::read_vp3(&bytes).unwrap(),
+            "u01" => vectorcraft_embroidery::read_u01(&bytes).unwrap(),
             _ => vectorcraft_embroidery::read_dst(&bytes).unwrap(),
         };
         let b = plan.stats().bounds.unwrap();

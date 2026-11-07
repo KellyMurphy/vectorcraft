@@ -649,9 +649,9 @@ pub struct EmbroiderySetup {
     /// The machine's sewing speed, stitches per minute (for the sewing time estimate).
     #[serde(skip_serializing_if = "is_default_speed")]
     pub speed: f64,
-    /// The machine file format the design is exported in by default (`dst`, `pes`, `jef` or
-    /// `exp`; see [`EmbroiderySetup::MACHINE_FORMATS`]). A format a newer VectorCraft named is kept
-    /// as written, and DST is used in its place.
+    /// The machine file format the design is exported in by default (`dst`, `pes`, `jef`, `exp`,
+    /// `vp3` or `u01`; see [`EmbroiderySetup::MACHINE_FORMATS`]). A format a newer VectorCraft
+    /// named is kept as written, and DST is used in its place.
     #[serde(skip_serializing_if = "is_dst")]
     pub machine_format: String,
     /// The order objects are sewn in: these first, in this order, then any other stitched objects
@@ -1198,8 +1198,8 @@ impl EmbroiderySetup {
     pub const DEFAULT_SPEED: f64 = 600.0;
     pub const DEFAULT_MACHINE_FORMAT: &str = "dst";
     /// The machine file formats a design can be exported in by default: Tajima DST, Brother PES,
-    /// Janome JEF, Melco EXP.
-    pub const MACHINE_FORMATS: [&str; 4] = ["dst", "pes", "jef", "exp"];
+    /// Janome JEF, Melco EXP, Pfaff / Husqvarna Viking VP3, Barudan U01.
+    pub const MACHINE_FORMATS: [&str; 6] = ["dst", "pes", "jef", "exp", "vp3", "u01"];
     /// Allowed machine speeds, stitches per minute.
     pub const SPEED: std::ops::RangeInclusive<f64> = 100.0..=1500.0;
     /// Allowed shortest stitches, mm.

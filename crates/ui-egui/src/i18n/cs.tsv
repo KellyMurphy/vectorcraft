@@ -6072,7 +6072,7 @@ mark-style	Japanese	Japonské
 # Machine file formats (PES, JEF, EXP)
 	Export {format}…	Exportovat {format}…
 	Machine Format:	Formát stroje:
-	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Formát souboru, který čte váš stroj: DST (Tajima a většina strojů), PES (Brother), JEF (Janome) nebo EXP (Melco)
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) or U01 (Barudan)	Formát souboru, který čte váš stroj: DST (Tajima a většina strojů), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) nebo U01 (Barudan)
 
 # Hidden travel (embroidery)
 	Hide Travel Under Fills	Skrýt přechody pod výplněmi

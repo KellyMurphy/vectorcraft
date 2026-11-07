@@ -1,7 +1,7 @@
 //! Embroidery panel (Window › Embroidery): the selected objects' stitch, chosen from a grid of
 //! stitched pictures, their thread and trims, and the stitch's own settings (fill patterns and
 //! border patterns picked from pictures too); then the design's numbers with Stitch Preview and
-//! Export in the machine's format (DST, PES, JEF, EXP), and the design checker's findings. The sewing order has a panel of its own
+//! Export in the machine's format (DST, PES, JEF, EXP, VP3, U01), and the design checker's findings. The sewing order has a panel of its own
 //! (`sew_order`). Reads `embroidery.info`, acts through `embroidery.set` and `embroidery.clear`.
 
 use egui::{Color32, Rect, Sense, Stroke, Ui, vec2};
@@ -1886,7 +1886,7 @@ fn load_chart(app: &mut VectorcraftApp) {
 }
 
 /// The document's hoop: a common one, none, or its own (loaded); whether the design fits it.
-/// The machine file format the document exports in (DST, PES, JEF, EXP).
+/// The machine file format the document exports in (DST, PES, JEF, EXP, VP3, U01).
 pub(crate) fn machine_format(app: &VectorcraftApp) -> &'static str {
     app.session.active().map_or(vectorcraft_doc::EmbroiderySetup::DEFAULT_MACHINE_FORMAT, |d| d.doc.embroidery.machine_format())
 }
@@ -1909,7 +1909,9 @@ fn machine_row(app: &mut VectorcraftApp, ui: &mut Ui) {
         })
     })
     .response
-    .on_hover_text(tl!("The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)"));
+    .on_hover_text(tl!(
+        "The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) or U01 (Barudan)"
+    ));
 }
 
 fn hoop_row(app: &mut VectorcraftApp, ui: &mut Ui) {

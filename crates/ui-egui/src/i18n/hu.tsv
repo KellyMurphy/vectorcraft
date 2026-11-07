@@ -6036,7 +6036,7 @@ imageTrace	Outline	Körvonal
 # Machine file formats (PES, JEF, EXP)
 	Export {format}…	{format} exportálása…
 	Machine Format:	Gép fájlformátuma:
-	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	A gépe által olvasott fájlformátum: DST (Tajima és a legtöbb gép), PES (Brother), JEF (Janome) vagy EXP (Melco)
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) or U01 (Barudan)	A gépe által olvasott fájlformátum: DST (Tajima és a legtöbb gép), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) vagy U01 (Barudan)
 
 # Hidden travel (embroidery)
 	Hide Travel Under Fills	Átvezetés elrejtése kitöltések alá

@@ -120,13 +120,13 @@ fn dst_is_listed_and_sniffed() {
 }
 
 #[test]
-fn pes_jef_and_exp_export_and_open_again() {
+fn pes_jef_exp_vp3_and_u01_export_and_open_again() {
     let mut s = session();
     s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
     s.execute("shape.rectangle", &json!({"x": 150, "y": 10, "width": 100, "height": 20})).unwrap();
     s.execute("embroidery.set", &json!({"type": "satin", "width": 2, "thread": [0, 0, 255]})).unwrap();
     let before = info(&mut s)["design"].clone();
-    for (format, magic) in [("pes", &b"#PES0060"[..]), ("jef", &[][..]), ("exp", &[][..])] {
+    for (format, magic) in [("pes", &b"#PES0060"[..]), ("jef", &[][..]), ("exp", &[][..]), ("vp3", &b"%vsm%\0"[..]), ("u01", &b"0000"[..])] {
         let r = s.execute("document.export", &json!({ "format": format })).unwrap();
         let bytes = b64(&r);
         assert!(bytes.starts_with(magic), "{format}");
@@ -139,8 +139,8 @@ fn pes_jef_and_exp_export_and_open_again() {
         assert!((after["heightMm"].as_f64().unwrap() - before["heightMm"].as_f64().unwrap()).abs() <= 0.2, "{format}");
         let threads = after["threads"].as_array().unwrap().clone();
         assert_eq!(threads.len(), 2, "{format}");
-        if format == "pes" {
-            // PES keeps the thread colours.
+        if format == "pes" || format == "vp3" {
+            // PES and VP3 keep the thread colours.
             assert_eq!(threads, before["threads"].as_array().unwrap().clone());
             assert!(o["warnings"].as_array().unwrap().is_empty(), "{}", o["warnings"]);
         } else {
@@ -154,6 +154,12 @@ fn pes_jef_and_exp_export_and_open_again() {
     let exp = b64(&s.execute("document.export", &json!({"format": "exp"})).unwrap());
     assert_eq!(load::detect("x.exp", &exp).map(|f| f.id), Some("exp"));
     assert!(OPEN_EXTS.contains(&"pes") && PLACE_EXTS.contains(&"jef") && UNASSOCIATED_EXTS.contains(&"exp"));
+    // VP3 by its magic and U01 by its header of zeros, whatever their names.
+    let vp3 = b64(&s.execute("document.export", &json!({"format": "vp3"})).unwrap());
+    assert_eq!(load::detect("x.bin", &vp3).map(|f| f.id), Some("vp3"));
+    let u01 = b64(&s.execute("document.export", &json!({"format": "u01"})).unwrap());
+    assert_eq!(load::detect("x.bin", &u01).map(|f| f.id), Some("u01"));
+    assert!(OPEN_EXTS.contains(&"vp3") && PLACE_EXTS.contains(&"u01") && UNASSOCIATED_EXTS.contains(&"u01"));
 }
 
 #[test]
@@ -174,7 +180,7 @@ fn machine_format_is_set_and_checked() {
     let r = s.execute("embroidery.setup", &json!({"machineFormat": "PES"})).unwrap();
     assert_eq!(r["machineFormat"], "pes");
     assert_eq!(s.doc().unwrap().doc.embroidery.machine_format, "pes");
-    assert!(s.execute("embroidery.setup", &json!({"machineFormat": "vp3"})).is_err());
+    assert!(s.execute("embroidery.setup", &json!({"machineFormat": "xxx"})).is_err());
     s.execute("edit.undo", &json!({})).unwrap();
     assert_eq!(s.doc().unwrap().doc.embroidery.machine_format(), "dst");
     // A format a newer VectorCraft named is kept, and DST is used in its place.

@@ -512,6 +512,26 @@ pub const FORMATS: &[Format] = &[
         raster: false,
         options: super::embroidery::OPTIONS,
     },
+    Format {
+        id: "vp3",
+        label: "Embroidery (VP3)",
+        extensions: &["vp3"],
+        mime: "application/x-vp3",
+        read: true,
+        write: true,
+        raster: false,
+        options: super::embroidery::OPTIONS,
+    },
+    Format {
+        id: "u01",
+        label: "Embroidery (U01)",
+        extensions: &["u01"],
+        mime: "application/x-u01",
+        read: true,
+        write: true,
+        raster: false,
+        options: super::embroidery::OPTIONS,
+    },
     Format { id: "emf", label: "EMF", extensions: &["emf"], mime: "image/emf", read: true, write: true, raster: false, options: metafile::OPTIONS },
     Format { id: "wmf", label: "WMF", extensions: &["wmf"], mime: "image/wmf", read: true, write: true, raster: false, options: metafile::OPTIONS },
     Format {
@@ -589,16 +609,19 @@ pub const OPEN_EXTS: &[&str] = &[
     "pes",
     "jef",
     "exp",
+    "vp3",
+    "u01",
 ];
 
 /// Extensions in [`OPEN_EXTS`] the packaging declares no type for: Photoshop documents belong to
 /// raster editors, so Finder and file managers don't offer a vector app for them, and there is no
 /// `.epsf`, `.ps`, Targa, PCX, Pixar or JPEG 2000 type, nor one for the `.pns`, `.dib` and `.rle`
-/// names of PNG and BMP files, and `.exp` names other kinds of file too (linker exports) (File ›
-/// Open and Place still read them all). On Linux the desktop entry's EPS
+/// names of PNG and BMP files, and `.exp` names other kinds of file too (linker exports), as `.u01`
+/// does (a Barudan design is one of `.u00` to `.u99`; File › Open and Place still read them all). On Linux the desktop entry's EPS
 /// type (shared-mime-info's) also covers `.epsf`, so file managers offer VectorCraft for it.
 pub const UNASSOCIATED_EXTS: &[&str] = &[
-    "psd", "pdd", "psb", "epsf", "ps", "pns", "dib", "rle", "tga", "vda", "icb", "vst", "exp", "pcx", "pxr", "jpf", "jpx", "jp2", "j2k", "j2c", "jpc",
+    "psd", "pdd", "psb", "epsf", "ps", "pns", "dib", "rle", "tga", "vda", "icb", "vst", "exp", "u01", "pcx", "pxr", "jpf", "jpx", "jp2", "j2k",
+    "j2c", "jpc",
 ];
 
 /// The extension that picks each writable format when exporting (the format's first; PNG-8 shares
@@ -679,6 +702,8 @@ pub const PLACE_EXTS: &[&str] = &[
     "pes",
     "jef",
     "exp",
+    "vp3",
+    "u01",
     "txt",
     "rtf",
     "docx",

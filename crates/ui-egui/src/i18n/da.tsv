@@ -5947,7 +5947,7 @@ swatch	Bright Violet	Kraftig violet
 # Machine file formats (PES, JEF, EXP)
 	Export {format}…	Eksportér {format}…
 	Machine Format:	Maskinformat:
-	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Det filformat din maskine læser: DST (Tajima og de fleste maskiner), PES (Brother), JEF (Janome) eller EXP (Melco)
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) or U01 (Barudan)	Det filformat din maskine læser: DST (Tajima og de fleste maskiner), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) eller U01 (Barudan)
 
 # Hidden travel (embroidery)
 	Hide Travel Under Fills	Skjul vandring under fyld

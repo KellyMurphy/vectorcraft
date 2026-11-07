@@ -5647,7 +5647,7 @@ theme	Appearance	Giao diện
 # Machine file formats (PES, JEF, EXP)
 	Export {format}…	Xuất {format}…
 	Machine Format:	Định dạng máy:
-	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Định dạng tệp máy của bạn đọc được: DST (Tajima và hầu hết các máy), PES (Brother), JEF (Janome) hoặc EXP (Melco)
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) or U01 (Barudan)	Định dạng tệp máy của bạn đọc được: DST (Tajima và hầu hết các máy), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) hoặc U01 (Barudan)
 
 # Hidden travel (embroidery)
 	Hide Travel Under Fills	Giấu đường di chuyển dưới lớp thêu đầy

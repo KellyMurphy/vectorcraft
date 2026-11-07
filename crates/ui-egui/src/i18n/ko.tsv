@@ -5627,7 +5627,7 @@ lighting	Light	광원
 # Machine file formats (PES, JEF, EXP)
 	Export {format}…	{format} 내보내기…
 	Machine Format:	기계 형식:
-	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	기계가 읽는 파일 형식: DST(Tajima 및 대부분의 기계), PES(Brother), JEF(Janome), EXP(Melco)
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) or U01 (Barudan)	기계가 읽는 파일 형식: DST(Tajima 및 대부분의 기계), PES(Brother), JEF(Janome), EXP(Melco), VP3(Pfaff, Husqvarna Viking), U01(Barudan)
 
 # Hidden travel (embroidery)
 	Hide Travel Under Fills	채우기 아래로 이동 숨기기

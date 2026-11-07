@@ -32,7 +32,8 @@ to say where a feature is described; nothing is copied from any of them (the cle
 | Quality, sequencing and automation | 12 | 10 | 1 | 1 |
 | Colour, preview, output and production | 13 | 7 | 5 | 1 |
 
-**P0 left:** one partly-done P0 feature: the VP3, XXX and U01 formats (E9.3). Run styles (E11.1) and split satin (E11.2) landed.
+**P0 left:** one partly-done P0 feature: the XXX format (E9.3 added VP3 and U01; XXX's only public
+description is a stub that leaves out its header, stitch bytes and colour table). Run styles (E11.1) and split satin (E11.2) landed.
 
 **Catalog gaps (E11).** The check found features, or pieces of them, that no plan step covered; they are
 now [plan phase E11](embroidery-plan.md#catalog-gaps--e11): run styles and split satin (P0, first), then
@@ -115,7 +116,7 @@ before G1), and the P2 items after G2. Only blending thread colours across an ar
 | Thread charts and matching | Palettes from major thread makers, nearest-match recolouring, custom palettes | Ink/Stitch (60+ makers), Hatch | P0 | **Done** | E7.10: `.vcthreads`, `embroidery.matchThreads`. Ships only charts published for free use |
 | Colour sequence list and recolour | See and reorder colour stops; swap a colour across the design | Wilcom Color Object List, all | P0 | **Done** | Sew Order panel, `embroidery.sortByThread` |
 | Stitch player | Replay the stitch-out at variable speed, stop by stop | Wilcom, Ink/Stitch simulator, Embrilliance | P0 | **Done** | E7.9 |
-| Machine file formats | Read and write DST, PES, EXP, JEF, VP3, XXX and U01 at minimum | pyembroidery, all | P0 | **Partly** | DST, PES, JEF, EXP read and write (E7.12). VP3, XXX, U01: E9.3 |
+| Machine file formats | Read and write DST, PES, EXP, JEF, VP3, XXX and U01 at minimum | pyembroidery, all | P0 | **Partly** | DST, PES, JEF, EXP read and write (E7.12); VP3 and U01 read and write (E9.3). XXX: not yet, its public description is a stub (no header layout, stitch encoding or colour table) |
 | Production worksheet and templates | PDF with colour stops, thread names, stitch count and run time; 1:1 print with centre marks | Ink/Stitch, Embrilliance, Pulse | P0 | **Done** | E7.11: `embroidery.worksheet` |
 | Realistic render and mockups | Thread-shaded view, fabric backgrounds, preview on 3D garments, real-size view | Chroma, Pulse Ambassador, mySewnet | P1 | **Partly** | View › Realistic Stitches draws shaded thread (sheen by stitch angle, shadows) on seven code-drawn fabric textures in any colour (E9.2a); Object › Embroidery › Garment Mockup… shows the design at real size on a T-shirt, polo, hoodie, cap, tote or towel drawn in code, at the usual placements (E9.2b). Flat front views, not 3D garments; a real-size view: E9.2c |
 | Import, edit and batch export | Open stitch files for stitch-level edits; export many formats at once | Ink/Stitch, Embird, Wilcom Export Docker | P1 | **Done** | Machine files open as editable manual-stitch paths; one design per artboard on export; E11.5: several formats at once (`document.export {formats}`, Export As › Also Export) |
@@ -153,3 +154,4 @@ independent reader in tests.
 - 2026-11-02: styles and presets done: stitch styles (E11.3).
 - 2026-11-04: auto-digitize from image done: satin outlines and centreline digitizing (E11.7).
 - 2026-11-06: realistic render and mockups: shaded thread on fabric textures (E9.2a), garment mockups (E9.2b); still partly done (no 3D garments, no real-size view).
+- 2026-11-06: machine file formats: VP3 and U01 read and write (E9.3); still partly done, XXX has no usable public description.

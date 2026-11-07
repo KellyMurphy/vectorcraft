@@ -246,6 +246,30 @@ fn an_agent_exports_several_machine_formats_at_once() {
     assert!(spec("document.export").params.contains("formats?:"));
 }
 
+/// VP3 and U01 over MCP: an agent exports a design in each and opens it again; VP3 keeps the
+/// thread colours, U01 names needles.
+#[test]
+fn an_agent_exports_and_opens_vp3_and_u01() {
+    let mut s = Server::new(Box::new(Headless::with_document()));
+    call(&mut s, "draw_shape", json!({"shape": "rectangle", "x": 100, "y": 100, "width": 120, "height": 80, "fill": "#1f6f8b"}));
+    run(&mut s, "embroidery.set", json!({"type": "fill"}));
+    let out = payload(&call(&mut s, "export", json!({"options": {"formats": ["vp3", "u01"]}})));
+    assert_eq!(out["formats"], json!(["vp3", "u01"]), "{out}");
+    for (i, format) in ["vp3", "u01"].iter().enumerate() {
+        let data = out["exports"][i]["dataBase64"].as_str().unwrap().to_string();
+        let o = run(&mut s, "document.open", json!({"name": format!("design.{format}"), "dataBase64": data}));
+        assert_eq!(o["format"], *format, "{o}");
+        let info = run(&mut s, "embroidery.info", json!({}));
+        assert!(info["design"]["stitches"].as_u64().unwrap() > 50, "{format}: {info}");
+        if *format == "vp3" {
+            assert!(info["design"]["threads"].to_string().contains("1f6f8b"), "VP3 keeps the colour: {info}");
+        }
+    }
+    let r = run(&mut s, "embroidery.setup", json!({"machineFormat": "vp3"}));
+    assert_eq!(r["machineFormat"], "vp3");
+    assert!(spec("embroidery.setup").params.contains("vp3|u01"));
+}
+
 /// A design bigger than the hoop over MCP: an agent turns it in the hoop to fit, then splits a
 /// larger one into hoopings and exports a file per hooping.
 #[test]

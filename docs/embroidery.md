@@ -1,7 +1,7 @@
 # Embroidery
 
 VectorCraft can turn artwork into machine embroidery. Give paths **stitch settings**, check the result
-with **View › Stitch Preview**, and export a file for the embroidery machine: **DST**, **PES**, **JEF** or **EXP**. This is early work
+with **View › Stitch Preview**, and export a file for the embroidery machine: **DST**, **PES**, **JEF**, **EXP**, **VP3** or **U01**. This is early work
 (milestones E1–E2): the stitches are correct, but stitch quality still lacks what dedicated digitizing
 software adds (see [What's next](#whats-next)).
 
@@ -27,7 +27,7 @@ pictures (each drawn by the real generator, with a line saying what it does), th
 stitch's own settings (Density is the spacing), the rarely changed ones folded under **More Settings**. Fill
 patterns and border patterns are picked from pictures too, so Tatami 4 and Tatami 7 can be told apart before
 sewing; when the checker finds problems, a line at the foot of the tab says how many and opens Design.
-**Design** shows the whole design: the fabric, hoop, machine format (DST, PES, JEF or EXP) and thread
+**Design** shows the whole design: the fabric, hoop, machine format (DST, PES, JEF, EXP, VP3 or U01) and thread
 chart, its stitch count, size, trims and jumps and threads, a Stitch Preview switch, **Export** in the
 machine's format, the worksheet, the Sew Order and Sew-Out Test panels, and the design checker's findings.
 **Tools** holds Appliqué and its Cut File, Extract Border Pattern and Extract Motif (for an opened design's stitches),
@@ -777,10 +777,10 @@ stitches). Parts of the shape no stroke runs through (round dots) are filled. Kn
 crossings (an &, an 8) are sewn twice where strokes overlap. Strokes wider than about 7 mm make long,
 loose satin stitches: fill those shapes instead.
 
-## Machine files (DST, PES, JEF, EXP)
+## Machine files (DST, PES, JEF, EXP, VP3, U01)
 
-`document.export {format: "dst" | "pes" | "jef" | "exp"}` (File › Export As › Embroidery (DST), (PES),
-(JEF) or (EXP)) writes the design for the machine. The Embroidery panel's **Machine Format** menu
+`document.export {format: "dst" | "pes" | "jef" | "exp" | "vp3" | "u01"}` (File › Export As › Embroidery
+(DST), (PES), (JEF), (EXP), (VP3) or (U01)) writes the design for the machine. The Embroidery panel's **Machine Format** menu
 (`embroidery.setup {machineFormat}`, saved with the document) picks the format its **Export** button,
 and the Sew-Out Test panel's, writes. Opening any of them (File › Open, Place, `document.open`) creates one
 manual-stitch path for each run of stitches, grouped by colour block.
@@ -791,6 +791,8 @@ manual-stitch path for each run of stitches, grouped by colour block.
 | PES (Brother, Baby Lock) | Brother | kept: the real colours in the version 6 thread list | a trim code |
 | JEF (Janome) | Janome | by palette number only (see below) | a trim code (a jump of zero) |
 | EXP (Melco) | Melco, Bernina | not stored | three short jumps, as DST |
+| VP3 (Pfaff, Husqvarna Viking) | Pfaff, Husqvarna Viking | kept: each colour block's thread colour | none in the format: the machine trims at colour changes and at long jumps, as its settings say (the export warns) |
+| U01 (Barudan) | Barudan | by needle number only (see below) | a trim code |
 
 **Thread colours in PES and JEF.** Both formats name threads by number in the maker's own palette, and
 the machine shows its palette's colour for each number. VectorCraft ships no maker's palette (as with
@@ -800,10 +802,16 @@ version 6 thread list, which VectorCraft and other software read back. A JEF fil
 version 6, opens with a colour of its own per palette number. Recolour the paths' strokes, or set
 `thread`, before sewing.
 
-The design is written centred on its middle (DST, JEF, EXP), where the machine starts, or from its
-top-left corner (PES, which machines centre themselves). JEF also records the smallest of its hoops the
+**Needles in U01.** A U01 file names needles, not colours: the machine sews each block with whatever
+thread is on that needle. VectorCraft writes a needle per distinct colour (1, 2, 3 …), at most 9 (the
+needles a U01 record can name; past nine colours the needles are used again, with a warning), and a thread
+stop where a block uses the needle before it again. A U01 file opens with a colour of its own per needle.
+
+The design is written centred on its middle (DST, JEF, EXP, VP3, U01), where the machine starts, or
+from its top-left corner (PES, which machines centre themselves). JEF also records the smallest of its hoops the
 design fits (50 × 50, 110 × 110, 140 × 200 or 200 × 200 mm). Moves longer than a format allows are split:
-12.1 mm (DST), 12.7 mm (JEF, EXP, and PES stitches), 204.7 mm (PES jumps).
+12.1 mm (DST), 12.7 mm (JEF, EXP, VP3 and U01 stitches, and PES's), 25.5 mm (U01 jumps), 204.7 mm (PES
+jumps), 3276.7 mm (VP3 jumps).
 
 With `artboard`, `artboards` or `range`, the export writes a design per artboard, each holding the
 stitched objects whose middle lies on that artboard (a test sheet's sections, or several designs laid
@@ -821,13 +829,25 @@ refused). Without a path, each format's design comes back in `exports`. At most 
 [DST](https://edutechwiki.unige.ch/en/Embroidery_format_DST),
 [PES](https://edutechwiki.unige.ch/en/Embroidery_format_PES) with its
 [PEC](https://edutechwiki.unige.ch/en/Embroidery_format_PEC) section,
-[JEF](https://edutechwiki.unige.ch/en/Embroidery_format_JEF) and
-[EXP](https://edutechwiki.unige.ch/en/Embroidery_format_EXP). Where a description leaves a point open
-(EXP's units and direction, where PEC's stitches start) it was settled by writing small test designs with
+[JEF](https://edutechwiki.unige.ch/en/Embroidery_format_JEF),
+[EXP](https://edutechwiki.unige.ch/en/Embroidery_format_EXP),
+[VP3](https://edutechwiki.unige.ch/en/Embroidery_format_VP3) (with
+[Jason Weiler's notes](http://www.jasonweiler.com/VP3FileFormatInfo.html) on its stitches and header) and
+[U01](https://edutechwiki.unige.ch/en/Embroidery_format_U%3F%3F). Where a description leaves a point open
+(EXP's units and direction, where PEC's stitches start, VP3's stitch direction and a header word only
+one description lists) it was settled by writing small test designs with
 an independent open-source tool, [pyembroidery](https://github.com/EmbroidePy/pyembroidery), and reading
 its files' bytes (used as a test tool only; none of its code or palettes are in VectorCraft). EXP has no
 documented trim code (`80 80` is listed both as the end and, by some readers, as a trim), so VectorCraft
-writes trims as DST does and reads `80 80` as a trim, or as the end when nothing follows it.
+writes trims as DST does and reads `80 80` as a trim, or as the end when nothing follows it. VP3 has
+no trim code either; its `80 03` is described as the end, and some writers also put it where they cut
+the thread, so VectorCraft reads it as a trim when more stitches follow. VP3's long moves (`80 01` …
+`80 02`) are jumps in one description; some readers take the shorter ones as long stitches. U01's end is
+command 18 in its description; some writers use 24 (0x18), which is read as the end too.
+
+**Singer XXX** is not supported: its only public description is a stub that leaves out the header's
+field sizes (so where the stitches start), how the stitch bytes are signed and the colour table the file
+ends with, and VectorCraft implements formats only from public descriptions.
 
 **Checked against an independent reader.** Files VectorCraft writes have been read with pyembroidery: for
 each format the stitch and colour-change counts and the design size agree, PES's thread colours come back
@@ -839,7 +859,7 @@ gate G1.
 
 - **E3, quality: done.** Underlay, pull compensation, tie-ins and tie-offs, satin corners, fill routing, satin
   between rails, carved motif fills and the Embroidery panel.
-- **E4, breadth:** VP3 and other formats as usage demands (DST, PES, JEF and EXP are done, E7.12); hoop templates; auto-digitizing traced art.
+- **E4, breadth:** other formats as usage demands (DST, PES, JEF and EXP are done, E7.12; VP3 and U01, E9.3); hoop templates; auto-digitizing traced art.
 - **E5, future sprints:**
   - **Embroidery fonts:** lettering digitized for embroidery (satin columns laid out by hand per letter), for
     crisp small type and heavy display type where Auto falls back to fill today. Three parts:
@@ -975,7 +995,7 @@ Priority items:
 - Realistic previews: thread-shaded views, fabric mockups and production estimators
 - Appliqué workflows with placement, tack-down, cover stitches and cutter export
 - Machine-transfer and cloud workflows, design libraries and extensions
-- Machine-format support beyond DST, PES, JEF and EXP: VP3 and others as usage demands
+- Machine-format support beyond DST, PES, JEF, EXP, VP3 and U01: others as usage demands (XXX once a public description covers it)
 
 This phase should only begin after the production-quality basics are solid and the app proves its digitizing core on
 real fabric.

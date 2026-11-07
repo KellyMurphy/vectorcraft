@@ -5995,7 +5995,7 @@ swatch	Bright Violet	Felviolet
 # Machine file formats (PES, JEF, EXP)
 	Export {format}…	{format} exporteren…
 	Machine Format:	Machineformaat:
-	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Het bestandsformaat dat uw machine leest: DST (Tajima en de meeste machines), PES (Brother), JEF (Janome) of EXP (Melco)
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) or U01 (Barudan)	Het bestandsformaat dat uw machine leest: DST (Tajima en de meeste machines), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) of U01 (Barudan)
 
 # Hidden travel (embroidery)
 	Hide Travel Under Fills	Verplaatsing onder vullingen verbergen

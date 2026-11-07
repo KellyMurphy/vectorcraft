@@ -4500,14 +4500,14 @@ proptest! {
     }
 }
 
-// ---------- Embroidery (DST, PES, JEF, EXP) ----------
+// ---------- Embroidery (DST, PES, JEF, EXP, VP3, U01) ----------
 
 /// A small DST design from a session (a fill and a satin column), as `document.export` writes it.
 fn saved_dst() -> Vec<u8> {
     saved_design("dst")
 }
 
-/// The same small design in machine format `format` (dst, pes, jef, exp).
+/// The same small design in machine format `format` (dst, pes, jef, exp, vp3, u01).
 fn saved_design(format: &str) -> Vec<u8> {
     let mut s = vectorcraft_engine::Session::new();
     s.execute("file.new", &json!({"width": 200, "height": 200})).unwrap();
@@ -4533,7 +4533,7 @@ fn survive_design(what: &str, format: &str, bytes: &[u8]) -> Result<(), TestCase
         if no_panic(s.execute("document.open", &p)).is_ok() {
             let _ = no_panic(s.execute("embroidery.info", &json!({})));
             let _ = no_panic(s.execute("embroidery.stitches", &json!({"limit": 1000})));
-            for f in ["dst", "pes", "jef", "exp"] {
+            for f in ["dst", "pes", "jef", "exp", "vp3", "u01"] {
                 let _ = no_panic(s.execute("document.export", &json!({ "format": f })));
             }
             let _ = no_panic(s.execute("document.export", &json!({"format": "png"})));
@@ -4677,11 +4677,19 @@ proptest! {
         jef.extend(&body);
         survive_design("jef garbage", "jef", &jef)?;
         survive_design("exp garbage", "exp", &body)?;
+        // VP3: the magic and anything after it; U01: a header of zeros and any records.
+        let mut vp3 = b"%vsm%\0".to_vec();
+        vp3.extend(&body);
+        survive_design("vp3 garbage", "vp3", &vp3)?;
+        let mut u01 = vec![b'0'; 128];
+        u01.resize(256, 0);
+        u01.extend(&body);
+        survive_design("u01 garbage", "u01", &u01)?;
     }
 
     #[test]
     fn pes_jef_and_exp_mutated_designs_never_panic(cut in 0usize..5000, edits in prop::collection::vec((any::<prop::sample::Index>(), any::<u8>()), 0..24)) {
-        for format in ["pes", "jef", "exp"] {
+        for format in ["pes", "jef", "exp", "vp3", "u01"] {
             let mut b = saved_design(format);
             for (i, v) in &edits {
                 let at = i.index(b.len());

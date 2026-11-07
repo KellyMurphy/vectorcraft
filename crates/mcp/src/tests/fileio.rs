@@ -79,6 +79,8 @@ fn export_tool_lists_engine_formats_and_options() {
             "pes",
             "jef",
             "exp",
+            "vp3",
+            "u01",
             "emf",
             "wmf",
             "tga",

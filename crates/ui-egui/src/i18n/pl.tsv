@@ -5906,7 +5906,7 @@ mark-style	Japanese	Japońskie
 # Machine file formats (PES, JEF, EXP)
 	Export {format}…	Eksportuj {format}…
 	Machine Format:	Format maszyny:
-	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Format pliku, który czyta Twoja maszyna: DST (Tajima i większość maszyn), PES (Brother), JEF (Janome) lub EXP (Melco)
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) or U01 (Barudan)	Format pliku, który czyta Twoja maszyna: DST (Tajima i większość maszyn), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) lub U01 (Barudan)
 
 # Hidden travel (embroidery)
 	Hide Travel Under Fills	Ukryj przejścia pod wypełnieniami

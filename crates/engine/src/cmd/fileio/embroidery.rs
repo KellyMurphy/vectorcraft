@@ -1,6 +1,7 @@
-//! Embroidery files: `document.export {format: dst | pes | jef | exp}` writes the stitched objects'
-//! design ([`vectorcraft_embroidery::plan`]); `document.open` and Place read a `.dst`, `.pes`,
-//! `.jef` or `.exp` design as manual-stitch paths, a group per colour block.
+//! Embroidery files: `document.export {format: dst | pes | jef | exp | vp3 | u01}` writes the
+//! stitched objects' design ([`vectorcraft_embroidery::plan`]); `document.open` and Place read a
+//! `.dst`, `.pes`, `.jef`, `.exp`, `.vp3` or `.u01` design as manual-stitch paths, a group per
+//! colour block.
 //! `artboard`/`artboards`/`range` write a design per artboard; a design split into hoopings
 //! (`embroidery.splitHoops`) is written a file per hooping.
 
@@ -29,7 +30,8 @@ struct Params {
     hoopings: Option<bool>,
 }
 
-/// `doc`'s stitched objects as a design in machine format `id` (`dst`, `pes`, `jef`, `exp`);
+/// `doc`'s stitched objects as a design in machine format `id` (`dst`, `pes`, `jef`, `exp`, `vp3`,
+/// `u01`);
 /// with `artboard`, `artboards` or `range`, a design per artboard, of the stitched objects centred
 /// on it (a test sheet's sections); split into hoopings, a design per hooping.
 pub(super) fn encode(id: &str, doc: &Document, p: &Value) -> Result<Encoded> {
@@ -125,7 +127,8 @@ fn hoopings(id: &str, doc: &Document) -> Result<Encoded> {
     Ok(out)
 }
 
-/// `plan` in machine format `id` (`dst`, `pes`, `jef`, `exp`), adding the writer's warnings.
+/// `plan` in machine format `id` (`dst`, `pes`, `jef`, `exp`, `vp3`, `u01`), adding the writer's
+/// warnings.
 fn write(id: &str, plan: &vectorcraft_embroidery::Plan, title: &str, warnings: &mut Vec<String>) -> Vec<u8> {
     match id {
         "pes" => {
@@ -138,16 +141,29 @@ fn write(id: &str, plan: &vectorcraft_embroidery::Plan, title: &str, warnings: &
             vectorcraft_embroidery::write_jef(plan, vectorcraft_doc::metadata::civil(t))
         }
         "exp" => vectorcraft_embroidery::write_exp(plan),
+        "vp3" => {
+            let (bytes, w) = vectorcraft_embroidery::write_vp3(plan);
+            warnings.extend(w);
+            bytes
+        }
+        "u01" => {
+            let (bytes, w) = vectorcraft_embroidery::write_u01(plan);
+            warnings.extend(w);
+            bytes
+        }
         _ => vectorcraft_embroidery::write_dst(plan, title),
     }
 }
 
-/// A design in machine format `id` (`dst`, `pes`, `jef`, `exp`) as a new document titled `title`.
+/// A design in machine format `id` (`dst`, `pes`, `jef`, `exp`, `vp3`, `u01`) as a new document
+/// titled `title`.
 pub(super) fn import(id: &str, title: &str, bytes: &[u8]) -> Result<(Document, Vec<String>)> {
     let plan = match id {
         "pes" => vectorcraft_embroidery::read_pes(bytes).map_err(EngineError::Other)?,
         "jef" => vectorcraft_embroidery::read_jef(bytes).map_err(EngineError::Other)?,
         "exp" => vectorcraft_embroidery::read_exp(bytes),
+        "vp3" => vectorcraft_embroidery::read_vp3(bytes).map_err(EngineError::Other)?,
+        "u01" => vectorcraft_embroidery::read_u01(bytes).map_err(EngineError::Other)?,
         _ => vectorcraft_embroidery::read_dst(bytes).map_err(|e| EngineError::Other(e.to_string()))?,
     };
     let mut warnings = plan.warnings.clone();
@@ -161,6 +177,7 @@ pub(super) fn import(id: &str, title: &str, bytes: &[u8]) -> Result<(Document, V
             "jef" => warnings.push(
                 "JEF files name threads by Janome palette number, and VectorCraft has no maker's palette: each number got a colour of its own".into(),
             ),
+            "u01" => warnings.push("U01 files name needles, not thread colours: each needle got a colour of its own".into()),
             // A PES file keeps its colours in its version 6 thread list; older ones by number.
             "pes" if bytes.get(4..8) != Some(b"0060") => warnings.push(
                 "this PES file names threads by Brother palette number, and VectorCraft has no maker's palette: each number got a colour of its own"

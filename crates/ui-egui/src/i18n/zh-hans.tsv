@@ -5903,7 +5903,7 @@ lighting	Light	光源
 # Machine file formats (PES, JEF, EXP)
 	Export {format}…	导出 {format}…
 	Machine Format:	机器格式:
-	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	您的绣花机读取的文件格式：DST（Tajima 和大多数机器）、PES（Brother）、JEF（Janome）或 EXP（Melco）
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) or U01 (Barudan)	您的绣花机读取的文件格式：DST（Tajima 和大多数机器）、PES（Brother）、JEF（Janome）、EXP（Melco）、VP3（Pfaff、Husqvarna Viking）或 U01（Barudan）
 
 # Hidden travel (embroidery)
 	Hide Travel Under Fills	将移动藏在填充下

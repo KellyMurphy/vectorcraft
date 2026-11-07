@@ -31,7 +31,8 @@
       </match>
     </magic>
   </mime-type>
-  <!-- Machine embroidery designs VectorCraft opens (Tajima DST, Brother PES, Janome JEF). -->
+  <!-- Machine embroidery designs VectorCraft opens (Tajima DST, Brother PES, Janome JEF, Pfaff and
+       Husqvarna Viking VP3). -->
   <mime-type type="application/x-embroidery-dst">
     <comment>Tajima embroidery design</comment>
     <glob pattern="*.dst"/>
@@ -43,5 +44,9 @@
   <mime-type type="application/x-embroidery-jef">
     <comment>Janome embroidery design</comment>
     <glob pattern="*.jef"/>
+  </mime-type>
+  <mime-type type="application/x-embroidery-vp3">
+    <comment>Pfaff / Husqvarna Viking embroidery design</comment>
+    <glob pattern="*.vp3"/>
   </mime-type>
 </mime-info>

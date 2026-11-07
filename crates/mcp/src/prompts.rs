@@ -117,7 +117,7 @@ pub struct PromptDef {
 }
 
 /// The machine file formats `export` writes for embroidery, kept in step with the engine (tested).
-pub(crate) const MACHINE_FORMATS: &[&str] = &["dst", "pes", "jef", "exp"];
+pub(crate) const MACHINE_FORMATS: &[&str] = &["dst", "pes", "jef", "exp", "vp3", "u01"];
 
 /// Stitch types (`embroidery.set`'s `type`), a closed set kept in step with the engine (tested).
 pub(crate) const STITCH_TYPES: &[&str] =
@@ -332,7 +332,7 @@ The trace is real geometry: every traced shape stays selectable and editable.",
     PromptDef {
         name: "embroidery",
         title: "Digitize for embroidery",
-        description: "Turn art or lettering into a machine embroidery design: stitch types, sewing order and travel, checked with a stitch preview, exported for the machine (DST, PES, JEF or EXP).",
+        description: "Turn art or lettering into a machine embroidery design: stitch types, sewing order and travel, checked with a stitch preview, exported for the machine (DST, PES, JEF, EXP, VP3 or U01).",
         arguments: &[
             PromptArg {
                 name: "subject",
@@ -351,7 +351,7 @@ The trace is real geometry: every traced shape stays selectable and editable.",
             PromptArg { name: "size", description: "The finished design's size", required: false, default: "as drawn", values: Values::Fixed(NONE) },
             PromptArg {
                 name: "format",
-                description: "The machine's file format: dst (Tajima, nearly all machines), pes (Brother), jef (Janome) or exp (Melco)",
+                description: "The machine's file format: dst (Tajima, nearly all machines), pes (Brother), jef (Janome), exp (Melco), vp3 (Pfaff, Husqvarna Viking) or u01 (Barudan)",
                 required: false,
                 default: "dst",
                 values: Values::Fixed(MACHINE_FORMATS),
@@ -396,9 +396,9 @@ Method:
    once; embroidery.reorder moves objects (what is sewn later lies on top). Set the travel
    with embroidery.setup (trim jumps over, sew moves under).
 6. export {path: \"{path}\", format: \"{format}\"} (run_command embroidery.setup
-   {machineFormat: {format}} makes it the panels' Export format too). PES keeps the thread
-   colours; DST and EXP keep none and JEF only palette numbers: list the thread colours in
-   order from embroidery.info for the operator.
+   {machineFormat: {format}} makes it the panels' Export format too). PES and VP3 keep the
+   thread colours; DST and EXP keep none, JEF only palette numbers and U01 only needle numbers:
+   list the thread colours in order from embroidery.info for the operator.
 
 Every change is one undo step, and the art stays editable: changing a path changes its
 stitches.",

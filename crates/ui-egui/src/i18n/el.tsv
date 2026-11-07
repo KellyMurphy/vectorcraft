@@ -6004,7 +6004,7 @@ effect	Points	Σημεία
 # Machine file formats (PES, JEF, EXP)
 	Export {format}…	Εξαγωγή {format}…
 	Machine Format:	Μορφή μηχανής:
-	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Η μορφή αρχείου που διαβάζει η μηχανή σας: DST (Tajima και οι περισσότερες μηχανές), PES (Brother), JEF (Janome) ή EXP (Melco)
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) or U01 (Barudan)	Η μορφή αρχείου που διαβάζει η μηχανή σας: DST (Tajima και οι περισσότερες μηχανές), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) ή U01 (Barudan)
 
 # Hidden travel (embroidery)
 	Hide Travel Under Fills	Απόκρυψη μετακινήσεων κάτω από γεμίσματα

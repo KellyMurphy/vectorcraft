@@ -227,6 +227,7 @@ const LINUX_TYPES: &[(&str, &str)] = &[
     ("dst", "application/x-embroidery-dst"),
     ("pes", "application/x-embroidery-pes"),
     ("jef", "application/x-embroidery-jef"),
+    ("vp3", "application/x-embroidery-vp3"),
 ];
 
 /// The types in `LINUX_TYPES` that shared-mime-info defines. The MIME package declares every

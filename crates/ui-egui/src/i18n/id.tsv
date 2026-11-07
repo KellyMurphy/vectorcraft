@@ -5947,7 +5947,7 @@ swatch	Bright Violet	Violet cerah
 # Machine file formats (PES, JEF, EXP)
 	Export {format}…	Ekspor {format}…
 	Machine Format:	Format mesin:
-	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Format berkas yang dibaca mesin Anda: DST (Tajima dan sebagian besar mesin), PES (Brother), JEF (Janome), atau EXP (Melco)
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) or U01 (Barudan)	Format berkas yang dibaca mesin Anda: DST (Tajima dan sebagian besar mesin), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking), atau U01 (Barudan)
 
 # Hidden travel (embroidery)
 	Hide Travel Under Fills	Sembunyikan perpindahan di bawah isian

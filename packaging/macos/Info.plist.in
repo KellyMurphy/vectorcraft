@@ -131,8 +131,8 @@
       <key>LSHandlerRank</key><string>Alternate</string>
     </dict>
     <dict>
-      <key>CFBundleTypeName</key><string>Embroidery (DST, PES, JEF)</string>
-      <key>CFBundleTypeExtensions</key><array><string>dst</string><string>pes</string><string>jef</string></array>
+      <key>CFBundleTypeName</key><string>Embroidery (DST, PES, JEF, VP3)</string>
+      <key>CFBundleTypeExtensions</key><array><string>dst</string><string>pes</string><string>jef</string><string>vp3</string></array>
       <key>CFBundleTypeRole</key><string>Editor</string>
       <key>LSHandlerRank</key><string>Alternate</string>
     </dict>

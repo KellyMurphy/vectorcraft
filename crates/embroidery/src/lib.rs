@@ -1,5 +1,5 @@
 //! Embroidery: turns a document's stitched objects into a machine stitch plan, and reads and
-//! writes the formats embroidery machines take (DST, PES, JEF, EXP).
+//! writes the formats embroidery machines take (DST, PES, JEF, EXP, VP3, U01).
 //!
 //! An object is stitched when it carries [`StitchSettings`] ([`vectorcraft_doc::Node::stitch`]).
 //! [`plan`] walks the visible art in paint order (bottom first) and generates each object's
@@ -8,8 +8,9 @@
 //!
 //! - `generate`: running, bean, satin, fill and manual stitches from geometry.
 //! - `dst`: the Tajima DST format (writer and reader).
-//! - `exp`, `jef`, `pes`: the Melco EXP, Janome JEF and Brother PES formats (writers and readers),
-//!   sharing `machine`'s needle moves.
+//! - `exp`, `jef`, `pes`, `u01`: the Melco EXP, Janome JEF, Brother PES and Barudan U01 formats
+//!   (writers and readers), sharing `machine`'s needle moves.
+//! - `vp3`: the Pfaff / Husqvarna Viking VP3 format (writer and reader).
 //! - `import`: a plan as editable art (one manual-stitch path per run of stitches).
 
 pub mod advise;
@@ -48,6 +49,8 @@ pub mod split;
 pub mod styles;
 pub mod testsheet;
 pub mod threads;
+mod u01;
+mod vp3;
 mod warp;
 pub mod worksheet;
 
@@ -65,6 +68,8 @@ pub use exp::{read_exp, write_exp};
 pub use import::to_document;
 pub use jef::{is_jef, read_jef, write_jef};
 pub use pes::{is_pes, read_pes, write_pes};
+pub use u01::{is_u01, read_u01, write_u01};
+pub use vp3::{is_vp3, read_vp3, write_vp3};
 
 /// Millimetres per point.
 pub const PT_MM: f64 = 25.4 / 72.0;

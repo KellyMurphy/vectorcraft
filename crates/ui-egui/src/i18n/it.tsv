@@ -5684,7 +5684,7 @@ lighting	Light	Luce
 # Machine file formats (PES, JEF, EXP)
 	Export {format}…	Esporta {format}…
 	Machine Format:	Formato macchina:
-	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome) or EXP (Melco)	Il formato di file letto dalla vostra macchina: DST (Tajima e la maggior parte delle macchine), PES (Brother), JEF (Janome) o EXP (Melco)
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) or U01 (Barudan)	Il formato di file letto dalla vostra macchina: DST (Tajima e la maggior parte delle macchine), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) o U01 (Barudan)
 
 # Hidden travel (embroidery)
 	Hide Travel Under Fills	Nascondi gli spostamenti sotto i riempimenti

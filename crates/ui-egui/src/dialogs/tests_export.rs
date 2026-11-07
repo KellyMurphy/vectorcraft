@@ -368,7 +368,7 @@ fn a_machine_format_also_exports_the_ticked_ones() {
     export_as::open(&mut app, Some("dst"), &json!({}));
     let texts = shown(&mut app);
     assert!(texts.iter().any(|t| t == "Also Export:"), "{texts:?}");
-    for f in ["PES", "JEF", "EXP"] {
+    for f in ["PES", "JEF", "EXP", "VP3", "U01"] {
         assert!(texts.iter().any(|t| t == f), "{f}: {texts:?}");
     }
     set(&mut app, "also_pes", json!(true));
