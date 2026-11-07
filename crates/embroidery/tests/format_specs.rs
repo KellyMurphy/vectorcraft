@@ -688,7 +688,8 @@ fn embroidery_schema_matches_the_code() {
     // The Realistic view's look: its fields, and every texture the renderer draws.
     let look = &setup["preview"]["properties"];
     assert_eq!(keys(look), keys(&serde_json::to_value(full_setup()).unwrap()["preview"]), "the look's fields");
-    let textures: BTreeSet<String> = vectorcraft_embroidery::realistic::Texture::ALL.iter().map(|t| t.id().to_string()).collect();
+    let mut textures: BTreeSet<String> = vectorcraft_embroidery::realistic::Texture::ALL.iter().map(|t| t.id().to_string()).collect();
+    textures.insert(vectorcraft_embroidery::realistic::NO_FABRIC.to_string());
     assert_eq!(strings(&look["texture"]["enum"]), textures, "the textures");
     let turns = setup["hoopRotation"]["description"].as_str().unwrap();
     assert!(["0, 90, 180 or 270", "clockwise"].iter().all(|t| turns.contains(t)), "the schema gives the quarter turns");

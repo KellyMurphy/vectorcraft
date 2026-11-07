@@ -88,7 +88,7 @@
           "type": "object",
           "description": "How the Realistic view draws the fabric (a picture only: nothing sewn depends on it).",
           "properties": {
-            "texture": { "enum": ["plain", "twill", "denim", "knit", "terry", "leather", "felt"], "description": "The fabric's surface (default: the fabric starter's texture, else plain)." },
+            "texture": { "enum": ["plain", "twill", "denim", "knit", "terry", "leather", "felt", "none"], "description": "The fabric's surface (default: the fabric starter's texture, else plain); none: no fabric, the threads alone." },
             "color": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$", "description": "The fabric's colour (default: the texture's own)." }
           }
         },

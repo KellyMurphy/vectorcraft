@@ -379,6 +379,7 @@ trimmed shows as the loose thread it leaves. The fabric under it is drawn in cod
 profile suggests (knit for Knit, terry for Towel, twill for Cap…). Choose another, and the fabric's
 colour (a navy polo, a white towel), in the panel's **Fabric Look** row or with `embroidery.setup
 {fabricTexture, fabricColor}`; both are saved with the document and change nothing that is sewn.
+**None** (`fabricTexture: "none"`) draws no fabric: only the shaded threads, over the artwork.
 Zoomed out, fine weaves blend into an even colour rather than moiré. While the view pans or zooms the
 last picture moves with it, and the view is drawn again once it is still. `embroidery.preview {style:
 realistic}` renders the same picture as a PNG, and MCP's `render_preview {stitches: "realistic"}` shows

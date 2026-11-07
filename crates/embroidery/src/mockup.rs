@@ -1004,7 +1004,7 @@ mod tests {
         Spec {
             garment: g,
             placement: g.placement(None).unwrap(),
-            look: Look { texture: g.texture(), color: g.default_color() },
+            look: Look { color: g.default_color(), ..Look::plain(g.texture()) },
             close_up,
             width: 400,
         }

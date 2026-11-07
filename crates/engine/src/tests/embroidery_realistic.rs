@@ -77,10 +77,20 @@ fn the_realistic_preview_renders_the_design_on_the_documents_fabric() {
     assert_eq!((r["fabricTexture"].as_str(), r["fabricColor"].as_str()), (Some("denim"), Some("#3a5480")));
     assert!(s.doc().unwrap().doc.embroidery.preview.is_none(), "nothing set: nothing kept");
 
+    // No fabric: only the threads, the artboard's corner left transparent.
+    let r = run(&mut s, "embroidery.setup", json!({"fabricTexture": "none"}));
+    assert_eq!(r["fabricTexture"].as_str(), Some("none"));
+    let bare = run(&mut s, "embroidery.preview", json!({"scale": 2, "style": "realistic"}));
+    assert_eq!(pixel(&bare, 6, 6)[3], 0, "no fabric drawn");
+    let back = vectorcraft_format::load(&vectorcraft_format::save(&s.doc().unwrap().doc, false)).unwrap();
+    assert!(!vectorcraft_embroidery::realistic::Look::of(&back).fabric, "kept when saved");
+    run(&mut s, "embroidery.setup", json!({"fabricTexture": null}));
+
     for bad in [json!({"fabricTexture": "silk"}), json!({"fabricColor": "navy"}), json!({"fabricColor": 3})] {
         assert!(s.execute("embroidery.setup", &bad).is_err(), "{bad}");
     }
     assert!(s.execute("embroidery.preview", &json!({"style": "glossy"})).is_err());
+    assert!(s.execute("embroidery.mockup", &json!({"fabricTexture": "none"})).is_err(), "a garment has a fabric");
 }
 
 #[test]

@@ -248,7 +248,7 @@ stitches. It is only a picture: nothing sewn depends on it.
 
 | Field | Type | Meaning | Default |
 |---|---|---|---|
-| `texture` | string: `plain`, `twill`, `denim`, `knit`, `terry`, `leather` or `felt` | The fabric's surface. | the texture of `fabric`'s starter (`knit` for knit, `terry` for towel, `twill` for cap, `leather`, `denim`), else `plain` |
+| `texture` | string: `plain`, `twill`, `denim`, `knit`, `terry`, `leather`, `felt` or `none` | The fabric's surface; `none` draws no fabric, only the threads over what is under them. | the texture of `fabric`'s starter (`knit` for knit, `terry` for towel, `twill` for cap, `leather`, `denim`), else `plain` |
 | `color` | string, `#rrggbb` | The fabric's colour. | the texture's own |
 
 Readers draw a `texture` or `color` they don't recognise as unset, and keep it, and any other member, as

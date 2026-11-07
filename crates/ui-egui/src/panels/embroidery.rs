@@ -1772,27 +1772,42 @@ fn texture_label(t: vectorcraft_embroidery::realistic::Texture) -> &'static str 
 }
 
 /// How View › Realistic Stitches draws the fabric: its texture (as the fabric profile suggests, or
-/// one chosen) and colour.
+/// one chosen) and colour, or none at all (the threads alone, over the artwork).
 fn look_row(app: &mut VectorcraftApp, ui: &mut Ui) {
-    use vectorcraft_embroidery::realistic::{Look, Texture};
+    use vectorcraft_embroidery::realistic::{Look, NO_FABRIC, Texture};
     let Some(doc) = app.session.active().map(|d| d.doc.clone()) else { return };
     let look = Look::of(&doc);
     let set = doc.embroidery.preview.as_deref().cloned().unwrap_or_default();
     let auto = set.texture.as_deref().and_then(Texture::from_id).is_none();
-    let mut names: Vec<String> = vec![tl!("As the Fabric").to_string()];
+    let auto = auto && look.fabric;
+    // As the Fabric, None, then each texture.
+    let mut names: Vec<String> = vec![tl!("As the Fabric").to_string(), tl!("None").to_string()];
     names.extend(Texture::ALL.iter().map(|t| texture_label(*t).to_string()));
-    let shown = if auto { format!("{} ({})", tl!("As the Fabric"), texture_label(look.texture)) } else { texture_label(look.texture).to_string() };
+    let shown = if !look.fabric {
+        tl!("None").to_string()
+    } else if auto {
+        format!("{} ({})", tl!("As the Fabric"), texture_label(look.texture))
+    } else {
+        texture_label(look.texture).to_string()
+    };
     ui.scope(|ui| {
         widgets::label_row(ui, tl!("Fabric Look:"), LABEL_W, |ui| {
             let opts: Vec<&str> = names.iter().map(String::as_str).collect();
             if let Some(i) = widgets::dropdown_names(ui, "emb-look", &shown, &opts, 150.0) {
-                let texture = i.checked_sub(1).and_then(|k| Texture::ALL.get(k)).map(|t| t.id());
+                let texture = match i {
+                    0 => None,
+                    1 => Some(NO_FABRIC),
+                    _ => i.checked_sub(2).and_then(|k| Texture::ALL.get(k)).map(|t| t.id()),
+                };
                 app.run("embroidery.setup", json!({ "fabricTexture": texture })).ok();
             }
         })
     })
     .response
     .on_hover_text(tl!("How Realistic Stitches draws the fabric the design is sewn on"));
+    if !look.fabric {
+        return;
+    }
     // Its colour, on a line of its own under the menu.
     ui.horizontal(|ui| {
         ui.add_space(LABEL_W + 8.0);

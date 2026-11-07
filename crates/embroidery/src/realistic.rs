@@ -96,26 +96,38 @@ impl Texture {
     }
 }
 
+/// The [`vectorcraft_doc::PreviewLook::texture`] that draws no fabric: only the thread, over what
+/// is under it.
+pub const NO_FABRIC: &str = "none";
+
 /// What the fabric looks like.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Look {
     pub texture: Texture,
     pub color: [u8; 3],
+    /// Whether the fabric is drawn at all (`false`: the threads alone, on a transparent image).
+    pub fabric: bool,
 }
 
 impl Look {
     /// The document's look ([`vectorcraft_doc::EmbroiderySetup::preview`]): its texture, else its
-    /// fabric profile's; its colour, else the texture's own.
+    /// fabric profile's; its colour, else the texture's own; no fabric for [`NO_FABRIC`].
     pub fn of(doc: &Document) -> Look {
         let e = &doc.embroidery;
         let set = e.preview.as_deref();
+        let fabric = set.and_then(|p| p.texture.as_deref()) != Some(NO_FABRIC);
         let texture = set
             .and_then(|p| p.texture.as_deref())
             .and_then(Texture::from_id)
             .or_else(|| e.fabric.as_deref().map(|f| Texture::of_fabric(&f.id)))
             .unwrap_or(Texture::Plain);
         let color = set.and_then(|p| p.color.as_deref()).and_then(parse_hex).unwrap_or_else(|| texture.default_color());
-        Look { texture, color }
+        Look { texture, color, fabric }
+    }
+
+    /// The look of `texture` in its own colour.
+    pub fn plain(texture: Texture) -> Look {
+        Look { texture, color: texture.default_color(), fabric: true }
     }
 }
 
@@ -203,7 +215,9 @@ pub fn render(plan: &Plan, look: &Look, view: &View) -> Result<Image, String> {
     let mut cv = Canvas { w, h, px: vec![[0.0; 4]; w * h] };
     // Pixels per mm (the transform may turn but doesn't stretch one way more than the other).
     let scale = view.to_px.determinant().abs().sqrt();
-    fabric(&mut cv, look, view, scale);
+    if look.fabric {
+        fabric(&mut cv, look, view, scale);
+    }
     threads(&mut cv, plan, view.to_px, scale as f32);
     let mut rgba = Vec::with_capacity(w * h * 4);
     for p in &cv.px {
@@ -608,7 +622,7 @@ mod tests {
     }
 
     fn look(t: Texture) -> Look {
-        Look { texture: t, color: t.default_color() }
+        Look::plain(t)
     }
 
     #[test]
@@ -661,7 +675,7 @@ mod tests {
         let along = plan(across.needles.iter().map(|n| stitch(n.x, 18.0 - n.y)).collect());
         let v = view(200, 200, 10.0);
         let bright = |p: &Plan| {
-            let img = render(p, &Look { texture: Texture::Felt, color: [0, 0, 0] }, &v).unwrap();
+            let img = render(p, &Look { color: [0, 0, 0], ..Look::plain(Texture::Felt) }, &v).unwrap();
             (60..120).flat_map(|y| (60..120).map(move |x| (x, y))).map(|(x, y)| u32::from(px(&img, x, y)[1])).sum::<u32>()
         };
         let thread = |p: &Plan| {
@@ -671,6 +685,15 @@ mod tests {
         };
         let (sa, sl) = (bright(&thread(&across)), bright(&thread(&along)));
         assert!(sa > sl + sl / 10, "across {sa} along {sl}");
+    }
+
+    #[test]
+    fn no_fabric_leaves_only_the_threads() {
+        let p = plan(vec![stitch(10.0, 10.0), stitch(30.0, 10.0)]);
+        let v = view(200, 100, 5.0);
+        let img = render(&p, &Look { fabric: false, ..look(Texture::Knit) }, &v).unwrap();
+        assert_eq!(px(&img, 150, 80)[3], 0, "no fabric away from the thread");
+        assert!(px(&img, 100, 50)[3] > 200, "the thread is still drawn");
     }
 
     #[test]
