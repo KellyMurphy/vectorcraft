@@ -402,6 +402,11 @@ fn run_ui_part5(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<Result<
             crate::canvas::fit(app, id);
             Ok(Value::Null)
         }
+        "view.realSize" => crate::canvas::real_size(app),
+        "view.calibrateRealSize" => {
+            crate::dialogs::calibrate_real_size::open(app);
+            Ok(Value::Null)
+        }
         "view.goToArtboard" => go_to_artboard(app, p),
         // The navigator's four buttons as commands of their own, so Edit › Keyboard Shortcuts lists
         // them (view.goToArtboard needs an index, so a key alone can't run it).

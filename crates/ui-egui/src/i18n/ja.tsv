@@ -6561,3 +6561,14 @@ breakText	Glyphs	字形
 	Close-Up	クローズアップ
 	Mockup…	モックアップ…
 	The design sewn on a T-shirt, polo shirt, hoodie, cap, tote bag or towel, at its real size	Tシャツ、ポロシャツ、パーカー、帽子、トートバッグ、タオルに刺繍したデザインを実寸で表示
+	Real Size	実寸表示
+	Calibrate Real Size…	実寸表示の調整…
+	Calibrate Real Size	実寸表示の調整
+	Screen Resolution for Real Size	実寸表示用の画面解像度
+	Reference	基準
+	Bank Card Width (85.60 mm)	カードの幅（85.60 mm）
+	100 mm on a Ruler	定規の 100 mm
+	Hold the card or ruler against the screen and drag the end of the bar until the bar is exactly as long.	カードまたは定規を画面に当て、バーが同じ長さになるまでバーの端をドラッグします。
+	The Bar Measures:	バーの実測:
+	Not calibrated: the system's display scale is assumed.	未調整：システムの表示倍率を仮定しています。
+	Show the design at its true size on this screen (View › Calibrate Real Size… makes it exact)	この画面でデザインを実寸で表示（表示 › 実寸表示の調整… で正確になります）

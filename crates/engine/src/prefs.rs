@@ -34,6 +34,10 @@ pub struct Prefs {
     /// its frame.
     pub align_glyph_bounds_area: bool,
     pub display_print_size: bool,
+    /// General › Screen Resolution for Real Size: the screen's true density, device pixels per
+    /// inch, as View › Calibrate Real Size… measured it (0: not calibrated; View › Real Size then
+    /// assumes the system's reference density, 96 per inch at its display scale).
+    pub screen_ppi: f64,
     pub double_click_to_isolate: bool,
     pub transform_pattern_tiles: bool,
     pub scale_corners: bool,
@@ -343,6 +347,7 @@ impl Default for Prefs {
             align_glyph_bounds_point: false,
             align_glyph_bounds_area: false,
             display_print_size: false,
+            screen_ppi: 0.0,
             double_click_to_isolate: true,
             transform_pattern_tiles: false,
             scale_corners: false,

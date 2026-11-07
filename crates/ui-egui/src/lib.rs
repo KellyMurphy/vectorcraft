@@ -172,6 +172,9 @@ pub struct VectorcraftApp {
     frame_rate: frame_rate::FrameRate,
     /// Canvas rect of the last frame (screen points), for control-channel coordinate mapping.
     pub canvas_rect: Option<egui::Rect>,
+    /// The canvas's density in the last frame: device pixels per screen point, and the share of
+    /// it that is the app's own UI scaling (`zoom_factor`), for View › Real Size.
+    pub canvas_density: (f32, f32),
     /// Hover position in document coordinates.
     pub hover_doc: Option<vectorcraft_geom::Point>,
     /// System clipboard: SVG to publish next frame, the last SVG we published (so pasting it back

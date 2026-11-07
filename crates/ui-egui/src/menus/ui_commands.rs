@@ -401,6 +401,18 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "Cmd+1",
         "{} 100%: with Display Print Size at 100% Zoom off, one document point per screen point; on, one document inch fills 96 screen points (an inch at the system's reference density, whatever the display scaling)",
     ),
+    (
+        "view.realSize",
+        "Real Size",
+        "",
+        "{} zoom so the document shows at its true size on this screen (a millimetre of the design is a millimetre on the glass, to hold a garment or a ruler against), centred on the selection, else the art, else the artboard. The screen's density is Preferences › General › Screen Resolution for Real Size (prefs key screenPpi, device pixels per inch, set by View › Calibrate Real Size…); when it isn't set (0), the system's reference density, 96 per inch at its display scale, which is only roughly to scale → {zoom, ppi, calibrated}",
+    ),
+    (
+        "view.calibrateRealSize",
+        "Calibrate Real Size…",
+        "",
+        "{} open Calibrate Real Size (dialog `calibrateRealSize`, fields ppi (device pixels per inch, 30–1200), reference: card|ruler, measured (mm, optional), auto): it draws a bar as long as the reference at that density (card: a bank card's width, 85.60 mm, ISO/IEC 7810 ID-1; ruler: 100 mm); drag the bar's end until it matches the card or ruler held against the screen, or type what the bar measures; OK runs prefs.set {key: screenPpi, value: ppi}, or 0 after Reset (not calibrated)",
+    ),
     ("view.setZoom", "Set Zoom", "", "{zoom: percent, center?: [x,y]}"),
     (
         "view.goToArtboard",

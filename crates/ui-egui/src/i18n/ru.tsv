@@ -6964,3 +6964,14 @@ shape	Open	Открытый
 	Close-Up	Крупный план
 	Mockup…	Макет…
 	The design sewn on a T-shirt, polo shirt, hoodie, cap, tote bag or towel, at its real size	Дизайн, вышитый на футболке, поло, худи, бейсболке, сумке или полотенце, в натуральную величину
+	Real Size	Реальный размер
+	Calibrate Real Size…	Калибровка реального размера…
+	Calibrate Real Size	Калибровка реального размера
+	Screen Resolution for Real Size	Разрешение экрана для реального размера
+	Reference	Эталон
+	Bank Card Width (85.60 mm)	Ширина банковской карты (85,60 мм)
+	100 mm on a Ruler	100 мм на линейке
+	Hold the card or ruler against the screen and drag the end of the bar until the bar is exactly as long.	Приложите карту или линейку к экрану и тяните конец полосы, пока полоса не станет точно такой же длины.
+	The Bar Measures:	Длина полосы:
+	Not calibrated: the system's display scale is assumed.	Не откалибровано: используется системный масштаб экрана.
+	Show the design at its true size on this screen (View › Calibrate Real Size… makes it exact)	Показать дизайн в реальном размере на этом экране (Просмотр › Калибровка реального размера… делает его точным)

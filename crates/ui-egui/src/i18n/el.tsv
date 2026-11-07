@@ -6809,3 +6809,14 @@ breakText	Glyphs	Γλύφοι
 	Close-Up	Κοντινό
 	Mockup…	Μακέτα…
 	The design sewn on a T-shirt, polo shirt, hoodie, cap, tote bag or towel, at its real size	Το σχέδιο κεντημένο σε μπλουζάκι, πόλο, φούτερ, καπέλο, τσάντα ή πετσέτα, σε πραγματικό μέγεθος
+	Real Size	Πραγματικό μέγεθος
+	Calibrate Real Size…	Βαθμονόμηση πραγματικού μεγέθους…
+	Calibrate Real Size	Βαθμονόμηση πραγματικού μεγέθους
+	Screen Resolution for Real Size	Ανάλυση οθόνης για πραγματικό μέγεθος
+	Reference	Αναφορά
+	Bank Card Width (85.60 mm)	Πλάτος τραπεζικής κάρτας (85,60 mm)
+	100 mm on a Ruler	100 mm σε χάρακα
+	Hold the card or ruler against the screen and drag the end of the bar until the bar is exactly as long.	Κρατήστε την κάρτα ή τον χάρακα πάνω στην οθόνη και σύρετε το άκρο της μπάρας μέχρι η μπάρα να έχει ακριβώς το ίδιο μήκος.
+	The Bar Measures:	Η μπάρα μετρά:
+	Not calibrated: the system's display scale is assumed.	Χωρίς βαθμονόμηση: θεωρείται η κλίμακα οθόνης του συστήματος.
+	Show the design at its true size on this screen (View › Calibrate Real Size… makes it exact)	Εμφάνιση του σχεδίου στο πραγματικό του μέγεθος σε αυτή την οθόνη (Προβολή › Βαθμονόμηση πραγματικού μεγέθους… το κάνει ακριβές)

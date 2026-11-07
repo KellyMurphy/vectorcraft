@@ -6387,3 +6387,14 @@ breakText	Glyphs	Glifler
 	Close-Up	Yakın plan
 	Mockup…	Maket…
 	The design sewn on a T-shirt, polo shirt, hoodie, cap, tote bag or towel, at its real size	Tişört, polo, sweatshirt, şapka, çanta veya havlu üzerine işlenmiş tasarım, gerçek boyutunda
+	Real Size	Gerçek boyut
+	Calibrate Real Size…	Gerçek boyutu kalibre et…
+	Calibrate Real Size	Gerçek boyutu kalibre et
+	Screen Resolution for Real Size	Gerçek boyut için ekran çözünürlüğü
+	Reference	Referans
+	Bank Card Width (85.60 mm)	Banka kartı genişliği (85,60 mm)
+	100 mm on a Ruler	Cetvelde 100 mm
+	Hold the card or ruler against the screen and drag the end of the bar until the bar is exactly as long.	Kartı veya cetveli ekrana dayayın ve çubuk tam olarak aynı uzunlukta olana kadar çubuğun ucunu sürükleyin.
+	The Bar Measures:	Çubuğun ölçüsü:
+	Not calibrated: the system's display scale is assumed.	Kalibre edilmedi: sistemin ekran ölçeği varsayılıyor.
+	Show the design at its true size on this screen (View › Calibrate Real Size… makes it exact)	Tasarımı bu ekranda gerçek boyutunda göster (Görünüm › Gerçek boyutu kalibre et… onu kesinleştirir)

@@ -78,6 +78,7 @@ use tool_overlays::{
 pub(crate) use view::animated_zoom;
 pub use view::fit;
 use view::scroll_bars;
+pub(crate) use view::{PPI_RANGE, real_size, screen_ppi};
 #[cfg(test)]
 use view::{ScrollRest, Span, scroll_by, scroll_spans, scroll_tracks};
 
@@ -221,6 +222,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let bars = app.ui.screen_mode < 2;
     let (full, rect) = view_rects(app, outer, ui.ctx().pixels_per_point());
     app.canvas_rect = Some(rect);
+    app.canvas_density = (ui.ctx().pixels_per_point(), ui.ctx().zoom_factor());
     let fitted = app.view().is_some_and(|v| v.fitted);
     // Presentation Mode shows the active artboard on the whole screen and nothing but the art:
     // no selection, guides, grids or artboard edges (#4365).

@@ -6438,3 +6438,14 @@ breakText	Glyphs	글리프
 	Close-Up	확대
 	Mockup…	목업…
 	The design sewn on a T-shirt, polo shirt, hoodie, cap, tote bag or towel, at its real size	티셔츠, 폴로 셔츠, 후드티, 모자, 토트백 또는 수건에 수놓은 디자인을 실제 크기로 표시
+	Real Size	실제 크기
+	Calibrate Real Size…	실제 크기 보정…
+	Calibrate Real Size	실제 크기 보정
+	Screen Resolution for Real Size	실제 크기용 화면 해상도
+	Reference	기준
+	Bank Card Width (85.60 mm)	은행 카드 너비(85.60mm)
+	100 mm on a Ruler	자의 100mm
+	Hold the card or ruler against the screen and drag the end of the bar until the bar is exactly as long.	카드나 자를 화면에 대고 막대가 정확히 같은 길이가 될 때까지 막대 끝을 드래그하세요.
+	The Bar Measures:	막대 실측:
+	Not calibrated: the system's display scale is assumed.	보정 안 됨: 시스템 디스플레이 배율을 가정합니다.
+	Show the design at its true size on this screen (View › Calibrate Real Size… makes it exact)	이 화면에서 디자인을 실제 크기로 표시(보기 › 실제 크기 보정…으로 정확해집니다)

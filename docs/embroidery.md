@@ -398,6 +398,17 @@ it; **Close-Up** shows the design and the cloth round it. The mockup opens as a 
 garment's real size, ready to export or print; `embroidery.mockup {garment, placement, view, width,
 fabricTexture, fabricColor, format: png, path?}` writes or returns the PNG instead.
 
+**Real size.** View › **Real Size** (or **Real Size** in the Embroidery panel) zooms so a millimetre of
+the design is a millimetre on the screen, centred on the selection or else the design: hold a garment,
+a hoop or a ruler against the screen to judge it. Few systems know a screen's true size, so calibrate
+it once with View › **Calibrate Real Size…**: hold a bank card (its width is 85.60 mm, ISO/IEC 7810
+ID-1) or a ruler (100 mm) against the bar, drag the bar's end until they match (or type what the bar
+measures, or the screen's resolution in pixels per inch), and click OK. The result is Preferences ›
+General › **Screen Resolution for Real Size** (`screenPpi`, device pixels per inch), kept with the
+preferences, not the document; **Reset** in the dialog goes back to not calibrated, where Real Size
+assumes the system's reference density (96 per inch at its display scale) and is only roughly to scale.
+The app's own UI scaling doesn't change it. Real Size works with Stitch Preview and Realistic Stitches.
+
 **The density adviser.** View › **Stitch Density** (it turns on Stitch Preview too) tints the design by
 needle holes per mm²: green where it is light, amber near the limit, red past it (10 per mm², the 40
 holes in a 2 × 2 mm spot that the checker counts), with a legend in the canvas's corner. A dense spot or
@@ -753,6 +764,8 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.recordSewOut` | `{fabric?, machine?, notes?, results?: [{swatch, result?: pass\|fail\|untested, notes?}]}`: fill in the form, one undo step |
 | `view.stitchPreview` | toggles Stitch Preview |
 | `view.realisticStitches` | toggles Realistic Stitches (shaded thread on the fabric's texture; turns Stitch Preview on) |
+| `view.realSize` | zooms so the design shows at its true size on the screen, by the calibrated `screenPpi` (or the system's reference density) → `{zoom, ppi, calibrated}` |
+| `view.calibrateRealSize` | opens Calibrate Real Size: match a bar to a bank card or ruler held against the screen; OK sets the preference `screenPpi` (`prefs.set {key: screenPpi, value}` sets it directly; 0: not calibrated) |
 
 Agents reach all of these over MCP (`run_command`), with the `embroidery` prompt, this guide as the
 resource `vectorcraft://guide/embroidery`, the file format specifications as `vectorcraft://spec/…`, and

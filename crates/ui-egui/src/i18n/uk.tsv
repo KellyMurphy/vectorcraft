@@ -6475,3 +6475,14 @@ breakText	Glyphs	Гліфи
 	Close-Up	Великий план
 	Mockup…	Макет…
 	The design sewn on a T-shirt, polo shirt, hoodie, cap, tote bag or towel, at its real size	Дизайн, вишитий на футболці, поло, худі, бейсболці, сумці чи рушнику, у натуральну величину
+	Real Size	Реальний розмір
+	Calibrate Real Size…	Калібрування реального розміру…
+	Calibrate Real Size	Калібрування реального розміру
+	Screen Resolution for Real Size	Роздільність екрана для реального розміру
+	Reference	Еталон
+	Bank Card Width (85.60 mm)	Ширина банківської картки (85,60 мм)
+	100 mm on a Ruler	100 мм на лінійці
+	Hold the card or ruler against the screen and drag the end of the bar until the bar is exactly as long.	Прикладіть картку чи лінійку до екрана й тягніть кінець смуги, доки смуга не стане точно такої самої довжини.
+	The Bar Measures:	Довжина смуги:
+	Not calibrated: the system's display scale is assumed.	Не відкалібровано: використовується системний масштаб екрана.
+	Show the design at its true size on this screen (View › Calibrate Real Size… makes it exact)	Показати дизайн у реальному розмірі на цьому екрані (Перегляд › Калібрування реального розміру… робить його точним)

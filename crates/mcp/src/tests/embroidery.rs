@@ -346,3 +346,23 @@ fn an_agent_shows_the_design_on_a_garment() {
         assert!(m.params.contains(id), "embroidery.mockup documents placement {id}");
     }
 }
+
+#[test]
+fn an_agent_calibrates_the_real_size_view() {
+    let mut s = Server::new(Box::new(Headless::with_document()));
+    assert_eq!(run(&mut s, "prefs.get", json!({"key": "screenPpi"})), json!(0.0), "not calibrated until set");
+    run(&mut s, "prefs.set", json!({"key": "screenPpi", "value": 189.5}));
+    assert_eq!(run(&mut s, "prefs.get", json!({"key": "screenPpi"})), json!(189.5));
+    let list = run(&mut s, "prefs.list", json!({})).to_string();
+    assert!(list.contains("\"screenPpi\"") && list.contains("Screen Resolution for Real Size"), "prefs.list describes it");
+    let bad = rpc(
+        &mut s,
+        "tools/call",
+        json!({"name": "run_command", "arguments": {"command": "prefs.set", "params": {"key": "screenPpi", "value": 5000}}}),
+    );
+    assert!(bad.get("error").is_some() || bad["result"]["isError"] == true, "{bad}");
+    // The view commands that use it are the desktop app's; the guide tells agents about them.
+    for id in ["view.realSize", "view.calibrateRealSize", "screenPpi"] {
+        assert!(guide().contains(id), "the guide documents {id}");
+    }
+}

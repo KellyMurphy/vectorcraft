@@ -6723,3 +6723,14 @@ breakText	Glyphs	Glyffer
 	Close-Up	Nærbillede
 	Mockup…	Mockup…
 	The design sewn on a T-shirt, polo shirt, hoodie, cap, tote bag or towel, at its real size	Designet broderet på en T-shirt, poloshirt, hættetrøje, kasket, mulepose eller et håndklæde i virkelig størrelse
+	Real Size	Virkelig størrelse
+	Calibrate Real Size…	Kalibrer virkelig størrelse…
+	Calibrate Real Size	Kalibrer virkelig størrelse
+	Screen Resolution for Real Size	Skærmopløsning til virkelig størrelse
+	Reference	Reference
+	Bank Card Width (85.60 mm)	Bredde af et betalingskort (85,60 mm)
+	100 mm on a Ruler	100 mm på en lineal
+	Hold the card or ruler against the screen and drag the end of the bar until the bar is exactly as long.	Hold kortet eller linealen mod skærmen, og træk i enden af bjælken, til bjælken er nøjagtig lige så lang.
+	The Bar Measures:	Bjælken måler:
+	Not calibrated: the system's display scale is assumed.	Ikke kalibreret: systemets skærmskalering antages.
+	Show the design at its true size on this screen (View › Calibrate Real Size… makes it exact)	Vis designet i virkelig størrelse på denne skærm (Vis › Kalibrer virkelig størrelse… gør den nøjagtig)

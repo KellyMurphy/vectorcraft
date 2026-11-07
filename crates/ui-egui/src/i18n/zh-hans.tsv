@@ -6717,3 +6717,14 @@ breakText	Glyphs	字形
 	Close-Up	特写
 	Mockup…	效果图…
 	The design sewn on a T-shirt, polo shirt, hoodie, cap, tote bag or towel, at its real size	按实际尺寸显示绣在 T 恤、Polo 衫、连帽衫、帽子、帆布袋或毛巾上的设计
+	Real Size	实际尺寸
+	Calibrate Real Size…	校准实际尺寸…
+	Calibrate Real Size	校准实际尺寸
+	Screen Resolution for Real Size	实际尺寸的屏幕分辨率
+	Reference	参照物
+	Bank Card Width (85.60 mm)	银行卡宽度（85.60 毫米）
+	100 mm on a Ruler	尺子上的 100 毫米
+	Hold the card or ruler against the screen and drag the end of the bar until the bar is exactly as long.	将卡片或尺子贴在屏幕上，拖动条的末端，直到条的长度与之完全相同。
+	The Bar Measures:	条的实测长度：
+	Not calibrated: the system's display scale is assumed.	未校准：假定为系统的显示缩放。
+	Show the design at its true size on this screen (View › Calibrate Real Size… makes it exact)	在此屏幕上按实际尺寸显示设计（视图 › 校准实际尺寸… 可使其精确）

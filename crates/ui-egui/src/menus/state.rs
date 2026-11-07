@@ -219,6 +219,7 @@ pub fn enabled(app: &VectorcraftApp, id: &str) -> bool {
         | "view.fitArtboard"
         | "view.fitAll"
         | "view.actualSize"
+        | "view.realSize"
         | "view.outline"
         | "view.rotate" => app.session.active().is_some(),
         "view.rotateToSelection" | crate::addons::arrange::ZOOM => app.session.active().is_some_and(|d| !d.selection.objects.is_empty()),

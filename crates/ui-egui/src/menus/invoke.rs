@@ -77,6 +77,7 @@ pub(super) fn menu_dialog(app: &VectorcraftApp, id: &str) -> Option<(&'static st
         crate::addons::typetools::COMMAND => (crate::addons::typetools::KIND, crate::addons::typetools::fields(app)),
         crate::addons::select::COMMAND => (crate::addons::select::KIND, crate::addons::select::fields(app)),
         "artboard.rearrange" => (crate::dialogs::rearrange_artboards::KIND, crate::dialogs::rearrange_artboards::open_fields(app)),
+        "view.calibrateRealSize" => (crate::dialogs::calibrate_real_size::KIND, crate::dialogs::calibrate_real_size::fields(app)),
         _ => return None,
     })
 }

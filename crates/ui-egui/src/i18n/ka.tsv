@@ -6441,3 +6441,14 @@ font-script	Japanese	იაპონური
 	Close-Up	ახლო ხედი
 	Mockup…	მაკეტი…
 	The design sewn on a T-shirt, polo shirt, hoodie, cap, tote bag or towel, at its real size	დიზაინი ამოქარგული მაისურზე, პოლოზე, ჰუდიზე, ქუდზე, ჩანთაზე ან პირსახოცზე, რეალურ ზომაში
+	Real Size	რეალური ზომა
+	Calibrate Real Size…	რეალური ზომის კალიბრაცია…
+	Calibrate Real Size	რეალური ზომის კალიბრაცია
+	Screen Resolution for Real Size	ეკრანის გარჩევადობა რეალური ზომისთვის
+	Reference	ეტალონი
+	Bank Card Width (85.60 mm)	საბანკო ბარათის სიგანე (85,60 მმ)
+	100 mm on a Ruler	100 მმ სახაზავზე
+	Hold the card or ruler against the screen and drag the end of the bar until the bar is exactly as long.	მიადეთ ბარათი ან სახაზავი ეკრანს და გადაათრიეთ ზოლის ბოლო, სანამ ზოლი ზუსტად იმავე სიგრძის არ გახდება.
+	The Bar Measures:	ზოლის სიგრძე:
+	Not calibrated: the system's display scale is assumed.	არ არის კალიბრებული: იგულისხმება სისტემის ეკრანის მასშტაბი.
+	Show the design at its true size on this screen (View › Calibrate Real Size… makes it exact)	დიზაინის ჩვენება რეალური ზომით ამ ეკრანზე (ხედი › რეალური ზომის კალიბრაცია… მას ზუსტს ხდის)

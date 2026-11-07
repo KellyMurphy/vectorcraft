@@ -85,6 +85,51 @@ pub(crate) fn actual_size_zoom(display_print_size: bool) -> f64 {
     if display_print_size { 96.0 / 72.0 } else { 1.0 }
 }
 
+/// The screen resolutions View › Calibrate Real Size… takes, device pixels per inch; below them
+/// Preferences' Screen Resolution for Real Size reads as not calibrated.
+pub(crate) const PPI_RANGE: std::ops::RangeInclusive<f64> = 30.0..=1200.0;
+
+/// The screen's density for View › Real Size, device pixels per inch, and whether it was
+/// calibrated: Preferences' Screen Resolution for Real Size (`screenPpi`) when it is set, else the
+/// system's reference density, 96 per inch at its display scale (the canvas's device pixels per
+/// point `ppp` without the app's own UI scaling `ui_zoom`). Few systems know a screen's true size,
+/// so only a calibrated value is really to scale.
+pub(crate) fn screen_ppi(pref: f64, (ppp, ui_zoom): (f32, f32)) -> (f64, bool) {
+    if pref.is_finite() && PPI_RANGE.contains(&pref) {
+        return (pref, true);
+    }
+    let system = f64::from(ppp) / f64::from(ui_zoom).max(0.1);
+    (96.0 * system.clamp(0.25, 8.0), false)
+}
+
+/// The zoom at which a document shows at its true size: a document inch (72 points) covers `ppi`
+/// device pixels, `ppp` of them to a screen point.
+pub(crate) fn real_size_zoom(ppi: f64, ppp: f32) -> f64 {
+    (ppi / 72.0 / f64::from(ppp).max(0.1)).clamp(0.0313, 640.0)
+}
+
+/// View › Real Size (`view.realSize`): zoom so a millimetre of the document is a millimetre on the
+/// screen, centred on the selection, else on the art, else on the navigator's artboard →
+/// {zoom, ppi, calibrated}.
+pub(crate) fn real_size(app: &mut VectorcraftApp) -> Result<serde_json::Value, String> {
+    let (ppi, calibrated) = screen_ppi(app.session.prefs.screen_ppi, app.canvas_density);
+    let zoom = real_size_zoom(ppi, app.canvas_density.0);
+    let current = app.view().map_or(0, |v| v.artboard);
+    let st = app.session.active().ok_or("no document")?;
+    let target = st
+        .doc
+        .bounds_of(&st.selection.objects, true)
+        .or_else(|| st.doc.art_bounds())
+        .or_else(|| st.doc.artboards.get(current).or(st.doc.artboards.first()).map(|a| a.rect));
+    let v = app.view_mut().ok_or("no document")?;
+    if let Some(t) = target {
+        v.center = t.center();
+    }
+    v.zoom = zoom;
+    v.fitted = true;
+    Ok(serde_json::json!({ "zoom": zoom, "ppi": ppi, "calibrated": calibrated }))
+}
+
 /// Zoom view `vm` of the canvas `rect` to `zoom` (clamped to the zoom range), keeping the document
 /// point under screen point `p` where it is.
 pub(super) fn zoom_about(vm: &mut View, rect: egui::Rect, p: Pos2, zoom: f64) {

@@ -6892,3 +6892,14 @@ breakText	Glyphs	Merkit
 	Close-Up	Lähikuva
 	Mockup…	Malli…
 	The design sewn on a T-shirt, polo shirt, hoodie, cap, tote bag or towel, at its real size	Kuvio kirjottuna T-paitaan, pikeepaitaan, hupparin, lippalakkiin, kassiin tai pyyhkeeseen todellisessa koossa
+	Real Size	Todellinen koko
+	Calibrate Real Size…	Kalibroi todellinen koko…
+	Calibrate Real Size	Kalibroi todellinen koko
+	Screen Resolution for Real Size	Näytön tarkkuus todelliselle koolle
+	Reference	Vertailukohde
+	Bank Card Width (85.60 mm)	Pankkikortin leveys (85,60 mm)
+	100 mm on a Ruler	100 mm viivaimella
+	Hold the card or ruler against the screen and drag the end of the bar until the bar is exactly as long.	Pidä korttia tai viivainta näyttöä vasten ja vedä palkin päätä, kunnes palkki on täsmälleen yhtä pitkä.
+	The Bar Measures:	Palkin pituus:
+	Not calibrated: the system's display scale is assumed.	Ei kalibroitu: järjestelmän näytön skaalaus oletetaan.
+	Show the design at its true size on this screen (View › Calibrate Real Size… makes it exact)	Näytä kuvio todellisessa koossa tällä näytöllä (Näytä › Kalibroi todellinen koko… tekee siitä tarkan)

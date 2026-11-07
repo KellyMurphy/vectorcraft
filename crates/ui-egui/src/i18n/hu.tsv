@@ -6841,3 +6841,14 @@ breakText	Glyphs	Glifák
 	Close-Up	Közeli
 	Mockup…	Makett…
 	The design sewn on a T-shirt, polo shirt, hoodie, cap, tote bag or towel, at its real size	A minta pólóra, galléros pólóra, pulóverre, sapkára, táskára vagy törölközőre hímezve, valós méretben
+	Real Size	Valós méret
+	Calibrate Real Size…	Valós méret kalibrálása…
+	Calibrate Real Size	Valós méret kalibrálása
+	Screen Resolution for Real Size	Képernyőfelbontás a valós mérethez
+	Reference	Viszonyítás
+	Bank Card Width (85.60 mm)	Bankkártya szélessége (85,60 mm)
+	100 mm on a Ruler	100 mm vonalzón
+	Hold the card or ruler against the screen and drag the end of the bar until the bar is exactly as long.	Tartsa a kártyát vagy a vonalzót a képernyőhöz, és húzza a sáv végét, amíg a sáv pontosan ugyanolyan hosszú nem lesz.
+	The Bar Measures:	A sáv hossza:
+	Not calibrated: the system's display scale is assumed.	Nincs kalibrálva: a rendszer kijelzőméretezése érvényes.
+	Show the design at its true size on this screen (View › Calibrate Real Size… makes it exact)	A minta valós méretben ezen a képernyőn (Nézet › Valós méret kalibrálása… teszi pontossá)

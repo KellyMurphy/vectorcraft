@@ -6458,3 +6458,14 @@ breakText	Glyphs	Glyph
 	Close-Up	Cận cảnh
 	Mockup…	Mô phỏng…
 	The design sewn on a T-shirt, polo shirt, hoodie, cap, tote bag or towel, at its real size	Mẫu thêu trên áo thun, áo polo, áo hoodie, mũ, túi vải hoặc khăn, theo kích thước thật
+	Real Size	Kích thước thật
+	Calibrate Real Size…	Hiệu chỉnh kích thước thật…
+	Calibrate Real Size	Hiệu chỉnh kích thước thật
+	Screen Resolution for Real Size	Độ phân giải màn hình cho kích thước thật
+	Reference	Mốc so sánh
+	Bank Card Width (85.60 mm)	Chiều rộng thẻ ngân hàng (85,60 mm)
+	100 mm on a Ruler	100 mm trên thước kẻ
+	Hold the card or ruler against the screen and drag the end of the bar until the bar is exactly as long.	Áp thẻ hoặc thước vào màn hình rồi kéo đầu thanh cho đến khi thanh dài đúng bằng.
+	The Bar Measures:	Thanh đo được:
+	Not calibrated: the system's display scale is assumed.	Chưa hiệu chỉnh: dùng tỉ lệ hiển thị của hệ thống.
+	Show the design at its true size on this screen (View › Calibrate Real Size… makes it exact)	Hiển thị mẫu theo kích thước thật trên màn hình này (Xem › Hiệu chỉnh kích thước thật… giúp chính xác)

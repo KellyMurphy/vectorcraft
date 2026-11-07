@@ -2242,6 +2242,12 @@ fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
             let (id, p) = crate::menus::click_target("Garment Mockup…", "embroidery.mockup", &defaults);
             app.run(&id, p).ok();
         }
+        if widgets::flat_button_fit(ui, tl!("Real Size"), 64.0)
+            .on_hover_text(tl!("Show the design at its true size on this screen (View › Calibrate Real Size… makes it exact)"))
+            .clicked()
+        {
+            app.run("view.realSize", json!({})).ok();
+        }
     });
     ui.add_space(2.0);
     ui.horizontal(|ui| {

@@ -563,6 +563,8 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                 c("Fit Artboard in Window", "view.fitArtboard"),
                 c("Fit All in Window", "view.fitAll"),
                 c("Actual Size", "view.actualSize"),
+                c("Real Size", "view.realSize"),
+                c("Calibrate Real Size…", "view.calibrateRealSize"),
                 Sep,
                 sub("Rotate View", crate::state::ROTATE_VIEW_ANGLES.iter().map(|(l, a)| cp(l, "view.rotate", json!({ "angle": a }))).collect()),
                 c("Rotate View to Selection", "view.rotateToSelection"),

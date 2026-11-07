@@ -115,6 +115,7 @@ impl VectorcraftApp {
             updates_rt: Default::default(),
             frame_rate: Default::default(),
             canvas_rect: None,
+            canvas_density: (1.0, 1.0),
             hover_doc: None,
             custom_titlebar: false,
             last_window_title: String::new(),
