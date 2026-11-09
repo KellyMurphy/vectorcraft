@@ -54,6 +54,7 @@ impl Serialize for Node {
             is_default(&e.shape_mode),
             e.stitch.is_none(),
             e.symbol_overrides.is_empty(),
+            e.envelope_edit_margin.is_none(),
         ];
         let mut st = s.serialize_struct("Node", skips.iter().filter(|s| !**s).count())?;
         let mut skip = skips.into_iter();
@@ -96,6 +97,7 @@ impl Serialize for Node {
         field!("shape_mode", &e.shape_mode);
         field!("stitch", &StitchOut(&e.stitch));
         field!("symbol_overrides", &e.symbol_overrides);
+        field!("envelope_edit_margin", &e.envelope_edit_margin);
         st.end()
     }
 }
@@ -237,6 +239,8 @@ pub(super) struct NodeWire {
     stitch: Option<Box<crate::StitchSettings>>,
     #[serde(default, deserialize_with = "counted_list")]
     symbol_overrides: Vec<crate::SymbolOverride>,
+    #[serde(default)]
+    envelope_edit_margin: Option<[f32; 4]>,
 }
 
 /// A node's stitch settings as written: those kept from a newer version go back as they were read.
@@ -273,6 +277,7 @@ impl From<NodeWire> for Node {
             shape_mode: w.shape_mode,
             stitch: w.stitch,
             symbol_overrides: w.symbol_overrides,
+            envelope_edit_margin: w.envelope_edit_margin,
         };
         Node {
             id: w.id,

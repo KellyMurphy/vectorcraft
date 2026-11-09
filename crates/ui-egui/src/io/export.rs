@@ -1,6 +1,6 @@
 use super::save::{
-    ask_before_losing, export_path, is_web, report_saved, report_write_error, saved_status, target_path, target_path_keeping, view_file,
-    write_encoded, write_named, write_reporting,
+    ask_before_losing, export_path, is_web, remember_active_artboard, report_saved, report_write_error, saved_status, target_path,
+    target_path_keeping, view_file, write_encoded, write_named, write_reporting,
 };
 use super::{EngineError, Progress, Value, VectorcraftApp, Writer, background, cancel, fileio, json, progress};
 
@@ -36,8 +36,10 @@ pub fn export(app: &mut VectorcraftApp, format: Option<&str>, path: Option<Strin
         return export_formats(app, &formats, path, params);
     }
     let f = fileio::writable_format(format, path.as_deref())?;
+    // A `.ai` file names the view's active artboard.
+    remember_active_artboard(app);
     let st = app.session.active().ok_or("no document")?;
-    let doc = match fileio::export_source(st, params).map_err(|e| e.to_string())? {
+    let doc = match fileio::export_doc(st, f, params).map_err(|e| e.to_string())? {
         std::borrow::Cow::Borrowed(_) => st.doc.clone(),
         std::borrow::Cow::Owned(d) => std::sync::Arc::new(d),
     };

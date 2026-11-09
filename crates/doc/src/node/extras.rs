@@ -68,6 +68,9 @@ pub struct NodeExtras {
     /// As an instance of a dynamic symbol, its own appearance changes to objects of the symbol's
     /// art (see [`crate::symbol_overrides`]); empty for none.
     pub symbol_overrides: Vec<crate::SymbolOverride>,
+    /// As an envelope with margins in Edit Contents, the margins its strokes gave when Edit Contents
+    /// began ([`crate::live::EnvelopeOptions::bounds_margin`]).
+    pub envelope_edit_margin: Option<[f32; 4]>,
 }
 
 /// No extras: what [`Node::extras`] gives for a node without any.
@@ -94,6 +97,7 @@ pub(super) static NO_EXTRAS: NodeExtras = NodeExtras {
     shape_mode: crate::ShapeMode::Add,
     stitch: None,
     symbol_overrides: Vec::new(),
+    envelope_edit_margin: None,
 };
 
 /// A node's [`NodeExtras`], if it has any ([`Node::extras`]). Extras that are all unset equal

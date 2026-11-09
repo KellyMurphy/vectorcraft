@@ -87,6 +87,7 @@ pub fn tool_icon(name: &str) -> &'static str {
         "tool-stitch-angle" => "dc-stitch-angle",
         "tool-stitch-fill" => "dc-stitch-fill",
         "tool-dimension" => "dc-dimension",
+        "tool-contour" => "dc-contour",
         "tool-blend" => "dc-blend",
         "tool-objects-on-path" => "dc-objects-on-path",
         "tool-symbol" => "dc-symbol-sprayer",

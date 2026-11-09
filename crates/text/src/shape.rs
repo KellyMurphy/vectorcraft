@@ -80,6 +80,8 @@ pub(crate) struct SGlyph {
     /// decided for the whole segment it was shaped in ([`joins`]): on a curved path it is bent
     /// along the path so its joins meet.
     pub cursive: bool,
+    /// Pattern language of this glyph's source run (unknown languages only use user exceptions).
+    pub hyphen_language: crate::hyphen::Language,
 }
 
 /// Does `script` join its letters (a cursive script, whose neighbouring glyphs touch)?
@@ -156,9 +158,9 @@ impl SGlyph {
     pub fn is_soft_hyphen(&self) -> bool {
         self.ch == SOFT_HYPHEN
     }
-    /// Part of a word that may be hyphenated (letters and apostrophes).
+    /// Part of a word that may be hyphenated (letters, marks, joiners and apostrophes).
     pub fn is_letter(&self) -> bool {
-        self.ch.is_alphabetic() || matches!(self.ch, '\'' | '’')
+        crate::hyphen::is_word_char(self.ch)
     }
     /// Vertical type: a tate-chu-yoko glyph after its block's first, sharing that glyph's cell.
     pub fn continues_tcy(&self) -> bool {
@@ -947,6 +949,7 @@ fn inline_glyph(
         no_break: st.no_break,
         vertical_roman: false,
         cursive: false,
+        hyphen_language: crate::hyphen::Language::None,
     }
 }
 
@@ -1083,7 +1086,10 @@ fn shape_segment(text: &str, context: &Range<usize>, seg: &Segment, feats: &OtFe
                 if let Some(post) = text.get(range.end..context.end) {
                     buf.set_post_context(post);
                 }
-                let gb = shaper.shape(buf, ShapeOptions::new().features(&feats));
+                // A buffer whose characters name no script reads as `UNKNOWN`: its plan has none.
+                let script = Some(buf.script()).filter(|s| *s != harfrust::script::UNKNOWN);
+                let plan = face.shape_plan(&shaper, buf.direction(), script, language.as_ref(), &feats);
+                let gb = shaper.shape(buf, ShapeOptions::new().features(&feats).plan(Some(&plan)));
                 gb.glyph_infos()
                     .iter()
                     .zip(gb.glyph_positions())
@@ -1327,6 +1333,7 @@ fn shape_segment(text: &str, context: &Range<usize>, seg: &Segment, feats: &OtFe
             no_break: gst.no_break,
             vertical_roman: gst.standard_vertical_roman,
             cursive,
+            hyphen_language: crate::hyphen::Language::from_tag(gst.language.as_deref()),
         });
     }
 }

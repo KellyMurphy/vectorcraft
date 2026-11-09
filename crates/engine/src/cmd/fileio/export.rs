@@ -115,6 +115,17 @@ fn export_formats(s: &mut Session, p: &Value, formats: &[&'static Format]) -> Re
     Ok(out)
 }
 
+/// The document an export of `st` in format `f` writes ([`export_source`]): a `.ai` or `.ait`
+/// file names the view's active artboard ([`DocState::active_artboard`]) as its active one, as a
+/// save does. The open document is unchanged.
+pub fn export_doc<'a>(st: &'a DocState, f: &Format, p: &Value) -> Result<Cow<'a, Document>> {
+    let mut doc = export_source(st, p)?;
+    if let Some(id) = super::save::moved_active_artboard(st, &doc, f) {
+        doc.to_mut().opened_artboard = Some(id);
+    }
+    Ok(doc)
+}
+
 /// The document an export of `st` writes: the whole document, or with `selectedOnly` just the
 /// selected objects, each in its layers and groups (a clipping group keeps its clipping path).
 pub fn export_source<'a>(st: &'a DocState, p: &Value) -> Result<Cow<'a, Document>> {
@@ -233,7 +244,7 @@ fn source<'a>(s: &'a mut Session, f: &Format, p: &Value, cmd: &str) -> Result<(C
         return Ok((Cow::Owned(doc), display_doc_title));
     }
     let st = s.doc()?;
-    let doc = export_source(st, p)?;
+    let doc = export_doc(st, f, p)?;
     let display_doc_title = super::has_own_title(&doc);
     Ok((super::titled_for_export(&doc, st.path.as_deref(), f.id).map_or(doc, Cow::Owned), display_doc_title))
 }
