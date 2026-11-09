@@ -7026,3 +7026,5 @@ breakText	Glyphs	Glify
 	Align to Pixel Grid	Wyrównaj do siatki pikseli
 @msg	only paths and compound paths can be aligned to the pixel grid	do siatki pikseli można wyrównać tylko ścieżki i ścieżki złożone
 @msg	side is left or right, not `{s}`	side to left lub right, a nie `{s}`
+	Compensation	Kompensacja
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Arkusz kompensacji: szyty bez kompensacji, aby zmierzyć, jak bardzo tkanina ściąga się w każdym kierunku ściegu.

@@ -7205,3 +7205,5 @@ breakText	Glyphs	Merkit
 	Align to Pixel Grid	Tasaa pikseliruudukkoon
 @msg	only paths and compound paths can be aligned to the pixel grid	vain polut ja yhdistelmäpolut voi tasata pikseliruudukkoon
 @msg	side is left or right, not `{s}`	side on left tai right, ei `{s}`
+	Compensation	Kompensaatio
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Kompensaatioarkki: ommellaan ilman kompensaatiota, jotta voidaan mitata, kuinka paljon kangas vetäytyy kussakin pistosuunnassa.

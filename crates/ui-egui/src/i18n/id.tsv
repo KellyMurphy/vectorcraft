@@ -6952,3 +6952,5 @@ breakText	Glyphs	Glif
 # Align to Pixel Grid
 	Align to Pixel Grid	Sejajarkan ke grid piksel
 @msg	side is left or right, not `{s}`	side adalah left atau right, bukan `{s}`
+	Compensation	Kompensasi
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Lembar kompensasi: dijahit tanpa kompensasi, untuk mengukur seberapa jauh kain tertarik di setiap arah tusukan.

@@ -618,6 +618,45 @@ fn the_sew_out_form_records_results_as_one_undo_step() {
     assert!(s.execute("embroidery.recordSewOut", &json!({"fabric": "x"})).is_err());
 }
 
+/// E10.1: the compensation sheet is a sheet of its own; its swatches carry their angle and drawn
+/// sizes, and take the sizes measured on the sewn swatch.
+#[test]
+fn the_compensation_sheet_records_measured_sizes() {
+    let mut s = Session::new();
+    let r = s.execute("embroidery.testSheet", &json!({})).unwrap();
+    assert!(r["sections"].as_array().unwrap().iter().all(|x| x.get("angle").is_none()), "not on the default sheet");
+    let r = s.execute("embroidery.testSheet", &json!({"sections": ["compensation"]})).unwrap();
+    let angles: Vec<f64> = r["sections"].as_array().unwrap().iter().map(|x| x["angle"].as_f64().unwrap()).collect();
+    assert_eq!(angles, [0.0, 45.0, 90.0, 135.0]);
+    assert_eq!(r["swatches"], 20, "four satin columns and a fill square at each angle");
+    let form = s.execute("embroidery.sewOut", &json!({})).unwrap();
+    let l2 = form["sewOut"]["swatches"].as_array().unwrap().iter().find(|w| w["id"] == "L2").unwrap().clone();
+    assert_eq!((l2["angle"].as_f64(), l2["drawnWidth"].as_f64(), l2["drawnLength"].as_f64()), (Some(45.0), Some(4.0), Some(30.0)));
+    assert!(l2.get("measuredWidth").is_none());
+    let k = form["sections"].as_array().unwrap().iter().find(|x| x["id"] == "compensation0").unwrap();
+    assert_eq!((k["title"].as_str(), k["default"].as_bool()), (Some("Compensation 0°"), Some(false)));
+    s.execute("embroidery.recordSewOut", &json!({"results": [{"swatch": "L2", "measuredWidth": 3.7, "measuredLength": 30.6}]})).unwrap();
+    let form = s.execute("embroidery.sewOut", &json!({})).unwrap();
+    let l2 = &form["sewOut"]["swatches"].as_array().unwrap().iter().find(|w| w["id"] == "L2").unwrap().clone();
+    assert_eq!((l2["measuredWidth"].as_f64(), l2["measuredLength"].as_f64()), (Some(3.7), Some(30.6)));
+    // null clears one; the other stays.
+    s.execute("embroidery.recordSewOut", &json!({"results": [{"swatch": "L2", "measuredLength": null}]})).unwrap();
+    let w = &s.doc().unwrap().doc.embroidery.sew_out.as_ref().unwrap().swatches;
+    let l2 = w.iter().find(|w| w.id == "L2").unwrap();
+    assert_eq!((l2.measured_width, l2.measured_length), (Some(3.7), None));
+    for bad in [
+        json!({"results": [{"swatch": "L2", "measuredWidth": 0}]}),
+        json!({"results": [{"swatch": "L2", "measuredWidth": -1}]}),
+        json!({"results": [{"swatch": "L2", "measuredWidth": 1e9}]}),
+        json!({"results": [{"swatch": "L2", "measuredWidth": "3"}]}),
+    ] {
+        assert!(s.execute("embroidery.recordSewOut", &bad).is_err(), "{bad}");
+    }
+    // Only compensation swatches have sizes to measure.
+    s.execute("embroidery.testSheet", &json!({"sections": ["satinWidth"]})).unwrap();
+    assert!(s.execute("embroidery.recordSewOut", &json!({"results": [{"swatch": "A1", "measuredWidth": 1.0}]})).is_err());
+}
+
 #[test]
 fn dst_export_writes_a_design_per_artboard() {
     let mut s = Session::new();

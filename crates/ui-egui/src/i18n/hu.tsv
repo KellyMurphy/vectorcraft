@@ -7154,3 +7154,5 @@ breakText	Glyphs	Glifák
 	Align to Pixel Grid	Igazítás a pixelrácshoz
 @msg	only paths and compound paths can be aligned to the pixel grid	csak útvonalak és összetett útvonalak igazíthatók a pixelrácshoz
 @msg	side is left or right, not `{s}`	a side értéke left vagy right lehet, nem `{s}`
+	Compensation	Kompenzáció
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Kompenzációs lap: kompenzáció nélkül varrva, hogy megmérje, mennyire húzódik össze az anyag az egyes öltésirányokban.

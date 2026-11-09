@@ -7189,3 +7189,5 @@ breakText	Glyphs	Glyfy
 	Align to Pixel Grid	Zarovnat na mřížku obrazových bodů
 @msg	only paths and compound paths can be aligned to the pixel grid	na mřížku obrazových bodů lze zarovnat jen cesty a složené cesty
 @msg	side is left or right, not `{s}`	side je left nebo right, ne `{s}`
+	Compensation	Kompenzace
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	List kompenzace: šije se bez kompenzace, aby se změřilo, jak moc se látka stáhne v každém směru stehu.

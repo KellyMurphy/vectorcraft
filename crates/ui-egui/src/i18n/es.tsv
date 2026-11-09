@@ -7131,3 +7131,5 @@ breakText	Glyphs	Glifos
 	Align to Pixel Grid	Alinear con cuadrícula de píxeles
 @msg	only paths and compound paths can be aligned to the pixel grid	solo los trazados y los trazados compuestos se pueden alinear con la cuadrícula de píxeles
 @msg	side is left or right, not `{s}`	side es left o right, no `{s}`
+	Compensation	Compensación
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Hoja de compensación: se borda sin compensación para medir cuánto encoge la tela en cada dirección de puntada.

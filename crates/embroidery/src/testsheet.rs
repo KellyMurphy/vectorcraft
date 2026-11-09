@@ -56,21 +56,54 @@ pub struct Section {
     pub name: &'static str,
     /// Its title, as sewn (capitals and digits only).
     sewn: &'static str,
+    /// A compensation section's stitch direction, degrees counter-clockwise from the sheet's
+    /// horizontal (the fabric hooped with its grain running top to bottom).
+    pub angle: Option<f64>,
+    /// On a test sheet made without naming its sections. The compensation sections are a sheet
+    /// of their own ([`COMPENSATION`]).
+    pub default: bool,
 }
 
-pub const SECTIONS: [Section; 10] = [
-    Section { id: "satinWidth", letter: 'A', name: "Satin Width", sewn: "SATIN WIDTH MM" },
-    Section { id: "satinDensity", letter: 'B', name: "Satin Density", sewn: "SATIN SPACING MM" },
-    Section { id: "pullCompensation", letter: 'C', name: "Pull Compensation", sewn: "PULL COMP MM" },
-    Section { id: "fillDensity", letter: 'D', name: "Fill Density", sewn: "FILL SPACING MM" },
-    Section { id: "fillAngle", letter: 'E', name: "Fill Angle", sewn: "FILL ANGLE" },
-    Section { id: "underlay", letter: 'F', name: "Underlay", sewn: "UNDERLAY" },
-    Section { id: "lettering", letter: 'G', name: "Lettering", sewn: "LETTERING MM" },
-    Section { id: "runStyles", letter: 'H', name: "Run Styles", sewn: "RUN STYLES" },
-    Section { id: "splitSatin", letter: 'I', name: "Split Satin", sewn: "SPLIT SATIN MM" },
+/// The id that names every compensation section at once.
+pub const COMPENSATION: &str = "compensation";
+
+const fn section(id: &'static str, letter: char, name: &'static str, sewn: &'static str) -> Section {
+    Section { id, letter, name, sewn, angle: None, default: true }
+}
+
+const fn compensation(id: &'static str, letter: char, sewn: &'static str, angle: f64) -> Section {
+    Section { id, letter, name: "Compensation", sewn, angle: Some(angle), default: false }
+}
+
+pub const SECTIONS: [Section; 14] = [
+    section("satinWidth", 'A', "Satin Width", "SATIN WIDTH MM"),
+    section("satinDensity", 'B', "Satin Density", "SATIN SPACING MM"),
+    section("pullCompensation", 'C', "Pull Compensation", "PULL COMP MM"),
+    section("fillDensity", 'D', "Fill Density", "FILL SPACING MM"),
+    section("fillAngle", 'E', "Fill Angle", "FILL ANGLE"),
+    section("underlay", 'F', "Underlay", "UNDERLAY"),
+    section("lettering", 'G', "Lettering", "LETTERING MM"),
+    section("runStyles", 'H', "Run Styles", "RUN STYLES"),
+    section("splitSatin", 'I', "Split Satin", "SPLIT SATIN MM"),
+    // The compensation sheet (E10.1): satin columns and a fill square sewn with no compensation
+    // at one stitch direction each, to measure how far the fabric draws in and pushes out.
+    compensation("compensation0", 'K', "COMP 0", 0.0),
+    compensation("compensation45", 'L', "COMP 45", 45.0),
+    compensation("compensation90", 'M', "COMP 90", 90.0),
+    compensation("compensation135", 'N', "COMP 135", 135.0),
     // Last: everything sewn after the foam is laid would sew through it.
-    Section { id: "puff", letter: 'J', name: "Puff", sewn: "PUFF 3MM FOAM" },
+    section("puff", 'J', "Puff", "PUFF 3MM FOAM"),
 ];
+
+impl Section {
+    /// Its name with its angle, as the UI and the artboard show it (`Compensation 45°`).
+    pub fn title(&self) -> String {
+        match self.angle {
+            Some(a) => format!("{} {}°", self.name, num(a)),
+            None => self.name.to_string(),
+        }
+    }
+}
 
 /// A test sheet: the document, and where its sections went.
 pub struct Sheet {
@@ -84,18 +117,22 @@ pub struct Sheet {
 pub struct SheetSection {
     pub id: &'static str,
     pub name: &'static str,
+    /// A compensation section's stitch direction ([`Section::angle`]).
+    pub angle: Option<f64>,
     /// Its artboard's index.
     pub artboard: usize,
     pub swatches: usize,
 }
 
-/// A test sheet of the sections `ids` (empty: all of them), in the order [`SECTIONS`] lists them.
+/// A test sheet of the sections `ids` (empty: the [`Section::default`] ones; [`COMPENSATION`]:
+/// every compensation section), in the order [`SECTIONS`] lists them.
 pub fn build(ids: &[String]) -> Result<Sheet, String> {
-    if let Some(bad) = ids.iter().find(|id| !SECTIONS.iter().any(|s| s.id == id.as_str())) {
-        let all: Vec<&str> = SECTIONS.iter().map(|s| s.id).collect();
+    if let Some(bad) = ids.iter().find(|id| id.as_str() != COMPENSATION && !SECTIONS.iter().any(|s| s.id == id.as_str())) {
+        let all: Vec<&str> = SECTIONS.iter().map(|s| s.id).chain([COMPENSATION]).collect();
         return Err(format!("no test sheet section `{bad}` (there are {})", all.join(", ")));
     }
-    let wanted: Vec<&Section> = SECTIONS.iter().filter(|s| ids.is_empty() || ids.iter().any(|i| i == s.id)).collect();
+    let picked = |s: &Section| ids.iter().any(|i| i == s.id || (i == COMPENSATION && s.angle.is_some()));
+    let wanted: Vec<&Section> = SECTIONS.iter().filter(|s| if ids.is_empty() { s.default } else { picked(s) }).collect();
     let mut doc = Document::new(FIELD_MM / PT_MM, FIELD_MM / PT_MM);
     doc.title = "Sew-Out Test Sheet".into();
     doc.units = Unit::Millimeters;
@@ -103,19 +140,21 @@ pub fn build(ids: &[String]) -> Result<Sheet, String> {
     let mut record = SewOut::default();
     let (mut groups, mut sections, mut skipped) = (vec![], vec![], vec![]);
     for section in wanted {
-        let cells = match cells(section.id) {
-            Ok(c) => c,
-            Err(why) => {
-                skipped.push((section.id, why));
-                continue;
-            }
-        };
         let index = doc.artboards.len();
         let left = index as f64 * (FIELD_MM + ARTBOARD_GAP);
-        let (group, swatches) = place(&mut doc, section, &cells, left)?;
+        let (group, swatches) = match section.angle {
+            Some(angle) => place_turned(&mut doc, section, angle, left)?,
+            None => match cells(section.id) {
+                Ok(cells) => place(&mut doc, section, &cells, left)?,
+                Err(why) => {
+                    skipped.push((section.id, why));
+                    continue;
+                }
+            },
+        };
         doc.artboards.push(Artboard {
             id: u32::try_from(index + 1).unwrap_or(u32::MAX),
-            name: format!("{} {}", section.letter, section.name),
+            name: format!("{} {}", section.letter, section.title()),
             rect: Rect::new(left / PT_MM, 0.0, (left + FIELD_MM) / PT_MM, FIELD_MM / PT_MM),
             show_center_mark: true,
             show_cross_hairs: false,
@@ -124,7 +163,7 @@ pub fn build(ids: &[String]) -> Result<Sheet, String> {
             video_ruler_pixel_aspect_ratio: 1.0,
             color: None,
         });
-        sections.push(SheetSection { id: section.id, name: section.name, artboard: index, swatches: swatches.len() });
+        sections.push(SheetSection { id: section.id, name: section.name, angle: section.angle, artboard: index, swatches: swatches.len() });
         record.swatches.extend(swatches);
         groups.push(Arc::new(group));
     }
@@ -327,6 +366,103 @@ fn place(doc: &mut Document, section: &Section, cells: &[Cell], left: f64) -> Re
     Ok((group, swatches))
 }
 
+/// The satin columns' widths on a compensation section, mm.
+pub const COMP_WIDTHS: [f64; 4] = [2.0, 4.0, 6.0, 8.0];
+
+/// A compensation section ([`Section::angle`]): satin columns [`COMP_WIDTHS`] wide and a fill
+/// square, each between running-stitch marks at its drawn edges and sewn with no compensation.
+/// They are laid out upright (the satins' stitches and the fill's rows running across), centred
+/// under the title, then turned about the centre so the stitches run at `angle`. The title stays
+/// upright. Each swatch's record holds the angle and its drawn width (along the stitches) and
+/// length (across them), for the sizes measured on the sewn swatch.
+fn place_turned(doc: &mut Document, section: &Section, angle: f64, left: f64) -> Result<(Node, Vec<SewSwatch>), String> {
+    let mark = TICK + TICK_GAP;
+    let mut children = vec![];
+    if let Some(title) = label(doc, &format!("{} {}", section.letter, section.sewn), Point::new(left + MARGIN, MARGIN), TITLE_H) {
+        children.push(Arc::new(title));
+    }
+    let comp = |kind| StitchSettings { pull: Some(0.0), pull_percent: Some(0.0), push: Some(0.0), ..settings(kind) };
+    let a = num(angle);
+    // Each swatch: its box (marks included), its label, what it tests, its drawn width and length.
+    struct Item {
+        w: f64,
+        h: f64,
+        label: String,
+        words: String,
+        drawn: (f64, f64),
+    }
+    let mut items: Vec<Item> = COMP_WIDTHS
+        .iter()
+        .map(|w| Item {
+            w: *w,
+            h: SATIN_LEN + 2.0 * mark,
+            label: num(*w),
+            words: format!("Satin {} mm wide, stitches at {a}°", num(*w)),
+            drawn: (*w, SATIN_LEN),
+        })
+        .collect();
+    items.push(Item {
+        w: SQUARE + 2.0 * mark,
+        h: SQUARE + 2.0 * mark,
+        label: "FILL".into(),
+        words: format!("Fill {} mm square, rows at {a}°", num(SQUARE)),
+        drawn: (SQUARE, SQUARE),
+    });
+    let cell_w: Vec<f64> = items.iter().map(|it| it.w.max(label_width(&it.label, LABEL_H))).collect();
+    let total_w = cell_w.iter().sum::<f64>() + GAP * (items.len().saturating_sub(1)) as f64;
+    let box_h = items.iter().map(|it| it.h).fold(0.0, f64::max);
+    let total_h = box_h + LABEL_GAP + LABEL_H;
+    // The area under the title, mm; the turned swatches must stay inside it.
+    let (x0, x1, y0, y1) = (left + MARGIN, left + FIELD_MM - MARGIN, MARGIN + TITLE_H + GAP, FIELD_MM - MARGIN);
+    let centre = Point::new((x0 + x1) / 2.0, (y0 + y1) / 2.0);
+    // Page counter-clockwise is a negative turn (y down), as a fill's angle is.
+    let turn = kurbo::Affine::rotate_about(-angle.to_radians(), Point::new(centre.x / PT_MM, centre.y / PT_MM));
+    let (mut x, y) = (centre.x - total_w / 2.0, centre.y - total_h / 2.0);
+    let mut swatches = vec![];
+    for (i, (it, cw)) in items.into_iter().zip(cell_w).enumerate() {
+        let at = Point::new(x + (cw - it.w) / 2.0, y + (box_h - it.h) / 2.0);
+        let mut nodes = if i < COMP_WIDTHS.len() {
+            let top = Point::new(at.x, at.y + mark);
+            vec![column(doc, top, it.w, StitchSettings { width: Some(it.w), ..comp(StitchKind::Satin) }), ticks(doc, top, it.w)]
+        } else {
+            let top = Point::new(at.x + mark, at.y + mark);
+            vec![square(doc, top, StitchSettings { angle, ..comp(StitchKind::Fill) }), square_ticks(doc, top)]
+        };
+        let lw = label_width(&it.label, LABEL_H);
+        if let Some(l) = label(doc, &it.label, Point::new(x + (cw - lw) / 2.0, y + box_h + LABEL_GAP), LABEL_H) {
+            nodes.push(l);
+        }
+        for n in &mut nodes {
+            n.transform(turn, false);
+        }
+        let id = format!("{}{}", section.letter, i + 1);
+        let objects: Vec<_> = nodes.iter().map(|n| n.id).collect();
+        let mut group = Node::group(doc.alloc_id(), nodes.into_iter().map(Arc::new).collect());
+        group.name = Some(format!("{id} {}", it.words));
+        if let Some(b) = group.geometric_bounds() {
+            let inside = b.x0 * PT_MM >= x0 - 1e-6 && b.x1 * PT_MM <= x1 + 1e-6 && b.y0 * PT_MM >= y0 - 1e-6 && b.y1 * PT_MM <= y1 + 1e-6;
+            if !inside {
+                return Err(format!("the {} section's swatch {} doesn't fit a {FIELD_MM} mm field", section.id, i + 1));
+            }
+        }
+        children.push(Arc::new(group));
+        swatches.push(SewSwatch {
+            id,
+            section: section.id.into(),
+            label: it.words,
+            objects,
+            angle: Some(angle),
+            drawn_width: Some(it.drawn.0),
+            drawn_length: Some(it.drawn.1),
+            ..SewSwatch::default()
+        });
+        x += cw + GAP;
+    }
+    let mut group = Node::group(doc.alloc_id(), children);
+    group.name = Some(format!("{} {}", section.letter, section.title()));
+    Ok((group, swatches))
+}
+
 fn thread_paint() -> Paint {
     let [r, g, b] = THREAD;
     Paint::solid(Color::rgb8(r, g, b))
@@ -360,7 +496,29 @@ fn ticks(d: &mut Document, top: Point, width: f64) -> Node {
         let below = top.y + SATIN_LEN + TICK_GAP;
         runs.push(vec![Point::new(x, below), Point::new(x, below + TICK)]);
     }
-    let mut n = Node::path(d.alloc_id(), lines(&runs, false), Appearance::basic(Paint::None, thread_paint(), 0.3 / PT_MM));
+    marks(d, &runs)
+}
+
+/// Running-stitch marks at the drawn edges of a fill square from `top`: each edge carried on past
+/// both of its corners.
+fn square_ticks(d: &mut Document, top: Point) -> Node {
+    let (x0, y0, x1, y1) = (top.x, top.y, top.x + SQUARE, top.y + SQUARE);
+    let (g, t) = (TICK_GAP, TICK);
+    let mut runs = vec![];
+    for x in [x0, x1] {
+        runs.push(vec![Point::new(x, y0 - g - t), Point::new(x, y0 - g)]);
+        runs.push(vec![Point::new(x, y1 + g), Point::new(x, y1 + g + t)]);
+    }
+    for y in [y0, y1] {
+        runs.push(vec![Point::new(x0 - g - t, y), Point::new(x0 - g, y)]);
+        runs.push(vec![Point::new(x1 + g, y), Point::new(x1 + g + t, y)]);
+    }
+    marks(d, &runs)
+}
+
+/// Short running-stitch marks along `runs` (mm).
+fn marks(d: &mut Document, runs: &[Vec<Point>]) -> Node {
+    let mut n = Node::path(d.alloc_id(), lines(runs, false), Appearance::basic(Paint::None, thread_paint(), 0.3 / PT_MM));
     n.extras_mut().stitch = Some(Box::new(StitchSettings { length: Some(LABEL_STITCH), ..settings(StitchKind::Running) }));
     n
 }
@@ -535,7 +693,8 @@ mod tests {
 
     #[test]
     fn every_section_fits_its_field_and_lists_its_swatches() {
-        let sheet = build(&[]).unwrap();
+        let all: Vec<String> = SECTIONS.iter().map(|s| s.id.to_string()).collect();
+        let sheet = build(&all).unwrap();
         let made: Vec<&str> = sheet.sections.iter().map(|s| s.id).collect();
         let skipped: Vec<&str> = sheet.skipped.iter().map(|s| s.0).collect();
         assert_eq!(made.len() + skipped.len(), SECTIONS.len());
@@ -562,6 +721,79 @@ mod tests {
         assert!(plan.stats().stitches > 10_000, "{}", plan.stats().stitches);
         assert!(plan.threads.iter().all(|t| *t == THREAD), "one thread (puff stops for the foam with it): {:?}", plan.threads);
         assert!(plan.warnings.is_empty(), "{:?}", plan.warnings);
+    }
+
+    /// The direction of the line from `a` to `b`, degrees counter-clockwise from the page's
+    /// horizontal (y down), from 0 up to 180.
+    fn direction(a: &crate::Needle, b: &crate::Needle) -> f64 {
+        (-(b.y - a.y)).atan2(b.x - a.x).to_degrees().rem_euclid(180.0)
+    }
+
+    /// How far apart two directions are, degrees (0 to 90).
+    fn apart(a: f64, b: f64) -> f64 {
+        let d = (a - b).rem_euclid(180.0);
+        d.min(180.0 - d)
+    }
+
+    /// The most common direction (to 5°) of the stitches longer than `min` mm sewn for `id`.
+    fn main_direction(plan: &crate::Plan, id: vectorcraft_doc::NodeId, min: f64) -> f64 {
+        let o = plan.objects.iter().find(|o| o.id == id).unwrap();
+        let needles = &plan.needles[o.needles.clone()];
+        let mut bins = [0usize; 36];
+        for w in needles.windows(2) {
+            if w[1].cmd == crate::Cmd::Stitch && (w[1].x - w[0].x).hypot(w[1].y - w[0].y) > min {
+                bins[(direction(&w[0], &w[1]) / 5.0).round() as usize % 36] += 1;
+            }
+        }
+        let best = (0..36).max_by_key(|i| bins[*i]).unwrap();
+        best as f64 * 5.0
+    }
+
+    #[test]
+    fn the_compensation_sheet_turns_each_section_to_its_stitch_direction() {
+        let default = build(&[]).unwrap();
+        assert!(default.sections.iter().all(|s| s.angle.is_none()), "a sheet of its own, not on the default one");
+        let sheet = build(&[COMPENSATION.into()]).unwrap();
+        let angles: Vec<Option<f64>> = sheet.sections.iter().map(|s| s.angle).collect();
+        assert_eq!(angles, [Some(0.0), Some(45.0), Some(90.0), Some(135.0)]);
+        assert_eq!(sheet.doc.artboards[1].name, "L Compensation 45°");
+        let record = sheet.doc.embroidery.sew_out.as_ref().unwrap();
+        assert_eq!(record.swatches.len(), 4 * (COMP_WIDTHS.len() + 1));
+        let plan = crate::plan(&sheet.doc);
+        assert!(plan.warnings.is_empty(), "{:?}", plan.warnings);
+        for sw in &record.swatches {
+            let angle = sw.angle.unwrap();
+            let sec = sheet.sections.iter().find(|s| s.id == sw.section).unwrap();
+            assert_eq!(sec.angle, Some(angle), "{}", sw.id);
+            let board = sheet.doc.artboards[sec.artboard].rect;
+            let shape = sheet.doc.node(sw.objects[0]).unwrap();
+            let b = shape.geometric_bounds().unwrap();
+            assert!(b.x0 >= board.x0 && b.x1 <= board.x1 && b.y0 >= board.y0 && b.y1 <= board.y1, "{} {b:?} in {board:?}", sw.id);
+            // Sewn as drawn: no compensation, whatever the fabric.
+            let s = shape.extras().stitch.as_deref().unwrap();
+            assert_eq!((s.pull, s.pull_percent, s.push), (Some(0.0), Some(0.0), Some(0.0)), "{}", sw.id);
+            let (w, l) = (sw.drawn_width.unwrap(), sw.drawn_length.unwrap());
+            // The satin's stitches run across the column at the section's angle, as the fill's rows do.
+            let (min, sewn) = match s.kind {
+                StitchKind::Satin => {
+                    assert_eq!((s.width, l), (Some(w), SATIN_LEN), "{}", sw.id);
+                    // 8 mm is split into shorter stitches (split satin's default 7 mm), and 2 mm
+                    // stitches slant by the spacing: the direction is checked on 4 and 6 mm.
+                    (0.8 * w, (4.0..=6.0).contains(&w))
+                }
+                _ => {
+                    assert_eq!((s.kind, s.angle, w, l), (StitchKind::Fill, angle, SQUARE, SQUARE), "{}", sw.id);
+                    (2.0, true)
+                }
+            };
+            if sewn {
+                let d = main_direction(&plan, sw.objects[0], min);
+                assert!(apart(d, angle) <= 10.0, "{}: stitches at {d}°, want {angle}°", sw.id);
+            }
+        }
+        // The panel's names: every compensation section's angle in its title.
+        let names: Vec<String> = SECTIONS.iter().filter(|s| s.angle.is_some()).map(Section::title).collect();
+        assert_eq!(names, ["Compensation 0°", "Compensation 45°", "Compensation 90°", "Compensation 135°"]);
     }
 
     #[test]

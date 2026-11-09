@@ -526,6 +526,11 @@ fn full_sew_out() -> SewOut {
         objects: vec![NodeId(2)],
         result: "pass".into(),
         notes: "n".into(),
+        angle: Some(45.0),
+        drawn_width: Some(4.0),
+        drawn_length: Some(30.0),
+        measured_width: Some(3.8),
+        measured_length: Some(30.4),
         extra: Default::default(),
     };
     SewOut { fabric: "f".into(), machine: "m".into(), notes: "n".into(), swatches: vec![swatch], extra: Default::default() }

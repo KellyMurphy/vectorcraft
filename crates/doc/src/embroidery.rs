@@ -1148,6 +1148,21 @@ pub struct SewSwatch {
     pub result: String,
     #[serde(skip_serializing_if = "String::is_empty")]
     pub notes: String,
+    /// A compensation swatch's stitch direction, degrees counter-clockwise from the sheet's
+    /// horizontal, the fabric hooped with its grain running top to bottom.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub angle: Option<f64>,
+    /// A compensation swatch's drawn size, mm: its width along the stitches (where the thread
+    /// pulls the fabric in) and its length across them (where the stitch ends push it out).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub drawn_width: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub drawn_length: Option<f64>,
+    /// The same sizes measured on the sewn swatch, mm.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub measured_width: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub measured_length: Option<f64>,
     /// Members a newer VectorCraft wrote that this version doesn't know, kept and written back.
     #[serde(flatten, default, skip_serializing_if = "serde_json::Map::is_empty")]
     pub extra: serde_json::Map<String, serde_json::Value>,

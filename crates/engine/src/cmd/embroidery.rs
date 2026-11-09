@@ -313,7 +313,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "New Test Sheet…",
             ["Window", "Embroidery"],
             None,
-            "{sections?: [satinWidth|satinDensity|pullCompensation|fillDensity|fillAngle|underlay|lettering|runStyles|splitSatin|puff] (default: all)} a new document of calibration swatches to sew on real fabric: one artboard per section, each a 100 × 100 mm design whose swatches change one setting (the others at their defaults) and are labelled in stitches. Its sew-out form (embroidery.sewOut, embroidery.recordSewOut) lists the swatches; document.export {format: dst, artboard} writes one section → {index, title, sections: [{id, name, artboard, swatches}], swatches, skipped: [{section, reason}] (lettering needs a type face)}",
+            "{sections?: [satinWidth|satinDensity|pullCompensation|fillDensity|fillAngle|underlay|lettering|runStyles|splitSatin|compensation0|compensation45|compensation90|compensation135|puff|compensation] (default: all but the compensation sections; compensation: the four compensation sections, the compensation sheet)} a new document of calibration swatches to sew on real fabric: one artboard per section, each a 100 × 100 mm design whose swatches change one setting (the others at their defaults) and are labelled in stitches. Its sew-out form (embroidery.sewOut, embroidery.recordSewOut) lists the swatches; document.export {format: dst, artboard} writes one section. A compensation section sews satin columns 2, 4, 6 and 8 mm wide and an 18 mm fill square with no compensation, each between running-stitch marks at its drawn edges, turned so the stitches run at its angle (degrees counter-clockwise from the sheet's horizontal; hoop the fabric with its grain running top to bottom) → {index, title, sections: [{id, name, angle?, artboard, swatches}], swatches, skipped: [{section, reason}] (lettering needs a type face)}",
             always,
             test_sheet
         ),
@@ -322,7 +322,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Sew-Out Test",
             ["Window", "Embroidery"],
             None,
-            "{} the document's sew-out form: the test sheet's swatches (embroidery.testSheet) and what was seen when they were sewn → {sewOut: null (no test sheet) | {fabric, machine, notes, swatches: [{id (A3: the section's letter, the swatch's number), section, label, objects: [ids], result: pass|fail|untested, notes}], counts: {pass, fail, untested}}, sections: [{id, letter, name}]}",
+            "{} the document's sew-out form: the test sheet's swatches (embroidery.testSheet) and what was seen when they were sewn → {sewOut: null (no test sheet) | {fabric, machine, notes, swatches: [{id (A3: the section's letter, the swatch's number), section, label, objects: [ids], result: pass|fail|untested, notes, angle?, drawnWidth?, drawnLength?, measuredWidth?, measuredLength? (compensation swatches, mm: width along the stitches, length across them)}], counts: {pass, fail, untested}}, sections: [{id, letter, name, title, angle?, default}]}",
             has_doc,
             sew_out
         ),
@@ -331,7 +331,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Record Sew-Out",
             ["Window", "Embroidery"],
             None,
-            "{fabric?, machine?, notes?, results?: [{swatch: id (A3), result?: pass|fail|untested, notes?}]} record what the sew-out showed in the test sheet's form, as one undo step → {counts: {pass, fail, untested}}",
+            "{fabric?, machine?, notes?, results?: [{swatch: id (A3), result?: pass|fail|untested, notes?, measuredWidth?: mm | null, measuredLength?: mm | null (compensation swatches: the sewn width along the stitches and length across them, between the marks; null clears it)}]} record what the sew-out showed in the test sheet's form, as one undo step → {counts: {pass, fail, untested}}",
             has_doc,
             record_sew_out
         ),
@@ -1490,8 +1490,17 @@ fn test_sheet(s: &mut Session, p: &Value) -> Result<Value> {
         Some(_) => return Err(bad(C, "`sections` must be a list of section ids")),
     };
     let sheet = vectorcraft_embroidery::testsheet::build(&ids).map_err(|e| bad(C, e))?;
-    let sections: Vec<Value> =
-        sheet.sections.iter().map(|x| json!({"id": x.id, "name": x.name, "artboard": x.artboard, "swatches": x.swatches})).collect();
+    let sections: Vec<Value> = sheet
+        .sections
+        .iter()
+        .map(|x| {
+            let mut o = json!({"id": x.id, "name": x.name, "artboard": x.artboard, "swatches": x.swatches});
+            if let Some(a) = x.angle {
+                o["angle"] = json!(a);
+            }
+            o
+        })
+        .collect();
     let skipped: Vec<Value> = sheet.skipped.iter().map(|(id, why)| json!({"section": id, "reason": why})).collect();
     let swatches: usize = sheet.sections.iter().map(|x| x.swatches).sum();
     let title = sheet.doc.title.clone();
@@ -1506,6 +1515,18 @@ fn sew_counts(r: &vectorcraft_doc::SewOut) -> Value {
     json!({"pass": n(SewResult::Pass), "fail": n(SewResult::Fail), "untested": n(SewResult::Untested)})
 }
 
+/// The longest size a measured swatch takes, mm (a swatch is at most 100 mm across).
+const MAX_MEASURED_MM: f64 = 200.0;
+
+/// A test sheet section as `embroidery.sewOut` lists it.
+fn section_json(x: &vectorcraft_embroidery::testsheet::Section) -> Value {
+    let mut o = json!({"id": x.id, "letter": x.letter.to_string(), "name": x.name, "title": x.title(), "default": x.default});
+    if let Some(a) = x.angle {
+        o["angle"] = json!(a);
+    }
+    o
+}
+
 fn result_id(r: vectorcraft_doc::SewResult) -> &'static str {
     match r {
         vectorcraft_doc::SewResult::Untested => "untested",
@@ -1514,8 +1535,7 @@ fn result_id(r: vectorcraft_doc::SewResult) -> &'static str {
 }
 
 fn sew_out(s: &mut Session, _: &Value) -> Result<Value> {
-    let sections: Vec<Value> =
-        vectorcraft_embroidery::testsheet::SECTIONS.iter().map(|x| json!({"id": x.id, "letter": x.letter.to_string(), "name": x.name})).collect();
+    let sections: Vec<Value> = vectorcraft_embroidery::testsheet::SECTIONS.iter().map(section_json).collect();
     let Some(r) = s.doc()?.doc.embroidery.sew_out.as_ref() else {
         return Ok(json!({"sewOut": null, "sections": sections}));
     };
@@ -1523,10 +1543,22 @@ fn sew_out(s: &mut Session, _: &Value) -> Result<Value> {
         .swatches
         .iter()
         .map(|w| {
-            json!({
+            let mut o = json!({
                 "id": w.id, "section": w.section, "label": w.label, "objects": w.objects.iter().map(|i| i.0).collect::<Vec<_>>(),
                 "result": result_id(w.result()), "notes": w.notes,
-            })
+            });
+            for (key, v) in [
+                ("angle", w.angle),
+                ("drawnWidth", w.drawn_width),
+                ("drawnLength", w.drawn_length),
+                ("measuredWidth", w.measured_width),
+                ("measuredLength", w.measured_length),
+            ] {
+                if let Some(v) = v {
+                    o[key] = json!(v);
+                }
+            }
+            o
         })
         .collect();
     Ok(json!({
@@ -1576,9 +1608,26 @@ fn record_sew_out(s: &mut Session, p: &Value) -> Result<Value> {
                     Some(Value::String(t)) => w.notes = t.trim().to_string(),
                     Some(_) => return Err(bad(C, "`notes` must be text")),
                 }
+                for key in ["measuredWidth", "measuredLength"] {
+                    let Some(v) = item.get(key) else { continue };
+                    if w.drawn_width.is_none() {
+                        return Err(bad(C, format!("swatch `{}` has no sizes to measure: only compensation swatches take `{key}`", w.id)));
+                    }
+                    let mm = match v {
+                        Value::Null => None,
+                        v => Some(v.as_f64().filter(|x| x.is_finite() && *x > 0.0 && *x <= MAX_MEASURED_MM).ok_or_else(|| {
+                            bad(C, format!("`{key}` must be a size in mm, more than 0 and at most {MAX_MEASURED_MM}, or null to clear it"))
+                        })?),
+                    };
+                    if key == "measuredWidth" {
+                        w.measured_width = mm;
+                    } else {
+                        w.measured_length = mm;
+                    }
+                }
             }
         }
-        Some(_) => return Err(bad(C, "`results` must be a list of {swatch, result?, notes?}")),
+        Some(_) => return Err(bad(C, "`results` must be a list of {swatch, result?, notes?, measuredWidth?, measuredLength?}")),
     }
     let counts = sew_counts(&r);
     if s.doc()?.doc.embroidery.sew_out.as_ref() != Some(&r) {

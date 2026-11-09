@@ -8655,3 +8655,5 @@ digits	Hindi	Hindi
 	Align to Pixel Grid	Justera mot pixelrutnät
 @msg	only paths and compound paths can be aligned to the pixel grid	bara banor och sammansatta banor kan justeras mot pixelrutnätet
 @msg	side is left or right, not `{s}`	side är left eller right, inte `{s}`
+	Compensation	Kompensation
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Kompensationsark: sys utan kompensation för att mäta hur mycket tyget drar ihop sig i varje stygnriktning.

@@ -7183,3 +7183,5 @@ breakText	Glyphs	Glyphes
 	Align to Pixel Grid	Aligner sur la grille de pixels
 @msg	only paths and compound paths can be aligned to the pixel grid	seuls les tracés et les tracés transparents peuvent être alignés sur la grille de pixels
 @msg	side is left or right, not `{s}`	side vaut left ou right, pas `{s}`
+	Compensation	Compensation
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Feuille de compensation : brodée sans compensation, pour mesurer de combien le tissu se resserre dans chaque direction de point.

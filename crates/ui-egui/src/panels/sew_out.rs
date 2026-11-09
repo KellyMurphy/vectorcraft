@@ -64,7 +64,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             if rows.is_empty() {
                 continue;
             }
-            widgets::subheader(ui, &format!("{}  {}", s["letter"].as_str().unwrap_or_default(), tl!(s["name"].as_str().unwrap_or_default())));
+            widgets::subheader(ui, &format!("{}  {}", s["letter"].as_str().unwrap_or_default(), section_title(s)));
             for w in rows {
                 let (click, set) = swatch_row(ui, w, open == w["id"].as_str().unwrap_or_default());
                 if let Some(result) = set {
@@ -178,6 +178,15 @@ fn swatch_row(ui: &mut Ui, w: &Value, open: bool) -> (bool, Option<&'static str>
     (resp.clicked() && set.is_none(), set)
 }
 
+/// A section's name in the UI's language, with a compensation section's angle (`Compensation 45°`).
+fn section_title(s: &Value) -> String {
+    let name = tl!(s["name"].as_str().unwrap_or_default());
+    match s["angle"].as_f64() {
+        Some(a) => format!("{name} {a}°"),
+        None => name.to_string(),
+    }
+}
+
 /// No test sheet yet: what one is, the sections to put on it, and the button that makes it.
 fn new_sheet(app: &mut VectorcraftApp, ui: &mut Ui) {
     widgets::section_header(ui, tl!("Test Sheet"));
@@ -188,19 +197,37 @@ fn new_sheet(app: &mut VectorcraftApp, ui: &mut Ui) {
         ),
     );
     ui.add_space(4.0);
-    let mut off: Vec<String> = pstate(ui.ctx(), "sew-out-off");
-    for s in vectorcraft_embroidery::testsheet::SECTIONS {
-        let on = !off.iter().any(|o| o == s.id);
-        if widgets::check(ui, &format!("{}  {}", s.letter, tl!(s.name)), on, true) {
-            if on {
-                off.push(s.id.to_string());
+    // The sections ticked against their default: on ones turned off, the compensation ones on.
+    let mut flipped: Vec<String> = pstate(ui.ctx(), "sew-out-flipped");
+    let sections = &vectorcraft_embroidery::testsheet::SECTIONS;
+    let ticked = |flipped: &[String], s: &vectorcraft_embroidery::testsheet::Section| s.default != flipped.iter().any(|o| o == s.id);
+    // The compensation sheet's sections last, under a note of their own.
+    let listed = sections.iter().filter(|s| s.angle.is_none()).chain(sections.iter().filter(|s| s.angle.is_some()));
+    let mut noted = false;
+    for s in listed {
+        if s.angle.is_some() && !noted {
+            noted = true;
+            ui.add_space(4.0);
+            widgets::dim_label(
+                ui,
+                tl!("Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction."),
+            );
+        }
+        let title = match s.angle {
+            Some(a) => format!("{} {a}°", tl!(s.name)),
+            None => tl!(s.name).to_string(),
+        };
+        let on = ticked(&flipped, s);
+        if widgets::check(ui, &format!("{}  {title}", s.letter), on, true) {
+            if flipped.iter().any(|o| o == s.id) {
+                flipped.retain(|o| o != s.id);
             } else {
-                off.retain(|o| o != s.id);
+                flipped.push(s.id.to_string());
             }
         }
     }
-    let chosen: Vec<&str> = vectorcraft_embroidery::testsheet::SECTIONS.iter().map(|s| s.id).filter(|id| !off.iter().any(|o| o == id)).collect();
-    set_pstate(ui.ctx(), "sew-out-off", off.clone());
+    let chosen: Vec<&str> = sections.iter().filter(|s| ticked(&flipped, s)).map(|s| s.id).collect();
+    set_pstate(ui.ctx(), "sew-out-flipped", flipped.clone());
     ui.add_space(6.0);
     if widgets::primary_button_enabled(ui, tl!("New Test Sheet"), !chosen.is_empty()).clicked() {
         app.run("embroidery.testSheet", json!({ "sections": chosen })).ok();
@@ -245,5 +272,20 @@ mod tests {
             assert!(shown.iter().any(|t| t == want), "{want} in {shown:?}");
         }
         assert!(shown.iter().any(|t| t.contains("Fail: 1") && t.contains("To judge: 12")), "{shown:?}");
+    }
+
+    /// The compensation sections are listed last and unticked; a sheet of them shows each
+    /// section's angle.
+    #[test]
+    fn the_compensation_sections_are_offered_unticked_and_named_by_angle() {
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        let shown = frame(&mut app);
+        let at = |want: &str| shown.iter().position(|t| t.contains(want)).unwrap_or_else(|| panic!("{want} in {shown:?}"));
+        assert!(at("Puff") < at("Compensation 0°") && at("Compensation 0°") < at("Compensation 135°"), "{shown:?}");
+        app.session.execute("embroidery.testSheet", &json!({"sections": ["compensation45"]})).unwrap();
+        let shown = frame(&mut app);
+        for want in ["L  Compensation 45°", "L1", "Satin 2 mm wide, stitches at 45°", "L5"] {
+            assert!(shown.iter().any(|t| t == want), "{want} in {shown:?}");
+        }
     }
 }

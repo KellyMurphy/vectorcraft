@@ -6758,3 +6758,5 @@ breakText	Glyphs	Glyphen
 	Align to Pixel Grid	Am Pixelraster ausrichten
 @msg	only paths and compound paths can be aligned to the pixel grid	nur Pfade und zusammengesetzte Pfade können am Pixelraster ausgerichtet werden
 @msg	side is left or right, not `{s}`	side ist left oder right, nicht `{s}`
+	Compensation	Ausgleich
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Ausgleichsblatt: ohne Ausgleich gestickt, um zu messen, wie stark sich der Stoff in jeder Stichrichtung zusammenzieht.

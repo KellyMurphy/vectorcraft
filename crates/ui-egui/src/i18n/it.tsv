@@ -6809,3 +6809,5 @@ breakText	Glyphs	Glifi
 	Align to Pixel Grid	Allinea alla griglia pixel
 @msg	only paths and compound paths can be aligned to the pixel grid	solo i tracciati e i tracciati composti possono essere allineati alla griglia pixel
 @msg	side is left or right, not `{s}`	side è left o right, non `{s}`
+	Compensation	Compensazione
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Foglio di compensazione: ricamato senza compensazione, per misurare quanto il tessuto si ritira in ogni direzione del punto.

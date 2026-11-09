@@ -7262,3 +7262,5 @@ swatch	Yellow Green	Verde-amarelado
 	Align to Pixel Grid	Alinhar à Grade de Pixels
 @msg	only paths and compound paths can be aligned to the pixel grid	somente caminhos e caminhos compostos podem ser alinhados à grade de pixels
 @msg	side is left or right, not `{s}`	side é left ou right, não `{s}`
+	Compensation	Compensação
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Folha de compensação: bordada sem compensação, para medir quanto o tecido repuxa em cada direção de ponto.

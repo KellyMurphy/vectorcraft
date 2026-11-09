@@ -6875,3 +6875,5 @@ breakText	Glyphs	字形
 	Align to Pixel Grid	ピクセルグリッドに整合
 @msg	only paths and compound paths can be aligned to the pixel grid	ピクセルグリッドに整合できるのはパスと複合パスのみです
 @msg	side is left or right, not `{s}`	side は left または right です（`{s}` ではありません）
+	Compensation	補正
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	補正シート：補正なしで縫い、各ステッチ方向で生地がどれだけ縮むかを測ります。

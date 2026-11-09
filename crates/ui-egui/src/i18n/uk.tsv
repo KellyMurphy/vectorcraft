@@ -6789,3 +6789,5 @@ breakText	Glyphs	Гліфи
 	Align to Pixel Grid	Вирівняти за піксельною сіткою
 @msg	only paths and compound paths can be aligned to the pixel grid	за піксельною сіткою можна вирівняти лише контури і складені контури
 @msg	side is left or right, not `{s}`	side — це left або right, а не `{s}`
+	Compensation	Компенсація
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Аркуш компенсації: вишивається без компенсації, щоб виміряти, наскільки тканина стягується в кожному напрямку стібка.

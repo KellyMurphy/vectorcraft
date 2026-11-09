@@ -6772,3 +6772,5 @@ breakText	Glyphs	Glyph
 	Align to Pixel Grid	Căn theo lưới pixel
 @msg	only paths and compound paths can be aligned to the pixel grid	chỉ đường dẫn và đường dẫn phức mới căn theo lưới pixel được
 @msg	side is left or right, not `{s}`	side là left hoặc right, không phải `{s}`
+	Compensation	Bù
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Trang bù: thêu không bù, để đo vải co lại bao nhiêu theo từng hướng mũi thêu.

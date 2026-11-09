@@ -6828,3 +6828,5 @@ breakText	Glyphs	字符
 	Align to Pixel Grid	對齊像素格點
 @msg	only paths and compound paths can be aligned to the pixel grid	只有路徑和複合路徑可以對齊像素格點
 @msg	side is left or right, not `{s}`	side 應為 left 或 right，而不是 `{s}`
+	Compensation	補償
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	補償測試頁：不加補償繡製，用於測量布料在每個針跡方向上的收縮量。

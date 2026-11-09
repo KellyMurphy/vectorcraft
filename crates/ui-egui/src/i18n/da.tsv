@@ -6952,3 +6952,5 @@ breakText	Glyphs	Glyffer
 # Align to Pixel Grid
 	Align to Pixel Grid	Juster efter pixelgitter
 @msg	side is left or right, not `{s}`	side er left eller right, ikke `{s}`
+	Compensation	Kompensation
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Kompensationsark: sys uden kompensation for at måle, hvor meget stoffet trækker sig sammen i hver stingretning.

@@ -289,8 +289,15 @@ Each swatch:
 | `objects` | array of object ids | The objects it is sewn from, its sewn label included. | empty |
 | `result` | string | `pass`, `fail`, or empty: not judged yet. A reader treats any other value as not judged, and keeps it. | empty |
 | `notes` | string | What was seen. | empty |
+| `angle` | number, degrees | A compensation swatch's stitch direction, counter-clockwise from the sheet's horizontal, the fabric hooped with its grain running top to bottom. | none |
+| `drawnWidth` | number, mm | A compensation swatch's drawn width along the stitches (a satin column's width, a fill square's side along its rows), where the thread pulls the fabric in. | none |
+| `drawnLength` | number, mm | Its drawn length across the stitches (a satin column's length, a fill square's side across its rows), where the stitch ends push the fabric out. | none |
+| `measuredWidth` | number, mm | The width measured on the sewn swatch, between the marks at its drawn edges. | none |
+| `measuredLength` | number, mm | The length measured on the sewn swatch. | none |
 
-Sections (each changes one setting; the others keep their defaults):
+Sections (each changes one setting; the others keep their defaults). A test sheet made without naming
+its sections has all but the compensation sections; `compensation` names those four, the compensation
+sheet:
 
 | Letter | `section` | Swatches |
 |---|---|---|
@@ -303,6 +310,10 @@ Sections (each changes one setting; the others keep their defaults):
 | G | `lettering` | The word "Hag" in auto stitches at 4, 6, 8, 10, 15 and 20 mm type sizes (left out when no type face is available). |
 | H | `runStyles` | Running stitch in each `style` (single, chain, stem, backstitch, sashiko) on a 22 × 14 mm S curve ending in a sharp corner. |
 | I | `splitSatin` | 30 mm satin columns 8, 12 and 20 mm wide split with the defaults (staggered), 12 mm split at random, and 12 mm not split to compare. |
+| K | `compensation0` | The compensation sheet at 0° (the stitches across the grain): satin columns 30 mm long, 2, 4, 6 and 8 mm wide, and an 18 mm fill square, sewn with `pull`, `pullPercent` and `push` at 0, each between running-stitch marks at its drawn edges. The title stays upright; the swatches are laid out with the satins' stitches and the fill's rows across, then turned to the section's angle. |
+| L | `compensation45` | The same at 45°. |
+| M | `compensation90` | The same at 90° (the stitches along the grain). |
+| N | `compensation135` | The same at 135°. Listed before `puff`, which stays last; the letters K to N were added after J (2026-11-09). |
 | J | `puff` | 3 mm puff (satin over 3 mm foam) 3, 4, 5, 6 and 8 mm wide; the design stops for the foam after its title. Last, since anything sewn after the foam is laid sews through it (before 2026-11-01 it was H, then I). |
 
 ## Compatibility

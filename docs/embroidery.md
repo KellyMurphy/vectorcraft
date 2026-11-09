@@ -685,6 +685,28 @@ After sewing, the **Sew-Out Test** panel is the form: the fabric and machine, an
 ([`sewOut`](formats/vectorcraft-embroidery.md#sew-out-test-sewout)), so a sheet saved per fabric (woven,
 knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.recordSewOut` fills it in.
 
+#### The compensation sheet
+
+The thread pulls the fabric in along the stitches and pushes it out at their ends, and how much depends on
+the direction the stitches run against the fabric's grain. The **compensation sheet** measures that. Tick
+its sections in the Sew-Out Test panel (they are listed last and start unticked), or ask for
+`embroidery.testSheet {sections: ["compensation"]}`:
+
+| Section | Swatches |
+|---|---|
+| K Compensation 0° | satin columns 30 mm long, 2, 4, 6 and 8 mm wide, and an 18 mm fill square, stitches across the grain |
+| L Compensation 45° | the same, turned so the stitches run at 45° |
+| M Compensation 90° | the same, stitches along the grain |
+| N Compensation 135° | the same at 135° |
+
+Every swatch is sewn with no compensation (`pull`, `pullPercent` and `push` at 0, whatever the fabric
+profile says) between running-stitch marks at its drawn edges, so what you measure is the fabric's own
+draw-in. Hoop the fabric with its grain (the warp, along the selvage) running from the top of the hoop to
+the bottom. After sewing, measure each swatch's width along its stitches and its length across them, and
+record them with `embroidery.recordSewOut {results: [{swatch: "L2", measuredWidth: 3.7, measuredLength:
+30.6}]}`; the form keeps them with the drawn sizes. Fitting compensation from them, per angle, into a fabric
+profile is the next step (E10.1b).
+
 ### Commands
 
 | Command | Params |
@@ -760,9 +782,9 @@ knit) keeps what each showed. `embroidery.sewOut` reads the form; `embroidery.re
 | `embroidery.fontFolders` | `{folders?}`: the folders searched for Ink/Stitch fonts (read in place) → `{folders, fonts, skipped}` |
 | `embroidery.worksheet` | `{page?: a4\|letter, format?: pdf, path?}`: the production worksheet, as a new document or a PDF |
 | `embroidery.mockup` | `{garment?: tshirt\|polo\|hoodie\|cap\|tote\|towel, placement?: leftChest\|rightChest\|center\|lower, view?: garment\|design, width?, fabricTexture?, fabricColor?, format?: png, path?}`: the design on a garment drawn in code, at real size where such designs go, as a new document or a PNG (`designSize`, `warnings` when it is bigger than usual there) |
-| `embroidery.testSheet` | `{sections?: [ids]}`: a new document of calibration swatches (see Sew-out tests) → `{index, sections, swatches, skipped}` |
-| `embroidery.sewOut` | → the sew-out form: `{sewOut: {fabric, machine, notes, swatches: [{id, section, label, objects, result, notes}], counts} \| null, sections}` |
-| `embroidery.recordSewOut` | `{fabric?, machine?, notes?, results?: [{swatch, result?: pass\|fail\|untested, notes?}]}`: fill in the form, one undo step |
+| `embroidery.testSheet` | `{sections?: [ids]}`: a new document of calibration swatches (see Sew-out tests; `compensation` for the compensation sheet) → `{index, sections, swatches, skipped}` |
+| `embroidery.sewOut` | → the sew-out form: `{sewOut: {fabric, machine, notes, swatches: [{id, section, label, objects, result, notes, angle?, drawnWidth?, drawnLength?, measuredWidth?, measuredLength?}], counts} \| null, sections}` |
+| `embroidery.recordSewOut` | `{fabric?, machine?, notes?, results?: [{swatch, result?: pass\|fail\|untested, notes?, measuredWidth?, measuredLength?}]}`: fill in the form, one undo step |
 | `view.stitchPreview` | toggles Stitch Preview |
 | `view.realisticStitches` | toggles Realistic Stitches (shaded thread on the fabric's texture; turns Stitch Preview on) |
 | `view.realSize` | zooms so the design shows at its true size on the screen, by the calibrated `screenPpi` (or the system's reference density) → `{zoom, ppi, calibrated}` |

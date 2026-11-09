@@ -194,7 +194,12 @@
         "label": { "type": "string", "description": "What the swatch tests, in words." },
         "objects": { "type": "array", "items": { "type": "integer", "minimum": 0 }, "description": "The ids of the objects it is sewn from." },
         "result": { "enum": ["", "pass", "fail"], "default": "", "description": "Empty: not judged yet. Readers treat other values as not judged, and keep them." },
-        "notes": { "type": "string" }
+        "notes": { "type": "string" },
+        "angle": { "type": "number", "description": "A compensation swatch's stitch direction, degrees counter-clockwise from the sheet's horizontal (grain top to bottom)." },
+        "drawnWidth": { "type": "number", "exclusiveMinimum": 0, "description": "Drawn width along the stitches, mm." },
+        "drawnLength": { "type": "number", "exclusiveMinimum": 0, "description": "Drawn length across the stitches, mm." },
+        "measuredWidth": { "type": "number", "exclusiveMinimum": 0, "description": "Width measured on the sewn swatch, mm." },
+        "measuredLength": { "type": "number", "exclusiveMinimum": 0, "description": "Length measured on the sewn swatch, mm." }
       }
     },
     "pattern": {
