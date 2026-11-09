@@ -26,7 +26,12 @@ pub fn check(ui: &mut Ui, label: &str, value: bool, enabled: bool) -> bool {
 
 /// [`check`] with tooltip `tip` on the box and its label. Returns true when toggled.
 pub fn check_tip(ui: &mut Ui, label: &str, value: bool, enabled: bool, tip: &str) -> bool {
-    let (clicked, resp) = check_row(ui, tl!(label), Some(value), enabled);
+    check3_tip(ui, label, Some(value), enabled, tip)
+}
+
+/// [`check3`] with tooltip `tip` on the box and its label. Returns true when clicked.
+pub fn check3_tip(ui: &mut Ui, label: &str, value: Option<bool>, enabled: bool, tip: &str) -> bool {
+    let (clicked, resp) = check_row(ui, tl!(label), value, enabled);
     resp.on_hover_text(tip);
     clicked
 }
@@ -34,13 +39,6 @@ pub fn check_tip(ui: &mut Ui, label: &str, value: bool, enabled: bool, tip: &str
 /// Three-state [`check`]: `None` shows a dash (a neutral or mixed state). Returns true when clicked.
 pub fn check3(ui: &mut Ui, label: &str, value: Option<bool>, enabled: bool) -> bool {
     check_row(ui, tl!(label), value, enabled).0
-}
-
-/// [`check3`] with a tooltip.
-pub fn check3_tip(ui: &mut Ui, label: &str, value: Option<bool>, enabled: bool, tip: &str) -> bool {
-    let (clicked, resp) = check_row(ui, label, value, enabled);
-    resp.on_hover_text(tip);
-    clicked
 }
 
 /// [`check`] for a name of the document's (an artboard's, an asset's), shown as it is, never

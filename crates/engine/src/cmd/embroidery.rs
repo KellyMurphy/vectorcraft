@@ -1052,7 +1052,7 @@ fn info(s: &mut Session, p: &Value) -> Result<Value> {
 
 fn check(s: &mut Session, p: &Value) -> Result<Value> {
     use vectorcraft_embroidery::check;
-    let only = match ids_param(p, "ids") {
+    let only = match ids_param(p, "ids", "embroidery.check")? {
         Some(ids) => Some(leaf_targets(s, &ids)?),
         None => None,
     };

@@ -34,6 +34,7 @@ impl Document {
             graphic_styles,
             char_styles,
             para_styles,
+            composite_fonts,
             text_threads,
             symbols,
             graph_designs,
@@ -68,6 +69,7 @@ impl Document {
             print_setup,
             assets,
             svg_scripts,
+            svg_filters,
             puppet,
             new_art,
             dimensions,
@@ -90,6 +92,7 @@ impl Document {
             && *graphic_styles == other.graphic_styles
             && *char_styles == other.char_styles
             && *para_styles == other.para_styles
+            && *composite_fonts == other.composite_fonts
             && *text_threads == other.text_threads
             && symbols.len() == other.symbols.len()
             && symbols.iter().zip(&other.symbols).all(|(a, b)| a.name == b.name && Arc::ptr_eq(&a.art, &b.art))
@@ -136,6 +139,7 @@ impl Document {
             && *print_setup == other.print_setup
             && *assets == other.assets
             && *svg_scripts == other.svg_scripts
+            && *svg_filters == other.svg_filters
             && match (puppet, &other.puppet) {
                 (Some(a), Some(b)) => Arc::ptr_eq(a, b),
                 (a, b) => a.is_none() && b.is_none(),
@@ -213,6 +217,7 @@ impl Document {
             graphic_styles: default_graphic_styles().into(),
             char_styles: Default::default(),
             para_styles: Default::default(),
+            composite_fonts: Default::default(),
             text_threads: vec![],
             symbols: vec![],
             graph_designs: vec![],
@@ -247,6 +252,7 @@ impl Document {
             print_setup: None,
             assets: vec![],
             svg_scripts: vec![],
+            svg_filters: vec![],
             puppet: None,
             new_art: Default::default(),
             embroidery: crate::EmbroiderySetup::default(),
@@ -355,6 +361,7 @@ impl Document {
             }
             false
         }
+        crate::id_index::note_tree_walk();
         let mut p = vec![];
         find(&self.layers, id, &mut p).then_some(p)
     }
@@ -396,6 +403,7 @@ impl Document {
             });
         }
         if !want.is_empty() {
+            crate::id_index::note_tree_walk();
             let mut rest = HashMap::with_capacity(want.len());
             walk(&self.layers, &want, &mut Vec::new(), &mut rest);
             out.extend(rest);
