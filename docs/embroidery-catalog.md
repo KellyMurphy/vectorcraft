@@ -67,9 +67,9 @@ before G1), and the P2 items after G2. Only blending thread colours across an ar
 | Tatami fill with holes | Row fill that respects inner holes, with stitch length, spacing and angle | All | P0 | **Done** | Fill (tatami 2–8, brick), routing (E3.5) |
 | Programmable and carved fill editor | Edit the penetration pattern of a fill, or carve lines through it | Pulse Carved Fill Pattern Editor, Wilcom Carving Stamp | P1 | **Partly** | Built-in stagger patterns and carved motifs; no editor for the penetration pattern |
 | Motif run and motif fill | Repeat a small user motif along a line or across an area | Embrilliance, Wilcom, Brother decorative fill | P1 | **Done** | Pattern Border (`.vcborder`), Motif Fill (`.vcmotif`), extraction of both (E8.4) |
-| Contour, circular, spiral and radial fills | Fills that echo the outline or radiate from a centre | Ink/Stitch, Brother, Pulse | P1 | **Missing** | E8.3a–c (waits for gate G1) |
-| Guided and curved fill | Fill rows bend to follow a guide line you draw | Ink/Stitch Guided Fill, Embrilliance Curved Fill | P1 | **Missing** | E8.3d (waits for G1) |
-| Meander and stipple | Quilting-style wandering line that fills an area | Ink/Stitch, Embrilliance | P1 | **Missing** | E8.3e (waits for G1) |
+| Contour, circular, spiral and radial fills | Fills that echo the outline or radiate from a centre | Ink/Stitch, Brother, Pulse | P1 | **Missing** | E8.3a–c (unblocked: G1's test sheet passed) |
+| Guided and curved fill | Fill rows bend to follow a guide line you draw | Ink/Stitch Guided Fill, Embrilliance Curved Fill | P1 | **Missing** | E8.3d (unblocked) |
+| Meander and stipple | Quilting-style wandering line that fills an area | Ink/Stitch, Embrilliance | P1 | **Missing** | E8.3e (unblocked) |
 | Gradient density and colour blends | Fade density, or blend two or more thread colours across an area | Wilcom Multi Blend, Pulse Auto Colour Blend, Ink/Stitch linear gradient | P2 | **Missing** | E9.1 (cascade/gradient density); colour blends: not planned yet |
 | Specialty fills | Fractal, fur, cascade and wave fills | Pulse Maestro | P2 | **Missing** | E9.1 |
 | Cross stitch | Even X stitches on a grid, like hand cross-stitch | Ink/Stitch 3.3, Embird, Pulse | P2 | **Missing** | E9.1 |
@@ -100,7 +100,7 @@ before G1), and the P2 items after G2. Only blending thread colours across an ar
 | Pull and push compensation | Widen or shorten objects to offset thread pull, set per axis | Pulse, Wilcom, Ink/Stitch 3.3 | P0 | **Done** | E7.2; grain- and curve-aware compensation: E10 |
 | Trims, ties and jumps | Auto trims, tie-in/tie-off, minimum jump length, start and stop points | mySewnet, Pulse | P0 | **Done** | Travel settings, Trim Before/After, tie-ins and tie-offs, start handles |
 | Branching and auto-sequencing | Order objects and route travel under later fills to cut trims | Wilcom, BERNINA 9, Pulse | P1 | **Done** | E7.5: `embroidery.optimizeOrder`, branching, hidden travel |
-| Fabric profiles | Pick a fabric and get density, underlay and compensation to match | Hatch, Wilcom | P1 | **Done** | E7.3; starter numbers unchecked until G1, measured profiles in E10.1 |
+| Fabric profiles | Pick a fabric and get density, underlay and compensation to match | Hatch, Wilcom | P1 | **Done** | E7.3; woven and knit starters checked on fabric (G1 test sheet, 2026-11-09), measured profiles in E10.1 |
 | Density advisor | Heat map of stitches per mm², with one-click reduction | mySewnet | P1 | **Done** | E8.7: View › Stitch Density, `embroidery.fix` |
 | Small-stitch filter and corner control | Remove tiny stitches; short stitches at sharp satin corners | Embrilliance, Pulse Custom Cornering | P1 | **Done** | E7.6 shortest stitch; fanned satin corners |
 | Design checker | List problems per object (gaps, long stitches, bad shapes) | Ink/Stitch Troubleshoot Objects | P1 | **Done** | E7.7: `embroidery.check`, Check list |

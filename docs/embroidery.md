@@ -866,8 +866,8 @@ ends with, and VectorCraft implements formats only from public descriptions.
 **Checked against an independent reader.** Files VectorCraft writes have been read with pyembroidery: for
 each format the stitch and colour-change counts and the design size agree, PES's thread colours come back
 exactly, and the trims are there (pyembroidery folds a trim next to a colour change into the change, and
-reads EXP trims as the jumps they are). They have not yet been sewn on a machine: that is part of
-gate G1.
+reads EXP trims as the jumps they are). DST has been sewn on a commercial machine: the test sheet, on woven and on knit, passed gate G1's
+checks (2026-11-09). The other formats have not yet been sewn.
 
 ## What's next
 

@@ -147,7 +147,7 @@ The goal: real artwork digitized, lettered and exported, sewing cleanly on commo
 |---|---|---|
 | **E7.1** Automatic underlay (**done**; thresholds fixed until E7.3) | An `auto` underlay, made the default, chosen by stitch kind and width: narrow satin gets a centre walk, medium gets an edge walk, wide gets edge walk plus zigzag; fills get an edge walk plus fill underlay at right angles; satin shapes get a centre or edge walk by stroke width. Thresholds come from the fabric profile (E7.3). | M |
 | **E7.2** Compensation (**done**: pull in mm and %, push; push not yet on satin shapes or between rails) | Pull compensation for fills (rows extended at their ends) and satin shapes by stitch angle. **Push compensation** (columns shortened at their ends along the stitch direction). Applied per axis, in mm or %. | M |
-| **E7.3** Fabric profiles (**done**; starters' numbers to be checked by the G1 sew-out; minimum stitch length waits for E7.6) | Document-level fabric presets (woven, knit, fleece/towel, cap, leather, denim) setting density, underlay thresholds, compensation and minimum stitch length; per-object overrides win. Generated in code; saved and loaded as open `.vcfabric` files (spec + schema). | M |
+| **E7.3** Fabric profiles (**done**; woven and knit starters checked on fabric by the G1 test sheet, 2026-11-09; minimum stitch length waits for E7.6) | Document-level fabric presets (woven, knit, fleece/towel, cap, leather, denim) setting density, underlay thresholds, compensation and minimum stitch length; per-object overrides win. Generated in code; saved and loaded as open `.vcfabric` files (spec + schema). | M |
 | **E7.4** Overlap removal (**done**; fill borders are still sewn whole) | Fill under a covering fill or satin (higher in the sewing order) is cut away, leaving an overlap margin (0.5 mm by default), so stitches don't pile up. On by default, per-object opt-out. | L |
 | **E7.5** Start/stop points and auto-sequencing (**done**: start points with canvas handles, automatic entry for lines, Optimize, hidden travel, branching; stop points follow from the start and the path) | Per-object start and stop points (handles on the canvas). Within a thread, objects are ordered and each started at the end nearest the last stop, cutting jumps and trims. Running-stitch networks are sewn by branching (each line once, travel doubled under it). Travel hidden under fills that are sewn later. | L |
 | **E7.6** Small-stitch filter (**done**) | A document minimum stitch length (from the fabric profile). Shorter stitches are merged or dropped everywhere, satin columns included. Short stitches on tight satin curves, as satin shape already does. | S |
@@ -163,6 +163,8 @@ The goal: real artwork digitized, lettered and exported, sewing cleanly on commo
 **Gate G1 (fabric):** sew the E6.6 test sheet on woven and on knit, and three real designs (a logo with fills
 and satins, lettering at 6, 10 and 25 mm, a multicolour badge). Pass: no thread breaks or bird-nests, no gaps
 between neighbouring objects, satin edges clean, lettering legible at 6 mm.
+
+**G1 status (2026-11-09): test sheet passed.** The user sewed the E6.6 test sheet on woven and on knit, as DST on a commercial (Tajima-format) machine: no thread breaks or bird-nests, no gaps between neighbouring objects, clean satin edges, and the lettering swatches legible at 6 mm. That checks underlay, density, pull compensation, trims and the woven and knit starter profiles on fabric, so E8.3 (fill families) and E10 can start. Still to sew for G1 to close: the three real designs (the logo, the lettering sample, the badge).
 
 ## Goal: compensation a step above — E10
 
@@ -222,7 +224,7 @@ The table is in the order of work. E8.5 comes first because fonts, motifs and ev
 somewhere to live. Appliqué is next: it is self-contained, uses only stitch kinds that already exist, and its
 patch is a G2 item that can be sewn early. Fonts are the largest step and the one the user asked for first.
 Fill families wait for G1, as the ground rules say: no new fill families until underlay, compensation and
-trims have passed on fabric. E8.7 and E8.6 come last because auto-digitizing leans on everything before it
+trims have passed on fabric (they did on G1's test sheet, 2026-11-09). E8.7 and E8.6 come last because auto-digitizing leans on everything before it
 (more stitch kinds to pick from, the checker to judge the result, the adviser to fix it). E10 (compensation)
 runs alongside once G1's numbers are in.
 
@@ -605,7 +607,7 @@ fabric showing between — a light, decorative fill.
   limit; extraction finds known lattices in code-generated designs (square, brick, hexagonal, with DST
   rounding noise) to 0.1 mm; the carve motifs give the same stitches as before the move to data.
 
-### E8.3 Fill families (L) — after G1
+### E8.3 Fill families (L) — after G1 (unblocked 2026-11-09: G1's test sheet passed)
 
 Each is a kind module (E6.3) with its own parameters (E6.2), auto underlay (E7.1), compensation (E7.2),
 overlap removal (E7.4) and checker support. One commit each:
@@ -924,6 +926,8 @@ code), renders compared by eye, and the independent reader for each machine form
    **Decided: (b).**
 2. **Machine format priority (E7.12).** PES, JEF and EXP are done. Name the machines you sew on, so
    their formats are checked on fabric first, and any other format (VP3, HUS…) is added.
+   **Answered (2026-11-09):** a commercial machine sewing DST; DST is the format checked on fabric (G1's
+   test sheet). The others are still checked only against pyembroidery.
 2a. **Machine thread palettes (E7.12).** PES's PEC section and JEF name threads by number in Brother's and
    Janome's built-in palettes, so a machine shows its palette's colour for each number. VectorCraft ships no
    palette (they are the makers' data, as thread charts are), writes a number per distinct colour and keeps
