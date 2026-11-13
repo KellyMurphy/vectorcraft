@@ -5889,6 +5889,7 @@ mark-style	Japanese	Japonesas
 	A small stitched motif repeated across the shape, the fabric showing between.	Un pequeño motivo bordado repetido por la forma, con la tela visible entre ellos.
 	How large one tile of the motif is	El tamaño de una tesela del motivo
 	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	El motivo bordado tesela a tesela por la forma (embroidery.loadMotif añade más)
+	Choose the thread's color	Elige el color del hilo
 	Stars	Estrellas
 	Flowers	Flores
 	Crosses	Cruces

@@ -5541,6 +5541,7 @@ lighting	Light	Світло
 	A small stitched motif repeated across the shape, the fabric showing between.	Невеликий вишитий мотив, повторений по фігурі, між ними видно тканину.
 	How large one tile of the motif is	Наскільки велика одна плитка мотиву
 	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Мотив, вишитий плитка за плиткою по фігурі (embroidery.loadMotif додає інші)
+	Choose the thread's color	Вибрати колір нитки
 	Stars	Зірки
 	Flowers	Квіти
 	Crosses	Хрестики

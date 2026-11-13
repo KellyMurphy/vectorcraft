@@ -5826,6 +5826,7 @@ swatch	Bright Violet	Kraftig violet
 	A small stitched motif repeated across the shape, the fabric showing between.	Et lille broderet motiv gentaget hen over formen, med stoffet synligt imellem.
 	How large one tile of the motif is	Hvor stor én flise af motivet er
 	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Motivet broderet flise for flise hen over formen (embroidery.loadMotif tilføjer flere)
+	Choose the thread's color	Vælg trådens farve
 	Stars	Stjerner
 	Flowers	Blomster
 	Crosses	Kryds

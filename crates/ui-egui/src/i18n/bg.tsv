@@ -5828,6 +5828,7 @@ theme	Appearance	Външен вид
 	A small stitched motif repeated across the shape, the fabric showing between.	Малък бродиран мотив, повторен по формата, с видим плат между тях.
 	How large one tile of the motif is	Колко голяма е една плочка на мотива
 	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Мотивът, бродиран плочка по плочка по формата (embroidery.loadMotif добавя още)
+	Choose the thread's color	Изберете цвета на конеца
 	Stars	Звезди
 	Flowers	Цветя
 	Crosses	Кръстчета

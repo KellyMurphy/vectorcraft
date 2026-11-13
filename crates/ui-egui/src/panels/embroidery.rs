@@ -1027,32 +1027,90 @@ fn stop_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
     .on_hover_text(tl!("Stop the machine before this object: to change something by hand, place appliqué fabric, or trim it"));
 }
 
+/// The thread the selection is sewn in: a chip of the colour sewn (its own thread, else the
+/// object's colour), which opens a colour picker and the chosen chart's threads; its hex as a
+/// second way in; and the chart thread it matches.
 fn thread_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
-    let thread = sel["thread"].as_str().and_then(rgb);
-    widgets::label_row(ui, tl!("Thread:"), LABEL_W, |ui| {
-        match thread {
-            Some(c) => {
-                chip(ui, c, 18.0);
-            }
-            None => {
-                ui.label(tl!("Object color")).on_hover_text(tl!("The stroke's color for stitches along the path, the fill's for fills"));
-            }
+    let own = sel["thread"].as_str().and_then(rgb);
+    let sewn = sel["sewn"].as_str().and_then(rgb);
+    widgets::label_row(ui, tl!("Color:"), LABEL_W, |ui| {
+        if let Some(c) = sewn {
+            let (r, resp) = ui.allocate_exact_size(vec2(22.0, 22.0), Sense::click());
+            ui.painter().rect_filled(r, 3.0, Color32::from_rgb(c[0], c[1], c[2]));
+            let edge = if resp.hovered() { Tokens::get(ui.ctx()).accent } else { Color32::from_gray(110) };
+            ui.painter().rect_stroke(r, 3.0, Stroke::new(1.0, edge), egui::StrokeKind::Inside);
+            let resp = resp.on_hover_text(tl!("Choose the thread's color"));
+            let clicked = resp.clicked();
+            widgets::popover(&resp, clicked, |ui| thread_picker(app, ui, c));
         }
-        let hex = sel["thread"].as_str().unwrap_or("").trim_start_matches('#').to_string();
+        let hex = sel["sewn"].as_str().unwrap_or("").trim_start_matches('#').to_string();
         if let Some(h) = widgets::hex_field(ui, "emb-thread", &hex)
             && rgb(&h).is_some()
         {
             set(app, json!({"thread": format!("#{}", h.trim_start_matches('#'))}));
         }
     });
-    // On a line of its own: beside the field it ran past the panel's edge.
-    if thread.is_some() {
-        indented(ui, |ui| {
-            if widgets::flat_button(ui, tl!("Use Object Color"), 110.0).clicked() {
-                set(app, json!({"thread": null}));
+    // On a line of their own: beside the field they ran past the panel's edge.
+    indented(ui, |ui| {
+        let t = &sel["sewnThread"];
+        if let Some(code) = t["code"].as_str() {
+            let text = format!("{code} {}", t["name"].as_str().unwrap_or(""));
+            ui.add(egui::Label::new(egui::RichText::new(text).color(Tokens::get(ui.ctx()).text_dim)).truncate())
+                .on_hover_text(format!("ΔE {}", t["deltaE"]));
+        }
+        match own {
+            Some(_) => {
+                if widgets::flat_button(ui, tl!("Use Object Color"), 110.0).clicked() {
+                    set(app, json!({"thread": null}));
+                }
+            }
+            None => {
+                ui.label(tl!("Object color")).on_hover_text(tl!("The stroke's color for stitches along the path, the fill's for fills"));
+            }
+        }
+    });
+}
+
+/// The thread chip's popover: a colour picker, then the chosen chart's threads. A drag in the
+/// picker sets the thread once, when it ends, so it is one undo step.
+fn thread_picker(app: &mut VectorcraftApp, ui: &mut Ui, sewn: [u8; 3]) {
+    let id = egui::Id::unique("emb-thread-picking");
+    let mut c = ui.ctx().data(|d| d.get_temp::<[u8; 3]>(id)).unwrap_or(sewn);
+    let mut color = Color32::from_rgb(c[0], c[1], c[2]);
+    if egui::widgets::color_picker::color_picker_color32(ui, &mut color, egui::widgets::color_picker::Alpha::Opaque) {
+        c = [color.r(), color.g(), color.b()];
+    }
+    if ui.input(|i| i.pointer.any_down()) {
+        ui.ctx().data_mut(|d| d.insert_temp(id, c));
+    } else {
+        ui.ctx().data_mut(|d| d.remove::<[u8; 3]>(id));
+        if c != sewn {
+            set(app, json!({"thread": format!("#{:02x}{:02x}{:02x}", c[0], c[1], c[2])}));
+        }
+    }
+    let chart = app.session.active().and_then(|d| {
+        let e = &d.doc.embroidery;
+        e.chart.as_deref().and_then(|id| e.charts.iter().find(|ch| ch.id == id && ch.unknown.is_none())).cloned()
+    });
+    let Some(chart) = chart else { return };
+    ui.separator();
+    ui.label(egui::RichText::new(&chart.name).color(Tokens::get(ui.ctx()).text_dim));
+    egui::ScrollArea::vertical().max_height(160.0).show(ui, |ui| {
+        ui.set_max_width(260.0);
+        ui.horizontal_wrapped(|ui| {
+            ui.spacing_mut().item_spacing = vec2(3.0, 3.0);
+            for t in &chart.threads {
+                let Some(tc) = rgb(&t.color) else { continue };
+                let (r, resp) = ui.allocate_exact_size(vec2(16.0, 16.0), Sense::click());
+                ui.painter().rect_filled(r, 2.0, Color32::from_rgb(tc[0], tc[1], tc[2]));
+                let edge = if tc == sewn { Tokens::get(ui.ctx()).accent } else { Color32::from_gray(110) };
+                ui.painter().rect_stroke(r, 2.0, Stroke::new(if tc == sewn { 2.0 } else { 1.0 }, edge), egui::StrokeKind::Inside);
+                if resp.on_hover_text(format!("{} {}", t.code, t.name)).clicked() {
+                    set(app, json!({"thread": format!("#{:02x}{:02x}{:02x}", tc[0], tc[1], tc[2])}));
+                }
             }
         });
-    }
+    });
 }
 
 fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Value) {
@@ -2579,6 +2637,10 @@ mod tests {
         check(&mut app, 0, "satin with a width and a thread");
         run(&mut app, "embroidery.set", json!({"type": "patternBorder", "width": 8}));
         check(&mut app, 0, "pattern border with a width");
+        // A thread chart: the thread's code and name under its colour.
+        run(&mut app, "embroidery.loadThreadChart", json!({"data": CHART}));
+        run(&mut app, "embroidery.set", json!({"type": "fill", "thread": null}));
+        check(&mut app, 0, "a thread named by the chart");
         run(&mut app, "embroidery.set", json!({"type": "fill", "border": 2}));
         check(&mut app, 1, "design");
         // The document's own fabric (Save…, Add to Library) and a hoop the design is too big for.
@@ -2589,6 +2651,10 @@ mod tests {
         check(&mut app, 1, "design split into hoopings");
         check(&mut app, 2, "tools");
     }
+
+    /// A thread chart of one red thread with a long name.
+    const CHART: &str = r##"{"format": "vectorcraft-thread-chart", "version": 1, "name": "Test Threads",
+        "threads": [{"code": "1801", "name": "Very Long Thread Name For A Red", "color": "#e00000"}]}"##;
 
     /// The texts the panel draws with tab `tab` open, and the colours of the rectangles it fills.
     fn drawn(app: &mut VectorcraftApp, tab: usize) -> (Vec<String>, Vec<Color32>) {
@@ -2650,6 +2716,29 @@ mod tests {
         // The last "Stitch" is the section's heading (the first, the tab's name).
         let heading = texts.iter().rposition(|t| t == "Stitch").expect("the Stitch heading");
         assert!(toggle < heading, "{texts:?}");
+    }
+
+    /// UI1.4: the Thread section shows the colour sewn, the object's own when it sets none, and
+    /// the chart thread it matches.
+    #[test]
+    fn the_thread_row_shows_the_colour_sewn() {
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        let run = |app: &mut VectorcraftApp, id: &str, p: Value| app.session.execute(id, &p).unwrap();
+        run(&mut app, "file.new", json!({"width": 200, "height": 200}));
+        run(&mut app, "paint.setFill", json!({"color": "#ff0000"}));
+        run(&mut app, "shape.rectangle", json!({"x": 10, "y": 10, "width": 100, "height": 60}));
+        run(&mut app, "embroidery.set", json!({"type": "fill"}));
+        let (texts, fills) = drawn(&mut app, 0);
+        assert!(fills.contains(&Color32::from_rgb(255, 0, 0)), "a chip of the fill's red");
+        assert!(texts.iter().any(|t| t == "Object color") && texts.iter().any(|t| t == "Color:"), "{texts:?}");
+        assert!(!texts.iter().any(|t| t == "Thread:"), "one Thread label, the heading");
+        // A thread of its own, named by the chart.
+        run(&mut app, "embroidery.loadThreadChart", json!({"data": CHART}));
+        run(&mut app, "embroidery.set", json!({"thread": "#e01010"}));
+        let (texts, fills) = drawn(&mut app, 0);
+        assert!(fills.contains(&Color32::from_rgb(0xe0, 0x10, 0x10)));
+        assert!(texts.iter().any(|t| t.starts_with("1801 Very Long")), "{texts:?}");
+        assert!(texts.iter().any(|t| t == "Use Object Color"));
     }
 
     #[test]

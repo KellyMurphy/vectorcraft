@@ -358,7 +358,7 @@ fn info_doc() -> &'static str {
     static DOC: std::sync::OnceLock<String> = std::sync::OnceLock::new();
     DOC.get_or_init(|| {
         format!(
-            "{{ids?}} → {{design: {{objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings, stops: [{{block: the thread sewn after it (0 with no colour change: before the machine starts), kind: stop|placeFabric|trimFabric|foam}}]}}, setup: {{trimJumpsOver, stitchMovesUnder}} (embroidery.setup), selection: {{stitched, unstitched, {}}} (as sewn: the document's fabric fills in what objects leave unset; each null when the stitched objects differ, or none is; type is `unknown` for settings from a newer VectorCraft)}}",
+            "{{ids?}} → {{design: {{objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings, stops: [{{block: the thread sewn after it (0 with no colour change: before the machine starts), kind: stop|placeFabric|trimFabric|foam}}]}}, setup: {{trimJumpsOver, stitchMovesUnder}} (embroidery.setup), selection: {{stitched, unstitched, sewn: \"#rrggbb\" (the thread colour the stitched objects are sewn in, their own colour when they set none; null when they differ), sewnThread: {{code, name, color, deltaE}} (sewn's nearest thread in the chosen thread chart; null without one), {}}} (as sewn: the document's fabric fills in what objects leave unset; each null when the stitched objects differ, or none is; type is `unknown` for settings from a newer VectorCraft)}}",
             params::info_keys()
         )
     })
@@ -1047,6 +1047,18 @@ fn info(s: &mut Session, p: &Value) -> Result<Value> {
     for param in params::PARAMS {
         selection[param.key] = same(all.iter().map(|s| (param.get)(s)));
     }
+    // The colour sewn, whether the objects set a thread or take their own colour, and its nearest
+    // thread in the chosen chart.
+    let sewn = same(
+        ids.iter().filter_map(|id| doc.node(*id)).filter(|n| n.extras().stitch.is_some()).map(|n| hex(vectorcraft_embroidery::thread_of_node(n))),
+    );
+    let chart = doc.embroidery.chart.as_deref().and_then(|id| doc.embroidery.charts.iter().find(|c| c.id == id && c.unknown.is_none()));
+    selection["sewnThread"] = match (sewn.as_str().and_then(vectorcraft_embroidery::threads::parse_hex), chart) {
+        (Some(rgb), Some(chart)) => vectorcraft_embroidery::threads::nearest(chart, rgb)
+            .map_or(Value::Null, |(t, d)| json!({"code": t.code, "name": t.name, "color": t.color, "deltaE": (d * 10.0).round() / 10.0})),
+        _ => Value::Null,
+    };
+    selection["sewn"] = sewn;
     Ok(json!({ "design": design(doc, &plan), "setup": setup_json(doc), "selection": selection }))
 }
 

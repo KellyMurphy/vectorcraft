@@ -724,7 +724,7 @@ profile is the next step (E10.1b).
 | `embroidery.removeMotif` | `{motif}`: remove one of the document's motifs that nothing uses |
 | `embroidery.removeBorderPattern` | `{pattern}`: remove one of the document's patterns that nothing sews with |
 | `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm, overlap?: mm, minStitch?: mm, autoStart?, hideTravel?, speed?: stitches/min, machineFormat?: dst \| pes \| jef \| exp, hoopRotation?: 0 \| 90 \| 180 \| 270}`: the document's travel settings, overlap, shortest stitch, machine speed, the format the panels export and the design's turn in the hoop |
-| `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings |
+| `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings, with `sewn` (the colour the selection is sewn in) and `sewnThread` (its nearest thread in the chosen chart) |
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
 | `embroidery.check` | `{ids?}` → the design checker's `findings` (`rule`, `severity`, `message`, `object`, `at` in document points), `counts` and the `rules` |
 | `embroidery.digitize` | `{id?, colors?, minArea?, keepWhite?, order?, fix?, lines?}`: a logo (image, traced image or group of filled shapes) as stitch objects, one undo step; `lines: centreline` sews parts under 2 mm wide along their centre lines → `{id, objects, threads, merged, dropped, centrelines, fixes, findings}` |

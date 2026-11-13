@@ -5561,6 +5561,7 @@ lighting	Light	Luce
 	A small stitched motif repeated across the shape, the fabric showing between.	Un piccolo motivo ricamato ripetuto sulla forma, con il tessuto visibile in mezzo.
 	How large one tile of the motif is	Quanto è grande una tessera del motivo
 	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Il motivo ricamato tessera per tessera sulla forma (embroidery.loadMotif ne aggiunge altri)
+	Choose the thread's color	Scegli il colore del filo
 	Stars	Stelle
 	Flowers	Fiori
 	Crosses	Croci

@@ -5942,6 +5942,7 @@ theme	Appearance	Apparence
 	A small stitched motif repeated across the shape, the fabric showing between.	Un petit motif brodé répété sur la forme, le tissu visible entre eux.
 	How large one tile of the motif is	La taille d’une tuile du motif
 	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Le motif brodé tuile par tuile sur la forme (embroidery.loadMotif en ajoute d’autres)
+	Choose the thread's color	Choisir la couleur du fil
 	Stars	Étoiles
 	Flowers	Fleurs
 	Crosses	Croix

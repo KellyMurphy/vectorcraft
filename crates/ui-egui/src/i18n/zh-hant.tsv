@@ -5585,6 +5585,7 @@ lighting	Light	光源
 	A small stitched motif repeated across the shape, the fabric showing between.	小型刺繡圖案在形狀上重複排列，圖案之間露出布面。
 	How large one tile of the motif is	一個圖案單元的大小
 	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	在形狀上逐個刺繡的圖案單元（embroidery.loadMotif 可新增更多）
+	Choose the thread's color	選擇線的顏色
 	Stars	星形
 	Flowers	花朵
 	Crosses	十字

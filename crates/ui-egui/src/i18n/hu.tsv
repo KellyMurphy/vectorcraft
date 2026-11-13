@@ -5941,6 +5941,7 @@ imageTrace	Outline	Körvonal
 	A small stitched motif repeated across the shape, the fabric showing between.	Kis hímzett motívum ismételve az alakzaton, köztük látszik az anyag.
 	How large one tile of the motif is	Mekkora a motívum egy csempéje
 	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	A motívum csempénként hímezve az alakzaton (az embroidery.loadMotif újakat ad hozzá)
+	Choose the thread's color	A cérna színének kiválasztása
 	Stars	Csillagok
 	Flowers	Virágok
 	Crosses	Keresztek

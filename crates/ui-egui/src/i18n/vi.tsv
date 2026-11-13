@@ -5553,6 +5553,7 @@ theme	Appearance	Giao diện
 	A small stitched motif repeated across the shape, the fabric showing between.	Một họa tiết thêu nhỏ lặp lại khắp hình, lộ vải ở giữa.
 	How large one tile of the motif is	Một ô họa tiết lớn cỡ nào
 	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Họa tiết thêu từng ô khắp hình (embroidery.loadMotif thêm họa tiết khác)
+	Choose the thread's color	Chọn màu chỉ
 	Stars	Ngôi sao
 	Flowers	Hoa
 	Crosses	Dấu chéo

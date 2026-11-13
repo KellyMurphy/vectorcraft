@@ -5860,6 +5860,7 @@ mark-style	Japanese	Japonesas
 	A small stitched motif repeated across the shape, the fabric showing between.	Um pequeno motivo bordado repetido pela forma, com o tecido visível entre eles.
 	How large one tile of the motif is	O tamanho de um ladrilho do motivo
 	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	O motivo bordado ladrilho a ladrilho pela forma (embroidery.loadMotif adiciona mais)
+	Choose the thread's color	Escolhe a cor da linha
 	Stars	Estrelas
 	Flowers	Flores
 	Crosses	Cruzes

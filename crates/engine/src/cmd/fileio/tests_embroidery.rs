@@ -800,6 +800,30 @@ fn optimizing_the_order_groups_threads_and_cuts_travel() {
 }
 
 #[test]
+fn the_selection_reports_the_colour_it_is_sewn_in_and_its_chart_thread() {
+    // The session's red square (#ff0000) stitched with no thread of its own: sewn in its fill.
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    let sel = info(&mut s)["selection"].clone();
+    assert_eq!((sel["thread"].clone(), sel["sewn"].as_str()), (Value::Null, Some("#ff0000")));
+    assert_eq!(sel["sewnThread"], Value::Null, "no thread chart");
+    // A thread of its own is sewn instead; with a chart, its nearest thread is named.
+    let chart = r##"{"format": "vectorcraft-thread-chart", "version": 1, "name": "Test Threads",
+        "threads": [{"code": "R1", "name": "Red", "color": "#e00000"}, {"code": "B1", "name": "Blue", "color": "#0020c0"}]}"##;
+    s.execute("embroidery.loadThreadChart", &json!({"data": chart})).unwrap();
+    s.execute("embroidery.set", &json!({"thread": "#0000ff"})).unwrap();
+    let sel = info(&mut s)["selection"].clone();
+    assert_eq!(sel["sewn"], "#0000ff");
+    assert_eq!((sel["sewnThread"]["code"].as_str(), sel["sewnThread"]["name"].as_str()), (Some("B1"), Some("Blue")));
+    // Objects sewn in different colours: none.
+    s.execute("shape.rectangle", &json!({"x": 300, "y": 300, "width": 40, "height": 40})).unwrap();
+    s.execute("embroidery.set", &json!({"type": "fill", "thread": "#00ff00"})).unwrap();
+    s.execute("select.all", &json!({})).unwrap();
+    let sel = info(&mut s)["selection"].clone();
+    assert_eq!((sel["sewn"].clone(), sel["sewnThread"].clone()), (Value::Null, Value::Null));
+}
+
+#[test]
 fn thread_charts_are_loaded_matched_chosen_and_removed() {
     let chart = r##"{"format": "vectorcraft-thread-chart", "version": 1, "name": "Test Threads",
         "threads": [{"code": "R1", "name": "Red", "color": "#e00000"}, {"code": "B1", "name": "Blue", "color": "#0020c0"}]}"##;

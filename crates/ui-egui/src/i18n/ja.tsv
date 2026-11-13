@@ -5605,6 +5605,7 @@ lighting	Light	ライト
 	A small stitched motif repeated across the shape, the fabric showing between.	小さな刺繍モチーフを図形全体に繰り返し、間に布が見えます。
 	How large one tile of the motif is	モチーフ 1 タイルの大きさ
 	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	図形全体にタイルごとに刺繍するモチーフ（embroidery.loadMotif で追加）
+	Choose the thread's color	糸のカラーを選択します
 	Stars	星
 	Flowers	花
 	Crosses	クロス

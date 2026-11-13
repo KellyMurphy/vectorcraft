@@ -5945,6 +5945,7 @@ mark-style	Japanese	Japonské
 	A small stitched motif repeated across the shape, the fabric showing between.	Malý vyšitý motiv opakovaný po tvaru, mezi nimi je vidět látka.
 	How large one tile of the motif is	Jak velká je jedna dlaždice motivu
 	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Motiv vyšitý dlaždici po dlaždici po tvaru (embroidery.loadMotif přidá další)
+	Choose the thread's color	Zvolit barvu nitě
 	Stars	Hvězdy
 	Flowers	Květiny
 	Crosses	Křížky
