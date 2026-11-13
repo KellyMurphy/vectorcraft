@@ -5647,6 +5647,9 @@ lighting	Light	ライト
 @plural	{n} thread|{n} threads	{n} 色
 @plural	{n} problem|{n} problems	{n} 件の問題
 	{m} min	{m} 分
+	Setup	設定
+	Check & Export	チェックと書き出し
+	Sewing	縫製
 	The stitched design: its stitches, size, threads and sewing time	刺しゅうデザイン：針数、サイズ、糸、縫製時間
 	What the design checker found: open its list	デザインチェックの結果：一覧を開きます
 @msg	Loaded embroidery font {_1}	刺繍フォント {_1} を読み込みました

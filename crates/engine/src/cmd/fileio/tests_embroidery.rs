@@ -799,6 +799,26 @@ fn optimizing_the_order_groups_threads_and_cuts_travel() {
     assert!(s.execute("embroidery.set", &json!({"startAt": [1.0]})).is_err());
 }
 
+/// The design lists each thread's stitch count beside it, for the thread rows the person at the
+/// machine reads; together they are the design's stitches.
+#[test]
+fn the_design_counts_each_threads_stitches() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 300, "height": 300})).unwrap();
+    s.execute("paint.setFill", &json!({"color": "#ff0000"})).unwrap();
+    s.execute("shape.rectangle", &json!({"x": 10, "y": 10, "width": 100, "height": 60})).unwrap();
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    s.execute("select.none", &json!({})).unwrap();
+    s.execute("path.create", &json!({"d": "M 20 200 L 280 200"})).unwrap();
+    s.execute("embroidery.set", &json!({"type": "running", "thread": "#0000ff"})).unwrap();
+    let d = s.execute("embroidery.info", &json!({})).unwrap()["design"].clone();
+    let counts: Vec<u64> = d["blockStitches"].as_array().unwrap().iter().map(|c| c.as_u64().unwrap()).collect();
+    assert_eq!(counts.len(), d["threads"].as_array().unwrap().len(), "{d}");
+    assert_eq!(counts.iter().sum::<u64>(), d["stitches"].as_u64().unwrap());
+    assert!(counts.iter().all(|c| *c > 0), "{counts:?}");
+    assert!(counts[0] > counts[1], "the fill sews more than the line: {counts:?}");
+}
+
 #[test]
 fn the_selection_reports_the_colour_it_is_sewn_in_and_its_chart_thread() {
     // The session's red square (#ff0000) stitched with no thread of its own: sewn in its fill.

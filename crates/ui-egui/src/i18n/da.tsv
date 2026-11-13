@@ -5868,6 +5868,9 @@ swatch	Bright Violet	Kraftig violet
 @plural	{n} thread|{n} threads	{n} tråd|{n} tråde
 @plural	{n} problem|{n} problems	{n} problem|{n} problemer
 	{m} min	{m} min
+	Setup	Opsætning
+	Check & Export	Kontrol og eksport
+	Sewing	Syning
 	The stitched design: its stitches, size, threads and sewing time	Det broderede design: sting, størrelse, tråde og syetid
 	What the design checker found: open its list	Hvad designkontrollen fandt: åbn listen
 @msg	Loaded embroidery font {_1}	Broderiskrifttypen {_1} er indlæst

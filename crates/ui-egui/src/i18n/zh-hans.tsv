@@ -5818,6 +5818,9 @@ lighting	Light	光源
 @plural	{n} thread|{n} threads	{n} 种线
 @plural	{n} problem|{n} problems	{n} 个问题
 	{m} min	{m} 分钟
+	Setup	设置
+	Check & Export	检查与导出
+	Sewing	缝制
 	The stitched design: its stitches, size, threads and sewing time	刺绣设计：针数、尺寸、线和缝制时间
 	What the design checker found: open its list	设计检查发现的问题：打开列表
 @msg	Loaded embroidery font {_1}	已载入刺绣字体 {_1}

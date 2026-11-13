@@ -477,7 +477,8 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     travel(app, ui, &info["setup"]);
 }
 
-/// The document's travel settings: when a jump trims, and how short a move is sewn.
+/// The document's travel settings: when a jump trims, and how short a move is sewn. The other
+/// sewing settings (speed, overlap, shortest stitch) are in the Embroidery panel's Setup tab.
 fn travel(app: &mut VectorcraftApp, ui: &mut Ui, setup: &Value) {
     widgets::section_header(ui, tl!("Travel"));
     let trim = setup["trimJumpsOver"].as_f64();
@@ -512,36 +513,6 @@ fn travel(app: &mut VectorcraftApp, ui: &mut Ui, setup: &Value) {
     ) {
         app.run("embroidery.setup", json!({ "hideTravel": !hide })).ok();
     }
-    ui.scope(|ui| {
-        widgets::label_row(ui, tl!("Machine Speed:"), LABEL_W, |ui| {
-            if let Some(v) = widgets::mixed_field(ui, ("emb", "speed"), setup["speed"].as_f64(), " /min", 0, FIELD_W) {
-                let r = EmbroiderySetup::SPEED;
-                app.run("embroidery.setup", json!({ "speed": v.clamp(*r.start(), *r.end()) })).ok();
-            }
-        })
-    })
-    .response
-    .on_hover_text(tl!("Stitches per minute, for the sewing time estimate"));
-    ui.scope(|ui| {
-        widgets::label_row(ui, tl!("Overlap:"), LABEL_W, |ui| {
-            if let Some(v) = widgets::mixed_field(ui, ("emb", "overlap"), setup["overlap"].as_f64(), " mm", 1, FIELD_W) {
-                let r = EmbroiderySetup::OVERLAP;
-                app.run("embroidery.setup", json!({ "overlap": v.clamp(*r.start(), *r.end()) })).ok();
-            }
-        })
-    })
-    .response
-    .on_hover_text(tl!("How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away"));
-    ui.scope(|ui| {
-        widgets::label_row(ui, tl!("Shortest Stitch:"), LABEL_W, |ui| {
-            if let Some(v) = widgets::mixed_field(ui, ("emb", "minStitch"), setup["minStitch"].as_f64(), " mm", 1, FIELD_W) {
-                let r = EmbroiderySetup::MIN_STITCH;
-                app.run("embroidery.setup", json!({ "minStitch": v.clamp(*r.start(), *r.end()) })).ok();
-            }
-        })
-    })
-    .response
-    .on_hover_text(tl!("Needle points closer than this to the one before are left out (the fabric may ask for longer)"));
 }
 
 #[cfg(test)]

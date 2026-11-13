@@ -5854,6 +5854,9 @@ mark-style	Japanese	Japońskie
 @plural	{n} thread|{n} threads	{n} nić|{n} nici|{n} nici
 @plural	{n} problem|{n} problems	{n} problem|{n} problemy|{n} problemów
 	{m} min	{m} min
+	Setup	Ustawienia
+	Check & Export	Sprawdź i eksportuj
+	Sewing	Szycie
 	The stitched design: its stitches, size, threads and sewing time	Wyhaftowany projekt: ściegi, rozmiar, nici i czas szycia
 	What the design checker found: open its list	Co znalazło sprawdzanie projektu: otwiera listę
 @msg	Loaded embroidery font {_1}	Wczytano czcionkę hafciarską {_1}

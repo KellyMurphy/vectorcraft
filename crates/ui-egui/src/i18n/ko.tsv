@@ -5575,6 +5575,9 @@ lighting	Light	광원
 @plural	{n} thread|{n} threads	실 {n}개
 @plural	{n} problem|{n} problems	문제 {n}개
 	{m} min	{m}분
+	Setup	설정
+	Check & Export	검사 및 내보내기
+	Sewing	봉제
 	The stitched design: its stitches, size, threads and sewing time	자수 디자인: 땀 수, 크기, 실, 봉제 시간
 	What the design checker found: open its list	디자인 검사 결과: 목록을 엽니다
 @msg	Loaded embroidery font {_1}	자수 글꼴 {_1}을(를) 불러왔습니다

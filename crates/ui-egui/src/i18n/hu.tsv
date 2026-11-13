@@ -5983,6 +5983,9 @@ imageTrace	Outline	Körvonal
 @plural	{n} thread|{n} threads	{n} cérna|{n} cérna
 @plural	{n} problem|{n} problems	{n} probléma|{n} probléma
 	{m} min	{m} perc
+	Setup	Beállítás
+	Check & Export	Ellenőrzés és exportálás
+	Sewing	Varrás
 	The stitched design: its stitches, size, threads and sewing time	A hímzett minta: öltések, méret, cérnák és varrási idő
 	What the design checker found: open its list	Amit a mintaellenőrzés talált: a lista megnyitása
 @msg	Loaded embroidery font {_1}	A(z) {_1} hímzőbetűtípus betöltve

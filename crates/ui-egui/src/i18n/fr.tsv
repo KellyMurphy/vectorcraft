@@ -5984,6 +5984,9 @@ theme	Appearance	Apparence
 @plural	{n} thread|{n} threads	{n} fil|{n} fils
 @plural	{n} problem|{n} problems	{n} problème|{n} problèmes
 	{m} min	{m} min
+	Setup	Configuration
+	Check & Export	Vérifier et exporter
+	Sewing	Broderie
 	The stitched design: its stitches, size, threads and sewing time	Le motif brodé : ses points, sa taille, ses fils et son temps de broderie
 	What the design checker found: open its list	Ce que le contrôle du motif a trouvé : ouvrir sa liste
 @msg	Loaded embroidery font {_1}	Police de broderie {_1} chargée

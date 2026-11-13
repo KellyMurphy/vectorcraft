@@ -5987,6 +5987,9 @@ mark-style	Japanese	Japonské
 @plural	{n} thread|{n} threads	{n} nit|{n} nitě|{n} nití
 @plural	{n} problem|{n} problems	{n} problém|{n} problémy|{n} problémů
 	{m} min	{m} min
+	Setup	Nastavení
+	Check & Export	Kontrola a export
+	Sewing	Šití
 	The stitched design: its stitches, size, threads and sewing time	Vyšívaný návrh: stehy, velikost, nitě a doba šití
 	What the design checker found: open its list	Co našla kontrola návrhu: otevře její seznam
 @msg	Loaded embroidery font {_1}	Načteno vyšívací písmo {_1}

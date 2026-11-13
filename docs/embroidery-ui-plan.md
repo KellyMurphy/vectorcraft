@@ -1,6 +1,6 @@
 # Embroidery UI improvement plan
 
-Status: Phase 1 (UI1.1 to UI1.5) and UI2.1 done; the rest proposed. Written 2026-11-11.
+Status: Phase 1 (UI1.1 to UI1.5), UI2.1 and UI2.2 done; the rest proposed. Written 2026-11-11.
 
 This plan comes from a review of the three embroidery panels: reading their code and driving the
 app through each tab with a small design (a filled rectangle and a satin line). It lists what to
@@ -171,6 +171,16 @@ Under Fills.
 
 Open question: whether Tools stays a fourth tab or moves out (UI2.4).
 
+Status: done. The tabs are Stitch, Setup, Check & Export and Tools (Tools stays a fourth tab until
+UI2.4). Setup holds Fabric, Fabric Look, Hoop (with its hoopings and turn), Machine Format, Thread
+Chart, a Sewing section with Machine Speed, Overlap and Shortest Stitch, and Sew-Out Test…. Check &
+Export holds the design's numbers, a Threads section with one row per thread in sewing order (chip,
+number, chart code and name or the hex, stitch count, from the new `blockStitches` of
+`embroidery.info`), Worksheet…, Mockup…, Real Size and Sew Order…, then the checker's findings.
+Export stays in the header only. Sew Order keeps Trim Jumps Over, Sew Moves Under and Hide Travel
+Under Fills. The open tab is kept under a new key, so a panel last left on Design or Tools opens on
+Stitch once.
+
 ### UI2.3 Fabric and hoop as first choices
 
 Fabric and Hoop both default to None, yet the fabric fills in density, compensation and underlay
@@ -282,3 +292,4 @@ sewing is seen on the artwork at the size the user is working at.
 - 2026-11-11: UI1.2 done.
 - 2026-11-12: UI1.3, UI1.4 and UI1.5 done.
 - 2026-11-12: UI2.1 done.
+- 2026-11-12: UI2.2 done.

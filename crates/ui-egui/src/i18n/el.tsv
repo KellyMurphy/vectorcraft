@@ -5951,6 +5951,9 @@ effect	Points	Σημεία
 @plural	{n} thread|{n} threads	{n} κλωστή|{n} κλωστές
 @plural	{n} problem|{n} problems	{n} πρόβλημα|{n} προβλήματα
 	{m} min	{m} λεπ.
+	Setup	Ρύθμιση
+	Check & Export	Έλεγχος & εξαγωγή
+	Sewing	Ράψιμο
 	The stitched design: its stitches, size, threads and sewing time	Το κεντημένο σχέδιο: βελονιές, μέγεθος, κλωστές και χρόνος ραφής
 	What the design checker found: open its list	Τι βρήκε ο έλεγχος σχεδίου: άνοιγμα της λίστας
 @msg	Loaded embroidery font {_1}	Φορτώθηκε η γραμματοσειρά κεντήματος {_1}

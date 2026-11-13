@@ -6026,6 +6026,9 @@ swatch	Yellow Green	Gulgrön
 @plural	{n} thread|{n} threads	{n} tråd|{n} trådar
 @plural	{n} problem|{n} problems	{n} problem|{n} problem
 	{m} min	{m} min
+	Setup	Inställning
+	Check & Export	Kontroll och export
+	Sewing	Sömnad
 	The stitched design: its stitches, size, threads and sewing time	Den broderade designen: stygn, storlek, trådar och sytid
 	What the design checker found: open its list	Vad designkontrollen hittade: öppna listan
 @msg	Loaded embroidery font {_1}	Broderiteckensnittet {_1} har lästs in

@@ -5918,6 +5918,9 @@ swatch	Bright Violet	Felviolet
 @plural	{n} thread|{n} threads	{n} garen|{n} garens
 @plural	{n} problem|{n} problems	{n} probleem|{n} problemen
 	{m} min	{m} min
+	Setup	Instellingen
+	Check & Export	Controleren en exporteren
+	Sewing	Borduren
 	The stitched design: its stitches, size, threads and sewing time	Het geborduurde ontwerp: steken, grootte, garens en borduurtijd
 	What the design checker found: open its list	Wat de ontwerpcontrole vond: de lijst openen
 @msg	Loaded embroidery font {_1}	Borduurlettertype {_1} geladen

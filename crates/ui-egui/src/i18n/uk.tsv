@@ -5583,6 +5583,9 @@ lighting	Light	Світло
 @plural	{n} thread|{n} threads	{n} нитка|{n} нитки|{n} ниток
 @plural	{n} problem|{n} problems	{n} проблема|{n} проблеми|{n} проблем
 	{m} min	{m} хв
+	Setup	Налаштування
+	Check & Export	Перевірка й експорт
+	Sewing	Шиття
 	The stitched design: its stitches, size, threads and sewing time	Вишитий дизайн: стібки, розмір, нитки й час вишивання
 	What the design checker found: open its list	Що знайшла перевірка дизайну: відкрити список
 @msg	Loaded embroidery font {_1}	Завантажено шрифт для вишивки {_1}

@@ -5595,6 +5595,9 @@ theme	Appearance	Giao diện
 @plural	{n} thread|{n} threads	{n} chỉ
 @plural	{n} problem|{n} problems	{n} vấn đề
 	{m} min	{m} phút
+	Setup	Thiết lập
+	Check & Export	Kiểm tra và xuất
+	Sewing	May
 	The stitched design: its stitches, size, threads and sewing time	Thiết kế thêu: số mũi, kích thước, chỉ và thời gian may
 	What the design checker found: open its list	Những gì kiểm tra thiết kế tìm thấy: mở danh sách
 @msg	Loaded embroidery font {_1}	Đã nạp phông chữ thêu {_1}

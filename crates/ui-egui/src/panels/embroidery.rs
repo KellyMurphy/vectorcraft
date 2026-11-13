@@ -2,13 +2,14 @@
 //! in one line, Export in the machine's format (DST, PES, JEF, EXP, VP3, U01) and a badge for the
 //! checker's findings. The Stitch tab holds the selected objects' stitch, chosen from a grid of
 //! stitched pictures, their thread and trims, and the stitch's own settings (fill patterns and
-//! border patterns picked from pictures too); the Design tab, the design's setup and numbers and the
-//! checker's findings. The sewing order has a panel of its own (`sew_order`). Reads
+//! border patterns picked from pictures too); the Setup tab, what the design is sewn on and with and
+//! its sewing settings; Check & Export, its numbers, threads and files and the checker's findings;
+//! Tools, the digitizing and lettering tools. The sewing order has a panel of its own (`sew_order`). Reads
 //! `embroidery.info`, acts through `embroidery.set` and `embroidery.clear`.
 
 use egui::{Color32, Rect, Sense, Stroke, Ui, vec2};
 use serde_json::{Value, json};
-use vectorcraft_doc::{NodeId, RunStyle, Split, SplitPattern, StitchKind, StitchSettings, Underlay};
+use vectorcraft_doc::{EmbroiderySetup, NodeId, RunStyle, Split, SplitPattern, StitchKind, StitchSettings, Underlay};
 
 use super::{selection_len, stitch_art};
 use crate::VectorcraftApp;
@@ -102,12 +103,17 @@ fn names_dropdown(ui: &mut Ui, id: impl std::hash::Hash, current: &str, options:
     widgets::dropdown_names(ui, id, current, options, WIDE_W)
 }
 
-/// The panel's tabs: the selection's stitches, the design as a whole, and the tools.
-const TABS: [&str; 3] = ["Stitch", "Design", "Tools"];
+/// The panel's tabs, by task: the selection's stitches, what the design is sewn on and with, what
+/// it came to (its numbers, threads and problems, and the files made from it), and the tools.
+const TABS: [&str; 4] = ["Stitch", "Setup", "Check & Export", "Tools"];
+const SETUP_TAB: usize = 1;
+const CHECK_TAB: usize = 2;
+const TOOLS_TAB: usize = 3;
 
-/// Which tab is open (kept between sessions).
+/// Which tab is open (kept between sessions). Named afresh with the task tabs: the index kept for
+/// the old Stitch, Design, Tools tabs means something else now.
 fn tab_id() -> egui::Id {
-    egui::Id::unique("embroidery-panel-tab")
+    egui::Id::unique("embroidery-panel-task-tab")
 }
 
 pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
@@ -116,21 +122,27 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     ui.set_min_width(PANEL_W);
     header(app, ui, &info);
     let mut tab = ui.ctx().data_mut(|d| d.get_persisted::<usize>(tab_id())).unwrap_or(0).min(TABS.len() - 1);
-    let names = [tl!("Stitch"), tl!("Design"), tl!("Tools")];
+    let names = TABS.map(|t| tl!(t));
     if let Some(i) = widgets::tab_bar(ui, &names, tab) {
         tab = i;
         ui.ctx().data_mut(|d| d.insert_persisted(tab_id(), i));
     }
     ui.add_space(4.0);
     match tab {
-        1 => {
-            design(app, ui, &info["design"]);
+        SETUP_TAB => setup_tab(app, ui, &info["setup"]),
+        CHECK_TAB => {
+            check_tab(app, ui, &info["design"]);
             widgets::divider(ui);
             checks(app, ui, &info["check"]);
         }
-        2 => tools(app, ui, &info["selection"]),
+        TOOLS_TAB => tools(app, ui, &info["selection"]),
         _ => stitch_tab(app, ui, &info),
     }
+}
+
+/// Open tab `tab` of the panel (`CHECK_TAB`, …).
+fn open_tab(ui: &Ui, tab: usize) {
+    ui.ctx().data_mut(|d| d.insert_persisted(tab_id(), tab));
 }
 
 /// The Stitch tab: the selected objects' stitch, thread, trims and settings.
@@ -216,7 +228,7 @@ fn header(app: &mut VectorcraftApp, ui: &mut Ui, info: &Value) {
             let text = crate::i18n::tn(u64::try_from(findings).unwrap_or(u64::MAX), "{n} problem", "{n} problems");
             let badge = egui::Button::new(egui::RichText::new(format!("⚠ {text}")).color(t.warning)).frame(false);
             if ui.add(badge).on_hover_text(tl!("What the design checker found: open its list")).clicked() {
-                ui.ctx().data_mut(|d| d.insert_persisted(tab_id(), 1usize));
+                open_tab(ui, CHECK_TAB);
             }
         }
     });
@@ -2348,15 +2360,74 @@ fn underlay_row(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &V
     });
 }
 
-fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
-    widgets::section_header(ui, tl!("Design"));
+/// The Setup tab: what the design is sewn on and with (fabric, its look in the preview, hoop,
+/// machine format, thread chart), the sewing settings for the whole design, and the Sew-Out Test.
+fn setup_tab(app: &mut VectorcraftApp, ui: &mut Ui, setup: &Value) {
+    widgets::section_header(ui, tl!("Setup"));
     fabric_row(app, ui);
     look_row(app, ui);
     hoop_row(app, ui);
     machine_row(app, ui);
     chart_row(app, ui);
+    widgets::divider(ui);
+    widgets::section_header(ui, tl!("Sewing"));
+    sewing_rows(app, ui, setup);
+    ui.add_space(4.0);
+    if widgets::flat_button(ui, tl!("Sew-Out Test…"), 104.0)
+        .on_hover_text(tl!("Calibration swatches to sew, and a form for what they showed"))
+        .clicked()
+    {
+        app.run("window.panel", json!({"panel": super::sew_out::ID})).ok();
+    }
+}
+
+/// One of the design's sewing settings: its label, `embroidery.setup` key, unit, decimals, range
+/// and tooltip.
+type SewingRow = (&'static str, &'static str, &'static str, usize, std::ops::RangeInclusive<f64>, &'static str);
+
+/// The design's sewing settings: machine speed (for the time estimate), how far fills reach under
+/// what is sewn on top, and the shortest stitch kept.
+fn sewing_rows(app: &mut VectorcraftApp, ui: &mut Ui, setup: &Value) {
+    let rows: [SewingRow; 3] = [
+        ("Machine Speed:", "speed", " /min", 0, EmbroiderySetup::SPEED, "Stitches per minute, for the sewing time estimate"),
+        (
+            "Overlap:",
+            "overlap",
+            " mm",
+            1,
+            EmbroiderySetup::OVERLAP,
+            "How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away",
+        ),
+        (
+            "Shortest Stitch:",
+            "minStitch",
+            " mm",
+            1,
+            EmbroiderySetup::MIN_STITCH,
+            "Needle points closer than this to the one before are left out (the fabric may ask for longer)",
+        ),
+    ];
+    for (label, key, unit, decimals, r, tip) in rows {
+        ui.scope(|ui| {
+            widgets::label_row(ui, tl!(label), LABEL_W, |ui| {
+                if let Some(v) = widgets::mixed_field(ui, ("emb", key), setup[key].as_f64(), unit, decimals, FIELD_W) {
+                    app.run("embroidery.setup", json!({ key: v.clamp(*r.start(), *r.end()) })).ok();
+                }
+            })
+        })
+        .response
+        .on_hover_text(tl!(tip));
+    }
+}
+
+/// The Check & Export tab: what the design came to (its numbers and its threads in sewing order,
+/// as the person at the machine reads them), the files and views made from it, and the sewing
+/// order; the checker's findings follow.
+fn check_tab(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
+    widgets::section_header(ui, tl!("Design"));
     let n = |k: &str| d[k].as_u64().unwrap_or(0);
-    if n("objects") == 0 {
+    let stitched = n("objects") > 0;
+    if !stitched {
         widgets::dim_label(ui, tl!("Nothing is stitched yet."));
     } else {
         let f = |k: &str| d[k].as_f64().unwrap_or(0.0);
@@ -2369,51 +2440,24 @@ fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
         widgets::label_row(ui, tl!("Trims / Jumps:"), LABEL_W, |ui| {
             ui.label(format!("{} / {}", n("trims"), n("jumps")));
         });
-        // Each thread's nearest in the chosen chart, when one is.
-        let matched = app.session.execute("embroidery.matchThreads", &json!({})).ok();
-        let matched = matched.as_ref().and_then(|m| m["threads"].as_array());
-        widgets::label_row(ui, tl!("Threads:"), LABEL_W, |ui| {
-            ui.horizontal_wrapped(|ui| {
-                for (i, t) in d["threads"].as_array().into_iter().flatten().enumerate() {
-                    if let Some(c) = t.as_str().and_then(rgb) {
-                        let mut tip = format!("{} {}", i + 1, t.as_str().unwrap_or(""));
-                        if let Some(m) = matched.and_then(|m| m.get(i)).filter(|m| !m["code"].is_null()) {
-                            tip.push_str(&format!(
-                                "\n{} {} (ΔE {})",
-                                m["code"].as_str().unwrap_or(""),
-                                m["name"].as_str().unwrap_or(""),
-                                m["deltaE"]
-                            ));
-                        }
-                        chip(ui, c, 14.0).on_hover_text(tip);
-                    }
-                }
-            });
-        });
-        if let Some(m) = matched {
-            let codes: Vec<&str> = m.iter().filter_map(|t| t["code"].as_str()).collect();
-            if !codes.is_empty() {
-                indented(ui, |ui| {
-                    ui.label(egui::RichText::new(codes.join(" · ")).size(11.5).color(Tokens::get(ui.ctx()).text_dim));
-                });
-            }
-        }
         for w in d["warnings"].as_array().into_iter().flatten().filter_map(Value::as_str) {
             widgets::dim_label(ui, w);
         }
+        widgets::divider(ui);
+        widgets::section_header(ui, tl!("Threads"));
+        thread_rows(app, ui, d);
     }
-    // Export is in the header (UI2.1).
     ui.add_space(4.0);
     ui.horizontal_wrapped(|ui| {
         let r = ui
-            .add_enabled_ui(n("objects") > 0, |ui| widgets::flat_button(ui, tl!("Worksheet…"), 96.0))
+            .add_enabled_ui(stitched, |ui| widgets::flat_button(ui, tl!("Worksheet…"), 96.0))
             .inner
             .on_hover_text(tl!("A printable sheet for whoever sews the design: picture, size, threads, time and notes"));
         if r.clicked() {
             app.run("embroidery.worksheet", json!({})).ok();
         }
         let r = ui
-            .add_enabled_ui(n("objects") > 0, |ui| widgets::flat_button(ui, tl!("Mockup…"), 96.0))
+            .add_enabled_ui(stitched, |ui| widgets::flat_button(ui, tl!("Mockup…"), 96.0))
             .inner
             .on_hover_text(tl!("The design sewn on a T-shirt, polo shirt, hoodie, cap, tote bag or towel, at its real size"));
         if r.clicked() {
@@ -2428,22 +2472,46 @@ fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
         {
             app.run("view.realSize", json!({})).ok();
         }
-    });
-    ui.add_space(2.0);
-    ui.horizontal(|ui| {
         if widgets::flat_button(ui, tl!("Sew Order…"), 96.0)
             .on_hover_text(tl!("Step through the design as it is sewn, and change the order"))
             .clicked()
         {
             app.run("window.panel", json!({"panel": super::sew_order::ID})).ok();
         }
-        if widgets::flat_button(ui, tl!("Sew-Out Test…"), 104.0)
-            .on_hover_text(tl!("Calibration swatches to sew, and a form for what they showed"))
-            .clicked()
-        {
-            app.run("window.panel", json!({"panel": super::sew_out::ID})).ok();
-        }
     });
+}
+
+/// One row per thread in sewing order: its colour, its number, its chart code and name when a chart
+/// is chosen (else its hex), and how many stitches it sews.
+fn thread_rows(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
+    let matched = app.session.execute("embroidery.matchThreads", &json!({})).ok();
+    let matched = matched.as_ref().and_then(|m| m["threads"].as_array());
+    let t = Tokens::get(ui.ctx());
+    for (i, thread) in d["threads"].as_array().into_iter().flatten().enumerate() {
+        let hex = thread.as_str().unwrap_or("");
+        let Some(c) = rgb(hex) else { continue };
+        let m = matched.and_then(|m| m.get(i)).filter(|m| !m["code"].is_null());
+        let name = match m {
+            Some(m) => format!("{} {}", m["code"].as_str().unwrap_or(""), m["name"].as_str().unwrap_or("")),
+            None => hex.to_string(),
+        };
+        let count = d["blockStitches"].get(i).and_then(Value::as_u64).unwrap_or(0);
+        ui.horizontal(|ui| {
+            let resp = chip(ui, c, 14.0);
+            if let Some(m) = m {
+                resp.on_hover_text(format!("{hex} (ΔE {})", m["deltaE"]));
+            }
+            ui.label(egui::RichText::new(format!("{}.", i + 1)).color(t.text_dim));
+            // The count keeps its room at the right; a long name is cut short before it.
+            let room = (ui.available_width() - 80.0).max(40.0);
+            ui.allocate_ui_with_layout(vec2(room, 18.0), egui::Layout::left_to_right(egui::Align::Center), |ui| {
+                ui.add(egui::Label::new(name).truncate());
+            });
+            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                ui.label(egui::RichText::new(crate::i18n::tn(count, "{n} stitch", "{n} stitches")).color(t.text_dim));
+            });
+        });
+    }
 }
 
 /// "Name (Library)": an embroidery library entry as the pickers list it.
@@ -2497,7 +2565,7 @@ fn show_library_folder(app: &mut VectorcraftApp, dir: &str) {
 mod tests {
     use vectorcraft_embroidery::params::{PARAMS, ValueKind, param};
 
-    /// With an embroidery library folder, the Design section offers Add to Library for the
+    /// With an embroidery library folder, the Setup tab offers Add to Library for the
     /// document's own fabric until the library has it, and Show in Folder.
     #[test]
     fn the_design_section_adds_to_the_embroidery_library() {
@@ -2511,7 +2579,7 @@ mod tests {
         fn shown(app: &mut VectorcraftApp) -> Vec<String> {
             let ctx = egui::Context::default();
             let mut out = ctx.run_ui(egui::RawInput::default(), |ui| {
-                design(app, ui, &Value::Null);
+                setup_tab(app, ui, &Value::Null);
                 tools(app, ui, &Value::Null);
             });
             out.textures_delta.clear();
@@ -2700,7 +2768,7 @@ mod tests {
         app.session.embroidery_libraries.set_dir(Some(dir.to_string_lossy().to_string()));
         let run = |app: &mut VectorcraftApp, id: &str, p: Value| app.session.execute(id, &p).unwrap();
         run(&mut app, "file.new", json!({"width": 600, "height": 600}));
-        // Wider than a 4 × 4 in hoop, so the Design tab offers to split it.
+        // Wider than a 4 × 4 in hoop, so the Setup tab offers to split it.
         run(&mut app, "shape.rectangle", json!({"x": 50, "y": 50, "width": 400, "height": 400}));
         let check = |app: &mut VectorcraftApp, tab: usize, what: &str| {
             let right = right_edge(app, tab, width);
@@ -2725,14 +2793,16 @@ mod tests {
         run(&mut app, "embroidery.set", json!({"type": "motifFill", "motif": "mine"}));
         check(&mut app, 0, "the document's own motif");
         run(&mut app, "embroidery.set", json!({"type": "fill", "border": 2}));
-        check(&mut app, 1, "design");
+        check(&mut app, SETUP_TAB, "setup");
+        check(&mut app, CHECK_TAB, "check and export");
         // The document's own fabric (Save…, Add to Library) and a hoop the design is too big for.
         run(&mut app, "embroidery.setFabric", json!({"fabric": "knit", "pull": 0.4}));
         run(&mut app, "embroidery.setHoop", json!({"hoop": "4x4"}));
-        check(&mut app, 1, "design too big for its hoop");
+        check(&mut app, SETUP_TAB, "design too big for its hoop");
         run(&mut app, "embroidery.splitHoops", json!({}));
-        check(&mut app, 1, "design split into hoopings");
-        check(&mut app, 2, "tools");
+        check(&mut app, SETUP_TAB, "design split into hoopings");
+        check(&mut app, CHECK_TAB, "threads of a split design");
+        check(&mut app, TOOLS_TAB, "tools");
     }
 
     /// A thread chart of one red thread with a long name.
@@ -2884,7 +2954,7 @@ mod tests {
         let info = run(&mut app, "embroidery.info", json!({}));
         let findings = run(&mut app, "embroidery.check", json!({}))["findings"].as_array().map_or(0, Vec::len);
         let stitches = info["design"]["stitches"].as_u64().unwrap();
-        for tab in 0..3 {
+        for tab in 0..TABS.len() {
             let texts = drawn(&mut app, tab).0;
             assert!(texts.iter().any(|t| t == "Stitch Preview"), "tab {tab}: {texts:?}");
             assert!(
@@ -2899,6 +2969,49 @@ mod tests {
         }
         assert!(findings > 0, "the satin's long stitches are found");
         assert!(!drawn(&mut app, 0).0.iter().any(|t| t.contains("see Design")), "the Stitch tab's link is gone");
+    }
+
+    /// UI2.2: the tabs are by task. Setup holds what the design is sewn on and with, and the sewing
+    /// settings Sew Order used to; Check & Export lists the threads as rows with their stitches.
+    #[test]
+    fn the_tabs_are_by_task() {
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        let run = |app: &mut VectorcraftApp, id: &str, p: Value| app.session.execute(id, &p).unwrap();
+        run(&mut app, "file.new", json!({"width": 300, "height": 300}));
+        run(&mut app, "paint.setFill", json!({"color": "#e00000"}));
+        run(&mut app, "shape.rectangle", json!({"x": 10, "y": 10, "width": 100, "height": 60}));
+        run(&mut app, "embroidery.set", json!({"type": "fill"}));
+        let texts = drawn(&mut app, 0).0;
+        for name in ["Stitch", "Setup", "Check & Export", "Tools"] {
+            assert!(texts.iter().any(|t| t == name), "the {name} tab: {texts:?}");
+        }
+        let setup = drawn(&mut app, SETUP_TAB).0;
+        for label in ["Fabric:", "Hoop:", "Machine Format:", "Thread Chart:", "Machine Speed:", "Overlap:", "Shortest Stitch:", "Sew-Out Test…"] {
+            assert!(setup.iter().any(|t| t == label), "Setup has {label}: {setup:?}");
+        }
+        assert!(!setup.iter().any(|t| t == "Stitches:"), "the numbers are in Check & Export: {setup:?}");
+        // One thread, named by its hex until a chart is chosen, with its stitches.
+        let stitches = run(&mut app, "embroidery.info", json!({}))["design"]["stitches"].as_u64().unwrap();
+        let check = drawn(&mut app, CHECK_TAB).0;
+        assert!(check.iter().any(|t| t == "#e00000") && check.contains(&format!("{stitches} stitches")), "{check:?}");
+        assert!(check.iter().any(|t| t == "Worksheet…") && !check.iter().any(|t| t == "Machine Speed:"), "{check:?}");
+        run(&mut app, "embroidery.loadThreadChart", json!({"data": CHART}));
+        let check = drawn(&mut app, CHECK_TAB).0;
+        assert!(check.iter().any(|t| t.starts_with("1801 Very Long")), "the chart's thread names the row: {check:?}");
+        // Sew Order keeps only what is about order and travel.
+        let ctx = egui::Context::default();
+        let mut out = ctx.run_ui(egui::RawInput::default(), |ui| super::super::sew_order::show(&mut app, ui));
+        out.textures_delta.clear();
+        let mut order = vec![];
+        fn walk(s: &egui::Shape, out: &mut Vec<String>) {
+            match s {
+                egui::Shape::Text(t) => out.push(t.galley.text().to_string()),
+                egui::Shape::Vec(v) => v.iter().for_each(|s| walk(s, out)),
+                _ => {}
+            }
+        }
+        out.shapes.iter().for_each(|c| walk(&c.shape, &mut order));
+        assert!(order.iter().any(|t| t == "Trim Jumps Over:") && !order.iter().any(|t| t == "Machine Speed:"), "{order:?}");
     }
 
     #[test]

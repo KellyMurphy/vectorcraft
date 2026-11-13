@@ -5868,6 +5868,9 @@ swatch	Bright Violet	Violet cerah
 @plural	{n} thread|{n} threads	{n} benang
 @plural	{n} problem|{n} problems	{n} masalah
 	{m} min	{m} mnt
+	Setup	Penyiapan
+	Check & Export	Periksa & Ekspor
+	Sewing	Jahitan
 	The stitched design: its stitches, size, threads and sewing time	Desain bordir: tusukan, ukuran, benang, dan waktu jahit
 	What the design checker found: open its list	Yang ditemukan pemeriksaan desain: buka daftarnya
 @msg	Loaded embroidery font {_1}	Fon sulaman {_1} dimuat

@@ -5603,6 +5603,9 @@ lighting	Light	Luce
 @plural	{n} thread|{n} threads	{n} filo|{n} fili
 @plural	{n} problem|{n} problems	{n} problema|{n} problemi
 	{m} min	{m} min
+	Setup	Impostazione
+	Check & Export	Controlla ed esporta
+	Sewing	Cucitura
 	The stitched design: its stitches, size, threads and sewing time	Il disegno ricamato: punti, dimensioni, fili e tempo di cucitura
 	What the design checker found: open its list	Ciò che ha trovato il controllo del disegno: apre il suo elenco
 @msg	Loaded embroidery font {_1}	Font da ricamo {_1} caricato

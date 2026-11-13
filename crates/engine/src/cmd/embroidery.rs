@@ -358,7 +358,7 @@ fn info_doc() -> &'static str {
     static DOC: std::sync::OnceLock<String> = std::sync::OnceLock::new();
     DOC.get_or_init(|| {
         format!(
-            "{{ids?}} → {{design: {{objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], widthMm, heightMm, warnings, stops: [{{block: the thread sewn after it (0 with no colour change: before the machine starts), kind: stop|placeFabric|trimFabric|foam}}]}}, setup: {{trimJumpsOver, stitchMovesUnder}} (embroidery.setup), selection: {{stitched, unstitched, sewn: \"#rrggbb\" (the thread colour the stitched objects are sewn in, their own colour when they set none; null when they differ), sewnThread: {{code, name, color, deltaE}} (sewn's nearest thread in the chosen thread chart; null without one), {}}} (as sewn: the document's fabric fills in what objects leave unset; each null when the stitched objects differ, or none is; type is `unknown` for settings from a newer VectorCraft)}}",
+            "{{ids?}} → {{design: {{objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], blockStitches: [each thread's stitch count, as threads], widthMm, heightMm, warnings, stops: [{{block: the thread sewn after it (0 with no colour change: before the machine starts), kind: stop|placeFabric|trimFabric|foam}}]}}, setup: {{trimJumpsOver, stitchMovesUnder}} (embroidery.setup), selection: {{stitched, unstitched, sewn: \"#rrggbb\" (the thread colour the stitched objects are sewn in, their own colour when they set none; null when they differ), sewnThread: {{code, name, color, deltaE}} (sewn's nearest thread in the chosen thread chart; null without one), {}}} (as sewn: the document's fabric fills in what objects leave unset; each null when the stitched objects differ, or none is; type is `unknown` for settings from a newer VectorCraft)}}",
             params::info_keys()
         )
     })
@@ -1011,6 +1011,24 @@ fn same<T: PartialEq + serde::Serialize>(mut it: impl Iterator<Item = T>) -> Val
     if it.all(|v| v == first) { json!(first) } else { Value::Null }
 }
 
+/// The stitches each colour block sews, one count per [`Plan::threads`] entry.
+fn block_stitches(plan: &Plan) -> Vec<usize> {
+    let mut counts = vec![0; plan.threads.len()];
+    let mut block = 0;
+    for n in &plan.needles {
+        match n.cmd {
+            vectorcraft_embroidery::Cmd::Stitch => {
+                if let Some(c) = counts.get_mut(block) {
+                    *c += 1;
+                }
+            }
+            vectorcraft_embroidery::Cmd::ColorChange => block += 1,
+            _ => {}
+        }
+    }
+    counts
+}
+
 /// `doc`'s design summary.
 pub(crate) fn design(doc: &Document, plan: &Plan) -> Value {
     let st = plan.stats();
@@ -1024,6 +1042,7 @@ pub(crate) fn design(doc: &Document, plan: &Plan) -> Value {
         "trims": st.trims,
         "colorChanges": st.color_changes,
         "threads": plan.threads.iter().map(|t| hex(*t)).collect::<Vec<_>>(),
+        "blockStitches": block_stitches(plan),
         "widthMm": (w * 10.0).round() / 10.0,
         "heightMm": (h * 10.0).round() / 10.0,
         "warnings": plan.warnings,

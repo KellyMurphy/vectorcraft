@@ -5963,6 +5963,9 @@ mark-style	Japanese	Japanilainen
 @plural	{n} thread|{n} threads	{n} lanka|{n} lankaa
 @plural	{n} problem|{n} problems	{n} ongelma|{n} ongelmaa
 	{m} min	{m} min
+	Setup	Asetukset
+	Check & Export	Tarkistus ja vienti
+	Sewing	Ompelu
 	The stitched design: its stitches, size, threads and sewing time	Kirjottu kuvio: pistot, koko, langat ja ompeluaika
 	What the design checker found: open its list	Mitä kuviotarkistus löysi: avaa sen luettelo
 @msg	Loaded embroidery font {_1}	Kirjontafontti {_1} ladattu

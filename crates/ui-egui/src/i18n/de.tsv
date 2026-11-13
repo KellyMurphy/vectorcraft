@@ -5581,6 +5581,9 @@ effect	Soft	Weich
 @plural	{n} thread|{n} threads	{n} Garn|{n} Garne
 @plural	{n} problem|{n} problems	{n} Problem|{n} Probleme
 	{m} min	{m} Min.
+	Setup	Einrichtung
+	Check & Export	Prüfen & Exportieren
+	Sewing	Sticken
 	The stitched design: its stitches, size, threads and sewing time	Das gestickte Design: Stiche, Größe, Garne und Stickzeit
 	What the design checker found: open its list	Was die Designprüfung gefunden hat: ihre Liste öffnen
 @msg	Loaded embroidery font {_1}	Stickschrift {_1} geladen

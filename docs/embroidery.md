@@ -440,7 +440,7 @@ have the right to use, or make your own ([specification](formats/vcthreads.md)).
 
 ### Hoops
 
-The Embroidery panel's **Hoop** menu (Design section, `embroidery.setHoop`) sets the hoop the design is
+The Embroidery panel's **Hoop** menu (Setup tab, `embroidery.setHoop`) sets the hoop the design is
 sewn in: a common size (100 × 100, 130 × 180, 160 × 260, 200 × 200, 200 × 300 mm, or a cap's
 130 × 60 mm), or one from a `.vchoop` file (File › Open; [specification](formats/vchoop.md)). Its sewing
 field is drawn in Stitch Preview as a dashed outline centred on the design, as machines centre it, and
@@ -475,7 +475,7 @@ hoop on its stitches (on its basting box when there is one).
 ### Shortest stitch
 
 Very short stitches cut the fabric, break threads and pile up. Needle points closer than the **Shortest
-Stitch** (Sew Order panel, `embroidery.setup {minStitch}`, 0.3 mm) to the one before are left out
+Stitch** (the Embroidery panel's Setup tab, `embroidery.setup {minStitch}`, 0.3 mm) to the one before are left out
 everywhere, satin columns included; a fabric can ask for longer (Leather: 1 mm). Manual stitches are sewn
 exactly as drawn.
 
@@ -543,7 +543,7 @@ The Sew Order panel plays the design as the machine sews it: **Play** draws it s
 threads, the needle ringed; **Pause** stops; the arrows jump to the previous or next thread change.
 Dragging the scrub bar or clicking a row goes back to stepping object by object. Each row shows the
 object's stitch count, and the panel shows the **Sewing Time**: the stitches at the **Machine Speed**
-(Travel, 600 stitches a minute unless set; `embroidery.setup {speed}`), plus 5 seconds a trim and 30
+(the Embroidery panel's Setup tab, 600 stitches a minute unless set; `embroidery.setup {speed}`), plus 5 seconds a trim and 30
 seconds a thread change. `embroidery.info` gives it as the design's `minutes`.
 
 ### Sequencing
@@ -575,7 +575,7 @@ trimmed: the fill sewn on top covers it (the Sew Order panel's **Hide Travel Und
 Where a fill lies under something sewn after it (lettering on a filled background, a satin outline over
 a fill, one fill over another), the fill's rows under it are cut away, so the stitches don't pile up into
 a stiff, bullet-proof patch. The rows still reach **0.5 mm** under the covering object's edge so no gap
-shows; the Sew Order panel's **Overlap** (`embroidery.setup {overlap}`) sets that for the document. Fills,
+shows; the Embroidery panel's **Overlap** (Setup tab, `embroidery.setup {overlap}`) sets that for the document. Fills,
 satin shapes, Auto objects and type cover by their outlines, satin columns by their band; running, bean,
 zigzag and pattern borders cover nothing. Tick a fill's **Keep Covered Rows** (`keepCovered`) to sew it
 whole. The fill's underlay is cut the same way. Where the covering object reaches past the fill's own
@@ -584,7 +584,7 @@ edge, no rim is kept (no gap can show there). Moving or reordering what lies on 
 ### Fabric profiles
 
 The fabric changes how a design should be sewn: stretchy knits want more underlay and compensation, lofty
-towels dense stitches, leather fewer holes. The Embroidery panel's **Fabric** menu (Design section,
+towels dense stitches, leather fewer holes. The Embroidery panel's **Fabric** menu (Setup tab,
 `embroidery.setFabric`) sets the document's fabric: **Woven**, **Knit**, **Fleece / Towel**, **Cap**,
 **Leather** or **Denim**, or one loaded from a `.vcfabric` file (**Load…**, or File › Open). Its settings
 fill in whatever an object leaves unset, so an object's own settings always win:
@@ -634,7 +634,7 @@ listed with the reason instead of being dropped silently.
 In the Embroidery panel, the border pattern picker and the **Fabric**, **Hoop** and **Thread Chart** menus
 list the library's entries after the document's own, marked **(Library)**; picking one loads it. **Add to
 Library** next to each copies the document's own pattern, fabric, hoop or chart into the library (it is
-hidden once the library has the same), and **Show in Folder**, under the Design section, opens the folder.
+hidden once the library has the same), and **Show in Folder**, under the Setup tab, opens the folder.
 
 Loading an entry (`library` on `embroidery.loadBorderPattern`, `loadFabric`, `loadHoop` or
 `loadThreadChart`, by its id or name) **copies it into the document**, as loading a file does, so the
@@ -724,7 +724,7 @@ profile is the next step (E10.1b).
 | `embroidery.removeMotif` | `{motif}`: remove one of the document's motifs that nothing uses |
 | `embroidery.removeBorderPattern` | `{pattern}`: remove one of the document's patterns that nothing sews with |
 | `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm, overlap?: mm, minStitch?: mm, autoStart?, hideTravel?, speed?: stitches/min, machineFormat?: dst \| pes \| jef \| exp, hoopRotation?: 0 \| 90 \| 180 \| 270}`: the document's travel settings, overlap, shortest stitch, machine speed, the format the panels export and the design's turn in the hoop |
-| `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `widthMm`, `heightMm`, `warnings`) and the selection's settings, with `sewn` (the colour the selection is sewn in) and `sewnThread` (its nearest thread in the chosen chart) |
+| `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `blockStitches` (each thread's stitches), `widthMm`, `heightMm`, `warnings`) and the selection's settings, with `sewn` (the colour the selection is sewn in) and `sewnThread` (its nearest thread in the chosen chart) |
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
 | `embroidery.check` | `{ids?}` → the design checker's `findings` (`rule`, `severity`, `message`, `object`, `at` in document points), `counts` and the `rules` |
 | `embroidery.digitize` | `{id?, colors?, minArea?, keepWhite?, order?, fix?, lines?}`: a logo (image, traced image or group of filled shapes) as stitch objects, one undo step; `lines: centreline` sews parts under 2 mm wide along their centre lines → `{id, objects, threads, merged, dropped, centrelines, fixes, findings}` |

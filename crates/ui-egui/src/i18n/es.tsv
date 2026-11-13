@@ -5931,6 +5931,9 @@ mark-style	Japanese	Japonesas
 @plural	{n} thread|{n} threads	{n} hilo|{n} hilos
 @plural	{n} problem|{n} problems	{n} problema|{n} problemas
 	{m} min	{m} min
+	Setup	Configuración
+	Check & Export	Comprobar y exportar
+	Sewing	Costura
 	The stitched design: its stitches, size, threads and sewing time	El diseño bordado: puntadas, tamaño, hilos y tiempo de costura
 	What the design checker found: open its list	Lo que encontró la comprobación del diseño: abre su lista
 @msg	Loaded embroidery font {_1}	Fuente de bordado {_1} cargada
