@@ -5650,6 +5650,10 @@ lighting	Light	ライト
 	Setup	設定
 	Check & Export	チェックと書き出し
 	Sewing	縫製
+	Fabric and Hoop	生地と枠
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	生地と枠を選択してください。生地は、独自の設定がないステッチの密度、補正、下縫いを決めます。
+	Dismiss	閉じる
+	Don't show this again (Setup has both menus)	今後表示しない（両方のメニューは設定にあります）
 	The stitched design: its stitches, size, threads and sewing time	刺しゅうデザイン：針数、サイズ、糸、縫製時間
 	What the design checker found: open its list	デザインチェックの結果：一覧を開きます
 @msg	Loaded embroidery font {_1}	刺繍フォント {_1} を読み込みました

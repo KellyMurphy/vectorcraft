@@ -5821,6 +5821,10 @@ lighting	Light	光源
 	Setup	设置
 	Check & Export	检查与导出
 	Sewing	缝制
+	Fabric and Hoop	面料和绣框
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	请选择面料和绣框：面料决定所有未自行设置的针迹的密度、补偿和底线。
+	Dismiss	关闭
+	Don't show this again (Setup has both menus)	不再显示（设置中有这两个菜单）
 	The stitched design: its stitches, size, threads and sewing time	刺绣设计：针数、尺寸、线和缝制时间
 	What the design checker found: open its list	设计检查发现的问题：打开列表
 @msg	Loaded embroidery font {_1}	已载入刺绣字体 {_1}

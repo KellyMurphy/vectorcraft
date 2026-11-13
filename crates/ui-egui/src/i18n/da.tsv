@@ -5871,6 +5871,10 @@ swatch	Bright Violet	Kraftig violet
 	Setup	Opsætning
 	Check & Export	Kontrol og eksport
 	Sewing	Syning
+	Fabric and Hoop	Stof og ramme
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	Vælg stof og ramme: stoffet bestemmer tæthed, kompensation og understing for alle sting, der ikke har deres egne.
+	Dismiss	Luk
+	Don't show this again (Setup has both menus)	Vis ikke igen (Opsætning har begge menuer)
 	The stitched design: its stitches, size, threads and sewing time	Det broderede design: sting, størrelse, tråde og syetid
 	What the design checker found: open its list	Hvad designkontrollen fandt: åbn listen
 @msg	Loaded embroidery font {_1}	Broderiskrifttypen {_1} er indlæst

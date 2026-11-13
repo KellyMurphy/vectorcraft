@@ -5990,6 +5990,10 @@ mark-style	Japanese	Japonské
 	Setup	Nastavení
 	Check & Export	Kontrola a export
 	Sewing	Šití
+	Fabric and Hoop	Látka a rámeček
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	Zvolte látku a rámeček: látka určuje hustotu, kompenzaci a podklad všech stehů, které nemají vlastní.
+	Dismiss	Zavřít
+	Don't show this again (Setup has both menus)	Už nezobrazovat (obě nabídky jsou v Nastavení)
 	The stitched design: its stitches, size, threads and sewing time	Vyšívaný návrh: stehy, velikost, nitě a doba šití
 	What the design checker found: open its list	Co našla kontrola návrhu: otevře její seznam
 @msg	Loaded embroidery font {_1}	Načteno vyšívací písmo {_1}

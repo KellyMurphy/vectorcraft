@@ -1,6 +1,6 @@
 # Embroidery UI improvement plan
 
-Status: Phase 1 (UI1.1 to UI1.5), UI2.1 and UI2.2 done; the rest proposed. Written 2026-11-11.
+Status: Phase 1 (UI1.1 to UI1.5), UI2.1, UI2.2 and UI2.3 done; the rest proposed. Written 2026-11-11.
 
 This plan comes from a review of the three embroidery panels: reading their code and driving the
 app through each tab with a small design (a filled rectangle and a satin line). It lists what to
@@ -187,6 +187,11 @@ Fabric and Hoop both default to None, yet the fabric fills in density, compensat
 for everything left unset. When the first stitch is assigned and no fabric is set, show a short
 prompt in the panel to choose a fabric and a hoop, with a way to dismiss it.
 
+Status: done. Once anything is stitched and the document lacks a fabric or a hoop, the Stitch tab
+opens with a "Fabric and Hoop" section: one sentence on what the fabric does, the Fabric and/or Hoop
+menu (whichever is missing, the same rows as Setup), and Dismiss. It goes away when both are chosen;
+Dismiss hides it for good (kept in the interface state), since Setup has both menus.
+
 ### UI2.4 Tools tab
 
 Seen: one long scroll of six unrelated features (appliqué, auto-digitize, lettering, font editor,
@@ -293,3 +298,4 @@ sewing is seen on the artwork at the size the user is working at.
 - 2026-11-12: UI1.3, UI1.4 and UI1.5 done.
 - 2026-11-12: UI2.1 done.
 - 2026-11-12: UI2.2 done.
+- 2026-11-12: UI2.3 done.

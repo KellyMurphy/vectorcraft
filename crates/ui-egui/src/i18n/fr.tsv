@@ -5987,6 +5987,10 @@ theme	Appearance	Apparence
 	Setup	Configuration
 	Check & Export	Vérifier et exporter
 	Sewing	Broderie
+	Fabric and Hoop	Tissu et cadre
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	Choisissez le tissu et le cadre : le tissu fixe la densité, la compensation et la sous-couche des points qui ne fixent pas les leurs.
+	Dismiss	Masquer
+	Don't show this again (Setup has both menus)	Ne plus afficher (Configuration contient les deux menus)
 	The stitched design: its stitches, size, threads and sewing time	Le motif brodé : ses points, sa taille, ses fils et son temps de broderie
 	What the design checker found: open its list	Ce que le contrôle du motif a trouvé : ouvrir sa liste
 @msg	Loaded embroidery font {_1}	Police de broderie {_1} chargée

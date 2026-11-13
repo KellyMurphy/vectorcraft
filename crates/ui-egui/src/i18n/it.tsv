@@ -5606,6 +5606,10 @@ lighting	Light	Luce
 	Setup	Impostazione
 	Check & Export	Controlla ed esporta
 	Sewing	Cucitura
+	Fabric and Hoop	Tessuto e telaio
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	Scegli il tessuto e il telaio: il tessuto stabilisce densità, compensazione e sottopunto dei punti che non stabiliscono i propri.
+	Dismiss	Ignora
+	Don't show this again (Setup has both menus)	Non mostrare più (Impostazione ha entrambi i menu)
 	The stitched design: its stitches, size, threads and sewing time	Il disegno ricamato: punti, dimensioni, fili e tempo di cucitura
 	What the design checker found: open its list	Ciò che ha trovato il controllo del disegno: apre il suo elenco
 @msg	Loaded embroidery font {_1}	Font da ricamo {_1} caricato

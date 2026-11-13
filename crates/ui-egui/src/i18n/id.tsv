@@ -5871,6 +5871,10 @@ swatch	Bright Violet	Violet cerah
 	Setup	Penyiapan
 	Check & Export	Periksa & Ekspor
 	Sewing	Jahitan
+	Fabric and Hoop	Kain dan Ram
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	Pilih kain dan ram: kain menentukan kerapatan, kompensasi, dan lapisan bawah setiap tusukan yang tidak menetapkan sendiri.
+	Dismiss	Tutup
+	Don't show this again (Setup has both menus)	Jangan tampilkan lagi (Penyiapan memiliki kedua menu)
 	The stitched design: its stitches, size, threads and sewing time	Desain bordir: tusukan, ukuran, benang, dan waktu jahit
 	What the design checker found: open its list	Yang ditemukan pemeriksaan desain: buka daftarnya
 @msg	Loaded embroidery font {_1}	Fon sulaman {_1} dimuat

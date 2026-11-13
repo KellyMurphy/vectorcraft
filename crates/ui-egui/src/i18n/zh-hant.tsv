@@ -5630,6 +5630,10 @@ lighting	Light	光源
 	Setup	設定
 	Check & Export	檢查與轉存
 	Sewing	縫製
+	Fabric and Hoop	布料和繡框
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	請選擇布料和繡框：布料決定所有未自行設定的針跡的密度、補償和底線。
+	Dismiss	關閉
+	Don't show this again (Setup has both menus)	不再顯示（設定中有這兩個選單）
 	The stitched design: its stitches, size, threads and sewing time	刺繡設計：針數、尺寸、線和縫製時間
 	What the design checker found: open its list	設計檢查發現的問題：開啟清單
 @msg	Loaded embroidery font {_1}	已載入刺繡字體 {_1}

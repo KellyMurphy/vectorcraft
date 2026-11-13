@@ -405,6 +405,10 @@ pub struct UiState {
     /// Advanced toolbar (every tool group) instead of the categorized Basic toolbar.
     #[serde(default)]
     pub toolbar_advanced: bool,
+    /// The Embroidery panel's prompt to choose a fabric and a hoop was dismissed: it isn't shown
+    /// again (`panels::embroidery::setup_prompt`).
+    #[serde(default)]
+    pub embroidery_setup_prompt_off: bool,
     #[serde(default = "yes")]
     pub task_bar: bool,
     /// Where the Contextual Task Bar was dragged or pinned. Not saved, as in Illustrator: the bar
@@ -1006,6 +1010,7 @@ impl Default for UiState {
         Self {
             legacy_language: None,
             brightness: Brightness::MediumDark,
+            embroidery_setup_prompt_off: false,
             dock_tab: DockTab::Properties,
             dock_tab_order: Vec::new(),
             dock_collapsed: false,

@@ -5966,6 +5966,10 @@ mark-style	Japanese	Japanilainen
 	Setup	Asetukset
 	Check & Export	Tarkistus ja vienti
 	Sewing	Ompelu
+	Fabric and Hoop	Kangas ja kehys
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	Valitse kangas ja kehys: kangas määrää tiheyden, kompensaation ja alustan kaikille pistoille, joilla ei ole omia.
+	Dismiss	Sulje
+	Don't show this again (Setup has both menus)	Älä näytä uudelleen (molemmat valikot ovat Asetuksissa)
 	The stitched design: its stitches, size, threads and sewing time	Kirjottu kuvio: pistot, koko, langat ja ompeluaika
 	What the design checker found: open its list	Mitä kuviotarkistus löysi: avaa sen luettelo
 @msg	Loaded embroidery font {_1}	Kirjontafontti {_1} ladattu

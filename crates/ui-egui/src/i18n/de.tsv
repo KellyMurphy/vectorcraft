@@ -5584,6 +5584,10 @@ effect	Soft	Weich
 	Setup	Einrichtung
 	Check & Export	Prüfen & Exportieren
 	Sewing	Sticken
+	Fabric and Hoop	Stoff und Stickrahmen
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	Wählen Sie Stoff und Stickrahmen: Der Stoff bestimmt Dichte, Ausgleich und Unterlage aller Stiche, die keine eigenen festlegen.
+	Dismiss	Ausblenden
+	Don't show this again (Setup has both menus)	Nicht mehr anzeigen (beide Menüs sind unter Einrichtung)
 	The stitched design: its stitches, size, threads and sewing time	Das gestickte Design: Stiche, Größe, Garne und Stickzeit
 	What the design checker found: open its list	Was die Designprüfung gefunden hat: ihre Liste öffnen
 @msg	Loaded embroidery font {_1}	Stickschrift {_1} geladen

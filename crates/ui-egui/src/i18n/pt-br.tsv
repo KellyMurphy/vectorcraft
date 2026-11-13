@@ -5905,6 +5905,10 @@ mark-style	Japanese	Japonesas
 	Setup	Configuração
 	Check & Export	Verificar e exportar
 	Sewing	Costura
+	Fabric and Hoop	Tecido e bastidor
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	Escolha o tecido e o bastidor: o tecido define a densidade, a compensação e o enchimento de cada ponto que não define os seus.
+	Dismiss	Dispensar
+	Don't show this again (Setup has both menus)	Não mostrar de novo (Configuração tem os dois menus)
 	The stitched design: its stitches, size, threads and sewing time	O desenho bordado: pontos, tamanho, linhas e tempo de costura
 	What the design checker found: open its list	O que a verificação do desenho encontrou: abre a lista
 @msg	Loaded embroidery font {_1}	Fonte de bordado {_1} carregada

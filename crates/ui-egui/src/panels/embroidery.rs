@@ -153,6 +153,7 @@ fn stitch_tab(app: &mut VectorcraftApp, ui: &mut Ui, info: &Value) {
     let any = stitched + unstitched > 0;
     let kind = sel["type"].as_str().and_then(StitchKind::parse).filter(|_| unstitched == 0);
 
+    setup_prompt(app, ui, info);
     widgets::section_header(ui, tl!("Stitch"));
     if !any {
         widgets::dim_label(
@@ -204,6 +205,40 @@ fn stitch_tab(app: &mut VectorcraftApp, ui: &mut Ui, info: &Value) {
             parameters(app, ui, k, sel);
         }
     }
+}
+
+/// Once something is stitched while the document has no fabric or no hoop: a short prompt with
+/// both menus, since the fabric fills in density, compensation and underlay for everything left
+/// unset and the hoop is what the design is checked against. Gone once both are chosen, or for good
+/// when dismissed.
+fn setup_prompt(app: &mut VectorcraftApp, ui: &mut Ui, info: &Value) {
+    if app.ui.embroidery_setup_prompt_off || info["design"]["objects"].as_u64().unwrap_or(0) == 0 {
+        return;
+    }
+    let Some((fabric, hoop)) = app.session.active().map(|d| (d.doc.embroidery.fabric.is_some(), d.doc.embroidery.hoop.is_some())) else {
+        return;
+    };
+    if fabric && hoop {
+        return;
+    }
+    // No frame: the rows keep the width they are laid out to everywhere else.
+    widgets::section_header(ui, tl!("Fabric and Hoop"));
+    widgets::dim_label(
+        ui,
+        tl!("Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own."),
+    );
+    if !fabric {
+        fabric_row(app, ui);
+    }
+    if !hoop {
+        hoop_row(app, ui);
+    }
+    indented(ui, |ui| {
+        if widgets::flat_button(ui, tl!("Dismiss"), 70.0).on_hover_text(tl!("Don't show this again (Setup has both menus)")).clicked() {
+            app.ui.embroidery_setup_prompt_off = true;
+        }
+    });
+    widgets::divider(ui);
 }
 
 /// Above the tabs, whichever is open: Stitch Preview and Realistic, the design in one line, and
@@ -2969,6 +3004,35 @@ mod tests {
         }
         assert!(findings > 0, "the satin's long stitches are found");
         assert!(!drawn(&mut app, 0).0.iter().any(|t| t.contains("see Design")), "the Stitch tab's link is gone");
+    }
+
+    /// UI2.3: once something is stitched, the Stitch tab asks for the fabric and the hoop the
+    /// document lacks, until both are chosen or the prompt is dismissed.
+    #[test]
+    fn the_stitch_tab_asks_for_a_fabric_and_a_hoop() {
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        let run = |app: &mut VectorcraftApp, id: &str, p: Value| app.session.execute(id, &p).unwrap();
+        let prompt = |app: &mut VectorcraftApp| {
+            let texts = drawn(app, 0).0;
+            let shows = texts.iter().any(|t| t == "Fabric and Hoop");
+            (shows, shows && texts.iter().any(|t| t == "Fabric:"), shows && texts.iter().any(|t| t == "Hoop:"))
+        };
+        run(&mut app, "file.new", json!({"width": 300, "height": 300}));
+        run(&mut app, "shape.rectangle", json!({"x": 10, "y": 10, "width": 100, "height": 60}));
+        assert_eq!(prompt(&mut app), (false, false, false), "nothing stitched yet");
+        run(&mut app, "embroidery.set", json!({"type": "fill"}));
+        assert_eq!(prompt(&mut app), (true, true, true), "stitched, with neither");
+        run(&mut app, "embroidery.setFabric", json!({"fabric": "knit"}));
+        assert_eq!(prompt(&mut app), (true, false, true), "only the hoop is left to choose");
+        run(&mut app, "embroidery.setHoop", json!({"hoop": "5x7"}));
+        assert_eq!(prompt(&mut app), (false, false, false), "both chosen");
+        // Another document without them asks again, until dismissed.
+        run(&mut app, "file.new", json!({"width": 300, "height": 300}));
+        run(&mut app, "shape.rectangle", json!({"x": 10, "y": 10, "width": 100, "height": 60}));
+        run(&mut app, "embroidery.set", json!({"type": "fill"}));
+        assert!(prompt(&mut app).0);
+        app.ui.embroidery_setup_prompt_off = true;
+        assert!(!prompt(&mut app).0, "dismissed for good");
     }
 
     /// UI2.2: the tabs are by task. Setup holds what the design is sewn on and with, and the sewing

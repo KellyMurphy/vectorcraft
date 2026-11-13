@@ -5873,6 +5873,10 @@ theme	Appearance	Външен вид
 	Setup	Настройка
 	Check & Export	Проверка и експорт
 	Sewing	Шиене
+	Fabric and Hoop	Плат и гергеф
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	Изберете плата и гергефа: платът задава плътността, компенсацията и подложката на всеки бод, който не задава свои.
+	Dismiss	Скриване
+	Don't show this again (Setup has both menus)	Да не се показва повече (Настройка има и двете менюта)
 	The stitched design: its stitches, size, threads and sewing time	Бродираният дизайн: бодове, размер, конци и време за шиене
 	What the design checker found: open its list	Какво откри проверката на дизайна: отваря списъка
 @msg	Loaded embroidery font {_1}	Зареден е шрифт за бродерия {_1}

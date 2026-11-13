@@ -5986,6 +5986,10 @@ imageTrace	Outline	Körvonal
 	Setup	Beállítás
 	Check & Export	Ellenőrzés és exportálás
 	Sewing	Varrás
+	Fabric and Hoop	Anyag és keret
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	Válassza ki az anyagot és a keretet: az anyag adja meg a sűrűséget, a kompenzációt és az alátétet minden öltésnek, amely nem ad meg sajátot.
+	Dismiss	Elvetés
+	Don't show this again (Setup has both menus)	Ne jelenjen meg többé (a Beállításban mindkét menü megvan)
 	The stitched design: its stitches, size, threads and sewing time	A hímzett minta: öltések, méret, cérnák és varrási idő
 	What the design checker found: open its list	Amit a mintaellenőrzés talált: a lista megnyitása
 @msg	Loaded embroidery font {_1}	A(z) {_1} hímzőbetűtípus betöltve

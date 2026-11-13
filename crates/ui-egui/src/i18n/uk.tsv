@@ -5586,6 +5586,10 @@ lighting	Light	Світло
 	Setup	Налаштування
 	Check & Export	Перевірка й експорт
 	Sewing	Шиття
+	Fabric and Hoop	Тканина й п’яльця
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	Виберіть тканину й п’яльця: тканина задає щільність, компенсацію й підкладку всіх стібків, що не мають власних.
+	Dismiss	Сховати
+	Don't show this again (Setup has both menus)	Більше не показувати (обидва меню є в Налаштуваннях)
 	The stitched design: its stitches, size, threads and sewing time	Вишитий дизайн: стібки, розмір, нитки й час вишивання
 	What the design checker found: open its list	Що знайшла перевірка дизайну: відкрити список
 @msg	Loaded embroidery font {_1}	Завантажено шрифт для вишивки {_1}

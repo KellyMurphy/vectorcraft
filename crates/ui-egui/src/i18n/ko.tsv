@@ -5578,6 +5578,10 @@ lighting	Light	광원
 	Setup	설정
 	Check & Export	검사 및 내보내기
 	Sewing	봉제
+	Fabric and Hoop	원단과 수틀
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	원단과 수틀을 선택하세요. 원단은 자체 설정이 없는 모든 땀의 밀도, 보정, 밑땀을 정합니다.
+	Dismiss	닫기
+	Don't show this again (Setup has both menus)	다시 표시 안 함(설정에 두 메뉴가 있음)
 	The stitched design: its stitches, size, threads and sewing time	자수 디자인: 땀 수, 크기, 실, 봉제 시간
 	What the design checker found: open its list	디자인 검사 결과: 목록을 엽니다
 @msg	Loaded embroidery font {_1}	자수 글꼴 {_1}을(를) 불러왔습니다

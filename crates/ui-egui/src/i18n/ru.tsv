@@ -5600,6 +5600,10 @@ lighting	Light	Свет
 	Setup	Настройка
 	Check & Export	Проверка и экспорт
 	Sewing	Шитьё
+	Fabric and Hoop	Ткань и пяльцы
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	Выберите ткань и пяльцы: ткань задаёт плотность, компенсацию и подстилку всех стежков, у которых нет своих.
+	Dismiss	Скрыть
+	Don't show this again (Setup has both menus)	Больше не показывать (оба меню есть в Настройке)
 	The stitched design: its stitches, size, threads and sewing time	Вышитый дизайн: стежки, размер, нити и время вышивки
 	What the design checker found: open its list	Что нашла проверка дизайна: открыть список
 @msg	Loaded embroidery font {_1}	Загружен шрифт для вышивки {_1}

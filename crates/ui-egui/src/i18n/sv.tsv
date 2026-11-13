@@ -6029,6 +6029,10 @@ swatch	Yellow Green	Gulgrön
 	Setup	Inställning
 	Check & Export	Kontroll och export
 	Sewing	Sömnad
+	Fabric and Hoop	Tyg och ram
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	Välj tyg och ram: tyget bestämmer täthet, kompensation och understygn för alla stygn som inte har egna.
+	Dismiss	Stäng
+	Don't show this again (Setup has both menus)	Visa inte igen (Inställning har båda menyerna)
 	The stitched design: its stitches, size, threads and sewing time	Den broderade designen: stygn, storlek, trådar och sytid
 	What the design checker found: open its list	Vad designkontrollen hittade: öppna listan
 @msg	Loaded embroidery font {_1}	Broderiteckensnittet {_1} har lästs in

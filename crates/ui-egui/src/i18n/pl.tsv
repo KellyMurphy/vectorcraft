@@ -5857,6 +5857,10 @@ mark-style	Japanese	Japońskie
 	Setup	Ustawienia
 	Check & Export	Sprawdź i eksportuj
 	Sewing	Szycie
+	Fabric and Hoop	Tkanina i tamborek
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	Wybierz tkaninę i tamborek: tkanina ustala gęstość, kompensację i podkład każdego ściegu, który nie ma własnych.
+	Dismiss	Odrzuć
+	Don't show this again (Setup has both menus)	Nie pokazuj ponownie (oba menu są w Ustawieniach)
 	The stitched design: its stitches, size, threads and sewing time	Wyhaftowany projekt: ściegi, rozmiar, nici i czas szycia
 	What the design checker found: open its list	Co znalazło sprawdzanie projektu: otwiera listę
 @msg	Loaded embroidery font {_1}	Wczytano czcionkę hafciarską {_1}
