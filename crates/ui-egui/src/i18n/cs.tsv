@@ -5983,7 +5983,12 @@ mark-style	Japanese	Japonské
 @msg	not a layer	není vrstva
 @msg	the document has no layer	dokument nemá žádnou vrstvu
 	More Settings ({n})	Další nastavení ({n})
-	{n} problems found: see Design	Nalezené problémy: {n} – viz Návrh
+@plural	{n} stitch|{n} stitches	{n} steh|{n} stehy|{n} stehů
+@plural	{n} thread|{n} threads	{n} nit|{n} nitě|{n} nití
+@plural	{n} problem|{n} problems	{n} problém|{n} problémy|{n} problémů
+	{m} min	{m} min
+	The stitched design: its stitches, size, threads and sewing time	Vyšívaný návrh: stehy, velikost, nitě a doba šití
+	What the design checker found: open its list	Co našla kontrola návrhu: otevře její seznam
 @msg	Loaded embroidery font {_1}	Načteno vyšívací písmo {_1}
 	Add Font Folder…	Přidat složku písem…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Složka vyšívacích písem k zobrazení zde, například složky písem Ink/Stitch, které jste nainstalovali; čtou se tam, kde jsou

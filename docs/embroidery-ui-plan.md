@@ -1,6 +1,6 @@
 # Embroidery UI improvement plan
 
-Status: Phase 1 (UI1.1 to UI1.5) done; the rest proposed. Written 2026-11-11.
+Status: Phase 1 (UI1.1 to UI1.5) and UI2.1 done; the rest proposed. Written 2026-11-11.
 
 This plan comes from a review of the three embroidery panels: reading their code and driving the
 app through each tab with a small design (a filled rectangle and a satin line). It lists what to
@@ -146,6 +146,12 @@ Always visible, whichever tab is open:
 - a problems badge with the count of findings, which opens the checker;
 - the Export button in the document's machine format.
 
+Status: done. The header sits above the tab bar: the two toggles, a summary line ("1062 stitches ·
+38.8 × 24.7 mm · 2 threads · 1.4 min", cut short with an ellipsis when the panel is narrow), and a
+row with Export and a "⚠ n problems" badge that opens the Design tab, where the checker's list is
+until UI2.2. The Stitch tab's "problems found: see Design" link and the Design tab's Export row are
+gone. The Design tab still shows its own Stitches, Size and Threads rows; UI2.2 reorganizes them.
+
 ### UI2.2 Tabs by task: Stitch, Setup, Check & Export
 
 The Design tab mixes setup, statistics, view toggles, outputs, links to other panels and the
@@ -275,3 +281,4 @@ sewing is seen on the artwork at the size the user is working at.
 - 2026-11-11: UI1.1 done.
 - 2026-11-11: UI1.2 done.
 - 2026-11-12: UI1.3, UI1.4 and UI1.5 done.
+- 2026-11-12: UI2.1 done.

@@ -5599,7 +5599,12 @@ lighting	Light	Luce
 @msg	not a layer	non è un livello
 @msg	the document has no layer	il documento non ha livelli
 	More Settings ({n})	Altre impostazioni ({n})
-	{n} problems found: see Design	{n} problemi trovati: vedi Disegno
+@plural	{n} stitch|{n} stitches	{n} punto|{n} punti
+@plural	{n} thread|{n} threads	{n} filo|{n} fili
+@plural	{n} problem|{n} problems	{n} problema|{n} problemi
+	{m} min	{m} min
+	The stitched design: its stitches, size, threads and sewing time	Il disegno ricamato: punti, dimensioni, fili e tempo di cucitura
+	What the design checker found: open its list	Ciò che ha trovato il controllo del disegno: apre il suo elenco
 @msg	Loaded embroidery font {_1}	Font da ricamo {_1} caricato
 	Add Font Folder…	Aggiungi cartella di font…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Una cartella di font da ricamo da elencare qui, come le cartelle di font Ink/Stitch che hai installato; vengono lette dove si trovano

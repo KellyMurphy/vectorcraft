@@ -1,8 +1,10 @@
-//! Embroidery panel (Window › Embroidery): Stitch Preview, the selected objects' stitch, chosen
-//! from a grid of stitched pictures, their thread and trims, and the stitch's own settings (fill
-//! patterns and border patterns picked from pictures too); then the design's numbers with
-//! Export in the machine's format (DST, PES, JEF, EXP, VP3, U01), and the design checker's findings. The sewing order has a panel of its own
-//! (`sew_order`). Reads `embroidery.info`, acts through `embroidery.set` and `embroidery.clear`.
+//! Embroidery panel (Window › Embroidery). A header above the tabs holds Stitch Preview, the design
+//! in one line, Export in the machine's format (DST, PES, JEF, EXP, VP3, U01) and a badge for the
+//! checker's findings. The Stitch tab holds the selected objects' stitch, chosen from a grid of
+//! stitched pictures, their thread and trims, and the stitch's own settings (fill patterns and
+//! border patterns picked from pictures too); the Design tab, the design's setup and numbers and the
+//! checker's findings. The sewing order has a panel of its own (`sew_order`). Reads
+//! `embroidery.info`, acts through `embroidery.set` and `embroidery.clear`.
 
 use egui::{Color32, Rect, Sense, Stroke, Ui, vec2};
 use serde_json::{Value, json};
@@ -112,6 +114,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let info = info(app, ui.ctx());
     // One width for every tab, so the panel doesn't jump as they change.
     ui.set_min_width(PANEL_W);
+    header(app, ui, &info);
     let mut tab = ui.ctx().data_mut(|d| d.get_persisted::<usize>(tab_id())).unwrap_or(0).min(TABS.len() - 1);
     let names = [tl!("Stitch"), tl!("Design"), tl!("Tools")];
     if let Some(i) = widgets::tab_bar(ui, &names, tab) {
@@ -138,7 +141,6 @@ fn stitch_tab(app: &mut VectorcraftApp, ui: &mut Ui, info: &Value) {
     let any = stitched + unstitched > 0;
     let kind = sel["type"].as_str().and_then(StitchKind::parse).filter(|_| unstitched == 0);
 
-    preview_toggles(app, ui);
     widgets::section_header(ui, tl!("Stitch"));
     if !any {
         widgets::dim_label(
@@ -190,20 +192,53 @@ fn stitch_tab(app: &mut VectorcraftApp, ui: &mut Ui, info: &Value) {
             parameters(app, ui, k, sel);
         }
     }
-    // What the checker found, and where to read it.
-    let findings = info["check"]["findings"].as_array().map_or(0, Vec::len);
-    if findings > 0 {
-        widgets::divider(ui);
-        let t = Tokens::get(ui.ctx());
-        let text = tl!("{n} problems found: see Design").replace("{n}", &findings.to_string());
-        if ui.add(egui::Button::new(egui::RichText::new(text).color(t.warning)).frame(false)).clicked() {
-            ui.ctx().data_mut(|d| d.insert_persisted(tab_id(), 1usize));
-        }
-    }
 }
 
-/// Stitch Preview and Realistic, at the top of the Stitch tab: what a stitch looks like is seen on
-/// the canvas only with the preview on, so its switch sits where stitches are chosen.
+/// Above the tabs, whichever is open: Stitch Preview and Realistic, the design in one line, and
+/// Export with a badge for what the checker found (it opens the checker's list).
+fn header(app: &mut VectorcraftApp, ui: &mut Ui, info: &Value) {
+    preview_toggles(app, ui);
+    let d = &info["design"];
+    let stitched = d["objects"].as_u64().unwrap_or(0) > 0;
+    let t = Tokens::get(ui.ctx());
+    if stitched {
+        ui.add(egui::Label::new(egui::RichText::new(summary(d)).size(11.5).color(t.text_dim)).truncate())
+            .on_hover_text(tl!("The stitched design: its stitches, size, threads and sewing time"));
+    }
+    ui.horizontal_wrapped(|ui| {
+        let label = export_label(app);
+        if ui.add_enabled_ui(stitched, |ui| widgets::flat_button(ui, &label, 96.0)).inner.clicked() {
+            let format = machine_format(app);
+            app.run("file.exportAs", json!({ "format": format })).ok();
+        }
+        let findings = info["check"]["findings"].as_array().map_or(0, Vec::len);
+        if findings > 0 {
+            let text = crate::i18n::tn(u64::try_from(findings).unwrap_or(u64::MAX), "{n} problem", "{n} problems");
+            let badge = egui::Button::new(egui::RichText::new(format!("⚠ {text}")).color(t.warning)).frame(false);
+            if ui.add(badge).on_hover_text(tl!("What the design checker found: open its list")).clicked() {
+                ui.ctx().data_mut(|d| d.insert_persisted(tab_id(), 1usize));
+            }
+        }
+    });
+    ui.add_space(2.0);
+}
+
+/// "1062 stitches · 38.8 × 24.7 mm · 2 threads · 1.4 min": the design's numbers in one line.
+fn summary(d: &Value) -> String {
+    let f = |k: &str| d[k].as_f64().unwrap_or(0.0);
+    let threads = u64::try_from(d["threads"].as_array().map_or(0, Vec::len)).unwrap_or(u64::MAX);
+    let minutes = crate::i18n::fmt(tl!("{m} min"), &[("m", &f("minutes").to_string())]);
+    format!(
+        "{} · {:.1} × {:.1} mm · {} · {minutes}",
+        crate::i18n::tn(d["stitches"].as_u64().unwrap_or(0), "{n} stitch", "{n} stitches"),
+        f("widthMm"),
+        f("heightMm"),
+        crate::i18n::tn(threads, "{n} thread", "{n} threads"),
+    )
+}
+
+/// Stitch Preview and Realistic, in the header: what a stitch looks like is seen on the canvas
+/// only with the preview on, so its switch is always in reach.
 fn preview_toggles(app: &mut VectorcraftApp, ui: &mut Ui) {
     ui.horizontal_wrapped(|ui| {
         let preview = app.ui.view.stitch_preview;
@@ -2367,16 +2402,8 @@ fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
             widgets::dim_label(ui, w);
         }
     }
+    // Export is in the header (UI2.1).
     ui.add_space(4.0);
-    ui.horizontal_wrapped(|ui| {
-        let label = export_label(app);
-        let r = ui.add_enabled_ui(n("objects") > 0, |ui| widgets::flat_button(ui, &label, 96.0)).inner;
-        if r.clicked() {
-            let format = machine_format(app);
-            app.run("file.exportAs", json!({ "format": format })).ok();
-        }
-    });
-    ui.add_space(2.0);
     ui.horizontal_wrapped(|ui| {
         let r = ui
             .add_enabled_ui(n("objects") > 0, |ui| widgets::flat_button(ui, tl!("Worksheet…"), 96.0))
@@ -2782,7 +2809,7 @@ mod tests {
         app.run("shape.rectangle", json!({"x": 10, "y": 10, "width": 100, "height": 60})).unwrap();
         app.run("embroidery.info", json!({})).unwrap();
         assert!(!app.ui.view.stitch_preview && !app.ui.view.stitch_preview_chosen);
-        // The toggles are at the top of the Stitch tab.
+        // The toggles are in the header, above the Stitch tab's heading.
         let texts = drawn(&mut app, 0).0;
         let toggle = texts.iter().position(|t| t == "Stitch Preview").expect("the Stitch Preview toggle");
         // The last "Stitch" is the section's heading (the first, the tab's name).
@@ -2838,6 +2865,40 @@ mod tests {
         crate::io::open_bytes(&mut app, "Dropped.vcmotif", data.as_bytes(), None).unwrap();
         assert_eq!(run(&mut app, "embroidery.info", json!({}))["selection"]["motif"], "dropped");
         let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    /// UI2.1: whichever tab is open, the header shows the preview toggles, the design in one line,
+    /// Export, and a badge for the checker's findings that opens the checker's list.
+    #[test]
+    fn the_header_shows_on_every_tab() {
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        let run = |app: &mut VectorcraftApp, id: &str, p: Value| app.session.execute(id, &p).unwrap();
+        run(&mut app, "file.new", json!({"width": 300, "height": 300}));
+        // Nothing stitched: the toggles and a disabled Export, no summary, no badge.
+        let texts = drawn(&mut app, 0).0;
+        assert!(texts.iter().any(|t| t == "Stitch Preview") && texts.iter().any(|t| t.starts_with("Export ")), "{texts:?}");
+        assert!(!texts.iter().any(|t| t.contains(" stitches · ")), "{texts:?}");
+        // An unsplit 10 mm satin sews, but its stitches are long: the checker has something to say.
+        run(&mut app, "path.create", json!({"d": "M 20 150 L 280 150"}));
+        run(&mut app, "embroidery.set", json!({"type": "satin", "width": 10, "split": "off"}));
+        let info = run(&mut app, "embroidery.info", json!({}));
+        let findings = run(&mut app, "embroidery.check", json!({}))["findings"].as_array().map_or(0, Vec::len);
+        let stitches = info["design"]["stitches"].as_u64().unwrap();
+        for tab in 0..3 {
+            let texts = drawn(&mut app, tab).0;
+            assert!(texts.iter().any(|t| t == "Stitch Preview"), "tab {tab}: {texts:?}");
+            assert!(
+                texts.iter().any(|t| t.starts_with(&format!("{stitches} stitches · ")) && t.contains(" mm · 1 thread · ")),
+                "tab {tab}: {texts:?}"
+            );
+            assert_eq!(texts.iter().filter(|t| t.starts_with("Export ")).count(), 1, "tab {tab}: one Export, in the header: {texts:?}");
+            if findings > 0 {
+                let badge = format!("⚠ {findings} problem{}", if findings == 1 { "" } else { "s" });
+                assert!(texts.contains(&badge), "tab {tab}: {texts:?}");
+            }
+        }
+        assert!(findings > 0, "the satin's long stitches are found");
+        assert!(!drawn(&mut app, 0).0.iter().any(|t| t.contains("see Design")), "the Stitch tab's link is gone");
     }
 
     #[test]

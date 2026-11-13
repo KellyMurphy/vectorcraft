@@ -5959,7 +5959,12 @@ mark-style	Japanese	Japanilainen
 @msg	not a layer	ei ole taso
 @msg	the document has no layer	asiakirjassa ei ole tasoa
 	More Settings ({n})	Lisää asetuksia ({n})
-	{n} problems found: see Design	Ongelmia löytyi: {n} – katso Malli
+@plural	{n} stitch|{n} stitches	{n} pisto|{n} pistoa
+@plural	{n} thread|{n} threads	{n} lanka|{n} lankaa
+@plural	{n} problem|{n} problems	{n} ongelma|{n} ongelmaa
+	{m} min	{m} min
+	The stitched design: its stitches, size, threads and sewing time	Kirjottu kuvio: pistot, koko, langat ja ompeluaika
+	What the design checker found: open its list	Mitä kuviotarkistus löysi: avaa sen luettelo
 @msg	Loaded embroidery font {_1}	Kirjontafontti {_1} ladattu
 	Add Font Folder…	Lisää fonttikansio…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Kansio, jonka kirjontafontit näytetään täällä, esimerkiksi asentamasi Ink/Stitch-fonttikansiot; ne luetaan siellä, missä ne ovat

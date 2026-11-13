@@ -6022,7 +6022,12 @@ swatch	Yellow Green	Gulgrön
 @msg	not a layer	inte ett lager
 @msg	the document has no layer	dokumentet har inget lager
 	More Settings ({n})	Fler inställningar ({n})
-	{n} problems found: see Design	{n} problem hittades: se Design
+@plural	{n} stitch|{n} stitches	{n} stygn|{n} stygn
+@plural	{n} thread|{n} threads	{n} tråd|{n} trådar
+@plural	{n} problem|{n} problems	{n} problem|{n} problem
+	{m} min	{m} min
+	The stitched design: its stitches, size, threads and sewing time	Den broderade designen: stygn, storlek, trådar och sytid
+	What the design checker found: open its list	Vad designkontrollen hittade: öppna listan
 @msg	Loaded embroidery font {_1}	Broderiteckensnittet {_1} har lästs in
 	Add Font Folder…	Lägg till teckensnittsmapp…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	En mapp med broderiteckensnitt att visa här, till exempel Ink/Stitch-teckensnittsmappar du har installerat; de läses där de ligger

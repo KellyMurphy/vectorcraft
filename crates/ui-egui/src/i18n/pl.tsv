@@ -5850,7 +5850,12 @@ mark-style	Japanese	Japońskie
 @msg	not a layer	to nie jest warstwa
 @msg	the document has no layer	dokument nie ma warstwy
 	More Settings ({n})	Więcej ustawień ({n})
-	{n} problems found: see Design	Znalezione problemy: {n} – zobacz Projekt
+@plural	{n} stitch|{n} stitches	{n} ścieg|{n} ściegi|{n} ściegów
+@plural	{n} thread|{n} threads	{n} nić|{n} nici|{n} nici
+@plural	{n} problem|{n} problems	{n} problem|{n} problemy|{n} problemów
+	{m} min	{m} min
+	The stitched design: its stitches, size, threads and sewing time	Wyhaftowany projekt: ściegi, rozmiar, nici i czas szycia
+	What the design checker found: open its list	Co znalazło sprawdzanie projektu: otwiera listę
 @msg	Loaded embroidery font {_1}	Wczytano czcionkę hafciarską {_1}
 	Add Font Folder…	Dodaj folder czcionek…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Folder czcionek hafciarskich wyświetlanych tutaj, np. zainstalowane foldery czcionek Ink/Stitch; są czytane tam, gdzie się znajdują

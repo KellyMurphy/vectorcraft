@@ -5593,7 +5593,12 @@ lighting	Light	Свет
 @msg	not a layer	это не слой
 @msg	the document has no layer	в документе нет слоя
 	More Settings ({n})	Другие настройки ({n})
-	{n} problems found: see Design	Найдено проблем: {n} — см. «Дизайн»
+@plural	{n} stitch|{n} stitches	{n} стежок|{n} стежка|{n} стежков
+@plural	{n} thread|{n} threads	{n} нить|{n} нити|{n} нитей
+@plural	{n} problem|{n} problems	{n} проблема|{n} проблемы|{n} проблем
+	{m} min	{m} мин
+	The stitched design: its stitches, size, threads and sewing time	Вышитый дизайн: стежки, размер, нити и время вышивки
+	What the design checker found: open its list	Что нашла проверка дизайна: открыть список
 @msg	Loaded embroidery font {_1}	Загружен шрифт для вышивки {_1}
 	Add Font Folder…	Добавить папку шрифтов…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Папка шрифтов для вышивки, показываемых здесь, например установленные вами папки шрифтов Ink/Stitch; они читаются там, где лежат

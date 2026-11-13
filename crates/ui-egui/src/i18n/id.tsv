@@ -5864,7 +5864,12 @@ swatch	Bright Violet	Violet cerah
 @msg	not a layer	bukan lapisan
 @msg	the document has no layer	dokumen tidak memiliki lapisan
 	More Settings ({n})	Pengaturan lain ({n})
-	{n} problems found: see Design	{n} masalah ditemukan: lihat Desain
+@plural	{n} stitch|{n} stitches	{n} tusukan
+@plural	{n} thread|{n} threads	{n} benang
+@plural	{n} problem|{n} problems	{n} masalah
+	{m} min	{m} mnt
+	The stitched design: its stitches, size, threads and sewing time	Desain bordir: tusukan, ukuran, benang, dan waktu jahit
+	What the design checker found: open its list	Yang ditemukan pemeriksaan desain: buka daftarnya
 @msg	Loaded embroidery font {_1}	Fon sulaman {_1} dimuat
 	Add Font Folder…	Tambah folder fon…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Folder fon sulaman yang ditampilkan di sini, misalnya folder fon Ink/Stitch yang Anda pasang; dibaca di tempatnya

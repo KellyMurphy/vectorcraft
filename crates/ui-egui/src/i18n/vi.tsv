@@ -5591,7 +5591,12 @@ theme	Appearance	Giao diện
 @msg	not a layer	không phải là lớp
 @msg	the document has no layer	tài liệu không có lớp nào
 	More Settings ({n})	Cài đặt khác ({n})
-	{n} problems found: see Design	Tìm thấy {n} vấn đề: xem Thiết kế
+@plural	{n} stitch|{n} stitches	{n} mũi
+@plural	{n} thread|{n} threads	{n} chỉ
+@plural	{n} problem|{n} problems	{n} vấn đề
+	{m} min	{m} phút
+	The stitched design: its stitches, size, threads and sewing time	Thiết kế thêu: số mũi, kích thước, chỉ và thời gian may
+	What the design checker found: open its list	Những gì kiểm tra thiết kế tìm thấy: mở danh sách
 @msg	Loaded embroidery font {_1}	Đã nạp phông chữ thêu {_1}
 	Add Font Folder…	Thêm thư mục phông chữ…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Một thư mục phông chữ thêu để liệt kê ở đây, như các thư mục phông chữ Ink/Stitch bạn đã cài; chúng được đọc tại chỗ

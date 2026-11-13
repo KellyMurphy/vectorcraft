@@ -5927,7 +5927,12 @@ mark-style	Japanese	Japonesas
 @msg	not a layer	no es una capa
 @msg	the document has no layer	el documento no tiene ninguna capa
 	More Settings ({n})	Más ajustes ({n})
-	{n} problems found: see Design	{n} problemas encontrados: ver Diseño
+@plural	{n} stitch|{n} stitches	{n} puntada|{n} puntadas
+@plural	{n} thread|{n} threads	{n} hilo|{n} hilos
+@plural	{n} problem|{n} problems	{n} problema|{n} problemas
+	{m} min	{m} min
+	The stitched design: its stitches, size, threads and sewing time	El diseño bordado: puntadas, tamaño, hilos y tiempo de costura
+	What the design checker found: open its list	Lo que encontró la comprobación del diseño: abre su lista
 @msg	Loaded embroidery font {_1}	Fuente de bordado {_1} cargada
 	Add Font Folder…	Añadir carpeta de fuentes…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Una carpeta de fuentes de bordado que mostrar aquí, como las carpetas de fuentes de Ink/Stitch que haya instalado; se leen donde están

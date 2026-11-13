@@ -5979,7 +5979,12 @@ imageTrace	Outline	Körvonal
 @msg	not a layer	nem réteg
 @msg	the document has no layer	a dokumentumnak nincs rétege
 	More Settings ({n})	További beállítások ({n})
-	{n} problems found: see Design	{n} probléma található: lásd Terv
+@plural	{n} stitch|{n} stitches	{n} öltés|{n} öltés
+@plural	{n} thread|{n} threads	{n} cérna|{n} cérna
+@plural	{n} problem|{n} problems	{n} probléma|{n} probléma
+	{m} min	{m} perc
+	The stitched design: its stitches, size, threads and sewing time	A hímzett minta: öltések, méret, cérnák és varrási idő
+	What the design checker found: open its list	Amit a mintaellenőrzés talált: a lista megnyitása
 @msg	Loaded embroidery font {_1}	A(z) {_1} hímzőbetűtípus betöltve
 	Add Font Folder…	Betűtípusmappa hozzáadása…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Hímzőbetűtípusok mappája, amelyek itt jelennek meg, például a telepített Ink/Stitch betűtípusmappák; ott olvassuk be őket, ahol vannak

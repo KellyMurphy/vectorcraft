@@ -5947,7 +5947,12 @@ effect	Points	Σημεία
 @msg	not a layer	δεν είναι επίπεδο
 @msg	the document has no layer	το έγγραφο δεν έχει επίπεδο
 	More Settings ({n})	Περισσότερες ρυθμίσεις ({n})
-	{n} problems found: see Design	Βρέθηκαν {n} προβλήματα: δείτε το Σχέδιο
+@plural	{n} stitch|{n} stitches	{n} βελονιά|{n} βελονιές
+@plural	{n} thread|{n} threads	{n} κλωστή|{n} κλωστές
+@plural	{n} problem|{n} problems	{n} πρόβλημα|{n} προβλήματα
+	{m} min	{m} λεπ.
+	The stitched design: its stitches, size, threads and sewing time	Το κεντημένο σχέδιο: βελονιές, μέγεθος, κλωστές και χρόνος ραφής
+	What the design checker found: open its list	Τι βρήκε ο έλεγχος σχεδίου: άνοιγμα της λίστας
 @msg	Loaded embroidery font {_1}	Φορτώθηκε η γραμματοσειρά κεντήματος {_1}
 	Add Font Folder…	Προσθήκη φακέλου γραμματοσειρών…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Ένας φάκελος γραμματοσειρών κεντήματος που θα εμφανίζονται εδώ, π.χ. φάκελοι γραμματοσειρών Ink/Stitch που εγκαταστήσατε· διαβάζονται εκεί που βρίσκονται

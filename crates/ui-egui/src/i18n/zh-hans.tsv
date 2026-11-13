@@ -5814,7 +5814,12 @@ lighting	Light	光源
 @msg	not a layer	不是图层
 @msg	the document has no layer	文档没有图层
 	More Settings ({n})	更多设置（{n}）
-	{n} problems found: see Design	发现 {n} 个问题：请看“设计”
+@plural	{n} stitch|{n} stitches	{n} 针
+@plural	{n} thread|{n} threads	{n} 种线
+@plural	{n} problem|{n} problems	{n} 个问题
+	{m} min	{m} 分钟
+	The stitched design: its stitches, size, threads and sewing time	刺绣设计：针数、尺寸、线和缝制时间
+	What the design checker found: open its list	设计检查发现的问题：打开列表
 @msg	Loaded embroidery font {_1}	已载入刺绣字体 {_1}
 	Add Font Folder…	添加字体文件夹…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	要在此列出的刺绣字体文件夹，例如您安装的 Ink/Stitch 字体文件夹；就地读取

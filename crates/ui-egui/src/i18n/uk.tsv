@@ -5579,7 +5579,12 @@ lighting	Light	Світло
 @msg	not a layer	це не шар
 @msg	the document has no layer	у документі немає шару
 	More Settings ({n})	Інші налаштування ({n})
-	{n} problems found: see Design	Знайдено проблем: {n} — див. «Дизайн»
+@plural	{n} stitch|{n} stitches	{n} стібок|{n} стібки|{n} стібків
+@plural	{n} thread|{n} threads	{n} нитка|{n} нитки|{n} ниток
+@plural	{n} problem|{n} problems	{n} проблема|{n} проблеми|{n} проблем
+	{m} min	{m} хв
+	The stitched design: its stitches, size, threads and sewing time	Вишитий дизайн: стібки, розмір, нитки й час вишивання
+	What the design checker found: open its list	Що знайшла перевірка дизайну: відкрити список
 @msg	Loaded embroidery font {_1}	Завантажено шрифт для вишивки {_1}
 	Add Font Folder…	Додати теку шрифтів…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Тека шрифтів для вишивки, що показуються тут, наприклад установлені вами теки шрифтів Ink/Stitch; вони читаються там, де лежать

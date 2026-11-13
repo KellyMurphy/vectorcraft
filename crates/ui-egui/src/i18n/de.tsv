@@ -5577,7 +5577,12 @@ effect	Soft	Weich
 @msg	not a layer	keine Ebene
 @msg	the document has no layer	das Dokument hat keine Ebene
 	More Settings ({n})	Weitere Einstellungen ({n})
-	{n} problems found: see Design	{n} Probleme gefunden: siehe Design
+@plural	{n} stitch|{n} stitches	{n} Stich|{n} Stiche
+@plural	{n} thread|{n} threads	{n} Garn|{n} Garne
+@plural	{n} problem|{n} problems	{n} Problem|{n} Probleme
+	{m} min	{m} Min.
+	The stitched design: its stitches, size, threads and sewing time	Das gestickte Design: Stiche, Größe, Garne und Stickzeit
+	What the design checker found: open its list	Was die Designprüfung gefunden hat: ihre Liste öffnen
 @msg	Loaded embroidery font {_1}	Stickschrift {_1} geladen
 	Add Font Folder…	Schriftordner hinzufügen…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Ein Ordner mit Stickschriften, die hier aufgeführt werden, etwa installierte Ink/Stitch-Schriftordner; sie werden dort gelesen, wo sie liegen

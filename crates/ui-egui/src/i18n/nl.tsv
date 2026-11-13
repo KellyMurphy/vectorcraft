@@ -5914,7 +5914,12 @@ swatch	Bright Violet	Felviolet
 @msg	not a layer	geen laag
 @msg	the document has no layer	het document heeft geen laag
 	More Settings ({n})	Meer instellingen ({n})
-	{n} problems found: see Design	{n} problemen gevonden: zie Ontwerp
+@plural	{n} stitch|{n} stitches	{n} steek|{n} steken
+@plural	{n} thread|{n} threads	{n} garen|{n} garens
+@plural	{n} problem|{n} problems	{n} probleem|{n} problemen
+	{m} min	{m} min
+	The stitched design: its stitches, size, threads and sewing time	Het geborduurde ontwerp: steken, grootte, garens en borduurtijd
+	What the design checker found: open its list	Wat de ontwerpcontrole vond: de lijst openen
 @msg	Loaded embroidery font {_1}	Borduurlettertype {_1} geladen
 	Add Font Folder…	Lettertypemap toevoegen…
 	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Een map met borduurlettertypen om hier te tonen, zoals Ink/Stitch-lettertypemappen die u hebt geïnstalleerd; ze worden gelezen waar ze staan
