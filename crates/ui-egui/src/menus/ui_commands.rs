@@ -1225,7 +1225,7 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "file.exportAs",
         "Export As…",
         "",
-        "{format?, useArtboards?, range?} opens Export As (then the format's options); with {path, …document.export options} writes the file(s) → {path, warnings, files?}",
+        "{format?: a format id, or machine for the document's embroidery machine format (embroidery.setup machineFormat), useArtboards?, range?} opens Export As (then the format's options); with {path, …document.export options} writes the file(s) → {path, warnings, files?}",
     ),
     (
         "ui.fileInfoDialog",

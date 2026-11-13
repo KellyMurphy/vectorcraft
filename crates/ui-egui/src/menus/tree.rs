@@ -317,6 +317,10 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                         c("Auto-Digitize", "embroidery.digitize"),
                         Sep,
                         cp("Garment Mockup…", "embroidery.mockup", json!({"garment": "tshirt", "placement": "leftChest", "view": "garment"})),
+                        Sep,
+                        cp("Embroidery Panel", "window.panel", json!({"panel": crate::panels::embroidery::ID})),
+                        cp("Sew Order", "window.panel", json!({"panel": crate::panels::sew_order::ID})),
+                        cp("Export Stitch File…", "file.exportAs", json!({"format": "machine"})),
                     ],
                 ),
                 sub(

@@ -80,6 +80,8 @@ impl Default for Workspace {
 }
 
 pub const ESSENTIALS: &str = "Essentials";
+/// Embroidery workspace: the Embroidery panel open, rulers, and Stitch Preview on.
+pub const EMBROIDERY: &str = "Embroidery";
 /// Touch workspace (Window → Workspace → Touch; Preferences › Devices › Enable Touch Workspace).
 pub const TOUCH: &str = "Touch";
 
@@ -105,6 +107,11 @@ pub fn builtins() -> Vec<Workspace> {
             x.toolbar_advanced = true;
             x.dock_tab = DockTab::Layers;
             x.open_panel = Some("actions".into());
+        }),
+        // Stitch Preview comes on with it (`switch`).
+        w(EMBROIDERY, &|x| {
+            x.rulers = true;
+            x.open_panel = Some(crate::panels::embroidery::ID.into());
         }),
         w("Layout", &|x| {
             x.control_bar = true;
@@ -266,6 +273,12 @@ pub fn switch(ui: &mut UiState, name: &str) -> Result<String, String> {
     remember(ui);
     let w = ui.workspace_changes.iter().find(|w| w.name.eq_ignore_ascii_case(&saved.name)).cloned().unwrap_or(saved);
     apply(ui, &w);
+    // What the Embroidery workspace is for shows only with the preview on. A view setting, not
+    // layout: it isn't saved with the workspace, and switching away leaves it as it is.
+    if w.name.eq_ignore_ascii_case(EMBROIDERY) {
+        ui.view.stitch_preview = true;
+        ui.view.stitch_preview_chosen = true;
+    }
     Ok(w.name)
 }
 

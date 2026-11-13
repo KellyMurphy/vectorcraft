@@ -869,13 +869,22 @@ fn run_ui_part10(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<Result
         "ui.colorPanel" => crate::panels::color::command(app, p),
         "ui.savePdfDialog" => crate::dialogs::open_save_pdf(app, p),
         "file.exportAs" if s("path").is_none() => {
-            crate::dialogs::open_export_as(app, s("format").as_deref(), p);
+            crate::dialogs::open_export_as(app, export_format(app, s("format")).as_deref(), p);
             Ok(Value::Null)
         }
-        "file.exportAs" => io::export(app, s("format").as_deref(), s("path"), p),
+        "file.exportAs" => io::export(app, export_format(app, s("format")).as_deref(), s("path"), p),
         _ => return None,
     };
     Some(r)
+}
+
+/// File › Export As's format: `machine` is the document's embroidery machine format (Object ›
+/// Embroidery › Export Stitch File…), anything else as given.
+fn export_format(app: &VectorcraftApp, format: Option<String>) -> Option<String> {
+    match format.as_deref() {
+        Some("machine") => Some(crate::panels::embroidery::machine_format(app).to_string()),
+        _ => format,
+    }
 }
 
 /// UI commands, part 11.

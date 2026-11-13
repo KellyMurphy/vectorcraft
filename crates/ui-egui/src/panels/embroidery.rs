@@ -3035,6 +3035,40 @@ mod tests {
         assert!(!prompt(&mut app).0, "dismissed for good");
     }
 
+    /// UI2.5: Object › Embroidery opens the Embroidery and Sew Order panels and exports in the
+    /// document's machine format; the Embroidery workspace opens the panel with Stitch Preview on.
+    #[test]
+    fn the_menu_and_the_workspace_reach_the_embroidery_panels() {
+        use crate::menus::Item;
+        fn find<'a>(items: &'a [Item], label: &str) -> Option<&'a Item> {
+            items.iter().find_map(|i| match i {
+                Item::Sub(l, sub) if *l == "Embroidery" => sub.iter().find(|s| matches!(s, Item::Cmd(l, ..) if *l == label)),
+                Item::Sub(_, sub) => find(sub, label),
+                _ => None,
+            })
+        }
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        app.run("file.new", json!({"width": 300, "height": 300})).unwrap();
+        let tree: Vec<Item> = crate::menus::menu_tree().into_iter().map(|(name, items)| Item::Sub(name, items)).collect();
+        for (label, id, panel) in [("Embroidery Panel", "window.panel", Some(ID)), ("Sew Order", "window.panel", Some(super::super::sew_order::ID))] {
+            let Some(Item::Cmd(_, cmd, p)) = find(&tree, label) else { panic!("Object › Embroidery › {label}") };
+            assert_eq!((*cmd, p["panel"].as_str()), (id, panel));
+        }
+        let Some(Item::Cmd(_, cmd, p)) = find(&tree, "Export Stitch File…") else { panic!("Export Stitch File…") };
+        assert_eq!((*cmd, p.clone()), ("file.exportAs", json!({"format": "machine"})));
+        // `machine` is the document's machine format: Export As opens on it.
+        app.run("embroidery.setup", json!({"machineFormat": "pes"})).unwrap();
+        app.run("file.exportAs", json!({"format": "machine"})).unwrap();
+        let dialog = app.ui.dialog.as_ref().expect("Export As");
+        assert_eq!((dialog.kind.as_str(), dialog.fields.get("format").and_then(Value::as_str)), ("exportAs", Some("pes")));
+        app.ui.dialog = None;
+        // The workspace.
+        app.ui.view.stitch_preview = false;
+        app.run("window.workspace", json!({"name": "Embroidery"})).unwrap();
+        assert_eq!(app.ui.open_panel.as_deref(), Some(ID));
+        assert!(app.ui.view.stitch_preview && app.ui.view.rulers);
+    }
+
     /// UI2.2: the tabs are by task. Setup holds what the design is sewn on and with, and the sewing
     /// settings Sew Order used to; Check & Export lists the threads as rows with their stitches.
     #[test]

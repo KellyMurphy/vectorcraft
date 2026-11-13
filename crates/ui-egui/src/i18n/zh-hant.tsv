@@ -5630,6 +5630,8 @@ lighting	Light	光源
 	Setup	設定
 	Check & Export	檢查與轉存
 	Sewing	縫製
+	Embroidery Panel	刺繡面板
+	Export Stitch File…	轉存針跡檔案…
 	Fabric and Hoop	布料和繡框
 	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	請選擇布料和繡框：布料決定所有未自行設定的針跡的密度、補償和底線。
 	Dismiss	關閉

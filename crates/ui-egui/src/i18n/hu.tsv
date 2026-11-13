@@ -5986,6 +5986,8 @@ imageTrace	Outline	Körvonal
 	Setup	Beállítás
 	Check & Export	Ellenőrzés és exportálás
 	Sewing	Varrás
+	Embroidery Panel	Hímzés panel
+	Export Stitch File…	Öltésfájl exportálása…
 	Fabric and Hoop	Anyag és keret
 	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	Válassza ki az anyagot és a keretet: az anyag adja meg a sűrűséget, a kompenzációt és az alátétet minden öltésnek, amely nem ad meg sajátot.
 	Dismiss	Elvetés

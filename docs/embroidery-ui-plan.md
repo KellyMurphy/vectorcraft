@@ -1,6 +1,6 @@
 # Embroidery UI improvement plan
 
-Status: Phase 1 (UI1.1 to UI1.5), UI2.1, UI2.2 and UI2.3 done; the rest proposed. Written 2026-11-11.
+Status: Phase 1 (UI1.1 to UI1.5), UI2.1, UI2.2, UI2.3 and UI2.5 done; the rest proposed. Written 2026-11-11.
 
 This plan comes from a review of the three embroidery panels: reading their code and driving the
 app through each tab with a small design (a filled rectangle and a satin line). It lists what to
@@ -210,6 +210,13 @@ Change:
 - Object › Embroidery gains entries for the Embroidery panel, Sew Order and Export. Today it has
   only the stitch types, Remove Stitches, Auto-Digitize and Garment Mockup.
 
+Status: done, with two parts left out. Window › Workspace › Embroidery opens the Embroidery panel with
+the rulers and turns Stitch Preview on. Object › Embroidery gains Embroidery Panel, Sew Order and
+Export Stitch File… (`file.exportAs {format: "machine"}`, the document's machine format). Left out:
+docking Sew Order beside Embroidery (a built-in workspace has no panel layout of its own yet, only
+flags and an open panel), and millimetre units (a document setting, which a workspace, being layout
+only, doesn't change).
+
 ## Phase 3: Stitch tab
 
 ### UI3.1 Stitch picker
@@ -299,3 +306,4 @@ sewing is seen on the artwork at the size the user is working at.
 - 2026-11-12: UI2.1 done.
 - 2026-11-12: UI2.2 done.
 - 2026-11-12: UI2.3 done.
+- 2026-11-12: UI2.5 done (without docking Sew Order or setting units).
