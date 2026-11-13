@@ -14,8 +14,13 @@ use crate::theme::Tokens;
 use crate::widgets;
 
 pub const ID: &str = "embroidery";
-const LABEL_W: f32 = 128.0;
+/// The width the panel is laid out to fit. Docked in the default column its content gets 290
+/// points (the column's 310 less the body's margins); the rest is room for a scroll bar.
+const PANEL_W: f32 = 270.0;
+const LABEL_W: f32 = 114.0;
 const FIELD_W: f32 = 76.0;
+/// A dropdown, text field or picker that fills its row beside the label.
+const WIDE_W: f32 = PANEL_W - LABEL_W - 8.0;
 
 /// A fill pattern's name: the rows before the needle holes line up again (2: brick).
 fn pattern_label(rows: u8) -> String {
@@ -76,6 +81,25 @@ fn mm(app: &mut VectorcraftApp, ui: &mut Ui, label: &str, key: &str, value: Opti
     .on_hover_text(tip);
 }
 
+/// What `add` draws in the column beside the labels, wrapping onto more lines there when one
+/// isn't enough: a row of buttons or a long note is never cut off at the panel's edge.
+fn indented(ui: &mut Ui, add: impl FnOnce(&mut Ui)) {
+    ui.horizontal(|ui| {
+        ui.add_space(LABEL_W + 8.0);
+        let width = ui.available_width();
+        // A row's height from the start: with none, the row centres an empty block and what is
+        // drawn hangs half a row low.
+        ui.allocate_ui_with_layout(vec2(width, 24.0), egui::Layout::left_to_right(egui::Align::Center).with_main_wrap(true), add);
+    });
+}
+
+/// A dropdown of names filling its row beside the label. A name too long for the row is cut
+/// short with an ellipsis: the dropdown never widens past the panel's edge.
+fn names_dropdown(ui: &mut Ui, id: impl std::hash::Hash, current: &str, options: &[&str]) -> Option<usize> {
+    ui.style_mut().wrap_mode = Some(egui::TextWrapMode::Truncate);
+    widgets::dropdown_names(ui, id, current, options, WIDE_W)
+}
+
 /// The panel's tabs: the selection's stitches, the design as a whole, and the tools.
 const TABS: [&str; 3] = ["Stitch", "Design", "Tools"];
 
@@ -87,7 +111,7 @@ fn tab_id() -> egui::Id {
 pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let info = info(app, ui.ctx());
     // One width for every tab, so the panel doesn't jump as they change.
-    ui.set_min_width(300.0);
+    ui.set_min_width(PANEL_W);
     let mut tab = ui.ctx().data_mut(|d| d.get_persisted::<usize>(tab_id())).unwrap_or(0).min(TABS.len() - 1);
     let names = [tl!("Stitch"), tl!("Design"), tl!("Tools")];
     if let Some(i) = widgets::tab_bar(ui, &names, tab) {
@@ -356,7 +380,7 @@ fn lettering(app: &mut VectorcraftApp, ui: &mut Ui) {
     widgets::label_row(ui, tl!("Layout:"), LABEL_W, |ui| {
         let layouts = monogram_layouts();
         let current = layouts.iter().find(|(id, _)| *id == layout).map_or("", |(_, n)| n);
-        if let Some(id) = widgets::combo(ui, "emb-mono-layout", current, 150.0, |ui| {
+        if let Some(id) = widgets::combo(ui, "emb-mono-layout", current, WIDE_W, |ui| {
             let mut chosen = None;
             for (id, name) in layouts {
                 if widgets::menu_item_name(ui, name, true, layout == id) {
@@ -374,7 +398,7 @@ fn lettering(app: &mut VectorcraftApp, ui: &mut Ui) {
             "satin" => tl!("Satin Ring").to_string(),
             id => vectorcraft_embroidery::borders::builtin(id).map_or_else(|| id.to_string(), |b| b.name),
         };
-        if let Some(id) = widgets::combo(ui, "emb-mono-frame", &name(&frame), 150.0, |ui| {
+        if let Some(id) = widgets::combo(ui, "emb-mono-frame", &name(&frame), WIDE_W, |ui| {
             let mut chosen = None;
             for id in ["none", "satin"].into_iter().chain(vectorcraft_embroidery::borders::BUILTIN) {
                 if widgets::menu_item_name(ui, &name(id), true, frame == id) {
@@ -427,12 +451,12 @@ fn font_editor(app: &mut VectorcraftApp, ui: &mut Ui) {
         widgets::dim_label(ui, tl!("Make an embroidery font: one artboard per letter, digitized with the ordinary stitches."));
         let (mut name, mut chars, mut from) = (kept(ui, "name", "Untitled Font"), kept(ui, "chars", "A-Za-z0-9 .,!?'&-"), kept(ui, "from", ""));
         widgets::label_row(ui, tl!("Name:"), LABEL_W, |ui| {
-            if let Some(v) = widgets::text_field(ui, "emb-font-new-name", Some(&name), 150.0, 1) {
+            if let Some(v) = widgets::text_field(ui, "emb-font-new-name", Some(&name), WIDE_W, 1) {
                 name = v;
             }
         });
         widgets::label_row(ui, tl!("Characters:"), LABEL_W, |ui| {
-            if let Some(v) = widgets::text_field(ui, "emb-font-new-chars", Some(&chars), 150.0, 1) {
+            if let Some(v) = widgets::text_field(ui, "emb-font-new-chars", Some(&chars), WIDE_W, 1) {
                 chars = v;
             }
         });
@@ -441,7 +465,7 @@ fn font_editor(app: &mut VectorcraftApp, ui: &mut Ui) {
                 // An installed font, picked from the font menu (typing a family's name exactly is
                 // too easy to get wrong).
                 let current = if from.is_empty() { tl!("None") } else { from.as_str() };
-                let pick = crate::font_menu::font_menu(ui, "emb-font-new-from", current, 180.0, None, crate::font_menu::MenuLook::of(app));
+                let pick = crate::font_menu::font_menu(ui, "emb-font-new-from", current, WIDE_W - 28.0, None, crate::font_menu::MenuLook::of(app));
                 if let Some((family, _)) = crate::font_menu::picked(app, pick) {
                     from = family;
                 }
@@ -455,7 +479,7 @@ fn font_editor(app: &mut VectorcraftApp, ui: &mut Ui) {
         keep(ui, "name", name.clone());
         keep(ui, "chars", chars.clone());
         keep(ui, "from", from.clone());
-        ui.horizontal(|ui| {
+        ui.horizontal_wrapped(|ui| {
             if widgets::flat_button(ui, tl!("New Embroidery Font"), 150.0).clicked() {
                 let mut p = json!({ "name": name, "chars": chars });
                 if !from.trim().is_empty() {
@@ -493,7 +517,7 @@ fn font_editor(app: &mut VectorcraftApp, ui: &mut Ui) {
         (tl!("License:"), "license", font.license.clone()),
     ] {
         widgets::label_row(ui, label, LABEL_W, |ui| {
-            if let Some(v) = widgets::text_field(ui, ("emb-font", key), Some(value.as_deref().unwrap_or("")), 150.0, 1)
+            if let Some(v) = widgets::text_field(ui, ("emb-font", key), Some(value.as_deref().unwrap_or("")), WIDE_W, 1)
                 && let Err(e) = app.run("embroidery.font.setup", json!({ key: v }))
             {
                 app.status(e);
@@ -667,7 +691,7 @@ fn picture_picker(
     dots: bool,
 ) -> Option<usize> {
     let t = Tokens::get(ui.ctx());
-    let (rect, resp) = ui.allocate_exact_size(vec2(170.0, 36.0), Sense::click());
+    let (rect, resp) = ui.allocate_exact_size(vec2(WIDE_W, 36.0), Sense::click());
     let resp = resp.on_hover_cursor(egui::CursorIcon::PointingHand);
     ui.painter().rect_filled(rect, 3.0, t.input);
     ui.painter().rect_stroke(rect, 3.0, Stroke::new(1.0, t.input_border), egui::StrokeKind::Inside);
@@ -675,7 +699,9 @@ fn picture_picker(
     if let Some(th) = thumb {
         stitch_art::draw(ui.painter(), pic, th, t.text, dots.then_some(t.text_dim));
     }
-    ui.painter().text(pic.right_center() + vec2(6.0, 0.0), egui::Align2::LEFT_CENTER, label, egui::FontId::proportional(12.0), t.text);
+    // The name, clipped short of the arrow.
+    let name = Rect::from_min_max(pic.right_top(), egui::pos2(rect.right() - 18.0, rect.bottom()));
+    ui.painter_at(name).text(name.left_center() + vec2(6.0, 0.0), egui::Align2::LEFT_CENTER, label, egui::FontId::proportional(12.0), t.text);
     let arrow = Rect::from_center_size(rect.right_center() - vec2(10.0, 0.0), vec2(8.0, 5.0));
     ui.painter().add(egui::Shape::convex_polygon(vec![arrow.left_top(), arrow.right_top(), arrow.center_bottom()], t.text_dim, Stroke::NONE));
     let cols = 3;
@@ -934,7 +960,7 @@ fn font_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
     ui.scope(|ui| {
         widgets::label_row(ui, tl!("Embroidery Font:"), LABEL_W, |ui| {
             let opts: Vec<&str> = names.iter().map(String::as_str).collect();
-            let Some(i) = widgets::dropdown_names(ui, "emb-font", &shown, &opts, 150.0) else { return };
+            let Some(i) = names_dropdown(ui, "emb-font", &shown, &opts) else { return };
             if i == 0 {
                 set(app, json!({"font": null}));
             } else if let Some((id, _)) = mine.get(i - 1) {
@@ -949,8 +975,7 @@ fn font_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
     })
     .response
     .on_hover_text(tl!("Type only: sew the letters from this embroidery font's stitch objects instead of the outline font"));
-    ui.horizontal(|ui| {
-        ui.add_space(LABEL_W + 8.0);
+    indented(ui, |ui| {
         add_font_folder_button(app, ui);
     });
 }
@@ -998,10 +1023,15 @@ fn thread_row(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
         {
             set(app, json!({"thread": format!("#{}", h.trim_start_matches('#'))}));
         }
-        if thread.is_some() && widgets::flat_button(ui, tl!("Use Object Color"), 110.0).clicked() {
-            set(app, json!({"thread": null}));
-        }
     });
+    // On a line of its own: beside the field it ran past the panel's edge.
+    if thread.is_some() {
+        indented(ui, |ui| {
+            if widgets::flat_button(ui, tl!("Use Object Color"), 110.0).clicked() {
+                set(app, json!({"thread": null}));
+            }
+        });
+    }
 }
 
 fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Value) {
@@ -1029,8 +1059,7 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
                 }
                 if style.is_none_or(|s| s == RunStyle::Stem) {
                     let flip = sel["flip"].as_bool();
-                    ui.horizontal(|ui| {
-                        ui.add_space(LABEL_W + 8.0);
+                    indented(ui, |ui| {
                         if widgets::check3_tip(ui, tl!("Flip"), flip, true, tl!("Slant the stem stitches the other way")) {
                             set(app, json!({"flip": flip != Some(true)}));
                         }
@@ -1053,8 +1082,7 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
         StitchKind::Satin => {
             widgets::section_header(ui, tl!("Satin Column"));
             let rails = sel["rails"].as_bool();
-            ui.horizontal(|ui| {
-                ui.add_space(LABEL_W + 8.0);
+            indented(ui, |ui| {
                 if widgets::check3_tip(
                     ui,
                     tl!("Between Rails"),
@@ -1066,12 +1094,14 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
                 }
             });
             if rails != Some(true) {
+                let width = sel["width"].as_f64();
                 widgets::label_row(ui, tl!("Width:"), LABEL_W, |ui| {
-                    let width = sel["width"].as_f64();
                     if let Some(v) = widgets::mixed_field(ui, ("emb", "width"), width, " mm", 2, FIELD_W) {
                         let r = width_range(sel);
                         set(app, json!({"width": v.clamp(*r.start(), *r.end())}));
                     }
+                });
+                indented(ui, |ui| {
                     if width.is_none() {
                         widgets::dim_label(ui, tl!("the stroke width"));
                     } else if widgets::flat_button(ui, tl!("Use Stroke"), 80.0).clicked() {
@@ -1234,8 +1264,7 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
                     }
                 }
             });
-            ui.horizontal(|ui| {
-                ui.add_space(LABEL_W + 8.0);
+            indented(ui, |ui| {
                 if widgets::flat_button(ui, tl!("Load…"), 70.0)
                     .on_hover_text(tl!("Load a border pattern file (.vcborder) into the document"))
                     .clicked()
@@ -1267,12 +1296,14 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
                 }
             }
             ui.scope(|ui| {
+                let width = sel["width"].as_f64();
                 widgets::label_row(ui, tl!("Width:"), LABEL_W, |ui| {
-                    let width = sel["width"].as_f64();
                     if let Some(v) = widgets::mixed_field(ui, ("emb", "patternWidth"), width, " mm", 1, FIELD_W) {
                         let r = StitchSettings::PATTERN_WIDTH;
                         set(app, json!({"width": v.clamp(*r.start(), *r.end())}));
                     }
+                });
+                indented(ui, |ui| {
                     if width.is_none() {
                         widgets::dim_label(ui, tl!("the pattern's size"));
                     } else if widgets::flat_button(ui, tl!("Pattern Size"), 90.0).clicked() {
@@ -1283,8 +1314,7 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
             .response
             .on_hover_text(tl!("How wide the border is: the pattern scales with it"));
             let flip = sel["flip"].as_bool();
-            ui.horizontal(|ui| {
-                ui.add_space(LABEL_W + 8.0);
+            indented(ui, |ui| {
                 if widgets::check3_tip(ui, tl!("Flip"), flip, true, tl!("Mirror the pattern across the path")) {
                     set(app, json!({"flip": flip != Some(true)}));
                 }
@@ -1375,8 +1405,7 @@ fn other_settings(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: 
             }
             ValueKind::Flag => {
                 let v = sel[key].as_bool();
-                ui.horizontal(|ui| {
-                    ui.add_space(LABEL_W + 8.0);
+                indented(ui, |ui| {
                     if widgets::check3_tip(ui, label, v, true, help) {
                         set(app, json!({ key: v != Some(true) }));
                     }
@@ -1385,7 +1414,7 @@ fn other_settings(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: 
             ValueKind::Choice(ids) => {
                 let cur = sel[key].as_str().unwrap_or_default();
                 widgets::label_row(ui, label, LABEL_W, |ui| {
-                    if let Some(i) = widgets::dropdown_names(ui, ("emb-generic", key), cur, ids, 150.0)
+                    if let Some(i) = names_dropdown(ui, ("emb-generic", key), cur, ids)
                         && let Some(id) = ids.get(i)
                     {
                         set(app, json!({ key: id }));
@@ -1712,7 +1741,7 @@ fn fabric_row(app: &mut VectorcraftApp, ui: &mut Ui) {
     ui.scope(|ui| {
         widgets::label_row(ui, tl!("Fabric:"), LABEL_W, |ui| {
             let opts: Vec<&str> = names.iter().map(String::as_str).collect();
-            if let Some(i) = widgets::dropdown_names(ui, "emb-fabric", &shown, &opts, 150.0) {
+            if let Some(i) = names_dropdown(ui, "emb-fabric", &shown, &opts) {
                 match i {
                     0 => {
                         app.run("embroidery.setFabric", json!({"fabric": null})).ok();
@@ -1735,8 +1764,7 @@ fn fabric_row(app: &mut VectorcraftApp, ui: &mut Ui) {
     })
     .response
     .on_hover_text(tl!("The fabric the design is for: its density, compensation and underlay fill in what objects leave unset"));
-    ui.horizontal(|ui| {
-        ui.add_space(LABEL_W + 8.0);
+    indented(ui, |ui| {
         if widgets::flat_button(ui, tl!("Load…"), 70.0).on_hover_text(tl!("Load a fabric profile file (.vcfabric)")).clicked() {
             load_fabric(app);
         }
@@ -1793,7 +1821,7 @@ fn look_row(app: &mut VectorcraftApp, ui: &mut Ui) {
     ui.scope(|ui| {
         widgets::label_row(ui, tl!("Fabric Look:"), LABEL_W, |ui| {
             let opts: Vec<&str> = names.iter().map(String::as_str).collect();
-            if let Some(i) = widgets::dropdown_names(ui, "emb-look", &shown, &opts, 150.0) {
+            if let Some(i) = names_dropdown(ui, "emb-look", &shown, &opts) {
                 let texture = match i {
                     0 => None,
                     1 => Some(NO_FABRIC),
@@ -1809,8 +1837,7 @@ fn look_row(app: &mut VectorcraftApp, ui: &mut Ui) {
         return;
     }
     // Its colour, on a line of its own under the menu.
-    ui.horizontal(|ui| {
-        ui.add_space(LABEL_W + 8.0);
+    indented(ui, |ui| {
         let mut rgb = look.color;
         if ui.color_edit_button_srgb(&mut rgb).on_hover_text(tl!("The fabric's colour")).changed() {
             let hex = format!("#{:02x}{:02x}{:02x}", rgb[0], rgb[1], rgb[2]);
@@ -1849,7 +1876,7 @@ fn chart_row(app: &mut VectorcraftApp, ui: &mut Ui) {
     ui.scope(|ui| {
         widgets::label_row(ui, tl!("Thread Chart:"), LABEL_W, |ui| {
             let opts: Vec<&str> = names.iter().map(String::as_str).collect();
-            if let Some(i) = widgets::dropdown_names(ui, "emb-chart", &shown, &opts, 150.0) {
+            if let Some(i) = names_dropdown(ui, "emb-chart", &shown, &opts) {
                 if let Some((lib, _)) = i.checked_sub(charts.len() + 1).and_then(|j| library.get(j)) {
                     // Loaded into the document, then chosen.
                     match app.run("embroidery.loadThreadChart", json!({ "library": lib })) {
@@ -1869,8 +1896,7 @@ fn chart_row(app: &mut VectorcraftApp, ui: &mut Ui) {
     .on_hover_text(tl!(
         "Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads)."
     ));
-    ui.horizontal(|ui| {
-        ui.add_space(LABEL_W + 8.0);
+    indented(ui, |ui| {
         if widgets::flat_button(ui, tl!("Load…"), 70.0).on_hover_text(tl!("Load a thread chart file (.vcthreads)")).clicked() {
             load_chart(app);
         }
@@ -1918,7 +1944,7 @@ fn machine_row(app: &mut VectorcraftApp, ui: &mut Ui) {
     ui.scope(|ui| {
         widgets::label_row(ui, tl!("Machine Format:"), LABEL_W, |ui| {
             let opts: Vec<&str> = names.iter().map(String::as_str).collect();
-            if let Some(f) = widgets::dropdown_names(ui, "emb-machine-format", &current, &opts, 150.0).and_then(|i| formats.get(i)) {
+            if let Some(f) = names_dropdown(ui, "emb-machine-format", &current, &opts).and_then(|i| formats.get(i)) {
                 app.run("embroidery.setup", json!({ "machineFormat": f })).ok();
             }
         })
@@ -1964,7 +1990,7 @@ fn hoop_row(app: &mut VectorcraftApp, ui: &mut Ui) {
     ui.scope(|ui| {
         widgets::label_row(ui, tl!("Hoop:"), LABEL_W, |ui| {
             let opts: Vec<&str> = names.iter().map(String::as_str).collect();
-            if let Some(i) = widgets::dropdown_names(ui, "emb-hoop", &shown, &opts, 150.0) {
+            if let Some(i) = names_dropdown(ui, "emb-hoop", &shown, &opts) {
                 if let Some((lib, h)) = i.checked_sub(first_library).and_then(|j| library.get(j)) {
                     if let Err(e) = app.run("embroidery.loadHoop", json!({ "library": lib, "hoop": h.id })) {
                         app.status(e);
@@ -1983,8 +2009,7 @@ fn hoop_row(app: &mut VectorcraftApp, ui: &mut Ui) {
     if let Some(h) = current.as_ref().filter(|_| starter.is_none()) {
         let libs = &app.session.embroidery_libraries.hoops;
         let listed = libs.infos().filter_map(|i| libs.get(&i.id)).any(|(_, l)| l.hoops.contains(h));
-        ui.horizontal(|ui| {
-            ui.add_space(LABEL_W + 8.0);
+        indented(ui, |ui| {
             if add_button(app, ui, !listed) {
                 add_to_library(app, "embroidery.saveHoop", json!({}), &format!("{}.{}", h.name, vectorcraft_embroidery::hoops::FILE_EXT), "hoops");
             }
@@ -2007,8 +2032,7 @@ fn hoop_row(app: &mut VectorcraftApp, ui: &mut Ui) {
             _ => (String::new(), t.text_dim),
         };
         if !text.is_empty() {
-            ui.horizontal(|ui| {
-                ui.add_space(LABEL_W + 8.0);
+            indented(ui, |ui| {
                 ui.label(egui::RichText::new(text).size(11.5).color(color));
             });
         }
@@ -2025,8 +2049,7 @@ fn hoopings_row(app: &mut VectorcraftApp, ui: &mut Ui, too_big: bool) {
             app.status(e);
         }
     };
-    ui.horizontal(|ui| {
-        ui.add_space(LABEL_W + 8.0);
+    indented(ui, |ui| {
         // Too big: not split yet, or grown past its hoopings since.
         if too_big
             && ui
@@ -2066,7 +2089,7 @@ fn rotation_row(app: &mut VectorcraftApp, ui: &mut Ui, rotation: u16) {
     ui.scope(|ui| {
         widgets::label_row(ui, tl!("Rotate in Hoop:"), LABEL_W, |ui| {
             let opts: Vec<&str> = names.iter().map(String::as_str).collect();
-            if let Some(d) = widgets::dropdown_names(ui, "emb-hoop-rotation", &format!("{rotation}°"), &opts, 150.0).and_then(|i| TURNS.get(i)) {
+            if let Some(d) = names_dropdown(ui, "emb-hoop-rotation", &format!("{rotation}°"), &opts).and_then(|i| TURNS.get(i)) {
                 app.run("embroidery.setup", json!({ "hoopRotation": d })).ok();
             }
         })
@@ -2112,8 +2135,7 @@ fn width_range(sel: &Value) -> std::ops::RangeInclusive<f64> {
 /// Split Stitches, and with it on, where and how the stitches are split.
 fn split_rows(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
     let split = sel["split"].as_str().and_then(Split::parse);
-    ui.horizontal(|ui| {
-        ui.add_space(LABEL_W + 8.0);
+    indented(ui, |ui| {
         let on = split.map(|s| s == Split::Auto);
         if widgets::check3_tip(
             ui,
@@ -2140,7 +2162,7 @@ fn split_rows(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
                 Some(SplitPattern::Random) => labels[1],
                 None => "",
             };
-            if let Some(p) = widgets::dropdown(ui, "emb-split-pattern", cur, &labels, 150.0).and_then(|i| SplitPattern::ALL.get(i)) {
+            if let Some(p) = widgets::dropdown(ui, "emb-split-pattern", cur, &labels, WIDE_W).and_then(|i| SplitPattern::ALL.get(i)) {
                 set(app, json!({"splitPattern": p.id()}));
             }
         })
@@ -2154,7 +2176,7 @@ fn underlay_row(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &V
     widgets::label_row(ui, tl!("Underlay:"), LABEL_W, |ui| {
         let labels: Vec<&str> = options.iter().map(|u| underlay_label(*u)).collect();
         let cur = sel["underlay"].as_str().and_then(Underlay::parse).map_or("", underlay_label);
-        if let Some(u) = widgets::dropdown(ui, "emb-underlay", cur, &labels, 150.0).and_then(|i| options.get(i)) {
+        if let Some(u) = widgets::dropdown(ui, "emb-underlay", cur, &labels, WIDE_W).and_then(|i| options.get(i)) {
             set(app, json!({"underlay": u.id()}));
         }
     });
@@ -2205,8 +2227,7 @@ fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
         if let Some(m) = matched {
             let codes: Vec<&str> = m.iter().filter_map(|t| t["code"].as_str()).collect();
             if !codes.is_empty() {
-                ui.horizontal(|ui| {
-                    ui.add_space(LABEL_W + 8.0);
+                indented(ui, |ui| {
                     ui.label(egui::RichText::new(codes.join(" · ")).size(11.5).color(Tokens::get(ui.ctx()).text_dim));
                 });
             }
@@ -2216,7 +2237,7 @@ fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
         }
     }
     ui.add_space(4.0);
-    ui.horizontal(|ui| {
+    ui.horizontal_wrapped(|ui| {
         let preview = app.ui.view.stitch_preview;
         if widgets::check(ui, tl!("Stitch Preview"), preview, true) {
             app.run("view.stitchPreview", json!({})).ok();
@@ -2239,7 +2260,7 @@ fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
         }
     });
     ui.add_space(2.0);
-    ui.horizontal(|ui| {
+    ui.horizontal_wrapped(|ui| {
         let r = ui
             .add_enabled_ui(n("objects") > 0, |ui| widgets::flat_button(ui, tl!("Worksheet…"), 96.0))
             .inner
@@ -2490,6 +2511,76 @@ mod tests {
         let row = crate::state::ICON_PANELS.iter().find(|p| p.0 == ID).unwrap();
         assert_eq!(row.1, "Embroidery");
         assert!(crate::icons::exists(row.2), "{} is not a bundled icon", row.2);
+    }
+
+    /// Everything the panel draws fits the default dock column: no tile, field, picker or button
+    /// row is cut off at its right edge, whatever is selected and whichever tab is open.
+    #[test]
+    fn nothing_is_cut_off_at_the_default_dock_width() {
+        // The default dock column less the panel body's margins (`dock::panel_body`).
+        let width = crate::panel_docking::COLUMN_WIDTH - 20.0;
+        // The right edge of the right-most thing drawn with tab `tab` open.
+        fn right_edge(app: &mut VectorcraftApp, tab: usize, width: f32) -> f32 {
+            let ctx = egui::Context::default();
+            crate::theme::install_fonts(&ctx);
+            ctx.data_mut(|d| d.insert_persisted(tab_id(), tab));
+            // A screen wider than the panel, so what runs past the panel isn't clipped away by the
+            // screen's edge; the panel is laid out in `width`.
+            let screen = egui::Rect::from_min_size(egui::Pos2::ZERO, vec2(width + 400.0, 4000.0));
+            let mut right = 0.0f32;
+            for k in 0..3 {
+                let input = egui::RawInput { time: Some(f64::from(k) * 0.1), screen_rect: Some(screen), ..Default::default() };
+                let mut out = ctx.run_ui(input, |ui| {
+                    ui.allocate_ui(vec2(width, 4000.0), |ui| {
+                        ui.set_max_width(width);
+                        show(app, ui);
+                    });
+                });
+                out.textures_delta.clear();
+                // What shows: a name clipped short (`painter_at`) is drawn whole but shown only
+                // inside its clip.
+                right = out
+                    .shapes
+                    .iter()
+                    // An empty text shows nothing, whatever its box (egui gives one the screen's).
+                    .filter(|c| !matches!(&c.shape, egui::Shape::Text(t) if t.galley.text().is_empty()))
+                    .map(|c| c.shape.visual_bounding_rect().intersect(c.clip_rect))
+                    .filter(|r| r.is_positive())
+                    .map(|r| r.right())
+                    .fold(0.0, f32::max);
+            }
+            right
+        }
+        let dir = std::env::temp_dir().join(format!("vc-emb-panel-width-{}", std::process::id()));
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        app.session.embroidery_libraries.set_dir(Some(dir.to_string_lossy().to_string()));
+        let run = |app: &mut VectorcraftApp, id: &str, p: Value| app.session.execute(id, &p).unwrap();
+        run(&mut app, "file.new", json!({"width": 600, "height": 600}));
+        // Wider than a 4 × 4 in hoop, so the Design tab offers to split it.
+        run(&mut app, "shape.rectangle", json!({"x": 50, "y": 50, "width": 400, "height": 400}));
+        let check = |app: &mut VectorcraftApp, tab: usize, what: &str| {
+            let right = right_edge(app, tab, width);
+            assert!(right <= width + 0.5, "{what}: drawn out to {right}, past the panel's {width}");
+        };
+        check(&mut app, 0, "nothing stitched");
+        for k in StitchKind::ALL {
+            run(&mut app, "embroidery.set", json!({"type": k.id()}));
+            check(&mut app, 0, k.id());
+        }
+        // Rows that grow a button once a value is set: the thread, a satin's and a border's width.
+        run(&mut app, "embroidery.set", json!({"type": "satin", "width": 3, "thread": "#cc2030"}));
+        check(&mut app, 0, "satin with a width and a thread");
+        run(&mut app, "embroidery.set", json!({"type": "patternBorder", "width": 8}));
+        check(&mut app, 0, "pattern border with a width");
+        run(&mut app, "embroidery.set", json!({"type": "fill", "border": 2}));
+        check(&mut app, 1, "design");
+        // The document's own fabric (Save…, Add to Library) and a hoop the design is too big for.
+        run(&mut app, "embroidery.setFabric", json!({"fabric": "knit", "pull": 0.4}));
+        run(&mut app, "embroidery.setHoop", json!({"hoop": "4x4"}));
+        check(&mut app, 1, "design too big for its hoop");
+        run(&mut app, "embroidery.splitHoops", json!({}));
+        check(&mut app, 1, "design split into hoopings");
+        check(&mut app, 2, "tools");
     }
 
     #[test]

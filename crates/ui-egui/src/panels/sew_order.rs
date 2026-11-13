@@ -301,7 +301,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             let name = rows.get(step.saturating_sub(1)).and_then(|r| r["name"].as_str()).unwrap_or("");
             let stitch =
                 rows.get(step.saturating_sub(1)).and_then(|r| r["stitch"].as_str()).and_then(StitchKind::parse).map_or("", |k| tl!(k.label()));
-            ui.label(egui::RichText::new(format!("{step} / {n}  ·  {name}  ·  {stitch}")).size(11.0).color(t.text_dim));
+            ui.add(egui::Label::new(egui::RichText::new(format!("{step} / {n}  ·  {name}  ·  {stitch}")).size(11.0).color(t.text_dim)).truncate());
         });
         // Play, pause, and step from colour stop to colour stop.
         ui.horizontal(|ui| {
@@ -429,7 +429,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
 
     let any = ids.iter().any(|i| selected.contains(i));
     ui.add_space(4.0);
-    ui.horizontal(|ui| {
+    ui.horizontal_wrapped(|ui| {
         for (icon, tip, to) in [
             ("dc-al-top", tl!("Sew First"), "first"),
             ("dc-arrow-up", tl!("Sew Earlier"), "earlier"),
@@ -454,6 +454,11 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             app.run("embroidery.sortByThread", json!({})).ok();
         }
         let custom = info["custom"] == json!(true);
+        // The enabled scope below is one block to the row, which a wrapping row doesn't break
+        // before: start the next line here when the button no longer fits this one.
+        if ui.available_size_before_wrap().x < 80.0 {
+            ui.end_row();
+        }
         if ui
             .add_enabled_ui(custom, |ui| widgets::flat_button(ui, tl!("Paint Order"), 80.0))
             .inner
@@ -569,6 +574,33 @@ mod tests {
             count(&c.shape, &mut lines);
         }
         (v, lines)
+    }
+
+    /// Everything the panel draws fits the default dock column: the row of order buttons wraps
+    /// instead of running past the panel's right edge.
+    #[test]
+    fn nothing_is_cut_off_at_the_default_dock_width() {
+        // The default dock column less the panel body's margins (`dock::panel_body`).
+        let width = crate::panel_docking::COLUMN_WIDTH - 20.0;
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        let run = |app: &mut VectorcraftApp, id: &str, p: Value| app.session.execute(id, &p).unwrap();
+        run(&mut app, "file.new", json!({"width": 300, "height": 200}));
+        run(&mut app, "shape.rectangle", json!({"x": 10, "y": 10, "width": 100, "height": 60}));
+        run(&mut app, "embroidery.set", json!({"type": "fill"}));
+        run(&mut app, "select.none", json!({}));
+        run(&mut app, "path.create", json!({"d": "M 20 150 L 280 150"}));
+        run(&mut app, "embroidery.set", json!({"type": "satin", "width": 3}));
+        let ctx = egui::Context::default();
+        crate::theme::install_fonts(&ctx);
+        let screen = Rect::from_min_size(Pos2::ZERO, vec2(width, 4000.0));
+        let mut right = 0.0f32;
+        for k in 0..3 {
+            let input = egui::RawInput { time: Some(f64::from(k) * 0.1), screen_rect: Some(screen), ..Default::default() };
+            let mut out = ctx.run_ui(input, |ui| show(&mut app, ui));
+            out.textures_delta.clear();
+            right = out.shapes.iter().map(|c| c.shape.visual_bounding_rect()).filter(|r| r.is_positive()).map(|r| r.right()).fold(0.0, f32::max);
+        }
+        assert!(right <= width + 0.5, "drawn out to {right}, past the panel's {width}");
     }
 
     #[test]
