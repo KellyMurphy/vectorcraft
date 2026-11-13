@@ -68,6 +68,11 @@ fn open_bytes_with(app: &mut VectorcraftApp, name: &str, bytes: &[u8], path: Opt
         crate::panels::embroidery::load_pattern_from(app, json!({"data": String::from_utf8_lossy(bytes)}));
         return Ok(Value::Null);
     }
+    // So does a motif.
+    if fileio::extension(name) == vectorcraft_embroidery::motifs::FILE_EXT {
+        crate::panels::embroidery::load_motif_from(app, json!({"data": String::from_utf8_lossy(bytes)}));
+        return Ok(Value::Null);
+    }
     if opens == Some(OpensAs::Library) {
         return crate::panels::libraries::import(app, json!({"dataBase64": vectorcraft_format::base64_encode(bytes)})).map(|_| Value::Null);
     }

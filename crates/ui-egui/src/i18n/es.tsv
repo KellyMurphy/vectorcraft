@@ -5888,8 +5888,10 @@ mark-style	Japanese	Japonesas
 	Motif Fill	Relleno de motivo
 	A small stitched motif repeated across the shape, the fabric showing between.	Un pequeño motivo bordado repetido por la forma, con la tela visible entre ellos.
 	How large one tile of the motif is	El tamaño de una tesela del motivo
-	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	El motivo bordado tesela a tesela por la forma (embroidery.loadMotif añade más)
+	The motif sewn tile by tile across the shape	El motivo bordado tesela a tesela por la forma
 	Choose the thread's color	Elige el color del hilo
+	Load a motif file (.vcmotif) into the document	Carga en el documento un archivo de motivo (.vcmotif)
+	Save this motif as a file (.vcmotif)	Guarda este motivo como archivo (.vcmotif)
 	Stars	Estrellas
 	Flowers	Flores
 	Crosses	Cruces

@@ -5538,8 +5538,10 @@ effect	Soft	Weich
 	Motif Fill	Motivfüllung
 	A small stitched motif repeated across the shape, the fabric showing between.	Ein kleines gesticktes Motiv, über die Form wiederholt, der Stoff dazwischen sichtbar.
 	How large one tile of the motif is	Wie groß eine Kachel des Motivs ist
-	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Das Motiv, Kachel für Kachel über die Form gestickt (embroidery.loadMotif fügt weitere hinzu)
+	The motif sewn tile by tile across the shape	Das Motiv, Kachel für Kachel über die Form gestickt
 	Choose the thread's color	Die Garnfarbe wählen
+	Load a motif file (.vcmotif) into the document	Eine Motivdatei (.vcmotif) in das Dokument laden
+	Save this motif as a file (.vcmotif)	Dieses Motiv als Datei (.vcmotif) speichern
 	Stars	Sterne
 	Flowers	Blumen
 	Crosses	Kreuze

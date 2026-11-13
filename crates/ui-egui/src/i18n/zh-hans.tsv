@@ -5775,8 +5775,10 @@ lighting	Light	光源
 	Motif Fill	图案填充
 	A small stitched motif repeated across the shape, the fabric showing between.	小型刺绣图案在形状上重复排列，图案之间露出布面。
 	How large one tile of the motif is	一个图案单元的大小
-	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	在形状上逐个刺绣的图案单元（embroidery.loadMotif 可添加更多）
+	The motif sewn tile by tile across the shape	在形状上逐个刺绣的图案单元
 	Choose the thread's color	选择线的颜色
+	Load a motif file (.vcmotif) into the document	将图案文件（.vcmotif）载入文档
+	Save this motif as a file (.vcmotif)	将此图案存储为文件（.vcmotif）
 	Stars	星形
 	Flowers	花朵
 	Crosses	十字

@@ -5825,8 +5825,10 @@ swatch	Bright Violet	Kraftig violet
 	Motif Fill	Motivfyld
 	A small stitched motif repeated across the shape, the fabric showing between.	Et lille broderet motiv gentaget hen over formen, med stoffet synligt imellem.
 	How large one tile of the motif is	Hvor stor én flise af motivet er
-	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Motivet broderet flise for flise hen over formen (embroidery.loadMotif tilføjer flere)
+	The motif sewn tile by tile across the shape	Motivet broderet flise for flise hen over formen
 	Choose the thread's color	Vælg trådens farve
+	Load a motif file (.vcmotif) into the document	Indlæs en motivfil (.vcmotif) i dokumentet
+	Save this motif as a file (.vcmotif)	Gem dette motiv som en fil (.vcmotif)
 	Stars	Stjerner
 	Flowers	Blomster
 	Crosses	Kryds

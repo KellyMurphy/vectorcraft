@@ -5827,8 +5827,10 @@ theme	Appearance	Външен вид
 	Motif Fill	Запълване с мотив
 	A small stitched motif repeated across the shape, the fabric showing between.	Малък бродиран мотив, повторен по формата, с видим плат между тях.
 	How large one tile of the motif is	Колко голяма е една плочка на мотива
-	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Мотивът, бродиран плочка по плочка по формата (embroidery.loadMotif добавя още)
+	The motif sewn tile by tile across the shape	Мотивът, бродиран плочка по плочка по формата
 	Choose the thread's color	Изберете цвета на конеца
+	Load a motif file (.vcmotif) into the document	Зареждане на файл с мотив (.vcmotif) в документа
+	Save this motif as a file (.vcmotif)	Запазване на този мотив като файл (.vcmotif)
 	Stars	Звезди
 	Flowers	Цветя
 	Crosses	Кръстчета

@@ -5920,8 +5920,10 @@ mark-style	Japanese	Japanilainen
 	Motif Fill	Aihetäyttö
 	A small stitched motif repeated across the shape, the fabric showing between.	Pieni kirjottu aihe toistettuna muodon yli, kangas näkyvissä välissä.
 	How large one tile of the motif is	Kuinka suuri aiheen yksi laatta on
-	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Aihe kirjottuna laatta laatalta muodon yli (embroidery.loadMotif lisää muita)
+	The motif sewn tile by tile across the shape	Aihe kirjottuna laatta laatalta muodon yli
 	Choose the thread's color	Valitse langan väri
+	Load a motif file (.vcmotif) into the document	Lataa kuviotiedosto (.vcmotif) dokumenttiin
+	Save this motif as a file (.vcmotif)	Tallenna tämä kuvio tiedostoksi (.vcmotif)
 	Stars	Tähdet
 	Flowers	Kukat
 	Crosses	Ristit

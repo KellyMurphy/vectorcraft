@@ -830,7 +830,7 @@ fn motif_fill_picker(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
             (name, stitch_art::motif(&ctx, m))
         })
         .collect();
-    let current = sel["motif"].as_str().unwrap_or(motifs::DEFAULT_STITCHED);
+    let current = sel["motif"].as_str().unwrap_or(motifs::DEFAULT_STITCHED).to_string();
     let selected = all.iter().position(|m| m.id == current);
     ui.scope(|ui| {
         widgets::label_row(ui, tl!("Motif:"), LABEL_W, |ui| {
@@ -841,7 +841,59 @@ fn motif_fill_picker(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
         })
     })
     .response
-    .on_hover_text(tl!("The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)"));
+    .on_hover_text(tl!("The motif sewn tile by tile across the shape"));
+    // As for border patterns: load one from a file, save the chosen one, keep the document's own
+    // in the library.
+    let mine = selected.and_then(|i| all.get(i)).filter(|m| !motifs::STITCHED.contains(&m.id.as_str())).cloned();
+    indented(ui, |ui| {
+        if widgets::flat_button(ui, tl!("Load…"), 70.0).on_hover_text(tl!("Load a motif file (.vcmotif) into the document")).clicked() {
+            load_motif(app);
+        }
+        if selected.is_some() && widgets::flat_button(ui, tl!("Save…"), 70.0).on_hover_text(tl!("Save this motif as a file (.vcmotif)")).clicked() {
+            let id = current.clone();
+            crate::picks::button(app, move |app| {
+                let file = format!("{id}.{}", motifs::FILE_EXT);
+                if let Err(e) = crate::io::save_command_output_named(app, "embroidery.saveMotif", &file, json!({ "motif": id })) {
+                    app.status(e);
+                }
+            });
+        }
+        if let Some(m) = mine
+            && add_button(app, ui, !in_library(&app.session.embroidery_libraries.motifs, &m))
+        {
+            add_to_library(app, "embroidery.saveMotif", json!({ "motif": m.id }), &format!("{}.{}", m.name, motifs::FILE_EXT), "motifs");
+        }
+    });
+}
+
+/// Load a motif file the user picks into the document (the web: the picked file arrives later,
+/// through [`crate::io::open_bytes`]), and sew the selected motif fills with it.
+fn load_motif(app: &mut VectorcraftApp) {
+    if let Some(f) = app.services.open_async.as_mut() {
+        f();
+        return;
+    }
+    crate::picks::button(app, |app| {
+        let ext: &'static [&'static str] = &[vectorcraft_embroidery::motifs::FILE_EXT];
+        let pick = crate::FilePick { filters: vec![crate::FilePick::filter("Motifs", ext)], ..Default::default() };
+        let Some(path) = crate::picks::open(app, &pick) else { return };
+        load_motif_from(app, json!({ "path": path }));
+    });
+}
+
+/// `embroidery.loadMotif` with `p`, then sew the selected motif fills with it when it is a
+/// stitched motif (a carve motif is for fills' patterns).
+pub(crate) fn load_motif_from(app: &mut VectorcraftApp, p: Value) {
+    match app.run("embroidery.loadMotif", p) {
+        Ok(r) => {
+            let sel = app.session.execute("embroidery.info", &json!({})).unwrap_or(Value::Null);
+            if sel["selection"]["type"] == json!(StitchKind::MotifFill.id()) && r["motifKind"] == json!("stitched") {
+                set(app, json!({ "motif": r["id"] }));
+            }
+            app.status(format!("Loaded motif {}", r["name"].as_str().unwrap_or_default()));
+        }
+        Err(e) => app.status(e),
+    }
 }
 
 /// The most findings the Check list shows.
@@ -2637,10 +2689,14 @@ mod tests {
         check(&mut app, 0, "satin with a width and a thread");
         run(&mut app, "embroidery.set", json!({"type": "patternBorder", "width": 8}));
         check(&mut app, 0, "pattern border with a width");
-        // A thread chart: the thread's code and name under its colour.
+        // A thread chart (the thread's code and name under its colour) and the document's own
+        // motif (Load…, Save… and Add to Library).
         run(&mut app, "embroidery.loadThreadChart", json!({"data": CHART}));
         run(&mut app, "embroidery.set", json!({"type": "fill", "thread": null}));
         check(&mut app, 0, "a thread named by the chart");
+        load_own_motif(&mut app);
+        run(&mut app, "embroidery.set", json!({"type": "motifFill", "motif": "mine"}));
+        check(&mut app, 0, "the document's own motif");
         run(&mut app, "embroidery.set", json!({"type": "fill", "border": 2}));
         check(&mut app, 1, "design");
         // The document's own fabric (Save…, Add to Library) and a hoop the design is too big for.
@@ -2655,6 +2711,22 @@ mod tests {
     /// A thread chart of one red thread with a long name.
     const CHART: &str = r##"{"format": "vectorcraft-thread-chart", "version": 1, "name": "Test Threads",
         "threads": [{"code": "1801", "name": "Very Long Thread Name For A Red", "color": "#e00000"}]}"##;
+
+    /// A `.vcmotif` file of a motif the built-ins don't have: the stars under id `id`.
+    fn motif_file(app: &mut VectorcraftApp, id: &str) -> String {
+        let data = app.session.execute("embroidery.saveMotif", &json!({"motif": "stars"})).unwrap();
+        let mut m: Value = serde_json::from_str(data["data"].as_str().unwrap()).unwrap();
+        // The file holds the motif's own members beside `format` and `version`.
+        m["id"] = json!(id);
+        m["name"] = json!("My Own Motif With A Long Name");
+        m.to_string()
+    }
+
+    /// Load a motif of the document's own, `mine`.
+    fn load_own_motif(app: &mut VectorcraftApp) {
+        let data = motif_file(app, "mine");
+        load_motif_from(app, json!({"data": data}));
+    }
 
     /// The texts the panel draws with tab `tab` open, and the colours of the rectangles it fills.
     fn drawn(app: &mut VectorcraftApp, tab: usize) -> (Vec<String>, Vec<Color32>) {
@@ -2739,6 +2811,33 @@ mod tests {
         assert!(fills.contains(&Color32::from_rgb(0xe0, 0x10, 0x10)));
         assert!(texts.iter().any(|t| t.starts_with("1801 Very Long")), "{texts:?}");
         assert!(texts.iter().any(|t| t == "Use Object Color"));
+    }
+
+    /// UI1.5: Motif Fill has Load…, Save… and Add to Library like border patterns, and a motif
+    /// loaded from a file is sewn by the selected motif fill.
+    #[test]
+    fn motifs_load_save_and_go_to_the_library() {
+        let dir = std::env::temp_dir().join(format!("vc-emb-panel-motif-{}", std::process::id()));
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        app.session.embroidery_libraries.set_dir(Some(dir.to_string_lossy().to_string()));
+        let run = |app: &mut VectorcraftApp, id: &str, p: Value| app.session.execute(id, &p).unwrap();
+        run(&mut app, "file.new", json!({"width": 200, "height": 200}));
+        run(&mut app, "shape.rectangle", json!({"x": 10, "y": 10, "width": 100, "height": 60}));
+        run(&mut app, "embroidery.set", json!({"type": "motifFill"}));
+        let texts = drawn(&mut app, 0).0;
+        assert!(texts.iter().any(|t| t == "Load…") && texts.iter().any(|t| t == "Save…"), "{texts:?}");
+        assert!(!texts.iter().any(|t| t == "Add to Library"), "a built-in motif isn't added");
+        load_own_motif(&mut app);
+        assert_eq!(run(&mut app, "embroidery.info", json!({}))["selection"]["motif"], "mine", "the loaded motif is sewn");
+        let texts = drawn(&mut app, 0).0;
+        assert!(texts.iter().any(|t| t == "Add to Library"), "{texts:?}");
+        add_to_library(&mut app, "embroidery.saveMotif", json!({"motif": "mine"}), "Mine.vcmotif", "motifs");
+        assert!(!drawn(&mut app, 0).0.iter().any(|t| t == "Add to Library"), "once there, no button");
+        // A motif file opened (File › Open, dropped, or picked on the web) loads the same way.
+        let data = motif_file(&mut app, "dropped");
+        crate::io::open_bytes(&mut app, "Dropped.vcmotif", data.as_bytes(), None).unwrap();
+        assert_eq!(run(&mut app, "embroidery.info", json!({}))["selection"]["motif"], "dropped");
+        let _ = std::fs::remove_dir_all(&dir);
     }
 
     #[test]

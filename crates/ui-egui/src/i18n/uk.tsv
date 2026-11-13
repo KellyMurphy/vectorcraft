@@ -5540,8 +5540,10 @@ lighting	Light	Світло
 	Motif Fill	Заливка мотивом
 	A small stitched motif repeated across the shape, the fabric showing between.	Невеликий вишитий мотив, повторений по фігурі, між ними видно тканину.
 	How large one tile of the motif is	Наскільки велика одна плитка мотиву
-	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Мотив, вишитий плитка за плиткою по фігурі (embroidery.loadMotif додає інші)
+	The motif sewn tile by tile across the shape	Мотив, вишитий плитка за плиткою по фігурі
 	Choose the thread's color	Вибрати колір нитки
+	Load a motif file (.vcmotif) into the document	Завантажити в документ файл мотиву (.vcmotif)
+	Save this motif as a file (.vcmotif)	Зберегти цей мотив як файл (.vcmotif)
 	Stars	Зірки
 	Flowers	Квіти
 	Crosses	Хрестики

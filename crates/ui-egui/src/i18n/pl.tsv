@@ -5811,8 +5811,10 @@ mark-style	Japanese	Japońskie
 	Motif Fill	Wypełnienie motywem
 	A small stitched motif repeated across the shape, the fabric showing between.	Mały haftowany motyw powtórzony na kształcie, z widoczną tkaniną pomiędzy.
 	How large one tile of the motif is	Jak duży jest jeden kafelek motywu
-	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Motyw haftowany kafelek po kafelku na kształcie (embroidery.loadMotif dodaje kolejne)
+	The motif sewn tile by tile across the shape	Motyw haftowany kafelek po kafelku na kształcie
 	Choose the thread's color	Wybierz kolor nici
+	Load a motif file (.vcmotif) into the document	Wczytaj plik motywu (.vcmotif) do dokumentu
+	Save this motif as a file (.vcmotif)	Zapisz ten motyw jako plik (.vcmotif)
 	Stars	Gwiazdki
 	Flowers	Kwiaty
 	Crosses	Krzyżyki

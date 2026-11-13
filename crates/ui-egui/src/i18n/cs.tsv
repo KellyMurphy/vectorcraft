@@ -5944,8 +5944,10 @@ mark-style	Japanese	Japonské
 	Motif Fill	Výplň motivem
 	A small stitched motif repeated across the shape, the fabric showing between.	Malý vyšitý motiv opakovaný po tvaru, mezi nimi je vidět látka.
 	How large one tile of the motif is	Jak velká je jedna dlaždice motivu
-	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Motiv vyšitý dlaždici po dlaždici po tvaru (embroidery.loadMotif přidá další)
+	The motif sewn tile by tile across the shape	Motiv vyšitý dlaždici po dlaždici po tvaru
 	Choose the thread's color	Zvolit barvu nitě
+	Load a motif file (.vcmotif) into the document	Načíst do dokumentu soubor motivu (.vcmotif)
+	Save this motif as a file (.vcmotif)	Uložit tento motiv jako soubor (.vcmotif)
 	Stars	Hvězdy
 	Flowers	Květiny
 	Crosses	Křížky

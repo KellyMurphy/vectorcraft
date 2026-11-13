@@ -5859,8 +5859,10 @@ mark-style	Japanese	Japonesas
 	Motif Fill	Preenchimento de Motivo
 	A small stitched motif repeated across the shape, the fabric showing between.	Um pequeno motivo bordado repetido pela forma, com o tecido visível entre eles.
 	How large one tile of the motif is	O tamanho de um ladrilho do motivo
-	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	O motivo bordado ladrilho a ladrilho pela forma (embroidery.loadMotif adiciona mais)
+	The motif sewn tile by tile across the shape	O motivo bordado ladrilho a ladrilho pela forma
 	Choose the thread's color	Escolhe a cor da linha
+	Load a motif file (.vcmotif) into the document	Carrega no documento um arquivo de motivo (.vcmotif)
+	Save this motif as a file (.vcmotif)	Salva este motivo como arquivo (.vcmotif)
 	Stars	Estrelas
 	Flowers	Flores
 	Crosses	Cruzes

@@ -854,6 +854,7 @@ fn other_open_filters() -> impl Iterator<Item = (&'static str, &'static [&'stati
     std::iter::once(("Swatch libraries", crate::cmd::swatchlib::LIBRARY_EXTS))
         .chain(std::iter::once(("Libraries", crate::cmd::library::LIBRARY_EXTS)))
         .chain(std::iter::once(("Border patterns", BORDER_PATTERN_EXTS)))
+        .chain(std::iter::once(("Motifs", MOTIF_EXTS)))
         .chain(std::iter::once(("Fabric profiles", FABRIC_EXTS)))
         .chain(std::iter::once(("Hoops", HOOP_EXTS)))
         .chain(std::iter::once(("Thread charts", THREAD_CHART_EXTS)))
@@ -871,6 +872,10 @@ fn other_open_filters() -> impl Iterator<Item = (&'static str, &'static [&'stati
 /// Embroidery border pattern files (`vectorcraft_embroidery::borders::FILE_EXT`): opening one
 /// loads it into the document.
 pub const BORDER_PATTERN_EXTS: &[&str] = &[vectorcraft_embroidery::borders::FILE_EXT];
+
+/// Embroidery motif files (`vectorcraft_embroidery::motifs::FILE_EXT`): opening one loads it into
+/// the document.
+pub const MOTIF_EXTS: &[&str] = &[vectorcraft_embroidery::motifs::FILE_EXT];
 
 /// Embroidery fabric profile files (`vectorcraft_embroidery::fabrics::FILE_EXT`): opening one makes
 /// it the document's fabric.

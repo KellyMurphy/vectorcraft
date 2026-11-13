@@ -5908,8 +5908,10 @@ effect	Points	Σημεία
 	Motif Fill	Γέμισμα με μοτίβο
 	A small stitched motif repeated across the shape, the fabric showing between.	Ένα μικρό κεντημένο μοτίβο επαναλαμβανόμενο στο σχήμα, με το ύφασμα να φαίνεται ανάμεσα.
 	How large one tile of the motif is	Πόσο μεγάλο είναι ένα πλακίδιο του μοτίβου
-	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Το μοτίβο κεντημένο πλακίδιο-πλακίδιο στο σχήμα (το embroidery.loadMotif προσθέτει κι άλλα)
+	The motif sewn tile by tile across the shape	Το μοτίβο κεντημένο πλακίδιο-πλακίδιο στο σχήμα
 	Choose the thread's color	Επιλογή χρώματος κλωστής
+	Load a motif file (.vcmotif) into the document	Φόρτωση αρχείου μοτίβου (.vcmotif) στο έγγραφο
+	Save this motif as a file (.vcmotif)	Αποθήκευση αυτού του μοτίβου ως αρχείο (.vcmotif)
 	Stars	Αστέρια
 	Flowers	Λουλούδια
 	Crosses	Σταυροί

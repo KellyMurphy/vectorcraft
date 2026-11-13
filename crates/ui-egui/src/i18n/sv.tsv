@@ -5983,8 +5983,10 @@ swatch	Yellow Green	Gulgrön
 	Motif Fill	Motivfyllning
 	A small stitched motif repeated across the shape, the fabric showing between.	Ett litet broderat motiv upprepat över formen, med tyget synligt emellan.
 	How large one tile of the motif is	Hur stor en platta av motivet är
-	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Motivet broderat platta för platta över formen (embroidery.loadMotif lägger till fler)
+	The motif sewn tile by tile across the shape	Motivet broderat platta för platta över formen
 	Choose the thread's color	Välj trådens färg
+	Load a motif file (.vcmotif) into the document	Läs in en motivfil (.vcmotif) i dokumentet
+	Save this motif as a file (.vcmotif)	Spara det här motivet som en fil (.vcmotif)
 	Stars	Stjärnor
 	Flowers	Blommor
 	Crosses	Kryss

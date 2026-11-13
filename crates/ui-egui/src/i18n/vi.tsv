@@ -5552,8 +5552,10 @@ theme	Appearance	Giao diện
 	Motif Fill	Tô bằng họa tiết
 	A small stitched motif repeated across the shape, the fabric showing between.	Một họa tiết thêu nhỏ lặp lại khắp hình, lộ vải ở giữa.
 	How large one tile of the motif is	Một ô họa tiết lớn cỡ nào
-	The motif sewn tile by tile across the shape (embroidery.loadMotif adds more)	Họa tiết thêu từng ô khắp hình (embroidery.loadMotif thêm họa tiết khác)
+	The motif sewn tile by tile across the shape	Họa tiết thêu từng ô khắp hình
 	Choose the thread's color	Chọn màu chỉ
+	Load a motif file (.vcmotif) into the document	Nạp tệp họa tiết (.vcmotif) vào tài liệu
+	Save this motif as a file (.vcmotif)	Lưu họa tiết này thành tệp (.vcmotif)
 	Stars	Ngôi sao
 	Flowers	Hoa
 	Crosses	Dấu chéo
