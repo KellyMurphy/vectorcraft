@@ -1,6 +1,6 @@
 # Embroidery UI improvement plan
 
-Status: Phase 1 (UI1.1 to UI1.5), UI2.1, UI2.2, UI2.3 and UI2.5 done; the rest proposed. Written 2026-11-11.
+Status: Phase 1 (UI1.1 to UI1.5) and Phase 2 (UI2.1 to UI2.5) done; the rest proposed. Written 2026-11-11.
 
 This plan comes from a review of the three embroidery panels: reading their code and driving the
 app through each tab with a small design (a filled rectangle and a satin line). It lists what to
@@ -203,6 +203,13 @@ Change:
   changes its content when a font document is open.
 - Add the tools' commands to Object › Embroidery where they are missing.
 
+Status: done. The Tools tab lists Appliqué, From Stitches (only for an opened design's manual
+stitches), Auto-Digitize, Lettering, Embroidery Fonts and Library as sections, closed until opened,
+each remembering whether it was left open. The Font Editor is the Embroidery Font Editor panel
+(Window › Embroidery Font Editor, or Font Editor… under Embroidery Fonts). Object › Embroidery gains
+Appliqué, Appliqué Cut File…, Type on an Arc… and Monogram… (the last two open the parameter dialog
+with sample values).
+
 ### UI2.5 An Embroidery workspace, and menu entries
 
 - A workspace preset that docks Embroidery and Sew Order, sets the document's units to
@@ -307,3 +314,4 @@ sewing is seen on the artwork at the size the user is working at.
 - 2026-11-12: UI2.2 done.
 - 2026-11-12: UI2.3 done.
 - 2026-11-12: UI2.5 done (without docking Sew Order or setting units).
+- 2026-11-12: UI2.4 done; Phase 2 complete.

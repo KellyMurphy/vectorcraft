@@ -180,6 +180,7 @@ pub fn show_icon_panel(app: &mut VectorcraftApp, ui: &mut Ui, id: &str) {
         flattener_preview::ID => flattener_preview::show(app, ui),
         "attributes" => attributes::show(app, ui),
         embroidery::ID => embroidery::show(app, ui),
+        embroidery::FONT_EDITOR_ID => embroidery::show_font_editor(app, ui),
         sew_order::ID => sew_order::show(app, ui),
         sew_out::ID => sew_out::show(app, ui),
         svg_interactivity::ID => svg_interactivity::show(app, ui),

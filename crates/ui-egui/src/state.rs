@@ -201,6 +201,7 @@ pub const ICON_PANELS: &[(&str, &str, &str)] = &[
     (crate::panels::flattener_preview::ID, "Flattener Preview", "eye"),
     ("attributes", "Attributes", "settings"),
     (crate::panels::embroidery::ID, "Embroidery", "spline"),
+    (crate::panels::embroidery::FONT_EDITOR_ID, "Embroidery Font Editor", "type"),
     (crate::panels::sew_order::ID, "Sew Order", "dc-list-view"),
     (crate::panels::sew_out::ID, "Sew-Out Test", "ruler"),
     (crate::panels::svg_interactivity::ID, "SVG Interactivity", "spline-pointer"),

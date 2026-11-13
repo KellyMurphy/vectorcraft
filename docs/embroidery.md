@@ -35,9 +35,10 @@ the design is sewn on and with: the fabric, its look in Realistic view, the hoop
 PES, JEF, EXP, VP3 or U01) and the thread chart; the sewing settings (Machine Speed, Overlap, Shortest
 Stitch); and the Sew-Out Test panel. **Check & Export** holds the stitch count, size, trims and jumps, one
 row per thread in sewing order (its chart code and name, and its stitches), the worksheet, mockup, Real
-Size and the Sew Order panel, and the design checker's findings. **Tools** holds Appliqué and its Cut File,
-Extract Border Pattern and Extract Motif (for an opened design's stitches), embroidery fonts (Load, Import
-Ink/Stitch Font, Add Font Folder) and the library folder. The panel opens on the tab it was last left on.
+Size and the Sew Order panel, and the design checker's findings. **Tools** lists its tools as sections, closed until opened: Appliqué
+and its Cut File, From Stitches (Extract Border Pattern and Extract Motif, for an opened design's
+stitches), Auto-Digitize, Lettering, Embroidery Fonts (Load, Import Ink/Stitch Font, Add Font Folder, and
+Font Editor…, which opens the **Embroidery Font Editor** panel) and the library folder. The panel opens on the tab it was last left on.
 The first stitch in a document turns Stitch Preview on, unless the preview was turned on or off before.
 
 **Window › Workspace › Embroidery** opens the Embroidery panel with the rulers and Stitch Preview on.

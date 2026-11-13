@@ -304,61 +304,89 @@ fn preview_toggles(app: &mut VectorcraftApp, ui: &mut Ui) {
     });
 }
 
-/// The Tools tab: appliqué, border extraction, fonts and the library folder.
+/// The Tools tab: one collapsible section per tool, closed until opened (each remembers whether it
+/// was left open), so the tab is a short list to choose from rather than every form at once.
 fn tools(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
-    widgets::section_header(ui, tl!("Appliqué"));
-    widgets::dim_label(ui, tl!("Make each selected closed shape an appliqué: placement line, stop, tack-down, stop, cover"));
-    ui.horizontal(|ui| {
-        if widgets::flat_button(ui, tl!("Appliqué"), 90.0).clicked()
-            && let Err(e) = app.run("embroidery.applique", json!({}))
-        {
-            app.status(e);
-        }
-        if widgets::flat_button(ui, tl!("Cut File…"), 80.0)
-            .on_hover_text(tl!("The appliqué pieces' outlines packed onto cutter mats, in a new document to export as SVG or DXF"))
-            .clicked()
-            && let Err(e) = app.run("embroidery.cutFile", json!({}))
-        {
-            app.status(e);
-        }
+    tool_section(ui, "applique", tl!("Appliqué"), |ui| {
+        widgets::dim_label(ui, tl!("Make each selected closed shape an appliqué: placement line, stop, tack-down, stop, cover"));
+        ui.horizontal(|ui| {
+            if widgets::flat_button(ui, tl!("Appliqué"), 90.0).clicked()
+                && let Err(e) = app.run("embroidery.applique", json!({}))
+            {
+                app.status(e);
+            }
+            if widgets::flat_button(ui, tl!("Cut File…"), 80.0)
+                .on_hover_text(tl!("The appliqué pieces' outlines packed onto cutter mats, in a new document to export as SVG or DXF"))
+                .clicked()
+                && let Err(e) = app.run("embroidery.cutFile", json!({}))
+            {
+                app.status(e);
+            }
+        });
     });
     // A border pattern or a motif from an opened design's stitches (manual stitches).
     if sel["type"] == json!(StitchKind::Manual.id()) {
-        extract_row(app, ui);
+        tool_section(ui, "extract", tl!("From Stitches"), |ui| extract_row(app, ui));
     }
-    widgets::divider(ui);
-    digitize_row(app, ui);
-    widgets::divider(ui);
-    lettering(app, ui);
-    widgets::divider(ui);
-    font_editor(app, ui);
-    widgets::divider(ui);
-    widgets::section_header(ui, tl!("Embroidery Fonts"));
-    ui.horizontal_wrapped(|ui| {
-        if widgets::flat_button(ui, tl!("Load Embroidery Font…"), 150.0).clicked() {
-            load_font(app);
-        }
-        if widgets::flat_button(ui, tl!("Import Ink/Stitch Font…"), 160.0).clicked() {
-            crate::picks::button(app, |app| {
-                let Some(dir) = crate::picks::folder(app) else { return };
-                match app.run("embroidery.importInkstitchFont", json!({ "path": dir })) {
-                    Ok(r) => app.status(format!("Loaded embroidery font {}", r["name"].as_str().unwrap_or_default())),
-                    Err(e) => app.status(e),
-                }
-            });
-        }
-        add_font_folder_button(app, ui);
-    });
-    if let Some(dir) = app.session.embroidery_libraries.dir().map(str::to_string) {
-        widgets::divider(ui);
-        widgets::section_header(ui, tl!("Library"));
-        if widgets::flat_button(ui, tl!("Show in Folder"), 104.0)
-            .on_hover_text(tl!("Your embroidery library: border patterns, fabrics, hoops and thread charts for any design"))
+    tool_section(ui, "digitize", tl!("Auto-Digitize"), |ui| digitize_row(app, ui));
+    tool_section(ui, "lettering", tl!("Lettering"), |ui| lettering(app, ui));
+    tool_section(ui, "fonts", tl!("Embroidery Fonts"), |ui| {
+        ui.horizontal_wrapped(|ui| {
+            if widgets::flat_button(ui, tl!("Load Embroidery Font…"), 150.0).clicked() {
+                load_font(app);
+            }
+            if widgets::flat_button(ui, tl!("Import Ink/Stitch Font…"), 160.0).clicked() {
+                crate::picks::button(app, |app| {
+                    let Some(dir) = crate::picks::folder(app) else { return };
+                    match app.run("embroidery.importInkstitchFont", json!({ "path": dir })) {
+                        Ok(r) => app.status(format!("Loaded embroidery font {}", r["name"].as_str().unwrap_or_default())),
+                        Err(e) => app.status(e),
+                    }
+                });
+            }
+            add_font_folder_button(app, ui);
+        });
+        // The Font Editor is a different mode of work: a panel of its own.
+        if widgets::flat_button(ui, tl!("Font Editor…"), 104.0)
+            .on_hover_text(tl!("Make an embroidery font, or edit the one in this font document"))
             .clicked()
         {
-            show_library_folder(app, &dir);
+            app.run("window.panel", json!({"panel": FONT_EDITOR_ID})).ok();
         }
+    });
+    if let Some(dir) = app.session.embroidery_libraries.dir().map(str::to_string) {
+        tool_section(ui, "library", tl!("Library"), |ui| {
+            if widgets::flat_button(ui, tl!("Show in Folder"), 104.0)
+                .on_hover_text(tl!("Your embroidery library: border patterns, fabrics, hoops and thread charts for any design"))
+                .clicked()
+            {
+                show_library_folder(app, &dir);
+            }
+        });
     }
+}
+
+/// A Tools section: its header toggles it, and it stays as it was left (closed at first).
+fn tool_section(ui: &mut Ui, key: &str, label: &str, add: impl FnOnce(&mut Ui)) {
+    let id = egui::Id::unique(("embroidery-tool-open", key.to_string()));
+    let open = ui.ctx().data_mut(|d| d.get_persisted::<bool>(id)).unwrap_or(false);
+    if widgets::section_toggle(ui, label, open) {
+        ui.ctx().data_mut(|d| d.insert_persisted(id, !open));
+    }
+    if open {
+        ui.indent(id, add);
+        ui.add_space(4.0);
+    }
+}
+
+/// The Embroidery Font Editor panel (Window › Embroidery Font Editor, or Font Editor… in the
+/// Embroidery panel's Tools): a new font, or the open font document's details, metrics, kerning,
+/// sample line and saving.
+pub const FONT_EDITOR_ID: &str = "embroideryFontEditor";
+
+pub fn show_font_editor(app: &mut VectorcraftApp, ui: &mut Ui) {
+    ui.set_min_width(PANEL_W);
+    font_editor(app, ui);
 }
 
 /// Monogram layouts: `embroidery.monogram`'s ids and their names.
@@ -394,7 +422,6 @@ fn selected_point_type(app: &VectorcraftApp) -> Option<(vectorcraft_geom::Rect, 
 /// Auto-Digitize: the selected logo (an image, a traced image or a group of filled shapes) made
 /// into stitch objects in one step.
 fn digitize_row(app: &mut VectorcraftApp, ui: &mut Ui) {
-    widgets::section_header(ui, tl!("Auto-Digitize"));
     widgets::dim_label(ui, tl!("Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour."));
     let row = ui.horizontal(|ui| {
         let tool = widgets::flat_button(ui, tl!("Stitch Fill Tool"), 120.0)
@@ -427,7 +454,6 @@ fn digitize_row(app: &mut VectorcraftApp, ui: &mut Ui) {
 }
 
 fn lettering(app: &mut VectorcraftApp, ui: &mut Ui) {
-    widgets::section_header(ui, tl!("Lettering"));
     // Type on an arc through where the selected type is.
     let (mut radius, mut bottom) = (kept(ui, "arc-radius", "40"), kept(ui, "arc-side", "top") == "bottom");
     ui.horizontal(|ui| {
@@ -548,7 +574,6 @@ fn keep(ui: &Ui, key: &str, value: String) {
 /// The Font Editor: a new font or one to edit; in a font document, its details, metrics, kerning,
 /// sample line and saving.
 fn font_editor(app: &mut VectorcraftApp, ui: &mut Ui) {
-    widgets::section_header(ui, tl!("Font Editor"));
     let editing = app.session.active().and_then(|d| d.doc.embroidery.font_editor.as_deref().cloned());
     let Some(font) = editing else {
         widgets::dim_label(ui, tl!("Make an embroidery font: one artboard per letter, digitized with the ordinary stitches."));
@@ -2613,6 +2638,7 @@ mod tests {
         }
         fn shown(app: &mut VectorcraftApp) -> Vec<String> {
             let ctx = egui::Context::default();
+            open_tools(&ctx);
             let mut out = ctx.run_ui(egui::RawInput::default(), |ui| {
                 setup_tab(app, ui, &Value::Null);
                 tools(app, ui, &Value::Null);
@@ -2771,6 +2797,7 @@ mod tests {
             let ctx = egui::Context::default();
             crate::theme::install_fonts(&ctx);
             ctx.data_mut(|d| d.insert_persisted(tab_id(), tab));
+            open_tools(&ctx);
             // A screen wider than the panel, so what runs past the panel isn't clipped away by the
             // screen's edge; the panel is laid out in `width`.
             let screen = egui::Rect::from_min_size(egui::Pos2::ZERO, vec2(width + 400.0, 4000.0));
@@ -2838,6 +2865,13 @@ mod tests {
         check(&mut app, SETUP_TAB, "design split into hoopings");
         check(&mut app, CHECK_TAB, "threads of a split design");
         check(&mut app, TOOLS_TAB, "tools");
+    }
+
+    /// Open every section of the Tools tab in `ctx`, as if each had been clicked open.
+    fn open_tools(ctx: &egui::Context) {
+        for key in ["applique", "extract", "digitize", "lettering", "fonts", "library"] {
+            ctx.data_mut(|d| d.insert_persisted(egui::Id::unique(("embroidery-tool-open", key.to_string())), true));
+        }
     }
 
     /// A thread chart of one red thread with a long name.
@@ -3067,6 +3101,54 @@ mod tests {
         app.run("window.workspace", json!({"name": "Embroidery"})).unwrap();
         assert_eq!(app.ui.open_panel.as_deref(), Some(ID));
         assert!(app.ui.view.stitch_preview && app.ui.view.rulers);
+    }
+
+    /// UI2.4: the Tools tab is a short list of closed sections, each opening its tool; the Font
+    /// Editor is a panel of its own; the tools' commands are in Object › Embroidery.
+    #[test]
+    fn the_tools_are_sections_and_the_font_editor_a_panel() {
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        app.run("file.new", json!({"width": 300, "height": 300})).unwrap();
+        let closed = drawn(&mut app, TOOLS_TAB).0;
+        for name in ["Appliqué", "Auto-Digitize", "Lettering", "Embroidery Fonts"] {
+            assert!(closed.iter().any(|t| t == name), "the {name} section: {closed:?}");
+        }
+        assert!(!closed.iter().any(|t| t == "Cut File…" || t == "Load Embroidery Font…"), "closed at first: {closed:?}");
+        assert!(!closed.iter().any(|t| t == "Font Editor"), "the Font Editor isn't in the tab: {closed:?}");
+        // Opened, a section shows its tool.
+        let ctx = egui::Context::default();
+        ctx.data_mut(|d| d.insert_persisted(tab_id(), TOOLS_TAB));
+        ctx.data_mut(|d| d.insert_persisted(egui::Id::unique(("embroidery-tool-open", "fonts".to_string())), true));
+        let mut out = ctx.run_ui(egui::RawInput::default(), |ui| show(&mut app, ui));
+        out.textures_delta.clear();
+        let mut texts = vec![];
+        fn walk(s: &egui::Shape, out: &mut Vec<String>) {
+            match s {
+                egui::Shape::Text(t) => out.push(t.galley.text().to_string()),
+                egui::Shape::Vec(v) => v.iter().for_each(|s| walk(s, out)),
+                _ => {}
+            }
+        }
+        out.shapes.iter().for_each(|c| walk(&c.shape, &mut texts));
+        assert!(texts.iter().any(|t| t == "Load Embroidery Font…") && texts.iter().any(|t| t == "Font Editor…"), "{texts:?}");
+        assert!(!texts.iter().any(|t| t == "Cut File…"), "the others stay closed: {texts:?}");
+        // The Font Editor panel.
+        let mut out = egui::Context::default().run_ui(egui::RawInput::default(), |ui| show_font_editor(&mut app, ui));
+        out.textures_delta.clear();
+        let mut editor = vec![];
+        out.shapes.iter().for_each(|c| walk(&c.shape, &mut editor));
+        assert!(editor.iter().any(|t| t == "New Embroidery Font"), "{editor:?}");
+        app.run("window.panel", json!({"panel": FONT_EDITOR_ID})).unwrap();
+        // Object › Embroidery.
+        let tree = crate::menus::menu_tree();
+        let object = tree.iter().find(|(m, _)| *m == "Object").map(|(_, items)| items).unwrap();
+        let Some(crate::menus::Item::Sub(_, emb)) = object.iter().find(|i| matches!(i, crate::menus::Item::Sub("Embroidery", _))) else {
+            panic!("Object › Embroidery")
+        };
+        let ids: Vec<&str> = emb.iter().filter_map(|i| if let crate::menus::Item::Cmd(_, id, _) = i { Some(*id) } else { None }).collect();
+        for id in ["embroidery.applique", "embroidery.cutFile", "embroidery.textArc", "embroidery.monogram"] {
+            assert!(ids.contains(&id), "{id}: {ids:?}");
+        }
     }
 
     /// UI2.2: the tabs are by task. Setup holds what the design is sewn on and with, and the sewing
