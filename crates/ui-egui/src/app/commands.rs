@@ -105,6 +105,41 @@ impl VectorcraftApp {
         }
     }
 
+    /// Before command `id` runs: the active document's uid, when the command might give it its
+    /// first stitches and Stitch Preview would then be turned on ([`Self::show_first_stitches`]).
+    /// Only embroidery commands (and batches, which may hold them) are watched: looking for
+    /// stitches walks the whole document, too slow to do before every command.
+    fn unstitched_document(&self, id: &str) -> Option<u64> {
+        let v = &self.ui.view;
+        if v.stitch_preview || v.stitch_preview_chosen || !(id.starts_with("embroidery.") || id == "command.batch") {
+            return None;
+        }
+        let d = self.session.active()?;
+        (!vectorcraft_embroidery::has_stitches(&d.doc)).then_some(d.uid)
+    }
+
+    /// After a command: when it gave document `before` its first stitches, turn Stitch Preview on,
+    /// once (UI1.3). Choosing a stitch otherwise changes nothing on the canvas, and a new user
+    /// can't tell it worked. Once on (or once the user has turned it on or off), it's the user's.
+    fn show_first_stitches(&mut self, before: Option<u64>) {
+        let Some(uid) = before else { return };
+        if self.session.active().is_some_and(|d| d.uid == uid && vectorcraft_embroidery::has_stitches(&d.doc)) {
+            self.ui.view.stitch_preview = true;
+            self.ui.view.stitch_preview_chosen = true;
+        }
+    }
+
+    /// Execute engine command `id`, turning Stitch Preview on when it gives the document its first
+    /// stitches ([`Self::show_first_stitches`]).
+    fn execute_showing_first_stitches(&mut self, id: &str, params: &Value) -> Result<Value, String> {
+        let unstitched = self.unstitched_document(id);
+        let r = self.session.execute(id, params).map_err(|e| e.to_string());
+        if r.is_ok() {
+            self.show_first_stitches(unstitched);
+        }
+        r
+    }
+
     /// [`Self::run`] it, inside what asks for file dialogs.
     fn run_now(&mut self, id: &str, params: Value) -> Result<Value, String> {
         crate::state::sync_zoom_stops_display_print_size(self.session.prefs.display_print_size);
@@ -211,7 +246,7 @@ impl VectorcraftApp {
         let ime_target = crate::ime::target(&mut self.session, ime_view);
         let ime_before = crate::ime::stamp(&mut self.session, ime_view);
         let cursor_settings = (self.session.caps_lock, self.session.prefs.use_precise_cursors);
-        let r = self.session.execute(id, &params).map_err(|e| e.to_string());
+        let r = self.execute_showing_first_stitches(id, &params);
         if r.is_ok() && cursor_settings != (self.session.caps_lock, self.session.prefs.use_precise_cursors) {
             self.canvas.hover_cursor = None;
         }

@@ -9684,7 +9684,8 @@ fn a_drag_waiting_to_sew_dashes_the_moved_objects_outline() {
     app.run("file.new", json!({"width": 400, "height": 300})).unwrap();
     app.run("shape.rectangle", json!({"x": 50, "y": 50, "width": 100, "height": 100})).unwrap();
     app.run("embroidery.set", json!({"type": "fill"})).unwrap();
-    app.run("view.stitchPreview", json!({})).unwrap();
+    // The first stitch turns the preview on (UI1.3); toggling it here would turn it off.
+    assert!(app.ui.view.stitch_preview, "Stitch Preview is on");
     app.session.execute("prefs.set", &json!({"key": "regenerateStitches", "value": "whenEditEnds"})).unwrap();
     app.select_tool("selection");
     let ctx = egui::Context::default();

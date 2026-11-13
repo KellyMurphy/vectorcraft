@@ -228,8 +228,12 @@ fn run_ui_part3(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<Result<
     };
     let r = match id {
         "view.pixelPreview" => flag(&mut app.ui.view.pixel_preview),
-        "view.stitchPreview" => flag(&mut app.ui.view.stitch_preview),
+        "view.stitchPreview" => {
+            app.ui.view.stitch_preview_chosen = true;
+            flag(&mut app.ui.view.stitch_preview)
+        }
         "view.stitchDensity" => {
+            app.ui.view.stitch_preview_chosen = true;
             let on = !app.ui.view.stitch_density;
             app.ui.view.stitch_density = on;
             // The map is drawn in Stitch Preview: showing it shows the stitches too.
@@ -237,6 +241,7 @@ fn run_ui_part3(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<Result<
             Ok(json!({ "on": on }))
         }
         "view.realisticStitches" => {
+            app.ui.view.stitch_preview_chosen = true;
             let on = !app.ui.view.realistic_stitches;
             app.ui.view.realistic_stitches = on;
             // Stitch Preview drawn realistically: showing it shows the stitches too.

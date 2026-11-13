@@ -1,6 +1,6 @@
-//! Embroidery panel (Window › Embroidery): the selected objects' stitch, chosen from a grid of
-//! stitched pictures, their thread and trims, and the stitch's own settings (fill patterns and
-//! border patterns picked from pictures too); then the design's numbers with Stitch Preview and
+//! Embroidery panel (Window › Embroidery): Stitch Preview, the selected objects' stitch, chosen
+//! from a grid of stitched pictures, their thread and trims, and the stitch's own settings (fill
+//! patterns and border patterns picked from pictures too); then the design's numbers with
 //! Export in the machine's format (DST, PES, JEF, EXP, VP3, U01), and the design checker's findings. The sewing order has a panel of its own
 //! (`sew_order`). Reads `embroidery.info`, acts through `embroidery.set` and `embroidery.clear`.
 
@@ -138,6 +138,7 @@ fn stitch_tab(app: &mut VectorcraftApp, ui: &mut Ui, info: &Value) {
     let any = stitched + unstitched > 0;
     let kind = sel["type"].as_str().and_then(StitchKind::parse).filter(|_| unstitched == 0);
 
+    preview_toggles(app, ui);
     widgets::section_header(ui, tl!("Stitch"));
     if !any {
         widgets::dim_label(
@@ -199,6 +200,26 @@ fn stitch_tab(app: &mut VectorcraftApp, ui: &mut Ui, info: &Value) {
             ui.ctx().data_mut(|d| d.insert_persisted(tab_id(), 1usize));
         }
     }
+}
+
+/// Stitch Preview and Realistic, at the top of the Stitch tab: what a stitch looks like is seen on
+/// the canvas only with the preview on, so its switch sits where stitches are chosen.
+fn preview_toggles(app: &mut VectorcraftApp, ui: &mut Ui) {
+    ui.horizontal_wrapped(|ui| {
+        let preview = app.ui.view.stitch_preview;
+        if widgets::check(ui, tl!("Stitch Preview"), preview, true) {
+            app.run("view.stitchPreview", json!({})).ok();
+        }
+        let realistic = preview && app.ui.view.realistic_stitches;
+        if widgets::check(ui, tl!("Realistic"), realistic, true) {
+            // Off while the preview shows turns only the realism off; on shows the preview too.
+            if realistic || !app.ui.view.realistic_stitches {
+                app.run("view.realisticStitches", json!({})).ok();
+            } else {
+                app.run("view.stitchPreview", json!({})).ok();
+            }
+        }
+    });
 }
 
 /// The Tools tab: appliqué, border extraction, fonts and the library folder.
@@ -2238,20 +2259,6 @@ fn design(app: &mut VectorcraftApp, ui: &mut Ui, d: &Value) {
     }
     ui.add_space(4.0);
     ui.horizontal_wrapped(|ui| {
-        let preview = app.ui.view.stitch_preview;
-        if widgets::check(ui, tl!("Stitch Preview"), preview, true) {
-            app.run("view.stitchPreview", json!({})).ok();
-        }
-        let realistic = preview && app.ui.view.realistic_stitches;
-        if widgets::check(ui, tl!("Realistic"), realistic, true) {
-            // Off while the preview shows turns only the realism off; on shows the preview too.
-            if realistic || !app.ui.view.realistic_stitches {
-                app.run("view.realisticStitches", json!({})).ok();
-            } else {
-                app.run("view.stitchPreview", json!({})).ok();
-            }
-        }
-        ui.add_space(8.0);
         let label = export_label(app);
         let r = ui.add_enabled_ui(n("objects") > 0, |ui| widgets::flat_button(ui, &label, 96.0)).inner;
         if r.clicked() {
@@ -2581,6 +2588,68 @@ mod tests {
         run(&mut app, "embroidery.splitHoops", json!({}));
         check(&mut app, 1, "design split into hoopings");
         check(&mut app, 2, "tools");
+    }
+
+    /// The texts the panel draws with tab `tab` open, and the colours of the rectangles it fills.
+    fn drawn(app: &mut VectorcraftApp, tab: usize) -> (Vec<String>, Vec<Color32>) {
+        fn walk(s: &egui::Shape, texts: &mut Vec<String>, fills: &mut Vec<Color32>) {
+            match s {
+                egui::Shape::Text(t) => texts.push(t.galley.text().to_string()),
+                egui::Shape::Rect(r) => fills.push(r.fill),
+                egui::Shape::Vec(v) => v.iter().for_each(|s| walk(s, texts, fills)),
+                _ => {}
+            }
+        }
+        let ctx = egui::Context::default();
+        ctx.data_mut(|d| d.insert_persisted(tab_id(), tab));
+        let (mut texts, mut fills) = (vec![], vec![]);
+        for k in 0..2 {
+            let input = egui::RawInput { time: Some(f64::from(k) * 0.1), ..Default::default() };
+            let mut out = ctx.run_ui(input, |ui| show(app, ui));
+            out.textures_delta.clear();
+            (texts, fills) = (vec![], vec![]);
+            out.shapes.iter().for_each(|c| walk(&c.shape, &mut texts, &mut fills));
+        }
+        (texts, fills)
+    }
+
+    /// UI1.3: the first stitch in a document turns Stitch Preview on, so choosing a stitch shows
+    /// on the canvas; once the user has turned it off it stays off.
+    #[test]
+    fn the_first_stitch_turns_stitch_preview_on_once() {
+        let stitch_new_document = |app: &mut VectorcraftApp| {
+            app.run("file.new", json!({"width": 200, "height": 200})).unwrap();
+            app.run("shape.rectangle", json!({"x": 10, "y": 10, "width": 100, "height": 60})).unwrap();
+            app.run("embroidery.set", json!({"type": "fill"})).unwrap();
+        };
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        app.run("file.new", json!({"width": 200, "height": 200})).unwrap();
+        app.run("shape.rectangle", json!({"x": 10, "y": 10, "width": 100, "height": 60})).unwrap();
+        assert!(!app.ui.view.stitch_preview, "off by default");
+        app.run("embroidery.set", json!({"type": "fill"})).unwrap();
+        assert!(app.ui.view.stitch_preview && app.ui.view.stitch_preview_chosen, "on with the first stitch");
+        app.run("view.stitchPreview", json!({})).unwrap();
+        assert!(!app.ui.view.stitch_preview);
+        stitch_new_document(&mut app);
+        assert!(!app.ui.view.stitch_preview, "turned off by the user, it stays off");
+        // Turned on and off before anything is stitched: the user's choice too.
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        app.run("view.stitchPreview", json!({})).unwrap();
+        app.run("view.stitchPreview", json!({})).unwrap();
+        stitch_new_document(&mut app);
+        assert!(!app.ui.view.stitch_preview);
+        // A command that stitches nothing leaves it alone.
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        app.run("file.new", json!({"width": 200, "height": 200})).unwrap();
+        app.run("shape.rectangle", json!({"x": 10, "y": 10, "width": 100, "height": 60})).unwrap();
+        app.run("embroidery.info", json!({})).unwrap();
+        assert!(!app.ui.view.stitch_preview && !app.ui.view.stitch_preview_chosen);
+        // The toggles are at the top of the Stitch tab.
+        let texts = drawn(&mut app, 0).0;
+        let toggle = texts.iter().position(|t| t == "Stitch Preview").expect("the Stitch Preview toggle");
+        // The last "Stitch" is the section's heading (the first, the tab's name).
+        let heading = texts.iter().rposition(|t| t == "Stitch").expect("the Stitch heading");
+        assert!(toggle < heading, "{texts:?}");
     }
 
     #[test]
