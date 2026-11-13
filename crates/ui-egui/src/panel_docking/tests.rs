@@ -120,6 +120,29 @@ fn the_default_layout_is_the_canvas_beside_the_main_column_and_the_icon_column()
     assert_eq!(count(&h), before + 1);
 }
 
+/// A flyout fits what its panel draws now, not what it drew when it opened. The Embroidery panel
+/// opens short with nothing selected (its icon is the last in the column, so the flyout sits at
+/// the window's bottom); once an object is stitched the flyout grows upward to show the panel,
+/// instead of keeping its first height with most of the panel cut off.
+#[test]
+fn a_flyout_grows_with_its_panels_content() {
+    let mut h = Harness::new();
+    h.app.run("window.panel", json!({"panel": "embroidery"})).unwrap();
+    for _ in 0..4 {
+        h.frame(vec![]);
+    }
+    assert_eq!(h.app.ui.open_panel.as_deref(), Some("embroidery"));
+    let short = h.tab("embroidery").unwrap().top();
+    h.app.run("shape.rectangle", json!({"x": 10, "y": 10, "width": 100, "height": 60})).unwrap();
+    h.app.run("embroidery.set", json!({"type": "fill"})).unwrap();
+    for _ in 0..6 {
+        h.frame(vec![]);
+    }
+    assert_eq!(h.app.ui.open_panel.as_deref(), Some("embroidery"), "the flyout stays open");
+    let tall = h.tab("embroidery").unwrap().top();
+    assert!(short - tall > 300.0, "the flyout's top went from {short} to {tall}: it did not grow to show the panel");
+}
+
 #[test]
 fn an_icon_opens_its_flyout_and_open_panel_follows() {
     let mut h = Harness::new();

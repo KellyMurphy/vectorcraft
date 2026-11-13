@@ -1336,6 +1336,9 @@ pub(crate) fn floating_size(panel: &str) -> egui::Vec2 {
         // Tall enough to show its Corners and Shared Edges sections, last in it, which the Corner
         // Tool's and Shared Edge Merge Tool's menu items open.
         crate::addons::pathtools::ID => egui::vec2(260.0, 660.0),
+        // As wide as its rows are laid out to (and the body's margins), and tall enough for the
+        // stitch pictures with the chosen stitch's settings under them.
+        crate::panels::embroidery::ID => egui::vec2(290.0, 660.0),
         _ => egui::vec2(260.0, 360.0),
     }
 }
@@ -1368,10 +1371,20 @@ impl craft_ui::docking::DockContent<String> for PanelContent<'_> {
             crate::dock::panel_body(self.app, ui, id, width, height);
         } else {
             // Shrinking to the content's height lets craft-ui fit a float or flyout to it.
-            crate::widgets::panel_scroll(ui, egui::ScrollArea::vertical().id_salt(("shared-panel-body", id)).auto_shrink([false, true]), |ui| {
-                let width = ui.available_width();
-                crate::dock::panel_body(self.app, ui, id, width, height)
-            });
+            let drawn =
+                crate::widgets::panel_scroll(ui, egui::ScrollArea::vertical().id_salt(("shared-panel-body", id)).auto_shrink([false, true]), |ui| {
+                    let width = ui.available_width();
+                    crate::dock::panel_body(self.app, ui, id, width, height);
+                    ui.min_rect().height()
+                });
+            // The scroll area takes no more than the body's height, so content that outgrew a
+            // body fitted to it would look as tall as that body for good: a flyout opened on a
+            // short panel never grew when the panel did. Tell craft-ui the height the content
+            // needs (it reads this body's minimum rect), so the float or flyout can grow.
+            let used = ui.min_rect();
+            if drawn > used.height() {
+                ui.expand_to_include_rect(egui::Rect::from_min_size(used.min, egui::vec2(used.width(), drawn)));
+            }
         }
         if field_had_keyboard {
             keep_field_ending_keys(ui);
