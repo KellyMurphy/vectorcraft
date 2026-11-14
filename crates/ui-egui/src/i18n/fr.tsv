@@ -6051,13 +6051,9 @@ theme	Appearance	Apparence
 	The selection's stitch and its settings	Le point de la sélection et ses réglages
 	Choose a stitch to sew the selection with.	Choisissez un point pour broder la sélection.
 	Drag a row to move it. Objects sewn later lie on top.	Faites glisser une ligne pour la déplacer. Les objets brodés après sont au-dessus.
-	First object	Premier objet
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Donnez des points aux tracés dans le panneau Broderie ; ils sont brodés dans cet ordre.
 	How the needle holes line up from row to row, or a motif carved into the fill	Comment les piqûres s’alignent d’un rang à l’autre, ou un motif gravé dans le remplissage
-	Last object	Dernier objet
-	Next object	Objet suivant
 	Open a document to see its sewing order.	Ouvrez un document pour voir son ordre de couture.
-	Previous object	Objet précédent
 	Sew Order…	Ordre de couture…
 	Sew in paint order again (bottom first)	Broder à nouveau dans l’ordre de dessin (du bas)
 	Some selected objects aren't stitched: choose a stitch for all of them.	Certains objets sélectionnés n’ont pas de point : choisissez-en un pour tous.
@@ -6217,8 +6213,6 @@ theme	Appearance	Apparence
 	Play	Lecture
 	Pause	Pause
 	Play the sewing stitch by stitch	Jouer la couture point par point
-	Previous thread	Fil précédent
-	Next thread	Fil suivant
 	Sewing Time	Durée de couture
 	At the machine speed set below, with time for trims and thread changes	À la vitesse de machine réglée ci-dessous, avec le temps des coupes et des changements de fil
 	Machine Speed:	Vitesse de la machine :

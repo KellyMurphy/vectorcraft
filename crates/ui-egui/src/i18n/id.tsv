@@ -5698,7 +5698,6 @@ swatch	Bright Violet	Violet cerah
 	Extract Border Pattern	Ekstrak pola tepi
 	Fill Above:	Isi di atas:
 	Fill Underlay	Lapisan dasar isian
-	First object	Objek pertama
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Beri jalur pengaturan jahitan di panel Sulaman; jalur disulam dalam urutan ini.
 	Group the sewing order by thread colour, for fewer thread changes	Kelompokkan urutan sulam menurut warna benang, agar pergantian benang lebih sedikit
 	Herringbone	Tulang ikan
@@ -5707,13 +5706,11 @@ swatch	Bright Violet	Violet cerah
 	How the needle holes line up from row to row, or a motif carved into the fill	Bagaimana lubang jarum sejajar dari baris ke baris, atau motif yang diukir ke dalam isian
 	How wide the border is: the pattern scales with it	Seberapa lebar tepinya: pola ikut menyesuaikan
 	How wide the zigzag swings	Seberapa lebar ayunan zigzag
-	Last object	Objek terakhir
 	Load a border pattern file (.vcborder) into the document	Muat berkas pola tepi (.vcborder) ke dalam dokumen
 	Load…	Muat…
 	Mirror the pattern across the path	Cerminkan pola terhadap jalur
 	Motif Size:	Ukuran motif:
 	Motif	Motif
-	Next object	Objek berikutnya
 	No problems found.	Tidak ada masalah ditemukan.
 	Nothing is stitched yet.	Belum ada yang disulam.
 	Object color	Warna objek
@@ -5726,7 +5723,6 @@ swatch	Bright Violet	Violet cerah
 	Pattern Border	Tepi berpola
 	Pattern Size	Ukuran pola
 	Pattern:	Pola:
-	Previous object	Objek sebelumnya
 	Pull Compensation:	Kompensasi tarikan:
 	Remove Stitches	Hapus jahitan
 	Satin Column	Kolom satin
@@ -6072,8 +6068,6 @@ swatch	Bright Violet	Violet cerah
 	Play	Putar
 	Pause	Jeda
 	Play the sewing stitch by stitch	Putar proses sulam jahitan demi jahitan
-	Previous thread	Benang sebelumnya
-	Next thread	Benang berikutnya
 	Sewing Time	Waktu sulam
 	At the machine speed set below, with time for trims and thread changes	Pada kecepatan mesin yang diatur di bawah, termasuk waktu potong dan ganti benang
 	Machine Speed:	Kecepatan mesin:

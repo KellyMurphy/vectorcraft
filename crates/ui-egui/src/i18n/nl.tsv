@@ -5748,7 +5748,6 @@ swatch	Bright Violet	Felviolet
 	Extract Border Pattern	Randpatroon extraheren
 	Fill Above:	Vulling boven:
 	Fill Underlay	Vulling-onderlaag
-	First object	Eerste object
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Geef paden steekinstellingen in het deelvenster Borduren; ze worden in deze volgorde geborduurd.
 	Group the sewing order by thread colour, for fewer thread changes	De borduurvolgorde groeperen op garenkleur, voor minder garenwissels
 	Herringbone	Visgraat
@@ -5757,13 +5756,11 @@ swatch	Bright Violet	Felviolet
 	How the needle holes line up from row to row, or a motif carved into the fill	Hoe de naaldgaten van rij tot rij uitlijnen, of een motief dat in de vulling is gegraveerd
 	How wide the border is: the pattern scales with it	Hoe breed de rand is: het patroon schaalt mee
 	How wide the zigzag swings	Hoe breed de zigzag uitslaat
-	Last object	Laatste object
 	Load a border pattern file (.vcborder) into the document	Een randpatroonbestand (.vcborder) in het document laden
 	Load…	Laden…
 	Mirror the pattern across the path	Het patroon over het pad spiegelen
 	Motif Size:	Motiefgrootte:
 	Motif	Motief
-	Next object	Volgend object
 	No problems found.	Geen problemen gevonden.
 	Nothing is stitched yet.	Er is nog niets geborduurd.
 	Object color	Objectkleur
@@ -5776,7 +5773,6 @@ swatch	Bright Violet	Felviolet
 	Pattern Border	Patroonrand
 	Pattern Size	Patroongrootte
 	Pattern:	Patroon:
-	Previous object	Vorig object
 	Pull Compensation:	Trekcompensatie:
 	Remove Stitches	Steken verwijderen
 	Satin Column	Satijnkolom
@@ -6122,8 +6118,6 @@ swatch	Bright Violet	Felviolet
 	Play	Afspelen
 	Pause	Pauzeren
 	Play the sewing stitch by stitch	Het borduren steek voor steek afspelen
-	Previous thread	Vorig garen
-	Next thread	Volgend garen
 	Sewing Time	Borduurtijd
 	At the machine speed set below, with time for trims and thread changes	Bij de hieronder ingestelde machinesnelheid, met tijd voor knippen en garenwissels
 	Machine Speed:	Machinesnelheid:

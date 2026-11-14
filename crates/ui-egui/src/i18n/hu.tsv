@@ -5813,7 +5813,6 @@ imageTrace	Outline	Körvonal
 	Extract Border Pattern	Szegélyminta kinyerése
 	Fill Above:	Kitöltés felette:
 	Fill Underlay	Kitöltés-alátét
-	First object	Első objektum
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Adjon öltésbeállításokat a görbéknek a Hímzés panelen; ebben a sorrendben hímzi őket.
 	Group the sewing order by thread colour, for fewer thread changes	A hímzési sorrend csoportosítása cérnaszín szerint, kevesebb cérnacseréért
 	Herringbone	Halszálka
@@ -5822,13 +5821,11 @@ imageTrace	Outline	Körvonal
 	How the needle holes line up from row to row, or a motif carved into the fill	Hogyan állnak egymáshoz a tűlyukak sorról sorra, vagy a kitöltésbe vésett motívum
 	How wide the border is: the pattern scales with it	Milyen széles a szegély: a minta vele együtt méreteződik
 	How wide the zigzag swings	Milyen szélesen leng ki a cikcakk
-	Last object	Utolsó objektum
 	Load a border pattern file (.vcborder) into the document	Szegélyminta-fájl (.vcborder) betöltése a dokumentumba
 	Load…	Betöltés…
 	Mirror the pattern across the path	A minta tükrözése a görbére
 	Motif Size:	Motívum mérete:
 	Motif	Motívum
-	Next object	Következő objektum
 	No problems found.	Nem található probléma.
 	Nothing is stitched yet.	Még semmi sincs hímezve.
 	Object color	Objektum színe
@@ -5841,7 +5838,6 @@ imageTrace	Outline	Körvonal
 	Pattern Border	Mintaszegély
 	Pattern Size	Minta mérete
 	Pattern:	Minta:
-	Previous object	Előző objektum
 	Pull Compensation:	Húzáskompenzáció:
 	Remove Stitches	Öltések eltávolítása
 	Satin Column	Szaténoszlop
@@ -6187,8 +6183,6 @@ imageTrace	Outline	Körvonal
 	Play	Lejátszás
 	Pause	Szünet
 	Play the sewing stitch by stitch	A hímzés lejátszása öltésről öltésre
-	Previous thread	Előző cérna
-	Next thread	Következő cérna
 	Sewing Time	Hímzési idő
 	At the machine speed set below, with time for trims and thread changes	Az alább beállított gépsebességgel, a vágások és cérnacserék idejével együtt
 	Machine Speed:	Gépsebesség:

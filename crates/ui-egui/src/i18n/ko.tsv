@@ -5405,7 +5405,6 @@ lighting	Light	광원
 	Extract Border Pattern	테두리 패턴 추출
 	Fill Above:	채우기 초과:
 	Fill Underlay	채우기 밑실
-	First object	첫 오브젝트
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	자수 패널에서 패스에 스티치 설정을 지정하세요. 이 순서대로 수놓습니다.
 	Group the sewing order by thread colour, for fewer thread changes	실 교체를 줄이도록 실 색상별로 자수 순서를 묶습니다
 	Herringbone	헤링본
@@ -5414,13 +5413,11 @@ lighting	Light	광원
 	How the needle holes line up from row to row, or a motif carved into the fill	행마다 바늘땀이 어떻게 정렬되는지, 또는 채우기에 새기는 모티프
 	How wide the border is: the pattern scales with it	테두리의 너비: 패턴이 함께 크기가 조절됩니다
 	How wide the zigzag swings	지그재그가 흔들리는 폭
-	Last object	마지막 오브젝트
 	Load a border pattern file (.vcborder) into the document	테두리 패턴 파일(.vcborder)을 문서에 불러옵니다
 	Load…	불러오기…
 	Mirror the pattern across the path	패스를 기준으로 패턴을 반전합니다
 	Motif Size:	모티프 크기:
 	Motif	모티프
-	Next object	다음 오브젝트
 	No problems found.	문제가 없습니다.
 	Nothing is stitched yet.	아직 수놓은 것이 없습니다.
 	Object color	오브젝트 색상
@@ -5433,7 +5430,6 @@ lighting	Light	광원
 	Pattern Border	패턴 테두리
 	Pattern Size	패턴 크기
 	Pattern:	패턴:
-	Previous object	이전 오브젝트
 	Pull Compensation:	당김 보정:
 	Remove Stitches	스티치 제거
 	Satin Column	새틴 칼럼
@@ -5779,8 +5775,6 @@ lighting	Light	광원
 	Play	재생
 	Pause	일시 정지
 	Play the sewing stitch by stitch	자수를 한 땀씩 재생합니다
-	Previous thread	이전 실
-	Next thread	다음 실
 	Sewing Time	자수 시간
 	At the machine speed set below, with time for trims and thread changes	아래에 설정한 기계 속도 기준이며, 자르기와 실 교체 시간을 포함합니다
 	Machine Speed:	기계 속도:

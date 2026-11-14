@@ -5411,7 +5411,6 @@ effect	Soft	Weich
 	Extract Border Pattern	Randmuster extrahieren
 	Fill Above:	Füllung über:
 	Fill Underlay	Füllungs-Unterlage
-	First object	Erstes Objekt
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Geben Sie Pfaden im Bedienfeld „Stickerei“ Sticheinstellungen; sie werden in dieser Reihenfolge gestickt.
 	Group the sewing order by thread colour, for fewer thread changes	Die Stickreihenfolge nach Garnfarbe gruppieren, für weniger Garnwechsel
 	Herringbone	Fischgrät
@@ -5420,13 +5419,11 @@ effect	Soft	Weich
 	How the needle holes line up from row to row, or a motif carved into the fill	Wie die Einstiche von Reihe zu Reihe ausgerichtet sind, oder ein in die Füllung gravierte Motiv
 	How wide the border is: the pattern scales with it	Wie breit der Rand ist: das Muster skaliert mit
 	How wide the zigzag swings	Wie weit der Zickzack ausschlägt
-	Last object	Letztes Objekt
 	Load a border pattern file (.vcborder) into the document	Eine Randmusterdatei (.vcborder) in das Dokument laden
 	Load…	Laden…
 	Mirror the pattern across the path	Das Muster am Pfad spiegeln
 	Motif Size:	Motivgröße:
 	Motif	Motiv
-	Next object	Nächstes Objekt
 	No problems found.	Keine Probleme gefunden.
 	Nothing is stitched yet.	Noch nichts gestickt.
 	Object color	Objektfarbe
@@ -5439,7 +5436,6 @@ effect	Soft	Weich
 	Pattern Border	Musterrand
 	Pattern Size	Mustergröße
 	Pattern:	Muster:
-	Previous object	Vorheriges Objekt
 	Pull Compensation:	Zugausgleich:
 	Remove Stitches	Stiche entfernen
 	Satin Column	Satinsäule
@@ -5785,8 +5781,6 @@ effect	Soft	Weich
 	Play	Abspielen
 	Pause	Pause
 	Play the sewing stitch by stitch	Das Sticken Stich für Stich abspielen
-	Previous thread	Vorheriges Garn
-	Next thread	Nächstes Garn
 	Sewing Time	Stickzeit
 	At the machine speed set below, with time for trims and thread changes	Bei der unten eingestellten Maschinengeschwindigkeit, mit Zeit für Schnitte und Garnwechsel
 	Machine Speed:	Maschinengeschwindigkeit:

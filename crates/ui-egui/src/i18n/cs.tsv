@@ -6054,13 +6054,9 @@ mark-style	Japanese	Japonské
 	The selection's stitch and its settings	Steh výběru a jeho nastavení
 	Choose a stitch to sew the selection with.	Vyberte steh, kterým se výběr vyšije.
 	Drag a row to move it. Objects sewn later lie on top.	Přetažením řádku ho přesunete. Objekty vyšité později leží navrchu.
-	First object	První objekt
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Nastavte cestám stehy v panelu Výšivka; vyšívají se v tomto pořadí.
 	How the needle holes line up from row to row, or a motif carved into the fill	Jak se vpichy řadí z řady na řadu, nebo motiv vyrytý do výplně
-	Last object	Poslední objekt
-	Next object	Další objekt
 	Open a document to see its sewing order.	Otevřete dokument a uvidíte jeho pořadí vyšívání.
-	Previous object	Předchozí objekt
 	Sew Order…	Pořadí vyšívání…
 	Sew in paint order again (bottom first)	Znovu vyšívat v pořadí kreslení (odspodu)
 	Some selected objects aren't stitched: choose a stitch for all of them.	Některé vybrané objekty nemají steh: vyberte steh pro všechny.
@@ -6223,8 +6219,6 @@ mark-style	Japanese	Japonské
 	Play	Přehrát
 	Pause	Pozastavit
 	Play the sewing stitch by stitch	Přehrát vyšívání steh po stehu
-	Previous thread	Předchozí nit
-	Next thread	Další nit
 	Sewing Time	Čas vyšívání
 	At the machine speed set below, with time for trims and thread changes	Při rychlosti stroje nastavené níže, včetně času na odstřihy a výměny nití
 	Machine Speed:	Rychlost stroje:

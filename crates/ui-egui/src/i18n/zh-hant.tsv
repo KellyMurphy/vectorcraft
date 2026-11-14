@@ -5694,13 +5694,9 @@ lighting	Light	光源
 	The selection's stitch and its settings	所選內容的針跡及其設定
 	Choose a stitch to sew the selection with.	選擇一種針跡來縫製所選內容。
 	Drag a row to move it. Objects sewn later lie on top.	拖曳一列可移動它。後縫的物件在上層。
-	First object	第一個物件
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	在「刺繡」面板中為路徑設定針跡；它們按此順序縫製。
 	How the needle holes line up from row to row, or a motif carved into the fill	針孔逐行如何對齊，或刻入填色的圖樣
-	Last object	最後一個物件
-	Next object	下一個物件
 	Open a document to see its sewing order.	開啟文件以查看其縫製順序。
-	Previous object	上一個物件
 	Sew Order…	縫製順序…
 	Sew in paint order again (bottom first)	重新按繪製順序（自下而上）縫製
 	Some selected objects aren't stitched: choose a stitch for all of them.	部分所選物件沒有針跡：請為全部物件選擇一種針跡。
@@ -5863,8 +5859,6 @@ lighting	Light	光源
 	Play	播放
 	Pause	暫停
 	Play the sewing stitch by stitch	逐針播放縫製過程
-	Previous thread	上一種線
-	Next thread	下一種線
 	Sewing Time	縫製時間
 	At the machine speed set below, with time for trims and thread changes	依下方設定的機器速度計算，包括剪線與換線時間
 	Machine Speed:	機器速度:

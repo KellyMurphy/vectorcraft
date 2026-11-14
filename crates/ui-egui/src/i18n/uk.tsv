@@ -5650,13 +5650,9 @@ lighting	Light	Світло
 	The selection's stitch and its settings	Стібок виділення та його налаштування
 	Choose a stitch to sew the selection with.	Виберіть стібок, яким вишити виділення.
 	Drag a row to move it. Objects sewn later lie on top.	Перетягніть рядок, щоб перемістити його. Об’єкти, вишиті пізніше, лежать зверху.
-	First object	Перший об’єкт
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Задайте контурам стібки на панелі «Вишивка»; вони вишиваються в цьому порядку.
 	How the needle holes line up from row to row, or a motif carved into the fill	Як проколи вишиковуються від ряду до ряду, або мотив, вирізаний у заливці
-	Last object	Останній об’єкт
-	Next object	Наступний об’єкт
 	Open a document to see its sewing order.	Відкрийте документ, щоб побачити порядок вишивання.
-	Previous object	Попередній об’єкт
 	Sew Order…	Порядок вишивання…
 	Sew in paint order again (bottom first)	Знову вишивати в порядку малювання (знизу)
 	Some selected objects aren't stitched: choose a stitch for all of them.	Частина виділених об’єктів не має стібка: виберіть стібок для всіх.
@@ -5816,8 +5812,6 @@ lighting	Light	Світло
 	Play	Відтворити
 	Pause	Пауза
 	Play the sewing stitch by stitch	Відтворити вишивання стібок за стібком
-	Previous thread	Попередня нитка
-	Next thread	Наступна нитка
 	Sewing Time	Час вишивання
 	At the machine speed set below, with time for trims and thread changes	За швидкості машини, заданої нижче, з часом на обрізання й заміни нитки
 	Machine Speed:	Швидкість машини:

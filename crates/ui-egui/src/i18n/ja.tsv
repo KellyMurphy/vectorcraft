@@ -5714,13 +5714,9 @@ lighting	Light	ライト
 	The selection's stitch and its settings	選択範囲のステッチとその設定
 	Choose a stitch to sew the selection with.	選択範囲を縫うステッチを選んでください。
 	Drag a row to move it. Objects sewn later lie on top.	行をドラッグして移動します。後に縫うオブジェクトが上になります。
-	First object	最初のオブジェクト
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	刺しゅうパネルでパスにステッチ設定を付けると、この順序で縫われます。
 	How the needle holes line up from row to row, or a motif carved into the fill	針穴が行ごとにどう並ぶか、または塗りに彫り込むモチーフ
-	Last object	最後のオブジェクト
-	Next object	次のオブジェクト
 	Open a document to see its sewing order.	ドキュメントを開くと縫製順が表示されます。
-	Previous object	前のオブジェクト
 	Sew Order…	縫製順…
 	Sew in paint order again (bottom first)	重ね順（下から）で縫い直す
 	Some selected objects aren't stitched: choose a stitch for all of them.	選択したオブジェクトの一部にステッチがありません。すべてにステッチを選んでください。
@@ -5880,8 +5876,6 @@ lighting	Light	ライト
 	Play	再生
 	Pause	一時停止
 	Play the sewing stitch by stitch	縫製を 1 針ずつ再生します
-	Previous thread	前の糸
-	Next thread	次の糸
 	Sewing Time	縫製時間
 	At the machine speed set below, with time for trims and thread changes	下で設定したミシン速度で、糸切りと糸替えの時間を含みます
 	Machine Speed:	ミシン速度:

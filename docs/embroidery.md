@@ -321,10 +321,10 @@ converts one to a `.vcfont`. How they are read: [formats/inkstitch-fonts.md](for
 ### Sew order
 
 Objects are sewn in paint order, bottom first, until you change it. **Window › Sew Order** is the panel for
-it: a preview of the fabric with the design sewn up to any step (sewn objects in their threads, the current
-one bright, the rest still faint), a scrub bar and step buttons to go through the sewing, and the list of
-stitched objects as they are sewn, each with a picture of its stitches, its thread and stitch. Click one to
-select it (the preview steps to it); drag it up or down the list, or use **Sew First**, **Sew Earlier**,
+it: a preview of the fabric with the design sewn up to an object (sewn objects in their threads, that one
+bright, the rest still faint), one row to play the sewing (below), and the list of stitched objects as they
+are sewn, each with a picture of its stitches, its thread and stitch. Click one to select it and step the
+preview to it: stepping object by object is done in the list. Drag a row up or down the list, or use **Sew First**, **Sew Earlier**,
 **Sew Later** and **Sew Last** on the selection.
 **By Thread** groups the order by thread colour (colours in the order they first come, each keeping its
 objects' order), so each thread is sewn once; **Reset Order** goes back to paint order. The order is saved with the
@@ -558,10 +558,13 @@ fabric); and a box for notes. It is an ordinary document: print it, or export it
 
 ### Playing the sewing
 
-The Sew Order panel plays the design as the machine sews it: **Play** draws it stitch by stitch in its
-threads, the needle ringed; **Pause** stops; the arrows jump to the previous or next thread change.
-Dragging the scrub bar or clicking a row goes back to stepping object by object. Each row shows the
-object's stitch count, and the panel shows the **Sewing Time**: the stitches at the **Machine Speed**
+The Sew Order panel plays the design as the machine sews it, from one row under the preview. The play
+button draws it stitch by stitch in its threads, the needle ringed, and the list marks the object being
+sewn; pressed again it pauses. The scrub bar beside it runs over every needle move, with a tick at each
+thread change: click or drag along it to go to any stitch, or to its end for the whole design. Clicking a
+row in the list leaves the player and shows the design up to that object. Each row shows the object's
+stitch count, and the row ends with the **Sewing Time** (while playing, the time sewn so far of the
+whole): the stitches at the **Machine Speed**
 (the Embroidery panel's Setup tab, 600 stitches a minute unless set; `embroidery.setup {speed}`), plus 5 seconds a trim and 30
 seconds a thread change. `embroidery.info` gives it as the design's `minutes`.
 

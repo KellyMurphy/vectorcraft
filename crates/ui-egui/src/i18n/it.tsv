@@ -5670,13 +5670,9 @@ lighting	Light	Luce
 	The selection's stitch and its settings	Il punto della selezione e le sue impostazioni
 	Choose a stitch to sew the selection with.	Scegli un punto con cui ricamare la selezione.
 	Drag a row to move it. Objects sewn later lie on top.	Trascina una riga per spostarla. Gli oggetti ricamati dopo stanno sopra.
-	First object	Primo oggetto
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Assegna punti ai tracciati nel pannello Ricamo; vengono ricamati in questo ordine.
 	How the needle holes line up from row to row, or a motif carved into the fill	Come si allineano i fori dell’ago da una fila all’altra, o un motivo inciso nel riempimento
-	Last object	Ultimo oggetto
-	Next object	Oggetto successivo
 	Open a document to see its sewing order.	Apri un documento per vedere il suo ordine di cucitura.
-	Previous object	Oggetto precedente
 	Sew Order…	Ordine di cucitura…
 	Sew in paint order again (bottom first)	Ricama di nuovo nell’ordine di disegno (dal basso)
 	Some selected objects aren't stitched: choose a stitch for all of them.	Alcuni oggetti selezionati non hanno un punto: scegline uno per tutti.
@@ -5836,8 +5832,6 @@ lighting	Light	Luce
 	Play	Riproduci
 	Pause	Pausa
 	Play the sewing stitch by stitch	Riproduci il ricamo punto per punto
-	Previous thread	Filo precedente
-	Next thread	Filo successivo
 	Sewing Time	Tempo di ricamo
 	At the machine speed set below, with time for trims and thread changes	Alla velocità della macchina impostata sotto, con il tempo per tagli e cambi di filo
 	Machine Speed:	Velocità della macchina:

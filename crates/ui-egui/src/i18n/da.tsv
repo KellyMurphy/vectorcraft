@@ -5698,7 +5698,6 @@ swatch	Bright Violet	Kraftig violet
 	Extract Border Pattern	Udtræk kantmønster
 	Fill Above:	Fyld over:
 	Fill Underlay	Fyld-underlag
-	First object	Første objekt
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Giv stier stingindstillinger i panelet Broderi; de broderes i denne rækkefølge.
 	Group the sewing order by thread colour, for fewer thread changes	Gruppér broderingsrækkefølgen efter trådfarve for færre trådskift
 	Herringbone	Sildeben
@@ -5707,13 +5706,11 @@ swatch	Bright Violet	Kraftig violet
 	How the needle holes line up from row to row, or a motif carved into the fill	Hvordan nålehullerne flugter fra række til række, eller et motiv indgraveret i fyldet
 	How wide the border is: the pattern scales with it	Hvor bred kanten er: mønsteret skalerer med
 	How wide the zigzag swings	Hvor bredt zigzaggen svinger
-	Last object	Sidste objekt
 	Load a border pattern file (.vcborder) into the document	Indlæs en kantmønsterfil (.vcborder) i dokumentet
 	Load…	Indlæs…
 	Mirror the pattern across the path	Spejl mønsteret over stien
 	Motif Size:	Motivstørrelse:
 	Motif	Motiv
-	Next object	Næste objekt
 	No problems found.	Ingen problemer fundet.
 	Nothing is stitched yet.	Intet er broderet endnu.
 	Object color	Objektfarve
@@ -5726,7 +5723,6 @@ swatch	Bright Violet	Kraftig violet
 	Pattern Border	Mønsterkant
 	Pattern Size	Mønsterstørrelse
 	Pattern:	Mønster:
-	Previous object	Forrige objekt
 	Pull Compensation:	Trækkompensation:
 	Remove Stitches	Fjern sting
 	Satin Column	Satinsøjle
@@ -6072,8 +6068,6 @@ swatch	Bright Violet	Kraftig violet
 	Play	Afspil
 	Pause	Pause
 	Play the sewing stitch by stitch	Afspil broderingen sting for sting
-	Previous thread	Forrige tråd
-	Next thread	Næste tråd
 	Sewing Time	Broderitid
 	At the machine speed set below, with time for trims and thread changes	Ved maskinhastigheden angivet nedenfor, med tid til klip og trådskift
 	Machine Speed:	Maskinhastighed:

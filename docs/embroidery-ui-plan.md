@@ -1,6 +1,6 @@
 # Embroidery UI improvement plan
 
-Status: Phases 1 to 3 (UI1.1 to UI3.5) done; Phase 4 proposed. Written 2026-11-11.
+Status: Phases 1 to 3 (UI1.1 to UI3.5) and UI4.1 done; UI4.2 and UI4.3 proposed. Written 2026-11-11.
 
 This plan comes from a review of the three embroidery panels: reading their code and driving the
 app through each tab with a small design (a filled rectangle and a satin line). It lists what to
@@ -336,6 +336,12 @@ Seen: two rows use the same double-arrow icons, one stepping by object and one b
 them with one row: play and pause, a scrubber over the stitches with a tick at each colour change,
 and the sewing time. Stepping by object happens in the list.
 
+Status: done. The object and thread arrows are gone. Under the preview one row has a play button (a
+triangle, two bars while playing, drawn in code), a scrub bar over the needle moves with a tick at each
+thread change, and the sewing time (so far / of all while playing). The list marks the object being sewn
+as it plays; clicking a row leaves the player and steps the preview to that object. Test:
+`one_transport_row_plays_the_sewing`.
+
 ### UI4.2 Rows that tell objects apart
 
 Seen: every row is named "Path". Lead each row with its stitch type and thread; show the object's
@@ -377,3 +383,4 @@ sewing is seen on the artwork at the size the user is working at.
 - 2026-11-14: UI3.3 done.
 - 2026-11-14: UI3.4 done.
 - 2026-11-14: UI3.5 done; Phase 3 complete.
+- 2026-11-14: UI4.1 done.

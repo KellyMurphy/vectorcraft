@@ -5856,7 +5856,6 @@ swatch	Yellow Green	Gulgrön
 	Extract Border Pattern	Extrahera kantmönster
 	Fill Above:	Fyllning över:
 	Fill Underlay	Fyllningsunderlag
-	First object	Första objektet
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Ge banor söminställningar i panelen Broderi; de broderas i den här ordningen.
 	Group the sewing order by thread colour, for fewer thread changes	Gruppera broderingsordningen efter trådfärg, för färre trådbyten
 	Herringbone	Fiskben
@@ -5865,13 +5864,11 @@ swatch	Yellow Green	Gulgrön
 	How the needle holes line up from row to row, or a motif carved into the fill	Hur nålhålen ligger i linje från rad till rad, eller ett motiv inristat i fyllningen
 	How wide the border is: the pattern scales with it	Hur bred kanten är: mönstret skalas med
 	How wide the zigzag swings	Hur brett sicksacken svänger
-	Last object	Sista objektet
 	Load a border pattern file (.vcborder) into the document	Läs in en kantmönsterfil (.vcborder) i dokumentet
 	Load…	Läs in…
 	Mirror the pattern across the path	Spegla mönstret över banan
 	Motif Size:	Motivstorlek:
 	Motif	Motiv
-	Next object	Nästa objekt
 	No problems found.	Inga problem hittades.
 	Nothing is stitched yet.	Inget är broderat ännu.
 	Object color	Objektfärg
@@ -5884,7 +5881,6 @@ swatch	Yellow Green	Gulgrön
 	Pattern Border	Mönsterkant
 	Pattern Size	Mönsterstorlek
 	Pattern:	Mönster:
-	Previous object	Föregående objekt
 	Pull Compensation:	Dragkompensation:
 	Remove Stitches	Ta bort sömmar
 	Satin Column	Satinkolumn
@@ -6230,8 +6226,6 @@ swatch	Yellow Green	Gulgrön
 	Play	Spela upp
 	Pause	Pausa
 	Play the sewing stitch by stitch	Spela upp broderingen stygn för stygn
-	Previous thread	Föregående tråd
-	Next thread	Nästa tråd
 	Sewing Time	Broderingstid
 	At the machine speed set below, with time for trims and thread changes	Vid maskinhastigheten nedan, med tid för klipp och trådbyten
 	Machine Speed:	Maskinhastighet:

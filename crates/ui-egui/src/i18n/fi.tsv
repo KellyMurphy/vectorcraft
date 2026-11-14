@@ -5793,7 +5793,6 @@ mark-style	Japanese	Japanilainen
 	Extract Border Pattern	Poimi reunuskuvio
 	Fill Above:	Täyttö yli:
 	Fill Underlay	Täytön alusta
-	First object	Ensimmäinen objekti
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Anna poluille pistoasetukset Kirjonta-paneelissa; ne kirjotaan tässä järjestyksessä.
 	Group the sewing order by thread colour, for fewer thread changes	Ryhmittele kirjontajärjestys langan värin mukaan, jolloin langanvaihtoja on vähemmän
 	Herringbone	Kalanruoto
@@ -5802,13 +5801,11 @@ mark-style	Japanese	Japanilainen
 	How the needle holes line up from row to row, or a motif carved into the fill	Miten neulanreiät asettuvat riviltä riville, tai täyttöön kaiverrettu kuvio
 	How wide the border is: the pattern scales with it	Kuinka leveä reunus on: kuvio skaalautuu sen mukana
 	How wide the zigzag swings	Kuinka leveälle siksak heilahtaa
-	Last object	Viimeinen objekti
 	Load a border pattern file (.vcborder) into the document	Lataa reunuskuviotiedosto (.vcborder) dokumenttiin
 	Load…	Lataa…
 	Mirror the pattern across the path	Peilaa kuvio polun yli
 	Motif Size:	Kuvion koko:
 	Motif	Kuvio
-	Next object	Seuraava objekti
 	No problems found.	Ongelmia ei löytynyt.
 	Nothing is stitched yet.	Mitään ei ole vielä kirjottu.
 	Object color	Objektin väri
@@ -5821,7 +5818,6 @@ mark-style	Japanese	Japanilainen
 	Pattern Border	Kuvioreunus
 	Pattern Size	Kuvion koko
 	Pattern:	Kuvio:
-	Previous object	Edellinen objekti
 	Pull Compensation:	Vetokompensaatio:
 	Remove Stitches	Poista pistot
 	Satin Column	Satiinipylväs
@@ -6167,8 +6163,6 @@ mark-style	Japanese	Japanilainen
 	Play	Toista
 	Pause	Tauko
 	Play the sewing stitch by stitch	Toista kirjonta pisto pistolta
-	Previous thread	Edellinen lanka
-	Next thread	Seuraava lanka
 	Sewing Time	Kirjonta-aika
 	At the machine speed set below, with time for trims and thread changes	Alla asetetulla koneen nopeudella, aika katkaisuille ja langanvaihdoille mukaan lukien
 	Machine Speed:	Koneen nopeus:

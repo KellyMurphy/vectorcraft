@@ -5684,7 +5684,6 @@ mark-style	Japanese	Japońskie
 	Extract Border Pattern	Wyodrębnij wzór obwódki
 	Fill Above:	Wypełnienie powyżej:
 	Fill Underlay	Podkład wypełnienia
-	First object	Pierwszy obiekt
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Nadaj ścieżkom ustawienia ściegu w panelu Haft; są wyszywane w tej kolejności.
 	Group the sewing order by thread colour, for fewer thread changes	Pogrupuj kolejność wyszywania według koloru nici, aby było mniej zmian nici
 	Herringbone	Jodełka
@@ -5693,13 +5692,11 @@ mark-style	Japanese	Japońskie
 	How the needle holes line up from row to row, or a motif carved into the fill	Jak układają się nakłucia igły w kolejnych rzędach, albo motyw wyryty w wypełnieniu
 	How wide the border is: the pattern scales with it	Jak szeroka jest obwódka: wzór skaluje się wraz z nią
 	How wide the zigzag swings	Jak szeroko wychyla się zygzak
-	Last object	Ostatni obiekt
 	Load a border pattern file (.vcborder) into the document	Wczytaj plik wzoru obwódki (.vcborder) do dokumentu
 	Load…	Wczytaj…
 	Mirror the pattern across the path	Odbij wzór względem ścieżki
 	Motif Size:	Rozmiar motywu:
 	Motif	Motyw
-	Next object	Następny obiekt
 	No problems found.	Nie znaleziono problemów.
 	Nothing is stitched yet.	Nic nie jest jeszcze wyszyte.
 	Object color	Kolor obiektu
@@ -5712,7 +5709,6 @@ mark-style	Japanese	Japońskie
 	Pattern Border	Obwódka wzorzysta
 	Pattern Size	Rozmiar wzoru
 	Pattern:	Wzór:
-	Previous object	Poprzedni obiekt
 	Pull Compensation:	Kompensacja ściągania:
 	Remove Stitches	Usuń ściegi
 	Satin Column	Kolumna satynowa
@@ -6058,8 +6054,6 @@ mark-style	Japanese	Japońskie
 	Play	Odtwórz
 	Pause	Wstrzymaj
 	Play the sewing stitch by stitch	Odtwórz wyszywanie ścieg po ściegu
-	Previous thread	Poprzednia nić
-	Next thread	Następna nić
 	Sewing Time	Czas wyszywania
 	At the machine speed set below, with time for trims and thread changes	Przy prędkości maszyny ustawionej poniżej, z czasem na obcięcia i zmiany nici
 	Machine Speed:	Prędkość maszyny:

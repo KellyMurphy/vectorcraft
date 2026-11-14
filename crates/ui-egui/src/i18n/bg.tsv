@@ -5700,7 +5700,6 @@ theme	Appearance	Външен вид
 	Extract Border Pattern	Извличане на шарка за кант
 	Fill Above:	Запълване над:
 	Fill Underlay	Подложка за запълване
-	First object	Първи обект
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Задайте настройки на бода на пътищата в панела Бродерия; те се бродират в този ред.
 	Group the sewing order by thread colour, for fewer thread changes	Групиране на реда на бродиране по цвят на конеца, за по-малко смени на конеца
 	Herringbone	Рибена кост
@@ -5709,13 +5708,11 @@ theme	Appearance	Външен вид
 	How the needle holes line up from row to row, or a motif carved into the fill	Как се подреждат дупките на иглата от ред на ред, или мотив, гравиран в запълването
 	How wide the border is: the pattern scales with it	Колко широк е кантът: шарката се мащабира с него
 	How wide the zigzag swings	Колко широко се люлее зигзагът
-	Last object	Последен обект
 	Load a border pattern file (.vcborder) into the document	Зареждане на файл с шарка за кант (.vcborder) в документа
 	Load…	Зареждане…
 	Mirror the pattern across the path	Огледално обръщане на шарката спрямо пътя
 	Motif Size:	Размер на мотива:
 	Motif	Мотив
-	Next object	Следващ обект
 	No problems found.	Не са открити проблеми.
 	Nothing is stitched yet.	Още нищо не е избродирано.
 	Object color	Цвят на обекта
@@ -5728,7 +5725,6 @@ theme	Appearance	Външен вид
 	Pattern Border	Кант с шарка
 	Pattern Size	Размер на шарката
 	Pattern:	Шарка:
-	Previous object	Предишен обект
 	Pull Compensation:	Компенсация на опъна:
 	Remove Stitches	Премахване на бодовете
 	Satin Column	Сатенена колона
@@ -6074,8 +6070,6 @@ theme	Appearance	Външен вид
 	Play	Възпроизвеждане
 	Pause	Пауза
 	Play the sewing stitch by stitch	Възпроизвеждане на бродирането бод по бод
-	Previous thread	Предишен конец
-	Next thread	Следващ конец
 	Sewing Time	Време за бродиране
 	At the machine speed set below, with time for trims and thread changes	При зададената по-долу скорост на машината, с време за отрязвания и смени на конеца
 	Machine Speed:	Скорост на машината:

@@ -5425,7 +5425,6 @@ theme	Appearance	Giao diện
 	Extract Border Pattern	Trích xuất mẫu đường viền
 	Fill Above:	Tô kín trên:
 	Fill Underlay	Lớp lót thêu đầy
-	First object	Đối tượng đầu
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Đặt cài đặt mũi thêu cho đường dẫn trong bảng Thêu; chúng được thêu theo thứ tự này.
 	Group the sewing order by thread colour, for fewer thread changes	Gom thứ tự thêu theo màu chỉ để đổi chỉ ít hơn
 	Herringbone	Xương cá
@@ -5434,13 +5433,11 @@ theme	Appearance	Giao diện
 	How the needle holes line up from row to row, or a motif carved into the fill	Các lỗ kim xếp thẳng hàng từ hàng này sang hàng khác ra sao, hoặc một họa tiết khắc vào phần thêu đầy
 	How wide the border is: the pattern scales with it	Đường viền rộng bao nhiêu: mẫu co giãn theo
 	How wide the zigzag swings	Zigzag đánh rộng bao nhiêu
-	Last object	Đối tượng cuối
 	Load a border pattern file (.vcborder) into the document	Nạp tệp mẫu đường viền (.vcborder) vào tài liệu
 	Load…	Nạp…
 	Mirror the pattern across the path	Lật mẫu qua đường dẫn
 	Motif Size:	Cỡ họa tiết:
 	Motif	Họa tiết
-	Next object	Đối tượng tiếp
 	No problems found.	Không thấy vấn đề nào.
 	Nothing is stitched yet.	Chưa thêu gì cả.
 	Object color	Màu đối tượng
@@ -5453,7 +5450,6 @@ theme	Appearance	Giao diện
 	Pattern Border	Đường viền mẫu
 	Pattern Size	Cỡ mẫu
 	Pattern:	Mẫu:
-	Previous object	Đối tượng trước
 	Pull Compensation:	Bù co kéo:
 	Remove Stitches	Bỏ mũi thêu
 	Satin Column	Cột satin
@@ -5799,8 +5795,6 @@ theme	Appearance	Giao diện
 	Play	Phát
 	Pause	Tạm dừng
 	Play the sewing stitch by stitch	Phát quá trình thêu từng mũi
-	Previous thread	Màu chỉ trước
-	Next thread	Màu chỉ tiếp
 	Sewing Time	Thời gian thêu
 	At the machine speed set below, with time for trims and thread changes	Theo tốc độ máy đặt bên dưới, gồm thời gian cắt chỉ và đổi chỉ
 	Machine Speed:	Tốc độ máy:

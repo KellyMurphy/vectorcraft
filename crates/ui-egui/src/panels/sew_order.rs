@@ -1,7 +1,9 @@
 //! Sew Order panel (Window › Sew Order): the design sewn step by step. A preview shows what is on
-//! the fabric after each object (sewn objects in their threads, the current one bright, the rest
-//! still to come in grey), a scrubber steps through, and the list below shows each object with a
-//! picture of its stitches, dragged or moved with buttons to change the order. The Travel settings
+//! the fabric after the object chosen in the list (sewn objects in their threads, the chosen one
+//! bright, the rest still to come in grey). One transport row plays the sewing stitch by stitch:
+//! play and pause, a scrubber over the needle moves with a tick at each thread change, and the
+//! sewing time. The list below shows each object with a picture of its stitches, dragged or moved
+//! with buttons to change the order. The Travel settings
 //! (trims and jumps between objects) live here too. Reads `embroidery.order` and the stitch plan;
 //! acts through `embroidery.reorder`, `embroidery.sortByThread`, `embroidery.resetOrder` and
 //! `embroidery.setup`.
@@ -215,32 +217,51 @@ fn played(ui: &mut Ui, n: &Needles, bounds: Option<[f64; 4]>, at: usize) {
     }
 }
 
-/// The scrub bar under the preview: a track with a mark per object, the sewn part in the accent
-/// colour; click or drag along it to choose how many objects are shown. The step chosen.
-fn scrubber(ui: &mut Ui, step: usize, n: usize) -> usize {
+/// The play and pause button: a triangle to play, two bars to pause, drawn in code.
+fn play_button(ui: &mut Ui, playing: bool) -> egui::Response {
     let t = Tokens::get(ui.ctx());
-    let (rect, resp) = ui.allocate_exact_size(vec2(ui.available_width(), 18.0), Sense::click_and_drag());
-    let resp = resp.on_hover_text(tl!("Step through the sewing"));
-    let track = Rect::from_center_size(rect.center(), vec2(rect.width() - 16.0, 4.0));
-    let at = |k: usize| track.left() + track.width() * (k as f32 / n as f32);
-    ui.painter().rect_filled(track, 2.0, t.input_border);
-    ui.painter().rect_filled(Rect::from_min_max(track.left_top(), Pos2::new(at(step), track.bottom())), 2.0, t.accent);
-    if n <= 60 {
-        for k in 1..n {
-            ui.painter().vline(at(k), track.y_range(), Stroke::new(1.0, t.panel));
-        }
+    let (rect, resp) = ui.allocate_exact_size(vec2(22.0, 22.0), Sense::click());
+    let name = if playing { tl!("Pause") } else { tl!("Play") };
+    resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, name));
+    if resp.hovered() {
+        ui.painter().rect_filled(rect, 3.0, t.hover);
     }
-    let knob = Pos2::new(at(step), track.center().y);
+    let c = rect.center();
+    if playing {
+        for dx in [-3.0, 3.0] {
+            ui.painter().rect_filled(Rect::from_center_size(c + vec2(dx, 0.0), vec2(3.0, 11.0)), 1.0, t.text);
+        }
+    } else {
+        let pts = vec![c + vec2(-4.0, -6.0), c + vec2(6.0, 0.0), c + vec2(-4.0, 6.0)];
+        ui.painter().add(egui::Shape::convex_polygon(pts, t.text, Stroke::NONE));
+    }
+    resp.on_hover_text(if playing { tl!("Pause") } else { tl!("Play the sewing stitch by stitch") })
+}
+
+/// The scrub bar over the design's needle moves: a track with a tick at each thread change, the
+/// sewn part in the accent colour. Clicked or dragged, the needle move chosen (`total`: the whole
+/// design).
+fn scrubber(ui: &mut Ui, at: usize, total: usize, stops: &[usize]) -> Option<usize> {
+    let t = Tokens::get(ui.ctx());
+    let (rect, resp) = ui.allocate_exact_size(vec2(ui.available_width().max(40.0), 22.0), Sense::click_and_drag());
+    let resp = resp.on_hover_text(tl!("Step through the sewing"));
+    let track = Rect::from_center_size(rect.center(), vec2(rect.width() - 14.0, 4.0));
+    let x = |k: usize| track.left() + track.width() * (k as f32 / total.max(1) as f32);
+    ui.painter().rect_filled(track, 2.0, t.input_border);
+    ui.painter().rect_filled(Rect::from_min_max(track.left_top(), Pos2::new(x(at), track.bottom())), 2.0, t.accent);
+    for s in stops {
+        ui.painter().vline(x(*s), track.expand(5.0).y_range(), Stroke::new(1.5, t.text_dim));
+    }
+    let knob = Pos2::new(x(at), track.center().y);
     ui.painter().circle_filled(knob, 6.0, t.accent);
     ui.painter().circle_stroke(knob, 6.0, Stroke::new(1.5, t.panel));
-    let mut chosen = step;
     if (resp.clicked() || resp.dragged())
         && let Some(p) = resp.interact_pointer_pos()
     {
         let f = ((p.x - track.left()) / track.width()).clamp(0.0, 1.0);
-        chosen = ((f * n as f32).ceil() as usize).clamp(1, n);
+        return Some(((f * total as f32).round() as usize).min(total));
     }
-    chosen
+    None
 }
 
 /// A row of the sewing order dragged in the list: its index.
@@ -259,84 +280,60 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let bounds = memo.plan.stats().bounds;
     let n = rows.len();
 
-    // The step shown: the object the selection is on (just clicked), else the one kept.
     let selected: Vec<u64> = app.session.active().map(|d| d.selection.objects.iter().map(|i| i.0).collect()).unwrap_or_default();
+    // The object shown: the one last clicked in the list (the last one at first).
     let kept: usize = pstate(ui.ctx(), "sew-order-step");
-    let mut step = kept.clamp(usize::from(n > 0), n);
-    if kept == 0 {
-        step = n;
-    }
-    // The player: playing (or paused part way) it shows the sewing stitch by stitch.
+    let mut step = if kept == 0 { n } else { kept.clamp(usize::from(n > 0), n) };
+    // The player: playing (or paused part way) it shows the sewing stitch by stitch, and the
+    // list marks the object being sewn.
     let stitches = needles(ui.ctx(), &memo);
-    let mut play: Option<usize> = pstate(ui.ctx(), "sew-play-at");
-    let mut playing: bool = pstate(ui.ctx(), "sew-playing");
-    match play.filter(|k| *k < stitches.total) {
-        Some(k) => played(ui, &stitches, bounds, k),
-        None => {
-            play = None;
-            playing = false;
-            preview(ui, &objects, bounds, step);
+    let total = stitches.total;
+    let mut play: Option<usize> = pstate::<Option<usize>>(ui.ctx(), "sew-play-at").filter(|k| *k < total);
+    let mut playing: bool = pstate::<bool>(ui.ctx(), "sew-playing") && play.is_some();
+    let sewing = |k: usize| {
+        let o = memo.plan.objects.iter().find(|o| o.needles.contains(&k))?;
+        rows.iter().position(|r| r["id"].as_u64() == Some(o.id.0)).map(|i| i + 1)
+    };
+    match play {
+        Some(k) => {
+            played(ui, &stitches, bounds, k);
+            step = sewing(k).unwrap_or(step);
         }
+        None => preview(ui, &objects, bounds, step),
     }
-    if n > 0 {
-        ui.add_space(4.0);
-        let before = step;
-        step = scrubber(ui, step, n);
-        if step != before {
-            // Scrubbing by object leaves the player.
-            (play, playing) = (None, false);
-        }
+    if n > 0 && total > 0 {
+        ui.add_space(2.0);
+        // One transport row: play or pause, the scrubber, and the sewing time (so far, of all).
         ui.horizontal(|ui| {
-            for (icon, tip, to) in [("chevrons-left", tl!("First object"), 0usize), ("chevron-left", tl!("Previous object"), 1)] {
-                if widgets::icon_button_enabled(ui, icon, tip, false, step > 1, 20.0).clicked() {
-                    step = if to == 0 { 1 } else { step - 1 };
-                }
-            }
-            for (icon, tip, to) in [("chevron-right", tl!("Next object"), 1usize), ("chevrons-right", tl!("Last object"), 0)] {
-                if widgets::icon_button_enabled(ui, icon, tip, false, step < n, 20.0).clicked() {
-                    step = if to == 0 { n } else { step + 1 };
-                }
-            }
-            ui.add_space(6.0);
-            let name = rows.get(step.saturating_sub(1)).and_then(|r| r["name"].as_str()).unwrap_or("");
-            let stitch =
-                rows.get(step.saturating_sub(1)).and_then(|r| r["stitch"].as_str()).and_then(StitchKind::parse).map_or("", |k| tl!(k.label()));
-            ui.add(egui::Label::new(egui::RichText::new(format!("{step} / {n}  ·  {name}  ·  {stitch}")).size(11.0).color(t.text_dim)).truncate());
-        });
-        // Play, pause, and step from colour stop to colour stop.
-        ui.horizontal(|ui| {
-            let label = if playing { tl!("Pause") } else { tl!("Play") };
-            if widgets::flat_button(ui, label, 64.0).on_hover_text(tl!("Play the sewing stitch by stitch")).clicked() {
+            if play_button(ui, playing).clicked() {
                 playing = !playing;
-                if playing && play.is_none_or(|k| k + 1 >= stitches.total) {
+                if playing && play.is_none() {
                     play = Some(0);
                 }
             }
-            let at = play.unwrap_or(stitches.total);
-            let prev = stitches.stops.iter().rev().find(|s| **s + 1 < at).copied();
-            if widgets::icon_button_enabled(ui, "chevrons-left", tl!("Previous thread"), false, play.is_some(), 20.0).clicked() {
-                play = Some(prev.map_or(0, |s| s + 1));
-                playing = false;
-            }
-            let next = stitches.stops.iter().find(|s| **s > at).copied();
-            if widgets::icon_button_enabled(ui, "chevrons-right", tl!("Next thread"), false, next.is_some() && play.is_some(), 20.0).clicked()
-                && let Some(s) = next
-            {
-                play = Some(s + 1);
-                playing = false;
-            }
-            if let Some(k) = play {
-                ui.label(egui::RichText::new(format!("{} %", (k * 100) / stitches.total.max(1))).size(11.0).color(t.text_dim));
-            }
-            if let Some(m) = info["minutes"].as_f64() {
-                ui.label(egui::RichText::new(format!("{}: {m:.1} min", tl!("Sewing Time"))).size(11.0).color(t.text_dim))
-                    .on_hover_text(tl!("At the machine speed set below, with time for trims and thread changes"));
-            }
+            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                if let Some(m) = info["minutes"].as_f64() {
+                    let text = match play {
+                        Some(k) => format!("{:.1} / {m:.1} min", m * k as f64 / total as f64),
+                        None => format!("{m:.1} min"),
+                    };
+                    ui.label(egui::RichText::new(text).size(11.0).color(t.text_dim)).on_hover_text(format!(
+                        "{}: {}",
+                        tl!("Sewing Time"),
+                        tl!("At the machine speed set below, with time for trims and thread changes")
+                    ));
+                }
+                if let Some(k) = scrubber(ui, play.unwrap_or(total), total, &stitches.stops) {
+                    // Dragged to the end: the whole design again.
+                    play = (k < total).then_some(k);
+                    playing = false;
+                }
+            });
         });
         if playing {
             // About ten seconds for a whole design.
-            let k = play.unwrap_or(0) + (stitches.total / 600).max(1);
-            if k + 1 >= stitches.total {
+            let k = play.unwrap_or(0) + (total / 600).max(1);
+            if k >= total {
                 (play, playing) = (None, false);
             } else {
                 play = Some(k);
@@ -412,7 +409,10 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     });
     if let Some((id, at)) = select {
         app.run("select.set", json!({ "ids": [id] })).ok();
+        // Stepping by object is done here: the picture shows the sewing up to it.
         step = at;
+        set_pstate(ui.ctx(), "sew-play-at", None::<usize>);
+        set_pstate(ui.ctx(), "sew-playing", false);
     }
     if let Some((from, to)) = moved
         && from != to
@@ -592,8 +592,48 @@ mod tests {
             texts.iter().any(|t| t.starts_with("Fill · ")) && texts.iter().any(|t| t.starts_with("Satin Column · ")),
             "each row with its stitch count: {texts:?}"
         );
-        assert!(texts.iter().any(|t| t.starts_with("Sewing Time: ")) && texts.iter().any(|t| t == "Play"), "{texts:?}");
-        assert!(texts.iter().any(|t| t.starts_with("2 / 2")), "the last step by default: {texts:?}");
+        assert!(texts.iter().any(|t| t.ends_with(" min") && !t.contains('/')), "the whole design's sewing time: {texts:?}");
         assert!(lines > 10, "the preview and the rows' pictures draw stitches: {lines}");
+    }
+
+    /// One transport row: play moves the needle on each frame, the time shows how far it has
+    /// sewn, and past the end the player stops.
+    #[test]
+    fn one_transport_row_plays_the_sewing() {
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        let run = |app: &mut VectorcraftApp, id: &str, p: Value| app.session.execute(id, &p).unwrap();
+        run(&mut app, "file.new", json!({"width": 300, "height": 200}));
+        run(&mut app, "shape.rectangle", json!({"x": 10, "y": 10, "width": 100, "height": 60}));
+        run(&mut app, "embroidery.set", json!({"type": "fill"}));
+        run(&mut app, "select.none", json!({}));
+        run(&mut app, "path.create", json!({"d": "M 20 150 L 280 150"}));
+        run(&mut app, "embroidery.set", json!({"type": "satin", "width": 3}));
+        let ctx = egui::Context::default();
+        let screen = Rect::from_min_size(Pos2::ZERO, vec2(260.0, 1200.0));
+        let frame = |app: &mut VectorcraftApp, k: u32| {
+            let input = egui::RawInput { time: Some(f64::from(k) * 0.1), screen_rect: Some(screen), ..Default::default() };
+            let mut out = ctx.run_ui(input, |ui| show(app, ui));
+            out.textures_delta.clear();
+            let mut v = vec![];
+            out.shapes.iter().for_each(|c| texts(&c.shape, &mut v));
+            v
+        };
+        frame(&mut app, 0);
+        // As the play button does: playing, from the first needle move.
+        set_pstate(&ctx, "sew-playing", true);
+        set_pstate(&ctx, "sew-play-at", Some(0usize));
+        let texts = frame(&mut app, 1);
+        let first: Option<usize> = pstate(&ctx, "sew-play-at");
+        assert_eq!(first.map(|k| k > 0), Some(true), "play starts at the first stitch and moves on: {first:?}");
+        frame(&mut app, 2);
+        let next: Option<usize> = pstate(&ctx, "sew-play-at");
+        assert!(next > first, "{next:?} after {first:?}");
+        let texts = [texts, frame(&mut app, 3)].concat();
+        assert!(texts.iter().any(|t| t.contains(" / ") && t.ends_with(" min")), "the time sewn so far: {texts:?}");
+        // Played to the end, the player stops and the whole design shows again.
+        set_pstate(&ctx, "sew-play-at", Some(usize::MAX - 1));
+        frame(&mut app, 4);
+        assert_eq!(pstate::<Option<usize>>(&ctx, "sew-play-at"), None);
+        assert!(!pstate::<bool>(&ctx, "sew-playing"));
     }
 }

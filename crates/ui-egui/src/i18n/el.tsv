@@ -5781,7 +5781,6 @@ effect	Points	Σημεία
 	Extract Border Pattern	Εξαγωγή μοτίβου περιγράμματος
 	Fill Above:	Γέμισμα πάνω από:
 	Fill Underlay	Υπόστρωμα γεμίσματος
-	First object	Πρώτο αντικείμενο
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Δώστε στις διαδρομές ρυθμίσεις βελονιάς στον πίνακα Κέντημα· κεντιούνται με αυτή τη σειρά.
 	Group the sewing order by thread colour, for fewer thread changes	Ομαδοποίηση της σειράς κεντήματος κατά χρώμα κλωστής, για λιγότερες αλλαγές κλωστής
 	Herringbone	Ψαροκόκαλο
@@ -5790,13 +5789,11 @@ effect	Points	Σημεία
 	How the needle holes line up from row to row, or a motif carved into the fill	Πώς ευθυγραμμίζονται οι τρύπες της βελόνας από σειρά σε σειρά, ή ένα μοτίβο χαραγμένο στο γέμισμα
 	How wide the border is: the pattern scales with it	Πόσο πλατύ είναι το περίγραμμα: το μοτίβο κλιμακώνεται μαζί του
 	How wide the zigzag swings	Πόσο πλατιά ταλαντεύεται το ζιγκ-ζαγκ
-	Last object	Τελευταίο αντικείμενο
 	Load a border pattern file (.vcborder) into the document	Φόρτωση αρχείου μοτίβου περιγράμματος (.vcborder) στο έγγραφο
 	Load…	Φόρτωση…
 	Mirror the pattern across the path	Καθρέφτισμα του μοτίβου ως προς τη διαδρομή
 	Motif Size:	Μέγεθος μοτίβου:
 	Motif	Μοτίβο
-	Next object	Επόμενο αντικείμενο
 	No problems found.	Δεν βρέθηκαν προβλήματα.
 	Nothing is stitched yet.	Δεν έχει κεντηθεί τίποτα ακόμα.
 	Object color	Χρώμα αντικειμένου
@@ -5809,7 +5806,6 @@ effect	Points	Σημεία
 	Pattern Border	Περίγραμμα μοτίβου
 	Pattern Size	Μέγεθος μοτίβου
 	Pattern:	Μοτίβο:
-	Previous object	Προηγούμενο αντικείμενο
 	Pull Compensation:	Αντιστάθμιση τραβήγματος:
 	Remove Stitches	Αφαίρεση βελονιών
 	Satin Column	Στήλη σατέν
@@ -6155,8 +6151,6 @@ effect	Points	Σημεία
 	Play	Αναπαραγωγή
 	Pause	Παύση
 	Play the sewing stitch by stitch	Αναπαραγωγή του κεντήματος βελονιά προς βελονιά
-	Previous thread	Προηγούμενη κλωστή
-	Next thread	Επόμενη κλωστή
 	Sewing Time	Χρόνος κεντήματος
 	At the machine speed set below, with time for trims and thread changes	Με την ταχύτητα μηχανής που ορίζεται παρακάτω, μαζί με χρόνο για κοψίματα και αλλαγές κλωστής
 	Machine Speed:	Ταχύτητα μηχανής:

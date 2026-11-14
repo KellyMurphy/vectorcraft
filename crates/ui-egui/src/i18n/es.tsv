@@ -5998,13 +5998,9 @@ mark-style	Japanese	Japonesas
 	The selection's stitch and its settings	La puntada de la selección y sus ajustes
 	Choose a stitch to sew the selection with.	Elige una puntada con la que bordar la selección.
 	Drag a row to move it. Objects sewn later lie on top.	Arrastra una fila para moverla. Los objetos bordados después quedan encima.
-	First object	Primer objeto
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Asigna puntadas a los trazados en el panel Bordado; se bordan en este orden.
 	How the needle holes line up from row to row, or a motif carved into the fill	Cómo se alinean los pinchazos de fila en fila, o un motivo tallado en el relleno
-	Last object	Último objeto
-	Next object	Objeto siguiente
 	Open a document to see its sewing order.	Abre un documento para ver su orden de bordado.
-	Previous object	Objeto anterior
 	Sew Order…	Orden de bordado…
 	Sew in paint order again (bottom first)	Bordar de nuevo en orden de pintura (desde abajo)
 	Some selected objects aren't stitched: choose a stitch for all of them.	Algunos objetos seleccionados no tienen puntada: elige una para todos.
@@ -6164,8 +6160,6 @@ mark-style	Japanese	Japonesas
 	Play	Reproducir
 	Pause	Pausa
 	Play the sewing stitch by stitch	Reproducir el bordado puntada a puntada
-	Previous thread	Hilo anterior
-	Next thread	Hilo siguiente
 	Sewing Time	Tiempo de bordado
 	At the machine speed set below, with time for trims and thread changes	A la velocidad de máquina indicada abajo, con tiempo para cortes y cambios de hilo
 	Machine Speed:	Velocidad de la máquina:
