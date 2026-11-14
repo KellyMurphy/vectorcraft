@@ -5717,7 +5717,7 @@ swatch	Bright Violet	Felviolet
 # Embroidery (Object › Embroidery, the Embroidery and Sew Order panels)
 	A satin border sewn over the shape's edges, after the fill	Een satijnen rand die na de vulling over de randen van de vorm wordt genaaid
 	After	Erna
-	Bean Outline Under:	Bean-contour onder:
+	Bean Below:	Boon onder:
 	Before	Ervoor
 	Between Rails	Tussen rails
 	Border:	Rand:
@@ -5729,7 +5729,6 @@ swatch	Bright Violet	Felviolet
 	Circles	Cirkels
 	Cut the thread after this object	De draad na dit object afknippen
 	Cut the thread before this object, however close it starts	De draad vóór dit object afknippen, hoe dichtbij het ook begint
-	Density:	Dichtheid:
 	Design	Ontwerp
 	Diamonds	Ruiten
 	Distance between rows: smaller is denser	Afstand tussen de rijen: kleiner is dichter
@@ -5741,7 +5740,7 @@ swatch	Bright Violet	Felviolet
 	Embroidery…	Borduren…
 	Export DST…	DST exporteren…
 	Extract Border Pattern	Randpatroon extraheren
-	Fill Over:	Vulling boven:
+	Fill Above:	Vulling boven:
 	Fill Underlay	Vulling-onderlaag
 	First object	Eerste object
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Geef paden steekinstellingen in het deelvenster Borduren; ze worden in deze volgorde geborduurd.
@@ -5766,7 +5765,7 @@ swatch	Bright Violet	Felviolet
 	Only the first 30 are listed.	Alleen de eerste 30 worden getoond.
 	Only thread changes and objects set to trim cut the thread.	Alleen garenwissels en objecten met afknippen knippen de draad af.
 	Open a document to see its sewing order.	Open een document om de borduurvolgorde te zien.
-	Paint Order	Tekenvolgorde
+	Reset Order	Volgorde herstellen
 	Passes:	Doorgangen:
 	Pattern Border	Patroonrand
 	Pattern Size	Patroongrootte
@@ -5786,7 +5785,7 @@ swatch	Bright Violet	Felviolet
 	Sew First	Eerst borduren
 	Sew Last	Laatst borduren
 	Sew Later	Later borduren
-	Sew Moves Under:	Verplaatsingen borduren onder:
+	Stitch Moves Under:	Verplaatsingen naaien onder:
 	Sew Order…	Borduurvolgorde…
 	Sew in paint order again (bottom first)	Weer in tekenvolgorde borduren (onderste eerst)
 	Sews the column this much wider, since the thread pulls the fabric in	Borduurt de kolom zoveel breder, omdat de draad de stof samentrekt
@@ -6949,7 +6948,7 @@ breakText	Glyphs	Glyphs
 	Twill	Keper
 	Terry	Badstof
 	Felt	Vilt
-	Fabric Look:	Stofuiterlijk:
+	Preview Fabric:	Voorbeeldstof:
 	As the Fabric	Zoals de stof
 	The fabric's colour	De kleur van de stof
 	The texture's own colour	De eigen kleur van de textuur

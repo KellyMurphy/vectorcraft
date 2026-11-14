@@ -11,7 +11,7 @@ Select paths or compound paths (or groups holding them) and choose **Object › 
 
 | Stitch | What it sews | Settings |
 |---|---|---|
-| Auto | Picks per shape (per letter, for type) by how wide its strokes are: under **Bean Outline Under** (1 mm) a bean stitch round the outline (a letter: narrow satin columns, see [Type](#type)), over **Fill Over** (7 mm) a tatami fill with auto underlay and a satin border fitted to the shape, in between a satin shape with auto underlay. The stroke width is twice the shape's area over its perimeter. | `thinUnder` (1 mm), `wideOver` (7 mm), `spacing`, `pull`, `pullPercent`, `push`, `border` (for filled shapes; 2 mm), `puff` (3D foam, for the letters sewn as satin), `angles` (stitch angle lines, for the shapes sewn as satin; none) |
+| Auto | Picks per shape (per letter, for type) by how wide its strokes are: under **Bean Below** (1 mm) a bean stitch round the outline (a letter: narrow satin columns, see [Type](#type)), over **Fill Above** (7 mm) a tatami fill with auto underlay and a satin border fitted to the shape, in between a satin shape with auto underlay. The stroke width is twice the shape's area over its perimeter. | `thinUnder` (1 mm), `wideOver` (7 mm), `spacing`, `pull`, `pullPercent`, `push`, `border` (for filled shapes; 2 mm), `puff` (3D foam, for the letters sewn as satin), `angles` (stitch angle lines, for the shapes sewn as satin; none) |
 | Running Stitch | Single stitches along the path (outlines, details). Sharp corners keep a needle point. **Style** sews it as a machine version of a hand stitch instead: **Chain** (linked loops), **Stem** (slanted, overlapping stitches: a twisted cord), **Backstitch** (each stitch forward, then half a stitch back: every stretch sewn three times) or **Sashiko** (dashes sewn three times, a single stitch across each gap). Each style fits whole repeats between sharp corners and starts again at each. | `length` (2.5 mm; a chain loop, a stem stitch, a sashiko dash), `style` (single, chain, stem, backstitch, sashiko; single), `width` (chain and stem: the loops or the slant, 0.2–6 mm; chain 1.5, stem 0.4), `flip` (stem: slanted the other way; off), `gap` (sashiko: between dashes, 0.5–6 mm; 1.5), `startAt` (where the needle starts; none: nearest where it is) |
 | Bean Stitch | Running stitch sewn several times over each stitch: a bolder line. | `length` (2.5 mm), `passes` (3, 5, 7 or 9; 3), `startAt` |
 | Satin Column | A zigzag centred on the path, as wide as the stroke (borders, lettering strokes). **Between Rails**: the object's two longest subpaths are the column's edges and the satin spans between them, as wide as they are apart (columns that swell and taper); other subpaths crossing both are rungs, each setting the stitch direction where it crosses. Draw the two edges, join them (Object › Compound Path) and tick Between Rails. | `width` (the stroke width, else 3 mm; up to 30 mm split, 12 mm not), `spacing` (density, 0.4 mm), `pull` (pull compensation, 0 mm) and `pullPercent` (% of the width, 0), `push` (push compensation: shorter at the ends, 0 mm), `underlay` (auto, none, center, edge, zigzag), `rails` (off), `split` (auto: stitches longer than `splitAt`, 7 mm, are sewn in pieces at most `splitLength`, 4 mm, long, moved along from stitch to stitch by `splitPattern`, stagger or random; off), `angles` (stitch angle lines; none), `puff` (3D foam thickness; none) |
@@ -23,7 +23,8 @@ Select paths or compound paths (or groups holding them) and choose **Object › 
 | Manual Stitch | The needle goes down at every anchor, as drawn. Imported designs use it. | — |
 
 **Window › Embroidery** (or Object › Embroidery › **Embroidery Panel**) has a header and four tabs. The
-header, always shown, holds the **Stitch Preview** and **Realistic** switches, the design in one line
+header, always shown, holds the **Stitch Preview** and **Realistic** switches (with **Preview Fabric**, what
+Realistic draws the stitches on, while it is on), the design in one line
 (stitches, size, threads, sewing time), **Export** in the machine's format and a badge with the number of
 problems the design checker found, which opens Check & Export. **Stitch** shows the same for the selection.
 It starts with one line saying what is selected, its size in mm, its stitch and its stitch count (`1 path ·
@@ -31,11 +32,11 @@ It starts with one line saying what is selected, its size in mm, its stitch and 
 Then the stitch, chosen from stitched pictures (each drawn by the real generator, with a line saying what it
 does) in three groups: Auto, the stitches along a line, and those that cover an area. With only open paths
 selected the area stitches are dimmed (they still work, closing each path with a straight line). Once the
-selection has a stitch the pictures fold away to that one; click it to choose another. Then the thread and trims, and the stitch's own settings (Density is the spacing), the rarely
+selection has a stitch the pictures fold away to that one; click it to choose another. Then the thread and trims, and the stitch's own settings, the rarely
 changed ones folded under **More Settings**. Fill patterns and border patterns are picked from pictures
 too, so Tatami 4 and Tatami 7 can be told apart before sewing. Once something is stitched while the
 document has no fabric or hoop, the tab opens with both menus and a Dismiss button. **Setup** holds what
-the design is sewn on and with: the fabric, its look in Realistic view, the hoop, the machine format (DST,
+the design is sewn on and with: the fabric, the hoop, the machine format (DST,
 PES, JEF, EXP, VP3 or U01) and the thread chart; the sewing settings (Machine Speed, Overlap, Shortest
 Stitch); and the Sew-Out Test panel. **Check & Export** holds the stitch count, size, trims and jumps, one
 row per thread in sewing order (its chart code and name, and its stitches), the worksheet, mockup, Real
@@ -323,7 +324,7 @@ stitched objects as they are sewn, each with a picture of its stitches, its thre
 select it (the preview steps to it); drag it up or down the list, or use **Sew First**, **Sew Earlier**,
 **Sew Later** and **Sew Last** on the selection.
 **By Thread** groups the order by thread colour (colours in the order they first come, each keeping its
-objects' order), so each thread is sewn once; **Paint Order** goes back. The order is saved with the
+objects' order), so each thread is sewn once; **Reset Order** goes back to paint order. The order is saved with the
 document; objects added later are sewn after the ones in it, and deleted ones drop out. Whatever is sewn
 later lies on top on the fabric, so Stitch Preview and the exported design follow the sewing order, not the
 paint order. Commands: `embroidery.order`, `embroidery.reorder {to: first|earlier|later|last, ids?}` or
@@ -335,7 +336,7 @@ before a long jump and before each colour change. The **Travel** settings (the S
 
 - **Trim Jumps Over** (3 mm): a jump longer than this cuts the thread first. Turn it off to cut only at thread
   changes and at objects set to trim.
-- **Sew Moves Under** (1 mm): a move to the next stitch up to this long is sewn as a stitch instead of jumped
+- **Stitch Moves Under** (1 mm): a move to the next stitch up to this long is sewn as a stitch instead of jumped
   (never longer than the trim length).
 
 Each object can also force a cut: **Trim Before** cuts the thread before it starts, however close it is to the
@@ -392,7 +393,7 @@ angle; threads cast soft shadows on the fabric and on what was sewn before them;
 trimmed shows as the loose thread it leaves. The fabric under it is drawn in code: **Plain Weave**,
 **Twill**, **Denim**, **Knit**, **Terry**, **Leather** or **Felt**, by default as the document's fabric
 profile suggests (knit for Knit, terry for Towel, twill for Cap…). Choose another, and the fabric's
-colour (a navy polo, a white towel), in the panel's **Fabric Look** row or with `embroidery.setup
+colour (a navy polo, a white towel), in the panel's **Preview Fabric** row (in the header while Realistic is on) or with `embroidery.setup
 {fabricTexture, fabricColor}`; both are saved with the document and change nothing that is sewn.
 **None** (`fabricTexture: "none"`) draws no fabric: only the shaded threads, over the artwork.
 Zoomed out, fine weaves blend into an even colour rather than moiré. While the view pans or zooms the
@@ -409,7 +410,7 @@ shoulder), **Right Chest**, **Center** (a T-shirt or hoodie front, a cap front, 
 the Border** (a towel). Each place has the largest size usually sewn there (100 × 100 mm on a chest,
 115 × 57 mm on a cap front); a design larger than that is still drawn, with a warning. The garment has
 its own fabric (knit shirts, a twill cap, a canvas tote, a terry towel) and colour, or the colour chosen
-in **Fabric Look**; the thread is drawn as Realistic Stitches draws it. **Whole Garment** shows all of
+in **Preview Fabric**; the thread is drawn as Realistic Stitches draws it. **Whole Garment** shows all of
 it; **Close-Up** shows the design and the cloth round it. The mockup opens as a new document the
 garment's real size, ready to export or print; `embroidery.mockup {garment, placement, view, width,
 fabricTexture, fabricColor, format: png, path?}` writes or returns the PNG instead.

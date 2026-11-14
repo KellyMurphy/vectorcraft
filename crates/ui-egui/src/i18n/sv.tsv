@@ -5825,7 +5825,7 @@ swatch	Yellow Green	Gulgrön
 # Embroidery (Object › Embroidery, the Embroidery and Sew Order panels)
 	A satin border sewn over the shape's edges, after the fill	En satinkant som sys över formens kanter efter fyllningen
 	After	Efter
-	Bean Outline Under:	Bean-kontur under:
+	Bean Below:	Böna under:
 	Before	Före
 	Between Rails	Mellan skenor
 	Border:	Kant:
@@ -5837,7 +5837,6 @@ swatch	Yellow Green	Gulgrön
 	Circles	Cirklar
 	Cut the thread after this object	Klipp tråden efter det här objektet
 	Cut the thread before this object, however close it starts	Klipp tråden före det här objektet, hur nära det än börjar
-	Density:	Täthet:
 	Design	Design
 	Diamonds	Romber
 	Distance between rows: smaller is denser	Avstånd mellan rader: mindre är tätare
@@ -5849,7 +5848,7 @@ swatch	Yellow Green	Gulgrön
 	Embroidery…	Broderi…
 	Export DST…	Exportera DST…
 	Extract Border Pattern	Extrahera kantmönster
-	Fill Over:	Fyllning över:
+	Fill Above:	Fyllning över:
 	Fill Underlay	Fyllningsunderlag
 	First object	Första objektet
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Ge banor söminställningar i panelen Broderi; de broderas i den här ordningen.
@@ -5874,7 +5873,7 @@ swatch	Yellow Green	Gulgrön
 	Only the first 30 are listed.	Bara de första 30 visas.
 	Only thread changes and objects set to trim cut the thread.	Bara trådbyten och objekt inställda på klippning klipper tråden.
 	Open a document to see its sewing order.	Öppna ett dokument för att se dess broderingsordning.
-	Paint Order	Ritordning
+	Reset Order	Återställ ordning
 	Passes:	Genomgångar:
 	Pattern Border	Mönsterkant
 	Pattern Size	Mönsterstorlek
@@ -5894,7 +5893,7 @@ swatch	Yellow Green	Gulgrön
 	Sew First	Brodera först
 	Sew Last	Brodera sist
 	Sew Later	Brodera senare
-	Sew Moves Under:	Brodera förflyttningar under:
+	Stitch Moves Under:	Sy förflyttningar under:
 	Sew Order…	Broderingsordning…
 	Sew in paint order again (bottom first)	Brodera i ritordning igen (understa först)
 	Sews the column this much wider, since the thread pulls the fabric in	Broderar kolumnen så mycket bredare, eftersom tråden drar ihop tyget
@@ -7158,7 +7157,7 @@ digits	Hindi	Hindi
 	Twill	Kypert
 	Terry	Frotté
 	Felt	Filt
-	Fabric Look:	Tygets utseende:
+	Preview Fabric:	Förhandsvisningstyg:
 	As the Fabric	Som tyget
 	The fabric's colour	Tygets färg
 	The texture's own colour	Texturens egen färg

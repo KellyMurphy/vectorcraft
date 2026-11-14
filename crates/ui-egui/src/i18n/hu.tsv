@@ -5782,7 +5782,7 @@ imageTrace	Outline	Körvonal
 # Embroidery (Object › Embroidery, the Embroidery and Sew Order panels)
 	A satin border sewn over the shape's edges, after the fill	A kitöltés után az alakzat szélei fölé varrt szaténszegély
 	After	Utána
-	Bean Outline Under:	Bean-körvonal ez alatt:
+	Bean Below:	Baböltés alatta:
 	Before	Előtte
 	Between Rails	Sínek között
 	Border:	Szegély:
@@ -5794,7 +5794,6 @@ imageTrace	Outline	Körvonal
 	Circles	Körök
 	Cut the thread after this object	A cérna elvágása ez után az objektum után
 	Cut the thread before this object, however close it starts	A cérna elvágása ez előtt az objektum előtt, bármilyen közel is kezdődik
-	Density:	Sűrűség:
 	Design	Minta
 	Diamonds	Rombuszok
 	Distance between rows: smaller is denser	A sorok távolsága: a kisebb sűrűbb
@@ -5806,7 +5805,7 @@ imageTrace	Outline	Körvonal
 	Embroidery…	Hímzés…
 	Export DST…	DST exportálása…
 	Extract Border Pattern	Szegélyminta kinyerése
-	Fill Over:	Kitöltés e fölött:
+	Fill Above:	Kitöltés felette:
 	Fill Underlay	Kitöltés-alátét
 	First object	Első objektum
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Adjon öltésbeállításokat a görbéknek a Hímzés panelen; ebben a sorrendben hímzi őket.
@@ -5831,7 +5830,7 @@ imageTrace	Outline	Körvonal
 	Only the first 30 are listed.	Csak az első 30 szerepel a listán.
 	Only thread changes and objects set to trim cut the thread.	Csak a cérnacserék és a vágásra beállított objektumok vágják el a cérnát.
 	Open a document to see its sewing order.	Nyisson meg egy dokumentumot a hímzési sorrend megtekintéséhez.
-	Paint Order	Rajzolási sorrend
+	Reset Order	Sorrend visszaállítása
 	Passes:	Menetek:
 	Pattern Border	Mintaszegély
 	Pattern Size	Minta mérete
@@ -5851,7 +5850,7 @@ imageTrace	Outline	Körvonal
 	Sew First	Hímzés elsőként
 	Sew Last	Hímzés utolsóként
 	Sew Later	Hímzés később
-	Sew Moves Under:	Mozgások hímzése ez alatt:
+	Stitch Moves Under:	Mozgások varrása alatta:
 	Sew Order…	Hímzési sorrend…
 	Sew in paint order again (bottom first)	Hímzés újra rajzolási sorrendben (alulról)
 	Sews the column this much wider, since the thread pulls the fabric in	Ennyivel szélesebbre hímzi az oszlopot, mert a cérna összehúzza az anyagot
@@ -7086,7 +7085,7 @@ breakText	Glyphs	Glifák
 	Twill	Sávolykötés
 	Terry	Frottír
 	Felt	Filc
-	Fabric Look:	Anyag megjelenése:
+	Preview Fabric:	Előnézeti anyag:
 	As the Fabric	Az anyag szerint
 	The fabric's colour	Az anyag színe
 	The texture's own colour	A textúra saját színe

@@ -5469,7 +5469,6 @@ lighting	Light	ライト
 	Embroidery Stitches	刺繍のステッチ
 
 # Embroidery panel
-	Density:	密度:
 	Design	デザイン
 	Distance between rows: smaller is denser	列の間隔:小さいほど密になります
 	Distance between zigzags: smaller is denser	ジグザグの間隔:小さいほど密になります
@@ -5509,7 +5508,7 @@ lighting	Light	ライト
 	Cut the thread after this object	このオブジェクトの後で糸を切ります
 	Travel	移動
 	Trim Jumps Over:	この長さを超えるジャンプで糸切り:
-	Sew Moves Under:	この長さ未満の移動は縫う:
+	Stitch Moves Under:	移動を縫う（未満）:
 	Only thread changes and objects set to trim cut the thread.	糸を切るのは糸の交換時と、糸切りを設定したオブジェクトだけです。
 	Embroidery Setup	刺繍の設定
 
@@ -5528,8 +5527,8 @@ lighting	Light	ライト
 
 # Embroidery: auto
 	Each shape (or letter) is stitched by how wide its strokes are.	各形状(または文字)をストロークの太さに応じて縫います。
-	Bean Outline Under:	ビーン輪郭の上限:
-	Fill Over:	フィルの下限:
+	Bean Below:	ビーン（未満）:
+	Fill Above:	フィル（超）:
 	Thinner strokes get a bean stitch round their outline	これより細いストロークは輪郭をビーンステッチで縫います
 	Wider strokes are filled, with a satin border; strokes in between get satin	これより太いストロークはフィルとサテンの縁取り、その間はサテンで縫います
 	Only paths, compound paths and type can be stitched.	ステッチできるのはパス、複合パス、テキストだけです。
@@ -5567,7 +5566,7 @@ lighting	Light	ライト
 	Sew Last	最後に縫う
 	By Thread	糸ごと
 	Group the sewing order by thread colour, for fewer thread changes	糸の色ごとに縫製順をまとめ、糸替えを減らします
-	Paint Order	重ね順
+	Reset Order	順序をリセット
 	Sew by Thread	糸ごとに縫う
 	Sew in Paint Order	重ね順で縫う
 	Change Sew Order	縫製順を変更
@@ -6807,7 +6806,7 @@ breakText	Glyphs	字形
 	Twill	綾織り
 	Terry	パイル
 	Felt	フェルト
-	Fabric Look:	生地の見た目:
+	Preview Fabric:	プレビュー生地:
 	As the Fabric	生地に合わせる
 	The fabric's colour	生地の色
 	The texture's own colour	テクスチャ本来の色

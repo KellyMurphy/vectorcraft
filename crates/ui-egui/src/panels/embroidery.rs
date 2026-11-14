@@ -273,6 +273,10 @@ fn setup_prompt(app: &mut VectorcraftApp, ui: &mut Ui, info: &Value) {
 /// Export with a badge for what the checker found (it opens the checker's list).
 fn header(app: &mut VectorcraftApp, ui: &mut Ui, info: &Value) {
     preview_toggles(app, ui);
+    // What Realistic draws the stitches on, beside its switch while it is on.
+    if app.ui.view.stitch_preview && app.ui.view.realistic_stitches {
+        look_row(app, ui);
+    }
     let d = &info["design"];
     let stitched = d["objects"].as_u64().unwrap_or(0) > 0;
     let t = Tokens::get(ui.ctx());
@@ -1451,7 +1455,7 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
                     }
                 });
             }
-            mm(app, ui, tl!("Density:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between zigzags: smaller is denser"));
+            mm(app, ui, tl!("Spacing:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between zigzags: smaller is denser"));
             mm(
                 app,
                 ui,
@@ -1471,7 +1475,7 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
                     set(app, json!({"angle": v}));
                 }
             });
-            mm(app, ui, tl!("Density:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between rows: smaller is denser"));
+            mm(app, ui, tl!("Spacing:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between rows: smaller is denser"));
             mm(app, ui, tl!("Stitch Length:"), "length", num("length"), StitchSettings::LENGTH, tl!("How long each stitch is"));
             fill_pattern_picker(app, ui, sel);
             if sel["motif"].is_string() {
@@ -1505,7 +1509,7 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
             mm(
                 app,
                 ui,
-                tl!("Bean Outline Under:"),
+                tl!("Bean Below:"),
                 "thinUnder",
                 num("thinUnder"),
                 StitchSettings::THIN,
@@ -1514,13 +1518,13 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
             mm(
                 app,
                 ui,
-                tl!("Fill Over:"),
+                tl!("Fill Above:"),
                 "wideOver",
                 num("wideOver"),
                 StitchSettings::WIDE,
                 tl!("Wider strokes are filled, with a satin border; strokes in between get satin"),
             );
-            mm(app, ui, tl!("Density:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between zigzags: smaller is denser"));
+            mm(app, ui, tl!("Spacing:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between zigzags: smaller is denser"));
             mm(
                 app,
                 ui,
@@ -1535,7 +1539,7 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
         StitchKind::SatinShape => {
             widgets::section_header(ui, tl!("Satin Shape"));
             widgets::dim_label(ui, tl!("Satin follows the shape's strokes from edge to edge."));
-            mm(app, ui, tl!("Density:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between zigzags: smaller is denser"));
+            mm(app, ui, tl!("Spacing:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between zigzags: smaller is denser"));
             mm(
                 app,
                 ui,
@@ -1664,7 +1668,7 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
             mm(app, ui, tl!("Stitch Length:"), "length", num("length"), StitchSettings::LENGTH, tl!("How long each stitch is"));
             // Density only matters to patterns with satin in them.
             if current.is_some_and(|p| p["satin"] == json!(true)) {
-                mm(app, ui, tl!("Density:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between zigzags: smaller is denser"));
+                mm(app, ui, tl!("Spacing:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between zigzags: smaller is denser"));
             }
         }
         StitchKind::Manual => {
@@ -2161,7 +2165,7 @@ fn look_row(app: &mut VectorcraftApp, ui: &mut Ui) {
         texture_label(look.texture).to_string()
     };
     ui.scope(|ui| {
-        widgets::label_row(ui, tl!("Fabric Look:"), LABEL_W, |ui| {
+        widgets::label_row(ui, tl!("Preview Fabric:"), LABEL_W, |ui| {
             let opts: Vec<&str> = names.iter().map(String::as_str).collect();
             if let Some(i) = names_dropdown(ui, "emb-look", &shown, &opts) {
                 let texture = match i {
@@ -2529,7 +2533,6 @@ fn underlay_row(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &V
 fn setup_tab(app: &mut VectorcraftApp, ui: &mut Ui, setup: &Value) {
     widgets::section_header(ui, tl!("Setup"));
     fabric_row(app, ui);
-    look_row(app, ui);
     hoop_row(app, ui);
     machine_row(app, ui);
     chart_row(app, ui);
@@ -3023,6 +3026,29 @@ mod tests {
             out.shapes.iter().for_each(|c| walk(&c.shape, &mut texts, &mut fills));
         }
         (texts, fills)
+    }
+
+    /// UI3.3: settings say what they do: Spacing (not Density), the Auto thresholds by the stitch
+    /// they pick, and Preview Fabric beside Realistic in the header rather than in Setup.
+    #[test]
+    fn the_labels_say_what_they_do() {
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        let run = |app: &mut VectorcraftApp, id: &str, p: Value| app.session.execute(id, &p).unwrap();
+        run(&mut app, "file.new", json!({"width": 300, "height": 300}));
+        run(&mut app, "shape.rectangle", json!({"x": 10, "y": 10, "width": 100, "height": 50}));
+        run(&mut app, "embroidery.set", json!({"type": "fill"}));
+        let texts = drawn(&mut app, 0).0;
+        assert!(texts.iter().any(|t| t == "Spacing:") && !texts.iter().any(|t| t == "Density:"), "{texts:?}");
+        run(&mut app, "embroidery.set", json!({"type": "auto"}));
+        let texts = drawn(&mut app, 0).0;
+        assert!(texts.iter().any(|t| t == "Bean Below:") && texts.iter().any(|t| t == "Fill Above:"), "{texts:?}");
+        assert!(!texts.iter().any(|t| t == "Preview Fabric:"), "Realistic is off: {texts:?}");
+        app.ui.view.stitch_preview = true;
+        app.ui.view.realistic_stitches = true;
+        for tab in [0, SETUP_TAB] {
+            let texts = drawn(&mut app, tab).0;
+            assert_eq!(texts.iter().filter(|t| *t == "Preview Fabric:").count(), 1, "in the header only: {texts:?}");
+        }
     }
 
     /// UI3.2: the Stitch tab starts with what is selected, its size in mm, its stitch and the

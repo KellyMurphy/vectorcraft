@@ -460,7 +460,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             ui.end_row();
         }
         if ui
-            .add_enabled_ui(custom, |ui| widgets::flat_button(ui, tl!("Paint Order"), 80.0))
+            .add_enabled_ui(custom, |ui| widgets::flat_button(ui, tl!("Reset Order"), 80.0))
             .inner
             .on_hover_text(tl!("Sew in paint order again (bottom first)"))
             .clicked()
@@ -494,7 +494,7 @@ fn travel(app: &mut VectorcraftApp, ui: &mut Ui, setup: &Value) {
             }
         });
     });
-    widgets::label_row(ui, tl!("Sew Moves Under:"), LABEL_W, |ui| {
+    widgets::label_row(ui, tl!("Stitch Moves Under:"), LABEL_W, |ui| {
         if let Some(v) = widgets::mixed_field(ui, ("emb", "sewMoves"), setup["stitchMovesUnder"].as_f64(), " mm", 1, FIELD_W) {
             let r = EmbroiderySetup::STITCH_MOVES;
             app.run("embroidery.setup", json!({ "stitchMovesUnder": v.clamp(*r.start(), *r.end()) })).ok();

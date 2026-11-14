@@ -5753,7 +5753,6 @@ mark-style	Japanese	Japonesas
 	Embroidery Stitches	Puntadas de bordado
 
 # Embroidery panel
-	Density:	Densidad:
 	Design	Diseño
 	Distance between rows: smaller is denser	Distancia entre filas: menor es más denso
 	Distance between zigzags: smaller is denser	Distancia entre zigzags: menor es más denso
@@ -5793,7 +5792,7 @@ mark-style	Japanese	Japonesas
 	Cut the thread after this object	Cortar el hilo después de este objeto
 	Travel	Desplazamientos
 	Trim Jumps Over:	Cortar saltos de más de:
-	Sew Moves Under:	Coser desplazamientos de menos de:
+	Stitch Moves Under:	Coser desplazamientos bajo:
 	Only thread changes and objects set to trim cut the thread.	Solo los cambios de hilo y los objetos con corte cortan el hilo.
 	Embroidery Setup	Ajustes de bordado
 
@@ -5812,8 +5811,8 @@ mark-style	Japanese	Japonesas
 
 # Embroidery: auto
 	Each shape (or letter) is stitched by how wide its strokes are.	Cada forma (o letra) se borda según el ancho de sus trazos.
-	Bean Outline Under:	Contorno triple por debajo de:
-	Fill Over:	Relleno por encima de:
+	Bean Below:	Judía bajo:
+	Fill Above:	Relleno sobre:
 	Thinner strokes get a bean stitch round their outline	Los trazos más finos llevan una puntada triple en su contorno
 	Wider strokes are filled, with a satin border; strokes in between get satin	Los trazos más anchos se rellenan con borde de satén; los intermedios, con satén
 	Only paths, compound paths and type can be stitched.	Solo se pueden bordar trazados, trazados compuestos y texto.
@@ -5851,7 +5850,7 @@ mark-style	Japanese	Japonesas
 	Sew Last	Coser al final
 	By Thread	Por hilo
 	Group the sewing order by thread colour, for fewer thread changes	Agrupar el orden de costura por color de hilo, para menos cambios de hilo
-	Paint Order	Orden de apilamiento
+	Reset Order	Restablecer orden
 	Sew by Thread	Coser por hilo
 	Sew in Paint Order	Coser en orden de apilamiento
 	Change Sew Order	Cambiar orden de costura
@@ -7063,7 +7062,7 @@ breakText	Glyphs	Glifos
 	Twill	Sarga
 	Terry	Rizo
 	Felt	Fieltro
-	Fabric Look:	Aspecto del tejido:
+	Preview Fabric:	Tela de vista previa:
 	As the Fabric	Como el tejido
 	The fabric's colour	El color del tejido
 	The texture's own colour	El color propio de la textura

@@ -5425,7 +5425,6 @@ lighting	Light	Luce
 	Embroidery Stitches	Punti del ricamo
 
 # Embroidery panel
-	Density:	Densità:
 	Design	Disegno
 	Distance between rows: smaller is denser	Distanza tra le file: più piccola, più fitta
 	Distance between zigzags: smaller is denser	Distanza tra gli zigzag: più piccola, più fitta
@@ -5465,7 +5464,7 @@ lighting	Light	Luce
 	Cut the thread after this object	Taglia il filo dopo questo oggetto
 	Travel	Spostamenti
 	Trim Jumps Over:	Taglia i salti oltre:
-	Sew Moves Under:	Cuci gli spostamenti sotto:
+	Stitch Moves Under:	Cuci spostamenti sotto:
 	Only thread changes and objects set to trim cut the thread.	Tagliano il filo solo i cambi di filo e gli oggetti impostati per tagliare.
 	Embroidery Setup	Impostazioni ricamo
 
@@ -5484,8 +5483,8 @@ lighting	Light	Luce
 
 # Embroidery: auto
 	Each shape (or letter) is stitched by how wide its strokes are.	Ogni forma (o lettera) è ricamata secondo la larghezza dei suoi tratti.
-	Bean Outline Under:	Contorno triplo sotto:
-	Fill Over:	Riempimento oltre:
+	Bean Below:	Fagiolo sotto:
+	Fill Above:	Riempimento sopra:
 	Thinner strokes get a bean stitch round their outline	I tratti più sottili ricevono un punto triplo sul contorno
 	Wider strokes are filled, with a satin border; strokes in between get satin	I tratti più larghi sono riempiti con un bordo satin; quelli intermedi in satin
 	Only paths, compound paths and type can be stitched.	Si possono ricamare solo tracciati, tracciati composti e testo.
@@ -5523,7 +5522,7 @@ lighting	Light	Luce
 	Sew Last	Cuci per ultimo
 	By Thread	Per filo
 	Group the sewing order by thread colour, for fewer thread changes	Raggruppa l'ordine di cucitura per colore del filo, per meno cambi di filo
-	Paint Order	Ordine di sovrapposizione
+	Reset Order	Ripristina ordine
 	Sew by Thread	Cuci per filo
 	Sew in Paint Order	Cuci in ordine di sovrapposizione
 	Change Sew Order	Cambia ordine di cucitura
@@ -6741,7 +6740,7 @@ breakText	Glyphs	Glifi
 	Twill	Saia
 	Terry	Spugna
 	Felt	Feltro
-	Fabric Look:	Aspetto del tessuto:
+	Preview Fabric:	Tessuto anteprima:
 	As the Fabric	Come il tessuto
 	The fabric's colour	Il colore del tessuto
 	The texture's own colour	Il colore proprio della texture

@@ -5724,7 +5724,6 @@ mark-style	Japanese	Japonesas
 	Embroidery Stitches	Pontos do bordado
 
 # Embroidery panel
-	Density:	Densidade:
 	Design	Desenho
 	Distance between rows: smaller is denser	Distância entre as fileiras: menor é mais denso
 	Distance between zigzags: smaller is denser	Distância entre os zigue-zagues: menor é mais denso
@@ -5764,7 +5763,7 @@ mark-style	Japanese	Japonesas
 	Cut the thread after this object	Cortar a linha depois deste objeto
 	Travel	Deslocamentos
 	Trim Jumps Over:	Cortar saltos acima de:
-	Sew Moves Under:	Costurar deslocamentos abaixo de:
+	Stitch Moves Under:	Costurar deslocamentos abaixo de:
 	Only thread changes and objects set to trim cut the thread.	Só as trocas de linha e os objetos definidos para cortar cortam a linha.
 	Embroidery Setup	Configurações de bordado
 
@@ -5783,8 +5782,8 @@ mark-style	Japanese	Japonesas
 
 # Embroidery: auto
 	Each shape (or letter) is stitched by how wide its strokes are.	Cada forma (ou letra) é bordada conforme a largura de seus traços.
-	Bean Outline Under:	Contorno triplo abaixo de:
-	Fill Over:	Preenchimento acima de:
+	Bean Below:	Feijão abaixo de:
+	Fill Above:	Preenchimento acima de:
 	Thinner strokes get a bean stitch round their outline	Traços mais finos recebem ponto triplo no contorno
 	Wider strokes are filled, with a satin border; strokes in between get satin	Traços mais largos são preenchidos com borda de cetim; os intermediários, com cetim
 	Only paths, compound paths and type can be stitched.	Só é possível bordar demarcadores, demarcadores compostos e texto.
@@ -5822,7 +5821,7 @@ mark-style	Japanese	Japonesas
 	Sew Last	Costurar por último
 	By Thread	Por linha
 	Group the sewing order by thread colour, for fewer thread changes	Agrupar a ordem de costura por cor de linha, para menos trocas de linha
-	Paint Order	Ordem de empilhamento
+	Reset Order	Redefinir ordem
 	Sew by Thread	Costurar por linha
 	Sew in Paint Order	Costurar na ordem de empilhamento
 	Change Sew Order	Alterar ordem de costura
@@ -7194,7 +7193,7 @@ swatch	Yellow Green	Verde-amarelado
 	Twill	Sarja
 	Terry	Atoalhado
 	Felt	Feltro
-	Fabric Look:	Aparência do tecido:
+	Preview Fabric:	Tecido da visualização:
 	As the Fabric	Como o tecido
 	The fabric's colour	A cor do tecido
 	The texture's own colour	A cor própria da textura

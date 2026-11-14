@@ -1,6 +1,6 @@
 # Embroidery UI improvement plan
 
-Status: Phase 1 (UI1.1 to UI1.5), Phase 2 (UI2.1 to UI2.5), UI3.1 and UI3.2 done; the rest proposed. Written 2026-11-11.
+Status: Phase 1 (UI1.1 to UI1.5), Phase 2 (UI2.1 to UI2.5), UI3.1 to UI3.3 done; the rest proposed. Written 2026-11-11.
 
 This plan comes from a review of the three embroidery panels: reading their code and driving the
 app through each tab with a small design (a filled rectangle and a satin line). It lists what to
@@ -282,6 +282,19 @@ with an ellipsis. The noun is path, compound path or type object, else object.
 
 Renaming a label changes its i18n key in every catalog. Command parameter names stay as they are.
 
+Status: done, with shorter wording where the proposal didn't fit. The panel's labels are painted
+in a 114-point column and aren't clipped, so a long label runs into its field.
+- Density is now Spacing, as Zigzag already said.
+- Bean Outline Under and Fill Over are Bean Below and Fill Above: each names the stitch Auto picks
+  on the far side of its width. The tooltips still say "thinner strokes" and "wider strokes".
+- Fabric Look is Preview Fabric. It moved from Setup to the header, under Realistic, and shows only
+  while Realistic is on.
+- Sew Moves Under is Stitch Moves Under: a move that short is sewn as a stitch, not jumped.
+- Sew Order's Paint Order button is Reset Order.
+
+Each old catalog row was renamed in place, with a new translation. "Density:" rows went, since
+"Spacing:" already had one. Test: `the_labels_say_what_they_do`.
+
 ### UI3.4 Buttons that can't run
 
 Appliqué, Cut File, Auto-Digitize, Extract Border Pattern and Extract Motif are always enabled and
@@ -340,3 +353,4 @@ sewing is seen on the artwork at the size the user is working at.
 - 2026-11-12: UI2.4 done; Phase 2 complete.
 - 2026-11-14: UI3.1 done.
 - 2026-11-14: UI3.2 done.
+- 2026-11-14: UI3.3 done.

@@ -5809,7 +5809,6 @@ mark-style	Japanese	Japonské
 	Embroidery Stitches	Stehy výšivky
 
 # Embroidery panel
-	Density:	Hustota:
 	Design	Návrh
 	Distance between rows: smaller is denser	Vzdálenost řad: menší je hustší
 	Distance between zigzags: smaller is denser	Vzdálenost klikatek: menší je hustší
@@ -5849,7 +5848,7 @@ mark-style	Japanese	Japonské
 	Cut the thread after this object	Ustřihnout nit po tomto objektu
 	Travel	Přesuny
 	Trim Jumps Over:	Ustřihnout skoky delší než:
-	Sew Moves Under:	Prošít přesuny kratší než:
+	Stitch Moves Under:	Prošít přesuny pod:
 	Only thread changes and objects set to trim cut the thread.	Nit se střihá jen při výměně nitě a u objektů s nastaveným ustřižením.
 	Embroidery Setup	Nastavení výšivky
 
@@ -5868,8 +5867,8 @@ mark-style	Japanese	Japonské
 
 # Embroidery: auto
 	Each shape (or letter) is stitched by how wide its strokes are.	Každý tvar (nebo písmeno) se vyšije podle šířky svých tahů.
-	Bean Outline Under:	Trojitý obrys pod:
-	Fill Over:	Výplň nad:
+	Bean Below:	Fazolový pod:
+	Fill Above:	Výplň nad:
 	Thinner strokes get a bean stitch round their outline	Tenčí tahy dostanou trojitý steh po obrysu
 	Wider strokes are filled, with a satin border; strokes in between get satin	Širší tahy se vyplní se saténovým lemem; mezi tím satén
 	Only paths, compound paths and type can be stitched.	Vyšívat lze jen cesty, složené cesty a text.
@@ -5907,7 +5906,7 @@ mark-style	Japanese	Japonské
 	Sew Last	Šít jako poslední
 	By Thread	Podle nitě
 	Group the sewing order by thread colour, for fewer thread changes	Seskupit pořadí šití podle barvy nitě, pro méně výměn nitě
-	Paint Order	Pořadí vrstev
+	Reset Order	Obnovit pořadí
 	Sew by Thread	Šít podle nitě
 	Sew in Paint Order	Šít v pořadí vrstev
 	Change Sew Order	Změnit pořadí šití
@@ -7121,7 +7120,7 @@ breakText	Glyphs	Glyfy
 	Twill	Kepr
 	Terry	Froté
 	Felt	Plsť
-	Fabric Look:	Vzhled látky:
+	Preview Fabric:	Látka náhledu:
 	As the Fabric	Podle látky
 	The fabric's colour	Barva látky
 	The texture's own colour	Vlastní barva textury

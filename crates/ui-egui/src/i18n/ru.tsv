@@ -5419,7 +5419,6 @@ lighting	Light	Свет
 	Embroidery Stitches	Стежки вышивки
 
 # Embroidery panel
-	Density:	Плотность:
 	Design	Дизайн
 	Distance between rows: smaller is denser	Расстояние между рядами: чем меньше, тем плотнее
 	Distance between zigzags: smaller is denser	Расстояние между зигзагами: чем меньше, тем плотнее
@@ -5459,7 +5458,7 @@ lighting	Light	Свет
 	Cut the thread after this object	Обрезать нить после этого объекта
 	Travel	Перемещения
 	Trim Jumps Over:	Обрезать прыжки длиннее:
-	Sew Moves Under:	Прошивать перемещения короче:
+	Stitch Moves Under:	Шить переходы до:
 	Only thread changes and objects set to trim cut the thread.	Нить обрезается только при смене нити и у объектов с обрезкой.
 	Embroidery Setup	Параметры вышивки
 
@@ -5478,8 +5477,8 @@ lighting	Light	Свет
 
 # Embroidery: auto
 	Each shape (or letter) is stitched by how wide its strokes are.	Каждая форма (или буква) вышивается по ширине своих штрихов.
-	Bean Outline Under:	Тройной контур тоньше:
-	Fill Over:	Заливка шире:
+	Bean Below:	Бобовый до:
+	Fill Above:	Заливка от:
 	Thinner strokes get a bean stitch round their outline	Более тонкие штрихи получают тройную строчку по контуру
 	Wider strokes are filled, with a satin border; strokes in between get satin	Более широкие штрихи заливаются с атласной каймой; промежуточные — атласом
 	Only paths, compound paths and type can be stitched.	Вышивать можно только контуры, составные контуры и текст.
@@ -5517,7 +5516,7 @@ lighting	Light	Свет
 	Sew Last	Вышить последним
 	By Thread	По нити
 	Group the sewing order by thread colour, for fewer thread changes	Сгруппировать порядок вышивки по цвету нити, чтобы реже менять нить
-	Paint Order	Порядок слоёв
+	Reset Order	Сбросить порядок
 	Sew by Thread	Вышивать по нити
 	Sew in Paint Order	Вышивать в порядке слоёв
 	Change Sew Order	Изменить порядок вышивки
@@ -7209,7 +7208,7 @@ shape	Open	Открытый
 	Twill	Саржа
 	Terry	Махра
 	Felt	Фетр
-	Fabric Look:	Вид ткани:
+	Preview Fabric:	Ткань просмотра:
 	As the Fabric	Как у ткани
 	The fabric's colour	Цвет ткани
 	The texture's own colour	Собственный цвет текстуры

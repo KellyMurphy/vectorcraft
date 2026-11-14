@@ -5669,7 +5669,7 @@ theme	Appearance	Външен вид
 # Embroidery (Object › Embroidery, the Embroidery and Sew Order panels)
 	A satin border sewn over the shape's edges, after the fill	Сатенен кант, зашит върху ръбовете на формата след запълването
 	After	След
-	Bean Outline Under:	Контур bean под:
+	Bean Below:	Бобов под:
 	Before	Преди
 	Between Rails	Между релси
 	Border:	Кант:
@@ -5681,7 +5681,6 @@ theme	Appearance	Външен вид
 	Circles	Кръгове
 	Cut the thread after this object	Отрязване на конеца след този обект
 	Cut the thread before this object, however close it starts	Отрязване на конеца преди този обект, колкото и близо да започва
-	Density:	Плътност:
 	Design	Дизайн
 	Diamonds	Ромбове
 	Distance between rows: smaller is denser	Разстояние между редовете: по-малко е по-плътно
@@ -5693,7 +5692,7 @@ theme	Appearance	Външен вид
 	Embroidery…	Бродерия…
 	Export DST…	Експортиране на DST…
 	Extract Border Pattern	Извличане на шарка за кант
-	Fill Over:	Запълване над:
+	Fill Above:	Запълване над:
 	Fill Underlay	Подложка за запълване
 	First object	Първи обект
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Задайте настройки на бода на пътищата в панела Бродерия; те се бродират в този ред.
@@ -5718,7 +5717,7 @@ theme	Appearance	Външен вид
 	Only the first 30 are listed.	Показани са само първите 30.
 	Only thread changes and objects set to trim cut the thread.	Само смените на конеца и обектите, зададени за отрязване, режат конеца.
 	Open a document to see its sewing order.	Отворете документ, за да видите реда му на бродиране.
-	Paint Order	Ред на рисуване
+	Reset Order	Нулиране на реда
 	Passes:	Преминавания:
 	Pattern Border	Кант с шарка
 	Pattern Size	Размер на шарката
@@ -5738,7 +5737,7 @@ theme	Appearance	Външен вид
 	Sew First	Бродиране първо
 	Sew Last	Бродиране последно
 	Sew Later	Бродиране по-късно
-	Sew Moves Under:	Шиене на преместванията под:
+	Stitch Moves Under:	Шиене на ходове под:
 	Sew Order…	Ред на бродиране…
 	Sew in paint order again (bottom first)	Бродиране отново в реда на рисуване (най-долното първо)
 	Sews the column this much wider, since the thread pulls the fabric in	Бродира колоната с толкова по-широка, защото конецът стяга плата
@@ -6884,7 +6883,7 @@ breakText	Glyphs	Глифи
 	Twill	Кепър
 	Terry	Хавлия
 	Felt	Филц
-	Fabric Look:	Вид на плата:
+	Preview Fabric:	Плат за преглед:
 	As the Fabric	Като плата
 	The fabric's colour	Цветът на плата
 	The texture's own colour	Собственият цвят на текстурата

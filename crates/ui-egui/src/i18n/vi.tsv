@@ -5394,7 +5394,7 @@ theme	Appearance	Giao diện
 # Embroidery (Object › Embroidery, the Embroidery and Sew Order panels)
 	A satin border sewn over the shape's edges, after the fill	Một đường viền satin may đè lên mép hình sau phần thêu đầy
 	After	Sau
-	Bean Outline Under:	Viền bean dưới:
+	Bean Below:	Mũi đậu dưới:
 	Before	Trước
 	Between Rails	Giữa hai ray
 	Border:	Đường viền:
@@ -5406,7 +5406,6 @@ theme	Appearance	Giao diện
 	Circles	Hình tròn
 	Cut the thread after this object	Cắt chỉ sau đối tượng này
 	Cut the thread before this object, however close it starts	Cắt chỉ trước đối tượng này, dù nó bắt đầu gần đến đâu
-	Density:	Mật độ:
 	Design	Thiết kế
 	Diamonds	Hình thoi
 	Distance between rows: smaller is denser	Khoảng cách giữa các hàng: nhỏ hơn là dày hơn
@@ -5418,7 +5417,7 @@ theme	Appearance	Giao diện
 	Embroidery…	Thêu…
 	Export DST…	Xuất DST…
 	Extract Border Pattern	Trích xuất mẫu đường viền
-	Fill Over:	Thêu đầy trên:
+	Fill Above:	Tô kín trên:
 	Fill Underlay	Lớp lót thêu đầy
 	First object	Đối tượng đầu
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Đặt cài đặt mũi thêu cho đường dẫn trong bảng Thêu; chúng được thêu theo thứ tự này.
@@ -5443,7 +5442,7 @@ theme	Appearance	Giao diện
 	Only the first 30 are listed.	Chỉ liệt kê 30 mục đầu.
 	Only thread changes and objects set to trim cut the thread.	Chỉ đổi chỉ và các đối tượng đặt cắt chỉ mới cắt chỉ.
 	Open a document to see its sewing order.	Mở một tài liệu để xem thứ tự thêu của nó.
-	Paint Order	Thứ tự vẽ
+	Reset Order	Đặt lại thứ tự
 	Passes:	Số lượt:
 	Pattern Border	Đường viền mẫu
 	Pattern Size	Cỡ mẫu
@@ -5463,7 +5462,7 @@ theme	Appearance	Giao diện
 	Sew First	Thêu đầu tiên
 	Sew Last	Thêu cuối cùng
 	Sew Later	Thêu muộn hơn
-	Sew Moves Under:	Thêu các bước di chuyển dưới:
+	Stitch Moves Under:	May bước di chuyển dưới:
 	Sew Order…	Thứ tự thêu…
 	Sew in paint order again (bottom first)	Thêu lại theo thứ tự vẽ (dưới cùng trước)
 	Sews the column this much wider, since the thread pulls the fabric in	Thêu cột rộng thêm chừng này, vì chỉ kéo vải co lại
@@ -6704,7 +6703,7 @@ breakText	Glyphs	Glyph
 	Twill	Vải chéo
 	Terry	Vải bông xù
 	Felt	Nỉ dạ
-	Fabric Look:	Kiểu vải:
+	Preview Fabric:	Vải xem trước:
 	As the Fabric	Theo loại vải
 	The fabric's colour	Màu vải
 	The texture's own colour	Màu riêng của kết cấu

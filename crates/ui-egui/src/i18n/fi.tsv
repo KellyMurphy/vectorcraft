@@ -5762,7 +5762,7 @@ mark-style	Japanese	Japanilainen
 # Embroidery (Object › Embroidery, the Embroidery and Sew Order panels)
 	A satin border sewn over the shape's edges, after the fill	Satiinireunus, joka ommellaan muodon reunojen päälle täytön jälkeen
 	After	Jälkeen
-	Bean Outline Under:	Bean-ääriviiva alle:
+	Bean Below:	Papu alle:
 	Before	Ennen
 	Between Rails	Kiskojen välissä
 	Border:	Reunus:
@@ -5774,7 +5774,6 @@ mark-style	Japanese	Japanilainen
 	Circles	Ympyrät
 	Cut the thread after this object	Katkaise lanka tämän objektin jälkeen
 	Cut the thread before this object, however close it starts	Katkaise lanka ennen tätä objektia, vaikka se alkaisi kuinka läheltä
-	Density:	Tiheys:
 	Design	Kuvio
 	Diamonds	Vinoneliöt
 	Distance between rows: smaller is denser	Rivien väli: pienempi on tiheämpi
@@ -5786,7 +5785,7 @@ mark-style	Japanese	Japanilainen
 	Embroidery…	Kirjonta…
 	Export DST…	Vie DST…
 	Extract Border Pattern	Poimi reunuskuvio
-	Fill Over:	Täyttö yli:
+	Fill Above:	Täyttö yli:
 	Fill Underlay	Täytön alusta
 	First object	Ensimmäinen objekti
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Anna poluille pistoasetukset Kirjonta-paneelissa; ne kirjotaan tässä järjestyksessä.
@@ -5811,7 +5810,7 @@ mark-style	Japanese	Japanilainen
 	Only the first 30 are listed.	Vain 30 ensimmäistä luetellaan.
 	Only thread changes and objects set to trim cut the thread.	Vain langanvaihdot ja katkaisuun asetetut objektit katkaisevat langan.
 	Open a document to see its sewing order.	Avaa dokumentti nähdäksesi sen kirjontajärjestyksen.
-	Paint Order	Piirtojärjestys
+	Reset Order	Palauta järjestys
 	Passes:	Kerrat:
 	Pattern Border	Kuvioreunus
 	Pattern Size	Kuvion koko
@@ -5831,7 +5830,7 @@ mark-style	Japanese	Japanilainen
 	Sew First	Kirjo ensin
 	Sew Last	Kirjo viimeiseksi
 	Sew Later	Kirjo myöhemmin
-	Sew Moves Under:	Ompele siirtymät alle:
+	Stitch Moves Under:	Ompele siirrot alle:
 	Sew Order…	Kirjontajärjestys…
 	Sew in paint order again (bottom first)	Kirjo taas piirtojärjestyksessä (alin ensin)
 	Sews the column this much wider, since the thread pulls the fabric in	Kirjoo pylvään tämän verran leveämpänä, koska lanka vetää kangasta kasaan
@@ -7137,7 +7136,7 @@ breakText	Glyphs	Merkit
 	Twill	Toimikas
 	Terry	Frotee
 	Felt	Huopa
-	Fabric Look:	Kankaan ulkonäkö:
+	Preview Fabric:	Esikatselukangas:
 	As the Fabric	Kankaan mukaan
 	The fabric's colour	Kankaan väri
 	The texture's own colour	Pintakuvion oma väri

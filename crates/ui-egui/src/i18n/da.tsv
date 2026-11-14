@@ -5667,7 +5667,7 @@ swatch	Bright Violet	Kraftig violet
 # Embroidery (Object › Embroidery, the Embroidery and Sew Order panels)
 	A satin border sewn over the shape's edges, after the fill	En satinkant, der sys over formens kanter efter fyldet
 	After	Efter
-	Bean Outline Under:	Bean-kontur under:
+	Bean Below:	Bønne under:
 	Before	Før
 	Between Rails	Mellem skinner
 	Border:	Kant:
@@ -5679,7 +5679,6 @@ swatch	Bright Violet	Kraftig violet
 	Circles	Cirkler
 	Cut the thread after this object	Klip tråden efter dette objekt
 	Cut the thread before this object, however close it starts	Klip tråden før dette objekt, uanset hvor tæt det begynder
-	Density:	Tæthed:
 	Design	Design
 	Diamonds	Romber
 	Distance between rows: smaller is denser	Afstand mellem rækker: mindre er tættere
@@ -5691,7 +5690,7 @@ swatch	Bright Violet	Kraftig violet
 	Embroidery…	Broderi…
 	Export DST…	Eksportér DST…
 	Extract Border Pattern	Udtræk kantmønster
-	Fill Over:	Fyld over:
+	Fill Above:	Fyld over:
 	Fill Underlay	Fyld-underlag
 	First object	Første objekt
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Giv stier stingindstillinger i panelet Broderi; de broderes i denne rækkefølge.
@@ -5716,7 +5715,7 @@ swatch	Bright Violet	Kraftig violet
 	Only the first 30 are listed.	Kun de første 30 vises.
 	Only thread changes and objects set to trim cut the thread.	Kun trådskift og objekter sat til at klippe klipper tråden.
 	Open a document to see its sewing order.	Åbn et dokument for at se dets broderingsrækkefølge.
-	Paint Order	Tegnerækkefølge
+	Reset Order	Nulstil rækkefølge
 	Passes:	Gennemløb:
 	Pattern Border	Mønsterkant
 	Pattern Size	Mønsterstørrelse
@@ -5736,7 +5735,7 @@ swatch	Bright Violet	Kraftig violet
 	Sew First	Brodér først
 	Sew Last	Brodér sidst
 	Sew Later	Brodér senere
-	Sew Moves Under:	Brodér flytninger under:
+	Stitch Moves Under:	Sy flytninger under:
 	Sew Order…	Broderingsrækkefølge…
 	Sew in paint order again (bottom first)	Brodér igen i tegnerækkefølge (nederste først)
 	Sews the column this much wider, since the thread pulls the fabric in	Broderer søjlen så meget bredere, fordi tråden trækker stoffet sammen
@@ -6898,7 +6897,7 @@ breakText	Glyphs	Glyffer
 	Twill	Kiper
 	Terry	Frotté
 	Felt	Filt
-	Fabric Look:	Stoffets udseende:
+	Preview Fabric:	Visningsstof:
 	As the Fabric	Som stoffet
 	The fabric's colour	Stoffets farve
 	The texture's own colour	Teksturens egen farve

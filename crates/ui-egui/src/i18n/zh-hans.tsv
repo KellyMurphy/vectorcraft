@@ -5640,7 +5640,6 @@ lighting	Light	光源
 	Embroidery Stitches	刺绣针迹
 
 # Embroidery panel
-	Density:	密度:
 	Design	设计
 	Distance between rows: smaller is denser	行距:越小越密
 	Distance between zigzags: smaller is denser	锯齿间距:越小越密
@@ -5680,7 +5679,7 @@ lighting	Light	光源
 	Cut the thread after this object	在此对象之后剪线
 	Travel	移动
 	Trim Jumps Over:	跳针超过此长度时剪线:
-	Sew Moves Under:	移动短于此长度时缝合:
+	Stitch Moves Under:	缝合移动短于：
 	Only thread changes and objects set to trim cut the thread.	只有换线和设置了剪线的对象才会剪线。
 	Embroidery Setup	刺绣设置
 
@@ -5699,8 +5698,8 @@ lighting	Light	光源
 
 # Embroidery: auto
 	Each shape (or letter) is stitched by how wide its strokes are.	每个形状(或字母)按笔画宽度选择针法。
-	Bean Outline Under:	豆形针轮廓上限:
-	Fill Over:	填充下限:
+	Bean Below:	豆针低于：
+	Fill Above:	填充高于：
 	Thinner strokes get a bean stitch round their outline	更细的笔画沿轮廓缝豆形针
 	Wider strokes are filled, with a satin border; strokes in between get satin	更宽的笔画用填充加缎面边框;介于两者之间的用缎面
 	Only paths, compound paths and type can be stitched.	只有路径、复合路径和文字可以刺绣。
@@ -5738,7 +5737,7 @@ lighting	Light	光源
 	Sew Last	最后缝
 	By Thread	按线色
 	Group the sewing order by thread colour, for fewer thread changes	按线的颜色归组缝制顺序,减少换线
-	Paint Order	绘制顺序
+	Reset Order	重置顺序
 	Sew by Thread	按线色缝制
 	Sew in Paint Order	按绘制顺序缝制
 	Change Sew Order	更改缝制顺序
@@ -6962,7 +6961,7 @@ breakText	Glyphs	字形
 	Twill	斜纹
 	Terry	毛巾布
 	Felt	毛毡
-	Fabric Look:	面料外观:
+	Preview Fabric:	预览面料：
 	As the Fabric	按面料
 	The fabric's colour	面料颜色
 	The texture's own colour	纹理本身的颜色

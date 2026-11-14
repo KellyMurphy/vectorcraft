@@ -5750,7 +5750,7 @@ effect	Points	Σημεία
 # Embroidery (Object › Embroidery, the Embroidery and Sew Order panels)
 	A satin border sewn over the shape's edges, after the fill	Ένα σατέν περίγραμμα που ράβεται πάνω στις άκρες του σχήματος, μετά το γέμισμα
 	After	Μετά
-	Bean Outline Under:	Περίγραμμα bean κάτω από:
+	Bean Below:	Διπλή κάτω από:
 	Before	Πριν
 	Between Rails	Ανάμεσα σε ράγες
 	Border:	Περίγραμμα:
@@ -5762,7 +5762,6 @@ effect	Points	Σημεία
 	Circles	Κύκλοι
 	Cut the thread after this object	Κόψιμο της κλωστής μετά από αυτό το αντικείμενο
 	Cut the thread before this object, however close it starts	Κόψιμο της κλωστής πριν από αυτό το αντικείμενο, όσο κοντά κι αν αρχίζει
-	Density:	Πυκνότητα:
 	Design	Σχέδιο
 	Diamonds	Ρόμβοι
 	Distance between rows: smaller is denser	Απόσταση μεταξύ σειρών: μικρότερη σημαίνει πυκνότερη
@@ -5774,7 +5773,7 @@ effect	Points	Σημεία
 	Embroidery…	Κέντημα…
 	Export DST…	Εξαγωγή DST…
 	Extract Border Pattern	Εξαγωγή μοτίβου περιγράμματος
-	Fill Over:	Γέμισμα πάνω από:
+	Fill Above:	Γέμισμα πάνω από:
 	Fill Underlay	Υπόστρωμα γεμίσματος
 	First object	Πρώτο αντικείμενο
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Δώστε στις διαδρομές ρυθμίσεις βελονιάς στον πίνακα Κέντημα· κεντιούνται με αυτή τη σειρά.
@@ -5799,7 +5798,7 @@ effect	Points	Σημεία
 	Only the first 30 are listed.	Εμφανίζονται μόνο τα πρώτα 30.
 	Only thread changes and objects set to trim cut the thread.	Μόνο οι αλλαγές κλωστής και τα αντικείμενα με ρύθμιση κοψίματος κόβουν την κλωστή.
 	Open a document to see its sewing order.	Ανοίξτε ένα έγγραφο για να δείτε τη σειρά κεντήματός του.
-	Paint Order	Σειρά σχεδίασης
+	Reset Order	Επαναφορά σειράς
 	Passes:	Περάσματα:
 	Pattern Border	Περίγραμμα μοτίβου
 	Pattern Size	Μέγεθος μοτίβου
@@ -5819,7 +5818,7 @@ effect	Points	Σημεία
 	Sew First	Κέντημα πρώτα
 	Sew Last	Κέντημα τελευταία
 	Sew Later	Κέντημα αργότερα
-	Sew Moves Under:	Ράψιμο μετακινήσεων κάτω από:
+	Stitch Moves Under:	Ράψιμο μετακινήσεων κάτω από:
 	Sew Order…	Σειρά κεντήματος…
 	Sew in paint order again (bottom first)	Κέντημα ξανά με τη σειρά σχεδίασης (από κάτω)
 	Sews the column this much wider, since the thread pulls the fabric in	Κεντά τη στήλη τόσο πιο πλατιά, επειδή η κλωστή μαζεύει το ύφασμα
@@ -7054,7 +7053,7 @@ breakText	Glyphs	Γλύφοι
 	Twill	Διαγώνιο
 	Terry	Πετσετέ
 	Felt	Τσόχα
-	Fabric Look:	Όψη υφάσματος:
+	Preview Fabric:	Ύφασμα προεπισκόπησης:
 	As the Fabric	Όπως το ύφασμα
 	The fabric's colour	Το χρώμα του υφάσματος
 	The texture's own colour	Το χρώμα της υφής

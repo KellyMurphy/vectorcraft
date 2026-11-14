@@ -5374,7 +5374,7 @@ lighting	Light	광원
 # Embroidery (Object › Embroidery, the Embroidery and Sew Order panels)
 	A satin border sewn over the shape's edges, after the fill	채우기 후 도형 가장자리 위에 수놓는 새틴 테두리
 	After	뒤
-	Bean Outline Under:	다음 미만이면 빈 윤곽선:
+	Bean Below:	빈 스티치 미만:
 	Before	앞
 	Between Rails	레일 사이
 	Border:	테두리:
@@ -5386,7 +5386,6 @@ lighting	Light	광원
 	Circles	원
 	Cut the thread after this object	이 오브젝트 뒤에서 실 자르기
 	Cut the thread before this object, however close it starts	아무리 가까이서 시작하더라도 이 오브젝트 앞에서 실 자르기
-	Density:	밀도:
 	Design	디자인
 	Diamonds	다이아몬드
 	Distance between rows: smaller is denser	행 사이 간격: 작을수록 촘촘합니다
@@ -5398,7 +5397,7 @@ lighting	Light	광원
 	Embroidery…	자수…
 	Export DST…	DST 내보내기…
 	Extract Border Pattern	테두리 패턴 추출
-	Fill Over:	다음 초과이면 채우기:
+	Fill Above:	채우기 초과:
 	Fill Underlay	채우기 밑실
 	First object	첫 오브젝트
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	자수 패널에서 패스에 스티치 설정을 지정하세요. 이 순서대로 수놓습니다.
@@ -5423,7 +5422,7 @@ lighting	Light	광원
 	Only the first 30 are listed.	처음 30개만 표시됩니다.
 	Only thread changes and objects set to trim cut the thread.	실 교체와 자르기로 설정한 오브젝트만 실을 자릅니다.
 	Open a document to see its sewing order.	자수 순서를 보려면 문서를 여세요.
-	Paint Order	그리기 순서
+	Reset Order	순서 재설정
 	Passes:	반복 횟수:
 	Pattern Border	패턴 테두리
 	Pattern Size	패턴 크기
@@ -5443,7 +5442,7 @@ lighting	Light	광원
 	Sew First	맨 먼저 수놓기
 	Sew Last	맨 나중에 수놓기
 	Sew Later	나중에 수놓기
-	Sew Moves Under:	다음 미만의 이동은 스티치로:
+	Stitch Moves Under:	이동을 바느질 미만:
 	Sew Order…	자수 순서…
 	Sew in paint order again (bottom first)	다시 그리기 순서로 수놓기(맨 아래부터)
 	Sews the column this much wider, since the thread pulls the fabric in	실이 천을 당기므로 칼럼을 이만큼 더 넓게 수놓습니다
@@ -6684,7 +6683,7 @@ breakText	Glyphs	글리프
 	Twill	능직
 	Terry	타월지
 	Felt	펠트
-	Fabric Look:	원단 모양:
+	Preview Fabric:	미리 보기 원단:
 	As the Fabric	원단에 맞춤
 	The fabric's colour	원단 색상
 	The texture's own colour	텍스처 고유 색상

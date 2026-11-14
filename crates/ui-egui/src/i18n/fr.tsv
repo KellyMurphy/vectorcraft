@@ -5806,7 +5806,6 @@ theme	Appearance	Apparence
 	Embroidery Stitches	Points de broderie
 
 # Embroidery panel
-	Density:	Densité :
 	Design	Motif
 	Distance between rows: smaller is denser	Écart entre les rangs : plus petit, plus dense
 	Distance between zigzags: smaller is denser	Écart entre les zigzags : plus petit, plus dense
@@ -5846,7 +5845,7 @@ theme	Appearance	Apparence
 	Cut the thread after this object	Couper le fil après cet objet
 	Travel	Déplacements
 	Trim Jumps Over:	Couper les sauts de plus de :
-	Sew Moves Under:	Coudre les déplacements de moins de :
+	Stitch Moves Under:	Coudre les trajets sous :
 	Only thread changes and objects set to trim cut the thread.	Seuls les changements de fil et les objets réglés pour couper coupent le fil.
 	Embroidery Setup	Réglages de broderie
 
@@ -5865,8 +5864,8 @@ theme	Appearance	Apparence
 
 # Embroidery: auto
 	Each shape (or letter) is stitched by how wide its strokes are.	Chaque forme (ou lettre) est brodée selon la largeur de ses traits.
-	Bean Outline Under:	Contour triple sous :
-	Fill Over:	Remplissage au-delà de :
+	Bean Below:	Haricot sous :
+	Fill Above:	Remplissage au-delà de :
 	Thinner strokes get a bean stitch round their outline	Les traits plus fins reçoivent un point triple sur leur contour
 	Wider strokes are filled, with a satin border; strokes in between get satin	Les traits plus larges sont remplis avec une bordure satin ; entre les deux, du satin
 	Only paths, compound paths and type can be stitched.	Seuls les tracés, les tracés transparents et le texte peuvent être brodés.
@@ -5904,7 +5903,7 @@ theme	Appearance	Apparence
 	Sew Last	Coudre en dernier
 	By Thread	Par fil
 	Group the sewing order by thread colour, for fewer thread changes	Regrouper l’ordre de couture par couleur de fil, pour moins de changements de fil
-	Paint Order	Ordre de superposition
+	Reset Order	Rétablir l’ordre
 	Sew by Thread	Coudre par fil
 	Sew in Paint Order	Coudre dans l’ordre de superposition
 	Change Sew Order	Modifier l’ordre de couture
@@ -7115,7 +7114,7 @@ breakText	Glyphs	Glyphes
 	Twill	Sergé
 	Terry	Éponge
 	Felt	Feutre
-	Fabric Look:	Aspect du tissu :
+	Preview Fabric:	Tissu d’aperçu :
 	As the Fabric	Comme le tissu
 	The fabric's colour	La couleur du tissu
 	The texture's own colour	La couleur propre de la texture

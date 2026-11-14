@@ -5653,7 +5653,7 @@ mark-style	Japanese	Japońskie
 # Embroidery (Object › Embroidery, the Embroidery and Sew Order panels)
 	A satin border sewn over the shape's edges, after the fill	Satynowa obwódka wyszywana po wypełnieniu na krawędziach kształtu
 	After	Po
-	Bean Outline Under:	Obrys bean poniżej:
+	Bean Below:	Fasolka poniżej:
 	Before	Przed
 	Between Rails	Między szynami
 	Border:	Obwódka:
@@ -5665,7 +5665,6 @@ mark-style	Japanese	Japońskie
 	Circles	Koła
 	Cut the thread after this object	Obetnij nić po tym obiekcie
 	Cut the thread before this object, however close it starts	Obetnij nić przed tym obiektem, niezależnie od tego, jak blisko się zaczyna
-	Density:	Gęstość:
 	Design	Projekt
 	Diamonds	Romby
 	Distance between rows: smaller is denser	Odstęp między rzędami: mniejszy to gęściej
@@ -5677,7 +5676,7 @@ mark-style	Japanese	Japońskie
 	Embroidery…	Haft…
 	Export DST…	Eksportuj DST…
 	Extract Border Pattern	Wyodrębnij wzór obwódki
-	Fill Over:	Wypełnienie powyżej:
+	Fill Above:	Wypełnienie powyżej:
 	Fill Underlay	Podkład wypełnienia
 	First object	Pierwszy obiekt
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Nadaj ścieżkom ustawienia ściegu w panelu Haft; są wyszywane w tej kolejności.
@@ -5702,7 +5701,7 @@ mark-style	Japanese	Japońskie
 	Only the first 30 are listed.	Wymieniono tylko pierwsze 30.
 	Only thread changes and objects set to trim cut the thread.	Nić obcinają tylko zmiany nici i obiekty ustawione na obcinanie.
 	Open a document to see its sewing order.	Otwórz dokument, aby zobaczyć jego kolejność wyszywania.
-	Paint Order	Kolejność rysowania
+	Reset Order	Przywróć kolejność
 	Passes:	Przejścia:
 	Pattern Border	Obwódka wzorzysta
 	Pattern Size	Rozmiar wzoru
@@ -5722,7 +5721,7 @@ mark-style	Japanese	Japońskie
 	Sew First	Wyszyj jako pierwsze
 	Sew Last	Wyszyj jako ostatnie
 	Sew Later	Wyszyj później
-	Sew Moves Under:	Wyszywaj przejścia poniżej:
+	Stitch Moves Under:	Szyj przejścia poniżej:
 	Sew Order…	Kolejność wyszywania…
 	Sew in paint order again (bottom first)	Wyszywaj znów w kolejności rysowania (od dołu)
 	Sews the column this much wider, since the thread pulls the fabric in	Wyszywa kolumnę o tyle szerszą, bo nić ściąga tkaninę
@@ -6958,7 +6957,7 @@ breakText	Glyphs	Glify
 	Twill	Diagonal
 	Terry	Frotte
 	Felt	Filc
-	Fabric Look:	Wygląd tkaniny:
+	Preview Fabric:	Tkanina podglądu:
 	As the Fabric	Jak tkanina
 	The fabric's colour	Kolor tkaniny
 	The texture's own colour	Własny kolor tekstury

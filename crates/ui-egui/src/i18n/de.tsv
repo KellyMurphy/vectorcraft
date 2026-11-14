@@ -5380,7 +5380,7 @@ effect	Soft	Weich
 	Brick	Ziegel
 	A satin border sewn over the shape's edges, after the fill	Ein Satinrand, der nach der Füllung über die Kanten der Form genäht wird
 	After	Danach
-	Bean Outline Under:	Bean-Kontur unter:
+	Bean Below:	Bohne unter:
 	Before	Davor
 	Between Rails	Zwischen Schienen
 	Border:	Rand:
@@ -5392,7 +5392,6 @@ effect	Soft	Weich
 	Circles	Kreise
 	Cut the thread after this object	Den Faden nach diesem Objekt schneiden
 	Cut the thread before this object, however close it starts	Den Faden vor diesem Objekt schneiden, wie nah es auch beginnt
-	Density:	Dichte:
 	Design	Design
 	Diamonds	Rauten
 	Distance between rows: smaller is denser	Abstand zwischen den Reihen: kleiner ist dichter
@@ -5404,7 +5403,7 @@ effect	Soft	Weich
 	Embroidery…	Stickerei…
 	Export DST…	DST exportieren…
 	Extract Border Pattern	Randmuster extrahieren
-	Fill Over:	Füllung über:
+	Fill Above:	Füllung über:
 	Fill Underlay	Füllungs-Unterlage
 	First object	Erstes Objekt
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Geben Sie Pfaden im Bedienfeld „Stickerei“ Sticheinstellungen; sie werden in dieser Reihenfolge gestickt.
@@ -5429,7 +5428,7 @@ effect	Soft	Weich
 	Only the first 30 are listed.	Nur die ersten 30 werden aufgeführt.
 	Only thread changes and objects set to trim cut the thread.	Nur Garnwechsel und Objekte mit Schneiden schneiden den Faden.
 	Open a document to see its sewing order.	Öffnen Sie ein Dokument, um seine Stickreihenfolge zu sehen.
-	Paint Order	Malreihenfolge
+	Reset Order	Reihenfolge zurücksetzen
 	Passes:	Durchgänge:
 	Pattern Border	Musterrand
 	Pattern Size	Mustergröße
@@ -5449,7 +5448,7 @@ effect	Soft	Weich
 	Sew First	Zuerst sticken
 	Sew Last	Zuletzt sticken
 	Sew Later	Später sticken
-	Sew Moves Under:	Bewegungen sticken unter:
+	Stitch Moves Under:	Wege nähen unter:
 	Sew Order…	Stickreihenfolge…
 	Sew in paint order again (bottom first)	Wieder in Malreihenfolge sticken (unterstes zuerst)
 	Sews the column this much wider, since the thread pulls the fabric in	Stickt die Säule um so viel breiter, da der Faden den Stoff zusammenzieht
@@ -6690,7 +6689,7 @@ breakText	Glyphs	Glyphen
 	Twill	Köper
 	Terry	Frottee
 	Felt	Filz
-	Fabric Look:	Stoffoptik:
+	Preview Fabric:	Vorschau-Stoff:
 	As the Fabric	Wie der Stoff
 	The fabric's colour	Die Farbe des Stoffs
 	The texture's own colour	Die eigene Farbe der Textur

@@ -5405,7 +5405,6 @@ lighting	Light	Світло
 	Embroidery Stitches	Стібки вишивки
 
 # Embroidery panel
-	Density:	Щільність:
 	Design	Дизайн
 	Distance between rows: smaller is denser	Відстань між рядами: що менша, то щільніше
 	Distance between zigzags: smaller is denser	Відстань між зигзагами: що менша, то щільніше
@@ -5445,7 +5444,7 @@ lighting	Light	Світло
 	Cut the thread after this object	Обрізати нитку після цього об’єкта
 	Travel	Переміщення
 	Trim Jumps Over:	Обрізати стрибки, довші за:
-	Sew Moves Under:	Прошивати переміщення, коротші за:
+	Stitch Moves Under:	Шити переходи до:
 	Only thread changes and objects set to trim cut the thread.	Нитка обрізається лише при зміні нитки та в об’єктів з обрізкою.
 	Embroidery Setup	Параметри вишивки
 
@@ -5464,8 +5463,8 @@ lighting	Light	Світло
 
 # Embroidery: auto
 	Each shape (or letter) is stitched by how wide its strokes are.	Кожна форма (або літера) вишивається за шириною своїх штрихів.
-	Bean Outline Under:	Потрійний контур, тонші за:
-	Fill Over:	Заливка, ширші за:
+	Bean Below:	Бобовий до:
+	Fill Above:	Заливка від:
 	Thinner strokes get a bean stitch round their outline	Тонші штрихи отримують потрійну строчку по контуру
 	Wider strokes are filled, with a satin border; strokes in between get satin	Ширші штрихи заливаються з атласною облямівкою; проміжні — атласом
 	Only paths, compound paths and type can be stitched.	Вишивати можна лише контури, складені контури та текст.
@@ -5503,7 +5502,7 @@ lighting	Light	Світло
 	Sew Last	Вишити останнім
 	By Thread	За ниткою
 	Group the sewing order by thread colour, for fewer thread changes	Згрупувати порядок вишивки за кольором нитки, щоб рідше змінювати нитку
-	Paint Order	Порядок шарів
+	Reset Order	Скинути порядок
 	Sew by Thread	Вишивати за ниткою
 	Sew in Paint Order	Вишивати в порядку шарів
 	Change Sew Order	Змінити порядок вишивки
@@ -6721,7 +6720,7 @@ breakText	Glyphs	Гліфи
 	Twill	Саржа
 	Terry	Махра
 	Felt	Фетр
-	Fabric Look:	Вигляд тканини:
+	Preview Fabric:	Тканина перегляду:
 	As the Fabric	Як у тканини
 	The fabric's colour	Колір тканини
 	The texture's own colour	Власний колір текстури

@@ -5667,7 +5667,7 @@ swatch	Bright Violet	Violet cerah
 # Embroidery (Object › Embroidery, the Embroidery and Sew Order panels)
 	A satin border sewn over the shape's edges, after the fill	Tepi satin yang dijahit di atas tepi bentuk, setelah isian
 	After	Sesudah
-	Bean Outline Under:	Garis luar bean di bawah:
+	Bean Below:	Bean di bawah:
 	Before	Sebelum
 	Between Rails	Di antara rel
 	Border:	Tepi:
@@ -5679,7 +5679,6 @@ swatch	Bright Violet	Violet cerah
 	Circles	Lingkaran
 	Cut the thread after this object	Potong benang setelah objek ini
 	Cut the thread before this object, however close it starts	Potong benang sebelum objek ini, sedekat apa pun mulainya
-	Density:	Kerapatan:
 	Design	Desain
 	Diamonds	Belah ketupat
 	Distance between rows: smaller is denser	Jarak antar baris: lebih kecil lebih rapat
@@ -5691,7 +5690,7 @@ swatch	Bright Violet	Violet cerah
 	Embroidery…	Sulaman…
 	Export DST…	Ekspor DST…
 	Extract Border Pattern	Ekstrak pola tepi
-	Fill Over:	Isian di atas:
+	Fill Above:	Isi di atas:
 	Fill Underlay	Lapisan dasar isian
 	First object	Objek pertama
 	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Beri jalur pengaturan jahitan di panel Sulaman; jalur disulam dalam urutan ini.
@@ -5716,7 +5715,7 @@ swatch	Bright Violet	Violet cerah
 	Only the first 30 are listed.	Hanya 30 pertama yang ditampilkan.
 	Only thread changes and objects set to trim cut the thread.	Hanya pergantian benang dan objek yang diatur untuk memotong yang memotong benang.
 	Open a document to see its sewing order.	Buka dokumen untuk melihat urutan sulamnya.
-	Paint Order	Urutan gambar
+	Reset Order	Setel ulang urutan
 	Passes:	Lintasan:
 	Pattern Border	Tepi berpola
 	Pattern Size	Ukuran pola
@@ -5736,7 +5735,7 @@ swatch	Bright Violet	Violet cerah
 	Sew First	Sulam pertama
 	Sew Last	Sulam terakhir
 	Sew Later	Sulam belakangan
-	Sew Moves Under:	Sulam perpindahan di bawah:
+	Stitch Moves Under:	Jahit perpindahan di bawah:
 	Sew Order…	Urutan sulam…
 	Sew in paint order again (bottom first)	Sulam lagi dalam urutan gambar (paling bawah dulu)
 	Sews the column this much wider, since the thread pulls the fabric in	Menyulam kolom selebar ini lebih, karena benang menarik kain
@@ -6898,7 +6897,7 @@ breakText	Glyphs	Glif
 	Twill	Kepar
 	Terry	Handuk
 	Felt	Kain Flanel
-	Fabric Look:	Tampilan Kain:
+	Preview Fabric:	Kain pratinjau:
 	As the Fabric	Sesuai Kain
 	The fabric's colour	Warna kain
 	The texture's own colour	Warna asli tekstur
