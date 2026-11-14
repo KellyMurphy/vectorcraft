@@ -1,6 +1,6 @@
 # Embroidery UI improvement plan
 
-Status: Phase 1 (UI1.1 to UI1.5), Phase 2 (UI2.1 to UI2.5), UI3.1 to UI3.4 done; the rest proposed. Written 2026-11-11.
+Status: Phases 1 to 3 (UI1.1 to UI3.5) done; Phase 4 proposed. Written 2026-11-11.
 
 This plan comes from a review of the three embroidery panels: reading their code and driving the
 app through each tab with a small design (a filled rectangle and a satin line). It lists what to
@@ -322,6 +322,12 @@ With findings on the selected object, the Stitch tab shows only a link to the De
 selected object's findings inline, with their Fix menus. Clicking a finding in the checker list
 should also bring the object into view, not only select it.
 
+Status: done. A Problems section under the stitch's choice lists what the checker found on the
+selected objects (`embroidery.check {ids}`, fetched with the panel's other info). It uses the same
+rows and Fix menus as Check & Export (`finding_rows`) and is absent when there are none. Clicking a
+finding, in either list, selects its object and centres the view on it at the zoom it has. Test:
+`findings_show_where_the_object_is`.
+
 ## Phase 4: Sew Order
 
 ### UI4.1 One transport row
@@ -370,3 +376,4 @@ sewing is seen on the artwork at the size the user is working at.
 - 2026-11-14: UI3.2 done.
 - 2026-11-14: UI3.3 done.
 - 2026-11-14: UI3.4 done.
+- 2026-11-14: UI3.5 done; Phase 3 complete.

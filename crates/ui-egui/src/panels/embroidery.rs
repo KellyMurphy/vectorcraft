@@ -36,6 +36,7 @@ fn info(app: &mut VectorcraftApp, ctx: &egui::Context) -> Value {
     let Some(st) = app.session.active() else { return Value::Null };
     let sel = &st.selection.objects;
     let key: Key = (st.uid, st.revision, sel.len(), sel.first().copied(), sel.last().copied());
+    let ids: Vec<u64> = sel.iter().map(|id| id.0).collect();
     let id = egui::Id::unique("embroidery-info");
     if let Some((k, v)) = ctx.data(|d| d.get_temp::<(Key, Value)>(id))
         && k == key
@@ -45,6 +46,12 @@ fn info(app: &mut VectorcraftApp, ctx: &egui::Context) -> Value {
     let mut v = app.session.execute("embroidery.info", &json!({})).unwrap_or(Value::Null);
     if let (Some(o), Ok(check)) = (v.as_object_mut(), app.session.execute("embroidery.check", &json!({}))) {
         o.insert("check".into(), check);
+    }
+    // The selected objects' own findings, for the Stitch tab.
+    if !ids.is_empty()
+        && let (Some(o), Ok(check)) = (v.as_object_mut(), app.session.execute("embroidery.check", &json!({ "ids": ids })))
+    {
+        o.insert("selectionCheck".into(), check);
     }
     if let (Some(o), Ok(list)) = (v["selection"].as_object_mut(), app.session.execute("embroidery.borderPatterns", &json!({}))) {
         o.insert("borderPatterns".into(), list["patterns"].clone());
@@ -193,6 +200,7 @@ fn stitch_tab(app: &mut VectorcraftApp, ui: &mut Ui, info: &Value) {
                 app.run("embroidery.clear", json!({})).ok();
             }
         });
+        selection_findings(app, ui, &info["selectionCheck"]);
     }
     if stitched > 0 && unstitched == 0 {
         widgets::divider(ui);
@@ -1139,13 +1147,23 @@ const MAX_CHECK_ROWS: usize = 30;
 /// The design checker's findings, errors first: click one to select its object. Stitch Preview
 /// marks where each one is.
 fn checks(app: &mut VectorcraftApp, ui: &mut Ui, check: &Value) {
-    let t = crate::theme::Tokens::get(ui.ctx());
     widgets::section_header(ui, tl!("Check"));
     let findings: Vec<&Value> = check["findings"].as_array().map(|a| a.iter().collect()).unwrap_or_default();
     if findings.is_empty() {
         widgets::dim_label(ui, tl!("No problems found."));
         return;
     }
+    finding_rows(app, ui, check, &findings);
+    if findings.len() > MAX_CHECK_ROWS {
+        widgets::dim_label(ui, tl!("Only the first 30 are listed."));
+    }
+}
+
+/// Findings of `check` as rows, errors first, at most [`MAX_CHECK_ROWS`]: a dot for how bad, the
+/// object and the message (its rule's help as the tooltip), and a Fix menu where the adviser has
+/// fixes. Clicking a row selects its object and brings it into view.
+fn finding_rows(app: &mut VectorcraftApp, ui: &mut Ui, check: &Value, findings: &[&Value]) {
+    let t = crate::theme::Tokens::get(ui.ctx());
     let rules = check["rules"].as_array().cloned().unwrap_or_default();
     let help = |id: &str| rules.iter().find(|r| r["id"] == id).and_then(|r| r["help"].as_str()).map(|h| tl!(h)).unwrap_or_default();
     for f in findings.iter().take(MAX_CHECK_ROWS) {
@@ -1165,8 +1183,9 @@ fn checks(app: &mut VectorcraftApp, ui: &mut Ui, check: &Value) {
             let row = ui.add(egui::Label::new(text).wrap().sense(egui::Sense::click())).on_hover_text(help(f["rule"].as_str().unwrap_or_default()));
             if row.clicked()
                 && let Some(id) = f["object"].as_u64()
+                && app.run("select.set", json!({ "ids": [id] })).is_ok()
             {
-                app.run("select.set", json!({ "ids": [id] })).ok();
+                bring_into_view(app);
             }
         });
         if let (Some(object), Some(rule @ ("dense" | "long-stitch"))) = (f["object"].as_u64(), f["rule"].as_str()) {
@@ -1176,9 +1195,27 @@ fn checks(app: &mut VectorcraftApp, ui: &mut Ui, check: &Value) {
             });
         }
     }
-    if findings.len() > MAX_CHECK_ROWS {
-        widgets::dim_label(ui, tl!("Only the first 30 are listed."));
+}
+
+/// Centre the view on the selection, at the zoom it has: an object picked from a list is seen.
+fn bring_into_view(app: &mut VectorcraftApp) {
+    if let Some(c) = app.selection_box().map(|b| b.center())
+        && let Some(v) = app.view_mut()
+    {
+        v.center = c;
     }
+}
+
+/// The Stitch tab's findings: what the checker found on the selected objects, with the same rows
+/// and Fix menus as Check & Export.
+fn selection_findings(app: &mut VectorcraftApp, ui: &mut Ui, check: &Value) {
+    let findings: Vec<&Value> = check["findings"].as_array().map(|a| a.iter().collect()).unwrap_or_default();
+    if findings.is_empty() {
+        return;
+    }
+    widgets::divider(ui);
+    widgets::section_header(ui, tl!("Problems"));
+    finding_rows(app, ui, check, &findings);
 }
 
 /// A finding's Fix menu: the adviser's suggested fixes (embroidery.fixes, worked out when the menu
@@ -3048,6 +3085,32 @@ mod tests {
             out.shapes.iter().for_each(|c| walk(&c.shape, &mut texts, &mut fills));
         }
         (texts, fills)
+    }
+
+    /// UI3.5: the Stitch tab lists what the checker found on the selected objects, with their Fix
+    /// menus; a finding clicked selects its object and brings it into view.
+    #[test]
+    fn findings_show_where_the_object_is() {
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        let run = |app: &mut VectorcraftApp, id: &str, p: Value| app.session.execute(id, &p).unwrap();
+        run(&mut app, "file.new", json!({"width": 300, "height": 300}));
+        // An unsplit 10 mm satin: long stitches.
+        let satin = run(&mut app, "path.create", json!({"d": "M 20 150 L 280 150"}))["id"].as_u64().unwrap();
+        run(&mut app, "embroidery.set", json!({"type": "satin", "width": 10, "split": "off"}));
+        let message = run(&mut app, "embroidery.check", json!({}))["findings"][0]["message"].as_str().unwrap().to_string();
+        let texts = drawn(&mut app, 0).0;
+        assert!(texts.iter().any(|t| t == "Problems") && texts.iter().any(|t| t.ends_with(&message)), "{texts:?}");
+        assert!(texts.iter().any(|t| t == "Fix…"), "{texts:?}");
+        // Another object selected, without problems: none listed.
+        run(&mut app, "select.none", json!({}));
+        run(&mut app, "shape.rectangle", json!({"x": 200, "y": 10, "width": 60, "height": 40}));
+        run(&mut app, "embroidery.set", json!({"type": "fill"}));
+        assert!(!drawn(&mut app, 0).0.iter().any(|t| t == "Problems"));
+        // Picked from the list: selected and centred in the view.
+        app.view_mut().unwrap().center = vectorcraft_geom::Point::new(250.0, 30.0);
+        app.run("select.set", json!({"ids": [satin]})).unwrap();
+        bring_into_view(&mut app);
+        assert_eq!(app.view().unwrap().center, vectorcraft_geom::Point::new(150.0, 150.0));
     }
 
     /// UI3.4: the tools' buttons are off until the selection suits them, saying what they need,

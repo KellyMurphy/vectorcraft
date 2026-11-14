@@ -32,7 +32,9 @@ It starts with one line saying what is selected, its size in mm, its stitch and 
 Then the stitch, chosen from stitched pictures (each drawn by the real generator, with a line saying what it
 does) in three groups: Auto, the stitches along a line, and those that cover an area. With only open paths
 selected the area stitches are dimmed (they still work, closing each path with a straight line). Once the
-selection has a stitch the pictures fold away to that one; click it to choose another. Then the thread and trims, and the stitch's own settings, the rarely
+selection has a stitch the pictures fold away to that one; click it to choose another. What the design
+checker found on the selection is listed under it, with the same Fix menus as Check & Export; clicking a
+finding (here or there) selects its object and centres the view on it. Then the thread and trims, and the stitch's own settings, the rarely
 changed ones folded under **More Settings**. Fill patterns and border patterns are picked from pictures
 too, so Tatami 4 and Tatami 7 can be told apart before sewing. Once something is stitched while the
 document has no fabric or hoop, the tab opens with both menus and a Dismiss button. **Setup** holds what
