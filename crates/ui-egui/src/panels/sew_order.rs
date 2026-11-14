@@ -2,7 +2,8 @@
 //! the fabric after the object chosen in the list (sewn objects in their threads, the chosen one
 //! bright, the rest still to come in grey). One transport row plays the sewing stitch by stitch:
 //! play and pause, a scrubber over the needle moves with a tick at each thread change, and the
-//! sewing time. The list below shows each object with a picture of its stitches, dragged or moved
+//! sewing time; while it plays (or is paused part way) the canvas draws the sewing up to the needle
+//! too. The list below shows each object with a picture of its stitches, dragged or moved
 //! with buttons to change the order. The Travel settings
 //! (trims and jumps between objects) live here too. Reads `embroidery.order` and the stitch plan;
 //! acts through `embroidery.reorder`, `embroidery.sortByThread`, `embroidery.resetOrder` and
@@ -357,6 +358,8 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     }
     set_pstate(ui.ctx(), "sew-play-at", play);
     set_pstate(ui.ctx(), "sew-playing", playing);
+    // The canvas plays it too, on the artwork at the size the user is working at.
+    app.ui.sew_player = play.map(|k| (memo.plan.clone(), k, ui.ctx().cumulative_pass_nr()));
     widgets::divider(ui);
 
     if rows.is_empty() {

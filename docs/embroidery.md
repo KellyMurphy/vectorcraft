@@ -561,7 +561,9 @@ fabric); and a box for notes. It is an ordinary document: print it, or export it
 
 The Sew Order panel plays the design as the machine sews it, from one row under the preview. The play
 button draws it stitch by stitch in its threads, the needle ringed, and the list marks the object being
-sewn; pressed again it pauses. The scrub bar beside it runs over every needle move, with a tick at each
+sewn; pressed again it pauses. While it plays, or is paused part way, the canvas plays it too: the
+design on its fabric sewn up to the needle, on the artwork at the zoom you are working at (with Stitch
+Preview off as well), until the player reaches the end or you click a row. The scrub bar beside it runs over every needle move, with a tick at each
 thread change: click or drag along it to go to any stitch, or to its end for the whole design. Clicking a
 row in the list leaves the player and shows the design up to that object. Each row shows the object's
 stitch count, and the row ends with the **Sewing Time** (while playing, the time sewn so far of the

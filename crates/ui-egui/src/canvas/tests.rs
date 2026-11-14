@@ -10758,3 +10758,39 @@ fn mac_cursor_headless(ctx: &egui::Context, input: egui::RawInput, draw: impl Fn
     output.textures_delta.clear();
     output
 }
+
+/// The Sew Order player plays on the canvas: while the panel keeps it going, the canvas draws the
+/// sewing up to the needle (with Stitch Preview off too), more of it further on; once the panel
+/// stops setting it, nothing.
+#[test]
+fn the_sew_order_player_plays_on_the_canvas() {
+    let mut app = VectorcraftApp::new(Session::new(), Default::default());
+    let run = |app: &mut VectorcraftApp, id: &str, p: serde_json::Value| app.session.execute(id, &p).unwrap();
+    run(&mut app, "file.new", serde_json::json!({"width": 300, "height": 200}));
+    run(&mut app, "shape.rectangle", serde_json::json!({"x": 10, "y": 10, "width": 100, "height": 60}));
+    run(&mut app, "embroidery.set", serde_json::json!({"type": "fill"}));
+    app.ui.view.stitch_preview = false;
+    let plan = crate::canvas::stitch_memo(&mut app).unwrap().plan;
+    let total = plan.needles.len();
+    assert!(total > 100);
+    let doc = app.session.active().unwrap().doc.clone();
+    let ctx = egui::Context::default();
+    // Segments drawn with the player at `at` (None: not playing), set `behind` passes ago.
+    let segments = |app: &mut VectorcraftApp, at: Option<usize>, behind: u64| {
+        let raw = egui::RawInput { screen_rect: Some(egui::Rect::from_min_size(Pos2::ZERO, vec2(400.0, 300.0))), ..Default::default() };
+        let mut out = ctx.run_ui(raw, |ui| {
+            let pass = ui.ctx().cumulative_pass_nr();
+            app.ui.sew_player = at.map(|k| (plan.clone(), k, pass.saturating_sub(behind)));
+            let t = Tokens::get(ui.ctx());
+            let xf = Xf { rect: ui.max_rect(), zoom: 1.0, center: Point::new(150.0, 100.0), rot: 0.0 };
+            stitches::draw_preview(app, ui.painter(), &xf, &doc, ui.max_rect(), &t);
+        });
+        out.textures_delta.clear();
+        out.shapes.iter().filter(|c| matches!(c.shape, egui::Shape::LineSegment { .. })).count()
+    };
+    assert_eq!(segments(&mut app, None, 0), 0, "Stitch Preview off and nothing playing");
+    let early = segments(&mut app, Some(total / 4), 0);
+    let late = segments(&mut app, Some(total - 1), 0);
+    assert!(early > 10 && late > early, "{early} then {late}");
+    assert_eq!(segments(&mut app, Some(total / 4), 5), 0, "the panel stopped setting it");
+}

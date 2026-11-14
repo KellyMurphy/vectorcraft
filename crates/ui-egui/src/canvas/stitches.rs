@@ -56,7 +56,10 @@ pub(super) fn draw_preview(
     area: egui::Rect,
     t: &Tokens,
 ) {
-    if !app.ui.view.stitch_preview {
+    // The Sew Order player, while its panel keeps it going (set this pass or the one before).
+    let pass = painter.ctx().cumulative_pass_nr();
+    let player = app.ui.sew_player.clone().filter(|(_, _, p)| p.saturating_add(1) >= pass);
+    if !app.ui.view.stitch_preview && player.is_none() {
         return;
     }
     let density = app.ui.view.stitch_density;
@@ -68,6 +71,15 @@ pub(super) fn draw_preview(
     // A document with nothing stitched (a garment mockup, a worksheet) is left as drawn: the
     // preview's fabric would only veil it.
     if memo.plan.needles.is_empty() && memo.findings.is_empty() && before.is_none() {
+        return;
+    }
+    // Playing this design: the sewing up to the needle, drawn flat (on with Stitch Preview off too).
+    if let Some((_, at, _)) = player.filter(|(plan, _, _)| std::sync::Arc::ptr_eq(plan, &memo.plan)) {
+        draw_played(painter, xf, shown, &memo.plan, at, t);
+        draw_hoops(painter, xf, shown, &memo.plan);
+        return;
+    }
+    if !app.ui.view.stitch_preview {
         return;
     }
     if app.ui.view.realistic_stitches {
@@ -200,6 +212,63 @@ pub(super) fn draw_stitches(painter: &egui::Painter, xf: &Xf, doc: &vectorcraft_
             painter.line_segment([f, p], jump);
         }
         from = Some(p);
+    }
+}
+
+/// The Sew Order player on the canvas: the stitches of `plan` sewn up to needle move `at` in their
+/// thread colours on the fabric, jumps as thin lines, and the needle ringed.
+pub(super) fn draw_played(
+    painter: &egui::Painter,
+    xf: &Xf,
+    doc: &vectorcraft_doc::Document,
+    plan: &vectorcraft_embroidery::Plan,
+    at: usize,
+    t: &Tokens,
+) {
+    use vectorcraft_embroidery::{Cmd, PT_MM};
+    let [r, g, b, a] = FABRIC;
+    let fabric = Color32::from_rgba_unmultiplied(r, g, b, a);
+    for ab in &doc.artboards {
+        painter.add(Shape::convex_polygon(xf.quad(ab.rect), fabric, Stroke::NONE));
+    }
+    let to = |x: f64, y: f64| xf.to_screen(Point::new(x / PT_MM, y / PT_MM));
+    let width = ((THREAD_MM / PT_MM) * xf.zoom).clamp(0.5, 8.0) as f32;
+    let jump = Stroke::new(JUMP_WIDTH_PT as f32, Color32::from_black_alpha(JUMP_ALPHA));
+    let thread = |block: usize| {
+        let [r, g, b] = plan.threads.get(block).copied().unwrap_or([0; 3]);
+        Color32::from_rgb(r, g, b)
+    };
+    let (mut block, mut run, mut from): (usize, Vec<egui::Pos2>, Option<egui::Pos2>) = (0, vec![], None);
+    for n in plan.needles.iter().take(at.saturating_add(1)) {
+        let p = to(n.x, n.y);
+        match n.cmd {
+            Cmd::Stitch => {
+                if run.is_empty()
+                    && let Some(f) = from
+                {
+                    run.push(f);
+                }
+                run.push(p);
+            }
+            Cmd::Jump | Cmd::Trim | Cmd::End | Cmd::ColorChange => {
+                thread_stitches(painter, &run, Stroke::new(width, thread(block)));
+                run.clear();
+                if n.cmd == Cmd::Jump
+                    && let Some(f) = from
+                {
+                    painter.line_segment([f, p], jump);
+                }
+                if n.cmd == Cmd::ColorChange {
+                    block += 1;
+                }
+            }
+        }
+        from = Some(p);
+    }
+    thread_stitches(painter, &run, Stroke::new(width, thread(block)));
+    if let Some(p) = from {
+        painter.circle_stroke(p, 8.0, Stroke::new(3.0, Color32::from_white_alpha(170)));
+        painter.circle_stroke(p, 7.0, Stroke::new(2.0, t.accent));
     }
 }
 

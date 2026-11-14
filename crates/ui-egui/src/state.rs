@@ -668,6 +668,11 @@ pub struct UiState {
     /// View › Realistic Stitches' last picture of the canvas.
     #[serde(skip)]
     pub realistic_cache: Option<crate::canvas::RealisticFrame>,
+    /// The Sew Order player's needle, for the canvas to draw the sewing up to it: the plan it plays,
+    /// the needle move, and the pass that set it. The panel sets it on every pass it is shown and
+    /// playing (or paused part way), so the canvas drops it once the panel stops.
+    #[serde(skip)]
+    pub sew_player: Option<(std::sync::Arc<vectorcraft_embroidery::Plan>, usize, u64)>,
     /// The documents (uids) whose Missing Fonts dialog waits until no dialog is open, the next one to
     /// show first ([`crate::dialogs::settle`]).
     #[serde(skip)]
@@ -1100,6 +1105,7 @@ impl Default for UiState {
             dialog_file: None,
             made_text_style: vec![],
             stitch_cache: None,
+            sew_player: None,
             realistic_cache: None,
             pending_fonts: vec![],
             fonts_dialog: None,

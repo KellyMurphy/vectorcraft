@@ -1,6 +1,6 @@
 # Embroidery UI improvement plan
 
-Status: Phases 1 to 3 (UI1.1 to UI3.5), UI4.1 and UI4.2 done; UI4.3 proposed. Written 2026-11-11.
+Status: Phases 1 to 4 (UI1.1 to UI4.3) done. Written 2026-11-11.
 
 This plan comes from a review of the three embroidery panels: reading their code and driving the
 app through each tab with a small design (a filled rectangle and a satin line). It lists what to
@@ -358,6 +358,12 @@ and `threadName`. Tests: `rows_tell_objects_apart`, and in the engine
 The player draws in a small picture in the panel. Play on the canvas instead (or as well), so the
 sewing is seen on the artwork at the size the user is working at.
 
+Status: done, as well as in the panel. While the player plays or is paused part way, the canvas draws
+the design on its fabric sewn up to the needle, with jumps and the needle ringed, whether or not Stitch
+Preview is on (flat stitches: the Realistic view is too slow to draw again each frame). The panel hands
+the needle to the canvas on every pass it is shown, so closing the panel ends it. Test:
+`the_sew_order_player_plays_on_the_canvas`.
+
 ## Order of work
 
 1. Phase 1 (UI1.1 to UI1.5): small, and fixes the first run.
@@ -391,3 +397,4 @@ sewing is seen on the artwork at the size the user is working at.
 - 2026-11-14: UI3.5 done; Phase 3 complete.
 - 2026-11-14: UI4.1 done.
 - 2026-11-14: UI4.2 done.
+- 2026-11-14: UI4.3 done; Phase 4 complete.
