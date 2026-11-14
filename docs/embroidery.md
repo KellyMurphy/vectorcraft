@@ -26,8 +26,10 @@ Select paths or compound paths (or groups holding them) and choose **Object › 
 header, always shown, holds the **Stitch Preview** and **Realistic** switches, the design in one line
 (stitches, size, threads, sewing time), **Export** in the machine's format and a badge with the number of
 problems the design checker found, which opens Check & Export. **Stitch** shows the same for the selection:
-the stitch, chosen from a grid of stitched pictures (each drawn by the real generator, with a line saying
-what it does), the thread and trims, and the stitch's own settings (Density is the spacing), the rarely
+the stitch, chosen from stitched pictures (each drawn by the real generator, with a line saying what it
+does) in three groups: Auto, the stitches along a line, and those that cover an area. With only open paths
+selected the area stitches are dimmed (they still work, closing each path with a straight line). Once the
+selection has a stitch the pictures fold away to that one; click it to choose another. Then the thread and trims, and the stitch's own settings (Density is the spacing), the rarely
 changed ones folded under **More Settings**. Fill patterns and border patterns are picked from pictures
 too, so Tatami 4 and Tatami 7 can be told apart before sewing. Once something is stitched while the
 document has no fabric or hoop, the tab opens with both menus and a Dismiss button. **Setup** holds what
@@ -735,7 +737,7 @@ profile is the next step (E10.1b).
 | `embroidery.removeMotif` | `{motif}`: remove one of the document's motifs that nothing uses |
 | `embroidery.removeBorderPattern` | `{pattern}`: remove one of the document's patterns that nothing sews with |
 | `embroidery.setup` | `{trimJumpsOver?: mm \| null, stitchMovesUnder?: mm, overlap?: mm, minStitch?: mm, autoStart?, hideTravel?, speed?: stitches/min, machineFormat?: dst \| pes \| jef \| exp, hoopRotation?: 0 \| 90 \| 180 \| 270}`: the document's travel settings, overlap, shortest stitch, machine speed, the format the panels export and the design's turn in the hoop |
-| `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `blockStitches` (each thread's stitches), `widthMm`, `heightMm`, `warnings`) and the selection's settings, with `sewn` (the colour the selection is sewn in) and `sewnThread` (its nearest thread in the chosen chart) |
+| `embroidery.info` | → the design (`stitches`, `jumps`, `trims`, `colorChanges`, `threads`, `blockStitches` (each thread's stitches), `widthMm`, `heightMm`, `warnings`) and the selection's settings, with `open` (how many selected objects are open paths), `sewn` (the colour the selection is sewn in) and `sewnThread` (its nearest thread in the chosen chart) |
 | `embroidery.stitches` | `{limit?}` → the stitches as sewn: `runs` of points in mm, `jumps`, `threads` |
 | `embroidery.check` | `{ids?}` → the design checker's `findings` (`rule`, `severity`, `message`, `object`, `at` in document points), `counts` and the `rules` |
 | `embroidery.digitize` | `{id?, colors?, minArea?, keepWhite?, order?, fix?, lines?}`: a logo (image, traced image or group of filled shapes) as stitch objects, one undo step; `lines: centreline` sews parts under 2 mm wide along their centre lines → `{id, objects, threads, merged, dropped, centrelines, fixes, findings}` |

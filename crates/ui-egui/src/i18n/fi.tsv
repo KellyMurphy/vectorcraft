@@ -5966,6 +5966,10 @@ mark-style	Japanese	Japanilainen
 	Setup	Asetukset
 	Check & Export	Tarkistus ja vienti
 	Sewing	Ompelu
+	Areas	Alueet
+	Fold the stitches away	Piilota pistot
+	Choose another stitch	Valitse toinen pisto
+	The selection is open paths: this stitch closes each one with a straight line between its ends.	Valinta on avoimia polkuja: tämä pisto sulkee jokaisen suoralla viivalla sen päiden välillä.
 	From Stitches	Pistoista
 	Font Editor…	Fonttieditori…
 	Make an embroidery font, or edit the one in this font document	Luo kirjontafontti tai muokkaa tämän fonttidokumentin fonttia

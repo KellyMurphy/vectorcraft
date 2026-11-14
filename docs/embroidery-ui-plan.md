@@ -1,6 +1,6 @@
 # Embroidery UI improvement plan
 
-Status: Phase 1 (UI1.1 to UI1.5) and Phase 2 (UI2.1 to UI2.5) done; the rest proposed. Written 2026-11-11.
+Status: Phase 1 (UI1.1 to UI1.5), Phase 2 (UI2.1 to UI2.5) and UI3.1 done; the rest proposed. Written 2026-11-11.
 
 This plan comes from a review of the three embroidery panels: reading their code and driving the
 app through each tab with a small design (a filled rectangle and a satin line). It lists what to
@@ -240,6 +240,21 @@ Change:
 - Consider collapsing the picker to the chosen kind's row once a stitch is set, with a control to
   open it again.
 
+Status: done. The pictures sit in three groups: Auto, Lines (Running, Bean, Zigzag, Satin Column,
+Pattern Border, Manual), Areas (Fill, Motif Fill, Satin Shape). With only open paths selected (the
+new `open` count of `embroidery.info`), the area tiles are drawn faint and their tooltip says the
+stitch closes each path with a straight line. They stay clickable, because that is what they do.
+New pictures:
+- Running stitch shows its needle holes.
+- Bean draws a heavier line.
+- Manual is a star placed point by point.
+- Satin Shape is an arch like a letter's stroke.
+- Auto shows what it picks by width: a filled block with a border, a satin bar and a bean line.
+
+Once the selection has a stitch, the picker folds to one row with that stitch's picture and name.
+Clicking the row unfolds the pictures, and choosing a stitch folds them again. Test:
+`the_stitch_picker_groups_dims_and_folds`.
+
 ### UI3.2 Say what is selected
 
 At the top of the Stitch tab: what is selected, its size in mm, its stitch and its stitch count,
@@ -315,3 +330,4 @@ sewing is seen on the artwork at the size the user is working at.
 - 2026-11-12: UI2.3 done.
 - 2026-11-12: UI2.5 done (without docking Sew Order or setting units).
 - 2026-11-12: UI2.4 done; Phase 2 complete.
+- 2026-11-14: UI3.1 done.

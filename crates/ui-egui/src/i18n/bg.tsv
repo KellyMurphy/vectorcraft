@@ -5873,6 +5873,10 @@ theme	Appearance	Външен вид
 	Setup	Настройка
 	Check & Export	Проверка и експорт
 	Sewing	Шиене
+	Areas	Площи
+	Fold the stitches away	Скриване на бодовете
+	Choose another stitch	Избор на друг бод
+	The selection is open paths: this stitch closes each one with a straight line between its ends.	Избрани са отворени контури: този бод затваря всеки с права линия между краищата му.
 	From Stitches	От бодове
 	Font Editor…	Редактор на шрифтове…
 	Make an embroidery font, or edit the one in this font document	Създаване на шрифт за бродерия или редактиране на този в документа на шрифта

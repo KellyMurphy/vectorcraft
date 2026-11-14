@@ -5986,6 +5986,10 @@ imageTrace	Outline	Körvonal
 	Setup	Beállítás
 	Check & Export	Ellenőrzés és exportálás
 	Sewing	Varrás
+	Areas	Területek
+	Fold the stitches away	Öltések elrejtése
+	Choose another stitch	Másik öltés választása
+	The selection is open paths: this stitch closes each one with a straight line between its ends.	A kijelölés nyitott útvonalakból áll: ez az öltés mindegyiket egyenes vonallal zárja le a végpontjai között.
 	From Stitches	Öltésekből
 	Font Editor…	Betűszerkesztő…
 	Make an embroidery font, or edit the one in this font document	Hímzőbetű készítése, vagy a betűdokumentumban lévő szerkesztése

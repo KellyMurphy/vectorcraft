@@ -161,7 +161,8 @@ fn stitch_tab(app: &mut VectorcraftApp, ui: &mut Ui, info: &Value) {
             if selection_len(app) == 0 { tl!("Select paths to stitch.") } else { tl!("Only paths, compound paths and type can be stitched.") },
         );
     } else {
-        stitch_picker(app, ui, kind);
+        let open_paths = sel["open"].as_u64().is_some_and(|n| n > 0 && n == stitched + unstitched);
+        stitch_picker(app, ui, kind, open_paths);
         match kind {
             Some(k) => {
                 widgets::dim_label(ui, tl!(kind_blurb(k)));
@@ -785,26 +786,102 @@ pub(crate) fn kind_blurb(k: StitchKind) -> &'static str {
     }
 }
 
-/// The stitch types as a grid of stitched pictures; the selection's is outlined.
-fn stitch_picker(app: &mut VectorcraftApp, ui: &mut Ui, current: Option<StitchKind>) {
+/// The stitches that sew along a line.
+const LINE_KINDS: [StitchKind; 6] =
+    [StitchKind::Running, StitchKind::Bean, StitchKind::Zigzag, StitchKind::Satin, StitchKind::PatternBorder, StitchKind::Manual];
+/// The stitches that cover an area.
+const AREA_KINDS: [StitchKind; 3] = [StitchKind::Fill, StitchKind::MotifFill, StitchKind::SatinShape];
+
+/// Whether the stitch picker is unfolded while the selection has a stitch.
+fn picker_open_id() -> egui::Id {
+    egui::Id::unique("embroidery-stitch-picker-open")
+}
+
+/// The stitch types as stitched pictures in groups: Auto, the stitches along a line, those that
+/// cover an area. Once the selection has a stitch the picker folds to that one stitch, so its
+/// settings come first; clicking it unfolds the pictures again. With only open paths selected, the
+/// area stitches are dimmed (still chosen with a click: they close each path with a straight line).
+fn stitch_picker(app: &mut VectorcraftApp, ui: &mut Ui, current: Option<StitchKind>, open_paths: bool) {
+    let mut open = current.is_none() || ui.ctx().data(|d| d.get_temp::<bool>(picker_open_id())).unwrap_or(false);
+    if let Some(k) = current
+        && chosen_stitch(ui, k, open).clicked()
+    {
+        open = !open;
+        ui.ctx().data_mut(|d| d.insert_temp(picker_open_id(), open));
+    }
+    if !open {
+        return;
+    }
     let cols = 3;
     let gap = 4.0;
-    let tile_w = ((ui.available_width() - gap * (cols as f32 - 1.0)) / cols as f32).floor().max(60.0);
+    let tile_w = ((ui.available_width().min(PANEL_W) - gap * (cols as f32 - 1.0)) / cols as f32).floor().max(60.0);
     let size = vec2(tile_w, 58.0);
+    let groups: [(Option<&str>, &[StitchKind]); 3] = [(None, &[StitchKind::Auto]), (Some("Lines"), &LINE_KINDS), (Some("Areas"), &AREA_KINDS)];
     ui.scope(|ui| {
         ui.spacing_mut().item_spacing = vec2(gap, gap);
-        for row in StitchKind::ALL.chunks(cols) {
-            ui.horizontal(|ui| {
-                for k in row {
-                    let thumb = stitch_art::kind(ui.ctx(), *k);
-                    let r = stitch_art::tile(ui, k.id(), size, &thumb, tl!(k.label()), current == Some(*k), false).on_hover_text(tl!(kind_blurb(*k)));
-                    if r.clicked() && current != Some(*k) {
-                        set(app, json!({"type": k.id()}));
+        for (heading, kinds) in groups {
+            if let Some(h) = heading {
+                ui.label(egui::RichText::new(tl!(h)).size(11.0).color(Tokens::get(ui.ctx()).text_dim));
+            }
+            for row in kinds.chunks(cols) {
+                ui.horizontal(|ui| {
+                    for k in row {
+                        let unsuited = open_paths && AREA_KINDS.contains(k);
+                        let thumb = stitch_art::kind(ui.ctx(), *k);
+                        let r = ui
+                            .scope(|ui| {
+                                if unsuited {
+                                    ui.set_opacity(0.4);
+                                }
+                                stitch_art::tile(ui, k.id(), size, &thumb, tl!(k.label()), current == Some(*k), false)
+                            })
+                            .inner;
+                        let tip = if unsuited {
+                            format!(
+                                "{}\n\n{}",
+                                tl!(kind_blurb(*k)),
+                                tl!("The selection is open paths: this stitch closes each one with a straight line between its ends.")
+                            )
+                        } else {
+                            tl!(kind_blurb(*k)).to_string()
+                        };
+                        if r.on_hover_text(tip).clicked() && current != Some(*k) {
+                            set(app, json!({"type": k.id()}));
+                            ui.ctx().data_mut(|d| d.insert_temp(picker_open_id(), false));
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     });
+}
+
+/// The folded picker: the chosen stitch's picture and name, and an arrow that unfolds the others.
+fn chosen_stitch(ui: &mut Ui, k: StitchKind, open: bool) -> egui::Response {
+    let t = Tokens::get(ui.ctx());
+    let (rect, resp) = ui.allocate_exact_size(vec2(ui.available_width().min(PANEL_W), 40.0), Sense::click());
+    let resp = resp.on_hover_cursor(egui::CursorIcon::PointingHand);
+    let fill = if resp.hovered() { t.hover } else { t.input };
+    ui.painter().rect_filled(rect, 3.0, fill);
+    ui.painter().rect_stroke(rect, 3.0, Stroke::new(1.0, t.input_border), egui::StrokeKind::Inside);
+    let pic = Rect::from_min_size(rect.min, vec2(64.0, rect.height()));
+    stitch_art::draw(ui.painter(), pic, &stitch_art::kind(ui.ctx(), k), t.text, None);
+    let name = Rect::from_min_max(pic.right_top(), egui::pos2(rect.right() - 18.0, rect.bottom()));
+    ui.painter_at(name).text(
+        name.left_center() + vec2(6.0, 0.0),
+        egui::Align2::LEFT_CENTER,
+        tl!(k.label()),
+        egui::FontId::proportional(13.0),
+        t.text_strong,
+    );
+    let arrow = Rect::from_center_size(rect.right_center() - vec2(10.0, 0.0), vec2(8.0, 5.0));
+    let tri = if open {
+        vec![arrow.left_bottom(), arrow.right_bottom(), arrow.center_top()]
+    } else {
+        vec![arrow.left_top(), arrow.right_top(), arrow.center_bottom()]
+    };
+    ui.painter().add(egui::Shape::convex_polygon(tri, t.text_dim, Stroke::NONE));
+    resp.on_hover_text(if open { tl!("Fold the stitches away") } else { tl!("Choose another stitch") })
 }
 
 /// A picker button showing `thumb` and `label`, opening a grid of `entries` (label, picture) on
@@ -2896,6 +2973,11 @@ mod tests {
 
     /// The texts the panel draws with tab `tab` open, and the colours of the rectangles it fills.
     fn drawn(app: &mut VectorcraftApp, tab: usize) -> (Vec<String>, Vec<Color32>) {
+        drawn_in(&egui::Context::default(), app, tab)
+    }
+
+    /// [`drawn`] in `ctx`, keeping what the panel remembers there.
+    fn drawn_in(ctx: &egui::Context, app: &mut VectorcraftApp, tab: usize) -> (Vec<String>, Vec<Color32>) {
         fn walk(s: &egui::Shape, texts: &mut Vec<String>, fills: &mut Vec<Color32>) {
             match s {
                 egui::Shape::Text(t) => texts.push(t.galley.text().to_string()),
@@ -2904,7 +2986,6 @@ mod tests {
                 _ => {}
             }
         }
-        let ctx = egui::Context::default();
         ctx.data_mut(|d| d.insert_persisted(tab_id(), tab));
         let (mut texts, mut fills) = (vec![], vec![]);
         for k in 0..2 {
@@ -2915,6 +2996,35 @@ mod tests {
             out.shapes.iter().for_each(|c| walk(&c.shape, &mut texts, &mut fills));
         }
         (texts, fills)
+    }
+
+    /// UI3.1: the stitch picker groups the stitches by what they sew, dims those that cover an
+    /// area while only open paths are selected, and folds to the chosen stitch once there is one.
+    #[test]
+    fn the_stitch_picker_groups_dims_and_folds() {
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        let run = |app: &mut VectorcraftApp, id: &str, p: Value| app.session.execute(id, &p).unwrap();
+        run(&mut app, "file.new", json!({"width": 200, "height": 200}));
+        run(&mut app, "path.create", json!({"d": "M 20 20 L 180 20 L 100 120"}));
+        let (texts, open_fills) = drawn(&mut app, 0);
+        let at = |t: &str| texts.iter().position(|x| x == t).unwrap_or_else(|| panic!("{t}: {texts:?}"));
+        assert!(at("Auto") < at("Lines") && at("Lines") < at("Running Stitch") && at("Manual Stitch") < at("Areas"), "{texts:?}");
+        assert!(at("Areas") < at("Fill") && at("Areas") < at("Satin Shape"), "{texts:?}");
+        // The area tiles are drawn faint for the open path, not for a closed one.
+        let faint = |fills: &[Color32]| fills.iter().filter(|c| c.a() > 0 && c.a() < 200).count();
+        run(&mut app, "select.none", json!({}));
+        run(&mut app, "shape.rectangle", json!({"x": 10, "y": 10, "width": 100, "height": 60}));
+        let closed_fills = drawn(&mut app, 0).1;
+        assert!(faint(&open_fills) >= faint(&closed_fills) + 3, "{} vs {}", faint(&open_fills), faint(&closed_fills));
+        // Stitched: folded to the chosen stitch, its settings next.
+        run(&mut app, "embroidery.set", json!({"type": "fill"}));
+        let ctx = egui::Context::default();
+        let texts = drawn_in(&ctx, &mut app, 0).0;
+        assert!(texts.iter().any(|t| t == "Fill") && !texts.iter().any(|t| t == "Lines" || t == "Running Stitch"), "{texts:?}");
+        // Unfolded with a click on it, every stitch again.
+        ctx.data_mut(|d| d.insert_temp(picker_open_id(), true));
+        let texts = drawn_in(&ctx, &mut app, 0).0;
+        assert!(texts.iter().any(|t| t == "Lines") && texts.iter().any(|t| t == "Running Stitch"), "{texts:?}");
     }
 
     /// UI1.3: the first stitch in a document turns Stitch Preview on, so choosing a stitch shows

@@ -5600,6 +5600,10 @@ lighting	Light	Свет
 	Setup	Настройка
 	Check & Export	Проверка и экспорт
 	Sewing	Шитьё
+	Areas	Области
+	Fold the stitches away	Свернуть стежки
+	Choose another stitch	Выбрать другой стежок
+	The selection is open paths: this stitch closes each one with a straight line between its ends.	Выделены открытые контуры: этот стежок замыкает каждый прямой линией между его концами.
 	From Stitches	Из стежков
 	Font Editor…	Редактор шрифтов…
 	Make an embroidery font, or edit the one in this font document	Создать шрифт для вышивки или изменить шрифт этого документа

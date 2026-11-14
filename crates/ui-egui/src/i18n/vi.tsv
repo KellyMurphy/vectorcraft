@@ -5598,6 +5598,10 @@ theme	Appearance	Giao diện
 	Setup	Thiết lập
 	Check & Export	Kiểm tra và xuất
 	Sewing	May
+	Areas	Vùng
+	Fold the stitches away	Thu gọn các mũi thêu
+	Choose another stitch	Chọn mũi thêu khác
+	The selection is open paths: this stitch closes each one with a straight line between its ends.	Vùng chọn là các đường mở: mũi thêu này khép mỗi đường bằng một đoạn thẳng nối hai đầu.
 	From Stitches	Từ mũi thêu
 	Font Editor…	Trình sửa phông…
 	Make an embroidery font, or edit the one in this font document	Tạo phông thêu, hoặc sửa phông trong tài liệu phông này

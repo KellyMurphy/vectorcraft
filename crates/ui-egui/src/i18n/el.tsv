@@ -5954,6 +5954,10 @@ effect	Points	Σημεία
 	Setup	Ρύθμιση
 	Check & Export	Έλεγχος & εξαγωγή
 	Sewing	Ράψιμο
+	Areas	Περιοχές
+	Fold the stitches away	Απόκρυψη βελονιών
+	Choose another stitch	Επιλογή άλλης βελονιάς
+	The selection is open paths: this stitch closes each one with a straight line between its ends.	Η επιλογή είναι ανοιχτές διαδρομές: αυτή η βελονιά κλείνει την καθεμία με ευθεία γραμμή ανάμεσα στα άκρα της.
 	From Stitches	Από βελονιές
 	Font Editor…	Επεξεργασία γραμματοσειράς…
 	Make an embroidery font, or edit the one in this font document	Δημιουργία γραμματοσειράς κεντήματος ή επεξεργασία αυτής του εγγράφου

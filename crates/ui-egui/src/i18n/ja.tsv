@@ -5650,6 +5650,10 @@ lighting	Light	ライト
 	Setup	設定
 	Check & Export	チェックと書き出し
 	Sewing	縫製
+	Areas	面
+	Fold the stitches away	ステッチを折りたたむ
+	Choose another stitch	別のステッチを選択
+	The selection is open paths: this stitch closes each one with a straight line between its ends.	選択範囲はオープンパスです。このステッチは各パスの両端を直線で結んで閉じます。
 	From Stitches	ステッチから
 	Font Editor…	フォントエディター…
 	Make an embroidery font, or edit the one in this font document	刺しゅうフォントを作成するか、このフォントドキュメントのフォントを編集します

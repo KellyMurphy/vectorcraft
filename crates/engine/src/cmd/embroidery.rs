@@ -358,7 +358,7 @@ fn info_doc() -> &'static str {
     static DOC: std::sync::OnceLock<String> = std::sync::OnceLock::new();
     DOC.get_or_init(|| {
         format!(
-            "{{ids?}} → {{design: {{objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], blockStitches: [each thread's stitch count, as threads], widthMm, heightMm, warnings, stops: [{{block: the thread sewn after it (0 with no colour change: before the machine starts), kind: stop|placeFabric|trimFabric|foam}}]}}, setup: {{trimJumpsOver, stitchMovesUnder}} (embroidery.setup), selection: {{stitched, unstitched, sewn: \"#rrggbb\" (the thread colour the stitched objects are sewn in, their own colour when they set none; null when they differ), sewnThread: {{code, name, color, deltaE}} (sewn's nearest thread in the chosen thread chart; null without one), {}}} (as sewn: the document's fabric fills in what objects leave unset; each null when the stitched objects differ, or none is; type is `unknown` for settings from a newer VectorCraft)}}",
+            "{{ids?}} → {{design: {{objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], blockStitches: [each thread's stitch count, as threads], widthMm, heightMm, warnings, stops: [{{block: the thread sewn after it (0 with no colour change: before the machine starts), kind: stop|placeFabric|trimFabric|foam}}]}}, setup: {{trimJumpsOver, stitchMovesUnder}} (embroidery.setup), selection: {{stitched, unstitched, open (how many of them are open paths, or compound paths of open paths: an area stitch closes each with a straight line), sewn: \"#rrggbb\" (the thread colour the stitched objects are sewn in, their own colour when they set none; null when they differ), sewnThread: {{code, name, color, deltaE}} (sewn's nearest thread in the chosen thread chart; null without one), {}}} (as sewn: the document's fabric fills in what objects leave unset; each null when the stitched objects differ, or none is; type is `unknown` for settings from a newer VectorCraft)}}",
             params::info_keys()
         )
     })
@@ -1051,6 +1051,17 @@ pub(crate) fn design(doc: &Document, plan: &Plan) -> Value {
     })
 }
 
+/// An open path, or a compound path of open paths: an area stitch closes it with a straight line
+/// from end to end (the panel dims the area stitches for a selection of them).
+fn is_open(n: &vectorcraft_doc::Node) -> bool {
+    let open = |p: &vectorcraft_geom::PathData| !p.subpaths.iter().any(|s| s.closed);
+    match &n.kind {
+        NodeKind::Path { path, .. } => open(path),
+        NodeKind::Compound { children, .. } => children.iter().all(|c| c.path_data().is_none_or(open)),
+        _ => false,
+    }
+}
+
 fn info(s: &mut Session, p: &Value) -> Result<Value> {
     let ids = stitchable(s, &targets(s, p)?)?;
     let doc = &s.doc()?.doc;
@@ -1062,7 +1073,8 @@ fn info(s: &mut Session, p: &Value) -> Result<Value> {
         .filter_map(|id| doc.node(*id)?.extras().stitch.as_deref())
         .map(|s| fabric.map_or_else(|| s.clone(), |f| vectorcraft_embroidery::fabrics::fill_in(s, f)))
         .collect();
-    let mut selection = json!({ "stitched": all.len(), "unstitched": ids.len() - all.len() });
+    let open = ids.iter().filter(|id| doc.node(**id).is_some_and(is_open)).count();
+    let mut selection = json!({ "stitched": all.len(), "unstitched": ids.len() - all.len(), "open": open });
     for param in params::PARAMS {
         selection[param.key] = same(all.iter().map(|s| (param.get)(s)));
     }

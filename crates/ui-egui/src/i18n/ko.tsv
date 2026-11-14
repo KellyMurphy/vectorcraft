@@ -5578,6 +5578,10 @@ lighting	Light	광원
 	Setup	설정
 	Check & Export	검사 및 내보내기
 	Sewing	봉제
+	Areas	면
+	Fold the stitches away	땀 접기
+	Choose another stitch	다른 땀 선택
+	The selection is open paths: this stitch closes each one with a straight line between its ends.	선택 항목이 열린 패스입니다. 이 땀은 각 패스의 양 끝을 직선으로 이어 닫습니다.
 	From Stitches	땀에서
 	Font Editor…	글꼴 편집기…
 	Make an embroidery font, or edit the one in this font document	자수 글꼴을 만들거나 이 글꼴 문서의 글꼴을 편집합니다

@@ -17,6 +17,10 @@ pub struct Thumb {
     pub runs: Vec<Vec<Point>>,
     pub lo: Point,
     pub hi: Point,
+    /// The needle holes drawn as dots (what tells a running stitch from a drawn line).
+    pub holes: bool,
+    /// Drawn with a heavier line (a bean stitch: each stitch sewn three times).
+    pub bold: bool,
 }
 
 impl Thumb {
@@ -34,7 +38,17 @@ impl Thumb {
         if !(lo.x.is_finite() && hi.x.is_finite()) {
             (lo, hi) = (Point::ZERO, Point::new(1.0, 1.0));
         }
-        Self { runs, lo, hi }
+        Self { runs, lo, hi, holes: false, bold: false }
+    }
+
+    fn with_holes(mut self) -> Self {
+        self.holes = true;
+        self
+    }
+
+    fn bold(mut self) -> Self {
+        self.bold = true;
+        self
     }
 
     /// Made for `key` once, then kept.
@@ -62,14 +76,31 @@ fn wave() -> PathData {
     path_mm(&pts, false)
 }
 
-/// A bar 14 × 2.4 mm.
-fn bar(y: f64) -> PathData {
-    path_mm(&[(0.0, y), (14.0, y), (14.0, y + 2.4), (0.0, y + 2.4)], true)
-}
-
 /// A square 10 × 8 mm.
 fn block() -> PathData {
     path_mm(&[(0.0, 0.0), (10.0, 0.0), (10.0, 8.0), (0.0, 8.0)], true)
+}
+
+/// An arch 12 mm across and 2.4 mm thick, like a letter's stroke (∩).
+fn arch() -> PathData {
+    let ring = |r: f64, k: usize| {
+        let a = std::f64::consts::PI * (1.0 + k as f64 / 16.0);
+        (6.0 + r * a.cos(), 6.0 + r * a.sin())
+    };
+    let pts: Vec<(f64, f64)> = (0..=16).map(|k| ring(6.0, k)).chain((0..=16).rev().map(|k| ring(3.6, k))).collect();
+    path_mm(&pts, true)
+}
+
+/// A five-pointed star drawn point by point, 12 mm across: what a hand-placed manual stitch sews.
+fn star() -> PathData {
+    let pts: Vec<(f64, f64)> = (0..=10)
+        .map(|k| {
+            let a = std::f64::consts::TAU * (k % 10) as f64 / 10.0 - std::f64::consts::FRAC_PI_2;
+            let r = if k % 2 == 0 { 6.0 } else { 2.6 };
+            (6.0 + r * a.cos(), 6.0 + r * a.sin())
+        })
+        .collect();
+    path_mm(&pts, false)
 }
 
 fn sew(settings: &StitchSettings, path: &PathData, stroke_mm: f64, patterns: &[BorderPattern]) -> Vec<Vec<Point>> {
@@ -88,13 +119,15 @@ fn sew(settings: &StitchSettings, path: &PathData, stroke_mm: f64, patterns: &[B
     .runs
 }
 
-/// The stitch type `k` on a shape that suits it.
+/// The stitch type `k` on a shape that suits it, each picture unlike the others: a running stitch
+/// shows its needle holes, a bean stitch a heavier line, a satin shape an arch like a letter's
+/// stroke, a manual stitch a star placed point by point, and Auto what it picks by width.
 pub fn kind(ctx: &egui::Context, k: StitchKind) -> Thumb {
-    Thumb::cached(ctx, &format!("kind:{}", k.id()), || {
+    Thumb::cached(ctx, &format!("kind2:{}", k.id()), || {
         let mut s = StitchSettings::new(k);
         let runs = match k {
-            StitchKind::Running => sew(&s, &wave(), 1.0, &[]),
-            StitchKind::Bean => sew(&s, &wave(), 1.0, &[]),
+            StitchKind::Running => return Thumb::new(sew(&s, &wave(), 1.0, &[])).with_holes(),
+            StitchKind::Bean => return Thumb::new(sew(&s, &wave(), 1.0, &[])).bold(),
             StitchKind::Satin => {
                 s.width = Some(2.2);
                 s.spacing = Some(0.6);
@@ -107,7 +140,7 @@ pub fn kind(ctx: &egui::Context, k: StitchKind) -> Thumb {
             }
             StitchKind::SatinShape => {
                 s.spacing = Some(0.6);
-                sew(&s, &bar(0.0), 1.0, &[])
+                sew(&s, &arch(), 1.0, &[])
             }
             StitchKind::Fill => {
                 s.spacing = Some(0.8);
@@ -123,16 +156,17 @@ pub fn kind(ctx: &egui::Context, k: StitchKind) -> Thumb {
                 s.width = Some(3.0);
                 sew(&s, &path_mm(&[(0.0, 0.0), (14.0, 0.0)], false), 1.0, &[])
             }
-            StitchKind::Manual => {
-                let pts: Vec<(f64, f64)> = (0..7).map(|k| (k as f64 * 2.3, if k % 2 == 0 { 0.0 } else { 2.2 })).collect();
-                sew(&s, &path_mm(&pts, false), 1.0, &[])
-            }
-            // Auto: a satin shape on a bar, a bean line under it (what it picks by width).
+            StitchKind::Manual => return Thumb::new(sew(&s, &star(), 1.0, &[])).with_holes(),
+            // Auto: what it picks by width, side by side: a wide shape filled with a satin border,
+            // a narrow one in satin, a thin line in bean stitch.
             StitchKind::Auto => {
+                let mut fill = StitchSettings::new(StitchKind::Fill);
+                (fill.spacing, fill.length, fill.border) = (Some(0.9), Some(2.2), Some(0.8));
+                let mut runs = sew(&fill, &path_mm(&[(0.0, 0.0), (6.0, 0.0), (6.0, 8.0), (0.0, 8.0)], true), 1.0, &[]);
                 let mut satin = StitchSettings::new(StitchKind::SatinShape);
                 satin.spacing = Some(0.6);
-                let mut runs = sew(&satin, &bar(0.0), 1.0, &[]);
-                runs.extend(sew(&StitchSettings::new(StitchKind::Running), &path_mm(&[(0.0, 4.2), (14.0, 4.2)], false), 1.0, &[]));
+                runs.extend(sew(&satin, &path_mm(&[(7.6, 0.0), (10.0, 0.0), (10.0, 8.0), (7.6, 8.0)], true), 1.0, &[]));
+                runs.extend(sew(&StitchSettings::new(StitchKind::Bean), &path_mm(&[(12.0, 0.0), (12.0, 8.0)], false), 1.0, &[]));
                 runs
             }
         };
@@ -192,9 +226,16 @@ pub fn draw(painter: &egui::Painter, rect: Rect, thumb: &Thumb, thread: Color32,
     // With dots, the needle holes are the picture (a fill pattern is its holes' diagonals): the
     // thread goes faint behind them.
     let line = if dots.is_some() { thread.gamma_multiply(0.45) } else { thread };
+    let width = if thumb.bold { 2.2 } else { 1.0 };
     for run in &thumb.runs {
         let pts: Vec<Pos2> = run.iter().map(at).collect();
-        painter.add(egui::Shape::line(pts, Stroke::new(1.0, line)));
+        painter.add(egui::Shape::line(pts, Stroke::new(width, line)));
+    }
+    // A picture's own needle holes, unless the caller already shows them.
+    if thumb.holes && dots.is_none() {
+        for p in thumb.runs.iter().flatten() {
+            painter.circle_filled(at(p), 1.6, thread);
+        }
     }
     if let Some(c) = dots {
         for p in thumb.runs.iter().flatten() {
@@ -258,6 +299,15 @@ mod tests {
         for id in borders::BUILTIN {
             assert!(!border(&ctx, &borders::builtin(id).unwrap()).runs.is_empty(), "{id}");
         }
+        // Each stitch type's picture is its own: no two sew the same points drawn the same way.
+        let pics: Vec<(StitchKind, Thumb)> = StitchKind::ALL.iter().map(|k| (*k, kind(&ctx, *k))).collect();
+        for (i, (a, ta)) in pics.iter().enumerate() {
+            for (b, tb) in &pics[i + 1..] {
+                let same = ta.runs == tb.runs && ta.holes == tb.holes && ta.bold == tb.bold;
+                assert!(!same, "{} and {} look the same", a.id(), b.id());
+            }
+        }
+        assert!(kind(&ctx, StitchKind::Running).holes && kind(&ctx, StitchKind::Bean).bold);
         // Tatami patterns differ from each other (the needle holes' diagonals): not the same picture.
         let a: Vec<Point> = fill_pattern(&ctx, 4, None).runs.concat();
         let b: Vec<Point> = fill_pattern(&ctx, 7, None).runs.concat();

@@ -5606,6 +5606,10 @@ lighting	Light	Luce
 	Setup	Impostazione
 	Check & Export	Controlla ed esporta
 	Sewing	Cucitura
+	Areas	Aree
+	Fold the stitches away	Nascondi i punti
+	Choose another stitch	Scegli un altro punto
+	The selection is open paths: this stitch closes each one with a straight line between its ends.	La selezione è fatta di tracciati aperti: questo punto chiude ciascuno con una linea retta tra le estremità.
 	From Stitches	Dai punti
 	Font Editor…	Editor font…
 	Make an embroidery font, or edit the one in this font document	Crea un font da ricamo o modifica quello di questo documento font

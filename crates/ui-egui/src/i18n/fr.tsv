@@ -5987,6 +5987,10 @@ theme	Appearance	Apparence
 	Setup	Configuration
 	Check & Export	Vérifier et exporter
 	Sewing	Broderie
+	Areas	Surfaces
+	Fold the stitches away	Masquer les points
+	Choose another stitch	Choisir un autre point
+	The selection is open paths: this stitch closes each one with a straight line between its ends.	La sélection est faite de tracés ouverts : ce point ferme chacun d’une ligne droite entre ses extrémités.
 	From Stitches	Depuis les points
 	Font Editor…	Éditeur de police…
 	Make an embroidery font, or edit the one in this font document	Créer une police de broderie, ou modifier celle de ce document de police

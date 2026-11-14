@@ -819,6 +819,21 @@ fn the_design_counts_each_threads_stitches() {
     assert!(counts[0] > counts[1], "the fill sews more than the line: {counts:?}");
 }
 
+/// The selection says how many of its objects are open paths, so the panel can dim the stitches
+/// that cover an area.
+#[test]
+fn the_selection_counts_its_open_paths() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 300, "height": 300})).unwrap();
+    s.execute("path.create", &json!({"d": "M 20 200 L 280 200 L 150 250"})).unwrap();
+    assert_eq!(s.execute("embroidery.info", &json!({})).unwrap()["selection"]["open"], json!(1));
+    s.execute("shape.rectangle", &json!({"x": 10, "y": 10, "width": 100, "height": 60})).unwrap();
+    assert_eq!(s.execute("embroidery.info", &json!({})).unwrap()["selection"]["open"], json!(0), "a rectangle is closed");
+    s.execute("select.all", &json!({})).unwrap();
+    let sel = s.execute("embroidery.info", &json!({})).unwrap()["selection"].clone();
+    assert_eq!((sel["open"].as_u64(), sel["unstitched"].as_u64()), (Some(1), Some(2)), "{sel}");
+}
+
 #[test]
 fn the_selection_reports_the_colour_it_is_sewn_in_and_its_chart_thread() {
     // The session's red square (#ff0000) stitched with no thread of its own: sewn in its fill.

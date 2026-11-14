@@ -5584,6 +5584,10 @@ effect	Soft	Weich
 	Setup	Einrichtung
 	Check & Export	Prüfen & Exportieren
 	Sewing	Sticken
+	Areas	Flächen
+	Fold the stitches away	Stiche ausblenden
+	Choose another stitch	Anderen Stich wählen
+	The selection is open paths: this stitch closes each one with a straight line between its ends.	Die Auswahl besteht aus offenen Pfaden: Dieser Stich schließt jeden mit einer geraden Linie zwischen seinen Enden.
 	From Stitches	Aus Stichen
 	Font Editor…	Schrifteditor…
 	Make an embroidery font, or edit the one in this font document	Eine Stickschrift erstellen oder die in diesem Schriftdokument bearbeiten

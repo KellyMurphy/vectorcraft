@@ -5821,6 +5821,10 @@ lighting	Light	光源
 	Setup	设置
 	Check & Export	检查与导出
 	Sewing	缝制
+	Areas	区域
+	Fold the stitches away	收起针法
+	Choose another stitch	选择其他针法
+	The selection is open paths: this stitch closes each one with a straight line between its ends.	所选为开放路径：此针法用直线连接每条路径的两端将其闭合。
 	From Stitches	从针迹
 	Font Editor…	字体编辑器…
 	Make an embroidery font, or edit the one in this font document	制作刺绣字体，或编辑此字体文档中的字体
