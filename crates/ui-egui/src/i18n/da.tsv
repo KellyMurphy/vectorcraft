@@ -5866,11 +5866,18 @@ swatch	Bright Violet	Kraftig violet
 	More Settings ({n})	Flere indstillinger ({n})
 @plural	{n} stitch|{n} stitches	{n} sting|{n} sting
 @plural	{n} thread|{n} threads	{n} tråd|{n} tråde
+@plural	{n} path|{n} paths	{n} sti|{n} stier
+@plural	{n} compound path|{n} compound paths	{n} sammensat sti|{n} sammensatte stier
+@plural	{n} type object|{n} type objects	{n} tekstobjekt|{n} tekstobjekter
+@plural	{n} object|{n} objects	{n} objekt|{n} objekter
 @plural	{n} problem|{n} problems	{n} problem|{n} problemer
 	{m} min	{m} min
 	Setup	Opsætning
 	Check & Export	Kontrol og eksport
 	Sewing	Syning
+	Not stitched	Ikke broderet
+	Mixed stitches	Forskellige sting
+	The selection: what it is, its size, its stitch and the stitches it sews	Markeringen: hvad den er, dens størrelse, dens sting og hvor mange sting den syr
 	Areas	Flader
 	Fold the stitches away	Skjul stingene
 	Choose another stitch	Vælg et andet sting

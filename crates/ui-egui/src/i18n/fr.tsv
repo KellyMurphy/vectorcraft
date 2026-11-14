@@ -5982,11 +5982,18 @@ theme	Appearance	Apparence
 	More Settings ({n})	Plus de réglages ({n})
 @plural	{n} stitch|{n} stitches	{n} point|{n} points
 @plural	{n} thread|{n} threads	{n} fil|{n} fils
+@plural	{n} path|{n} paths	{n} tracé|{n} tracés
+@plural	{n} compound path|{n} compound paths	{n} tracé transparent|{n} tracés transparents
+@plural	{n} type object|{n} type objects	{n} objet texte|{n} objets texte
+@plural	{n} object|{n} objects	{n} objet|{n} objets
 @plural	{n} problem|{n} problems	{n} problème|{n} problèmes
 	{m} min	{m} min
 	Setup	Configuration
 	Check & Export	Vérifier et exporter
 	Sewing	Broderie
+	Not stitched	Non brodé
+	Mixed stitches	Points différents
+	The selection: what it is, its size, its stitch and the stitches it sews	La sélection : ce qu’elle est, sa taille, son point et le nombre de points qu’elle coud
 	Areas	Surfaces
 	Fold the stitches away	Masquer les points
 	Choose another stitch	Choisir un autre point

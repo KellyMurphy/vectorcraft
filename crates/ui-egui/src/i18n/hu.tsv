@@ -5981,11 +5981,18 @@ imageTrace	Outline	Körvonal
 	More Settings ({n})	További beállítások ({n})
 @plural	{n} stitch|{n} stitches	{n} öltés|{n} öltés
 @plural	{n} thread|{n} threads	{n} cérna|{n} cérna
+@plural	{n} path|{n} paths	{n} útvonal|{n} útvonal
+@plural	{n} compound path|{n} compound paths	{n} összetett útvonal|{n} összetett útvonal
+@plural	{n} type object|{n} type objects	{n} szövegobjektum|{n} szövegobjektum
+@plural	{n} object|{n} objects	{n} objektum|{n} objektum
 @plural	{n} problem|{n} problems	{n} probléma|{n} probléma
 	{m} min	{m} perc
 	Setup	Beállítás
 	Check & Export	Ellenőrzés és exportálás
 	Sewing	Varrás
+	Not stitched	Nincs öltés
+	Mixed stitches	Különböző öltések
+	The selection: what it is, its size, its stitch and the stitches it sews	A kijelölés: mi az, mekkora, milyen öltéssel és hány öltéssel varrja
 	Areas	Területek
 	Fold the stitches away	Öltések elrejtése
 	Choose another stitch	Másik öltés választása

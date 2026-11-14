@@ -5985,11 +5985,18 @@ mark-style	Japanese	Japonské
 	More Settings ({n})	Další nastavení ({n})
 @plural	{n} stitch|{n} stitches	{n} steh|{n} stehy|{n} stehů
 @plural	{n} thread|{n} threads	{n} nit|{n} nitě|{n} nití
+@plural	{n} path|{n} paths	{n} cesta|{n} cesty|{n} cest
+@plural	{n} compound path|{n} compound paths	{n} složená cesta|{n} složené cesty|{n} složených cest
+@plural	{n} type object|{n} type objects	{n} textový objekt|{n} textové objekty|{n} textových objektů
+@plural	{n} object|{n} objects	{n} objekt|{n} objekty|{n} objektů
 @plural	{n} problem|{n} problems	{n} problém|{n} problémy|{n} problémů
 	{m} min	{m} min
 	Setup	Nastavení
 	Check & Export	Kontrola a export
 	Sewing	Šití
+	Not stitched	Bez stehů
+	Mixed stitches	Různé stehy
+	The selection: what it is, its size, its stitch and the stitches it sews	Výběr: co to je, jeho velikost, steh a kolik stehů ušije
 	Areas	Plochy
 	Fold the stitches away	Skrýt stehy
 	Choose another stitch	Vybrat jiný steh

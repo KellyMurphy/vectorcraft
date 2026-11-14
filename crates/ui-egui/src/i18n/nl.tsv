@@ -5916,11 +5916,18 @@ swatch	Bright Violet	Felviolet
 	More Settings ({n})	Meer instellingen ({n})
 @plural	{n} stitch|{n} stitches	{n} steek|{n} steken
 @plural	{n} thread|{n} threads	{n} garen|{n} garens
+@plural	{n} path|{n} paths	{n} pad|{n} paden
+@plural	{n} compound path|{n} compound paths	{n} samengesteld pad|{n} samengestelde paden
+@plural	{n} type object|{n} type objects	{n} tekstobject|{n} tekstobjecten
+@plural	{n} object|{n} objects	{n} object|{n} objecten
 @plural	{n} problem|{n} problems	{n} probleem|{n} problemen
 	{m} min	{m} min
 	Setup	Instellingen
 	Check & Export	Controleren en exporteren
 	Sewing	Borduren
+	Not stitched	Niet geborduurd
+	Mixed stitches	Verschillende steken
+	The selection: what it is, its size, its stitch and the stitches it sews	De selectie: wat het is, de grootte, de steek en hoeveel steken het naait
 	Areas	Vlakken
 	Fold the stitches away	Steken verbergen
 	Choose another stitch	Andere steek kiezen

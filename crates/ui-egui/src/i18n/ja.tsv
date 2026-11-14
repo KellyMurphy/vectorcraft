@@ -5645,11 +5645,18 @@ lighting	Light	ライト
 	More Settings ({n})	その他の設定（{n}）
 @plural	{n} stitch|{n} stitches	{n} 針
 @plural	{n} thread|{n} threads	{n} 色
+@plural	{n} path|{n} paths	{n} 個のパス
+@plural	{n} compound path|{n} compound paths	{n} 個の複合パス
+@plural	{n} type object|{n} type objects	{n} 個のテキスト
+@plural	{n} object|{n} objects	{n} 個のオブジェクト
 @plural	{n} problem|{n} problems	{n} 件の問題
 	{m} min	{m} 分
 	Setup	設定
 	Check & Export	チェックと書き出し
 	Sewing	縫製
+	Not stitched	ステッチなし
+	Mixed stitches	異なるステッチ
+	The selection: what it is, its size, its stitch and the stitches it sews	選択範囲：種類、サイズ、ステッチ、縫う針数
 	Areas	面
 	Fold the stitches away	ステッチを折りたたむ
 	Choose another stitch	別のステッチを選択

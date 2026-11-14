@@ -5852,11 +5852,18 @@ mark-style	Japanese	Japońskie
 	More Settings ({n})	Więcej ustawień ({n})
 @plural	{n} stitch|{n} stitches	{n} ścieg|{n} ściegi|{n} ściegów
 @plural	{n} thread|{n} threads	{n} nić|{n} nici|{n} nici
+@plural	{n} path|{n} paths	{n} ścieżka|{n} ścieżki|{n} ścieżek
+@plural	{n} compound path|{n} compound paths	{n} ścieżka złożona|{n} ścieżki złożone|{n} ścieżek złożonych
+@plural	{n} type object|{n} type objects	{n} obiekt tekstowy|{n} obiekty tekstowe|{n} obiektów tekstowych
+@plural	{n} object|{n} objects	{n} obiekt|{n} obiekty|{n} obiektów
 @plural	{n} problem|{n} problems	{n} problem|{n} problemy|{n} problemów
 	{m} min	{m} min
 	Setup	Ustawienia
 	Check & Export	Sprawdź i eksportuj
 	Sewing	Szycie
+	Not stitched	Bez ściegów
+	Mixed stitches	Różne ściegi
+	The selection: what it is, its size, its stitch and the stitches it sews	Zaznaczenie: co to jest, rozmiar, ścieg i ile ściegów szyje
 	Areas	Obszary
 	Fold the stitches away	Zwiń ściegi
 	Choose another stitch	Wybierz inny ścieg

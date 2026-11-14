@@ -5601,11 +5601,18 @@ lighting	Light	Luce
 	More Settings ({n})	Altre impostazioni ({n})
 @plural	{n} stitch|{n} stitches	{n} punto|{n} punti
 @plural	{n} thread|{n} threads	{n} filo|{n} fili
+@plural	{n} path|{n} paths	{n} tracciato|{n} tracciati
+@plural	{n} compound path|{n} compound paths	{n} tracciato composto|{n} tracciati composti
+@plural	{n} type object|{n} type objects	{n} oggetto di testo|{n} oggetti di testo
+@plural	{n} object|{n} objects	{n} oggetto|{n} oggetti
 @plural	{n} problem|{n} problems	{n} problema|{n} problemi
 	{m} min	{m} min
 	Setup	Impostazione
 	Check & Export	Controlla ed esporta
 	Sewing	Cucitura
+	Not stitched	Senza punti
+	Mixed stitches	Punti diversi
+	The selection: what it is, its size, its stitch and the stitches it sews	La selezione: cos’è, le sue dimensioni, il suo punto e quanti punti cuce
 	Areas	Aree
 	Fold the stitches away	Nascondi i punti
 	Choose another stitch	Scegli un altro punto

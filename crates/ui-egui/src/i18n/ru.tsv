@@ -5595,11 +5595,18 @@ lighting	Light	Свет
 	More Settings ({n})	Другие настройки ({n})
 @plural	{n} stitch|{n} stitches	{n} стежок|{n} стежка|{n} стежков
 @plural	{n} thread|{n} threads	{n} нить|{n} нити|{n} нитей
+@plural	{n} path|{n} paths	{n} контур|{n} контура|{n} контуров
+@plural	{n} compound path|{n} compound paths	{n} составной контур|{n} составных контура|{n} составных контуров
+@plural	{n} type object|{n} type objects	{n} текстовый объект|{n} текстовых объекта|{n} текстовых объектов
+@plural	{n} object|{n} objects	{n} объект|{n} объекта|{n} объектов
 @plural	{n} problem|{n} problems	{n} проблема|{n} проблемы|{n} проблем
 	{m} min	{m} мин
 	Setup	Настройка
 	Check & Export	Проверка и экспорт
 	Sewing	Шитьё
+	Not stitched	Без стежков
+	Mixed stitches	Разные стежки
+	The selection: what it is, its size, its stitch and the stitches it sews	Выделение: что это, его размер, стежок и сколько стежков оно шьёт
 	Areas	Области
 	Fold the stitches away	Свернуть стежки
 	Choose another stitch	Выбрать другой стежок

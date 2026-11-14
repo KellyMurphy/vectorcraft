@@ -5866,11 +5866,18 @@ swatch	Bright Violet	Violet cerah
 	More Settings ({n})	Pengaturan lain ({n})
 @plural	{n} stitch|{n} stitches	{n} tusukan
 @plural	{n} thread|{n} threads	{n} benang
+@plural	{n} path|{n} paths	{n} jalur
+@plural	{n} compound path|{n} compound paths	{n} jalur majemuk
+@plural	{n} type object|{n} type objects	{n} objek teks
+@plural	{n} object|{n} objects	{n} objek
 @plural	{n} problem|{n} problems	{n} masalah
 	{m} min	{m} mnt
 	Setup	Penyiapan
 	Check & Export	Periksa & Ekspor
 	Sewing	Jahitan
+	Not stitched	Tidak dibordir
+	Mixed stitches	Tusukan berbeda
+	The selection: what it is, its size, its stitch and the stitches it sews	Pilihan: apa itu, ukurannya, tusukannya, dan berapa tusukan yang dijahit
 	Areas	Area
 	Fold the stitches away	Sembunyikan tusukan
 	Choose another stitch	Pilih tusukan lain

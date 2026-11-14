@@ -358,7 +358,7 @@ fn info_doc() -> &'static str {
     static DOC: std::sync::OnceLock<String> = std::sync::OnceLock::new();
     DOC.get_or_init(|| {
         format!(
-            "{{ids?}} → {{design: {{objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], blockStitches: [each thread's stitch count, as threads], widthMm, heightMm, warnings, stops: [{{block: the thread sewn after it (0 with no colour change: before the machine starts), kind: stop|placeFabric|trimFabric|foam}}]}}, setup: {{trimJumpsOver, stitchMovesUnder}} (embroidery.setup), selection: {{stitched, unstitched, open (how many of them are open paths, or compound paths of open paths: an area stitch closes each with a straight line), sewn: \"#rrggbb\" (the thread colour the stitched objects are sewn in, their own colour when they set none; null when they differ), sewnThread: {{code, name, color, deltaE}} (sewn's nearest thread in the chosen thread chart; null without one), {}}} (as sewn: the document's fabric fills in what objects leave unset; each null when the stitched objects differ, or none is; type is `unknown` for settings from a newer VectorCraft)}}",
+            "{{ids?}} → {{design: {{objects, stitches, jumps, trims, colorChanges, threads: [\"#rrggbb\"], blockStitches: [each thread's stitch count, as threads], widthMm, heightMm, warnings, stops: [{{block: the thread sewn after it (0 with no colour change: before the machine starts), kind: stop|placeFabric|trimFabric|foam}}]}}, setup: {{trimJumpsOver, stitchMovesUnder}} (embroidery.setup), selection: {{stitched, unstitched, open (how many of them are open paths, or compound paths of open paths: an area stitch closes each with a straight line), kind: path|compound|type (null when they differ), widthMm, heightMm (their size; null with none), stitches (the stitches they sew), sewn: \"#rrggbb\" (the thread colour the stitched objects are sewn in, their own colour when they set none; null when they differ), sewnThread: {{code, name, color, deltaE}} (sewn's nearest thread in the chosen thread chart; null without one), {}}} (as sewn: the document's fabric fills in what objects leave unset; each null when the stitched objects differ, or none is; type is `unknown` for settings from a newer VectorCraft)}}",
             params::info_keys()
         )
     })
@@ -1075,6 +1075,21 @@ fn info(s: &mut Session, p: &Value) -> Result<Value> {
         .collect();
     let open = ids.iter().filter(|id| doc.node(**id).is_some_and(is_open)).count();
     let mut selection = json!({ "stitched": all.len(), "unstitched": ids.len() - all.len(), "open": open });
+    // What is selected, its size in mm and the stitches it sews: the line at the top of the
+    // panel's Stitch tab (documents are mostly in points, every stitch setting in mm).
+    selection["kind"] = same(ids.iter().filter_map(|id| doc.node(*id)).map(|n| match n.kind {
+        NodeKind::Text(_) => "type",
+        NodeKind::Compound { .. } => "compound",
+        _ => "path",
+    }));
+    let bounds = ids.iter().filter_map(|id| doc.node(*id)?.geometric_bounds()).reduce(|a, b| a.union(b));
+    let mm = |pt: f64| (pt * vectorcraft_embroidery::PT_MM * 10.0).round() / 10.0;
+    selection["widthMm"] = bounds.map_or(Value::Null, |b| json!(mm(b.width())));
+    selection["heightMm"] = bounds.map_or(Value::Null, |b| json!(mm(b.height())));
+    let sewn_by = |o: &vectorcraft_embroidery::PlannedObject| {
+        plan.needles.get(o.needles.clone()).map_or(0, |n| n.iter().filter(|n| matches!(n.cmd, vectorcraft_embroidery::Cmd::Stitch)).count())
+    };
+    selection["stitches"] = json!(plan.objects.iter().filter(|o| ids.contains(&o.id)).map(sewn_by).sum::<usize>());
     for param in params::PARAMS {
         selection[param.key] = same(all.iter().map(|s| (param.get)(s)));
     }

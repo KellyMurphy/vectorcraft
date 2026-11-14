@@ -5900,11 +5900,18 @@ mark-style	Japanese	Japonesas
 	More Settings ({n})	Mais Configurações ({n})
 @plural	{n} stitch|{n} stitches	{n} ponto|{n} pontos
 @plural	{n} thread|{n} threads	{n} linha|{n} linhas
+@plural	{n} path|{n} paths	{n} demarcador|{n} demarcadores
+@plural	{n} compound path|{n} compound paths	{n} demarcador composto|{n} demarcadores compostos
+@plural	{n} type object|{n} type objects	{n} objeto de texto|{n} objetos de texto
+@plural	{n} object|{n} objects	{n} objeto|{n} objetos
 @plural	{n} problem|{n} problems	{n} problema|{n} problemas
 	{m} min	{m} min
 	Setup	Configuração
 	Check & Export	Verificar e exportar
 	Sewing	Costura
+	Not stitched	Sem pontos
+	Mixed stitches	Pontos diferentes
+	The selection: what it is, its size, its stitch and the stitches it sews	A seleção: o que é, seu tamanho, seu ponto e quantos pontos costura
 	Areas	Áreas
 	Fold the stitches away	Ocultar os pontos
 	Choose another stitch	Escolher outro ponto

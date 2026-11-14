@@ -5816,11 +5816,18 @@ lighting	Light	光源
 	More Settings ({n})	更多设置（{n}）
 @plural	{n} stitch|{n} stitches	{n} 针
 @plural	{n} thread|{n} threads	{n} 种线
+@plural	{n} path|{n} paths	{n} 条路径
+@plural	{n} compound path|{n} compound paths	{n} 条复合路径
+@plural	{n} type object|{n} type objects	{n} 个文字对象
+@plural	{n} object|{n} objects	{n} 个对象
 @plural	{n} problem|{n} problems	{n} 个问题
 	{m} min	{m} 分钟
 	Setup	设置
 	Check & Export	检查与导出
 	Sewing	缝制
+	Not stitched	未刺绣
+	Mixed stitches	针法不同
+	The selection: what it is, its size, its stitch and the stitches it sews	所选内容：是什么、尺寸、针法及缝制的针数
 	Areas	区域
 	Fold the stitches away	收起针法
 	Choose another stitch	选择其他针法

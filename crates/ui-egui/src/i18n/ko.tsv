@@ -5573,11 +5573,18 @@ lighting	Light	광원
 	More Settings ({n})	추가 설정 ({n})
 @plural	{n} stitch|{n} stitches	{n}땀
 @plural	{n} thread|{n} threads	실 {n}개
+@plural	{n} path|{n} paths	패스 {n}개
+@plural	{n} compound path|{n} compound paths	컴파운드 패스 {n}개
+@plural	{n} type object|{n} type objects	텍스트 개체 {n}개
+@plural	{n} object|{n} objects	개체 {n}개
 @plural	{n} problem|{n} problems	문제 {n}개
 	{m} min	{m}분
 	Setup	설정
 	Check & Export	검사 및 내보내기
 	Sewing	봉제
+	Not stitched	자수 없음
+	Mixed stitches	서로 다른 땀
+	The selection: what it is, its size, its stitch and the stitches it sews	선택 항목: 종류, 크기, 땀과 바느질하는 땀 수
 	Areas	면
 	Fold the stitches away	땀 접기
 	Choose another stitch	다른 땀 선택

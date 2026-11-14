@@ -6024,11 +6024,18 @@ swatch	Yellow Green	Gulgrön
 	More Settings ({n})	Fler inställningar ({n})
 @plural	{n} stitch|{n} stitches	{n} stygn|{n} stygn
 @plural	{n} thread|{n} threads	{n} tråd|{n} trådar
+@plural	{n} path|{n} paths	{n} bana|{n} banor
+@plural	{n} compound path|{n} compound paths	{n} sammansatt bana|{n} sammansatta banor
+@plural	{n} type object|{n} type objects	{n} textobjekt|{n} textobjekt
+@plural	{n} object|{n} objects	{n} objekt|{n} objekt
 @plural	{n} problem|{n} problems	{n} problem|{n} problem
 	{m} min	{m} min
 	Setup	Inställning
 	Check & Export	Kontroll och export
 	Sewing	Sömnad
+	Not stitched	Inte broderad
+	Mixed stitches	Olika stygn
+	The selection: what it is, its size, its stitch and the stitches it sews	Markeringen: vad den är, dess storlek, dess stygn och hur många stygn den syr
 	Areas	Ytor
 	Fold the stitches away	Dölj stygnen
 	Choose another stitch	Välj ett annat stygn

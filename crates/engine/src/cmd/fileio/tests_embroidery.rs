@@ -834,6 +834,31 @@ fn the_selection_counts_its_open_paths() {
     assert_eq!((sel["open"].as_u64(), sel["unstitched"].as_u64()), (Some(1), Some(2)), "{sel}");
 }
 
+/// The selection says what it is, its size in mm and the stitches it sews.
+#[test]
+fn the_selection_reports_its_kind_size_and_stitches() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 300, "height": 300})).unwrap();
+    s.execute("shape.rectangle", &json!({"x": 10, "y": 10, "width": 100, "height": 50})).unwrap();
+    let sel = s.execute("embroidery.info", &json!({})).unwrap()["selection"].clone();
+    assert_eq!((sel["kind"].as_str(), sel["widthMm"].as_f64(), sel["heightMm"].as_f64()), (Some("path"), Some(35.3), Some(17.6)), "{sel}");
+    assert_eq!(sel["stitches"], json!(0), "not stitched");
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    let info = s.execute("embroidery.info", &json!({})).unwrap();
+    let n = info["selection"]["stitches"].as_u64().unwrap();
+    // Nearly the whole design: the plan's own stitches between objects (the finishing lock) belong
+    // to no object.
+    let all = info["design"]["stitches"].as_u64().unwrap();
+    assert!(n > 100 && n <= all && n * 100 >= all * 98, "{n} of {all}: {info}");
+    // With a line too: two objects of the same kind, the line's stitches added.
+    s.execute("path.create", &json!({"d": "M 20 200 L 280 200"})).unwrap();
+    s.execute("embroidery.set", &json!({"type": "running"})).unwrap();
+    s.execute("select.all", &json!({})).unwrap();
+    let sel = s.execute("embroidery.info", &json!({})).unwrap()["selection"].clone();
+    assert_eq!(sel["kind"], json!("path"));
+    assert!(sel["stitches"].as_u64().unwrap() > n && sel["heightMm"].as_f64().unwrap() > 60.0, "{sel}");
+}
+
 #[test]
 fn the_selection_reports_the_colour_it_is_sewn_in_and_its_chart_thread() {
     // The session's red square (#ff0000) stitched with no thread of its own: sewn in its fill.

@@ -5593,11 +5593,18 @@ theme	Appearance	Giao diện
 	More Settings ({n})	Cài đặt khác ({n})
 @plural	{n} stitch|{n} stitches	{n} mũi
 @plural	{n} thread|{n} threads	{n} chỉ
+@plural	{n} path|{n} paths	{n} đường
+@plural	{n} compound path|{n} compound paths	{n} đường phức hợp
+@plural	{n} type object|{n} type objects	{n} đối tượng chữ
+@plural	{n} object|{n} objects	{n} đối tượng
 @plural	{n} problem|{n} problems	{n} vấn đề
 	{m} min	{m} phút
 	Setup	Thiết lập
 	Check & Export	Kiểm tra và xuất
 	Sewing	May
+	Not stitched	Chưa thêu
+	Mixed stitches	Mũi thêu khác nhau
+	The selection: what it is, its size, its stitch and the stitches it sews	Vùng chọn: là gì, kích thước, mũi thêu và số mũi sẽ may
 	Areas	Vùng
 	Fold the stitches away	Thu gọn các mũi thêu
 	Choose another stitch	Chọn mũi thêu khác

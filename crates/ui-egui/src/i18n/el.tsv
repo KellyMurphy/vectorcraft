@@ -5949,11 +5949,18 @@ effect	Points	Σημεία
 	More Settings ({n})	Περισσότερες ρυθμίσεις ({n})
 @plural	{n} stitch|{n} stitches	{n} βελονιά|{n} βελονιές
 @plural	{n} thread|{n} threads	{n} κλωστή|{n} κλωστές
+@plural	{n} path|{n} paths	{n} διαδρομή|{n} διαδρομές
+@plural	{n} compound path|{n} compound paths	{n} σύνθετη διαδρομή|{n} σύνθετες διαδρομές
+@plural	{n} type object|{n} type objects	{n} αντικείμενο κειμένου|{n} αντικείμενα κειμένου
+@plural	{n} object|{n} objects	{n} αντικείμενο|{n} αντικείμενα
 @plural	{n} problem|{n} problems	{n} πρόβλημα|{n} προβλήματα
 	{m} min	{m} λεπ.
 	Setup	Ρύθμιση
 	Check & Export	Έλεγχος & εξαγωγή
 	Sewing	Ράψιμο
+	Not stitched	Χωρίς βελονιές
+	Mixed stitches	Διάφορες βελονιές
+	The selection: what it is, its size, its stitch and the stitches it sews	Η επιλογή: τι είναι, το μέγεθός της, η βελονιά της και πόσες βελονιές ράβει
 	Areas	Περιοχές
 	Fold the stitches away	Απόκρυψη βελονιών
 	Choose another stitch	Επιλογή άλλης βελονιάς

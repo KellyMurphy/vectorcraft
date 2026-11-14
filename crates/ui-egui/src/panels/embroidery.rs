@@ -161,6 +161,8 @@ fn stitch_tab(app: &mut VectorcraftApp, ui: &mut Ui, info: &Value) {
             if selection_len(app) == 0 { tl!("Select paths to stitch.") } else { tl!("Only paths, compound paths and type can be stitched.") },
         );
     } else {
+        ui.add(egui::Label::new(egui::RichText::new(selection_line(sel)).size(11.5).color(Tokens::get(ui.ctx()).text_dim)).truncate())
+            .on_hover_text(tl!("The selection: what it is, its size, its stitch and the stitches it sews"));
         let open_paths = sel["open"].as_u64().is_some_and(|n| n > 0 && n == stitched + unstitched);
         stitch_picker(app, ui, kind, open_paths);
         match kind {
@@ -206,6 +208,31 @@ fn stitch_tab(app: &mut VectorcraftApp, ui: &mut Ui, info: &Value) {
             parameters(app, ui, k, sel);
         }
     }
+}
+
+/// "1 path · 38.8 × 24.7 mm · Fill · 1062 stitches": what is selected, its size in mm (documents
+/// are mostly in points, every stitch setting in mm), its stitch and the stitches it sews.
+fn selection_line(sel: &Value) -> String {
+    let n = |k: &str| sel[k].as_u64().unwrap_or(0);
+    let (stitched, unstitched) = (n("stitched"), n("unstitched"));
+    let count = stitched + unstitched;
+    let mut parts = vec![match sel["kind"].as_str() {
+        Some("path") => crate::i18n::tn(count, "{n} path", "{n} paths"),
+        Some("compound") => crate::i18n::tn(count, "{n} compound path", "{n} compound paths"),
+        Some("type") => crate::i18n::tn(count, "{n} type object", "{n} type objects"),
+        _ => crate::i18n::tn(count, "{n} object", "{n} objects"),
+    }];
+    if let (Some(w), Some(h)) = (sel["widthMm"].as_f64(), sel["heightMm"].as_f64()) {
+        parts.push(format!("{w:.1} × {h:.1} mm"));
+    }
+    if stitched == 0 {
+        parts.push(tl!("Not stitched").to_string());
+    } else {
+        let kind = sel["type"].as_str().and_then(StitchKind::parse).filter(|_| unstitched == 0);
+        parts.push(kind.map_or_else(|| tl!("Mixed stitches").to_string(), |k| tl!(k.label()).to_string()));
+        parts.push(crate::i18n::tn(n("stitches"), "{n} stitch", "{n} stitches"));
+    }
+    parts.join(" · ")
 }
 
 /// Once something is stitched while the document has no fabric or no hoop: a short prompt with
@@ -2996,6 +3023,28 @@ mod tests {
             out.shapes.iter().for_each(|c| walk(&c.shape, &mut texts, &mut fills));
         }
         (texts, fills)
+    }
+
+    /// UI3.2: the Stitch tab starts with what is selected, its size in mm, its stitch and the
+    /// stitches it sews.
+    #[test]
+    fn the_stitch_tab_says_what_is_selected() {
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        let run = |app: &mut VectorcraftApp, id: &str, p: Value| app.session.execute(id, &p).unwrap();
+        run(&mut app, "file.new", json!({"width": 300, "height": 300}));
+        run(&mut app, "shape.rectangle", json!({"x": 10, "y": 10, "width": 100, "height": 50}));
+        let texts = drawn(&mut app, 0).0;
+        assert!(texts.iter().any(|t| t == "1 path · 35.3 × 17.6 mm · Not stitched"), "{texts:?}");
+        run(&mut app, "embroidery.set", json!({"type": "fill"}));
+        let n = run(&mut app, "embroidery.info", json!({}))["selection"]["stitches"].as_u64().unwrap();
+        let texts = drawn(&mut app, 0).0;
+        assert!(texts.iter().any(|t| *t == format!("1 path · 35.3 × 17.6 mm · Fill · {n} stitches")), "{texts:?}");
+        // Two stitched differently.
+        run(&mut app, "path.create", json!({"d": "M 20 200 L 280 200"}));
+        run(&mut app, "embroidery.set", json!({"type": "running"}));
+        run(&mut app, "select.all", json!({}));
+        let texts = drawn(&mut app, 0).0;
+        assert!(texts.iter().any(|t| t.starts_with("2 paths · ") && t.contains(" · Mixed stitches · ")), "{texts:?}");
     }
 
     /// UI3.1: the stitch picker groups the stitches by what they sew, dims those that cover an

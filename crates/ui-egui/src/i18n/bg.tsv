@@ -5868,11 +5868,18 @@ theme	Appearance	Външен вид
 	More Settings ({n})	Още настройки ({n})
 @plural	{n} stitch|{n} stitches	{n} бод|{n} бода
 @plural	{n} thread|{n} threads	{n} конец|{n} конеца
+@plural	{n} path|{n} paths	{n} контур|{n} контура
+@plural	{n} compound path|{n} compound paths	{n} съставен контур|{n} съставни контура
+@plural	{n} type object|{n} type objects	{n} текстов обект|{n} текстови обекта
+@plural	{n} object|{n} objects	{n} обект|{n} обекта
 @plural	{n} problem|{n} problems	{n} проблем|{n} проблема
 	{m} min	{m} мин
 	Setup	Настройка
 	Check & Export	Проверка и експорт
 	Sewing	Шиене
+	Not stitched	Без бодове
+	Mixed stitches	Различни бодове
+	The selection: what it is, its size, its stitch and the stitches it sews	Избраното: какво е, размерът му, бодът му и колко бода шие
 	Areas	Площи
 	Fold the stitches away	Скриване на бодовете
 	Choose another stitch	Избор на друг бод

@@ -5961,11 +5961,18 @@ mark-style	Japanese	Japanilainen
 	More Settings ({n})	Lisää asetuksia ({n})
 @plural	{n} stitch|{n} stitches	{n} pisto|{n} pistoa
 @plural	{n} thread|{n} threads	{n} lanka|{n} lankaa
+@plural	{n} path|{n} paths	{n} polku|{n} polkua
+@plural	{n} compound path|{n} compound paths	{n} yhdistelmäpolku|{n} yhdistelmäpolkua
+@plural	{n} type object|{n} type objects	{n} tekstiobjekti|{n} tekstiobjektia
+@plural	{n} object|{n} objects	{n} objekti|{n} objektia
 @plural	{n} problem|{n} problems	{n} ongelma|{n} ongelmaa
 	{m} min	{m} min
 	Setup	Asetukset
 	Check & Export	Tarkistus ja vienti
 	Sewing	Ompelu
+	Not stitched	Ei pistoja
+	Mixed stitches	Eri pistoja
+	The selection: what it is, its size, its stitch and the stitches it sews	Valinta: mitä se on, sen koko, sen pisto ja montako pistoa se ompelee
 	Areas	Alueet
 	Fold the stitches away	Piilota pistot
 	Choose another stitch	Valitse toinen pisto

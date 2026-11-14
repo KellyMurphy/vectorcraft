@@ -5581,11 +5581,18 @@ lighting	Light	Світло
 	More Settings ({n})	Інші налаштування ({n})
 @plural	{n} stitch|{n} stitches	{n} стібок|{n} стібки|{n} стібків
 @plural	{n} thread|{n} threads	{n} нитка|{n} нитки|{n} ниток
+@plural	{n} path|{n} paths	{n} контур|{n} контури|{n} контурів
+@plural	{n} compound path|{n} compound paths	{n} складений контур|{n} складені контури|{n} складених контурів
+@plural	{n} type object|{n} type objects	{n} текстовий об’єкт|{n} текстові об’єкти|{n} текстових об’єктів
+@plural	{n} object|{n} objects	{n} об’єкт|{n} об’єкти|{n} об’єктів
 @plural	{n} problem|{n} problems	{n} проблема|{n} проблеми|{n} проблем
 	{m} min	{m} хв
 	Setup	Налаштування
 	Check & Export	Перевірка й експорт
 	Sewing	Шиття
+	Not stitched	Без стібків
+	Mixed stitches	Різні стібки
+	The selection: what it is, its size, its stitch and the stitches it sews	Виділення: що це, його розмір, стібок і скільки стібків воно шиє
 	Areas	Області
 	Fold the stitches away	Згорнути стібки
 	Choose another stitch	Вибрати інший стібок

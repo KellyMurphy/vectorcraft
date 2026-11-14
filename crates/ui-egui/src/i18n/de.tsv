@@ -5579,11 +5579,18 @@ effect	Soft	Weich
 	More Settings ({n})	Weitere Einstellungen ({n})
 @plural	{n} stitch|{n} stitches	{n} Stich|{n} Stiche
 @plural	{n} thread|{n} threads	{n} Garn|{n} Garne
+@plural	{n} path|{n} paths	{n} Pfad|{n} Pfade
+@plural	{n} compound path|{n} compound paths	{n} zusammengesetzter Pfad|{n} zusammengesetzte Pfade
+@plural	{n} type object|{n} type objects	{n} Textobjekt|{n} Textobjekte
+@plural	{n} object|{n} objects	{n} Objekt|{n} Objekte
 @plural	{n} problem|{n} problems	{n} Problem|{n} Probleme
 	{m} min	{m} Min.
 	Setup	Einrichtung
 	Check & Export	Prüfen & Exportieren
 	Sewing	Sticken
+	Not stitched	Nicht bestickt
+	Mixed stitches	Verschiedene Stiche
+	The selection: what it is, its size, its stitch and the stitches it sews	Die Auswahl: was sie ist, ihre Größe, ihr Stich und wie viele Stiche sie näht
 	Areas	Flächen
 	Fold the stitches away	Stiche ausblenden
 	Choose another stitch	Anderen Stich wählen

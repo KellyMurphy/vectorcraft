@@ -5625,11 +5625,18 @@ lighting	Light	光源
 	More Settings ({n})	更多設定（{n}）
 @plural	{n} stitch|{n} stitches	{n} 針
 @plural	{n} thread|{n} threads	{n} 種線
+@plural	{n} path|{n} paths	{n} 條路徑
+@plural	{n} compound path|{n} compound paths	{n} 條複合路徑
+@plural	{n} type object|{n} type objects	{n} 個文字物件
+@plural	{n} object|{n} objects	{n} 個物件
 @plural	{n} problem|{n} problems	{n} 個問題
 	{m} min	{m} 分鐘
 	Setup	設定
 	Check & Export	檢查與轉存
 	Sewing	縫製
+	Not stitched	未刺繡
+	Mixed stitches	針法不同
+	The selection: what it is, its size, its stitch and the stitches it sews	所選內容：是什麼、尺寸、針法及縫製的針數
 	Areas	區域
 	Fold the stitches away	收合針法
 	Choose another stitch	選擇其他針法

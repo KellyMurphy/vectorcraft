@@ -1,6 +1,6 @@
 # Embroidery UI improvement plan
 
-Status: Phase 1 (UI1.1 to UI1.5), Phase 2 (UI2.1 to UI2.5) and UI3.1 done; the rest proposed. Written 2026-11-11.
+Status: Phase 1 (UI1.1 to UI1.5), Phase 2 (UI2.1 to UI2.5), UI3.1 and UI3.2 done; the rest proposed. Written 2026-11-11.
 
 This plan comes from a review of the three embroidery panels: reading their code and driving the
 app through each tab with a small design (a filled rectangle and a satin line). It lists what to
@@ -261,6 +261,14 @@ At the top of the Stitch tab: what is selected, its size in mm, its stitch and i
 for example "1 path · 38.8 × 24.7 mm · Fill · 1,062 stitches". The size matters because documents
 are usually in points while every stitch setting is in mm.
 
+Status: done. Under the Stitch heading, a dim line reads, for example, "1 path · 35.3 × 17.6 mm ·
+Fill · 1699 stitches". It says "Not stitched" when nothing selected is stitched, and "Mixed
+stitches" when the stitches differ or only some objects are stitched. A long line is cut short
+with an ellipsis. The noun is path, compound path or type object, else object.
+`embroidery.info` gains the selection's `kind`, `widthMm`, `heightMm` (geometric bounds) and
+`stitches` (the stitches its objects sew in the plan). Tests:
+`the_stitch_tab_says_what_is_selected`, `the_selection_reports_its_kind_size_and_stitches`.
+
 ### UI3.3 Labels
 
 | Now | Problem | Proposed |
@@ -331,3 +339,4 @@ sewing is seen on the artwork at the size the user is working at.
 - 2026-11-12: UI2.5 done (without docking Sew Order or setting units).
 - 2026-11-12: UI2.4 done; Phase 2 complete.
 - 2026-11-14: UI3.1 done.
+- 2026-11-14: UI3.2 done.
