@@ -42,7 +42,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Sew Order",
             ["Window", "Embroidery"],
             None,
-            "{} the stitched objects in the order they are sewn → {order: [{id, name, stitch: type id, thread: \"#rrggbb\", stitches: how many it sews}], custom: bool (false: paint order)}. Whatever is sewn later lies on top on the fabric",
+            "{} the stitched objects in the order they are sewn → {order: [{id, name, named: bool (false: name is only the kind of object, as Path or Compound Path; true: the user named it, or it is a type object's words), stitch: type id, thread: \"#rrggbb\", threadName: \"code name\" (the thread's nearest in the chosen thread chart; null without one), stitches: how many it sews}], custom: bool (false: paint order)}. Whatever is sewn later lies on top on the fabric",
             has_doc,
             order
         ),
@@ -811,14 +811,21 @@ fn order(s: &mut Session, _: &Value) -> Result<Value> {
             plan.needles.get(o.needles.clone()).unwrap_or_default().iter().filter(|n| n.cmd == vectorcraft_embroidery::Cmd::Stitch).count()
         })
     };
+    let chart = doc.embroidery.chart.as_deref().and_then(|id| doc.embroidery.charts.iter().find(|c| c.id == id && c.unknown.is_none()));
     let list: Vec<Value> = vectorcraft_embroidery::sew_order(doc)
         .into_iter()
         .map(|n| {
+            let thread = vectorcraft_embroidery::thread_of_node(n);
+            let thread_name = chart
+                .and_then(|c| vectorcraft_embroidery::threads::nearest(c, thread))
+                .map(|(t, _)| format!("{} {}", t.code, t.name).trim().to_string());
             json!({
                 "id": n.id.0,
                 "name": object_name(n),
+                "named": n.name.as_deref().is_some_and(|s| !s.is_empty()) || matches!(n.kind, NodeKind::Text(_)),
                 "stitch": n.extras().stitch.as_deref().map(StitchSettings::kind_id),
-                "thread": hex(vectorcraft_embroidery::thread_of_node(n)),
+                "thread": hex(thread),
+                "threadName": thread_name,
                 "stitches": count(n.id),
             })
         })

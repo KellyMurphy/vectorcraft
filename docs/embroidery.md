@@ -323,7 +323,8 @@ converts one to a `.vcfont`. How they are read: [formats/inkstitch-fonts.md](for
 Objects are sewn in paint order, bottom first, until you change it. **Window › Sew Order** is the panel for
 it: a preview of the fabric with the design sewn up to an object (sewn objects in their threads, that one
 bright, the rest still faint), one row to play the sewing (below), and the list of stitched objects as they
-are sewn, each with a picture of its stitches, its thread and stitch. Click one to select it and step the
+are sewn, each with a picture of its stitches and its thread's colour, led by its stitch type, then its
+thread's name in the chosen thread chart and the object's own name when you gave it one. Click one to select it and step the
 preview to it: stepping object by object is done in the list. Drag a row up or down the list, or use **Sew First**, **Sew Earlier**,
 **Sew Later** and **Sew Last** on the selection.
 **By Thread** groups the order by thread colour (colours in the order they first come, each keeping its

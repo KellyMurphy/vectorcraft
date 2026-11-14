@@ -961,6 +961,22 @@ fn the_sewing_time_follows_the_machine_speed() {
 }
 
 #[test]
+fn the_sewing_order_says_which_objects_are_named_and_their_chart_thread() {
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    let row = |s: &mut Session| s.execute("embroidery.order", &json!({})).unwrap()["order"][0].clone();
+    let r = row(&mut s);
+    assert_eq!((r["name"].as_str(), r["named"].as_bool(), r["threadName"].clone()), (Some("Path"), Some(false), Value::Null));
+    let id = r["id"].as_u64().unwrap();
+    s.execute("layer.setProps", &json!({"id": id, "name": "Leaf"})).unwrap();
+    let chart = r##"{"format": "vectorcraft-thread-chart", "version": 1, "name": "Test Threads",
+        "threads": [{"code": "R1", "name": "Red", "color": "#e00000"}, {"code": "B1", "name": "Blue", "color": "#0020c0"}]}"##;
+    s.execute("embroidery.loadThreadChart", &json!({"data": chart})).unwrap();
+    let r = row(&mut s);
+    assert_eq!((r["name"].as_str(), r["named"].as_bool(), r["threadName"].as_str()), (Some("Leaf"), Some(true), Some("R1 Red")));
+}
+
+#[test]
 fn the_worksheet_opens_or_comes_back_as_a_pdf() {
     let mut s = session();
     assert!(s.execute("embroidery.worksheet", &json!({})).is_err(), "nothing stitched");

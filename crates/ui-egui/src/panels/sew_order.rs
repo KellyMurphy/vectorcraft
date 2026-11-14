@@ -264,6 +264,20 @@ fn scrubber(ui: &mut Ui, at: usize, total: usize, stops: &[usize]) -> Option<usi
     None
 }
 
+/// What a row of the sewing order says: its stitch type first, then the thread's name in the chosen
+/// chart and the object's own name (only when the user named it, or it is type), joined by dots.
+fn row_label(r: &Value) -> (String, String) {
+    let named = r["named"] == json!(true);
+    // A stitch from a newer VectorCraft, unknown here: the object's name leads instead.
+    let Some(kind) = r["stitch"].as_str().and_then(StitchKind::parse) else {
+        return (r["name"].as_str().unwrap_or("").to_string(), r["threadName"].as_str().unwrap_or("").to_string());
+    };
+    let stitch = tl!(kind.label()).to_string();
+    let name = r["name"].as_str().filter(|_| named);
+    let rest: Vec<&str> = [r["threadName"].as_str(), name].into_iter().flatten().filter(|s| !s.is_empty()).collect();
+    (stitch, rest.join(" · "))
+}
+
 /// A row of the sewing order dragged in the list: its index.
 #[derive(Clone, Copy)]
 struct OrderDrag(usize);
@@ -390,18 +404,24 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 let chip = Rect::from_center_size(rect.left_center() + vec2(82.0, 0.0), vec2(10.0, 10.0));
                 ui.painter().rect_filled(chip, 2.0, Color32::from_rgb(c[0], c[1], c[2]));
             }
-            // The name, clipped short of the stitch type and count on the right.
-            let name_rect = Rect::from_min_max(rect.left_top() + vec2(94.0, 0.0), Pos2::new(rect.right() - 120.0, rect.bottom()));
-            ui.painter_at(name_rect).text(name_rect.left_center(), egui::Align2::LEFT_CENTER, r["name"].as_str().unwrap_or(""), font.clone(), t.text);
-            let stitch = r["stitch"].as_str().and_then(StitchKind::parse).map_or("", |k| tl!(k.label()));
+            // The stitch count on the right; before it the stitch type, then (dim) the thread's
+            // name in the chosen chart and the object's name when the user gave it one, clipped.
             let count = r["stitches"].as_u64().unwrap_or(0);
-            ui.painter().text(
-                rect.right_center() - vec2(6.0, 0.0),
-                egui::Align2::RIGHT_CENTER,
-                format!("{stitch} · {count}"),
-                egui::FontId::proportional(11.0),
-                t.text_dim,
-            );
+            let small = egui::FontId::proportional(11.0);
+            let count = ui.painter().layout_no_wrap(count.to_string(), small.clone(), t.text_dim);
+            let count_at = rect.right_center() - vec2(6.0 + count.size().x, count.size().y / 2.0);
+            let label_rect = Rect::from_min_max(rect.left_top() + vec2(94.0, 0.0), Pos2::new(count_at.x - 8.0, rect.bottom()));
+            ui.painter().galley(count_at, count, t.text_dim);
+            let (lead, rest) = row_label(r);
+            let mut job = egui::text::LayoutJob::default();
+            job.append(&lead, 0.0, egui::TextFormat::simple(font.clone(), t.text));
+            if !rest.is_empty() {
+                job.append(&format!("  {rest}"), 0.0, egui::TextFormat::simple(small, t.text_dim));
+            }
+            let galley = ui.painter().layout_job(job);
+            let at = Pos2::new(label_rect.left(), rect.center().y - galley.size().y / 2.0);
+            ui.painter_at(label_rect).galley(at, galley, t.text);
+            let resp = if rest.is_empty() { resp } else { resp.on_hover_text(format!("{lead} · {rest}")) };
             if resp.clicked() {
                 select = Some((id, i + 1));
             }
@@ -587,13 +607,24 @@ mod tests {
         run(&mut app, "path.create", json!({"d": "M 20 150 L 280 150"}));
         run(&mut app, "embroidery.set", json!({"type": "satin", "width": 3}));
         let (texts, lines) = frame(&mut app);
-        assert!(texts.iter().filter(|t| *t == "Path").count() >= 2, "{texts:?}");
-        assert!(
-            texts.iter().any(|t| t.starts_with("Fill · ")) && texts.iter().any(|t| t.starts_with("Satin Column · ")),
-            "each row with its stitch count: {texts:?}"
-        );
+        assert!(texts.iter().any(|t| t == "Fill") && texts.iter().any(|t| t == "Satin Column"), "each row led by its stitch: {texts:?}");
+        assert!(!texts.iter().any(|t| t.contains("Path")), "no row is called Path: {texts:?}");
+        assert!(texts.iter().filter(|t| t.parse::<u64>().is_ok_and(|n| n > 20)).count() >= 2, "each row's stitch count: {texts:?}");
         assert!(texts.iter().any(|t| t.ends_with(" min") && !t.contains('/')), "the whole design's sewing time: {texts:?}");
         assert!(lines > 10, "the preview and the rows' pictures draw stitches: {lines}");
+    }
+
+    /// A row names the thread from the chosen chart, and the object's name only once the user
+    /// gave it one.
+    #[test]
+    fn rows_tell_objects_apart() {
+        let row = |r: Value| row_label(&r);
+        let fill = json!({"name": "Path", "named": false, "stitch": "fill", "threadName": null});
+        assert_eq!(row(fill), ("Fill".to_string(), String::new()));
+        let named = json!({"name": "Leaf", "named": true, "stitch": "satin", "threadName": "R1 Red"});
+        assert_eq!(row(named), ("Satin Column".to_string(), "R1 Red · Leaf".to_string()));
+        let newer = json!({"name": "Path", "named": false, "stitch": "from-the-future", "threadName": null});
+        assert_eq!(row(newer).0, "Path", "an unknown stitch: the object's name leads");
     }
 
     /// One transport row: play moves the needle on each frame, the time shows how far it has

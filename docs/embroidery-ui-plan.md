@@ -1,6 +1,6 @@
 # Embroidery UI improvement plan
 
-Status: Phases 1 to 3 (UI1.1 to UI3.5) and UI4.1 done; UI4.2 and UI4.3 proposed. Written 2026-11-11.
+Status: Phases 1 to 3 (UI1.1 to UI3.5), UI4.1 and UI4.2 done; UI4.3 proposed. Written 2026-11-11.
 
 This plan comes from a review of the three embroidery panels: reading their code and driving the
 app through each tab with a small design (a filled rectangle and a satin line). It lists what to
@@ -347,6 +347,12 @@ as it plays; clicking a row leaves the player and steps the preview to that obje
 Seen: every row is named "Path". Lead each row with its stitch type and thread; show the object's
 name second, and only when the user has named it.
 
+Status: done. Each row reads its stitch type, then, dimmer, the thread's code and name in the chosen
+thread chart and the object's name when the user gave it one (or a type object's words); the stitch
+count is on the right, and the whole line is the row's tooltip. `embroidery.order` rows gained `named`
+and `threadName`. Tests: `rows_tell_objects_apart`, and in the engine
+`the_sewing_order_says_which_objects_are_named_and_their_chart_thread`.
+
 ### UI4.3 Play on the canvas
 
 The player draws in a small picture in the panel. Play on the canvas instead (or as well), so the
@@ -384,3 +390,4 @@ sewing is seen on the artwork at the size the user is working at.
 - 2026-11-14: UI3.4 done.
 - 2026-11-14: UI3.5 done; Phase 3 complete.
 - 2026-11-14: UI4.1 done.
+- 2026-11-14: UI4.2 done.
