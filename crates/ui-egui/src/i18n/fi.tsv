@@ -4677,6 +4677,12 @@ imageTrace	Outline	Ääriviiva
 @msg	finish editing the pattern first	lopeta ensin kuvion muokkaus
 @msg	nothing encoded	mitään ei koodattu
 @msg	nothing selected	mitään ei ole valittu
+@msg	select closed paths or compound paths to make appliqué from	valitse suljetut tai yhdistelmäpolut applikaatiota varten
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	valitse applikaatioryhmiä tai suljettuja muotoja (dokumentissa ei ole applikaatioryhmiä)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	valitse logo: kuva, jäljitetty kuva tai ryhmä täytettyjä muotoja
+@msg	select one logo: group its shapes first	valitse yksi logo: ryhmitä ensin sen muodot
+@msg	the selection has no filled shapes or image to digitize	valinnassa ei ole täytettyjä muotoja tai kuvaa digitoitavaksi
+@msg	select an opened design's manual stitches	valitse avatun mallin manuaaliset pistot
 @msg	nothing selected is in a group	mikään valituista ei ole ryhmässä
 @msg	nothing to align	ei tasattavaa
 @msg	nothing to distort	ei vääristettävää

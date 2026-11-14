@@ -4419,6 +4419,12 @@ imageTrace	Outline	Kontur
 @msg	finish editing the pattern first	afslut først redigeringen af mønsteret
 @msg	nothing encoded	intet kodet
 @msg	nothing selected	intet markeret
+@msg	select closed paths or compound paths to make appliqué from	vælg lukkede eller sammensatte stier at lave applikation af
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	vælg applikationsgrupper eller lukkede figurer (dokumentet har ingen applikationsgrupper)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	vælg et logo: et billede, et sporet billede eller en gruppe udfyldte figurer
+@msg	select one logo: group its shapes first	vælg ét logo: gruppér først dets figurer
+@msg	the selection has no filled shapes or image to digitize	markeringen har ingen udfyldte figurer eller billede at digitalisere
+@msg	select an opened design's manual stitches	vælg et åbnet designs manuelle sting
 @msg	nothing selected is in a group	intet af det markerede er i en gruppe
 @msg	nothing to align	intet at justere
 @msg	nothing to distort	intet at forvrænge

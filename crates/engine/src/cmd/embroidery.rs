@@ -106,7 +106,7 @@ pub fn specs() -> Vec<CommandSpec> {
             ["Window", "Embroidery"],
             None,
             "{ids?, name?, period?: mm (skip the search for the repeat's length), author?, license?, source? (default: the document's title)} find the repeat of a stitched border in the selected manual-stitch paths (an opened DST design; with a closed unstitched path selected too, only the stitches inside it: draw one over the stretch to take) and add one repeat, joining end to end, to the document's border patterns (save it with embroidery.saveBorderPattern), as one undo step. Pick a straight stretch with two or more repeats → {id, name, period: the repeat's length, mm, width: mm, stitches: needle points a repeat, repeats: whole repeats found, error: mm the repeats differ from the pattern on average}",
-            has_doc,
+            has_manual_stitches,
             extract_border_pattern
         ),
         cmd!(
@@ -427,6 +427,15 @@ impl Edits {
 
 /// The paths, compound paths and type objects `ids` stand for (groups and layers: those inside;
 /// not the paths inside a compound path, which stitches as one), guides left out.
+/// On while the selection holds manual stitches (an opened design's): what Extract Border Pattern
+/// and Extract Motif take a repeat from.
+pub(crate) fn has_manual_stitches(s: &Session) -> std::result::Result<(), String> {
+    let doc = &s.active().ok_or("no document open")?.doc;
+    let ids = targets(s, &json!({})).and_then(|ids| leaf_targets(s, &ids)).map_err(|e| e.to_string())?;
+    let manual = |n: &vectorcraft_doc::Node| n.path_data().is_some() && n.extras().stitch.as_deref().is_some_and(|t| t.kind == StitchKind::Manual);
+    if ids.iter().any(|id| doc.node(*id).is_some_and(manual)) { Ok(()) } else { Err("select an opened design's manual stitches".into()) }
+}
+
 pub(crate) fn stitchable(s: &Session, ids: &[NodeId]) -> Result<Vec<NodeId>> {
     let d = &s.doc()?.doc;
     Ok(leaf_targets(s, ids)?

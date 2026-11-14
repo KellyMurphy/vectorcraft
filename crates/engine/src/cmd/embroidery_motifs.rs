@@ -36,7 +36,7 @@ pub(crate) fn specs() -> Vec<CommandSpec> {
             ["Window", "Embroidery"],
             None,
             "{ids?, name?, offsets?: [[x, y], [x, y]] (mm: the lattice; skips the search, or corrects one found), author?, license?, source? (default: the document's title)} find the motif of a pattern repeating both ways in the selected manual-stitch paths (an opened design's fill or background; with a closed unstitched path selected too, only the stitches inside it: draw one over the area to take) and add one tile, as a stitched motif, to the document's motifs (save it with embroidery.saveMotif), as one undo step. Pick an area with two or more repeats each way. Use only designs you have the right to reuse → {id, name, offsets, stitches: needle points a tile, tiles: about how many tiles the area holds, error: mm the repeats differ from the tile, median}",
-            has_doc,
+            super::embroidery::has_manual_stitches,
             extract_motif
         ),
         cmd!(

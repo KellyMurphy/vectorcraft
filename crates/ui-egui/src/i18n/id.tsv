@@ -4419,6 +4419,12 @@ imageTrace	Outline	Kontur
 @msg	finish editing the pattern first	selesaikan pengeditan pola terlebih dahulu
 @msg	nothing encoded	tidak ada yang dikodekan
 @msg	nothing selected	tidak ada yang dipilih
+@msg	select closed paths or compound paths to make appliqué from	pilih jalur tertutup atau jalur majemuk untuk dibuat aplikasi
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	pilih grup aplikasi atau bentuk tertutup (dokumen tidak memiliki grup aplikasi)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	pilih logo: gambar, gambar hasil jiplakan, atau grup bentuk berisi
+@msg	select one logo: group its shapes first	pilih satu logo: kelompokkan dulu bentuknya
+@msg	the selection has no filled shapes or image to digitize	pilihan tidak memiliki bentuk berisi atau gambar untuk didigitalkan
+@msg	select an opened design's manual stitches	pilih tusukan manual dari desain yang dibuka
 @msg	nothing selected is in a group	tidak ada yang dipilih yang berada dalam grup
 @msg	nothing to align	tidak ada yang dapat disejajarkan
 @msg	nothing to distort	tidak ada yang dapat didistorsi

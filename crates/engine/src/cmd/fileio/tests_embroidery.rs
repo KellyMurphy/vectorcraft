@@ -834,6 +834,36 @@ fn the_selection_counts_its_open_paths() {
     assert_eq!((sel["open"].as_u64(), sel["unstitched"].as_u64()), (Some(1), Some(2)), "{sel}");
 }
 
+/// The tools are off, saying what they need, until the selection suits them (the panel's buttons
+/// and the menus show it).
+#[test]
+fn the_tools_say_what_they_need() {
+    let why = |s: &Session, id: &str| (crate::find_command(id).unwrap().enabled)(s).err().unwrap_or_default();
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 300, "height": 300})).unwrap();
+    assert!(why(&s, "embroidery.applique").contains("closed paths"), "{}", why(&s, "embroidery.applique"));
+    assert!(why(&s, "embroidery.cutFile").contains("appliqué groups"));
+    assert!(why(&s, "embroidery.extractBorderPattern").contains("manual stitches"));
+    assert!(why(&s, "embroidery.extractMotif").contains("manual stitches"));
+    assert!(crate::embroidery_has_logo(&s).is_err());
+    // An open path: still no appliqué, nor a cut file.
+    s.execute("path.create", &json!({"d": "M 20 200 L 280 200"})).unwrap();
+    assert!(!why(&s, "embroidery.applique").is_empty() && !why(&s, "embroidery.cutFile").is_empty());
+    // A filled rectangle: appliqué, a cut file and a logo to digitize.
+    s.execute("select.none", &json!({})).unwrap();
+    s.execute("paint.setFill", &json!({"color": "#ff0000"})).unwrap();
+    s.execute("shape.rectangle", &json!({"x": 10, "y": 10, "width": 100, "height": 50})).unwrap();
+    assert_eq!((why(&s, "embroidery.applique"), why(&s, "embroidery.cutFile")), (String::new(), String::new()));
+    assert!(crate::embroidery_has_logo(&s).is_ok());
+    assert!(!why(&s, "embroidery.extractMotif").is_empty(), "not manual stitches");
+    s.execute("embroidery.set", &json!({"type": "manual"})).unwrap();
+    assert_eq!((why(&s, "embroidery.extractBorderPattern"), why(&s, "embroidery.extractMotif")), (String::new(), String::new()));
+    // Nothing selected: the cut file takes the document's appliqué groups, once it has one.
+    s.execute("embroidery.applique", &json!({})).unwrap();
+    s.execute("select.none", &json!({})).unwrap();
+    assert_eq!(why(&s, "embroidery.cutFile"), "");
+}
+
 /// The selection says what it is, its size in mm and the stitches it sews.
 #[test]
 fn the_selection_reports_its_kind_size_and_stitches() {

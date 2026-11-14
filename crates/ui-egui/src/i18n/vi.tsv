@@ -4800,6 +4800,12 @@ theme	Appearance	Giao diện
 @msg	finish editing the pattern first	hãy hoàn tất chỉnh sửa họa tiết trước
 @msg	nothing encoded	không có gì được mã hóa
 @msg	nothing selected	chưa chọn gì
+@msg	select closed paths or compound paths to make appliqué from	chọn các đường khép kín hoặc đường phức hợp để làm đắp vải
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	chọn nhóm đắp vải hoặc hình khép kín (tài liệu không có nhóm đắp vải)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	chọn một logo: ảnh, ảnh đã đồ lại hoặc nhóm hình được tô
+@msg	select one logo: group its shapes first	chọn một logo: hãy nhóm các hình của nó trước
+@msg	the selection has no filled shapes or image to digitize	vùng chọn không có hình được tô hay ảnh để số hóa
+@msg	select an opened design's manual stitches	chọn các mũi thêu thủ công của mẫu đã mở
 @msg	nothing selected is in a group	không mục nào được chọn nằm trong nhóm
 @msg	nothing to align	không có gì để căn chỉnh
 @msg	nothing to distort	không có gì để làm méo

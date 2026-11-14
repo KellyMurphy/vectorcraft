@@ -63,6 +63,27 @@ fn traceable(n: &Node) -> bool {
     }
 }
 
+/// Whether one logo is selected (an image, a traced image, or art with filled shapes), as the
+/// panel's Auto-Digitize button needs; the command itself stays enabled with any document, since
+/// it can be given its logo as `id` instead (which isn't `ids`, so it can't stand in for the
+/// selection the way the menus check).
+pub fn has_logo(s: &Session) -> std::result::Result<(), String> {
+    let st = s.active().ok_or("no document open")?;
+    let ids = st.selection.whole();
+    let [one] = ids.as_slice() else {
+        return Err(if ids.is_empty() {
+            "select a logo: an image, a traced image, or a group of filled shapes"
+        } else {
+            "select one logo: group its shapes first"
+        }
+        .into());
+    };
+    let Some(n) = st.doc.node(*one) else { return Err("select a logo: an image, a traced image, or a group of filled shapes".into()) };
+    let mut filled = vec![];
+    regions(n, &mut filled);
+    if traceable(n) || !filled.is_empty() { Ok(()) } else { Err("the selection has no filled shapes or image to digitize".into()) }
+}
+
 /// The filled paths and compound paths under `n` (itself included), in paint order.
 fn regions(n: &Node, out: &mut Vec<NodeId>) {
     match &n.kind {

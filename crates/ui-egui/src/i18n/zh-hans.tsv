@@ -4601,6 +4601,12 @@ imageTrace	Outline	轮廓
 @msg	Couldn't paste from the clipboard: {e}	无法从剪贴板粘贴：{e}
 @msg	Couldn't paste: the document it was pasted in was closed	无法粘贴：要粘贴到的文档已关闭
 @msg	nothing selected	未选择任何对象
+@msg	select closed paths or compound paths to make appliqué from	请选择要做成贴布绣的闭合路径或复合路径
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	请选择贴布绣组或闭合形状（文档中没有贴布绣组）
+@msg	select a logo: an image, a traced image, or a group of filled shapes	请选择一个标志：图像、描摹后的图像或一组填色形状
+@msg	select one logo: group its shapes first	请只选择一个标志：先将其形状编组
+@msg	the selection has no filled shapes or image to digitize	所选内容没有可数字化的填色形状或图像
+@msg	select an opened design's manual stitches	请选择所打开设计的手动针迹
 @msg	nothing selected is in a group	所选对象均不在编组中
 @msg	the {tool} tool has no options	{tool} 工具没有选项
 @msg	unknown tool `{tool}`	未知工具 `{tool}`

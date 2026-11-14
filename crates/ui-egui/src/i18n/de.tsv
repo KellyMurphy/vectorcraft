@@ -4377,6 +4377,12 @@ theme	Appearance	Erscheinungsbild
 @msg	finish editing the pattern first	beenden Sie zuerst die Bearbeitung des Musters
 @msg	nothing encoded	nichts kodiert
 @msg	nothing selected	nichts ausgewählt
+@msg	select closed paths or compound paths to make appliqué from	geschlossene oder zusammengesetzte Pfade auswählen, aus denen Applikationen werden
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	Applikationsgruppen oder geschlossene Formen auswählen (das Dokument hat keine Applikationsgruppen)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	ein Logo auswählen: ein Bild, ein nachgezeichnetes Bild oder eine Gruppe gefüllter Formen
+@msg	select one logo: group its shapes first	ein Logo auswählen: zuerst seine Formen gruppieren
+@msg	the selection has no filled shapes or image to digitize	die Auswahl hat keine gefüllten Formen und kein Bild zum Digitalisieren
+@msg	select an opened design's manual stitches	die manuellen Stiche eines geöffneten Designs auswählen
 @msg	nothing selected is in a group	nichts Ausgewähltes befindet sich in einer Gruppe
 @msg	nothing to align	nichts auszurichten
 @msg	nothing to distort	nichts zu verzerren

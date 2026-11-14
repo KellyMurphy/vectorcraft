@@ -4452,6 +4452,12 @@ axis	Both	Les deux
 @msg	finish editing the pattern first	terminez d’abord la modification du motif
 @msg	nothing encoded	rien n’a été encodé
 @msg	nothing selected	aucune sélection
+@msg	select closed paths or compound paths to make appliqué from	sélectionnez des tracés fermés ou transparents à transformer en appliqué
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	sélectionnez des groupes d’appliqué ou des formes fermées (le document n’a aucun groupe d’appliqué)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	sélectionnez un logo : une image, une image vectorisée ou un groupe de formes remplies
+@msg	select one logo: group its shapes first	sélectionnez un seul logo : groupez d’abord ses formes
+@msg	the selection has no filled shapes or image to digitize	la sélection n’a ni forme remplie ni image à numériser
+@msg	select an opened design's manual stitches	sélectionnez les points manuels d’un motif ouvert
 @msg	nothing selected is in a group	aucun élément sélectionné ne se trouve dans un groupe
 @msg	nothing to align	rien à aligner
 @msg	nothing to distort	rien à déformer

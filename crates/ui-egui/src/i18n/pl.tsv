@@ -4594,6 +4594,12 @@ imageTrace	Outline	Kontur
 @msg	finish editing the pattern first	najpierw zakończ edycję wzorka
 @msg	nothing encoded	nic nie zakodowano
 @msg	nothing selected	nic nie zaznaczono
+@msg	select closed paths or compound paths to make appliqué from	zaznacz zamknięte lub złożone ścieżki, z których powstanie aplikacja
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	zaznacz grupy aplikacji lub zamknięte kształty (dokument nie ma grup aplikacji)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	zaznacz logo: obraz, obrys obrazu lub grupę wypełnionych kształtów
+@msg	select one logo: group its shapes first	zaznacz jedno logo: najpierw zgrupuj jego kształty
+@msg	the selection has no filled shapes or image to digitize	zaznaczenie nie ma wypełnionych kształtów ani obrazu do digitalizacji
+@msg	select an opened design's manual stitches	zaznacz ręczne ściegi otwartego wzoru
 @msg	nothing selected is in a group	nic z zaznaczenia nie należy do grupy
 @msg	nothing to align	nie ma czego wyrównać
 @msg	nothing to distort	nie ma czego zniekształcić

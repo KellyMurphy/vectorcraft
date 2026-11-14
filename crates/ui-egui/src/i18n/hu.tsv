@@ -5145,6 +5145,12 @@ imageTrace	Outline	Körvonal
 @msg	finish editing the pattern first	előbb fejezd be a mintázat szerkesztését
 @msg	nothing encoded	nincs kódolt adat
 @msg	nothing selected	nincs kijelölés
+@msg	select closed paths or compound paths to make appliqué from	jelöljön ki zárt vagy összetett útvonalakat az applikációhoz
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	jelöljön ki applikációcsoportokat vagy zárt alakzatokat (a dokumentumban nincs applikációcsoport)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	jelöljön ki egy logót: képet, vektorizált képet vagy kitöltött alakzatok csoportját
+@msg	select one logo: group its shapes first	egy logót jelöljön ki: előbb csoportosítsa az alakzatait
+@msg	the selection has no filled shapes or image to digitize	a kijelölésben nincs digitalizálható kitöltött alakzat vagy kép
+@msg	select an opened design's manual stitches	jelölje ki egy megnyitott minta kézi öltéseit
 @msg	nothing selected is in a group	a kijelölésből semmi sincs csoportban
 @msg	nothing to align	nincs mit igazítani
 @msg	nothing to distort	nincs mit torzítani

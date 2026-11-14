@@ -4318,6 +4318,12 @@ axis	Both	И двете
 @msg	finish editing the pattern first	първо завършете редактирането на мострата
 @msg	nothing encoded	нищо не е кодирано
 @msg	nothing selected	нищо не е избрано
+@msg	select closed paths or compound paths to make appliqué from	изберете затворени или съставни контури, от които да направите апликация
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	изберете групи апликации или затворени форми (документът няма групи апликации)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	изберете лого: изображение, трасирано изображение или група запълнени форми
+@msg	select one logo: group its shapes first	изберете едно лого: първо групирайте формите му
+@msg	the selection has no filled shapes or image to digitize	избраното няма запълнени форми или изображение за дигитализиране
+@msg	select an opened design's manual stitches	изберете ръчните бодове на отворен дизайн
 @msg	nothing selected is in a group	нищо от избраното не е в група
 @msg	nothing to align	няма нищо за подравняване
 @msg	nothing to distort	няма нищо за изкривяване

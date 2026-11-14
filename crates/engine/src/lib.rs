@@ -28,6 +28,7 @@ use vectorcraft_tools::{PaintDefaults, Tool};
 pub use cmd::clipboard::Clipboard;
 pub use cmd::create::constrain_click;
 pub use cmd::distortcmds::perspective_click;
+pub use cmd::embroidery_digitize::has_logo as embroidery_has_logo;
 pub use cmd::params::{check_keys, check_params};
 pub use cmd::pathops::auto_simplify_level;
 pub use cmd::rasterfx::{export_pdf, flatten_raster_effects};

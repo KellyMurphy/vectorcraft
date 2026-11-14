@@ -4769,6 +4769,12 @@ imageTrace	Outline	Obrys
 @msg	finish editing the pattern first	nejprve dokončete úpravy vzorku
 @msg	nothing encoded	nic nebylo zakódováno
 @msg	nothing selected	nic není vybráno
+@msg	select closed paths or compound paths to make appliqué from	vyberte uzavřené nebo složené cesty, ze kterých se udělá aplikace
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	vyberte skupiny aplikací nebo uzavřené tvary (dokument nemá žádné skupiny aplikací)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	vyberte logo: obraz, vektorizovaný obraz nebo skupinu vyplněných tvarů
+@msg	select one logo: group its shapes first	vyberte jedno logo: nejprve seskupte jeho tvary
+@msg	the selection has no filled shapes or image to digitize	výběr nemá žádné vyplněné tvary ani obraz k digitalizaci
+@msg	select an opened design's manual stitches	vyberte ruční stehy otevřeného vzoru
 @msg	nothing selected is in a group	nic z výběru není ve skupině
 @msg	nothing to align	není co zarovnat
 @msg	nothing to distort	není co deformovat

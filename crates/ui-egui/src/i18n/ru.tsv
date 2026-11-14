@@ -4499,6 +4499,12 @@ axis	Both	Оба
 @msg	finish editing the pattern first	сначала завершите редактирование узора
 @msg	nothing encoded	ничего не закодировано
 @msg	nothing selected	ничего не выделено
+@msg	select closed paths or compound paths to make appliqué from	выделите замкнутые или составные контуры для аппликации
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	выделите группы аппликаций или замкнутые фигуры (в документе нет групп аппликаций)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	выделите логотип: изображение, трассированное изображение или группу залитых фигур
+@msg	select one logo: group its shapes first	выделите один логотип: сначала сгруппируйте его фигуры
+@msg	the selection has no filled shapes or image to digitize	в выделении нет залитых фигур или изображения для оцифровки
+@msg	select an opened design's manual stitches	выделите ручные стежки открытого дизайна
 @msg	nothing selected is in a group	ничего из выделенного не находится в группе
 @msg	nothing to align	нечего выравнивать
 @msg	nothing to distort	нечего искажать

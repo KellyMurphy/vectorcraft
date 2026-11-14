@@ -342,14 +342,13 @@ fn tools(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
     tool_section(ui, "applique", tl!("Appliqué"), |ui| {
         widgets::dim_label(ui, tl!("Make each selected closed shape an appliqué: placement line, stop, tack-down, stop, cover"));
         ui.horizontal(|ui| {
-            if widgets::flat_button(ui, tl!("Appliqué"), 90.0).clicked()
+            if tool_button(ui, tl!("Appliqué"), 90.0, why_not(app, "embroidery.applique"), None)
                 && let Err(e) = app.run("embroidery.applique", json!({}))
             {
                 app.status(e);
             }
-            if widgets::flat_button(ui, tl!("Cut File…"), 80.0)
-                .on_hover_text(tl!("The appliqué pieces' outlines packed onto cutter mats, in a new document to export as SVG or DXF"))
-                .clicked()
+            let tip = tl!("The appliqué pieces' outlines packed onto cutter mats, in a new document to export as SVG or DXF");
+            if tool_button(ui, tl!("Cut File…"), 80.0, why_not(app, "embroidery.cutFile"), Some(tip))
                 && let Err(e) = app.run("embroidery.cutFile", json!({}))
             {
                 app.status(e);
@@ -396,6 +395,28 @@ fn tools(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
             }
         });
     }
+}
+
+/// Why command `id` can't run now (what its `enabled` check says), or `None` when it can.
+fn why_not(app: &VectorcraftApp, id: &str) -> Option<String> {
+    vectorcraft_engine::find_command(id).and_then(|c| (c.enabled)(&app.session).err())
+}
+
+/// A tool's button, off while `why` says what it needs (shown as its tooltip, translated and
+/// starting with a capital); else with `tip`. Whether it was clicked.
+fn tool_button(ui: &mut Ui, label: &str, width: f32, why: Option<String>, tip: Option<&str>) -> bool {
+    let r = ui.add_enabled_ui(why.is_none(), |ui| widgets::flat_button(ui, label, width)).inner;
+    let r = match (why, tip) {
+        (Some(w), _) => {
+            let w = crate::i18n::msg(&w);
+            let mut c = w.chars();
+            let w = c.next().map(|f| f.to_uppercase().chain(c).collect::<String>()).unwrap_or_default();
+            r.on_disabled_hover_text(w)
+        }
+        (None, Some(t)) => r.on_hover_text(t),
+        (None, None) => r,
+    };
+    r.clicked()
 }
 
 /// A Tools section: its header toggles it, and it stays as it was left (closed at first).
@@ -461,7 +482,8 @@ fn digitize_row(app: &mut VectorcraftApp, ui: &mut Ui) {
                 "Click inside any closed area to stitch it in its colour; Alt-click to outline it (Alt-Shift-click: a satin border); Shift-click to sew a thin line along its centre"
             ))
             .clicked();
-        (widgets::flat_button(ui, tl!("Auto-Digitize"), 120.0).clicked(), tool)
+        let why = vectorcraft_engine::embroidery_has_logo(&app.session).err();
+        (tool_button(ui, tl!("Auto-Digitize"), 120.0, why, None), tool)
     });
     let (digitize, tool) = row.inner;
     let mut centre = kept(ui, "digitize-lines", "auto") == "centreline";
@@ -1852,7 +1874,7 @@ fn motif_label(id: &str) -> &'static str {
 fn extract_row(app: &mut VectorcraftApp, ui: &mut Ui) {
     widgets::divider(ui);
     widgets::dim_label(ui, tl!("Select a straight stretch of a border with two or more repeats, or a shape drawn over it too."));
-    if widgets::flat_button(ui, tl!("Extract Border Pattern"), 170.0).clicked() {
+    if tool_button(ui, tl!("Extract Border Pattern"), 170.0, why_not(app, "embroidery.extractBorderPattern"), None) {
         match app.run("embroidery.extractBorderPattern", json!({})) {
             Ok(r) => {
                 let period = r["period"].as_f64().unwrap_or_default();
@@ -1862,7 +1884,7 @@ fn extract_row(app: &mut VectorcraftApp, ui: &mut Ui) {
         }
     }
     widgets::dim_label(ui, tl!("For a fill repeating both ways: select an area with two or more repeats each way."));
-    if widgets::flat_button(ui, tl!("Extract Motif"), 170.0).clicked() {
+    if tool_button(ui, tl!("Extract Motif"), 170.0, why_not(app, "embroidery.extractMotif"), None) {
         match app.run("embroidery.extractMotif", json!({})) {
             Ok(r) => app.status(format!(
                 "Extracted motif {}: {} stitches a tile, about {} tiles found",
@@ -3026,6 +3048,40 @@ mod tests {
             out.shapes.iter().for_each(|c| walk(&c.shape, &mut texts, &mut fills));
         }
         (texts, fills)
+    }
+
+    /// UI3.4: the tools' buttons are off until the selection suits them, saying what they need,
+    /// in the interface's language.
+    #[test]
+    fn the_tool_buttons_say_what_they_need() {
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        let run = |app: &mut VectorcraftApp, id: &str, p: Value| app.session.execute(id, &p).unwrap();
+        run(&mut app, "file.new", json!({"width": 300, "height": 300}));
+        for id in ["embroidery.applique", "embroidery.cutFile", "embroidery.extractBorderPattern", "embroidery.extractMotif"] {
+            assert!(why_not(&app, id).is_some(), "{id}: nothing selected");
+        }
+        assert!(vectorcraft_engine::embroidery_has_logo(&app.session).is_err());
+        // The reason reads as a sentence on the disabled button.
+        let ctx = egui::Context::default();
+        let mut clicked = true;
+        let mut out = ctx.run_ui(egui::RawInput::default(), |ui| {
+            clicked = tool_button(ui, "Appliqué", 90.0, why_not(&app, "embroidery.applique"), None);
+        });
+        out.textures_delta.clear();
+        assert!(!clicked);
+        let de = crate::i18n::Lang::from_code("de").unwrap();
+        let why = why_not(&app, "embroidery.applique").unwrap();
+        assert_ne!(crate::i18n::message(de, &why), why, "translated");
+        run(&mut app, "shape.rectangle", json!({"x": 10, "y": 10, "width": 100, "height": 50}));
+        assert_eq!((why_not(&app, "embroidery.applique"), why_not(&app, "embroidery.cutFile")), (None, None));
+        assert!(vectorcraft_engine::embroidery_has_logo(&app.session).is_ok());
+        // Every section open: the tab draws with the buttons on and off.
+        let texts = {
+            let ctx = egui::Context::default();
+            open_tools(&ctx);
+            drawn_in(&ctx, &mut app, TOOLS_TAB).0
+        };
+        assert!(texts.iter().any(|t| t == "Appliqué") && texts.iter().any(|t| t == "Auto-Digitize"), "{texts:?}");
     }
 
     /// UI3.3: settings say what they do: Spacing (not Density), the Auto thresholds by the stitch

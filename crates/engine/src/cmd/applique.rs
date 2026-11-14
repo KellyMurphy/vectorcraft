@@ -12,7 +12,7 @@ use serde_json::{Value, json};
 use vectorcraft_doc::{Document, Node, NodeId, NodeKind, StitchKind, StitchSettings, Underlay};
 use vectorcraft_geom::{FillRule, PathData};
 
-use super::{CommandSpec, EngineError, Result, Session, bad, bool_or, cmd, has_doc, str_param, targets};
+use super::{CommandSpec, EngineError, Result, Session, bad, bool_or, cmd, str_param, targets};
 
 const C: &str = "embroidery.applique";
 /// The group's name, and its parts' names in sewing order.
@@ -38,7 +38,7 @@ pub fn specs() -> Vec<CommandSpec> {
             ["Object", "Embroidery"],
             None,
             "{ids?: [closed paths or compound paths] (default: the selection), cover?: satin|zigzag|bean|none (satin: what covers the fabric's raw edge), width?: mm (1–10; 3: the satin or zigzag cover's width, centred on the outline), tackDown?: running|zigzag|bean (running: what holds the fabric down), inset?: mm (0–3; 0.8: how far inside the outline the tack-down runs)} turn each shape into an appliqué group, one undo step: a placement line on the outline (running stitch), a stop to place the fabric, the tack-down, a stop to trim the fabric, then the cover. The group (named Appliqué) takes the shape's place and id; its three parts are ordinary stitched objects in one thread (the shape's), sewn in that order. The cover must reach past the tack-down's inner side (a zigzag tack-down is 1.2 mm wide) → {groups: [{id, placement, tackDown, cover}]}",
-            has_doc,
+            has_shapes,
             applique
         ),
         cut_spec(),
@@ -214,9 +214,35 @@ fn cut_spec() -> CommandSpec {
         ["Object", "Embroidery"],
         None,
         "{ids?: [appliqué groups or closed shapes] (default: the selection, else every appliqué group), allowance?: mm (0–10; 0: how much bigger than the placement line each piece is cut, so the fabric reaches under the tack-down), gap?: mm (0–20; 3: the least distance between pieces), mat?: 12x12|12x24 (inches) | {width, height} (mm, 10–1500) (12x12), margin?: mm (0–50; 5: kept clear round the mat's edge), rotate?: none|quarter|any (quarter: how pieces may turn to fit; none for a fabric with a grain or print that must run one way; any: every 15°), flip?: false (pieces may be turned over: fabric with no right side), format?: svg|dxf (left out: a new document with one artboard per mat), path?: file to write (several mats: name-1.svg, name-2.svg…)} the appliqué pieces' cut outlines (each appliqué group's placement line, else the shape's outline, grown by the allowance) nested onto as few cutter mats as they fit on, without overlapping and the gap apart, as cut lines (hairline paths, no fill) for a fabric cutter. Pieces too big for a mat are reported, not dropped → {mats, pieces (placed), unplaced: [ids], index (the new document) | files: [paths] | files: [{mat, dataBase64}]}",
-        has_doc,
+        has_pieces,
         cut_file
     )
+}
+
+/// Appliqué is on while the selection is closed paths or compound paths (what it is made from).
+fn has_shapes(s: &Session) -> std::result::Result<(), String> {
+    let doc = &s.active().ok_or("no document open")?.doc;
+    let ids = targets(s, &json!({})).map_err(|e| e.to_string())?;
+    if !ids.is_empty() && ids.iter().all(|id| doc.node(*id).and_then(outline).is_some()) {
+        Ok(())
+    } else {
+        Err("select closed paths or compound paths to make appliqué from".into())
+    }
+}
+
+/// The cut file is on while the selection is appliqué groups or closed shapes, or with nothing
+/// selected while the document has appliqué groups.
+fn has_pieces(s: &Session) -> std::result::Result<(), String> {
+    let doc = &s.active().ok_or("no document open")?.doc;
+    let ids = targets(s, &json!({})).map_err(|e| e.to_string())?;
+    let ok = if ids.is_empty() {
+        let mut any = false;
+        doc.walk(|n| any |= is_applique(n));
+        any
+    } else {
+        ids.iter().all(|id| doc.node(*id).and_then(cut_outline).is_some())
+    };
+    if ok { Ok(()) } else { Err("select appliqué groups or closed shapes (the document has no appliqué groups)".into()) }
 }
 
 /// The cut outline of `n`: an appliqué group's placement line, else its own when closed.

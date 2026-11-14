@@ -1,6 +1,6 @@
 # Embroidery UI improvement plan
 
-Status: Phase 1 (UI1.1 to UI1.5), Phase 2 (UI2.1 to UI2.5), UI3.1 to UI3.3 done; the rest proposed. Written 2026-11-11.
+Status: Phase 1 (UI1.1 to UI1.5), Phase 2 (UI2.1 to UI2.5), UI3.1 to UI3.4 done; the rest proposed. Written 2026-11-11.
 
 This plan comes from a review of the three embroidery panels: reading their code and driving the
 app through each tab with a small design (a filled rectangle and a satin line). It lists what to
@@ -301,6 +301,21 @@ Appliqué, Cut File, Auto-Digitize, Extract Border Pattern and Extract Motif are
 report failure only in the status bar. Disable each when the selection doesn't qualify, with a
 tooltip saying what it needs (each command's `enabled` should already know).
 
+Status: done. The commands' `enabled` only asked for an open document, so each got a real check
+that returns what it needs:
+- Appliqué: closed paths or compound paths.
+- Cut File: appliqué groups or closed shapes, or nothing selected while the document has an
+  appliqué group.
+- Extract Border Pattern and Extract Motif: an opened design's manual stitches.
+
+The buttons are off while the check fails, with its reason (translated, as a sentence) as the
+tooltip, and the menus follow the same checks. Auto-Digitize keeps its command enabled with any
+document, because it takes its logo as `id`. The engine puts given `ids` in for the selection when
+it checks a command, but not `id`, so a selection check would refuse a caller that names the logo.
+The panel's button uses the engine's `embroidery_has_logo` check instead: one image, traced image
+or art with filled shapes. Tests: `the_tools_say_what_they_need` (engine),
+`the_tool_buttons_say_what_they_need` (panel).
+
 ### UI3.5 Findings where the object is
 
 With findings on the selected object, the Stitch tab shows only a link to the Design tab. Show the
@@ -354,3 +369,4 @@ sewing is seen on the artwork at the size the user is working at.
 - 2026-11-14: UI3.1 done.
 - 2026-11-14: UI3.2 done.
 - 2026-11-14: UI3.3 done.
+- 2026-11-14: UI3.4 done.

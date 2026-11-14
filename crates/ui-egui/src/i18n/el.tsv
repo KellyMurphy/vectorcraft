@@ -4415,6 +4415,12 @@ digits	Malayalam	Μαλαγιάλαμ
 @msg	finish editing the pattern first	ολοκληρώστε πρώτα την επεξεργασία του μοτίβου
 @msg	nothing encoded	δεν κωδικοποιήθηκε τίποτα
 @msg	nothing selected	δεν έχει επιλεγεί τίποτα
+@msg	select closed paths or compound paths to make appliqué from	επιλέξτε κλειστές ή σύνθετες διαδρομές για απλικέ
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	επιλέξτε ομάδες απλικέ ή κλειστά σχήματα (το έγγραφο δεν έχει ομάδες απλικέ)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	επιλέξτε ένα λογότυπο: εικόνα, ιχνηλατημένη εικόνα ή ομάδα γεμισμένων σχημάτων
+@msg	select one logo: group its shapes first	επιλέξτε ένα λογότυπο: ομαδοποιήστε πρώτα τα σχήματά του
+@msg	the selection has no filled shapes or image to digitize	η επιλογή δεν έχει γεμισμένα σχήματα ή εικόνα για ψηφιοποίηση
+@msg	select an opened design's manual stitches	επιλέξτε τις χειροκίνητες βελονιές ενός ανοιχτού σχεδίου
 @msg	nothing selected is in a group	τίποτα από τα επιλεγμένα δεν βρίσκεται σε ομάδα
 @msg	nothing to align	δεν υπάρχει τίποτα για στοίχιση
 @msg	nothing to distort	δεν υπάρχει τίποτα για παραμόρφωση

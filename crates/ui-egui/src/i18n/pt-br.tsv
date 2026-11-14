@@ -4032,6 +4032,12 @@ axis	Both	Ambos
 @msg	finish editing the pattern first	termine de editar o padrão primeiro
 @msg	nothing encoded	nada codificado
 @msg	nothing selected	nada selecionado
+@msg	select closed paths or compound paths to make appliqué from	selecione demarcadores fechados ou compostos para fazer apliques
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	selecione grupos de aplique ou formas fechadas (o documento não tem grupos de aplique)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	selecione um logotipo: uma imagem, uma imagem traçada ou um grupo de formas preenchidas
+@msg	select one logo: group its shapes first	selecione um só logotipo: agrupe antes suas formas
+@msg	the selection has no filled shapes or image to digitize	a seleção não tem formas preenchidas nem imagem para digitalizar
+@msg	select an opened design's manual stitches	selecione os pontos manuais de um desenho aberto
 @msg	nothing selected is in a group	nada do que está selecionado está em um grupo
 @msg	nothing to align	nada para alinhar
 @msg	nothing to distort	nada para distorcer

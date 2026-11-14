@@ -4431,6 +4431,12 @@ imageTrace	Outline	Contour
 @msg	finish editing the pattern first	rond eerst het bewerken van het patroon af
 @msg	nothing encoded	niets gecodeerd
 @msg	nothing selected	niets geselecteerd
+@msg	select closed paths or compound paths to make appliqué from	selecteer gesloten of samengestelde paden om applicaties van te maken
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	selecteer applicatiegroepen of gesloten vormen (het document heeft geen applicatiegroepen)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	selecteer een logo: een afbeelding, een overgetrokken afbeelding of een groep gevulde vormen
+@msg	select one logo: group its shapes first	selecteer één logo: groepeer eerst de vormen
+@msg	the selection has no filled shapes or image to digitize	de selectie heeft geen gevulde vormen of afbeelding om te digitaliseren
+@msg	select an opened design's manual stitches	selecteer de handmatige steken van een geopend ontwerp
 @msg	nothing selected is in a group	niets van de selectie zit in een groep
 @msg	nothing to align	niets om uit te lijnen
 @msg	nothing to distort	niets om te vervormen

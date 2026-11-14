@@ -2445,6 +2445,12 @@ file-filter	Templates	範本
 @msg	Couldn't paste from the clipboard: {e}	無法從剪貼簿貼上：{e}
 @msg	Couldn't paste: the document it was pasted in was closed	無法貼上：要貼上的文件已關閉
 @msg	nothing selected	未選取任何物件
+@msg	select closed paths or compound paths to make appliqué from	請選取要做成貼布繡的封閉路徑或複合路徑
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	請選取貼布繡群組或封閉形狀（文件中沒有貼布繡群組）
+@msg	select a logo: an image, a traced image, or a group of filled shapes	請選取一個標誌：影像、描圖後的影像或一組填色形狀
+@msg	select one logo: group its shapes first	請只選取一個標誌：先將其形狀組成群組
+@msg	the selection has no filled shapes or image to digitize	所選內容沒有可數位化的填色形狀或影像
+@msg	select an opened design's manual stitches	請選取所開啟設計的手動針跡
 @msg	nothing selected is in a group	選取的物件都不在群組中
 @msg	the {tool} tool has no options	{tool} 工具沒有選項
 @msg	unknown tool `{tool}`	未知的工具 `{tool}`

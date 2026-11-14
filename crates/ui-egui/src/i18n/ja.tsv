@@ -4898,6 +4898,12 @@ swatch	Bright Violet	ビビッドバイオレット
 @msg	Couldn't paste from the clipboard: {e}	クリップボードから貼り付けられませんでした: {e}
 @msg	Couldn't paste: the document it was pasted in was closed	貼り付けられませんでした: 貼り付け先のドキュメントは閉じられています
 @msg	nothing selected	何も選択されていません
+@msg	select closed paths or compound paths to make appliqué from	アップリケにするクローズパスまたは複合パスを選択してください
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	アップリケグループまたはクローズシェイプを選択してください（ドキュメントにアップリケグループがありません）
+@msg	select a logo: an image, a traced image, or a group of filled shapes	ロゴを選択してください：画像、トレースした画像、または塗りのあるシェイプのグループ
+@msg	select one logo: group its shapes first	ロゴを 1 つ選択してください：先にシェイプをグループ化します
+@msg	the selection has no filled shapes or image to digitize	選択範囲にデジタイズする塗りのシェイプや画像がありません
+@msg	select an opened design's manual stitches	開いたデザインの手動ステッチを選択してください
 @msg	nothing selected is in a group	選択したオブジェクトはどれもグループ内にありません
 @msg	the {tool} tool has no options	{tool} ツールにはオプションがありません
 @msg	unknown tool `{tool}`	`{tool}` は不明なツールです

@@ -4365,6 +4365,12 @@ axis	Both	Båda
 @msg	finish editing the pattern first	slutför redigeringen av mönstret först
 @msg	nothing encoded	inget kodat
 @msg	nothing selected	inget markerat
+@msg	select closed paths or compound paths to make appliqué from	markera slutna eller sammansatta banor att göra applikation av
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	markera applikationsgrupper eller slutna former (dokumentet har inga applikationsgrupper)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	markera en logotyp: en bild, en vektoriserad bild eller en grupp fyllda former
+@msg	select one logo: group its shapes first	markera en logotyp: gruppera först dess former
+@msg	the selection has no filled shapes or image to digitize	markeringen har inga fyllda former eller bild att digitalisera
+@msg	select an opened design's manual stitches	markera en öppnad designs manuella stygn
 @msg	nothing selected is in a group	inget av det markerade ligger i en grupp
 @msg	nothing to align	inget att justera
 @msg	nothing to distort	inget att förvränga
