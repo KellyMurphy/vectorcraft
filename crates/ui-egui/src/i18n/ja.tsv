@@ -5983,6 +5983,7 @@ lighting	Light	ライト
 	How the area is covered: straight rows, or rings following the outline	面の埋め方: 直線の列、または輪郭に沿ったリング
 	Straight rows at the fill's angle, their needle holes staggered.	フィルの角度で並ぶ直線の列。針穴をずらします。
 	Rings following the outline, sewn ring to ring: good for round and flowing shapes.	輪郭に沿ったリングを順に縫います。丸い形や流れる形に適しています。
+	The rings blended into one continuous spiral, with no step between them: best on round shapes.	リングを段差のない一続きのスパイラルにつなげます。丸い形に最適です。
 
 # Embroidery panel: trims and travel
 	Trim:	糸切り:

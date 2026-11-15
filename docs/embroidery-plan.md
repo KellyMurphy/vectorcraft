@@ -623,6 +623,11 @@ overlap removal (E7.4) and checker support. One commit each:
 - **E8.3b Spiral fill.** The contour rings joined into one continuous spiral (each ring blended into the
   next over one turn), no visible join. Best on round and near-round shapes; the checker suggests contour
   where the spiral would distort.
+  **Done 2026-11-14** as `fillStyle: spiral` (`contour::spiral`): the rings are grouped into chains (a ring's next is the
+  one ring a row deeper within two rows of it all the way round), each chain sewn as its outermost ring whole, a blended
+  turn per ring (by fraction of the way round, each ring started nearest the last one's start) and its innermost ring
+  whole; chains broken by lobes or holes are joined end to end nearest first. **Not yet:** the checker's suggestion of
+  contour where the spiral distorts.
 - **E8.3c Radial and circular fill.** Radial: rows from a centre point outward (a handle on the canvas,
   default the centroid), spaced by angle so the spacing at the outer edge matches `spacing` and
   shortened rows inserted near the centre so it doesn't pile up. Circular: concentric circles around the

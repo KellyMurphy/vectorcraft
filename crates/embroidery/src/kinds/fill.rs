@@ -44,7 +44,7 @@ pub(super) fn sew(i: &Input) -> Output {
         FillStyle::Tatami => {
             generate::fill_compensated(&polys, i.rule, s.angle(), s.spacing(), s.length(), s.stagger(), &carve, comp, cuts, i.overlap)
         }
-        FillStyle::Contour => contour_rows(&polys, i, cuts),
+        FillStyle::Contour | FillStyle::Spiral => contour_rows(&polys, i, cuts),
     };
     match under.and_then(|u| Ok((u, top?))) {
         Ok((u, top)) => {
@@ -60,13 +60,18 @@ pub(super) fn sew(i: &Input) -> Output {
     out
 }
 
-/// The contour fill's rings as runs: the first ring half a row in from the edge, pushed out by half
-/// the pull compensation (the rings run along the edge, so the thread draws the fabric in across
-/// them as it does across a satin), and cut where objects sewn later lie on top.
+/// The contour fill's rings as runs (or, for a spiral fill, blended into spirals): the first ring
+/// half a row in from the edge, pushed out by half the pull compensation (the rings run along the
+/// edge, so the thread draws the fabric in across them as it does across a satin), and cut where
+/// objects sewn later lie on top.
 fn contour_rows(polys: &[Vec<Point>], i: &Input, cuts: &[generate::Cut]) -> Result<Vec<Vec<Point>>, String> {
     let s = i.settings;
     let first = (s.spacing() - s.pull() - s.spacing() * s.pull_percent() / 100.0) / 2.0;
-    let rings =
-        contour::rings(polys, i.rule, s.spacing(), first).ok_or_else(|| "the shape is too small for a contour fill: nothing sewn".to_string())?;
-    Ok(generate::outside_cuts(contour::runs(rings, s.spacing(), s.length()), cuts))
+    let too_small = || format!("the shape is too small for a {} fill: nothing sewn", s.fill_style().id());
+    let runs = if s.fill_style() == FillStyle::Spiral {
+        contour::spiral(polys, i.rule, s.spacing(), first, s.length()).ok_or_else(too_small)?
+    } else {
+        contour::runs(contour::rings(polys, i.rule, s.spacing(), first).ok_or_else(too_small)?, s.spacing(), s.length())
+    };
+    Ok(generate::outside_cuts(runs, cuts))
 }

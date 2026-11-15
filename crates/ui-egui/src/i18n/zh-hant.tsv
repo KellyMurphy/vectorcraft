@@ -5962,6 +5962,7 @@ lighting	Light	光源
 	How the area is covered: straight rows, or rings following the outline	區域的覆蓋方式：直行，或沿輪廓的環
 	Straight rows at the fill's angle, their needle holes staggered.	依填色角度排列的直行，針孔交錯。
 	Rings following the outline, sewn ring to ring: good for round and flowing shapes.	沿輪廓的環，一環接一環地繡：適合圓形與流暢的形狀。
+	The rings blended into one continuous spiral, with no step between them: best on round shapes.	各環融合為一條連續的螺旋，環與環之間沒有跳步：最適合圓形。
 
 # Embroidery panel: trims and travel
 	Trim:	剪線:

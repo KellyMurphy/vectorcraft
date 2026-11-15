@@ -34,7 +34,7 @@ are kept but have no effect.
 | `width` | number, mm | satin, zigzag; pattern border; running (chain and stem styles) | satin and zigzag 0.3–12, or 0.3–30 with `split` `auto`; pattern border 1–40; running 0.2–6 | satin: the stroke width (3 without one); zigzag 3; pattern border: the pattern's own width; chain 1.5, stem 0.4 (not the stroke) |
 | `style` | string: `single` `chain` `stem` `backstitch` `sashiko` | running | | `single`. See [Running stitch styles](#running-stitch-styles). |
 | `gap` | number, mm | running (sashiko style) | 0.5–6 | 1.5 |
-| `fillStyle` | string: `tatami` `contour` | fill | | `tatami`. See [Fill styles](#fill-styles). |
+| `fillStyle` | string: `tatami` `contour` `spiral` | fill | | `tatami`. See [Fill styles](#fill-styles). |
 | `split` | string: `auto` `off` | satin, satin shape, zigzag | | `auto`. See [Split satin](#split-satin). |
 | `splitAt` | number, mm | satin, satin shape, zigzag (`split` `auto`) | 4–12 | 7 |
 | `splitLength` | number, mm | satin, satin shape, zigzag (`split` `auto`) | 2–8 | 4 |
@@ -126,6 +126,7 @@ A fill's `fillStyle` says how its area is covered.
 |---|---|
 | `tatami` | Straight rows `spacing` apart at `angle`, their needle holes staggered by `stagger`, with an optional carved `motif`. |
 | `contour` | Rings following the outline: the first half a row inside the edge (less half the pull compensation), each next one `spacing` further in, round holes too, a ring splitting where the shape narrows into lobes. The rings are sewn ring to ring, each entered at its point nearest the needle, with a short step to the next; a step longer than three rows starts a new run. `angle`, `stagger` and `motif` aren't used. |
+| `spiral` | The same rings as `contour`, sewn as a spiral with no step between them: the outermost ring whole, then each ring blended into the next over one turn (the point a fraction of the way round one ring moved that fraction of the way to the point as far round the next, each ring starting at its point nearest the last one's start), then the innermost ring whole. A ring's next is the one ring a row deeper lying within two rows of it all the way round; where there are two (lobes) or none, or round a hole where the rings meet, one spiral ends and the next starts at the end nearest the needle (sewn from either end), joined when the step is at most three rows. `angle`, `stagger` and `motif` aren't used. |
 
 A reader that doesn't know `fillStyle` sews the fill as tatami (and keeps the member, as with any
 other).

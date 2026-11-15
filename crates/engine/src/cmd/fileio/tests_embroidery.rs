@@ -1200,7 +1200,33 @@ fn a_contour_fill_is_sewn_in_rings() {
     for n in plan.needles.iter().filter(|n| n.cmd == vectorcraft_embroidery::Cmd::Stitch) {
         assert!(n.x >= b.min_x() * mm - 0.5 && n.x <= b.max_x() * mm + 0.5 && n.y >= b.min_y() * mm - 0.5 && n.y <= b.max_y() * mm + 0.5, "{n:?}");
     }
-    assert!(s.execute("embroidery.set", &json!({"fillStyle": "spiral"})).is_err());
+    assert!(s.execute("embroidery.set", &json!({"fillStyle": "meander"})).is_err());
     s.execute("embroidery.set", &json!({"fillStyle": null})).unwrap();
     assert_eq!(info(&mut s)["selection"]["fillStyle"], "tatami");
+}
+
+/// E8.3b: a spiral fill sews the contour rings as a spiral: inside the shape, in no more runs
+/// than the rings, and with its top stitches no longer than the stitch length (no ring-to-ring
+/// step).
+#[test]
+fn a_spiral_fill_is_sewn_without_steps() {
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "fill", "fillStyle": "contour", "underlay": "none"})).unwrap();
+    let contour = info(&mut s)["design"].clone();
+    s.execute("embroidery.set", &json!({"fillStyle": "spiral"})).unwrap();
+    let i = info(&mut s);
+    assert_eq!(i["selection"]["fillStyle"], "spiral");
+    let spiral = &i["design"];
+    assert!(spiral["stitches"].as_u64().unwrap() > 100, "{spiral}");
+    assert!(spiral["jumps"].as_u64().unwrap() <= contour["jumps"].as_u64().unwrap(), "{spiral} against {contour}");
+    let id = s.doc().unwrap().selection.objects[0];
+    let b = s.doc().unwrap().doc.node(id).unwrap().geometric_bounds().unwrap();
+    let mm = vectorcraft_embroidery::PT_MM;
+    let plan = s.stitch_plan(&s.doc().unwrap().doc);
+    let stitches: Vec<_> = plan.needles.iter().filter(|n| n.cmd == vectorcraft_embroidery::Cmd::Stitch).collect();
+    for n in &stitches {
+        assert!(n.x >= b.min_x() * mm - 0.5 && n.x <= b.max_x() * mm + 0.5 && n.y >= b.min_y() * mm - 0.5 && n.y <= b.max_y() * mm + 0.5, "{n:?}");
+    }
+    let long = stitches.windows(2).filter(|w| (w[0].x - w[1].x).hypot(w[0].y - w[1].y) > 4.0 + 0.05).count();
+    assert_eq!(long, 0, "stitches longer than 4 mm");
 }

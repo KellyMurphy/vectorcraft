@@ -132,15 +132,18 @@ pub enum FillStyle {
     Tatami,
     /// Rings following the outline, each a row's spacing inside the last, sewn ring to ring.
     Contour,
+    /// The contour rings blended into one continuous spiral, with no step between them.
+    Spiral,
 }
 
 impl FillStyle {
-    pub const ALL: [FillStyle; 2] = [Self::Tatami, Self::Contour];
+    pub const ALL: [FillStyle; 3] = [Self::Tatami, Self::Contour, Self::Spiral];
 
     pub fn id(self) -> &'static str {
         match self {
             Self::Tatami => "tatami",
             Self::Contour => "contour",
+            Self::Spiral => "spiral",
         }
     }
 
@@ -148,6 +151,7 @@ impl FillStyle {
         match self {
             Self::Tatami => "Tatami",
             Self::Contour => "Contour",
+            Self::Spiral => "Spiral",
         }
     }
 

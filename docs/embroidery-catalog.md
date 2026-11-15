@@ -1,6 +1,6 @@
 # Embroidery feature catalog
 
-Status: 62 features checked against the code on 2026-11-06 (contour fill 2026-11-14). Done 36, partly done 13, missing 13 (estimated, by
+Status: 62 features checked against the code on 2026-11-06 (contour and spiral fills 2026-11-14). Done 36, partly done 13, missing 13 (estimated, by
 reading the code and the guide, not by sewing: nothing is marked done on fabric until the sew-out gates pass).
 
 This is the feature catalog from the embroidery research (Kelly, 2026-10-16) that
@@ -67,7 +67,7 @@ before G1), and the P2 items after G2. Only blending thread colours across an ar
 | Tatami fill with holes | Row fill that respects inner holes, with stitch length, spacing and angle | All | P0 | **Done** | Fill (tatami 2–8, brick), routing (E3.5) |
 | Programmable and carved fill editor | Edit the penetration pattern of a fill, or carve lines through it | Pulse Carved Fill Pattern Editor, Wilcom Carving Stamp | P1 | **Partly** | Built-in stagger patterns and carved motifs; no editor for the penetration pattern |
 | Motif run and motif fill | Repeat a small user motif along a line or across an area | Embrilliance, Wilcom, Brother decorative fill | P1 | **Done** | Pattern Border (`.vcborder`), Motif Fill (`.vcmotif`), extraction of both (E8.4) |
-| Contour, circular, spiral and radial fills | Fills that echo the outline or radiate from a centre | Ink/Stitch, Brother, Pulse | P1 | **Partly** | E8.3a contour fill done (`fillStyle: contour`, 2026-11-14); circular, spiral and radial: E8.3b–c |
+| Contour, circular, spiral and radial fills | Fills that echo the outline or radiate from a centre | Ink/Stitch, Brother, Pulse | P1 | **Partly** | E8.3a contour and E8.3b spiral fills done (`fillStyle: contour|spiral`, 2026-11-14); circular and radial: E8.3c |
 | Guided and curved fill | Fill rows bend to follow a guide line you draw | Ink/Stitch Guided Fill, Embrilliance Curved Fill | P1 | **Missing** | E8.3d (unblocked) |
 | Meander and stipple | Quilting-style wandering line that fills an area | Ink/Stitch, Embrilliance | P1 | **Missing** | E8.3e (unblocked) |
 | Gradient density and colour blends | Fade density, or blend two or more thread colours across an area | Wilcom Multi Blend, Pulse Auto Colour Blend, Ink/Stitch linear gradient | P2 | **Missing** | E9.1 (cascade/gradient density); colour blends: not planned yet |
@@ -156,3 +156,4 @@ independent reader in tests.
 - 2026-11-06: realistic render and mockups: shaded thread on fabric textures (E9.2a), garment mockups (E9.2b), real-size view with screen calibration (E9.2c); still partly done (no 3D garments).
 - 2026-11-06: machine file formats: VP3 and U01 read and write (E9.3); still partly done, XXX has no usable public description.
 - 2026-11-14: contour fill (E8.3a, `fillStyle: contour`): contour, circular, spiral and radial fills are now partly done.
+- 2026-11-14: spiral fill (E8.3b, `fillStyle: spiral`): the contour rings blended into one continuous spiral; circular and radial remain.

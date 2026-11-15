@@ -1042,6 +1042,7 @@ fn fill_style_blurb(s: FillStyle) -> &'static str {
     match s {
         FillStyle::Tatami => "Straight rows at the fill's angle, their needle holes staggered.",
         FillStyle::Contour => "Rings following the outline, sewn ring to ring: good for round and flowing shapes.",
+        FillStyle::Spiral => "The rings blended into one continuous spiral, with no step between them: best on round shapes.",
     }
 }
 
@@ -3223,6 +3224,10 @@ mod tests {
         let texts = drawn(&mut app, 0).0;
         assert!(texts.iter().any(|t| t == "Contour") && texts.iter().any(|t| t == "Spacing:"), "{texts:?}");
         assert!(!texts.iter().any(|t| t == "Angle:" || t == "Pattern:"), "the rows' settings: {texts:?}");
+        // E8.3b: the spiral, too.
+        run(&mut app, "embroidery.set", json!({"fillStyle": "spiral"}));
+        let texts = drawn(&mut app, 0).0;
+        assert!(texts.iter().any(|t| t == "Spiral") && !texts.iter().any(|t| t == "Angle:"), "{texts:?}");
     }
 
     /// UI3.2: the Stitch tab starts with what is selected, its size in mm, its stitch and the

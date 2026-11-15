@@ -173,11 +173,11 @@ pub static PARAMS: &[Param] = &[
     },
     Param {
         key: "fillStyle",
-        value: ValueKind::Choice(&["tatami", "contour"]),
+        value: ValueKind::Choice(&["tatami", "contour", "spiral"]),
         kinds: &[K::Fill],
         label: "Fill Style:",
         help: "How the area is covered: straight rows, or rings following the outline",
-        doc: "tatami|contour (fill; tatami: straight staggered rows at `angle`; contour: rings following the outline `spacing` apart and sewn ring to ring; angle and stagger and motif are tatami's only)",
+        doc: "tatami|contour|spiral (fill; tatami: straight staggered rows at `angle`; contour: rings following the outline `spacing` apart and sewn ring to ring; spiral: the same rings blended into one continuous spiral; angle and stagger and motif are tatami's only)",
         nullable: true,
         get: |s| json!(s.fill_style.id()),
         set: |s, v| s.fill_style = text(v).as_deref().and_then(FillStyle::parse).unwrap_or_default(),

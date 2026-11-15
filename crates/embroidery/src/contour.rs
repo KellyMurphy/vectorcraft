@@ -7,6 +7,9 @@
 //! where they can be: each from its point nearest where the needle is, then a short step to the
 //! next ring, the nearest one left. A step longer than a few rows starts a new run (the needle
 //! jumps, or travels, between them as between any two runs).
+//!
+//! The spiral fill (E8.3b, [`spiral`]) sews the same rings with no step between them: each ring
+//! blends into the next over one turn.
 
 use kurbo::Point;
 use vectorcraft_geom::FillRule;
@@ -22,6 +25,11 @@ const JOIN_ROWS: f64 = 3.0;
 /// The rings of `polys` (filled by `rule`) at `spacing` mm: the first `first` mm inside the edge,
 /// each next one `spacing` further in. None when the shape is empty or too thin for one ring.
 pub fn rings(polys: &[Vec<Point>], rule: FillRule, spacing: f64, first: f64) -> Option<Vec<Vec<Point>>> {
+    leveled(polys, rule, spacing, first).map(|r| r.into_iter().map(|(_, ring)| ring).collect())
+}
+
+/// [`rings`], each with its level: 0 for the rings `first` in, 1 for the next, and so on.
+fn leveled(polys: &[Vec<Point>], rule: FillRule, spacing: f64, first: f64) -> Option<Vec<(usize, Vec<Point>)>> {
     if !spacing.is_finite() || spacing <= 0.0 || !first.is_finite() {
         return None;
     }
@@ -46,8 +54,8 @@ struct Edge {
     y: usize,
 }
 
-/// The closed rings of field `f` at each of `levels`, innermost level last.
-fn trace(f: &Field, levels: &[f64]) -> Vec<Vec<Point>> {
+/// The closed rings of field `f` at each of `levels` with their level's index, innermost level last.
+fn trace(f: &Field, levels: &[f64]) -> Vec<(usize, Vec<Point>)> {
     let at = |x: usize, y: usize| f.d.get(y * f.w + x).copied().unwrap_or(0.0);
     let mm = |x: f64, y: f64| Point::new(f.origin.x + x * f.px, f.origin.y + y * f.px);
     // Each level's segments, as pairs of the pixel edges they cross.
@@ -75,11 +83,11 @@ fn trace(f: &Field, levels: &[f64]) -> Vec<Vec<Point>> {
         mm(ax as f64 + (bx as f64 - ax as f64) * t, ay as f64 + (by as f64 - ay as f64) * t)
     };
     let mut out = vec![];
-    for (level, segs) in levels.iter().zip(segs) {
+    for (k, (level, segs)) in levels.iter().zip(segs).enumerate() {
         for ring in link(&segs) {
             let pts: Vec<Point> = ring.into_iter().map(|e| point(e, *level)).collect();
             if pts.len() >= 3 {
-                out.push(pts);
+                out.push((k, pts));
             }
         }
     }
@@ -198,6 +206,195 @@ pub fn runs(rings: Vec<Vec<Point>>, spacing: f64, length: f64) -> Vec<Vec<Point>
     out
 }
 
+/// Spiral fill (E8.3b): the rings of `polys` (as [`rings`]) sewn as spirals, each ring blended
+/// into the next over one turn so there is no step between them. A spiral follows a chain of
+/// rings, each a row inside the last; where the chain splits (lobes) or meets another (round a
+/// hole), the spiral ends and the next one starts nearest the needle, as [`runs`] joins rings.
+/// The outermost and innermost rings of a chain are sewn whole, so the edge and the middle are
+/// covered as a contour fill covers them. None when the shape is too thin for one ring.
+pub fn spiral(polys: &[Vec<Point>], rule: FillRule, spacing: f64, first: f64, length: f64) -> Option<Vec<Vec<Point>>> {
+    if !length.is_finite() || length <= 0.0 {
+        return None;
+    }
+    let found = leveled(polys, rule, spacing, first)?;
+    let rings: Vec<(usize, Vec<Point>)> =
+        found.into_iter().map(|(k, r)| (k, ccw(close(generate::resample(&close(r), length, true))))).filter(|(_, r)| r.len() >= 4).collect();
+    let spirals: Vec<Vec<Point>> = chains(&rings, spacing).iter().map(|c| at_most(&turns(c, length), length)).collect();
+    Some(join_ends(spirals, spacing))
+}
+
+/// The rings grouped into chains, outermost first: a ring's next is the one ring a level deeper
+/// that lies within two rows of it all the way round. (Not the other way: near the middle the
+/// rings shrink to a slit faster at their ends than a row a level.) Two such rings (lobes) end
+/// the chain, and so does a ring round a hole about to meet the outer ones.
+fn chains(rings: &[(usize, Vec<Point>)], spacing: f64) -> Vec<Vec<Vec<Point>>> {
+    let near = 2.0 * spacing;
+    let mut used = vec![false; rings.len()];
+    let mut out = vec![];
+    for start in 0..rings.len() {
+        if used.get(start).copied().unwrap_or(true) {
+            continue;
+        }
+        let mut chain: Vec<Vec<Point>> = vec![];
+        let mut at = start;
+        // Each ring joins one chain, so this ends within as many steps as there are rings.
+        for _ in 0..rings.len() {
+            let Some((level, ring)) = rings.get(at) else { break };
+            if let Some(u) = used.get_mut(at) {
+                *u = true;
+            }
+            chain.push(ring.clone());
+            let next: Vec<usize> = (0..rings.len())
+                .filter(|&j| !used.get(j).copied().unwrap_or(true))
+                .filter(|&j| rings.get(j).is_some_and(|(l, r)| *l == level + 1 && within(r, ring, near)))
+                .collect();
+            match next.as_slice() {
+                [only] => at = *only,
+                _ => break,
+            }
+        }
+        out.push(chain);
+    }
+    out
+}
+
+/// Whether every point of `a` lies within `d` of polyline `b` (its bounds checked first).
+fn within(a: &[Point], b: &[Point], d: f64) -> bool {
+    let bounds = |r: &[Point]| {
+        r.iter().fold((f64::INFINITY, f64::INFINITY, f64::NEG_INFINITY, f64::NEG_INFINITY), |(x0, y0, x1, y1), p| {
+            (x0.min(p.x), y0.min(p.y), x1.max(p.x), y1.max(p.y))
+        })
+    };
+    let (ax0, ay0, ax1, ay1) = bounds(a);
+    let (bx0, by0, bx1, by1) = bounds(b);
+    if ax0 < bx0 - d || ay0 < by0 - d || ax1 > bx1 + d || ay1 > by1 + d {
+        return false;
+    }
+    a.iter().all(|p| b.windows(2).any(|w| to_segment(*p, w[0], w[1]) <= d * d))
+}
+
+/// The squared distance from `p` to the segment `a`–`b`.
+fn to_segment(p: Point, a: Point, b: Point) -> f64 {
+    let ab = b - a;
+    let len = ab.hypot2();
+    let t = if len > 1e-18 { ((p - a).dot(ab) / len).clamp(0.0, 1.0) } else { 0.0 };
+    p.distance_squared(a + ab * t)
+}
+
+/// One chain sewn as a spiral: its first ring whole, then each ring blended into the next over a
+/// turn (the point a fraction `t` round one ring moved `t` of the way to the point as far round
+/// the next), then the last ring whole. Each ring starts at its point nearest the last one's start.
+fn turns(chain: &[Vec<Point>], length: f64) -> Vec<Point> {
+    let mut aligned: Vec<Vec<Point>> = vec![];
+    for ring in chain {
+        let ring = match aligned.last().and_then(|r| r.first()) {
+            Some(start) => from_nearest(ring, *start),
+            None => ring.clone(),
+        };
+        aligned.push(ring);
+    }
+    let Some(first) = aligned.first() else { return vec![] };
+    let mut out = first.clone();
+    for w in aligned.windows(2) {
+        let (a, b) = (Walk::new(&w[0]), Walk::new(&w[1]));
+        let n = (a.total.max(b.total) / length).ceil().clamp(3.0, 100_000.0) as usize;
+        out.extend((1..=n).map(|j| j as f64 / n as f64).map(|t| a.at(t).lerp(b.at(t), t)));
+    }
+    if aligned.len() > 1
+        && let Some(last) = aligned.last()
+    {
+        out.extend(last.iter().skip(1).copied());
+    }
+    out
+}
+
+/// Closed `ring` (last point repeating the first) started from its point nearest `p`.
+fn from_nearest(ring: &[Point], p: Point) -> Vec<Point> {
+    let body = ring.get(..ring.len().saturating_sub(1)).unwrap_or(ring);
+    let at = body.iter().enumerate().min_by(|a, b| a.1.distance_squared(p).total_cmp(&b.1.distance_squared(p))).map_or(0, |(i, _)| i);
+    close(body.iter().cycle().skip(at).take(body.len()).copied().collect())
+}
+
+/// Closed `ring` wound counter-clockwise (positive area in y-up terms), so chained rings turn
+/// the same way.
+fn ccw(mut ring: Vec<Point>) -> Vec<Point> {
+    let area: f64 = ring.windows(2).map(|w| w[0].x * w[1].y - w[1].x * w[0].y).sum();
+    if area < 0.0 {
+        ring.reverse();
+    }
+    ring
+}
+
+/// A closed polyline measured along its length, to find the point a fraction of the way round.
+struct Walk<'a> {
+    pts: &'a [Point],
+    lens: Vec<f64>,
+    total: f64,
+}
+
+impl<'a> Walk<'a> {
+    fn new(pts: &'a [Point]) -> Self {
+        let mut lens = vec![0.0];
+        let mut total = 0.0;
+        for w in pts.windows(2) {
+            total += w[0].distance(w[1]);
+            lens.push(total);
+        }
+        Walk { pts, lens, total }
+    }
+
+    /// The point `t` (0–1) of the way round.
+    fn at(&self, t: f64) -> Point {
+        let goal = t.clamp(0.0, 1.0) * self.total;
+        let i = self.lens.partition_point(|l| *l < goal).max(1);
+        match (self.pts.get(i - 1), self.pts.get(i), self.lens.get(i - 1), self.lens.get(i)) {
+            (Some(a), Some(b), Some(la), Some(lb)) if lb - la > 1e-12 => a.lerp(*b, (goal - la) / (lb - la)),
+            (Some(a), ..) => *a,
+            _ => Point::ZERO,
+        }
+    }
+}
+
+/// Open lines joined into runs: each next line is the one with an end nearest the needle (sewn
+/// from that end), joined to the run when the step is at most [`JOIN_ROWS`] rows.
+fn join_ends(mut left: Vec<Vec<Point>>, spacing: f64) -> Vec<Vec<Point>> {
+    left.retain(|l| l.len() >= 2);
+    let mut out: Vec<Vec<Point>> = vec![];
+    let mut needle: Option<Point> = None;
+    while !left.is_empty() {
+        let (pick, reverse) = match needle {
+            None => (0, false),
+            Some(n) => {
+                let mut best = (0, false, f64::INFINITY);
+                for (i, l) in left.iter().enumerate() {
+                    for (rev, end) in [(false, l.first()), (true, l.last())] {
+                        if let Some(d) = end.map(|e| e.distance_squared(n))
+                            && d < best.2
+                        {
+                            best = (i, rev, d);
+                        }
+                    }
+                }
+                (best.0, best.1)
+            }
+        };
+        let mut line = left.swap_remove(pick);
+        if reverse {
+            line.reverse();
+        }
+        let joins = match (needle, line.first()) {
+            (Some(n), Some(f)) => n.distance(*f) <= JOIN_ROWS * spacing,
+            _ => false,
+        };
+        needle = line.last().copied();
+        match out.last_mut() {
+            Some(run) if joins => run.extend(line),
+            _ => out.push(line),
+        }
+    }
+    out
+}
+
 /// `line` with every stitch longer than `length` split evenly (resampling rounds the number of
 /// stitches on a side, so a side a little longer than one stitch stays one).
 fn at_most(line: &[Point], length: f64) -> Vec<Point> {
@@ -285,6 +482,50 @@ mod tests {
         assert!(run.iter().all(|p| p.x >= 0.0 && p.x <= 20.0 && p.y >= 0.0 && p.y <= 10.0));
     }
 
+    fn ellipse(cx: f64, cy: f64, rx: f64, ry: f64) -> Vec<Point> {
+        (0..96).map(|k| k as f64 * std::f64::consts::TAU / 96.0).map(|a| Point::new(cx + rx * a.cos(), cy + ry * a.sin())).collect()
+    }
+
+    /// An oval's rings make one chain, sewn as one spiral with no stitch longer than the stitch
+    /// length: no step from ring to ring. It starts on the outermost ring and ends in the middle,
+    /// and every point is inside the oval.
+    #[test]
+    fn an_oval_is_sewn_as_one_spiral() {
+        let shape = [ellipse(20.0, 15.0, 20.0, 15.0)];
+        let found = leveled(&shape, FillRule::NonZero, 1.0, 0.5).unwrap();
+        let resampled: Vec<(usize, Vec<Point>)> = found.into_iter().map(|(k, r)| (k, ccw(close(generate::resample(&close(r), 2.0, true))))).collect();
+        assert_eq!(chains(&resampled, 1.0).len(), 1, "one chain, outer ring to middle");
+        let sewn = spiral(&shape, FillRule::NonZero, 1.0, 0.5, 2.0).unwrap();
+        assert_eq!(sewn.len(), 1);
+        let run = &sewn[0];
+        let long: Vec<_> = run.windows(2).filter(|w| w[0].distance(w[1]) > 2.0 + 1e-6).collect();
+        assert!(long.is_empty(), "every stitch at most 2 mm: {long:?}");
+        let rim = |p: &Point| ((p.x - 20.0) / 20.0).powi(2) + ((p.y - 15.0) / 15.0).powi(2);
+        assert!(run.iter().all(|p| rim(p) < 1.0), "inside the oval");
+        let (Some(start), Some(end)) = (run.first(), run.last()) else { panic!() };
+        assert!(rim(start) > 0.85, "starts at the edge: {start:?}");
+        assert!(rim(end) < 0.2, "ends in the middle: {end:?}");
+        // The needle keeps moving inward: the distance in from the edge only grows, turn by turn.
+        let depth = |p: &Point| 1.0 - rim(p).sqrt();
+        let quarter = run.len() / 4;
+        assert!(depth(&run[quarter]) < depth(&run[3 * quarter]));
+    }
+
+    /// Two lobes and a hole break the chains; the spirals are joined nearest first and stay out
+    /// of the hole.
+    #[test]
+    fn lobes_and_holes_break_the_spiral() {
+        let two = [ellipse(10.0, 10.0, 10.0, 10.0), ellipse(30.0, 10.0, 10.0, 10.0)];
+        let sewn = spiral(&two, FillRule::NonZero, 1.0, 0.5, 3.0).unwrap();
+        let points: usize = sewn.iter().map(Vec::len).sum();
+        assert!(points > 100);
+        assert!(sewn.iter().flatten().all(|p| p.distance(Point::new(10.0, 10.0)) < 10.0 || p.distance(Point::new(30.0, 10.0)) < 10.0));
+        let holed = [rect(0.0, 0.0, 20.0, 20.0), rect(8.0, 8.0, 4.0, 4.0)];
+        let sewn = spiral(&holed, FillRule::EvenOdd, 1.0, 0.5, 3.0).unwrap();
+        assert!(sewn.iter().flatten().all(|p| !(p.x > 8.0 && p.x < 12.0 && p.y > 8.0 && p.y < 12.0)), "nothing in the hole");
+        assert!(sewn.iter().flatten().any(|p| p.x > 6.0 && p.x < 14.0 && p.y > 6.0 && p.y < 14.0), "sewn round the hole");
+    }
+
     /// Nothing to fill, a shape too thin for the first ring, and bad spacings.
     #[test]
     fn odd_shapes_and_settings() {
@@ -296,5 +537,10 @@ mod tests {
             assert_eq!(rings(&[rect(0.0, 0.0, 5.0, 5.0)], FillRule::NonZero, bad, 0.5), None, "{bad}");
         }
         assert!(runs(vec![], 1.0, 3.0).is_empty());
+        assert_eq!(spiral(&[], FillRule::NonZero, 1.0, 0.5, 3.0), None);
+        assert_eq!(spiral(&thin, FillRule::NonZero, 1.0, 0.5, 3.0).map(|s| s.len()), Some(1), "one ring down the middle");
+        for bad in [0.0, -1.0, f64::NAN] {
+            assert_eq!(spiral(&[rect(0.0, 0.0, 5.0, 5.0)], FillRule::NonZero, 1.0, 0.5, bad), None, "{bad}");
+        }
     }
 }

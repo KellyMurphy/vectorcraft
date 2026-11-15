@@ -194,7 +194,7 @@ pub fn fill_pattern(ctx: &egui::Context, stagger: u8, motif: Option<&str>) -> Th
     })
 }
 
-/// A fill style on a 12 × 8 mm oval: tatami rows, or contour rings following its edge.
+/// A fill style on a 12 × 8 mm oval: tatami rows, contour rings following its edge, or a spiral.
 pub fn fill_style(ctx: &egui::Context, style: vectorcraft_doc::FillStyle) -> Thumb {
     use vectorcraft_doc::FillStyle;
     Thumb::cached(ctx, &format!("fill-style:{}", style.id()), || {
@@ -206,6 +206,7 @@ pub fn fill_style(ctx: &egui::Context, style: vectorcraft_doc::FillStyle) -> Thu
             FillStyle::Contour => vectorcraft_embroidery::contour::rings(&polys, FillRule::NonZero, 0.8, 0.4)
                 .map(|r| vectorcraft_embroidery::contour::runs(r, 0.8, 1.6))
                 .unwrap_or_default(),
+            FillStyle::Spiral => vectorcraft_embroidery::contour::spiral(&polys, FillRule::NonZero, 0.8, 0.4, 1.6).unwrap_or_default(),
         };
         Thumb::new(runs)
     })
