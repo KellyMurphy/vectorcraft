@@ -123,6 +123,44 @@ pub enum RunStyle {
     Sashiko,
 }
 
+/// How a fill covers its area: the fill families.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum FillStyle {
+    /// Straight, staggered rows at the fill's angle.
+    #[default]
+    Tatami,
+    /// Rings following the outline, each a row's spacing inside the last, sewn ring to ring.
+    Contour,
+}
+
+impl FillStyle {
+    pub const ALL: [FillStyle; 2] = [Self::Tatami, Self::Contour];
+
+    pub fn id(self) -> &'static str {
+        match self {
+            Self::Tatami => "tatami",
+            Self::Contour => "contour",
+        }
+    }
+
+    pub fn label(self) -> &'static str {
+        match self {
+            Self::Tatami => "Tatami",
+            Self::Contour => "Contour",
+        }
+    }
+
+    pub fn parse(s: &str) -> Option<Self> {
+        Self::ALL.into_iter().find(|f| f.id().eq_ignore_ascii_case(s.trim()))
+    }
+
+    /// Whether the style sews straight rows, so the fill's angle, stagger and carved motif apply.
+    pub fn has_rows(self) -> bool {
+        self == Self::Tatami
+    }
+}
+
 impl RunStyle {
     pub const ALL: [RunStyle; 5] = [Self::Single, Self::Chain, Self::Stem, Self::Backstitch, Self::Sashiko];
 
@@ -310,6 +348,9 @@ pub struct StitchSettings {
     /// ([`StitchSettings::DEFAULT_GAP`]).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub gap: Option<f64>,
+    /// Fill: how the area is covered ([`FillStyle`]).
+    #[serde(default, skip_serializing_if = "crate::skip::is_default")]
+    pub fill_style: FillStyle,
     /// Satin, satin shape and zigzag: whether stitches wider than `split_at` are split
     /// ([`Split`]).
     #[serde(default, skip_serializing_if = "crate::skip::is_default")]
@@ -1438,6 +1479,11 @@ impl StitchSettings {
     /// The longest piece of a split stitch, mm (always within [`Self::SPLIT_LENGTH`]).
     pub fn split_length(&self) -> f64 {
         clamp(self.split_length, Self::DEFAULT_SPLIT_LENGTH, Self::SPLIT_LENGTH)
+    }
+
+    /// The fill style to sew with: tatami for every other stitch type.
+    pub fn fill_style(&self) -> FillStyle {
+        if self.kind == StitchKind::Fill { self.fill_style } else { FillStyle::Tatami }
     }
 
     /// The running stitch style to sew with: single for every other stitch type.

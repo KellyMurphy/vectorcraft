@@ -1,11 +1,12 @@
-//! Fill: staggered rows covering the shape (tatami), with fill underlay, an optional carved motif
-//! and an optional satin border over the edges.
+//! Fill: staggered rows covering the shape (tatami) or rings following its outline (contour,
+//! [`crate::contour`]), with fill underlay, an optional carved motif (tatami) and an optional satin
+//! border over the edges.
 
 use kurbo::Point;
-use vectorcraft_doc::Underlay;
+use vectorcraft_doc::{FillStyle, Underlay};
 
 use super::{Input, Output};
-use crate::{generate, motifs};
+use crate::{contour, generate, motifs};
 
 pub(super) fn sew(i: &Input) -> Output {
     let s = i.settings;
@@ -39,7 +40,12 @@ pub(super) fn sew(i: &Input) -> Output {
         None => vec![],
     };
     let comp = generate::RowComp { pull: s.pull(), pull_percent: s.pull_percent(), push: s.push() };
-    let top = generate::fill_compensated(&polys, i.rule, s.angle(), s.spacing(), s.length(), s.stagger(), &carve, comp, cuts, i.overlap);
+    let top = match s.fill_style() {
+        FillStyle::Tatami => {
+            generate::fill_compensated(&polys, i.rule, s.angle(), s.spacing(), s.length(), s.stagger(), &carve, comp, cuts, i.overlap)
+        }
+        FillStyle::Contour => contour_rows(&polys, i, cuts),
+    };
     match under.and_then(|u| Ok((u, top?))) {
         Ok((u, top)) => {
             out.runs.extend(u.into_iter().chain(top));
@@ -52,4 +58,15 @@ pub(super) fn sew(i: &Input) -> Output {
         Err(e) => out.warnings.push(e),
     }
     out
+}
+
+/// The contour fill's rings as runs: the first ring half a row in from the edge, pushed out by half
+/// the pull compensation (the rings run along the edge, so the thread draws the fabric in across
+/// them as it does across a satin), and cut where objects sewn later lie on top.
+fn contour_rows(polys: &[Vec<Point>], i: &Input, cuts: &[generate::Cut]) -> Result<Vec<Vec<Point>>, String> {
+    let s = i.settings;
+    let first = (s.spacing() - s.pull() - s.spacing() * s.pull_percent() / 100.0) / 2.0;
+    let rings =
+        contour::rings(polys, i.rule, s.spacing(), first).ok_or_else(|| "the shape is too small for a contour fill: nothing sewn".to_string())?;
+    Ok(generate::outside_cuts(contour::runs(rings, s.spacing(), s.length()), cuts))
 }

@@ -5919,6 +5919,10 @@ lighting	Light	Свет
 	Zigzag	Зигзаг
 	Fill Underlay	Подложка заливки
 	Tatami	Татами
+	Fill Style:	Стиль заливки:
+	How the area is covered: straight rows, or rings following the outline	Как заполняется область: прямыми рядами или кольцами вдоль контура
+	Straight rows at the fill's angle, their needle holes staggered.	Прямые ряды под углом заливки со смещёнными проколами.
+	Rings following the outline, sewn ring to ring: good for round and flowing shapes.	Кольца вдоль контура, вышиваемые одно за другим: хорошо для круглых и плавных форм.
 
 # Embroidery panel: trims and travel
 	Trim:	Обрезка:

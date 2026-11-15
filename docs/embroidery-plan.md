@@ -615,6 +615,11 @@ overlap removal (E7.4) and checker support. One commit each:
 - **E8.3a Contour fill.** Rings following the outline, inset by the spacing (offsets of the shape, from
   `pathops`), joined ring to ring at the nearest points so it sews as one run; holes get their own rings
   merging into the outer ones. Setting: `spacing`, `length`, `join: "spiral"|"rings"`.
+  **Done 2026-11-14**, as a fill style rather than a new stitch type (`fillStyle: tatami|contour` on Fill, picked in the
+  Fill section; the spiral joining is E8.3b). Built from the shape's distance field (`skeleton::field`), traced at a level
+  every `spacing` in from the edge by marching squares (`contour.rs`), so holes and lobes come out right without polygon
+  offsetting; rings are chained nearest first, a step over three rows starts a new run; the first ring sits half a row in,
+  less half the pull compensation; objects sewn on top are cut out of the rings. Test-sheet swatches wait for the G2 set.
 - **E8.3b Spiral fill.** The contour rings joined into one continuous spiral (each ring blended into the
   next over one turn), no visible join. Best on round and near-round shapes; the checker suggests contour
   where the spiral would distort.

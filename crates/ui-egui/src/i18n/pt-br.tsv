@@ -6226,6 +6226,10 @@ mark-style	Japanese	Japonesas
 	Zigzag	Zigue-zague
 	Fill Underlay	Base de preenchimento
 	Tatami	Tatame
+	Fill Style:	Estilo de preenchimento:
+	How the area is covered: straight rows, or rings following the outline	Como a área é coberta: fileiras retas ou anéis que seguem o contorno
+	Straight rows at the fill's angle, their needle holes staggered.	Fileiras retas no ângulo do preenchimento, com as perfurações alternadas.
+	Rings following the outline, sewn ring to ring: good for round and flowing shapes.	Anéis que seguem o contorno, bordados um após o outro: bom para formas redondas e fluidas.
 
 # Embroidery panel: trims and travel
 	Trim:	Corte:

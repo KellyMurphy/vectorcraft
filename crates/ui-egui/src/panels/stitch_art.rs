@@ -194,6 +194,23 @@ pub fn fill_pattern(ctx: &egui::Context, stagger: u8, motif: Option<&str>) -> Th
     })
 }
 
+/// A fill style on a 12 × 8 mm oval: tatami rows, or contour rings following its edge.
+pub fn fill_style(ctx: &egui::Context, style: vectorcraft_doc::FillStyle) -> Thumb {
+    use vectorcraft_doc::FillStyle;
+    Thumb::cached(ctx, &format!("fill-style:{}", style.id()), || {
+        let oval: Vec<Point> =
+            (0..48).map(|k| (k as f64) * std::f64::consts::TAU / 48.0).map(|a| Point::new(6.0 + 6.0 * a.cos(), 4.0 + 4.0 * a.sin())).collect();
+        let polys = vec![oval];
+        let runs = match style {
+            FillStyle::Tatami => generate::fill_carved(&polys, FillRule::NonZero, 0.0, 0.7, 2.2, 3, &[]).unwrap_or_default(),
+            FillStyle::Contour => vectorcraft_embroidery::contour::rings(&polys, FillRule::NonZero, 0.8, 0.4)
+                .map(|r| vectorcraft_embroidery::contour::runs(r, 0.8, 1.6))
+                .unwrap_or_default(),
+        };
+        Thumb::new(runs)
+    })
+}
+
 /// One tile of stitched motif `m`, about 10 mm across.
 pub fn motif(ctx: &egui::Context, m: &vectorcraft_doc::Motif) -> Thumb {
     // The document's motifs can change: keyed by content, not just id.

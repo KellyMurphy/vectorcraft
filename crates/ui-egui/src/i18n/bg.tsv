@@ -6016,6 +6016,10 @@ theme	Appearance	Външен вид
 	Stitch	Бод
 	Stitches:	Бодове:
 	Tatami	Татами
+	Fill Style:	Стил на запълване:
+	How the area is covered: straight rows, or rings following the outline	Как се покрива площта: прави редове или пръстени по контура
+	Straight rows at the fill's angle, their needle holes staggered.	Прави редове под ъгъла на запълването, с разместени убождания.
+	Rings following the outline, sewn ring to ring: good for round and flowing shapes.	Пръстени по контура, бродирани един след друг: подходящо за кръгли и плавни форми.
 	The needle goes down at every anchor point, as drawn.	Иглата слиза във всяка опорна точка, както е нарисувано.
 	The object's two paths are the column's edges; lines crossing both set the stitch direction	Двата пътя на обекта са ръбовете на колоната; линии, пресичащи и двата, задават посоката на бода
 	The pattern repeats along the path, a whole number of times between corners.	Шарката се повтаря по пътя цяло число пъти между ъглите.

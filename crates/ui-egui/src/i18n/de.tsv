@@ -5935,6 +5935,10 @@ effect	Soft	Weich
 	Stitch	Stich
 	Stitches:	Stiche:
 	Tatami	Tatami
+	Fill Style:	Füllstil:
+	How the area is covered: straight rows, or rings following the outline	Wie die Fläche gedeckt wird: gerade Reihen oder Ringe entlang der Kontur
+	Straight rows at the fill's angle, their needle holes staggered.	Gerade Reihen im Winkel der Füllung, mit versetzten Einstichen.
+	Rings following the outline, sewn ring to ring: good for round and flowing shapes.	Ringe entlang der Kontur, Ring für Ring gestickt: gut für runde und fließende Formen.
 	The needle goes down at every anchor point, as drawn.	Die Nadel sticht an jedem Ankerpunkt ein, wie gezeichnet.
 	The object's two paths are the column's edges; lines crossing both set the stitch direction	Die zwei Pfade des Objekts sind die Kanten der Säule; Linien, die beide kreuzen, legen die Stichrichtung fest
 	The pattern repeats along the path, a whole number of times between corners.	Das Muster wiederholt sich entlang des Pfads, zwischen Ecken eine ganze Anzahl Male.

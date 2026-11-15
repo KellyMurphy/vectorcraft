@@ -5958,6 +5958,10 @@ lighting	Light	光源
 	Zigzag	鋸齒
 	Fill Underlay	填色底襯
 	Tatami	榻榻米
+	Fill Style:	填色樣式:
+	How the area is covered: straight rows, or rings following the outline	區域的覆蓋方式：直行，或沿輪廓的環
+	Straight rows at the fill's angle, their needle holes staggered.	依填色角度排列的直行，針孔交錯。
+	Rings following the outline, sewn ring to ring: good for round and flowing shapes.	沿輪廓的環，一環接一環地繡：適合圓形與流暢的形狀。
 
 # Embroidery panel: trims and travel
 	Trim:	剪線:

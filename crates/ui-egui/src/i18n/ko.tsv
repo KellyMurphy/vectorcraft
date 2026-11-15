@@ -5929,6 +5929,10 @@ lighting	Light	광원
 	Stitch	스티치
 	Stitches:	스티치 수:
 	Tatami	다다미
+	Fill Style:	채우기 스타일:
+	How the area is covered: straight rows, or rings following the outline	면을 채우는 방식: 직선 줄 또는 윤곽을 따르는 고리
+	Straight rows at the fill's angle, their needle holes staggered.	채우기 각도의 직선 줄로, 바늘 자리를 엇갈리게 놓습니다.
+	Rings following the outline, sewn ring to ring: good for round and flowing shapes.	윤곽을 따르는 고리를 차례로 수놓습니다. 둥글고 흐르는 모양에 좋습니다.
 	The needle goes down at every anchor point, as drawn.	그린 대로 모든 고정점에서 바늘이 내려갑니다.
 	The object's two paths are the column's edges; lines crossing both set the stitch direction	오브젝트의 두 패스가 칼럼의 가장자리가 되고, 둘을 가로지르는 선이 스티치 방향을 정합니다
 	The pattern repeats along the path, a whole number of times between corners.	패턴이 패스를 따라 반복되며, 모서리 사이에 정수 번 들어갑니다.

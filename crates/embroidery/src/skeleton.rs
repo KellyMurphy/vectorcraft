@@ -188,6 +188,23 @@ fn distances(g: &Grid) -> Vec<f64> {
     d
 }
 
+/// A shape's distance field: for each pixel of a raster over it, how far its centre is inside the
+/// shape, mm (0 outside). Pixel (0, 0)'s centre is at `origin`; the border pixels are all outside.
+pub(crate) struct Field {
+    pub w: usize,
+    pub h: usize,
+    pub px: f64,
+    pub origin: Point,
+    pub d: Vec<f64>,
+}
+
+/// The distance field of `polys` filled by `rule`; none when the shape is empty or degenerate.
+pub(crate) fn field(polys: &[Vec<Point>], rule: FillRule) -> Option<Field> {
+    let g = rasterize(polys, rule)?;
+    let d = distances(&g).into_iter().map(|v| v * g.px).collect();
+    Some(Field { w: g.w, h: g.h, px: g.px, origin: g.origin, d })
+}
+
 /// Zhang–Suen thinning, in place.
 fn thin(g: &mut Grid) {
     let mut changed = true;

@@ -6330,6 +6330,10 @@ imageTrace	Outline	Körvonal
 	Stitch	Öltés
 	Stitches:	Öltések:
 	Tatami	Tatami
+	Fill Style:	Kitöltési stílus:
+	How the area is covered: straight rows, or rings following the outline	Hogyan fedi le a területet: egyenes sorokkal vagy a körvonalat követő gyűrűkkel
+	Straight rows at the fill's angle, their needle holes staggered.	Egyenes sorok a kitöltés szögében, eltolt szúrásokkal.
+	Rings following the outline, sewn ring to ring: good for round and flowing shapes.	A körvonalat követő gyűrűk, egymás után hímezve: kerek és lendületes formákhoz jó.
 	The needle goes down at every anchor point, as drawn.	A tű minden horgonypontnál leszúr, ahogy rajzolva van.
 	The object's two paths are the column's edges; lines crossing both set the stitch direction	Az objektum két görbéje az oszlop széle; a mindkettőt keresztező vonalak adják az öltés irányát
 	The pattern repeats along the path, a whole number of times between corners.	A minta a görbe mentén ismétlődik, a sarkok között egész számszor.

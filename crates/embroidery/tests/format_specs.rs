@@ -102,6 +102,7 @@ fn full_stitch() -> StitchSettings {
         width: Some(1.0),
         style: vectorcraft_doc::RunStyle::Sashiko,
         gap: Some(2.0),
+        fill_style: vectorcraft_doc::FillStyle::Contour,
         split: vectorcraft_doc::Split::Off,
         split_at: Some(8.0),
         split_length: Some(3.0),

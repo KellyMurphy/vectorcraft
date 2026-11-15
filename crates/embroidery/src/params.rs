@@ -8,7 +8,7 @@
 use std::ops::RangeInclusive;
 
 use serde_json::{Value, json};
-use vectorcraft_doc::{RunStyle, Split, SplitPattern, StitchKind, StitchSettings, Underlay};
+use vectorcraft_doc::{FillStyle, RunStyle, Split, SplitPattern, StitchKind, StitchSettings, Underlay};
 
 /// What a setting holds, for parsing, the panel's generic row and the parameter description.
 #[derive(Clone, Debug)]
@@ -169,6 +169,18 @@ pub static PARAMS: &[Param] = &[
         nullable: true,
         get: |s| json!(s.spacing()),
         set: |s, v| s.spacing = f(v),
+        suits: None,
+    },
+    Param {
+        key: "fillStyle",
+        value: ValueKind::Choice(&["tatami", "contour"]),
+        kinds: &[K::Fill],
+        label: "Fill Style:",
+        help: "How the area is covered: straight rows, or rings following the outline",
+        doc: "tatami|contour (fill; tatami: straight staggered rows at `angle`; contour: rings following the outline `spacing` apart and sewn ring to ring; angle and stagger and motif are tatami's only)",
+        nullable: true,
+        get: |s| json!(s.fill_style.id()),
+        set: |s, v| s.fill_style = text(v).as_deref().and_then(FillStyle::parse).unwrap_or_default(),
         suits: None,
     },
     Param {

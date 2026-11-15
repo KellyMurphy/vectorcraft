@@ -5934,6 +5934,10 @@ lighting	Light	Luce
 	Zigzag	Zigzag
 	Fill Underlay	Imbottitura di riempimento
 	Tatami	Tatami
+	Fill Style:	Stile di riempimento:
+	How the area is covered: straight rows, or rings following the outline	Come viene coperta l’area: file dritte o anelli che seguono il contorno
+	Straight rows at the fill's angle, their needle holes staggered.	File dritte all’angolo del riempimento, con le punture sfalsate.
+	Rings following the outline, sewn ring to ring: good for round and flowing shapes.	Anelli che seguono il contorno, ricamati uno dopo l’altro: ideale per forme rotonde e fluide.
 
 # Embroidery panel: trims and travel
 	Trim:	Taglio:

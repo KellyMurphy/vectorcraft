@@ -6625,6 +6625,10 @@ swatch	Bright Violet	Kraftig violet
 	Stitch	Sting
 	Stitches:	Sting:
 	Tatami	Tatami
+	Fill Style:	Fyldstil:
+	How the area is covered: straight rows, or rings following the outline	Hvordan fladen dækkes: lige rækker eller ringe, der følger omridset
+	Straight rows at the fill's angle, their needle holes staggered.	Lige rækker i fyldets vinkel med forskudte nålestik.
+	Rings following the outline, sewn ring to ring: good for round and flowing shapes.	Ringe, der følger omridset, syet ring for ring: godt til runde og flydende former.
 	The needle goes down at every anchor point, as drawn.	Nålen stikker ned i hvert ankerpunkt, som tegnet.
 	The object's two paths are the column's edges; lines crossing both set the stitch direction	Objektets to stier er søjlens kanter; linjer, der krydser begge, bestemmer stingretningen
 	The pattern repeats along the path, a whole number of times between corners.	Mønsteret gentages langs stien et helt antal gange mellem hjørner.

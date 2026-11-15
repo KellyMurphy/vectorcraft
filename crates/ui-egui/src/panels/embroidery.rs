@@ -9,7 +9,7 @@
 
 use egui::{Color32, Rect, Sense, Stroke, Ui, vec2};
 use serde_json::{Value, json};
-use vectorcraft_doc::{EmbroiderySetup, NodeId, RunStyle, Split, SplitPattern, StitchKind, StitchSettings, Underlay};
+use vectorcraft_doc::{EmbroiderySetup, FillStyle, NodeId, RunStyle, Split, SplitPattern, StitchKind, StitchSettings, Underlay};
 
 use super::{selection_len, stitch_art};
 use crate::VectorcraftApp;
@@ -1015,6 +1015,36 @@ fn run_style_picker(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
     );
 }
 
+/// Fill › Fill Style: tatami rows or contour rings, each as a picture.
+fn fill_style_picker(app: &mut VectorcraftApp, ui: &mut Ui, sel: &Value) {
+    let ctx = ui.ctx().clone();
+    let entries: Vec<(String, stitch_art::Thumb)> =
+        FillStyle::ALL.iter().map(|s| (tl!(s.label()).to_string(), stitch_art::fill_style(&ctx, *s))).collect();
+    let selected = sel["fillStyle"].as_str().and_then(FillStyle::parse).and_then(|s| FillStyle::ALL.iter().position(|x| *x == s));
+    ui.scope(|ui| {
+        widgets::label_row(ui, tl!("Fill Style:"), LABEL_W, |ui| {
+            let (label, thumb) = selected.and_then(|i| entries.get(i)).map(|(l, th)| (l.clone(), Some(th))).unwrap_or_default();
+            if let Some(s) = picture_picker(ui, "fill-style", &label, thumb, &entries, selected, false).and_then(|i| FillStyle::ALL.get(i)) {
+                set(app, json!({"fillStyle": s.id()}));
+            }
+        })
+    })
+    .response
+    .on_hover_text(
+        selected
+            .and_then(|i| FillStyle::ALL.get(i))
+            .map_or(tl!("How the area is covered: straight rows, or rings following the outline"), |s| tl!(fill_style_blurb(*s))),
+    );
+}
+
+/// What a fill style looks like, for its tooltip.
+fn fill_style_blurb(s: FillStyle) -> &'static str {
+    match s {
+        FillStyle::Tatami => "Straight rows at the fill's angle, their needle holes staggered.",
+        FillStyle::Contour => "Rings following the outline, sewn ring to ring: good for round and flowing shapes.",
+    }
+}
+
 /// What a running stitch style looks like, for its tooltip.
 fn run_style_blurb(s: RunStyle) -> &'static str {
     match s {
@@ -1529,15 +1559,22 @@ fn parameters(app: &mut VectorcraftApp, ui: &mut Ui, kind: StitchKind, sel: &Val
         }
         StitchKind::Fill => {
             widgets::section_header(ui, tl!("Fill"));
-            widgets::label_row(ui, tl!("Angle:"), LABEL_W, |ui| {
-                if let Some(v) = widgets::mixed_field(ui, ("emb", "angle"), num("angle"), "°", 1, FIELD_W) {
-                    set(app, json!({"angle": v}));
-                }
-            });
+            fill_style_picker(app, ui, sel);
+            // Angle, pattern and motif are the rows' (a mixed selection shows them).
+            let rows = sel["fillStyle"].as_str().and_then(FillStyle::parse).is_none_or(FillStyle::has_rows);
+            if rows {
+                widgets::label_row(ui, tl!("Angle:"), LABEL_W, |ui| {
+                    if let Some(v) = widgets::mixed_field(ui, ("emb", "angle"), num("angle"), "°", 1, FIELD_W) {
+                        set(app, json!({"angle": v}));
+                    }
+                });
+            }
             mm(app, ui, tl!("Spacing:"), "spacing", num("spacing"), StitchSettings::SPACING, tl!("Distance between rows: smaller is denser"));
             mm(app, ui, tl!("Stitch Length:"), "length", num("length"), StitchSettings::LENGTH, tl!("How long each stitch is"));
-            fill_pattern_picker(app, ui, sel);
-            if sel["motif"].is_string() {
+            if rows {
+                fill_pattern_picker(app, ui, sel);
+            }
+            if rows && sel["motif"].is_string() {
                 mm(
                     app,
                     ui,
@@ -1758,7 +1795,7 @@ fn own_rows(kind: StitchKind) -> &'static [&'static str] {
         StitchKind::Satin => &["rails", "width", "spacing", "pull", "underlay", "split", "splitAt", "splitLength", "splitPattern"],
         StitchKind::Zigzag => &["width", "spacing", "split", "splitAt", "splitLength", "splitPattern"],
         StitchKind::SatinShape => &["spacing", "pull", "underlay", "split", "splitAt", "splitLength", "splitPattern"],
-        StitchKind::Fill => &["angle", "spacing", "length", "stagger", "motif", "motifSize", "underlay", "border"],
+        StitchKind::Fill => &["fillStyle", "angle", "spacing", "length", "stagger", "motif", "motifSize", "underlay", "border"],
         StitchKind::PatternBorder => &["pattern", "width", "flip", "length", "spacing"],
         StitchKind::MotifFill => &["motif", "motifSize", "angle", "length", "spacing"],
         StitchKind::Auto => &["thinUnder", "wideOver", "spacing", "pull", "border"],
@@ -3168,6 +3205,24 @@ mod tests {
             let texts = drawn(&mut app, tab).0;
             assert_eq!(texts.iter().filter(|t| *t == "Preview Fabric:").count(), 1, "in the header only: {texts:?}");
         }
+    }
+
+    /// E8.3a: a fill offers its styles; contour leaves out the rows' angle and pattern.
+    #[test]
+    fn a_fill_offers_its_styles() {
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        let run = |app: &mut VectorcraftApp, id: &str, p: Value| app.session.execute(id, &p).unwrap();
+        run(&mut app, "file.new", json!({"width": 300, "height": 300}));
+        run(&mut app, "shape.ellipse", json!({"x": 10, "y": 10, "width": 100, "height": 60}));
+        run(&mut app, "embroidery.set", json!({"type": "fill"}));
+        let texts = drawn(&mut app, 0).0;
+        for want in ["Fill Style:", "Tatami", "Angle:", "Pattern:"] {
+            assert!(texts.iter().any(|t| t == want), "{want} in {texts:?}");
+        }
+        run(&mut app, "embroidery.set", json!({"fillStyle": "contour"}));
+        let texts = drawn(&mut app, 0).0;
+        assert!(texts.iter().any(|t| t == "Contour") && texts.iter().any(|t| t == "Spacing:"), "{texts:?}");
+        assert!(!texts.iter().any(|t| t == "Angle:" || t == "Pattern:"), "the rows' settings: {texts:?}");
     }
 
     /// UI3.2: the Stitch tab starts with what is selected, its size in mm, its stitch and the

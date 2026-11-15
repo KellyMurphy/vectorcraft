@@ -1179,3 +1179,28 @@ fn sibling_paths_take_the_formats_extension() {
     assert_eq!(sibling_path("Rose", "pes"), "Rose.pes");
     assert_eq!(sibling_path("Rose.v2", "pes"), "Rose.v2.pes");
 }
+
+/// E8.3a: a fill set to the contour style is sewn as rings following its outline, kept in the
+/// settings and reported; an unknown style is refused, and null goes back to tatami.
+#[test]
+fn a_contour_fill_is_sewn_in_rings() {
+    let mut s = session();
+    s.execute("embroidery.set", &json!({"type": "fill"})).unwrap();
+    let tatami = info(&mut s)["design"]["stitches"].as_u64().unwrap();
+    s.execute("embroidery.set", &json!({"fillStyle": "contour"})).unwrap();
+    let i = info(&mut s);
+    assert_eq!(i["selection"]["fillStyle"], "contour");
+    let contour = i["design"]["stitches"].as_u64().unwrap();
+    assert!(contour > 100 && contour != tatami, "{contour} stitches against tatami's {tatami}");
+    // Every needle point lies inside the square (with the pull compensation's half-row margin).
+    let id = s.doc().unwrap().selection.objects[0];
+    let b = s.doc().unwrap().doc.node(id).unwrap().geometric_bounds().unwrap();
+    let mm = vectorcraft_embroidery::PT_MM;
+    let plan = s.stitch_plan(&s.doc().unwrap().doc);
+    for n in plan.needles.iter().filter(|n| n.cmd == vectorcraft_embroidery::Cmd::Stitch) {
+        assert!(n.x >= b.min_x() * mm - 0.5 && n.x <= b.max_x() * mm + 0.5 && n.y >= b.min_y() * mm - 0.5 && n.y <= b.max_y() * mm + 0.5, "{n:?}");
+    }
+    assert!(s.execute("embroidery.set", &json!({"fillStyle": "spiral"})).is_err());
+    s.execute("embroidery.set", &json!({"fillStyle": null})).unwrap();
+    assert_eq!(info(&mut s)["selection"]["fillStyle"], "tatami");
+}

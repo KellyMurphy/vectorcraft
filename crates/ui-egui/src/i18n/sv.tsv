@@ -6371,6 +6371,10 @@ swatch	Yellow Green	Gulgrön
 	Stitch	Söm
 	Stitches:	Sömmar:
 	Tatami	Tatami
+	Fill Style:	Fyllnadsstil:
+	How the area is covered: straight rows, or rings following the outline	Hur ytan täcks: raka rader eller ringar som följer konturen
+	Straight rows at the fill's angle, their needle holes staggered.	Raka rader i fyllningens vinkel, med förskjutna nålstick.
+	Rings following the outline, sewn ring to ring: good for round and flowing shapes.	Ringar som följer konturen, sydda ring för ring: bra för runda och flytande former.
 	The needle goes down at every anchor point, as drawn.	Nålen sticker ned i varje ankarpunkt, som ritat.
 	The object's two paths are the column's edges; lines crossing both set the stitch direction	Objektets två banor är kolumnens kanter; linjer som korsar båda anger sömriktningen
 	The pattern repeats along the path, a whole number of times between corners.	Mönstret upprepas längs banan, ett helt antal gånger mellan hörn.

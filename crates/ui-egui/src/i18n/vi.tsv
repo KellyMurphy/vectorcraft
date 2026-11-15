@@ -5949,6 +5949,10 @@ theme	Appearance	Giao diện
 	Stitch	Mũi thêu
 	Stitches:	Số mũi:
 	Tatami	Tatami
+	Fill Style:	Kiểu tô:
+	How the area is covered: straight rows, or rings following the outline	Cách phủ vùng: các hàng thẳng, hoặc các vòng theo đường viền
+	Straight rows at the fill's angle, their needle holes staggered.	Các hàng thẳng theo góc tô, lỗ kim so le.
+	Rings following the outline, sewn ring to ring: good for round and flowing shapes.	Các vòng theo đường viền, thêu lần lượt từng vòng: hợp với hình tròn và uyển chuyển.
 	The needle goes down at every anchor point, as drawn.	Kim xuống ở mọi điểm neo, như đã vẽ.
 	The object's two paths are the column's edges; lines crossing both set the stitch direction	Hai đường dẫn của đối tượng là hai mép cột; các đường cắt ngang cả hai định hướng mũi thêu
 	The pattern repeats along the path, a whole number of times between corners.	Mẫu lặp dọc theo đường dẫn, một số nguyên lần giữa các góc.
