@@ -4,14 +4,14 @@ use super::handlers::{
     select_ids, transform,
 };
 use super::{ARTBOARD_PARAMS, Backend, Map, ToolResult, Value, json, writable_format};
+use vectorcraft_doc::resample::{Resample, fitted};
 
 /// The `menu` argument of the command listings.
 pub(super) const MENU_FILTER: &str =
     "Case-insensitive substring of the menu path, its levels joined with \" > \" (e.g. \"Object\", \"Object > Path\")";
 
 /// The `brief` argument of the command listings.
-pub(super) const BRIEF: &str =
-    "Leave out each command's params description (the bulk of the catalogue); run command_list with the id as filter to read it";
+pub(super) const BRIEF: &str = "Leave out each command's params description and its schema and inputSchema (the bulk of the catalogue); run command_list with the id as filter to read them";
 
 /// The `max_side` argument of the window captures.
 pub(super) const MAX_SIDE_WINDOW: &str =
@@ -30,7 +30,7 @@ pub(super) fn trace_views(a: &Args) -> Result<bool, String> {
 
 /// The command catalogue narrowed by the listing tools' arguments: `filter` (or `query`) on the
 /// id, label and menu path, `menu` on the menu path, `enabledOnly`, and `brief` (no `params`
-/// text: the full catalogue is too large for many clients, #2173).
+/// text, `schema` or `inputSchema`: the full catalogue is too large for many clients, #2173).
 fn filter_commands(all: Value, a: &Args) -> Value {
     let text = |k: &str| a.get(k).and_then(Value::as_str).map(str::to_lowercase).filter(|s| !s.is_empty());
     let needle = text("filter").or_else(|| text("query"));
@@ -63,7 +63,9 @@ fn filter_commands(all: Value, a: &Args) -> Value {
             .filter(hit)
             .map(|mut c| {
                 if brief && let Some(o) = c.as_object_mut() {
-                    o.remove("params");
+                    for key in ["params", "schema", "inputSchema"] {
+                        o.remove(key);
+                    }
                 }
                 c
             })
@@ -454,7 +456,7 @@ fn render_preview(b: &mut dyn Backend, a: &Args) -> Result<ToolResult, String> {
     let png = vectorcraft_format::base64_decode(encoded).ok_or("renderer returned bad base64")?;
     // The render was asked for at most 4096 a side.
     let img = super::handlers::decode_png(&png, 8192).map_err(|e| format!("read preview: {e}"))?;
-    let img = if img.width() > max || img.height() > max { img.thumbnail(max, max) } else { img };
+    let img = if img.width() > max || img.height() > max { fitted(img, max, max, Resample::Average) } else { img };
     let mut out = std::io::Cursor::new(Vec::new());
     img.write_to(&mut out, image::ImageFormat::Png).map_err(|e| format!("encode preview: {e}"))?;
     Ok(image_result(out.get_ref(), json!({"width":img.width(),"height":img.height()})))

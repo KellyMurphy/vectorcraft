@@ -121,6 +121,7 @@ pub fn document(font: &EmbroideryFont, extra: &[String], template: &dyn Fn(&str)
             show_video_safe_areas: false,
             video_ruler_pixel_aspect_ratio: 1.0,
             color: None,
+            guide_label: None,
         });
         // Font units (y up from the baseline) → this artboard (points, y down).
         let to_doc = Affine::new([u, 0.0, 0.0, -u, x, base]);
@@ -145,10 +146,6 @@ pub fn document(font: &EmbroideryFont, extra: &[String], template: &dyn Fn(&str)
         }
         x += width + GAP_EM * upem * u;
     }
-    // The metric lines, across every artboard.
-    for v in [font.ascender, font.cap_height, font.x_height, 0.0, font.descender] {
-        doc.guides.push(Guide { vertical: false, pos: base - v * u, artboard: None, layer: None });
-    }
     let mut template_layer = Node::layer(doc.alloc_id(), TEMPLATE, LayerColor::Preset(1));
     if let NodeKind::Layer { template, children, .. } = &mut template_layer.kind {
         *template = true;
@@ -159,7 +156,12 @@ pub fn document(font: &EmbroideryFont, extra: &[String], template: &dyn Fn(&str)
     if let Some(c) = letters_layer.children_mut() {
         *c = letters;
     }
+    let template_id = template_layer.id;
     doc.layers = vec![Arc::new(template_layer), Arc::new(letters_layer)];
+    // The metric lines, across every artboard, on the locked template layer so they stay put.
+    for v in [font.ascender, font.cap_height, font.x_height, 0.0, font.descender] {
+        doc.add_ruler_guide(&Guide { layer: Some(template_id), ..Guide::new(false, base - v * u) });
+    }
     let mut meta = font.clone();
     meta.glyphs.clear();
     doc.embroidery.font_editor = Some(Box::new(meta));
@@ -318,7 +320,7 @@ mod tests {
         let doc = document(&f, &[], &|_| None);
         assert_eq!(doc.artboards.len(), f.glyphs.len());
         assert_eq!(doc.artboards[0].name, SPACE);
-        assert_eq!(doc.guides.len(), 5);
+        assert_eq!(doc.ruler_guides().len(), 5);
         let back = font(&doc).unwrap();
         assert_eq!(back.glyphs.len(), f.glyphs.len());
         for (a, b) in f.glyphs.iter().zip(&back.glyphs) {
@@ -386,7 +388,9 @@ mod tests {
         assert_eq!(doc.artboards.iter().map(|a| a.name.as_str()).collect::<Vec<_>>(), ["A", "B", "C"]);
         let template = &doc.layers[0];
         assert!(matches!(template.kind, NodeKind::Layer { template: true, .. }) && template.locked);
-        assert_eq!(template.children().unwrap().len(), 3);
+        // The three traced letters, and the five metric lines as guides.
+        let (guides, letters): (Vec<_>, Vec<_>) = template.children().unwrap().iter().partition(|n| matches!(n.kind, NodeKind::RulerGuide { .. }));
+        assert_eq!((letters.len(), guides.len()), (3, 5));
         // Each artboard as wide as its traced letter's advance (0.6 em here).
         let em_pt = EM_MM / PT_MM;
         assert!(doc.artboards.iter().all(|a| (a.rect.width() - 0.6 * em_pt).abs() < 1e-6));

@@ -91,7 +91,7 @@ fn an_agent_digitizes_previews_and_exports() {
     let text = p["result"]["messages"][0]["content"]["text"].as_str().unwrap();
     assert!(text.contains("embroidery.set {type: satin}") && text.contains("out.dst") && text.contains("render_preview {stitches: true}"), "{text}");
     let g = rpc(&mut s, "resources/read", json!({"uri": "vectorcraft://guide/embroidery"}));
-    assert_eq!(g["result"]["contents"][0]["mimeType"], "text/markdown");
+    assert_eq!(g["result"]["contents"][0]["mimeType"], crate::resources::MARKDOWN);
     assert!(g["result"]["contents"][0]["text"].as_str().unwrap().starts_with("# Embroidery"));
 }
 

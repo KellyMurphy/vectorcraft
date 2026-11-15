@@ -19,6 +19,7 @@ const STITCHES_LIMIT: usize = 500_000;
 pub fn specs() -> Vec<CommandSpec> {
     vec![
         CommandSpec {
+            schema: None,
             id: "embroidery.set",
             label: "Stitch Settings",
             menu: &["Object", "Embroidery"],
@@ -137,6 +138,7 @@ pub fn specs() -> Vec<CommandSpec> {
             clear
         ),
         CommandSpec {
+            schema: None,
             id: "embroidery.info",
             label: "Embroidery Info",
             menu: &["Window", "Embroidery"],

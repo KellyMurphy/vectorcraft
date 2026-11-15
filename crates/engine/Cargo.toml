@@ -41,6 +41,9 @@ vectorcraft-plugins = { workspace = true }
 vectorcraft-affinity = { workspace = true }
 vectorcraft-embroidery = { workspace = true }
 vectorcraft-scriptcheck = { workspace = true }
+vectorcraft-js = { workspace = true }
+# The commands' parameter schemas (schemas.rs).
+vectorcraft-apischema = { workspace = true }
 image = { workspace = true }
 jxl-oxide = { workspace = true }
 jxl-color = { workspace = true }
@@ -65,6 +68,11 @@ log = { workspace = true }
 [target.'cfg(unix)'.dependencies]
 rustix = { workspace = true, features = ["std", "process"] }
 
+# Whether a recovery area's lock file is still the one that was opened (`FolderStore::still_named`).
+# Already in Cargo.lock (walkdir), so this adds no new crate.
+[target.'cfg(windows)'.dependencies]
+same-file = "1.0.6"
+
 # The tiles of a HEIC photo decode in parallel on native; wasm stays single-threaded.
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 heic-rs = { version = "=0.1.4", default-features = false, features = ["std", "parallel"], optional = true }
@@ -87,3 +95,5 @@ zune-jpegxl = { workspace = true }
 zune-core = { workspace = true }
 # The JavaScript parser's lexer, compared with the script checker's on the same scripts.
 vectorcraft-js = { workspace = true }
+# A bundled font's own glyph boxes, for the glyph bounds tests.
+skrifa = { workspace = true }

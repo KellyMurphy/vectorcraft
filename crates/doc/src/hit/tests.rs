@@ -450,7 +450,7 @@ fn a_marquee_meets_blends_and_envelopes_by_their_box() {
         envelope,
         NodeKind::Envelope {
             content,
-            kind: Box::new(crate::live::EnvelopeKind::Warp { style: "arc".to_string(), bend: 0.0, h: 0.0, v: 0.0, horizontal: true }),
+            kind: Box::new(crate::live::EnvelopeKind::Warp { style: "arc".to_string(), bend: 0.0, h: 0.0, v: 0.0, horizontal: true, version: 0 }),
             fidelity: 100.0,
             editing: false,
             options: Default::default(),
@@ -880,6 +880,45 @@ fn path_only_picks_paths_through_images() {
     assert_eq!(hit(image_edge, path_only), Some(image), "path only: the image's frame");
 }
 
+/// #6437: in outline mode an image is drawn as its frame and a gradient mesh as its mesh lines,
+/// so a click inside them, on the outline of a path behind, picks that path, and a click on the
+/// frame or a mesh line picks the image or the mesh. In Preview they cover the path as before,
+/// and an image whose pixels show in outline mode (Show Images in Outline Mode) still does.
+#[test]
+fn outline_mode_picks_paths_through_images_and_meshes() {
+    let mut d = Document::new(200.0, 200.0);
+    let l = d.layers[0].id;
+    let (path, image, under, mesh) = (d.alloc_id(), d.alloc_id(), d.alloc_id(), d.alloc_id());
+    d.insert(Some(l), 0, Node::path(path, shapes::rectangle(Rect::new(20.0, 20.0, 60.0, 60.0)), Appearance::default_art())).unwrap();
+    let xf = vectorcraft_geom::Affine::translate((10.0, 10.0));
+    let im = crate::ImageObject { key: "k".into(), width: 80, height: 80, xf, link: None, placement: Default::default(), pixels: None };
+    d.insert(Some(l), 1, Node::new(image, NodeKind::Image(Box::new(im)))).unwrap();
+    d.insert(Some(l), 2, Node::path(under, shapes::rectangle(Rect::new(120.0, 120.0, 160.0, 160.0)), Appearance::default_art())).unwrap();
+    let area = shapes::rectangle(Rect::new(110.0, 110.0, 190.0, 190.0));
+    let m = crate::GradientMesh::for_path_with(&area, 2, 2, &|_| (Color::BLACK, 1.0)).unwrap();
+    d.insert(Some(l), 3, Node::new(mesh, NodeKind::Mesh(m))).unwrap();
+    let outline = HitOptions { outline: true, ..Default::default() };
+    let hit = |d: &Document, p: Point, opt| hit_test(d, p, opt).map(|h| h.leaf);
+    // The image: the path's edge and the inside, then the frame.
+    let (path_edge, inside, frame) = (Point::new(20.5, 40.0), Point::new(80.0, 80.0), Point::new(89.5, 50.0));
+    assert_eq!(hit(&d, path_edge, HitOptions::default()), Some(image), "Preview: the image covers the path");
+    assert_eq!(hit(&d, inside, HitOptions::default()), Some(image));
+    assert_eq!(hit(&d, path_edge, outline), Some(path), "outline: the path through the image");
+    assert_eq!(hit(&d, inside, outline), None, "outline: not inside the image");
+    assert_eq!(hit(&d, frame, outline), Some(image), "outline: the image's frame");
+    // The mesh: the path's edge and the inside, then its edge and a mesh line inside it.
+    let (under_edge, inside, edge, line) = (Point::new(120.5, 130.0), Point::new(130.0, 170.0), Point::new(189.5, 130.0), Point::new(150.0, 170.0));
+    assert_eq!(hit(&d, under_edge, HitOptions::default()), Some(mesh), "Preview: the mesh covers the path");
+    assert_eq!(hit(&d, inside, HitOptions::default()), Some(mesh));
+    assert_eq!(hit(&d, under_edge, outline), Some(under), "outline: the path through the mesh");
+    assert_eq!(hit(&d, inside, outline), None, "outline: not between the mesh lines");
+    assert_eq!(hit(&d, edge, outline), Some(mesh), "outline: the mesh's edge");
+    assert_eq!(hit(&d, line, outline), Some(mesh), "outline: a mesh line");
+    // Show Images in Outline Mode: the image's pixels are drawn, and it covers the path again.
+    d.setup.outline_images = true;
+    assert_eq!(hit(&d, path_edge, outline), Some(image));
+}
+
 /// Type Object Selection by Path Only: point type is picked on its baseline, area type on its
 /// frame and type on a path on its path, no longer anywhere in its bounds.
 #[test]
@@ -1153,7 +1192,7 @@ fn objects_at_edit_contents_uses_general_order() {
         d.alloc_id(),
         NodeKind::Envelope {
             content: vec![inner(a), inner(b)],
-            kind: Box::new(crate::live::EnvelopeKind::Warp { style: "arc".to_string(), bend: 0.0, h: 0.0, v: 0.0, horizontal: true }),
+            kind: Box::new(crate::live::EnvelopeKind::Warp { style: "arc".to_string(), bend: 0.0, h: 0.0, v: 0.0, horizontal: true, version: 0 }),
             fidelity: 100.0,
             editing: true,
             options: Default::default(),
@@ -1545,6 +1584,53 @@ fn symbol_art_past_the_object_limit_picks_nothing() {
     let n = d.node(natural).unwrap();
     assert_eq!(symbol_part_at(&d, n, Point::new(50.0, 75.0), opt), Some(vec![0]));
     assert!(symbol_part_outline(&d, n, &[0]).is_some());
+}
+
+/// Picking and outlining an object of a 9-slice instance's art, and placing that art, read the
+/// symbol list once for each call, however many instances the art holds.
+#[test]
+fn picking_in_9_slice_art_reads_the_symbol_list_once() {
+    let mut d = Document::new(400.0, 400.0);
+    for i in 0..2_000 {
+        let dot = Node::path(d.alloc_id(), shapes::rectangle(Rect::new(0.0, 0.0, 1.0, 1.0)), Appearance::default_art());
+        d.symbols.push(crate::Symbol { dynamic: false, name: format!("Dot {i}"), art: Arc::new(dot) });
+    }
+    // A frame, a group of 20 squares in its top left cell, and 20 instances of the dots across
+    // the guides.
+    let square = |d: &mut Document, x: f64, y: f64| {
+        Arc::new(Node::path(d.alloc_id(), shapes::rectangle(Rect::new(x, y, x + 4.0, y + 4.0)), Appearance::default_art()))
+    };
+    let corner: Vec<_> = (0..20).map(|i| square(&mut d, f64::from(i % 5) * 4.0, f64::from(i / 5) * 4.0)).collect();
+    let dot = |d: &mut Document, i: u32| {
+        let xf = vectorcraft_geom::Affine::translate((f64::from(i) * 4.5 + 5.0, 48.0)) * vectorcraft_geom::Affine::scale(4.0);
+        Arc::new(Node::new(d.alloc_id(), NodeKind::SymbolInstance { symbol: format!("Dot {i}"), xf }))
+    };
+    let across: Vec<_> = (0..20).map(|i| dot(&mut d, i)).collect();
+    let frame = Arc::new(Node::path(d.alloc_id(), shapes::rectangle(Rect::new(0.0, 0.0, 100.0, 100.0)), Appearance::default_art()));
+    let mut kids = vec![frame, Arc::new(Node::group(d.alloc_id(), corner))];
+    kids.extend(across);
+    let root = Node::group(d.alloc_id(), kids);
+    d.symbols.push(crate::Symbol { dynamic: true, name: "Panel".into(), art: Arc::new(root) });
+    d.set_symbol_nine_slice("Panel", Some(crate::SymbolNineSlice::default()));
+    let xf = vectorcraft_geom::Affine::scale_non_uniform(2.0, 1.5);
+    let inst = Node::new(d.alloc_id(), NodeKind::SymbolInstance { symbol: "Panel".into(), xf });
+    let art = d.symbols[2_000].art.clone();
+    let symbols = d.symbols.len();
+    let read = || crate::symbols::SYMBOLS_READ.with(std::cell::Cell::get);
+    let reads = |f: &dyn Fn()| {
+        let before = read();
+        f();
+        read() - before
+    };
+    // Picking also tests the placed art with boxes of its own, as a click outside symbols does.
+    let n = reads(&|| assert_eq!(symbol_part_at(&d, &inst, Point::new(2.0, 2.0), HitOptions::default()).map(|p| p[0]), Some(1)));
+    assert!(n <= 2 * symbols, "picking read {n} symbols");
+    let n = reads(&|| assert!(symbol_part_outline(&d, &inst, &[2]).is_some()));
+    assert!(n <= symbols, "outlining read {n} symbols");
+    let n = reads(&|| assert!(d.place_symbol_art("Panel", &art, xf).is_some()));
+    assert!(n <= symbols, "placing read {n} symbols");
+    let n = reads(&|| assert!(d.place_symbol_art_unclipped("Panel", &art, xf).is_some()));
+    assert!(n <= symbols, "placing without clips read {n} symbols");
 }
 
 /// A clip group that lies in one 9-slice cell is moved by that cell as one piece, everything in it

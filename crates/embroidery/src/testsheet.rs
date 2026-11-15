@@ -162,6 +162,7 @@ pub fn build(ids: &[String]) -> Result<Sheet, String> {
             show_video_safe_areas: false,
             video_ruler_pixel_aspect_ratio: 1.0,
             color: None,
+            guide_label: None,
         });
         sections.push(SheetSection { id: section.id, name: section.name, angle: section.angle, artboard: index, swatches: swatches.len() });
         record.swatches.extend(swatches);

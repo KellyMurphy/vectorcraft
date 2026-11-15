@@ -68,7 +68,7 @@ fn text_arc(s: &mut Session, p: &Value) -> Result<Value> {
     };
     let mut runs = match &replace {
         Some((_, runs, _)) => runs.clone(),
-        None => vec![TextRun { text: str_param(p, "text").unwrap_or("").to_string(), style: super::create::new_type_style(s, p), inline: None }],
+        None => vec![TextRun { text: str_param(p, "text").unwrap_or("").to_string(), style: super::create::new_type_style(s, p, C)?, inline: None }],
     };
     if p.get("tracking").is_some() {
         for r in &mut runs {
@@ -234,7 +234,7 @@ fn monogram(s: &mut Session, p: &Value) -> Result<Value> {
     if centre.x.abs() > 1e7 || centre.y.abs() > 1e7 {
         return Err(bad(C, "the centre must be on the page"));
     }
-    let style = super::create::new_type_style(s, p);
+    let style = super::create::new_type_style(s, p, C)?;
     // Each letter fitted to its box by its ink.
     let mut texts = vec![];
     let mut boxes = Rect::from_points(centre, centre);

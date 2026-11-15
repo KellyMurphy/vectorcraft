@@ -366,6 +366,7 @@ fn cut_file(s: &mut Session, p: &Value) -> Result<Value> {
         show_video_safe_areas: false,
         video_ruler_pixel_aspect_ratio: 1.0,
         color: None,
+        guide_label: None,
     };
     let title = format!("{} cut file", doc.title);
     let new_doc = |boards: &[usize]| -> Document {

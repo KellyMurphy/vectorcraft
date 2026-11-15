@@ -35,8 +35,10 @@ pub(crate) fn color_image_owned(img: vectorcraft_render::Rendered) -> egui::Colo
 /// objects showing those bitmaps' files cover (`Some(None)`: none), grown to whole eighths of the
 /// frame, as long as they are at most half of it. None: render the whole frame. Frames the worker
 /// renders stay whole: its renderer keeps the rasters of the art's effects, this thread's doesn't.
+/// What changed is measured by this thread's renderer, which drew the frame shown: it keeps what
+/// it measures (a 3D effect's art) to draw the part again.
 pub(super) fn changed_pixels(
-    app: &VectorcraftApp,
+    app: &mut VectorcraftApp,
     key: &CacheKey,
     doc: &vectorcraft_doc::Document,
     opts: &vectorcraft_render::RenderOptions,
@@ -55,12 +57,9 @@ pub(super) fn changed_pixels(
         return None;
     }
     // The placed documents' files whose bitmaps were made since the frame shown.
-    let placed = if shown_key.placed == key.placed {
-        vectorcraft_render::Changed::Nothing
-    } else {
-        vectorcraft_render::placed_area(doc, &vectorcraft_render::placed_document::made_between(shown_key.placed, key.placed)?)
-    };
-    match vectorcraft_render::changed(shown, doc).and(placed) {
+    let entry = app.session.documents().iter().find(|d| d.uid as usize == key.doc).and_then(|d| app.canvas.placed_keys.get(&d.uid));
+    let placed = super::placed_changes(entry, shown_key.placed, key.placed, doc, vectorcraft_render::placed_document::made_between)?;
+    match app.canvas.renderer.changed(shown, doc, opts).and(placed) {
         vectorcraft_render::Changed::Nothing => Some(None),
         vectorcraft_render::Changed::Area(area) => match vectorcraft_render::view_pixels(area, view, w, h) {
             None => Some(None),
@@ -217,7 +216,7 @@ pub(crate) fn render_job(r: &mut vectorcraft_render::Renderer, kept: &mut Option
         composed_frame(r, moved_pixels(k.pixels.as_ref()?, job.w, job.h, pan), parts, job)
     });
     let reused = copied.is_some();
-    let (img, moved) = copied.unwrap_or_else(|| {
+    let (mut img, moved) = copied.unwrap_or_else(|| {
         let img = r.render(&job.doc, job.w, job.h, job.view, &job.opts);
         let moved = r.stats.moved;
         (img, moved)
@@ -226,6 +225,8 @@ pub(crate) fn render_job(r: &mut vectorcraft_render::Renderer, kept: &mut Option
         job.may_keep && moved == 0 && r.stats.view_sized == 0 && img.pixels.len() <= MAX_KEPT_BYTES && (img.width, img.height) == (job.w, job.h);
     *kept =
         keeps.then(|| KeptFrame { key: job.key.clone(), opts: job.opts.clone(), view: job.view, pixels: holds_pixels.then(|| img.pixels.clone()) });
+    // The kept frame stays sRGB, so the next frame's copied pixels are converted only once.
+    crate::display_profile::convert(job.display.as_deref(), &mut img.pixels);
     WorkerFrame { img, moved, reused }
 }
 
