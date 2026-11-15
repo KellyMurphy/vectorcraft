@@ -7552,6 +7552,16 @@ breakText	Glyphs	글리프
 @msg	only paths and compound paths can be aligned to the pixel grid	패스와 컴파운드 패스만 픽셀 격자에 정렬할 수 있습니다
 @msg	side is left or right, not `{s}`	side는 left 또는 right입니다(`{s}` 아님)
 	Compensation	보정
+	Sewn Width:	자수 후 너비:
+	Sewn Length:	자수 후 길이:
+	Along the stitches, between the marks	땀을 따라, 표시 사이
+	Across the stitches, between the marks	땀을 가로질러, 표시 사이
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: 당김 {pull} mm + {percent} %, 밀림 {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: 당김 {pull} mm + {percent} %
+	Use as Fabric	원단으로 사용
+	Make the fitted compensation the document's fabric	계산된 보정을 문서의 원단으로 만듭니다
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	계산된 원단을 파일(.vcfabric)로 저장하여 이 원단에 수놓을 디자인에 불러옵니다
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	보정 견본을 클릭하고 자수 후 측정값을 입력하면 보정이 계산됩니다.
 	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	보정 시트: 보정 없이 수놓아 각 스티치 방향에서 원단이 얼마나 당겨지는지 측정합니다.
 	Ignore All	모두 무시
 	Add to Dictionary	사전에 추가

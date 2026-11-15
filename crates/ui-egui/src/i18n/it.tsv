@@ -7609,6 +7609,16 @@ breakText	Glyphs	Glifi
 @msg	only paths and compound paths can be aligned to the pixel grid	solo i tracciati e i tracciati composti possono essere allineati alla griglia pixel
 @msg	side is left or right, not `{s}`	side è left o right, non `{s}`
 	Compensation	Compensazione
+	Sewn Width:	Larghezza ricamata:
+	Sewn Length:	Lunghezza ricamata:
+	Along the stitches, between the marks	Lungo i punti, tra i segni
+	Across the stitches, between the marks	Di traverso ai punti, tra i segni
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: trazione {pull} mm + {percent} %, spinta {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: trazione {pull} mm + {percent} %
+	Use as Fabric	Usa come tessuto
+	Make the fitted compensation the document's fabric	Rendi la compensazione calcolata il tessuto del documento
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	Salva il tessuto calcolato come file (.vcfabric), per i disegni ricamati su questo tessuto
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	Fai clic su un campione di compensazione e inserisci quanto misura ricamato per calcolare la compensazione.
 	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Foglio di compensazione: ricamato senza compensazione, per misurare quanto il tessuto si ritira in ogni direzione del punto.
 	Ignore All	Ignora tutto
 	Add to Dictionary	Aggiungi al dizionario

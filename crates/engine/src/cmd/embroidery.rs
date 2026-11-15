@@ -338,6 +338,15 @@ pub fn specs() -> Vec<CommandSpec> {
             record_sew_out
         ),
         cmd!(
+            "embroidery.fitCompensation",
+            "Fit Compensation",
+            ["Window", "Embroidery"],
+            None,
+            "{name?: text (default: the sew-out's fabric and \"fitted\"), apply?: true (false: only report the fit)} fit pull compensation and push compensation to the compensation sheet's measured swatches (embroidery.recordSewOut measuredWidth and measuredLength): each swatch was sewn with none; so its shrink along the stitches is pull + width × pullPercent / 100 and its growth across them is push. With apply the fitted values go into the document's fabric (a copy of it named `name`; one undo step) for embroidery.saveFabric to write as a .vcfabric → {pull (mm), pullPercent (%), push (mm | null: no length measured), widths, lengths (how many swatches each is fitted from), spread (mm: how far the widths lie from the fit), angles: [{angle (degrees counter-clockwise from the sheet's horizontal), pull, pullPercent, push, widths, lengths, spread}] (each stitch direction measured on its own), fabric (as embroidery.fabrics gives it; with apply)}",
+            has_doc,
+            fit_compensation
+        ),
+        cmd!(
             query "embroidery.stitches",
             "Embroidery Stitches",
             ["Window", "Embroidery"],
@@ -1641,6 +1650,59 @@ fn sew_out(s: &mut Session, _: &Value) -> Result<Value> {
         "sewOut": {"fabric": r.fabric, "machine": r.machine, "notes": r.notes, "swatches": swatches, "counts": sew_counts(r)},
         "sections": sections,
     }))
+}
+
+/// A fit's values as `embroidery.fitCompensation` replies with them.
+fn fitted_json(f: &vectorcraft_embroidery::compensation::Fitted) -> Value {
+    json!({"pull": f.pull, "pullPercent": f.pull_percent, "push": f.push, "widths": f.widths, "lengths": f.lengths, "spread": f.spread})
+}
+
+fn fit_compensation(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "embroidery.fitCompensation";
+    let doc = &s.doc()?.doc;
+    let r = doc.embroidery.sew_out.as_ref().ok_or_else(|| {
+        bad(C, "the document has no sew-out form: make a compensation sheet first (embroidery.testSheet {sections: [\"compensation\"]})")
+    })?;
+    let fit = vectorcraft_embroidery::compensation::fit(&r.swatches)
+        .ok_or_else(|| bad(C, "no compensation swatch has a measured width yet: enter what the sewn swatches measure first"))?;
+    let apply = match p.get("apply") {
+        None | Some(Value::Null) => true,
+        Some(v) => v.as_bool().ok_or_else(|| bad(C, "`apply` must be true or false"))?,
+    };
+    // The fabric it starts from: the document's (its other settings kept), unless it is one this
+    // version can't read.
+    let base = doc.embroidery.fabric.as_deref().filter(|f| f.unknown.is_none()).cloned();
+    let name = match p.get("name") {
+        None | Some(Value::Null) => {
+            let of = [r.fabric.trim(), base.as_ref().map_or("", |f| f.name.trim())].into_iter().find(|t| !t.is_empty());
+            of.map_or_else(|| "Fitted".to_string(), |t| format!("{t} (fitted)"))
+        }
+        Some(v) => v.as_str().map(str::trim).filter(|t| !t.is_empty()).ok_or_else(|| bad(C, "`name` must be text"))?.to_string(),
+    };
+    let mut f = base.unwrap_or_default();
+    let id: String = vectorcraft_embroidery::borders::slug(&name).chars().filter(|c| c.is_ascii_alphanumeric() || *c == '-').collect();
+    f.id = if id.trim_matches('-').is_empty() { "fitted".into() } else { id.trim_matches('-').to_string() };
+    f.name = name;
+    f.pull = Some(fit.all.pull);
+    f.pull_percent = Some(fit.all.pull_percent);
+    if let Some(push) = fit.all.push {
+        f.push = Some(push);
+    }
+    f.description = Some(format!("Compensation fitted from {} measured sew-out swatches.", fit.all.widths));
+    let mut out = fitted_json(&fit.all);
+    out["angles"] = fit
+        .angles
+        .iter()
+        .map(|(a, x)| {
+            let mut o = fitted_json(x);
+            o["angle"] = json!(a);
+            o
+        })
+        .collect();
+    if apply {
+        out["fabric"] = put_fabric(s, Some(f), "Fit Compensation")?["fabric"].take();
+    }
+    Ok(out)
 }
 
 fn record_sew_out(s: &mut Session, p: &Value) -> Result<Value> {

@@ -9480,6 +9480,16 @@ breakText	Glyphs	字形
 @msg	only paths and compound paths can be aligned to the pixel grid	ピクセルグリッドに整合できるのはパスと複合パスのみです
 @msg	side is left or right, not `{s}`	side は left または right です（`{s}` ではありません）
 	Compensation	補正
+	Sewn Width:	縫製後の幅:
+	Sewn Length:	縫製後の長さ:
+	Along the stitches, between the marks	ステッチに沿って、印の間
+	Across the stitches, between the marks	ステッチを横切って、印の間
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: 引き {pull} mm + {percent} %、押し {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: 引き {pull} mm + {percent} %
+	Use as Fabric	生地として使用
+	Make the fitted compensation the document's fabric	算出した補正をドキュメントの生地にします
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	算出した生地をファイル (.vcfabric) に保存し、この生地に刺しゅうするデザインで読み込めるようにします
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	補正スウォッチをクリックして縫製後の寸法を入力すると、補正が算出されます。
 	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	補正シート：補正なしで縫い、各ステッチ方向で生地がどれだけ縮むかを測ります。
 	Ignore All	すべて無視
 	Add to Dictionary	辞書に追加

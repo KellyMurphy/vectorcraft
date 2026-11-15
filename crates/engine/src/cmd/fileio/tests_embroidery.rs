@@ -657,6 +657,59 @@ fn the_compensation_sheet_records_measured_sizes() {
     assert!(s.execute("embroidery.recordSewOut", &json!({"results": [{"swatch": "A1", "measuredWidth": 1.0}]})).is_err());
 }
 
+/// E10.1b: the measured compensation swatches give the pull, pull share and push that undo the
+/// fabric's draw-in; applied, they go into a copy of the document's fabric (one undo step), ready
+/// to be saved as a .vcfabric.
+#[test]
+fn compensation_is_fitted_from_the_measured_swatches() {
+    let mut s = Session::new();
+    s.execute("embroidery.testSheet", &json!({"sections": ["compensation0", "compensation90"]})).unwrap();
+    assert!(s.execute("embroidery.fitCompensation", &json!({})).is_err(), "nothing measured yet");
+    s.execute("embroidery.setFabric", &json!({"fabric": "knit"})).unwrap();
+    s.execute("embroidery.recordSewOut", &json!({"fabric": "Jersey"})).unwrap();
+    // Every swatch shrank by 0.3 mm and 5% of its width at 0°, by 0.5 mm at 90°, and came out 0.2
+    // mm longer.
+    let form = s.execute("embroidery.sewOut", &json!({})).unwrap();
+    let results: Vec<Value> = form["sewOut"]["swatches"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|w| {
+            let (width, length) = (w["drawnWidth"].as_f64().unwrap(), w["drawnLength"].as_f64().unwrap());
+            let shrink = if w["angle"] == 0.0 { 0.3 + 0.05 * width } else { 0.5 };
+            json!({"swatch": w["id"], "measuredWidth": width - shrink, "measuredLength": length + 0.2})
+        })
+        .collect();
+    s.execute("embroidery.recordSewOut", &json!({ "results": results })).unwrap();
+    let report = s.execute("embroidery.fitCompensation", &json!({"apply": false})).unwrap();
+    let angles: Vec<(f64, f64, f64)> = report["angles"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|a| (a["angle"].as_f64().unwrap(), a["pull"].as_f64().unwrap(), a["pullPercent"].as_f64().unwrap()))
+        .collect();
+    assert_eq!(angles, [(0.0, 0.3, 5.0), (90.0, 0.5, 0.0)]);
+    assert_eq!((report["push"].as_f64(), report["widths"].as_u64()), (Some(0.2), Some(10)));
+    assert!(report.get("fabric").is_none());
+    assert_eq!(s.doc().unwrap().doc.embroidery.fabric.as_ref().unwrap().id, "knit", "only reported");
+    // Applied: the knit profile's other settings kept, named for the sew-out's fabric.
+    let r = s.execute("embroidery.fitCompensation", &json!({})).unwrap();
+    assert_eq!((r["fabric"]["id"].as_str(), r["fabric"]["name"].as_str()), (Some("jersey-fitted"), Some("Jersey (fitted)")));
+    let f = s.doc().unwrap().doc.embroidery.fabric.clone().unwrap();
+    let knit = vectorcraft_embroidery::fabrics::builtin("knit").unwrap();
+    assert_eq!((f.pull, f.pull_percent, f.push), (r["pull"].as_f64(), r["pullPercent"].as_f64(), Some(0.2)));
+    assert_eq!((f.satin_spacing, f.satin_center_under), (knit.satin_spacing, knit.satin_center_under));
+    let saved = s.execute("embroidery.saveFabric", &json!({})).unwrap()["data"].as_str().unwrap().to_string();
+    assert!(saved.contains("\"jersey-fitted\""), "{saved}");
+    s.execute("edit.undo", &json!({})).unwrap();
+    assert_eq!(s.doc().unwrap().doc.embroidery.fabric.as_ref().unwrap().id, "knit", "one undo step");
+    let named = s.execute("embroidery.fitCompensation", &json!({"name": "My Polo"})).unwrap();
+    assert_eq!(named["fabric"]["id"], "my-polo");
+    for bad in [json!({"name": ""}), json!({"name": 3}), json!({"apply": "yes"})] {
+        assert!(s.execute("embroidery.fitCompensation", &bad).is_err(), "{bad}");
+    }
+}
+
 #[test]
 fn dst_export_writes_a_design_per_artboard() {
     let mut s = Session::new();

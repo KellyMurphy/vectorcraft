@@ -7358,6 +7358,16 @@ breakText	Glyphs	Глифи
 	Not Aligned to Pixel Grid	Неподравнени към пикселната мрежа
 @msg	side is left or right, not `{s}`	side е left или right, а не `{s}`
 	Compensation	Компенсация
+	Sewn Width:	Ушита ширина:
+	Sewn Length:	Ушита дължина:
+	Along the stitches, between the marks	По протежение на бодовете, между маркировките
+	Across the stitches, between the marks	Напречно на бодовете, между маркировките
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: свиване {pull} mm + {percent} %, разширяване {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: свиване {pull} mm + {percent} %
+	Use as Fabric	Използване като плат
+	Make the fitted compensation the document's fabric	Компенсацията се прилага като плат на документа
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	Записване на изчисления плат като файл (.vcfabric) за дизайни, бродирани върху този плат
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	Щракнете върху мостра за компенсация и въведете измереното след бродиране, за да се изчисли компенсацията.
 	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Лист за компенсация: шие се без компенсация, за да се измери колко се свива платът във всяка посока на бода.
 	Edit Custom Dictionary	Редактиране на потребителски речник
 	Entry:	Запис:

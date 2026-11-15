@@ -9399,6 +9399,16 @@ digits	Hindi	Hindi
 @msg	only paths and compound paths can be aligned to the pixel grid	bara banor och sammansatta banor kan justeras mot pixelrutnätet
 @msg	side is left or right, not `{s}`	side är left eller right, inte `{s}`
 	Compensation	Kompensation
+	Sewn Width:	Sydd bredd:
+	Sewn Length:	Sydd längd:
+	Along the stitches, between the marks	Längs stygnen, mellan markeringarna
+	Across the stitches, between the marks	Tvärs över stygnen, mellan markeringarna
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: drag {pull} mm + {percent} %, tryck {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: drag {pull} mm + {percent} %
+	Use as Fabric	Använd som tyg
+	Make the fitted compensation the document's fabric	Gör den beräknade kompensationen till dokumentets tyg
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	Spara det beräknade tyget som en fil (.vcfabric) för mönster som broderas på det här tyget
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	Klicka på ett kompensationsprov och ange vad det mäter sytt för att beräkna kompensationen.
 	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Kompensationsark: sys utan kompensation för att mäta hur mycket tyget drar ihop sig i varje stygnriktning.
 	Ignore All	Ignorera alla
 	Add to Dictionary	Lägg till i ordlistan

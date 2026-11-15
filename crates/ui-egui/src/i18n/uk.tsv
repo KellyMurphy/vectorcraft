@@ -7589,6 +7589,16 @@ breakText	Glyphs	Гліфи
 @msg	only paths and compound paths can be aligned to the pixel grid	за піксельною сіткою можна вирівняти лише контури і складені контури
 @msg	side is left or right, not `{s}`	side — це left або right, а не `{s}`
 	Compensation	Компенсація
+	Sewn Width:	Ширина після вишивки:
+	Sewn Length:	Довжина після вишивки:
+	Along the stitches, between the marks	Уздовж стібків, між мітками
+	Across the stitches, between the marks	Поперек стібків, між мітками
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: стягування {pull} мм + {percent} %, розтягування {push} мм
+	{angle}: pull {pull} mm + {percent} %	{angle}: стягування {pull} мм + {percent} %
+	Use as Fabric	Використати як тканину
+	Make the fitted compensation the document's fabric	Зробити розраховану компенсацію тканиною документа
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	Зберегти розраховану тканину у файл (.vcfabric) для дизайнів, що вишиваються на цій тканині
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	Клацніть зразок компенсації та введіть його розмір після вишивки, щоб розрахувати компенсацію.
 	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Аркуш компенсації: вишивається без компенсації, щоб виміряти, наскільки тканина стягується в кожному напрямку стібка.
 	Ignore All	Пропустити все
 	Add to Dictionary	Додати до словника

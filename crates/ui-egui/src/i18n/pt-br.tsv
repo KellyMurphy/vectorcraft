@@ -8169,6 +8169,16 @@ swatch	Yellow Green	Verde-amarelado
 @msg	only paths and compound paths can be aligned to the pixel grid	somente caminhos e caminhos compostos podem ser alinhados à grade de pixels
 @msg	side is left or right, not `{s}`	side é left ou right, não `{s}`
 	Compensation	Compensação
+	Sewn Width:	Largura bordada:
+	Sewn Length:	Comprimento bordado:
+	Along the stitches, between the marks	Ao longo dos pontos, entre as marcas
+	Across the stitches, between the marks	Atravessando os pontos, entre as marcas
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: tração {pull} mm + {percent} %, empuxo {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: tração {pull} mm + {percent} %
+	Use as Fabric	Usar como tecido
+	Make the fitted compensation the document's fabric	Tornar a compensação calculada o tecido do documento
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	Salvar o tecido calculado como arquivo (.vcfabric), para desenhos bordados neste tecido
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	Clique em uma amostra de compensação e informe quanto ela mede bordada para calcular a compensação.
 	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Folha de compensação: bordada sem compensação, para medir quanto o tecido repuxa em cada direção de ponto.
 	Ignore All	Ignorar Tudo
 	Add to Dictionary	Adicionar ao Dicionário

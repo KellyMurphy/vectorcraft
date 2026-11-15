@@ -7572,6 +7572,16 @@ breakText	Glyphs	Glyph
 @msg	only paths and compound paths can be aligned to the pixel grid	chỉ đường dẫn và đường dẫn phức mới căn theo lưới pixel được
 @msg	side is left or right, not `{s}`	side là left hoặc right, không phải `{s}`
 	Compensation	Bù
+	Sewn Width:	Chiều rộng sau khi thêu:
+	Sewn Length:	Chiều dài sau khi thêu:
+	Along the stitches, between the marks	Dọc theo mũi thêu, giữa các dấu
+	Across the stitches, between the marks	Ngang qua mũi thêu, giữa các dấu
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: co {pull} mm + {percent} %, giãn {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: co {pull} mm + {percent} %
+	Use as Fabric	Dùng làm vải
+	Make the fitted compensation the document's fabric	Đặt bù trừ đã tính làm vải của tài liệu
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	Lưu vải đã tính thành tệp (.vcfabric) cho các mẫu thêu trên loại vải này
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	Nhấp vào một mẫu bù trừ và nhập số đo sau khi thêu để tính bù trừ.
 	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Trang bù: thêu không bù, để đo vải co lại bao nhiêu theo từng hướng mũi thêu.
 	Ignore All	Bỏ qua tất cả
 	Add to Dictionary	Thêm vào từ điển

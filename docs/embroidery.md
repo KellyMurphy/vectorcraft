@@ -728,9 +728,22 @@ Every swatch is sewn with no compensation (`pull`, `pullPercent` and `push` at 0
 profile says) between running-stitch marks at its drawn edges, so what you measure is the fabric's own
 draw-in. Hoop the fabric with its grain (the warp, along the selvage) running from the top of the hoop to
 the bottom. After sewing, measure each swatch's width along its stitches and its length across them, and
-record them with `embroidery.recordSewOut {results: [{swatch: "L2", measuredWidth: 3.7, measuredLength:
-30.6}]}`; the form keeps them with the drawn sizes. Fitting compensation from them, per angle, into a fabric
-profile is the next step (E10.1b).
+enter them in the Sew-Out Test panel (click a swatch: **Sewn Width** and **Sewn Length**, next to the drawn
+sizes) or record them with `embroidery.recordSewOut {results: [{swatch: "L2", measuredWidth: 3.7,
+measuredLength: 30.6}]}`; the form keeps them with the drawn sizes.
+
+As soon as one width is measured, the panel's **Compensation** section shows the compensation they ask for,
+a line for each stitch direction and one for all of them: `pull` mm plus `pullPercent` % of the width, and
+`push` mm. It comes from the generator's own model. Sewn with none, a swatch shrinks along its stitches by
+its drawn width less its measured one; a straight line through each swatch's shrink against its drawn width
+gives `pull` (where it meets zero width) and `pullPercent` (its slope), and `push` is how much longer the
+swatches came out across their stitches, on average. Each is held to the range the stitch settings take.
+**Use as Fabric** puts the values for all directions into a copy of the document's fabric (its other
+settings kept, named for the sew-out's fabric with "(fitted)"), one undo step; **Save Fabric…** does that
+and writes it as a `.vcfabric` to load for designs on that fabric. `embroidery.fitCompensation {name?,
+apply?: false}` does the same for agents (with `apply: false` it only reports). A fabric profile keeps one
+set of values for now: using the per-direction ones as the stitches turn is grain-aware compensation
+(E10.2).
 
 ### Commands
 
@@ -810,6 +823,7 @@ profile is the next step (E10.1b).
 | `embroidery.testSheet` | `{sections?: [ids]}`: a new document of calibration swatches (see Sew-out tests; `compensation` for the compensation sheet) → `{index, sections, swatches, skipped}` |
 | `embroidery.sewOut` | → the sew-out form: `{sewOut: {fabric, machine, notes, swatches: [{id, section, label, objects, result, notes, angle?, drawnWidth?, drawnLength?, measuredWidth?, measuredLength?}], counts} \| null, sections}` |
 | `embroidery.recordSewOut` | `{fabric?, machine?, notes?, results?: [{swatch, result?: pass\|fail\|untested, notes?, measuredWidth?, measuredLength?}]}`: fill in the form, one undo step |
+| `embroidery.fitCompensation` | `{name?, apply?: true}`: the compensation the measured compensation swatches fit → `{pull, pullPercent, push, widths, lengths, spread, angles: [{angle, …}], fabric?}`; with `apply`, into a copy of the document's fabric (one undo step) |
 | `view.stitchPreview` | toggles Stitch Preview |
 | `view.realisticStitches` | toggles Realistic Stitches (shaded thread on the fabric's texture; turns Stitch Preview on) |
 | `view.realSize` | zooms so the design shows at its true size on the screen, by the calibrated `screenPpi` (or the system's reference density) → `{zoom, ppi, calibrated}` |

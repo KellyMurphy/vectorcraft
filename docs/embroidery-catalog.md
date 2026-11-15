@@ -100,7 +100,7 @@ before G1), and the P2 items after G2. Only blending thread colours across an ar
 | Pull and push compensation | Widen or shorten objects to offset thread pull, set per axis | Pulse, Wilcom, Ink/Stitch 3.3 | P0 | **Done** | E7.2; grain- and curve-aware compensation: E10 |
 | Trims, ties and jumps | Auto trims, tie-in/tie-off, minimum jump length, start and stop points | mySewnet, Pulse | P0 | **Done** | Travel settings, Trim Before/After, tie-ins and tie-offs, start handles |
 | Branching and auto-sequencing | Order objects and route travel under later fills to cut trims | Wilcom, BERNINA 9, Pulse | P1 | **Done** | E7.5: `embroidery.optimizeOrder`, branching, hidden travel |
-| Fabric profiles | Pick a fabric and get density, underlay and compensation to match | Hatch, Wilcom | P1 | **Done** | E7.3; woven and knit starters checked on fabric (G1 test sheet, 2026-11-09), measured profiles in E10.1 |
+| Fabric profiles | Pick a fabric and get density, underlay and compensation to match | Hatch, Wilcom | P1 | **Done** | E7.3; woven and knit starters checked on fabric (G1 test sheet, 2026-11-09); profiles fitted from a measured compensation sheet (E10.1b) |
 | Density advisor | Heat map of stitches per mm², with one-click reduction | mySewnet | P1 | **Done** | E8.7: View › Stitch Density, `embroidery.fix` |
 | Small-stitch filter and corner control | Remove tiny stitches; short stitches at sharp satin corners | Embrilliance, Pulse Custom Cornering | P1 | **Done** | E7.6 shortest stitch; fanned satin corners |
 | Design checker | List problems per object (gaps, long stitches, bad shapes) | Ink/Stitch Troubleshoot Objects | P1 | **Done** | E7.7: `embroidery.check`, Check list |

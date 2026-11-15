@@ -9816,6 +9816,16 @@ breakText	Glyphs	Glyphs
 	Not Aligned to Pixel Grid	Niet uitgelijnd op pixelraster
 @msg	side is left or right, not `{s}`	side is left of right, niet `{s}`
 	Compensation	Compensatie
+	Sewn Width:	Geborduurde breedte:
+	Sewn Length:	Geborduurde lengte:
+	Along the stitches, between the marks	Langs de steken, tussen de markeringen
+	Across the stitches, between the marks	Dwars op de steken, tussen de markeringen
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: trek {pull} mm + {percent} %, duw {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: trek {pull} mm + {percent} %
+	Use as Fabric	Als stof gebruiken
+	Make the fitted compensation the document's fabric	De berekende compensatie de stof van het document maken
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	De berekende stof als bestand (.vcfabric) opslaan, voor ontwerpen die op deze stof worden geborduurd
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	Klik op een compensatiestaal en vul in wat het geborduurd meet om de compensatie te berekenen.
 	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Compensatieblad: zonder compensatie geborduurd, om te meten hoeveel de stof in elke steekrichting intrekt.
 	Edit Custom Dictionary	Aangepast woordenboek bewerken
 	Entry:	Item:

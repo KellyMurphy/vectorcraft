@@ -7980,6 +7980,16 @@ breakText	Glyphs	Glyfy
 @msg	only paths and compound paths can be aligned to the pixel grid	na mřížku obrazových bodů lze zarovnat jen cesty a složené cesty
 @msg	side is left or right, not `{s}`	side je left nebo right, ne `{s}`
 	Compensation	Kompenzace
+	Sewn Width:	Šířka po vyšití:
+	Sewn Length:	Délka po vyšití:
+	Along the stitches, between the marks	Podél stehů, mezi značkami
+	Across the stitches, between the marks	Napříč stehy, mezi značkami
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: stažení {pull} mm + {percent} %, roztažení {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: stažení {pull} mm + {percent} %
+	Use as Fabric	Použít jako látku
+	Make the fitted compensation the document's fabric	Nastavit vypočtenou kompenzaci jako látku dokumentu
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	Uložit vypočtenou látku jako soubor (.vcfabric) pro návrhy vyšívané na této látce
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	Klepněte na vzorek kompenzace a zadejte, co měří po vyšití; z toho se vypočte kompenzace.
 	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	List kompenzace: šije se bez kompenzace, aby se změřilo, jak moc se látka stáhne v každém směru stehu.
 	Ignore All	Ignorovat vše
 	Add to Dictionary	Přidat do slovníku

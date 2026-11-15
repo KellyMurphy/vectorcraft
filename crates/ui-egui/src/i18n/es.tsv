@@ -8039,6 +8039,16 @@ breakText	Glyphs	Glifos
 @msg	only paths and compound paths can be aligned to the pixel grid	solo los trazados y los trazados compuestos se pueden alinear con la cuadrícula de píxeles
 @msg	side is left or right, not `{s}`	side es left o right, no `{s}`
 	Compensation	Compensación
+	Sewn Width:	Ancho bordado:
+	Sewn Length:	Largo bordado:
+	Along the stitches, between the marks	A lo largo de las puntadas, entre las marcas
+	Across the stitches, between the marks	A través de las puntadas, entre las marcas
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: tirón {pull} mm + {percent} %, empuje {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: tirón {pull} mm + {percent} %
+	Use as Fabric	Usar como tejido
+	Make the fitted compensation the document's fabric	Convertir la compensación calculada en el tejido del documento
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	Guardar el tejido calculado como archivo (.vcfabric), para diseños bordados en este tejido
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	Haga clic en una muestra de compensación e introduzca lo que mide bordada para calcular la compensación.
 	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Hoja de compensación: se borda sin compensación para medir cuánto encoge la tela en cada dirección de puntada.
 	Ignore All	Omitir todo
 	Add to Dictionary	Añadir al diccionario

@@ -7630,6 +7630,16 @@ breakText	Glyphs	字符
 @msg	only paths and compound paths can be aligned to the pixel grid	只有路徑和複合路徑可以對齊像素格點
 @msg	side is left or right, not `{s}`	side 應為 left 或 right，而不是 `{s}`
 	Compensation	補償
+	Sewn Width:	繡後寬度:
+	Sewn Length:	繡後長度:
+	Along the stitches, between the marks	沿針跡方向，在標記之間
+	Across the stitches, between the marks	橫跨針跡方向，在標記之間
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}：收縮 {pull} mm + {percent} %，擴張 {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}：收縮 {pull} mm + {percent} %
+	Use as Fabric	用作布料
+	Make the fitted compensation the document's fabric	將擬合的補償設為文件的布料
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	將擬合的布料儲存為檔案 (.vcfabric)，供在此布料上刺繡的設計載入
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	按一下補償樣片並輸入繡後測得的尺寸，以擬合補償。
 	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	補償測試頁：不加補償繡製，用於測量布料在每個針跡方向上的收縮量。
 	Edit Custom Dictionary	編輯自訂字典
 	Entry:	項目：

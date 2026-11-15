@@ -7983,6 +7983,16 @@ breakText	Glyphs	Glyffer
 	Not Aligned to Pixel Grid	Ikke justeret efter pixelgitter
 @msg	side is left or right, not `{s}`	side er left eller right, ikke `{s}`
 	Compensation	Kompensation
+	Sewn Width:	Syet bredde:
+	Sewn Length:	Syet længde:
+	Along the stitches, between the marks	Langs stingene, mellem mærkerne
+	Across the stitches, between the marks	På tværs af stingene, mellem mærkerne
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: træk {pull} mm + {percent} %, skub {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: træk {pull} mm + {percent} %
+	Use as Fabric	Brug som stof
+	Make the fitted compensation the document's fabric	Gør den beregnede kompensation til dokumentets stof
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	Gem det beregnede stof som en fil (.vcfabric) til design, der sys på dette stof
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	Klik på en kompensationsprøve, og angiv hvad den måler syet, for at beregne kompensationen.
 	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Kompensationsark: sys uden kompensation for at måle, hvor meget stoffet trækker sig sammen i hver stingretning.
 	Edit Custom Dictionary	Redigér egen ordliste
 	Entry:	Opslag:

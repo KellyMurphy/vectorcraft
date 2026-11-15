@@ -7558,6 +7558,16 @@ breakText	Glyphs	Glyphen
 @msg	only paths and compound paths can be aligned to the pixel grid	nur Pfade und zusammengesetzte Pfade können am Pixelraster ausgerichtet werden
 @msg	side is left or right, not `{s}`	side ist left oder right, nicht `{s}`
 	Compensation	Ausgleich
+	Sewn Width:	Gestickte Breite:
+	Sewn Length:	Gestickte Länge:
+	Along the stitches, between the marks	Entlang der Stiche, zwischen den Markierungen
+	Across the stitches, between the marks	Quer zu den Stichen, zwischen den Markierungen
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: Zug {pull} mm + {percent} %, Schub {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: Zug {pull} mm + {percent} %
+	Use as Fabric	Als Stoff verwenden
+	Make the fitted compensation the document's fabric	Die ermittelte Kompensation zum Stoff des Dokuments machen
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	Den ermittelten Stoff als Datei (.vcfabric) speichern, für Designs auf diesem Stoff
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	Klicken Sie auf ein Kompensationsmuster und geben Sie ein, was es gestickt misst, um die Kompensation zu ermitteln.
 	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Ausgleichsblatt: ohne Ausgleich gestickt, um zu messen, wie stark sich der Stoff in jeder Stichrichtung zusammenzieht.
 	Ignore All	Alle ignorieren
 	Add to Dictionary	Zum Wörterbuch hinzufügen

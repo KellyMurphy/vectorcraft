@@ -7373,6 +7373,16 @@ breakText	Glyphs	Glif
 	Not Aligned to Pixel Grid	Tidak sejajar ke grid piksel
 @msg	side is left or right, not `{s}`	side adalah left atau right, bukan `{s}`
 	Compensation	Kompensasi
+	Sewn Width:	Lebar hasil jahit:
+	Sewn Length:	Panjang hasil jahit:
+	Along the stitches, between the marks	Searah tusukan, di antara tanda
+	Across the stitches, between the marks	Melintang tusukan, di antara tanda
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: tarikan {pull} mm + {percent} %, dorongan {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: tarikan {pull} mm + {percent} %
+	Use as Fabric	Gunakan sebagai kain
+	Make the fitted compensation the document's fabric	Jadikan kompensasi hasil hitungan sebagai kain dokumen
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	Simpan kain hasil hitungan sebagai file (.vcfabric) untuk desain yang dijahit pada kain ini
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	Klik contoh kompensasi dan masukkan ukurannya setelah dijahit untuk menghitung kompensasi.
 	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Lembar kompensasi: dijahit tanpa kompensasi, untuk mengukur seberapa jauh kain tertarik di setiap arah tusukan.
 	Edit Custom Dictionary	Edit kamus kustom
 	Entry:	Entri:

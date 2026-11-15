@@ -17,6 +17,7 @@ pub mod advise;
 pub mod angles;
 pub mod borders;
 pub mod check;
+pub mod compensation;
 mod dst;
 mod exp;
 pub mod extract;

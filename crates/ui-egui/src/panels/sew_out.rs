@@ -2,7 +2,10 @@
 //! what they showed on fabric. Without a test sheet it offers to make one (`embroidery.testSheet`,
 //! with the sections ticked here); with one, it lists the swatches by section, each marked Pass or
 //! Fail with a note, and the fabric, machine and notes of the whole sew-out
-//! (`embroidery.recordSewOut`). Clicking a swatch selects its objects. Reads `embroidery.sewOut`.
+//! (`embroidery.recordSewOut`). Clicking a swatch selects its objects. A compensation swatch takes
+//! the width and length it measures sewn, and the Compensation section shows the compensation
+//! they fit (`embroidery.fitCompensation`), to use as the document's fabric or save as a
+//! `.vcfabric`. Reads `embroidery.sewOut`.
 
 use egui::{Color32, Rect, Sense, Stroke, Ui, vec2};
 use serde_json::{Value, json};
@@ -27,7 +30,11 @@ fn form(app: &mut VectorcraftApp, ctx: &egui::Context) -> Value {
     {
         return v;
     }
-    let v = app.session.execute("embroidery.sewOut", &json!({})).unwrap_or(Value::Null);
+    let mut v = app.session.execute("embroidery.sewOut", &json!({})).unwrap_or(Value::Null);
+    // The compensation the measured swatches fit, reported only (null: none measured yet).
+    if let Some(o) = v.as_object_mut() {
+        o.insert("fit".into(), app.session.execute("embroidery.fitCompensation", &json!({"apply": false})).unwrap_or(Value::Null));
+    }
     ctx.data_mut(|d| d.insert_temp(id, (key, v.clone())));
     v
 }
@@ -77,6 +84,9 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                     opened = Some(if open == me { String::new() } else { me });
                 }
                 if open == w["id"].as_str().unwrap_or_default() {
+                    if let Some(p) = measurements(ui, w) {
+                        record = Some(p);
+                    }
                     ui.horizontal(|ui| {
                         ui.add_space(26.0);
                         let width = ui.available_width() - 4.0;
@@ -102,6 +112,10 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     if let Some(text) = widgets::text_field(ui, ("sew-out", "notes"), r["notes"].as_str(), w, 3) {
         app.run("embroidery.recordSewOut", json!({ "notes": text })).ok();
     }
+    if swatches.iter().any(|w| w.get("angle").is_some()) {
+        widgets::divider(ui);
+        compensation(app, ui, &f["fit"]);
+    }
     ui.add_space(6.0);
     ui.horizontal(|ui| {
         let label = super::embroidery::export_label(app);
@@ -112,6 +126,86 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         if widgets::flat_button(ui, tl!("New Test Sheet…"), 110.0).on_hover_text(tl!("Another test sheet, for another fabric or machine")).clicked()
         {
             app.run("embroidery.testSheet", json!({})).ok();
+        }
+    });
+}
+
+/// An opened compensation swatch's sewn width and length, as measured between its marks: the
+/// `embroidery.recordSewOut` params of a changed one.
+fn measurements(ui: &mut Ui, w: &Value) -> Option<Value> {
+    w.get("angle")?;
+    let id = w["id"].as_str().unwrap_or_default();
+    let mut out = None;
+    for (key, drawn, label, tip) in [
+        ("measuredWidth", "drawnWidth", tl!("Sewn Width:"), tl!("Along the stitches, between the marks")),
+        ("measuredLength", "drawnLength", tl!("Sewn Length:"), tl!("Across the stitches, between the marks")),
+    ] {
+        ui.horizontal(|ui| {
+            ui.add_space(26.0);
+            widgets::label_row(ui, label, LABEL_W + 20.0, |ui| {
+                if let Some(v) = widgets::mixed_field(ui, ("sew-out-measure", id, key), w[key].as_f64(), " mm", 1, 70.0) {
+                    out = Some(json!({"results": [{"swatch": id, key: v}]}));
+                }
+                if let Some(d) = w[drawn].as_f64() {
+                    ui.label(egui::RichText::new(format!("/ {d:.1} mm")).size(11.0).color(Tokens::get(ui.ctx()).text_dim));
+                }
+            });
+        })
+        .response
+        .on_hover_text(tip);
+    }
+    out
+}
+
+/// One line of the fit: the compensation `f` asks for, led by `what` (an angle, or All).
+fn fit_line(what: &str, f: &Value) -> String {
+    let (pull, percent) = (f["pull"].as_f64().unwrap_or(0.0), f["pullPercent"].as_f64().unwrap_or(0.0));
+    let text = match f["push"].as_f64() {
+        Some(_) => tl!("{angle}: pull {pull} mm + {percent} %, push {push} mm"),
+        None => tl!("{angle}: pull {pull} mm + {percent} %"),
+    };
+    text.replace("{angle}", what)
+        .replace("{pull}", &format!("{pull:.2}"))
+        .replace("{percent}", &format!("{percent:.1}"))
+        .replace("{push}", &format!("{:.2}", f["push"].as_f64().unwrap_or(0.0)))
+}
+
+/// The compensation the measured swatches fit (`fit`: `embroidery.fitCompensation`'s report, null
+/// with none measured): a line for each stitch direction and one for all, and the buttons that
+/// make it the document's fabric or save it as a `.vcfabric`.
+fn compensation(app: &mut VectorcraftApp, ui: &mut Ui, fit: &Value) {
+    widgets::subheader(ui, tl!("Compensation"));
+    if fit.is_null() {
+        widgets::dim_label(ui, tl!("Click a compensation swatch and enter what it measures sewn, to fit the compensation."));
+        return;
+    }
+    let t = Tokens::get(ui.ctx());
+    for a in fit["angles"].as_array().into_iter().flatten() {
+        let line = fit_line(&format!("{}°", a["angle"].as_f64().unwrap_or(0.0)), a);
+        ui.label(egui::RichText::new(line).size(11.5).color(t.text_dim));
+    }
+    ui.label(egui::RichText::new(fit_line(tl!("All"), fit)).size(11.5).color(t.text));
+    ui.add_space(2.0);
+    ui.horizontal_wrapped(|ui| {
+        if widgets::flat_button(ui, tl!("Use as Fabric"), 96.0).on_hover_text(tl!("Make the fitted compensation the document's fabric")).clicked() {
+            app.run("embroidery.fitCompensation", json!({})).ok();
+        }
+        if widgets::flat_button(ui, tl!("Save Fabric…"), 96.0)
+            .on_hover_text(tl!("Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric"))
+            .clicked()
+        {
+            match app.run("embroidery.fitCompensation", json!({})) {
+                Ok(r) => {
+                    let id = r["fabric"]["id"].as_str().filter(|i| !i.is_empty()).unwrap_or("fabric").to_string();
+                    let file = format!("{id}.{}", vectorcraft_embroidery::fabrics::FILE_EXT);
+                    crate::picks::button(app, move |app| {
+                        if let Err(e) = crate::io::save_command_output_named(app, "embroidery.saveFabric", &file, json!({})) {
+                            app.status(e);
+                        }
+                    });
+                }
+                Err(e) => app.status(e),
+            }
         }
     });
 }
@@ -152,7 +246,14 @@ fn swatch_row(ui: &mut Ui, w: &Value, open: bool) -> (bool, Option<&'static str>
         t.text_strong,
     );
     let notes = w["notes"].as_str().unwrap_or_default();
-    let label = w["label"].as_str().unwrap_or_default();
+    // A measured compensation swatch: its kind and its drawn and sewn width, short enough to show.
+    let label = match (w["measuredWidth"].as_f64(), w["drawnWidth"].as_f64()) {
+        (Some(m), Some(d)) => {
+            let kind = w["label"].as_str().unwrap_or_default().split(' ').next().unwrap_or_default();
+            format!("{kind} {d:.1} → {m:.1} mm")
+        }
+        _ => w["label"].as_str().unwrap_or_default().to_string(),
+    };
     // What it tests, clipped short of the toggles.
     let text_rect = Rect::from_min_max(rect.left_top() + vec2(30.0, 0.0), egui::pos2(rect.right() - 2.0 * (TOGGLE_W + 4.0) - 4.0, rect.bottom()));
     ui.painter_at(text_rect).text(text_rect.left_center(), egui::Align2::LEFT_CENTER, label, font, t.text);
@@ -287,5 +388,38 @@ mod tests {
         for want in ["L  Compensation 45°", "L1", "Satin 2 mm wide, stitches at 45°", "L5"] {
             assert!(shown.iter().any(|t| t == want), "{want} in {shown:?}");
         }
+    }
+
+    /// E10.1b: an opened compensation swatch takes its sewn width and length; once some are
+    /// measured, the Compensation section shows the fit for each direction and for all, and Use as
+    /// Fabric makes it the document's fabric.
+    #[test]
+    fn measured_swatches_show_the_fitted_compensation() {
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        app.session.execute("embroidery.testSheet", &json!({"sections": ["compensation0"]})).unwrap();
+        let ctx = egui::Context::default();
+        crate::theme::install_fonts(&ctx);
+        let shown = |app: &mut VectorcraftApp| {
+            let mut out = ctx.run_ui(egui::RawInput::default(), |ui| show(app, ui));
+            out.textures_delta.clear();
+            let mut v = vec![];
+            out.shapes.iter().for_each(|c| texts(&c.shape, &mut v));
+            v
+        };
+        let first = shown(&mut app);
+        assert!(first.iter().any(|t| t.starts_with("Click a compensation swatch")), "{first:?}");
+        set_pstate(&ctx, "sew-out-open", "K2".to_string());
+        let open = shown(&mut app);
+        assert!(open.iter().any(|t| t == "Sewn Width:") && open.iter().any(|t| t == "/ 4.0 mm"), "{open:?}");
+        let results: Vec<Value> = [(1, 2.0), (2, 4.0), (3, 6.0), (4, 8.0)]
+            .iter()
+            .map(|(n, w)| json!({"swatch": format!("K{n}"), "measuredWidth": w - 0.4, "measuredLength": 30.3}))
+            .collect();
+        app.session.execute("embroidery.recordSewOut", &json!({ "results": results })).unwrap();
+        let fitted = shown(&mut app);
+        for want in ["0°: pull 0.40 mm + 0.0 %, push 0.30 mm", "All: pull 0.40 mm + 0.0 %, push 0.30 mm", "Use as Fabric", "Save Fabric…"] {
+            assert!(fitted.iter().any(|t| t == want), "{want} in {fitted:?}");
+        }
+        assert!(fitted.iter().any(|t| t == "Satin 4.0 → 3.6 mm"), "a measured row shows its width: {fitted:?}");
     }
 }

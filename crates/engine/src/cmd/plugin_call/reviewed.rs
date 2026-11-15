@@ -186,6 +186,7 @@ pub(super) const ALLOWED: &[&str] = &[
     "embroidery.extractMotif",
     "embroidery.fabrics",
     "embroidery.fillAt",
+    "embroidery.fitCompensation",
     "embroidery.fix",
     "embroidery.fixes",
     "embroidery.font.info",

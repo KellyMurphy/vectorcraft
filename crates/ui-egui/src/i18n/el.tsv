@@ -7914,6 +7914,16 @@ breakText	Glyphs	Γλύφοι
 @msg	only paths and compound paths can be aligned to the pixel grid	μόνο διαδρομές και σύνθετες διαδρομές μπορούν να στοιχιστούν στο πλέγμα εικονοστοιχείων
 @msg	side is left or right, not `{s}`	το side είναι left ή right, όχι `{s}`
 	Compensation	Αντιστάθμιση
+	Sewn Width:	Πλάτος μετά το κέντημα:
+	Sewn Length:	Μήκος μετά το κέντημα:
+	Along the stitches, between the marks	Κατά μήκος των βελονιών, ανάμεσα στα σημάδια
+	Across the stitches, between the marks	Εγκάρσια στις βελονιές, ανάμεσα στα σημάδια
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: συστολή {pull} mm + {percent} %, διαστολή {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: συστολή {pull} mm + {percent} %
+	Use as Fabric	Χρήση ως ύφασμα
+	Make the fitted compensation the document's fabric	Η υπολογισμένη αντιστάθμιση γίνεται το ύφασμα του εγγράφου
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	Αποθήκευση του υπολογισμένου υφάσματος ως αρχείο (.vcfabric) για σχέδια που κεντιούνται σε αυτό το ύφασμα
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	Κάντε κλικ σε ένα δείγμα αντιστάθμισης και εισαγάγετε τη μέτρησή του μετά το κέντημα, για να υπολογιστεί η αντιστάθμιση.
 	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Φύλλο αντιστάθμισης: ράβεται χωρίς αντιστάθμιση, για να μετρηθεί πόσο μαζεύει το ύφασμα σε κάθε κατεύθυνση βελονιάς.
 	Ignore All	Παράβλεψη όλων
 	Add to Dictionary	Προσθήκη στο λεξικό

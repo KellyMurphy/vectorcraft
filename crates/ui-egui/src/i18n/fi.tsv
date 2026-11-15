@@ -7996,6 +7996,16 @@ breakText	Glyphs	Merkit
 @msg	only paths and compound paths can be aligned to the pixel grid	vain polut ja yhdistelmäpolut voi tasata pikseliruudukkoon
 @msg	side is left or right, not `{s}`	side on left tai right, ei `{s}`
 	Compensation	Kompensaatio
+	Sewn Width:	Ommeltu leveys:
+	Sewn Length:	Ommeltu pituus:
+	Along the stitches, between the marks	Pistojen suuntaan, merkkien välillä
+	Across the stitches, between the marks	Pistoja vastaan, merkkien välillä
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: veto {pull} mm + {percent} %, työntö {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: veto {pull} mm + {percent} %
+	Use as Fabric	Käytä kankaana
+	Make the fitted compensation the document's fabric	Tee lasketusta kompensaatiosta asiakirjan kangas
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	Tallenna laskettu kangas tiedostoksi (.vcfabric) tälle kankaalle ommeltavia malleja varten
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	Napsauta kompensaationäytettä ja anna sen ommeltu mitta, niin kompensaatio lasketaan.
 	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Kompensaatioarkki: ommellaan ilman kompensaatiota, jotta voidaan mitata, kuinka paljon kangas vetäytyy kussakin pistosuunnassa.
 	Ignore All	Ohita kaikki
 	Add to Dictionary	Lisää sanastoon

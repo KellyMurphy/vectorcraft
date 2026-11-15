@@ -7822,6 +7822,16 @@ breakText	Glyphs	字形
 @msg	only paths and compound paths can be aligned to the pixel grid	只有路径和复合路径可以对齐像素网格
 @msg	side is left or right, not `{s}`	side 应为 left 或 right，而不是 `{s}`
 	Compensation	补偿
+	Sewn Width:	绣后宽度:
+	Sewn Length:	绣后长度:
+	Along the stitches, between the marks	沿针迹方向，在标记之间
+	Across the stitches, between the marks	横跨针迹方向，在标记之间
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}：收缩 {pull} mm + {percent} %，扩张 {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}：收缩 {pull} mm + {percent} %
+	Use as Fabric	用作面料
+	Make the fitted compensation the document's fabric	将拟合的补偿设为文档的面料
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	将拟合的面料存储为文件 (.vcfabric)，供在此面料上刺绣的设计载入
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	单击补偿样片并输入绣后测得的尺寸，以拟合补偿。
 	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	补偿测试页：不加补偿绣制，用于测量面料在每个针迹方向上的收缩量。
 	Edit Custom Dictionary	编辑自定义词典
 	Entry:	条目：

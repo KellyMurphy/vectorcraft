@@ -7945,6 +7945,16 @@ breakText	Glyphs	Glifák
 @msg	only paths and compound paths can be aligned to the pixel grid	csak útvonalak és összetett útvonalak igazíthatók a pixelrácshoz
 @msg	side is left or right, not `{s}`	a side értéke left vagy right lehet, nem `{s}`
 	Compensation	Kompenzáció
+	Sewn Width:	Hímzett szélesség:
+	Sewn Length:	Hímzett hossz:
+	Along the stitches, between the marks	Az öltések mentén, a jelölések között
+	Across the stitches, between the marks	Az öltésekre merőlegesen, a jelölések között
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: húzás {pull} mm + {percent} %, tolás {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: húzás {pull} mm + {percent} %
+	Use as Fabric	Használat anyagként
+	Make the fitted compensation the document's fabric	A kiszámított kompenzáció legyen a dokumentum anyaga
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	A kiszámított anyag mentése fájlba (.vcfabric) az ezen az anyagon hímzett mintákhoz
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	Kattintson egy kompenzációs mintára, és adja meg a hímzés utáni méretét a kompenzáció kiszámításához.
 	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Kompenzációs lap: kompenzáció nélkül varrva, hogy megmérje, mennyire húzódik össze az anyag az egyes öltésirányokban.
 	Ignore All	Az összes kihagyása
 	Add to Dictionary	Hozzáadás a szótárhoz
