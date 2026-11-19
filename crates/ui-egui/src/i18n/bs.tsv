@@ -7825,3 +7825,457 @@ shape	Open	Otvoren
 	Pulse Stroke	Pulsirajući potez
 	Round Flow	Okrugli tok
 	Chisel Flow	Kosi tok
+# Embroidery: stitches, sewing, hoops, fabrics, threads, fonts and checks. Drafted with AI assistance
+# from the English meaning; not yet reviewed by a native speaker (review welcome).
+@msg	select closed paths or compound paths to make appliqué from	odaberite zatvorene putanje ili složene putanje od kojih će se napraviti aplikacija
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	odaberite grupe aplikacija ili zatvorene oblike (dokument nema grupa aplikacija)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	odaberite logo: sliku, praćenu sliku ili grupu ispunjenih oblika
+@msg	select one logo: group its shapes first	odaberite jedan logo: prvo grupišite njegove oblike
+@msg	the selection has no filled shapes or image to digitize	odabir nema ispunjenih oblika ni slike za digitalizaciju
+@msg	select an opened design's manual stitches	odaberite ručne bodove otvorenog dizajna
+	A satin border sewn over the shape's edges, after the fill	Satenski rub vezen preko rubova oblika, nakon ispune
+	After	Poslije
+	Bean Below:	Dvostruki bod ispod:
+	Before	Prije
+	Between Rails	Između šina
+	Border:	Rub:
+	By Thread	Po koncu
+	Center Walk	Središnji prolaz
+	Chain	Lančić
+	Choose a stitch to sew the selection with.	Odaberite bod kojim će se vesti odabir.
+	Circles	Krugovi
+	Cut the thread after this object	Odsijeci konac nakon ovog objekta
+	Cut the thread before this object, however close it starts	Odsijeci konac prije ovog objekta, ma koliko blizu počinjao
+	Design	Dizajn
+	Distance between rows: smaller is denser	Razmak između redova: manji je gušći
+	Distance between the points of the zigzag	Razmak između vrhova cik-caka
+	Distance between zigzags: smaller is denser	Razmak između cik-cakova: manji je gušći
+	Drag a row to move it. Objects sewn later lie on top.	Prevucite red da ga pomjerite. Objekti vezeni kasnije leže na vrhu.
+	Each shape (or letter) is stitched by how wide its strokes are.	Svaki oblik (ili slovo) veze se prema širini svojih poteza.
+	Edge Walk	Prolaz po rubu
+	Embroidery…	Vez…
+	Export DST…	Izvezi DST…
+	Extract Border Pattern	Izdvoji uzorak ruba
+	Fill Above:	Ispuna iznad:
+	Fill Underlay	Podloga ispune
+	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Dajte putanjama postavke boda u panelu Vez; vezu se ovim redoslijedom.
+	Group the sewing order by thread colour, for fewer thread changes	Grupiši redoslijed vezenja po boji konca, za manje promjena konca
+	Herringbone	Riblja kost
+	How large one repeat of the motif is	Koliko je veliko jedno ponavljanje motiva
+	How long each stitch is	Koliko je dug svaki bod
+	How the needle holes line up from row to row, or a motif carved into the fill	Kako se rupe od igle poravnavaju od reda do reda, ili motiv urezan u ispunu
+	How wide the border is: the pattern scales with it	Koliko je širok rub: uzorak se skalira s njim
+	How wide the zigzag swings	Koliko široko cik-cak zamahuje
+	Load a border pattern file (.vcborder) into the document	Učitaj datoteku uzorka ruba (.vcborder) u dokument
+	Load…	Učitaj…
+	Mirror the pattern across the path	Zrcali uzorak preko putanje
+	Motif Size:	Veličina motiva:
+	Motif	Motiv
+	No problems found.	Nisu pronađeni problemi.
+	Nothing is stitched yet.	Još ništa nije vezeno.
+	Object color	Boja objekta
+	Only paths, compound paths and type can be stitched.	Vesti se mogu samo putanje, složene putanje i tekst.
+	Only the first 30 are listed.	Prikazano je samo prvih 30.
+	Only thread changes and objects set to trim cut the thread.	Konac sijeku samo promjene konca i objekti postavljeni za odsijecanje.
+	Open a document to see its sewing order.	Otvorite dokument da vidite njegov redoslijed vezenja.
+	Reset Order	Vrati redoslijed
+	Passes:	Prolazi:
+	Pattern Border	Rub s uzorkom
+	Pattern Size	Veličina uzorka
+	Pattern:	Uzorak:
+	Pull Compensation:	Kompenzacija povlačenja:
+	Remove Stitches	Ukloni bodove
+	Satin Column	Satenska kolona
+	Satin Shape	Satenski oblik
+	Satin follows the shape's strokes from edge to edge.	Saten prati poteze oblika od ruba do ruba.
+	Save this border pattern as a file (.vcborder)	Sačuvaj ovaj uzorak ruba kao datoteku (.vcborder)
+	Scales	Krljušti
+	Select a straight stretch of a border with two or more repeats, or a shape drawn over it too.	Odaberite ravan dio ruba s dva ili više ponavljanja, ili i oblik nacrtan preko njega.
+	Select paths to stitch.	Odaberite putanje za vezenje.
+	Sew Earlier	Vezi ranije
+	Sew First	Vezi prvo
+	Sew Last	Vezi posljednje
+	Sew Later	Vezi kasnije
+	Stitch Moves Under:	Prelazi ispod bodova:
+	Sew Order…	Redoslijed vezenja…
+	Sew in paint order again (bottom first)	Ponovo vezi redoslijedom crtanja (prvo donje)
+	Sews the column this much wider, since the thread pulls the fabric in	Veze kolonu toliko šire, jer konac uvlači tkaninu
+	Some selected objects aren't stitched: choose a stitch for all of them.	Neki odabrani objekti se ne vezu: odaberite bod za sve njih.
+	Step through the design as it is sewn, and change the order	Prođite kroz dizajn onako kako se veze i promijenite redoslijed
+	Step through the sewing	Prođi kroz vezenje korak po korak
+	Stitch Length:	Dužina boda:
+	Stitch Preview	Pregled bodova
+	Stitch	Bod
+	Stitches:	Bodovi:
+	Tatami	Tatami
+	Fill Style:	Stil ispune:
+	How the area is covered: straight rows, or rings following the outline	Kako je površina pokrivena: ravni redovi ili prstenovi koji prate obris
+	Straight rows at the fill's angle, their needle holes staggered.	Ravni redovi pod uglom ispune, s pomaknutim rupama od igle.
+	Rings following the outline, sewn ring to ring: good for round and flowing shapes.	Prstenovi koji prate obris, vezeni od prstena do prstena: dobro za okrugle i tečne oblike.
+	The rings blended into one continuous spiral, with no step between them: best on round shapes.	Prstenovi stopljeni u jednu neprekidnu spiralu, bez koraka između njih: najbolje na okruglim oblicima.
+	The needle goes down at every anchor point, as drawn.	Igla se spušta u svakoj sidrenoj tački, kako je nacrtano.
+	The object's two paths are the column's edges; lines crossing both set the stitch direction	Dvije putanje objekta su rubovi kolone; linije koje sijeku obje određuju smjer boda
+	The pattern repeats along the path, a whole number of times between corners.	Uzorak se ponavlja duž putanje, cijeli broj puta između uglova.
+	The selected objects use different stitches.	Odabrani objekti koriste različite bodove.
+	The selection is no longer stitched	Odabir se više ne veze
+	The selection's stitch and its settings	Bod odabira i njegove postavke
+	The stroke's color for stitches along the path, the fill's for fills	Boja poteza za bodove duž putanje, boja ispune za ispune
+	These stitch settings are from a newer VectorCraft: kept as they are, but not sewn. Choose a stitch to replace them.	Ove postavke boda su iz novijeg VectorCrafta: zadržane su kakve jesu, ali se ne vezu. Odaberite bod da ih zamijenite.
+	Thinner strokes get a bean stitch round their outline	Tanji potezi dobijaju dvostruki bod oko obrisa
+	Thread	Konac
+	Thread:	Konac:
+	Threads:	Konci:
+	Travel	Prelaz
+	Trim Jumps Over:	Odsijeci skokove duže od:
+	Trim:	Odsijecanje:
+	Trims / Jumps:	Odsijecanja / skokovi:
+	Underlay:	Podloga:
+	Use Object Color	Koristi boju objekta
+	Use Stroke	Koristi potez
+	Waves	Talasi
+	Wider strokes are filled, with a satin border; strokes in between get satin	Širi potezi se ispunjavaju, sa satenskim rubom; potezi između dobijaju saten
+	Zigzag Stitch	Cik-cak bod
+	the pattern's size	veličina uzorka
+	the stroke width	širina poteza
+	A border pattern repeated along the path.	Uzorak ruba ponovljen duž putanje.
+	A dense zigzag column along the path, as wide as the stroke.	Gusta cik-cak kolona duž putanje, široka koliko i potez.
+	A motif carved into the fill	Motiv urezan u ispunu
+	A stitched object that makes no stitches: empty, or too small for its stitch type.	Vezeni objekat koji ne pravi bodove: prazan ili premalen za svoju vrstu boda.
+	An open zigzag along the path: decorative lines, appliqué edges.	Otvoreni cik-cak duž putanje: ukrasne linije, rubovi aplikacija.
+	Art the stitch can't follow	Crtež koji bod ne može pratiti
+	Bean Stitch	Dvostruki bod
+	Border Patterns	Uzorci rubova
+	Change Sew Order	Promijeni redoslijed vezenja
+	Check Design	Provjeri dizajn
+	Design cut short	Dizajn je skraćen
+	Distance between zigzags or rows: smaller is denser	Razmak između cik-cakova ili redova: manji je gušći
+	Each stitch sewn three times: a bolder line.	Svaki bod se veze tri puta: deblja linija.
+	Embroidery Info	Informacije o vezu
+	Embroidery Setup	Postavke veza
+	Embroidery Stitches	Bodovi veza
+	Embroidery	Vez
+	How many times each stitch is sewn	Koliko puta se veze svaki bod
+	How the object is stitched	Kako se objekat veze
+	How wide the column, zigzag or border is	Koliko je široka kolona, cik-cak ili rub
+	Load Border Pattern…	Učitaj uzorak ruba…
+	Embroidery Libraries	Biblioteke veza
+	Add to Embroidery Library…	Dodaj u biblioteku veza…
+	Rescan Embroidery Libraries	Ponovo pretraži biblioteke veza
+	A line of type below the letters, sewn from the font as it is now	Red teksta ispod slova, vezen iz fonta kakav je sada
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	Instalirani font čija slova idu na zaključani sloj predloška za precrtavanje (prazno: nijedan)
+	Ascender:	Uzlazni dio:
+	Cap Height:	Visina velikih slova:
+	Characters:	Znakovi:
+	Descender:	Silazni dio:
+	Edit Font…	Uredi font…
+	Font Editor	Uređivač fonta
+	Kerning:	Podrezivanje:
+	License:	Licenca:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Napravite font za vez: jedna radna ploča po slovu, digitalizovana običnim bodovima.
+	New Embroidery Font	Novi font za vez
+	Save Font…	Sačuvaj font…
+	Trace:	Precrtaj:
+	Two letters and font units: negative sets them closer	Dva slova i jedinice fonta: negativna vrijednost ih približava
+	Update Sample	Ažuriraj uzorak
+	x Height:	Visina slova x:
+	Embroidery Font Info	Informacije o fontu za vez
+	Embroidery Font Kerning	Podrezivanje fonta za vez
+	Embroidery Font Sample	Uzorak fonta za vez
+	Embroidery Font Setup	Postavke fonta za vez
+	New Embroidery Font…	Novi font za vez…
+	Open Embroidery Font…	Otvori font za vez…
+	Trace Embroidery Font…	Precrtaj font za vez…
+	Load Motif…	Učitaj motiv…
+	Motif Fill	Ispuna motivima
+	A small stitched motif repeated across the shape, the fabric showing between.	Mali vezeni motiv ponovljen preko oblika, s tkaninom vidljivom između.
+	How large one tile of the motif is	Koliko je velika jedna pločica motiva
+	The motif sewn tile by tile across the shape	Motiv vezen pločicu po pločicu preko oblika
+	Choose the thread's color	Odaberite boju konca
+	Load a motif file (.vcmotif) into the document	Učitaj datoteku motiva (.vcmotif) u dokument
+	Save this motif as a file (.vcmotif)	Sačuvaj ovaj motiv kao datoteku (.vcmotif)
+	Flowers	Cvijeće
+	Hearts	Srca
+	Motifs	Motivi
+	Remove Motif	Ukloni motiv
+	Save Motif…	Sačuvaj motiv…
+	Load Motif	Učitaj motiv
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	Precrtan {family}: {traced} slova kao satenske kolone, {kept} zadržano kao obrisi
+	Tracing Font	Precrtavanje fonta
+	Tracing {family}	Precrtavanje: {family}
+	{done} of {total} letters	{done} od {total} slova
+	Frame:	Okvir:
+	Letters as live type placed by the layout, each still editable, with an optional frame	Slova kao živi tekst koji postavlja raspored, svako i dalje uredivo, s neobaveznim okvirom
+	Letters:	Slova:
+	Monogram	Monogram
+	No Frame	Bez okvira
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	Postavi odabrani tačkasti tekst na kružni luk kroz mjesto gdje se nalazi: preko vrha, ili ispod dna, čitljivo slijeva nadesno
+	Satin Ring	Satenski prsten
+	Type on an Arc	Tekst na luku
+	Update Monogram	Ažuriraj monogram
+	Monogram…	Monogram…
+	Type on an Arc…	Tekst na luku…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	Alat Ugao boda: prevucite preko satena da dodate liniju, prevucite kraj linije da je pomjerite, Alt-klik na liniju da je uklonite
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	Linije preko satena koje određuju smjer njegovih bodova gdje ga sijeku, postepeno se okrećući između njih (crta ih alat Ugao boda)
+	Stitch Angle Tool	Alat Ugao boda
+	Stitch Angles:	Uglovi boda:
+	Stitch Angle	Ugao boda
+	Three Equal	Tri jednaka
+	Two Letters	Dva slova
+	Trace Font	Font za precrtavanje
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Automatski digitalizuj slova fonta za precrtavanje, svaki potez pera kao satensku kolonu (samo za fontove čija licenca dozvoljava izvedena djela)
+@msg	not a layer	nije sloj
+@msg	the document has no layer	dokument nema sloj
+	More Settings ({n})	Više postavki ({n})
+@plural	{n} stitch|{n} stitches	{n} bod|{n} boda|{n} bodova
+@plural	{n} thread|{n} threads	{n} konac|{n} konca|{n} konaca
+@plural	{n} path|{n} paths	{n} putanja|{n} putanje|{n} putanja
+@plural	{n} compound path|{n} compound paths	{n} složena putanja|{n} složene putanje|{n} složenih putanja
+@plural	{n} type object|{n} type objects	{n} tekstualni objekat|{n} tekstualna objekta|{n} tekstualnih objekata
+@plural	{n} object|{n} objects	{n} objekat|{n} objekta|{n} objekata
+@plural	{n} problem|{n} problems	{n} problem|{n} problema|{n} problema
+	{m} min	{m} min
+	Setup	Postavke
+	Check & Export	Provjera i izvoz
+	Sewing	Vezenje
+	Not stitched	Nije vezeno
+	Mixed stitches	Različiti bodovi
+	The selection: what it is, its size, its stitch and the stitches it sews	Odabir: šta je, njegova veličina, njegov bod i bodovi koje veze
+	Areas	Površine
+	Fold the stitches away	Sklopi bodove
+	Choose another stitch	Odaberi drugi bod
+	The selection is open paths: this stitch closes each one with a straight line between its ends.	Odabir su otvorene putanje: ovaj bod zatvara svaku ravnom linijom između njenih krajeva.
+	From Stitches	Iz bodova
+	Font Editor…	Uređivač fonta…
+	Make an embroidery font, or edit the one in this font document	Napravite font za vez, ili uredite onaj u ovom dokumentu fonta
+	Embroidery Font Editor	Uređivač fonta za vez
+	Embroidery Panel	Panel Vez
+	Export Stitch File…	Izvezi datoteku bodova…
+	Fabric and Hoop	Tkanina i obruč
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	Odaberite tkaninu i obruč: tkanina određuje gustinu, kompenzaciju i podlogu svakog boda koji ne određuje svoje.
+	Dismiss	Odbaci
+	Don't show this again (Setup has both menus)	Ne prikazuj ovo ponovo (Postavke imaju oba menija)
+	The stitched design: its stitches, size, threads and sewing time	Vezeni dizajn: njegovi bodovi, veličina, konci i vrijeme vezenja
+	What the design checker found: open its list	Šta je pronašla provjera dizajna: otvori njen spisak
+@msg	Loaded embroidery font {_1}	Učitan font za vez {_1}
+	Add Font Folder…	Dodaj folder fontova…
+	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Folder fontova za vez koji će se ovdje prikazati, kao što su folderi fontova Ink/Stitch koje ste instalirali; čitaju se tamo gdje jesu
+	Embroidery Font Folders…	Folderi fontova za vez…
+	Import Ink/Stitch Font…	Uvezi Ink/Stitch font…
+	Import Ink/Stitch Font	Uvezi Ink/Stitch font
+@msg	font.json is over {_1} MB	font.json je veći od {_1} MB
+@msg	{_1} embroidery fonts found	Pronađeno fontova za vez: {_1}
+	Embroidery Font:	Font za vez:
+	Type only: sew the letters from this embroidery font's stitch objects instead of the outline font	Samo tekst: vezi slova iz vezenih objekata ovog fonta za vez umjesto fonta obrisa
+	Embroidery Fonts	Fontovi za vez
+	Load Embroidery Font…	Učitaj font za vez…
+	Save Embroidery Font…	Sačuvaj font za vez…
+	Remove Embroidery Font	Ukloni font za vez
+	Load Embroidery Font	Učitaj font za vez
+	Appliqué Cut File…	Datoteka za rezanje aplikacije…
+	Cut File…	Datoteka za rezanje…
+	The appliqué pieces' outlines packed onto cutter mats, in a new document to export as SVG or DXF	Obrisi dijelova aplikacije složeni na podloge rezača, u novom dokumentu za izvoz kao SVG ili DXF
+	Appliqué	Aplikacija
+	Make each selected closed shape an appliqué: placement line, stop, tack-down, stop, cover	Pretvori svaki odabrani zatvoreni oblik u aplikaciju: linija postavljanja, zaustavljanje, pričvršćivanje, zaustavljanje, prekrivanje
+	Stop Before:	Zaustavi prije:
+	Place Fabric	Postavi tkaninu
+	Trim Fabric	Obreži tkaninu
+	Stop the machine before this object: to change something by hand, place appliqué fabric, or trim it	Zaustavi mašinu prije ovog objekta: da se nešto promijeni ručno, postavi tkanina za aplikaciju ili obreže
+	Save a copy in your embroidery library, for any design	Sačuvajte kopiju u svoju biblioteku veza, za bilo koji dizajn
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Vaša biblioteka veza: uzorci rubova, tkanine, obruči i karte konaca za bilo koji dizajn
+@msg	no embroidery library folder here	ovdje nema foldera biblioteke veza
+@msg	Added {_1} to the embroidery library	{_1} je dodan u biblioteku veza
+@msg	nothing to add	nema ništa za dodavanje
+	Long stitches	Dugi bodovi
+	Makes no stitches	Ne pravi bodove
+	Manual Stitch	Ručni bod
+	Motif:	Motiv:
+	Not sewn as set	Ne veze se kako je postavljeno
+	Objects that are stitched but can't be sewn (not a path, compound path or type; settings from a newer VectorCraft), or are sewn whole although a mask hides part of them.	Objekti koji imaju bod, ali se ne mogu vesti (nisu putanja, složena putanja ni tekst; postavke iz novijeg VectorCrafta), ili se vezu cijeli iako maska skriva njihov dio.
+	Picks a stitch for each shape (each letter) by how wide its strokes are.	Bira bod za svaki oblik (svako slovo) prema širini njegovih poteza.
+	Remove Border Pattern	Ukloni uzorak ruba
+	Render Stitch Preview	Iscrtaj pregled bodova
+	Rows before the needle holes line up again (2: brick, 3–8: tatami)	Redovi prije nego se rupe od igle ponovo poravnaju (2: cigla, 3–8: tatami)
+	Rows of stitches covering the shape, with a pattern.	Redovi bodova koji pokrivaju oblik, s uzorkom.
+	Running Stitch	Ravni bod
+	Satin that follows a shape's strokes from edge to edge: lettering.	Saten koji prati poteze oblika od ruba do ruba: natpisi.
+	Save Border Pattern…	Sačuvaj uzorak ruba…
+	Sew Order	Redoslijed vezenja
+	Sew by Thread	Vezi po koncu
+	Sew in Paint Order	Vezi redoslijedom crtanja
+	Single stitches along the path: outlines and details.	Pojedinačni bodovi duž putanje: obrisi i detalji.
+	Stitch Settings	Postavke boda
+	Stitch:	Bod:
+	Stitches longer than 7 mm snag and loosen with wear. Shorten the stitch length, narrow the satin, or fill a shape that wide.	Bodovi duži od 7 mm se zakače i olabave nošenjem. Skratite dužinu boda, suzite saten ili ispunite tako širok oblik.
+	Stitches sewn first to hold the fabric and lift the top stitches	Bodovi vezeni prvo da drže tkaninu i podignu gornje bodove
+	The border pattern repeated along the path	Uzorak ruba ponovljen duž putanje
+	The design has more needle moves than a file can hold; the rest is left out. Split it into several designs.	Dizajn ima više pokreta igle nego što datoteka može sadržati; ostatak je izostavljen. Podijelite ga na više dizajna.
+	The direction of the fill's rows	Smjer redova ispune
+	The needle goes down at every anchor, as drawn.	Igla se spušta u svakom sidru, kako je nacrtano.
+	The thread colour (unset: the object's stroke or fill colour)	Boja konca (nepostavljena: boja poteza ili ispune objekta)
+	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	Šta je vrsta boda rekla o obliku objekta (satenski oblik bez poteza, motiv presitan, uzorak ruba koji nedostaje…).
+@msg	Extracted border pattern {_1}: a {_2} mm repeat	Izdvojen uzorak ruba {_1}: ponavljanje od {_2} mm
+@msg	Loaded border pattern {_1}	Učitan uzorak ruba {_1}
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	Probni list je skup kalibracijskih uzoraka za vezenje na vašoj mašini i tkanini. Svaki odjeljak je dizajn od 100 × 100 mm; nakon vezenja ovdje označite šta je svaki uzorak pokazao.
+	Another test sheet, for another fabric or machine	Još jedan probni list, za drugu tkaninu ili mašinu
+	Calibration swatches to sew, and a form for what they showed	Kalibracijski uzorci za vezenje i obrazac za ono što su pokazali
+	Click a swatch to select it and add a note.	Kliknite uzorak da ga odaberete i dodate bilješku.
+	Each section as a design of its own (one file per artboard)	Svaki odjeljak kao zaseban dizajn (jedna datoteka po radnoj ploči)
+	Fabric:	Tkanina:
+	Fail	Pao
+	Lettering needs a type face; without one it is left out.	Natpisima je potreban tip slova; bez njega se izostavljaju.
+	Machine:	Mašina:
+	New Test Sheet	Novi probni list
+	New Test Sheet…	Novi probni list…
+	Notes:	Bilješke:
+	Pass	Prošao
+	Sew-Out Test…	Probno vezenje…
+	Test Sheet	Probni list
+	To judge	Za ocjenu
+	Fill Angle	Ugao ispune
+	Fill Density	Gustina ispune
+	Lettering	Natpisi
+	Pull Compensation	Kompenzacija povlačenja
+	Record Sew-Out	Zabilježi probno vezenje
+	Satin Density	Gustina satena
+	Satin Width	Širina satena
+	Sew-Out Test	Probno vezenje
+	Underlay	Podloga
+	Pull Compensation (%):	Kompenzacija povlačenja (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	Dodatna kompenzacija povlačenja, kao udio širine (saten) ili dužine reda (ispuna)
+	Push Compensation:	Kompenzacija guranja:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Veze kolone toliko kraće na krajevima, a ispune poprijeko redova, jer bodovi guraju tkaninu prema van
+	Denim	Teksas
+	Fleece / Towel	Flis / frotir
+	Knit	Pletivo
+	Leather	Koža
+	Load a fabric profile file (.vcfabric)	Učitaj datoteku profila tkanine (.vcfabric)
+	Save the fabric as a file (.vcfabric)	Sačuvaj tkaninu kao datoteku (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	Tkanina za koju je dizajn: njena gustina, kompenzacija i podloga popunjavaju ono što objekti ostavljaju nepostavljeno
+	Woven	Tkano
+	Fabric	Tkanina
+	Fabric Profiles	Profili tkanina
+	Load Fabric…	Učitaj tkaninu…
+	Save Fabric…	Sačuvaj tkaninu…
+	Load Fabric	Učitaj tkaninu
+@msg	Fabric: {_1}	Tkanina: {_1}
+	Keep Covered Rows	Zadrži pokrivene redove
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Vezi redove ove ispune i ispod objekata vezenih kasnije preko nje (obično se izrežu)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Koliko daleko redovi ispune i dalje sežu ispod objekata vezenih kasnije preko nje; ostatak pokrivenih redova se izreže
+	Shortest Stitch:	Najkraći bod:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Ubodi igle bliži od ovoga prethodnom se izostavljaju (tkanina može tražiti duže)
+	Stitches too long to sew	Bodovi predugi za vezenje
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	Bodovi duži od 12 mm ne mogu se vesti jednim pokretom. Dodajte tačke duž putanje ili koristite vrstu boda koja dijeli duge bodove.
+	Satin too narrow or too wide	Saten preuzak ili preširok
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	Saten uži od 1 mm ne pokriva (koristite ravni ili dvostruki bod); preko 10 mm njegovi bodovi su dugi i labavi (umjesto toga ispunite oblik).
+	Too small to sew	Premaleno za vezenje
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	Objekti čiji bodovi staju u kvadrat od 1 mm vezu se kao čvor konca. Povećajte ih ili ih uklonite.
+	Open shape set to fill	Otvoren oblik postavljen za ispunu
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	Ispuna zatvara otvorene putanje ravnom linijom, što možda nije željeni oblik. Zatvorite putanju ili koristite bod duž nje.
+	Too many needle holes in one place	Previše rupa od igle na jednom mjestu
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	Gdje se objekti naslažu, toliko rupa od igle ide u jednu tačku da se tkanina pocijepa ili igla slomi. Izrežite ono što je pokriveno, smanjite gustinu ili uklonite sloj.
+	Many trims or jumps	Mnogo odsijecanja ili skokova
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Svako odsijecanje i skok usporava mašinu i ostavlja krajeve konca. Vezite po koncu, preuredite objekte ili spojite obližnje dijelove.
+	Type too small	Tekst premalen
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Letters' holes (the inside of an o, a or e) under 1 mm across close up on fabric whatever the stitch, so a font with small holes needs larger type. Make the type larger, or use a running stitch.	Natpisi ispod sigurne veličine se zatvaraju i ne mogu se čitati: satenskim natpisima treba 4 mm ili više, ispunjenim 6 mm, ravnim ili dvostrukim bodom 2,5 mm. Rupe slova (unutrašnjost slova o, a ili e) manje od 1 mm zatvaraju se na tkanini bez obzira na bod, pa font s malim rupama traži veći tekst. Povećajte tekst ili koristite ravni bod.
+	Hoop:	Obruč:
+	The hoop the design is sewn in: its sewing field, centred on the design, is checked and shown in Stitch Preview	Obruč u kojem se dizajn veze: njegovo polje vezenja, centrirano na dizajn, provjerava se i prikazuje u Pregledu bodova
+	The design fits the hoop.	Dizajn staje u obruč.
+	The design fits only turned a quarter turn.	Dizajn staje samo okrenut za četvrtinu kruga.
+	The design is bigger than the hoop.	Dizajn je veći od obruča.
+	Hoops	Obruči
+	Hoop	Odaberi obruč
+	Load Hoop…	Učitaj obruč…
+	Save Hoop…	Sačuvaj obruč…
+	Load Hoop	Učitaj obruč
+	Design bigger than the hoop	Dizajn veći od obruča
+	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	Dizajn mora stati u polje vezenja obruča. Odaberite veći obruč, okrenite dizajn za četvrtinu kruga, smanjite ga ili ga podijelite na dizajne vezene jedan za drugim.
+@msg	Hoop: {_1}	Obruč: {_1}
+	Optimize	Optimizuj
+	Group by thread and sew each thread's objects nearest first, cutting jumps and trims	Grupiši po koncu i vezi objekte svakog konca od najbližeg, smanjujući skokove i odsijecanja
+	Optimize Sew Order	Optimizuj redoslijed vezenja
+	Start At:	Počni od:
+	Where the needle starts: the path is entered at its point nearest it	Gdje igla počinje: u putanju se ulazi u njenoj tački najbližoj tome
+	Thread Chart:	Karta konaca:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Svaka boja konca u dizajnu dobija najbliži konac s ove karte. Učitajte karte koje imate pravo koristiti (.vcthreads).
+	Load a thread chart file (.vcthreads)	Učitaj datoteku karte konaca (.vcthreads)
+	Thread Charts	Karte konaca
+	Thread Chart	Odaberi kartu konaca
+	Load Thread Chart…	Učitaj kartu konaca…
+	Save Thread Chart…	Sačuvaj kartu konaca…
+	Remove Thread Chart	Ukloni kartu konaca
+	Match Threads	Uskladi konce
+	Load Thread Chart	Učitaj kartu konaca
+@msg	Thread chart: {_1}	Karta konaca: {_1}
+	Play	Pusti
+	Pause	Pauza
+	Play the sewing stitch by stitch	Pusti vezenje bod po bod
+	Sewing Time	Vrijeme vezenja
+	At the machine speed set below, with time for trims and thread changes	Pri brzini mašine postavljenoj ispod, s vremenom za odsijecanja i promjene konca
+	Machine Speed:	Brzina mašine:
+	Stitches per minute, for the sewing time estimate	Bodova u minuti, za procjenu vremena vezenja
+	Worksheet…	Radni list…
+	A printable sheet for whoever sews the design: picture, size, threads, time and notes	List za štampu za onoga ko veze dizajn: slika, veličina, konci, vrijeme i bilješke
+	Production Worksheet	Proizvodni radni list
+	Puff Foam:	Pjena za reljef:
+	Sew over 3D foam this thick: a stop to place the foam, dense satin with no underlay, capped ends, and a perforation all round so the excess foam tears away	Vezi preko 3D pjene ove debljine: zaustavljanje za postavljanje pjene, gust saten bez podloge, zatvoreni krajevi i perforacija svuda okolo da se višak pjene otkine
+	Puff that won't rise well	Reljef koji se neće dobro podići
+	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	Reljefu treba saten širok od 3 do 10 mm preko pjene: uži se ne podiže, a kod šireg bodovi ne drže pjenu. Ravni objekti vezeni nakon postavljanja pjene prošivaju je: vezite ih prvo.
+	Puff	Reljef
+	Export {format}…	Izvezi {format}…
+	Machine Format:	Format mašine:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) or U01 (Barudan)	Format datoteke koji vaša mašina čita: DST (Tajima i većina mašina), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) ili U01 (Barudan)
+	Hide Travel Under Fills	Sakrij prelaze ispod ispuna
+	Travel that a fill sewn later covers is sewn there as running stitches instead of jumped and trimmed	Prelazi koje pokriva kasnije vezena ispuna vezu se tamo kao ravni bodovi umjesto preskakanja i odsijecanja
+	Stitch Start	Početak boda
+	Extract Motif	Izdvoji motiv
+	For a fill repeating both ways: select an area with two or more repeats each way.	Za ispunu koja se ponavlja u oba smjera: odaberite površinu s dva ili više ponavljanja u svakom smjeru.
+	Stitch Density	Gustina bodova
+	Suggested Fixes	Predložene ispravke
+	Fix	Ispravi
+	Fix…	Ispravi…
+	Needle holes per mm²	Rupa od igle po mm²
+	over {n}: too dense	preko {n}: pregusto
+	No one-click fix: change the design by hand (hover the finding for how).	Nema ispravke jednim klikom: promijenite dizajn ručno (zadržite pokazivač na nalazu da vidite kako).
+	Clears it	Uklanja ga
+	Thins the spot to {n} needle holes; fix again to clear it	Prorjeđuje mjesto na {n} rupa od igle; ponovo ispravite da ga uklonite
+	Auto-Digitize	Automatska digitalizacija
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Odaberite logo (sliku ili grupu oblika ravne boje): prati se i svaka površina se veze u svojoj boji.
+	Stitch Fill Tool	Alat Ispuna bodovima
+	Stitch Fill	Ispuna bodovima
+	Single	Jednostruki
+	Stem	Stabljika
+	Backstitch	Bod unazad
+	Sashiko	Sashiko
+	Run Styles	Stilovi ravnog boda
+	How the line is sewn: single stitches or a hand-stitch look	Kako se linija veze: pojedinačni bodovi ili izgled ručnog boda
+	The space between sashiko dashes	Razmak između sashiko crtica
+	How wide the chain's loops or the stem's slant are	Koliko su široke petlje lančića ili nagib stabljike
+	Slant the stem stitches the other way	Nagni bodove stabljike na drugu stranu
+	Single stitches along the path.	Pojedinačni bodovi duž putanje.
+	Linked loops, like a hand chain stitch.	Povezane petlje, kao ručni lančić.
+	Slanted stitches overlapping by half: a twisted cord.	Kosi bodovi koji se preklapaju do pola: uvijeni gajtan.
+	Each stitch forward, then half a stitch back: a heavier, smooth line.	Svaki bod naprijed, pa pola boda nazad: teža, glatka linija.
+	Bold dashes with gaps between them.	Debele crtice s razmacima između njih.
+	Split:	Dijeljenje:
+	Split Wide Stitches	Podijeli široke bodove
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	Bodovi širi od Dijeli od vezu se u kraćim dijelovima, da se široke kolone ne zakače (do 30 mm širine)
+	Split At:	Dijeli od:
+	Split Length:	Dužina dijeljenja:
+	Split Pattern:	Uzorak dijeljenja:
+	Stagger	Pomaknuto
+	Stitches longer than this are split	Bodovi duži od ovoga se dijele
+	The longest piece of a split stitch	Najduži dio podijeljenog boda
+	How the split points move from stitch to stitch, so they don't line up into a seam	Kako se tačke dijeljenja pomjeraju od boda do boda, da se ne poravnaju u šav
+	Split Satin	Podijeljeni saten
+	Compensation	Kompenzacija
+	Sewn Width:	Vezena širina:
+	Sewn Length:	Vezena dužina:
+	Along the stitches, between the marks	Duž bodova, između oznaka
+	Across the stitches, between the marks	Poprijeko bodova, između oznaka
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: povlačenje {pull} mm + {percent} %, guranje {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: povlačenje {pull} mm + {percent} %
+	Use as Fabric	Koristi kao tkaninu
+	Make the fitted compensation the document's fabric	Postavi prilagođenu kompenzaciju kao tkaninu dokumenta
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	Sačuvaj prilagođenu tkaninu kao datoteku (.vcfabric), za učitavanje u dizajne vezene na ovoj tkanini
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	Kliknite uzorak kompenzacije i unesite koliko mjeri vezen, da prilagodite kompenzaciju.
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	List kompenzacije: vezen bez kompenzacije, za mjerenje koliko se tkanina uvlači u svakom smjeru boda.

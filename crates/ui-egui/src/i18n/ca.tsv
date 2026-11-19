@@ -8352,7 +8352,7 @@ breakText	Glyphs	Glifs
 	Hold the card or ruler against the screen and drag the end of the bar until the bar is exactly as long.	Poseu la targeta o el regle contra la pantalla i arrossegueu l'extrem de la barra fins que la barra faci exactament el mateix.
 	The Bar Measures:	La barra fa:
 	Not calibrated: the system's display scale is assumed.	Sense calibrar: se suposa l'escala de pantalla del sistema.
-	Show the design at its true size on this screen (View › Calibrate Real Size… makes it exact)	Mostra el disseny a la seva mida real en aquesta pantalla (Visualització › Calibra la mida real… la fa exacta)
+	Show the design at its true size on this screen (View › Calibrate Real Size… makes it exact)	Mostra el disseny a la seva mida real en aquesta pantalla (Visualitza › Calibra la mida real… la fa exacta)
 
 # Selection Tools add-on: Select by Link Status (Object › Plug-ins › Selection Tools, the Links panel menu, #5526).
 	Select Linked	Selecciona les enllaçades
@@ -8729,3 +8729,457 @@ breakText	Glyphs	Glifs
 	Round Flow	Flux rodó
 	Chisel Flow	Flux bisellat
 @msg	text.{key} `{v}`: use "{_1}" or "{_2}"	text.{key} `{v}`: utilitzeu "{_1}" o "{_2}"
+# Embroidery: stitches, sewing, hoops, fabrics, threads, fonts and checks. Drafted with AI assistance
+# from the English meaning; not yet reviewed by a native speaker (review welcome).
+@msg	select closed paths or compound paths to make appliqué from	seleccioneu traçats tancats o traçats compostos per fer-ne una aplicació
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	seleccioneu grups d’aplicació o formes tancades (el document no té grups d’aplicació)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	seleccioneu un logotip: una imatge, una imatge vectoritzada o un grup de formes farcides
+@msg	select one logo: group its shapes first	seleccioneu un sol logotip: primer agrupeu-ne les formes
+@msg	the selection has no filled shapes or image to digitize	la selecció no té formes farcides ni cap imatge per digitalitzar
+@msg	select an opened design's manual stitches	seleccioneu els punts manuals d’un disseny obert
+	A satin border sewn over the shape's edges, after the fill	Una vora de setí brodada sobre les vores de la forma, després del farciment
+	After	Després
+	Bean Below:	Punt doble a sota:
+	Before	Abans
+	Between Rails	Entre els rails
+	Border:	Vora:
+	By Thread	Per fil
+	Center Walk	Recorregut central
+	Chain	Cadeneta
+	Choose a stitch to sew the selection with.	Trieu un punt per brodar la selecció.
+	Circles	Cercles
+	Cut the thread after this object	Talla el fil després d’aquest objecte
+	Cut the thread before this object, however close it starts	Talla el fil abans d’aquest objecte, per a prop que comenci
+	Design	Disseny
+	Distance between rows: smaller is denser	Distància entre files: com més petita, més densa
+	Distance between the points of the zigzag	Distància entre les puntes del zig-zag
+	Distance between zigzags: smaller is denser	Distància entre zig-zags: com més petita, més densa
+	Drag a row to move it. Objects sewn later lie on top.	Arrossegueu una fila per moure-la. Els objectes brodats més tard queden a sobre.
+	Each shape (or letter) is stitched by how wide its strokes are.	Cada forma (o lletra) es broda segons l’amplada dels seus traços.
+	Edge Walk	Recorregut de vora
+	Embroidery…	Brodat…
+	Export DST…	Exporta DST…
+	Extract Border Pattern	Extreu el patró de vora
+	Fill Above:	Farciment a sobre:
+	Fill Underlay	Base del farciment
+	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Doneu als traçats ajustos de punt al tauler Brodat; es broden en aquest ordre.
+	Group the sewing order by thread colour, for fewer thread changes	Agrupa l’ordre de brodat per color de fil, per canviar menys de fil
+	Herringbone	Espiga
+	How large one repeat of the motif is	La mida d’una repetició del motiu
+	How long each stitch is	La llargada de cada punt
+	How the needle holes line up from row to row, or a motif carved into the fill	Com s’alineen els forats de l’agulla d’una fila a l’altra, o un motiu gravat al farciment
+	How wide the border is: the pattern scales with it	L’amplada de la vora: el patró s’escala amb ella
+	How wide the zigzag swings	L’amplada de l’oscil·lació del zig-zag
+	Load a border pattern file (.vcborder) into the document	Carrega un fitxer de patró de vora (.vcborder) al document
+	Load…	Carrega…
+	Mirror the pattern across the path	Emmiralla el patró a través del traçat
+	Motif Size:	Mida del motiu:
+	Motif	Motiu
+	No problems found.	No s’ha trobat cap problema.
+	Nothing is stitched yet.	Encara no s’ha brodat res.
+	Object color	Color de l’objecte
+	Only paths, compound paths and type can be stitched.	Només es poden brodar traçats, traçats compostos i text.
+	Only the first 30 are listed.	Només es mostren els 30 primers.
+	Only thread changes and objects set to trim cut the thread.	Només els canvis de fil i els objectes configurats per tallar tallen el fil.
+	Open a document to see its sewing order.	Obriu un document per veure’n l’ordre de brodat.
+	Reset Order	Restableix l’ordre
+	Passes:	Passades:
+	Pattern Border	Vora amb patró
+	Pattern Size	Mida del patró
+	Pattern:	Patró:
+	Pull Compensation:	Compensació d’estirada:
+	Remove Stitches	Elimina els punts
+	Satin Column	Columna de setí
+	Satin Shape	Forma de setí
+	Satin follows the shape's strokes from edge to edge.	El setí segueix els traços de la forma de vora a vora.
+	Save this border pattern as a file (.vcborder)	Desa aquest patró de vora com a fitxer (.vcborder)
+	Scales	Escates
+	Select a straight stretch of a border with two or more repeats, or a shape drawn over it too.	Seleccioneu un tram recte d’una vora amb dues repeticions o més, o també una forma dibuixada a sobre.
+	Select paths to stitch.	Seleccioneu traçats per brodar.
+	Sew Earlier	Broda abans
+	Sew First	Broda primer
+	Sew Last	Broda l’últim
+	Sew Later	Broda després
+	Stitch Moves Under:	Desplaçaments per sota dels punts:
+	Sew Order…	Ordre de brodat…
+	Sew in paint order again (bottom first)	Torna a brodar en l’ordre de pintura (primer el de baix)
+	Sews the column this much wider, since the thread pulls the fabric in	Broda la columna aquesta mida més ampla, perquè el fil estira el teixit cap a dins
+	Some selected objects aren't stitched: choose a stitch for all of them.	Alguns objectes seleccionats no es broden: trieu un punt per a tots.
+	Step through the design as it is sewn, and change the order	Recorreu el disseny tal com es broda i canvieu-ne l’ordre
+	Step through the sewing	Recorre el brodat pas a pas
+	Stitch Length:	Llargada del punt:
+	Stitch Preview	Previsualització dels punts
+	Stitch	Punt
+	Stitches:	Punts:
+	Tatami	Tatami
+	Fill Style:	Estil de farciment:
+	How the area is covered: straight rows, or rings following the outline	Com es cobreix l’àrea: files rectes, o anells que segueixen el contorn
+	Straight rows at the fill's angle, their needle holes staggered.	Files rectes a l’angle del farciment, amb els forats de l’agulla escalonats.
+	Rings following the outline, sewn ring to ring: good for round and flowing shapes.	Anells que segueixen el contorn, brodats d’anell en anell: bo per a formes rodones i fluides.
+	The rings blended into one continuous spiral, with no step between them: best on round shapes.	Els anells fosos en una sola espiral contínua, sense cap salt entre ells: el millor per a formes rodones.
+	The needle goes down at every anchor point, as drawn.	L’agulla baixa a cada punt d’ancoratge, tal com està dibuixat.
+	The object's two paths are the column's edges; lines crossing both set the stitch direction	Els dos traçats de l’objecte són les vores de la columna; les línies que travessen tots dos fixen la direcció del punt
+	The pattern repeats along the path, a whole number of times between corners.	El patró es repeteix al llarg del traçat, un nombre sencer de vegades entre cantonades.
+	The selected objects use different stitches.	Els objectes seleccionats fan servir punts diferents.
+	The selection is no longer stitched	La selecció ja no es broda
+	The selection's stitch and its settings	El punt de la selecció i els seus ajustos
+	The stroke's color for stitches along the path, the fill's for fills	El color del traç per als punts al llarg del traçat, el del farciment per als farciments
+	These stitch settings are from a newer VectorCraft: kept as they are, but not sewn. Choose a stitch to replace them.	Aquests ajustos de punt són d’un VectorCraft més nou: es conserven tal com són, però no es broden. Trieu un punt per substituir-los.
+	Thinner strokes get a bean stitch round their outline	Els traços més prims reben un punt doble al voltant del contorn
+	Thread	Fil
+	Thread:	Fil:
+	Threads:	Fils:
+	Travel	Desplaçament
+	Trim Jumps Over:	Talla els salts de més de:
+	Trim:	Tall:
+	Trims / Jumps:	Talls / salts:
+	Underlay:	Base:
+	Use Object Color	Utilitza el color de l’objecte
+	Use Stroke	Utilitza el traç
+	Waves	Ones
+	Wider strokes are filled, with a satin border; strokes in between get satin	Els traços més amples es farceixen, amb una vora de setí; els intermedis reben setí
+	Zigzag Stitch	Punt de zig-zag
+	the pattern's size	la mida del patró
+	the stroke width	l’amplada del traç
+	A border pattern repeated along the path.	Un patró de vora repetit al llarg del traçat.
+	A dense zigzag column along the path, as wide as the stroke.	Una columna densa de zig-zag al llarg del traçat, tan ampla com el traç.
+	A motif carved into the fill	Un motiu gravat al farciment
+	A stitched object that makes no stitches: empty, or too small for its stitch type.	Un objecte brodat que no fa cap punt: buit, o massa petit per al seu tipus de punt.
+	An open zigzag along the path: decorative lines, appliqué edges.	Un zig-zag obert al llarg del traçat: línies decoratives, vores d’aplicació.
+	Art the stitch can't follow	Art que el punt no pot seguir
+	Bean Stitch	Punt doble
+	Border Patterns	Patrons de vora
+	Change Sew Order	Canvia l’ordre de brodat
+	Check Design	Comprova el disseny
+	Design cut short	Disseny escurçat
+	Distance between zigzags or rows: smaller is denser	Distància entre zig-zags o files: com més petita, més densa
+	Each stitch sewn three times: a bolder line.	Cada punt es broda tres vegades: una línia més gruixuda.
+	Embroidery Info	Informació del brodat
+	Embroidery Setup	Configuració del brodat
+	Embroidery Stitches	Punts de brodat
+	Embroidery	Brodat
+	How many times each stitch is sewn	Quantes vegades es broda cada punt
+	How the object is stitched	Com es broda l’objecte
+	How wide the column, zigzag or border is	L’amplada de la columna, el zig-zag o la vora
+	Load Border Pattern…	Carrega un patró de vora…
+	Embroidery Libraries	Biblioteques de brodat
+	Add to Embroidery Library…	Afegeix a la biblioteca de brodat…
+	Rescan Embroidery Libraries	Torna a explorar les biblioteques de brodat
+	A line of type below the letters, sewn from the font as it is now	Una línia de text sota les lletres, brodada amb la font tal com és ara
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	Una font instal·lada les lletres de la qual van a una capa de plantilla bloquejada per resseguir-les (buit: cap)
+	Ascender:	Ascendent:
+	Cap Height:	Alçada de majúscula:
+	Characters:	Caràcters:
+	Descender:	Descendent:
+	Edit Font…	Edita la font…
+	Font Editor	Editor de fonts
+	Kerning:	Interlletratge:
+	License:	Llicència:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Feu una font de brodat: un tauler per lletra, digitalitzada amb els punts habituals.
+	New Embroidery Font	Font de brodat nova
+	Save Font…	Desa la font…
+	Trace:	Ressegueix:
+	Two letters and font units: negative sets them closer	Dues lletres i unitats de la font: un valor negatiu les apropa
+	Update Sample	Actualitza la mostra
+	x Height:	Alçada de la x:
+	Embroidery Font Info	Informació de la font de brodat
+	Embroidery Font Kerning	Interlletratge de la font de brodat
+	Embroidery Font Sample	Mostra de la font de brodat
+	Embroidery Font Setup	Configuració de la font de brodat
+	New Embroidery Font…	Font de brodat nova…
+	Open Embroidery Font…	Obre una font de brodat…
+	Trace Embroidery Font…	Ressegueix una font de brodat…
+	Load Motif…	Carrega un motiu…
+	Motif Fill	Farciment de motius
+	A small stitched motif repeated across the shape, the fabric showing between.	Un petit motiu brodat repetit per tota la forma, amb el teixit visible entremig.
+	How large one tile of the motif is	La mida d’una rajola del motiu
+	The motif sewn tile by tile across the shape	El motiu brodat rajola a rajola per tota la forma
+	Choose the thread's color	Trieu el color del fil
+	Load a motif file (.vcmotif) into the document	Carrega un fitxer de motiu (.vcmotif) al document
+	Save this motif as a file (.vcmotif)	Desa aquest motiu com a fitxer (.vcmotif)
+	Flowers	Flors
+	Hearts	Cors
+	Motifs	Motius
+	Remove Motif	Elimina el motiu
+	Save Motif…	Desa el motiu…
+	Load Motif	Carrega el motiu
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	S’ha resseguit {family}: {traced} lletres com a columnes de setí, {kept} conservades com a contorns
+	Tracing Font	S’està resseguint la font
+	Tracing {family}	S’està resseguint {family}
+	{done} of {total} letters	{done} de {total} lletres
+	Frame:	Marc:
+	Letters as live type placed by the layout, each still editable, with an optional frame	Lletres com a text editable col·locat per la disposició, cadascuna encara editable, amb un marc opcional
+	Letters:	Lletres:
+	Monogram	Monograma
+	No Frame	Sense marc
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	Col·loca el text de punt seleccionat sobre un arc de cercle que passa per on és: per sobre, o per sota llegint d’esquerra a dreta
+	Satin Ring	Anell de setí
+	Type on an Arc	Text sobre un arc
+	Update Monogram	Actualitza el monograma
+	Monogram…	Monograma…
+	Type on an Arc…	Text sobre un arc…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	L’eina Angle del punt: arrossegueu a través del setí per afegir una línia, arrossegueu l’extrem d’una línia per moure-la, feu Alt+clic en una línia per eliminar-la
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	Línies a través del setí que fixen la direcció dels punts on el travessen, girant gradualment entre elles (les dibuixa l’eina Angle del punt)
+	Stitch Angle Tool	Eina Angle del punt
+	Stitch Angles:	Angles del punt:
+	Stitch Angle	Angle del punt
+	Three Equal	Tres iguals
+	Two Letters	Dues lletres
+	Trace Font	Font per resseguir
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	Digitalitza automàticament les lletres de la font per resseguir, cada traç de ploma una columna de setí (només per a fonts la llicència de les quals permet obres derivades)
+@msg	not a layer	no és una capa
+@msg	the document has no layer	el document no té cap capa
+	More Settings ({n})	Més ajustos ({n})
+@plural	{n} stitch|{n} stitches	{n} punt|{n} punts
+@plural	{n} thread|{n} threads	{n} fil|{n} fils
+@plural	{n} path|{n} paths	{n} traçat|{n} traçats
+@plural	{n} compound path|{n} compound paths	{n} traçat compost|{n} traçats compostos
+@plural	{n} type object|{n} type objects	{n} objecte de text|{n} objectes de text
+@plural	{n} object|{n} objects	{n} objecte|{n} objectes
+@plural	{n} problem|{n} problems	{n} problema|{n} problemes
+	{m} min	{m} min
+	Setup	Configuració
+	Check & Export	Comprova i exporta
+	Sewing	Brodat en curs
+	Not stitched	No brodat
+	Mixed stitches	Punts barrejats
+	The selection: what it is, its size, its stitch and the stitches it sews	La selecció: què és, la mida, el punt i els punts que broda
+	Areas	Àrees
+	Fold the stitches away	Plega els punts
+	Choose another stitch	Trieu un altre punt
+	The selection is open paths: this stitch closes each one with a straight line between its ends.	La selecció són traçats oberts: aquest punt tanca cadascun amb una línia recta entre els seus extrems.
+	From Stitches	A partir dels punts
+	Font Editor…	Editor de fonts…
+	Make an embroidery font, or edit the one in this font document	Feu una font de brodat, o editeu la d’aquest document de font
+	Embroidery Font Editor	Editor de fonts de brodat
+	Embroidery Panel	Tauler Brodat
+	Export Stitch File…	Exporta el fitxer de punts…
+	Fabric and Hoop	Teixit i bastidor
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	Trieu el teixit i el bastidor: el teixit fixa la densitat, la compensació i la base de cada punt que no fixa les seves.
+	Dismiss	Descarta
+	Don't show this again (Setup has both menus)	No ho tornis a mostrar (Configuració té tots dos menús)
+	The stitched design: its stitches, size, threads and sewing time	El disseny brodat: punts, mida, fils i temps de brodat
+	What the design checker found: open its list	El que ha trobat el comprovador de disseny: obre’n la llista
+@msg	Loaded embroidery font {_1}	S’ha carregat la font de brodat {_1}
+	Add Font Folder…	Afegeix una carpeta de fonts…
+	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Una carpeta de fonts de brodat per mostrar aquí, com ara les carpetes de fonts d’Ink/Stitch que hàgiu instal·lat; es llegeixen on són
+	Embroidery Font Folders…	Carpetes de fonts de brodat…
+	Import Ink/Stitch Font…	Importa una font d’Ink/Stitch…
+	Import Ink/Stitch Font	Importa una font d’Ink/Stitch
+@msg	font.json is over {_1} MB	font.json supera {_1} MB
+@msg	{_1} embroidery fonts found	S’han trobat {_1} fonts de brodat
+	Embroidery Font:	Font de brodat:
+	Type only: sew the letters from this embroidery font's stitch objects instead of the outline font	Només text: broda les lletres amb els objectes de punts d’aquesta font de brodat en lloc de la font de contorn
+	Embroidery Fonts	Fonts de brodat
+	Load Embroidery Font…	Carrega una font de brodat…
+	Save Embroidery Font…	Desa la font de brodat…
+	Remove Embroidery Font	Elimina la font de brodat
+	Load Embroidery Font	Carrega la font de brodat
+	Appliqué Cut File…	Fitxer de tall d’aplicació…
+	Cut File…	Fitxer de tall…
+	The appliqué pieces' outlines packed onto cutter mats, in a new document to export as SVG or DXF	Els contorns de les peces d’aplicació col·locats sobre estores de tall, en un document nou per exportar com a SVG o DXF
+	Appliqué	Aplicació
+	Make each selected closed shape an appliqué: placement line, stop, tack-down, stop, cover	Converteix cada forma tancada seleccionada en una aplicació: línia de col·locació, aturada, fixació, aturada, cobertura
+	Stop Before:	Atura abans:
+	Place Fabric	Col·loca el teixit
+	Trim Fabric	Retalla el teixit
+	Stop the machine before this object: to change something by hand, place appliqué fabric, or trim it	Atura la màquina abans d’aquest objecte: per canviar alguna cosa a mà, col·locar el teixit d’aplicació o retallar-lo
+	Save a copy in your embroidery library, for any design	Deseu-ne una còpia a la vostra biblioteca de brodat, per a qualsevol disseny
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	La vostra biblioteca de brodat: patrons de vora, teixits, bastidors i cartes de fils per a qualsevol disseny
+@msg	no embroidery library folder here	aquí no hi ha cap carpeta de biblioteca de brodat
+@msg	Added {_1} to the embroidery library	S’ha afegit {_1} a la biblioteca de brodat
+@msg	nothing to add	no hi ha res per afegir
+	Long stitches	Punts llargs
+	Makes no stitches	No fa cap punt
+	Manual Stitch	Punt manual
+	Motif:	Motiu:
+	Not sewn as set	No es broda com està configurat
+	Objects that are stitched but can't be sewn (not a path, compound path or type; settings from a newer VectorCraft), or are sewn whole although a mask hides part of them.	Objectes amb punt que no es poden brodar (no són un traçat, un traçat compost ni text; ajustos d’un VectorCraft més nou), o que es broden sencers tot i que una màscara n’amaga una part.
+	Picks a stitch for each shape (each letter) by how wide its strokes are.	Tria un punt per a cada forma (cada lletra) segons l’amplada dels seus traços.
+	Remove Border Pattern	Elimina el patró de vora
+	Render Stitch Preview	Renderitza la previsualització dels punts
+	Rows before the needle holes line up again (2: brick, 3–8: tatami)	Files abans que els forats de l’agulla tornin a alinear-se (2: maó, 3–8: tatami)
+	Rows of stitches covering the shape, with a pattern.	Files de punts que cobreixen la forma, amb un patró.
+	Running Stitch	Punt corregut
+	Satin that follows a shape's strokes from edge to edge: lettering.	Setí que segueix els traços d’una forma de vora a vora: lletres.
+	Save Border Pattern…	Desa el patró de vora…
+	Sew Order	Ordre de brodat
+	Sew by Thread	Broda per fil
+	Sew in Paint Order	Broda en l’ordre de pintura
+	Single stitches along the path: outlines and details.	Punts senzills al llarg del traçat: contorns i detalls.
+	Stitch Settings	Ajustos del punt
+	Stitch:	Punt:
+	Stitches longer than 7 mm snag and loosen with wear. Shorten the stitch length, narrow the satin, or fill a shape that wide.	Els punts de més de 7 mm s’enganxen i s’afluixen amb l’ús. Escurceu la llargada del punt, estreteu el setí o farciu una forma tan ampla.
+	Stitches sewn first to hold the fabric and lift the top stitches	Punts brodats primer per subjectar el teixit i aixecar els punts de sobre
+	The border pattern repeated along the path	El patró de vora repetit al llarg del traçat
+	The design has more needle moves than a file can hold; the rest is left out. Split it into several designs.	El disseny té més moviments d’agulla dels que pot contenir un fitxer; la resta queda fora. Dividiu-lo en diversos dissenys.
+	The direction of the fill's rows	La direcció de les files del farciment
+	The needle goes down at every anchor, as drawn.	L’agulla baixa a cada ancoratge, tal com està dibuixat.
+	The thread colour (unset: the object's stroke or fill colour)	El color del fil (sense definir: el color del traç o del farciment de l’objecte)
+	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	El que el tipus de punt ha dit de la forma de l’objecte (una forma de setí sense traços, un motiu massa fi, un patró de vora que falta…).
+@msg	Extracted border pattern {_1}: a {_2} mm repeat	S’ha extret el patró de vora {_1}: una repetició de {_2} mm
+@msg	Loaded border pattern {_1}	S’ha carregat el patró de vora {_1}
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	Un full de prova és un conjunt de mostres de calibratge per brodar a la vostra màquina i teixit. Cada secció és un disseny de 100 × 100 mm; després de brodar, marqueu aquí què ha mostrat cada mostra.
+	Another test sheet, for another fabric or machine	Un altre full de prova, per a un altre teixit o màquina
+	Calibration swatches to sew, and a form for what they showed	Mostres de calibratge per brodar, i un formulari per al que han mostrat
+	Click a swatch to select it and add a note.	Feu clic en una mostra per seleccionar-la i afegir-hi una nota.
+	Each section as a design of its own (one file per artboard)	Cada secció com a disseny propi (un fitxer per tauler)
+	Fabric:	Teixit:
+	Fail	Suspès
+	Lettering needs a type face; without one it is left out.	Les lletres necessiten un tipus de lletra; sense, queden fora.
+	Machine:	Màquina:
+	New Test Sheet	Full de prova nou
+	New Test Sheet…	Full de prova nou…
+	Notes:	Notes:
+	Pass	Aprovat
+	Sew-Out Test…	Prova de brodat…
+	Test Sheet	Full de prova
+	To judge	Per valorar
+	Fill Angle	Angle del farciment
+	Fill Density	Densitat del farciment
+	Lettering	Lletres
+	Pull Compensation	Compensació d’estirada
+	Record Sew-Out	Registra la prova de brodat
+	Satin Density	Densitat del setí
+	Satin Width	Amplada del setí
+	Sew-Out Test	Prova de brodat
+	Underlay	Base
+	Pull Compensation (%):	Compensació d’estirada (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	Més compensació d’estirada, com a part de l’amplada (setí) o de la llargada de la fila (farciment)
+	Push Compensation:	Compensació d’empenta:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Broda les columnes aquesta mida més curtes als extrems, i els farciments a través de les files, perquè els punts empenyen el teixit cap a fora
+	Denim	Texà
+	Fleece / Towel	Folre polar / tovallola
+	Knit	Punt de malla
+	Leather	Pell
+	Load a fabric profile file (.vcfabric)	Carrega un fitxer de perfil de teixit (.vcfabric)
+	Save the fabric as a file (.vcfabric)	Desa el teixit com a fitxer (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	El teixit per al qual és el disseny: la seva densitat, compensació i base completen el que els objectes deixen sense definir
+	Woven	Teixit pla
+	Fabric	Teixit
+	Fabric Profiles	Perfils de teixit
+	Load Fabric…	Carrega un teixit…
+	Save Fabric…	Desa el teixit…
+	Load Fabric	Carrega el teixit
+@msg	Fabric: {_1}	Teixit: {_1}
+	Keep Covered Rows	Conserva les files cobertes
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Broda també les files d’aquest farciment sota els objectes brodats més tard a sobre (normalment es retallen)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Fins on arriben encara les files d’un farciment sota els objectes brodats més tard a sobre; la resta de files cobertes es retalla
+	Shortest Stitch:	Punt més curt:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Els punts d’agulla més a prop que això de l’anterior s’ometen (el teixit en pot demanar de més llargs)
+	Stitches too long to sew	Punts massa llargs per brodar
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	Els punts de més de 12 mm no es poden brodar d’un sol moviment. Afegiu punts al llarg del traçat, o feu servir un tipus de punt que divideixi els punts llargs.
+	Satin too narrow or too wide	Setí massa estret o massa ample
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	El setí de menys d’1 mm d’amplada no cobreix (feu servir un punt corregut o doble); per sobre de 10 mm els punts són llargs i fluixos (farciu la forma en lloc d’això).
+	Too small to sew	Massa petit per brodar
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	Els objectes els punts dels quals caben en un quadre d’1 mm es broden com un nus de fil. Feu-los més grans o elimineu-los.
+	Open shape set to fill	Forma oberta configurada per farcir
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	Un farciment tanca els traçats oberts amb una línia recta, que potser no és la forma volguda. Tanqueu el traçat, o feu servir un punt al llarg d’ell.
+	Too many needle holes in one place	Massa forats d’agulla en un sol lloc
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	On els objectes s’apilen, tants forats d’agulla van a un sol punt que el teixit s’esquinça o l’agulla es trenca. Retalleu el que queda cobert, baixeu la densitat o elimineu una capa.
+	Many trims or jumps	Molts talls o salts
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Cada tall i salt alenteix la màquina i deixa caps de fil. Brodeu per fil, reordeneu els objectes o uniu les parts properes.
+	Type too small	Text massa petit
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Letters' holes (the inside of an o, a or e) under 1 mm across close up on fabric whatever the stitch, so a font with small holes needs larger type. Make the type larger, or use a running stitch.	Les lletres per sota de la mida segura es tanquen i no es poden llegir: les lletres de setí necessiten 4 mm o més, les farcides 6 mm, les de punt corregut o doble 2,5 mm. Els forats de les lletres (l’interior d’una o, a o e) de menys d’1 mm es tanquen al teixit sigui quin sigui el punt, així que una font amb forats petits necessita un text més gran. Feu el text més gran, o feu servir un punt corregut.
+	Hoop:	Bastidor:
+	The hoop the design is sewn in: its sewing field, centred on the design, is checked and shown in Stitch Preview	El bastidor on es broda el disseny: la seva àrea de brodat, centrada al disseny, es comprova i es mostra a la Previsualització dels punts
+	The design fits the hoop.	El disseny cap al bastidor.
+	The design fits only turned a quarter turn.	El disseny només hi cap girat un quart de volta.
+	The design is bigger than the hoop.	El disseny és més gran que el bastidor.
+	Hoops	Bastidors
+	Hoop	Tria el bastidor
+	Load Hoop…	Carrega un bastidor…
+	Save Hoop…	Desa el bastidor…
+	Load Hoop	Carrega el bastidor
+	Design bigger than the hoop	Disseny més gran que el bastidor
+	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	El disseny ha de cabre a l’àrea de brodat del bastidor. Trieu un bastidor més gran, gireu el disseny un quart de volta, reduïu-lo o dividiu-lo en dissenys brodats l’un després de l’altre.
+@msg	Hoop: {_1}	Bastidor: {_1}
+	Optimize	Optimitza
+	Group by thread and sew each thread's objects nearest first, cutting jumps and trims	Agrupa per fil i broda els objectes de cada fil del més proper al més llunyà, reduint salts i talls
+	Optimize Sew Order	Optimitza l’ordre de brodat
+	Start At:	Comença a:
+	Where the needle starts: the path is entered at its point nearest it	On comença l’agulla: s’entra al traçat pel punt més proper
+	Thread Chart:	Carta de fils:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Cada color de fil del disseny rep el fil més proper d’aquesta carta. Carregueu cartes que tingueu dret a fer servir (.vcthreads).
+	Load a thread chart file (.vcthreads)	Carrega un fitxer de carta de fils (.vcthreads)
+	Thread Charts	Cartes de fils
+	Thread Chart	Tria la carta de fils
+	Load Thread Chart…	Carrega una carta de fils…
+	Save Thread Chart…	Desa la carta de fils…
+	Remove Thread Chart	Elimina la carta de fils
+	Match Threads	Fes coincidir els fils
+	Load Thread Chart	Carrega la carta de fils
+@msg	Thread chart: {_1}	Carta de fils: {_1}
+	Play	Reprodueix
+	Pause	Pausa
+	Play the sewing stitch by stitch	Reprodueix el brodat punt a punt
+	Sewing Time	Temps de brodat
+	At the machine speed set below, with time for trims and thread changes	A la velocitat de màquina indicada a sota, amb temps per a talls i canvis de fil
+	Machine Speed:	Velocitat de la màquina:
+	Stitches per minute, for the sewing time estimate	Punts per minut, per estimar el temps de brodat
+	Worksheet…	Full de treball…
+	A printable sheet for whoever sews the design: picture, size, threads, time and notes	Un full imprimible per a qui broda el disseny: imatge, mida, fils, temps i notes
+	Production Worksheet	Full de producció
+	Puff Foam:	Escuma de relleu:
+	Sew over 3D foam this thick: a stop to place the foam, dense satin with no underlay, capped ends, and a perforation all round so the excess foam tears away	Broda sobre escuma 3D d’aquest gruix: una aturada per col·locar l’escuma, setí dens sense base, extrems tapats i una perforació tot al voltant perquè l’escuma sobrant s’arrenqui
+	Puff that won't rise well	Relleu que no s’aixecarà bé
+	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	El relleu necessita setí de 3 a 10 mm d’amplada sobre l’escuma: més estret no s’aixeca, més ample els punts no subjecten l’escuma. Els objectes plans brodats després de posar l’escuma la travessen: brodeu-los primer.
+	Puff	Relleu
+	Export {format}…	Exporta {format}…
+	Machine Format:	Format de la màquina:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) or U01 (Barudan)	El format de fitxer que llegeix la vostra màquina: DST (Tajima i la majoria de màquines), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) o U01 (Barudan)
+	Hide Travel Under Fills	Amaga els desplaçaments sota els farciments
+	Travel that a fill sewn later covers is sewn there as running stitches instead of jumped and trimmed	Els desplaçaments que cobreix un farciment brodat més tard es broden allà com a punts correguts en lloc de saltar-los i tallar-los
+	Stitch Start	Inici del punt
+	Extract Motif	Extreu el motiu
+	For a fill repeating both ways: select an area with two or more repeats each way.	Per a un farciment que es repeteix en les dues direccions: seleccioneu una àrea amb dues repeticions o més en cada direcció.
+	Stitch Density	Densitat de punts
+	Suggested Fixes	Correccions suggerides
+	Fix	Corregeix
+	Fix…	Corregeix…
+	Needle holes per mm²	Forats d’agulla per mm²
+	over {n}: too dense	més de {n}: massa dens
+	No one-click fix: change the design by hand (hover the finding for how).	Cap correcció d’un sol clic: canvieu el disseny a mà (passeu per sobre de la troballa per veure com).
+	Clears it	L’elimina
+	Thins the spot to {n} needle holes; fix again to clear it	Aclareix el punt fins a {n} forats d’agulla; torneu a corregir per eliminar-lo
+	Auto-Digitize	Digitalització automàtica
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	Seleccioneu un logotip (una imatge o un grup de formes de color pla): es vectoritza i cada àrea es broda del seu color.
+	Stitch Fill Tool	Eina Farciment de punts
+	Stitch Fill	Farciment de punts
+	Single	Senzill
+	Stem	Tija
+	Backstitch	Punt enrere
+	Sashiko	Sashiko
+	Run Styles	Estils de punt corregut
+	How the line is sewn: single stitches or a hand-stitch look	Com es broda la línia: punts senzills o aspecte de punt a mà
+	The space between sashiko dashes	L’espai entre els traços del sashiko
+	How wide the chain's loops or the stem's slant are	L’amplada de les baules de la cadeneta o de la inclinació de la tija
+	Slant the stem stitches the other way	Inclina els punts de tija cap a l’altre costat
+	Single stitches along the path.	Punts senzills al llarg del traçat.
+	Linked loops, like a hand chain stitch.	Baules enllaçades, com un punt de cadeneta a mà.
+	Slanted stitches overlapping by half: a twisted cord.	Punts inclinats que se superposen a la meitat: un cordó retorçat.
+	Each stitch forward, then half a stitch back: a heavier, smooth line.	Cada punt endavant i després mig punt enrere: una línia més gruixuda i llisa.
+	Bold dashes with gaps between them.	Traços gruixuts amb espais entremig.
+	Split:	Divisió:
+	Split Wide Stitches	Divideix els punts amples
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	Els punts més amples que Divideix a partir de es broden en trossos més curts, perquè les columnes amples no s’enganxin (fins a 30 mm d’amplada)
+	Split At:	Divideix a partir de:
+	Split Length:	Llargada de divisió:
+	Split Pattern:	Patró de divisió:
+	Stagger	Escalonat
+	Stitches longer than this are split	Els punts més llargs que això es divideixen
+	The longest piece of a split stitch	El tros més llarg d’un punt dividit
+	How the split points move from stitch to stitch, so they don't line up into a seam	Com es mouen els punts de divisió d’un punt a l’altre, perquè no s’alineïn formant una costura
+	Split Satin	Setí dividit
+	Compensation	Compensació
+	Sewn Width:	Amplada brodada:
+	Sewn Length:	Llargada brodada:
+	Along the stitches, between the marks	Al llarg dels punts, entre les marques
+	Across the stitches, between the marks	A través dels punts, entre les marques
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: estirada {pull} mm + {percent} %, empenta {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: estirada {pull} mm + {percent} %
+	Use as Fabric	Utilitza com a teixit
+	Make the fitted compensation the document's fabric	Fes que la compensació ajustada sigui el teixit del document
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	Desa el teixit ajustat com a fitxer (.vcfabric), per carregar-lo en dissenys brodats sobre aquest teixit
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	Feu clic en una mostra de compensació i introduïu la mida brodada, per ajustar la compensació.
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Full de compensació: brodat sense compensació, per mesurar quant s’encongeix el teixit en cada direcció de punt.

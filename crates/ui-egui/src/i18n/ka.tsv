@@ -10878,3 +10878,442 @@ font-script	Japanese	იაპონური
 	Pulse Stroke	პულსირებადი მონასმი
 	Round Flow	მრგვალი ნაკადი
 	Chisel Flow	დახრილი ნაკადი
+# Embroidery: stitches, sewing, hoops, fabrics, threads, fonts and checks. Drafted with AI assistance
+# from the English meaning; not yet reviewed by a native speaker (review welcome).
+@msg	select closed paths or compound paths to make appliqué from	აპლიკაციის შესაქმნელად მონიშნეთ შეკრული ან შედგენილი ტრაექტორიები
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	მონიშნეთ აპლიკაციის ჯგუფები ან შეკრული ფიგურები (დოკუმენტს აპლიკაციის ჯგუფები არ აქვს)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	მონიშნეთ ლოგო: გამოსახულება, ვექტორიზებული გამოსახულება ან შევსებული ფიგურების ჯგუფი
+@msg	select one logo: group its shapes first	მონიშნეთ ერთი ლოგო: ჯერ დააჯგუფეთ მისი ფიგურები
+@msg	the selection has no filled shapes or image to digitize	მონიშნულში არ არის შევსებული ფიგურები ან გამოსახულება დიგიტალიზაციისთვის
+@msg	select an opened design's manual stitches	მონიშნეთ გახსნილი დიზაინის ხელით დასმული ნაკერები
+	A satin border sewn over the shape's edges, after the fill	ატლასის კიდე, ნაქარგი ფიგურის კიდეებზე, შევსების შემდეგ
+	After	შემდეგ
+	Bean Below:	ორმაგი ნაკერი ქვემოთ:
+	Before	მანამდე
+	Between Rails	რელსებს შორის
+	Border:	კიდე:
+	By Thread	ძაფის მიხედვით
+	Center Walk	ცენტრალური გავლა
+	Chain	ჯაჭვი
+	Choose a stitch to sew the selection with.	აირჩიეთ ნაკერი მონიშნულის ქარგვისთვის.
+	Circles	წრეები
+	Cut the thread after this object	ძაფის გაჭრა ამ ობიექტის შემდეგ
+	Cut the thread before this object, however close it starts	ძაფის გაჭრა ამ ობიექტამდე, რაც არ უნდა ახლოს იწყებოდეს
+	Design	დიზაინი
+	Distance between rows: smaller is denser	მანძილი რიგებს შორის: ნაკლები უფრო მჭიდროა
+	Distance between the points of the zigzag	მანძილი ზიგზაგის წვეროებს შორის
+	Distance between zigzags: smaller is denser	მანძილი ზიგზაგებს შორის: ნაკლები უფრო მჭიდროა
+	Drag a row to move it. Objects sewn later lie on top.	გადასატანად გადაათრიეთ რიგი. მოგვიანებით ნაქარგი ობიექტები ზემოთ დევს.
+	Each shape (or letter) is stitched by how wide its strokes are.	თითოეული ფიგურა (ან ასო) იქარგება მისი კონტურების სიგანის მიხედვით.
+	Edge Walk	კიდის გავლა
+	Embroidery…	ქარგვა…
+	Export DST…	DST-ად ექსპორტირება…
+	Extract Border Pattern	კიდის ორნამენტის ამოღება
+	Fill Above:	შევსება ზემოთ:
+	Fill Underlay	შევსების საფენი
+	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	ტრაექტორიებს მიეცით ნაკერის პარამეტრები ქარგვის პანელში; ისინი ამ რიგით იქარგება.
+	Group the sewing order by thread colour, for fewer thread changes	ქარგვის რიგის დაჯგუფება ძაფის ფერის მიხედვით, ძაფის ნაკლები გამოცვლისთვის
+	Herringbone	ნაძვისებრი
+	How large one repeat of the motif is	მოტივის ერთი გამეორების ზომა
+	How long each stitch is	თითოეული ნაკერის სიგრძე
+	How the needle holes line up from row to row, or a motif carved into the fill	როგორ ლაგდება ნემსის ნახვრეტები რიგიდან რიგამდე, ან შევსებაში ამოკვეთილი მოტივი
+	How wide the border is: the pattern scales with it	კიდის სიგანე: ორნამენტი მასთან ერთად მასშტაბირდება
+	How wide the zigzag swings	ზიგზაგის რხევის სიგანე
+	Load a border pattern file (.vcborder) into the document	კიდის ორნამენტის ფაილის (.vcborder) ჩატვირთვა დოკუმენტში
+	Load…	ჩატვირთვა…
+	Mirror the pattern across the path	ორნამენტის სარკისებრი არეკვლა ტრაექტორიის გასწვრივ
+	Motif Size:	მოტივის ზომა:
+	Motif	მოტივი
+	No problems found.	პრობლემები ვერ მოიძებნა.
+	Nothing is stitched yet.	ჯერ არაფერი დაქარგულა.
+	Object color	ობიექტის ფერი
+	Only paths, compound paths and type can be stitched.	ქარგვა შესაძლებელია მხოლოდ ტრაექტორიების, შედგენილი ტრაექტორიების და ტექსტის.
+	Only the first 30 are listed.	ნაჩვენებია მხოლოდ პირველი 30.
+	Only thread changes and objects set to trim cut the thread.	ძაფს ჭრის მხოლოდ ძაფის გამოცვლა და გაჭრაზე დაყენებული ობიექტები.
+	Open a document to see its sewing order.	ქარგვის რიგის სანახავად გახსენით დოკუმენტი.
+	Reset Order	რიგის ჩამოყრა
+	Passes:	გავლები:
+	Pattern Border	ორნამენტული კიდე
+	Pattern Size	ორნამენტის ზომა
+	Pattern:	ორნამენტი:
+	Pull Compensation:	შეკუმშვის კომპენსაცია:
+	Remove Stitches	ნაკერების წაშლა
+	Satin Column	ატლასის სვეტი
+	Satin Shape	ატლასის ფიგურა
+	Satin follows the shape's strokes from edge to edge.	ატლასი მიჰყვება ფიგურის კონტურებს კიდიდან კიდემდე.
+	Save this border pattern as a file (.vcborder)	ამ კიდის ორნამენტის ფაილად შენახვა (.vcborder)
+	Scales	ქერცლები
+	Select a straight stretch of a border with two or more repeats, or a shape drawn over it too.	მონიშნეთ კიდის სწორი მონაკვეთი ორი ან მეტი გამეორებით, ან ასევე მასზე დახატული ფიგურა.
+	Select paths to stitch.	მონიშნეთ დასაქარგი ტრაექტორიები.
+	Sew Earlier	უფრო ადრე ქარგვა
+	Sew First	პირველად ქარგვა
+	Sew Last	ბოლოს ქარგვა
+	Sew Later	უფრო გვიან ქარგვა
+	Stitch Moves Under:	გადაადგილება ნაკერების ქვეშ:
+	Sew Order…	ქარგვის რიგი…
+	Sew in paint order again (bottom first)	ხელახლა ქარგვა ხატვის რიგით (ქვედა პირველი)
+	Sews the column this much wider, since the thread pulls the fabric in	სვეტს ამდენით აფართოებს, რადგან ძაფი ქსოვილს შიგნით ქაჩავს
+	Some selected objects aren't stitched: choose a stitch for all of them.	ზოგი მონიშნული ობიექტი არ იქარგება: აირჩიეთ ნაკერი ყველასთვის.
+	Step through the design as it is sewn, and change the order	დიზაინის ნაბიჯ-ნაბიჯ გავლა ისე, როგორც იქარგება, და რიგის შეცვლა
+	Step through the sewing	ქარგვის ნაბიჯ-ნაბიჯ გავლა
+	Stitch Length:	ნაკერის სიგრძე:
+	Stitch Preview	ნაკერების გადახედვა
+	Stitch	ნაკერი
+	Stitches:	ნაკერები:
+	Tatami	ტატამი
+	Fill Style:	შევსების სტილი:
+	How the area is covered: straight rows, or rings following the outline	როგორ იფარება არე: სწორი რიგებით, ან კონტურის მიმყოლი რგოლებით
+	Straight rows at the fill's angle, their needle holes staggered.	სწორი რიგები შევსების კუთხით, ნემსის ნახვრეტები წანაცვლებულია.
+	Rings following the outline, sewn ring to ring: good for round and flowing shapes.	კონტურის მიმყოლი რგოლები, ნაქარგი რგოლიდან რგოლამდე: კარგია მრგვალი და ტალღოვანი ფიგურებისთვის.
+	The rings blended into one continuous spiral, with no step between them: best on round shapes.	რგოლები შერწყმულია ერთ უწყვეტ სპირალად, მათ შორის საფეხურის გარეშე: საუკეთესოა მრგვალ ფიგურებზე.
+	The needle goes down at every anchor point, as drawn.	ნემსი ეშვება ყოველ საყრდენ წერტილში, როგორც დახატულია.
+	The object's two paths are the column's edges; lines crossing both set the stitch direction	ობიექტის ორი ტრაექტორია სვეტის კიდეებია; ორივეს გადამკვეთი ხაზები ნაკერის მიმართულებას ადგენს
+	The pattern repeats along the path, a whole number of times between corners.	ორნამენტი მეორდება ტრაექტორიის გასწვრივ, კუთხეებს შორის მთელ რიცხვჯერ.
+	The selected objects use different stitches.	მონიშნული ობიექტები სხვადასხვა ნაკერს იყენებს.
+	The selection is no longer stitched	მონიშნული აღარ იქარგება
+	The selection's stitch and its settings	მონიშნულის ნაკერი და მისი პარამეტრები
+	The stroke's color for stitches along the path, the fill's for fills	კონტურის ფერი ტრაექტორიის გასწვრივ ნაკერებისთვის, შევსების ფერი — შევსებებისთვის
+	These stitch settings are from a newer VectorCraft: kept as they are, but not sewn. Choose a stitch to replace them.	ეს ნაკერის პარამეტრები VectorCraft-ის უფრო ახალი ვერსიიდანაა: შენახულია უცვლელად, მაგრამ არ იქარგება. ჩასანაცვლებლად აირჩიეთ ნაკერი.
+	Thinner strokes get a bean stitch round their outline	უფრო თხელი კონტურები კონტურის გარშემო ორმაგ ნაკერს იღებს
+	Thread	ძაფი
+	Thread:	ძაფი:
+	Threads:	ძაფები:
+	Travel	გადაადგილება
+	Trim Jumps Over:	ნახტომების გაჭრა, თუ გრძელია:
+	Trim:	გაჭრა:
+	Trims / Jumps:	გაჭრები / ნახტომები:
+	Underlay:	საფენი:
+	Use Object Color	ობიექტის ფერის გამოყენება
+	Use Stroke	კონტურის გამოყენება
+	Waves	ტალღები
+	Wider strokes are filled, with a satin border; strokes in between get satin	განიერი კონტურები ივსება ატლასის კიდით; შუალედური კონტურები ატლასს იღებს
+	Zigzag Stitch	ზიგზაგ ნაკერი
+	the pattern's size	ორნამენტის ზომა
+	the stroke width	კონტურის სისქე
+	A border pattern repeated along the path.	ტრაექტორიის გასწვრივ გამეორებული კიდის ორნამენტი.
+	A dense zigzag column along the path, as wide as the stroke.	მჭიდრო ზიგზაგის სვეტი ტრაექტორიის გასწვრივ, კონტურის სიგანისა.
+	A motif carved into the fill	შევსებაში ამოკვეთილი მოტივი
+	A stitched object that makes no stitches: empty, or too small for its stitch type.	ნაქარგი ობიექტი, რომელიც ნაკერებს არ ქმნის: ცარიელია ან ზედმეტად პატარაა თავისი ნაკერის ტიპისთვის.
+	An open zigzag along the path: decorative lines, appliqué edges.	ღია ზიგზაგი ტრაექტორიის გასწვრივ: დეკორატიული ხაზები, აპლიკაციის კიდეები.
+	Art the stitch can't follow	ნახატი, რომელსაც ნაკერი ვერ მიჰყვება
+	Bean Stitch	ორმაგი ნაკერი
+	Border Patterns	კიდის ორნამენტები
+	Change Sew Order	ქარგვის რიგის შეცვლა
+	Check Design	დიზაინის შემოწმება
+	Design cut short	დიზაინი შემოკლდა
+	Distance between zigzags or rows: smaller is denser	მანძილი ზიგზაგებს ან რიგებს შორის: ნაკლები უფრო მჭიდროა
+	Each stitch sewn three times: a bolder line.	თითოეული ნაკერი სამჯერ იქარგება: უფრო მსხვილი ხაზი.
+	Embroidery Info	ქარგვის ინფორმაცია
+	Embroidery Setup	ქარგვის პარამეტრები
+	Embroidery Stitches	ქარგვის ნაკერები
+	Embroidery	ქარგვა
+	How many times each stitch is sewn	რამდენჯერ იქარგება თითოეული ნაკერი
+	How the object is stitched	როგორ იქარგება ობიექტი
+	How wide the column, zigzag or border is	სვეტის, ზიგზაგის ან კიდის სიგანე
+	Load Border Pattern…	კიდის ორნამენტის ჩატვირთვა…
+	Embroidery Libraries	ქარგვის ბიბლიოთეკები
+	Add to Embroidery Library…	ქარგვის ბიბლიოთეკაში დამატება…
+	Rescan Embroidery Libraries	ქარგვის ბიბლიოთეკების ხელახლა სკანირება
+	A line of type below the letters, sewn from the font as it is now	ტექსტის სტრიქონი ასოების ქვემოთ, ნაქარგი შრიფტით მისი ამჟამინდელი სახით
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	დაინსტალირებული შრიფტი, რომლის ასოებიც გადასახატად ჩაკეტილ შაბლონის შრეზე ჩაიდება (ცარიელი: არცერთი)
+	Ascender:	ზედა გამონაშვერი:
+	Cap Height:	მთავრული ასოს სიმაღლე:
+	Characters:	სიმბოლოები:
+	Descender:	ქვედა გამონაშვერი:
+	Edit Font…	შრიფტის რედაქტირება…
+	Font Editor	შრიფტის რედაქტორი
+	Kerning:	კერნინგი:
+	License:	ლიცენზია:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	ქარგვის შრიფტის შექმნა: თითო სამუშაო დაფა ყოველ ასოზე, ჩვეულებრივი ნაკერებით დიგიტალიზებული.
+	New Embroidery Font	ახალი ქარგვის შრიფტი
+	Save Font…	შრიფტის შენახვა…
+	Trace:	გადახატვა:
+	Two letters and font units: negative sets them closer	ორი ასო და შრიფტის ერთეულები: უარყოფითი მნიშვნელობა მათ აახლოებს
+	Update Sample	ნიმუშის განახლება
+	x Height:	x-ის სიმაღლე:
+	Embroidery Font Info	ქარგვის შრიფტის ინფორმაცია
+	Embroidery Font Kerning	ქარგვის შრიფტის კერნინგი
+	Embroidery Font Sample	ქარგვის შრიფტის ნიმუში
+	Embroidery Font Setup	ქარგვის შრიფტის პარამეტრები
+	New Embroidery Font…	ახალი ქარგვის შრიფტი…
+	Open Embroidery Font…	ქარგვის შრიფტის გახსნა…
+	Trace Embroidery Font…	ქარგვის შრიფტის გადახატვა…
+	Load Motif…	მოტივის ჩატვირთვა…
+	Motif Fill	მოტივებით შევსება
+	A small stitched motif repeated across the shape, the fabric showing between.	პატარა ნაქარგი მოტივი, გამეორებული მთელ ფიგურაზე, შუაში ქსოვილი ჩანს.
+	How large one tile of the motif is	მოტივის ერთი ფილის ზომა
+	The motif sewn tile by tile across the shape	მოტივი, ნაქარგი ფილა-ფილა მთელ ფიგურაზე
+	Choose the thread's color	აირჩიეთ ძაფის ფერი
+	Load a motif file (.vcmotif) into the document	მოტივის ფაილის (.vcmotif) ჩატვირთვა დოკუმენტში
+	Save this motif as a file (.vcmotif)	ამ მოტივის ფაილად შენახვა (.vcmotif)
+	Flowers	ყვავილები
+	Hearts	გულები
+	Motifs	მოტივები
+	Remove Motif	მოტივის წაშლა
+	Save Motif…	მოტივის შენახვა…
+	Load Motif	მოტივის ჩატვირთვა
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	გადახატულია {family}: ასოები ატლასის სვეტებად — {traced}, კონტურებად შენახული — {kept}
+	Tracing Font	შრიფტის გადახატვა
+	Tracing {family}	გადაიხატება {family}
+	{done} of {total} letters	{done} / {total} ასო
+	Frame:	ჩარჩო:
+	Letters as live type placed by the layout, each still editable, with an optional frame	ასოები ცოცხალ ტექსტად, განლაგებით დასმული, თითოეული კვლავ რედაქტირებადი, არასავალდებულო ჩარჩოთი
+	Letters:	ასოები:
+	Monogram	მონოგრამა
+	No Frame	ჩარჩოს გარეშე
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	მონიშნული წერტილოვანი ტექსტის განთავსება წრის რკალზე, რომელიც მის ადგილზე გადის: ზემოდან, ან ქვემოდან, მარცხნიდან მარჯვნივ საკითხავად
+	Satin Ring	ატლასის რგოლი
+	Type on an Arc	ტექსტი რკალზე
+	Update Monogram	მონოგრამის განახლება
+	Monogram…	მონოგრამა…
+	Type on an Arc…	ტექსტი რკალზე…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	ნაკერის კუთხის ხელსაწყო: ხაზის დასამატებლად გადაათრიეთ ატლასზე, გადასატანად გადაათრიეთ ხაზის ბოლო, წასაშლელად ხაზზე Alt-დაწკაპუნება
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	ატლასზე გადამავალი ხაზები, რომლებიც გადაკვეთის ადგილას მისი ნაკერების მიმართულებას ადგენს და მათ შორის თანდათან ბრუნავს (მათ ნაკერის კუთხის ხელსაწყო ხატავს)
+	Stitch Angle Tool	ნაკერის კუთხის ხელსაწყო
+	Stitch Angles:	ნაკერის კუთხეები:
+	Stitch Angle	ნაკერის კუთხე
+	Three Equal	სამი თანაბარი
+	Two Letters	ორი ასო
+	Trace Font	გადასახატი შრიფტი
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	გადასახატი შრიფტის ასოების ავტომატური დიგიტალიზაცია, კალმის თითო მონასმი — ატლასის სვეტი (მხოლოდ შრიფტებისთვის, რომელთა ლიცენზიაც წარმოებულ ნაწარმოებებს ნებადართავს)
+@msg	not a layer	არ არის შრე
+@msg	the document has no layer	დოკუმენტს შრე არ აქვს
+	More Settings ({n})	მეტი პარამეტრი ({n})
+@plural	{n} stitch|{n} stitches	{n} ნაკერი
+@plural	{n} thread|{n} threads	{n} ძაფი
+@plural	{n} path|{n} paths	{n} ტრაექტორია
+@plural	{n} compound path|{n} compound paths	{n} შედგენილი ტრაექტორია
+@plural	{n} type object|{n} type objects	{n} ტექსტური ობიექტი
+@plural	{n} object|{n} objects	{n} ობიექტი
+@plural	{n} problem|{n} problems	{n} პრობლემა
+	{m} min	{m} წთ
+	Setup	პარამეტრები
+	Check & Export	შემოწმება და ექსპორტი
+	Sewing	ქარგვის პროცესი
+	Not stitched	არ იქარგება
+	Mixed stitches	შერეული ნაკერები
+	The selection: what it is, its size, its stitch and the stitches it sews	მონიშნული: რა არის, მისი ზომა, ნაკერი და ნაკერები, რომლებსაც ქარგავს
+	Areas	არეები
+	Fold the stitches away	ნაკერების აკეცვა
+	Choose another stitch	სხვა ნაკერის არჩევა
+	The selection is open paths: this stitch closes each one with a straight line between its ends.	მონიშნული ღია ტრაექტორიებია: ეს ნაკერი თითოეულს მის ბოლოებს შორის სწორი ხაზით კრავს.
+	From Stitches	ნაკერებიდან
+	Font Editor…	შრიფტის რედაქტორი…
+	Make an embroidery font, or edit the one in this font document	ქარგვის შრიფტის შექმნა, ან ამ შრიფტის დოკუმენტში არსებულის რედაქტირება
+	Embroidery Font Editor	ქარგვის შრიფტის რედაქტორი
+	Embroidery Panel	ქარგვის პანელი
+	Export Stitch File…	ნაკერების ფაილის ექსპორტირება…
+	Fabric and Hoop	ქსოვილი და საქარგავი რგოლი
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	აირჩიეთ ქსოვილი და საქარგავი რგოლი: ქსოვილი ადგენს სიმჭიდროვეს, კომპენსაციას და საფენს ყველა ნაკერისთვის, რომელიც საკუთარს არ ადგენს.
+	Dismiss	დახურვა
+	Don't show this again (Setup has both menus)	აღარ აჩვენო (პარამეტრებში ორივე მენიუა)
+	The stitched design: its stitches, size, threads and sewing time	ნაქარგი დიზაინი: მისი ნაკერები, ზომა, ძაფები და ქარგვის დრო
+	What the design checker found: open its list	რა იპოვა დიზაინის შემმოწმებელმა: მისი სიის გახსნა
+@msg	Loaded embroidery font {_1}	ჩაიტვირთა ქარგვის შრიფტი {_1}
+	Add Font Folder…	შრიფტების საქაღალდის დამატება…
+	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	ქარგვის შრიფტების საქაღალდე აქ ჩამოსათვლელად, მაგალითად თქვენ მიერ დაინსტალირებული Ink/Stitch-ის შრიფტების საქაღალდეები; ისინი იქიდან იკითხება, სადაც არიან
+	Embroidery Font Folders…	ქარგვის შრიფტების საქაღალდეები…
+	Import Ink/Stitch Font…	Ink/Stitch-ის შრიფტის იმპორტი…
+	Import Ink/Stitch Font	Ink/Stitch-ის შრიფტის იმპორტი
+@msg	font.json is over {_1} MB	font.json აღემატება {_1} მბ-ს
+@msg	{_1} embroidery fonts found	ნაპოვნია ქარგვის შრიფტები: {_1}
+	Embroidery Font:	ქარგვის შრიფტი:
+	Type only: sew the letters from this embroidery font's stitch objects instead of the outline font	მხოლოდ ტექსტი: ასოების ქარგვა ამ ქარგვის შრიფტის ნაკერების ობიექტებით, კონტურული შრიფტის ნაცვლად
+	Embroidery Fonts	ქარგვის შრიფტები
+	Load Embroidery Font…	ქარგვის შრიფტის ჩატვირთვა…
+	Save Embroidery Font…	ქარგვის შრიფტის შენახვა…
+	Remove Embroidery Font	ქარგვის შრიფტის წაშლა
+	Load Embroidery Font	ქარგვის შრიფტის ჩატვირთვა
+	Appliqué Cut File…	აპლიკაციის საჭრელი ფაილი…
+	Cut File…	საჭრელი ფაილი…
+	The appliqué pieces' outlines packed onto cutter mats, in a new document to export as SVG or DXF	აპლიკაციის ნაწილების კონტურები, ჩალაგებული საჭრელის ფირფიტებზე, ახალ დოკუმენტში SVG-ად ან DXF-ად ექსპორტისთვის
+	Appliqué	აპლიკაცია
+	Make each selected closed shape an appliqué: placement line, stop, tack-down, stop, cover	თითოეული მონიშნული შეკრული ფიგურის აპლიკაციად ქცევა: განთავსების ხაზი, გაჩერება, მიმაგრება, გაჩერება, დაფარვა
+	Stop Before:	გაჩერება მანამდე:
+	Place Fabric	ქსოვილის დადება
+	Trim Fabric	ქსოვილის შეჭრა
+	Stop the machine before this object: to change something by hand, place appliqué fabric, or trim it	მანქანის გაჩერება ამ ობიექტამდე: რაიმეს ხელით შესაცვლელად, აპლიკაციის ქსოვილის დასადებად ან შესაჭრელად
+	Save a copy in your embroidery library, for any design	ასლის შენახვა თქვენს ქარგვის ბიბლიოთეკაში, ნებისმიერი დიზაინისთვის
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	თქვენი ქარგვის ბიბლიოთეკა: კიდის ორნამენტები, ქსოვილები, საქარგავი რგოლები და ძაფების ცხრილები ნებისმიერი დიზაინისთვის
+@msg	no embroidery library folder here	აქ ქარგვის ბიბლიოთეკის საქაღალდე არ არის
+@msg	Added {_1} to the embroidery library	{_1} დაემატა ქარგვის ბიბლიოთეკას
+@msg	nothing to add	დასამატებელი არაფერია
+	Long stitches	გრძელი ნაკერები
+	Makes no stitches	ნაკერებს არ ქმნის
+	Manual Stitch	ხელით დასმული ნაკერი
+	Motif:	მოტივი:
+	Not sewn as set	არ იქარგება ისე, როგორც დაყენებულია
+	Objects that are stitched but can't be sewn (not a path, compound path or type; settings from a newer VectorCraft), or are sewn whole although a mask hides part of them.	ობიექტები, რომლებსაც ნაკერი აქვს, მაგრამ ვერ იქარგება (არ არის ტრაექტორია, შედგენილი ტრაექტორია ან ტექსტი; პარამეტრები VectorCraft-ის უფრო ახალი ვერსიიდან), ან იქარგება მთლიანად, თუმცა ნიღაბი მათ ნაწილს მალავს.
+	Picks a stitch for each shape (each letter) by how wide its strokes are.	ირჩევს ნაკერს თითოეული ფიგურისთვის (თითოეული ასოსთვის) მისი კონტურების სიგანის მიხედვით.
+	Remove Border Pattern	კიდის ორნამენტის წაშლა
+	Render Stitch Preview	ნაკერების გადახედვის რენდერი
+	Rows before the needle holes line up again (2: brick, 3–8: tatami)	რიგები, სანამ ნემსის ნახვრეტები ისევ გასწორდება (2: აგური, 3–8: ტატამი)
+	Rows of stitches covering the shape, with a pattern.	ფიგურის დამფარავი ნაკერების რიგები, ორნამენტით.
+	Running Stitch	სწორი ნაკერი
+	Satin that follows a shape's strokes from edge to edge: lettering.	ატლასი, რომელიც ფიგურის კონტურებს კიდიდან კიდემდე მიჰყვება: წარწერები.
+	Save Border Pattern…	კიდის ორნამენტის შენახვა…
+	Sew Order	ქარგვის რიგი
+	Sew by Thread	ძაფის მიხედვით ქარგვა
+	Sew in Paint Order	ხატვის რიგით ქარგვა
+	Single stitches along the path: outlines and details.	ცალკეული ნაკერები ტრაექტორიის გასწვრივ: კონტურები და დეტალები.
+	Stitch Settings	ნაკერის პარამეტრები
+	Stitch:	ნაკერი:
+	Stitches longer than 7 mm snag and loosen with wear. Shorten the stitch length, narrow the satin, or fill a shape that wide.	7 მმ-ზე გრძელი ნაკერები ედება და ტარებისას ფხვიერდება. შეამოკლეთ ნაკერის სიგრძე, დაავიწროეთ ატლასი, ან შეავსეთ ასეთი განიერი ფიგურა.
+	Stitches sewn first to hold the fabric and lift the top stitches	პირველად ნაქარგი ნაკერები, ქსოვილის დასაჭერად და ზედა ნაკერების ასაწევად
+	The border pattern repeated along the path	ტრაექტორიის გასწვრივ გამეორებული კიდის ორნამენტი
+	The design has more needle moves than a file can hold; the rest is left out. Split it into several designs.	დიზაინს იმაზე მეტი ნემსის მოძრაობა აქვს, ვიდრე ფაილს ეტევა; დანარჩენი გამოტოვებულია. დაყავით ის რამდენიმე დიზაინად.
+	The direction of the fill's rows	შევსების რიგების მიმართულება
+	The needle goes down at every anchor, as drawn.	ნემსი ეშვება ყოველ საყრდენში, როგორც დახატულია.
+	The thread colour (unset: the object's stroke or fill colour)	ძაფის ფერი (დაუყენებელი: ობიექტის კონტურის ან შევსების ფერი)
+	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	რა თქვა ნაკერის ტიპმა ობიექტის ფორმაზე (ატლასის ფიგურა კონტურების გარეშე, ზედმეტად წვრილი მოტივი, დაკარგული კიდის ორნამენტი…).
+@msg	Extracted border pattern {_1}: a {_2} mm repeat	ამოღებულია კიდის ორნამენტი {_1}: გამეორება {_2} მმ
+@msg	Loaded border pattern {_1}	ჩაიტვირთა კიდის ორნამენტი {_1}
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	სატესტო ფურცელი არის კალიბრაციის ნიმუშების ნაკრები თქვენს მანქანასა და ქსოვილზე დასაქარგად. თითოეული სექცია 100 × 100 მმ დიზაინია; ქარგვის შემდეგ აქ მონიშნეთ, რა აჩვენა თითოეულმა ნიმუშმა.
+	Another test sheet, for another fabric or machine	კიდევ ერთი სატესტო ფურცელი, სხვა ქსოვილის ან მანქანისთვის
+	Calibration swatches to sew, and a form for what they showed	დასაქარგი კალიბრაციის ნიმუშები და ფორმა იმისთვის, რაც აჩვენეს
+	Click a swatch to select it and add a note.	ნიმუშის მოსანიშნად და შენიშვნის დასამატებლად დააწკაპუნეთ მასზე.
+	Each section as a design of its own (one file per artboard)	თითოეული სექცია ცალკე დიზაინად (თითო ფაილი სამუშაო დაფაზე)
+	Fabric:	ქსოვილი:
+	Fail	ჩაიჭრა
+	Lettering needs a type face; without one it is left out.	წარწერებს შრიფტი სჭირდება; მის გარეშე ისინი გამოტოვებულია.
+	Machine:	მანქანა:
+	New Test Sheet	ახალი სატესტო ფურცელი
+	New Test Sheet…	ახალი სატესტო ფურცელი…
+	Notes:	შენიშვნები:
+	Pass	გავიდა
+	Sew-Out Test…	სატესტო ქარგვა…
+	Test Sheet	სატესტო ფურცელი
+	To judge	შესაფასებელი
+	Fill Angle	შევსების კუთხე
+	Fill Density	შევსების სიმჭიდროვე
+	Lettering	წარწერები
+	Pull Compensation	შეკუმშვის კომპენსაცია
+	Record Sew-Out	სატესტო ქარგვის ჩაწერა
+	Satin Density	ატლასის სიმჭიდროვე
+	Satin Width	ატლასის სიგანე
+	Sew-Out Test	სატესტო ქარგვა
+	Underlay	საფენი
+	Pull Compensation (%):	შეკუმშვის კომპენსაცია (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	დამატებითი შეკუმშვის კომპენსაცია, სიგანის (ატლასი) ან რიგის სიგრძის (შევსება) წილად
+	Push Compensation:	გაწევის კომპენსაცია:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	სვეტებს ბოლოებში ამდენით ამოკლებს, შევსებებს კი რიგების განივად, რადგან ნაკერები ქსოვილს გარეთ სწევს
+	Denim	ჯინსი
+	Fleece / Towel	ფლისი / პირსახოცი
+	Knit	ნაქსოვი
+	Leather	ტყავი
+	Load a fabric profile file (.vcfabric)	ქსოვილის პროფილის ფაილის (.vcfabric) ჩატვირთვა
+	Save the fabric as a file (.vcfabric)	ქსოვილის ფაილად შენახვა (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	ქსოვილი, რომლისთვისაც დიზაინია: მისი სიმჭიდროვე, კომპენსაცია და საფენი ავსებს იმას, რასაც ობიექტები დაუყენებლად ტოვებს
+	Woven	ფეიქრული
+	Fabric	ქსოვილი
+	Fabric Profiles	ქსოვილის პროფილები
+	Load Fabric…	ქსოვილის ჩატვირთვა…
+	Save Fabric…	ქსოვილის შენახვა…
+	Load Fabric	ქსოვილის ჩატვირთვა
+@msg	Fabric: {_1}	ქსოვილი: {_1}
+	Keep Covered Rows	დაფარული რიგების შენარჩუნება
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	ამ შევსების რიგების ქარგვა მასზე მოგვიანებით ნაქარგი ობიექტების ქვეშაც (ჩვეულებრივ ისინი იჭრება)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	რამდენად შორს სწვდება შევსების რიგები მასზე მოგვიანებით ნაქარგი ობიექტების ქვეშ; დაფარული რიგების დანარჩენი იჭრება
+	Shortest Stitch:	უმოკლესი ნაკერი:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	ნემსის წერტილები, რომლებიც წინასთან ამაზე ახლოსაა, გამოიტოვება (ქსოვილმა შეიძლება უფრო გრძელი მოითხოვოს)
+	Stitches too long to sew	დასაქარგად ზედმეტად გრძელი ნაკერები
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	12 მმ-ზე გრძელი ნაკერები ერთი მოძრაობით ვერ იქარგება. დაამატეთ წერტილები ტრაექტორიის გასწვრივ, ან გამოიყენეთ ნაკერის ტიპი, რომელიც გრძელ ნაკერებს ყოფს.
+	Satin too narrow or too wide	ზედმეტად ვიწრო ან განიერი ატლასი
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	1 მმ-ზე ვიწრო ატლასი არ ფარავს (გამოიყენეთ სწორი ან ორმაგი ნაკერი); 10 მმ-ზე მეტზე მისი ნაკერები გრძელი და ფხვიერია (ამის ნაცვლად შეავსეთ ფიგურა).
+	Too small to sew	დასაქარგად ზედმეტად პატარა
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	ობიექტები, რომელთა ნაკერებიც 1 მმ ყუთში ეტევა, ძაფის კვანძად იქარგება. გაადიდეთ ან წაშალეთ ისინი.
+	Open shape set to fill	შესავსებად დაყენებული ღია ფიგურა
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	შევსება ღია ტრაექტორიებს სწორი ხაზით კრავს, რაც შეიძლება ჩაფიქრებული ფორმა არ იყოს. შეკარით ტრაექტორია, ან გამოიყენეთ ნაკერი მის გასწვრივ.
+	Too many needle holes in one place	ზედმეტად ბევრი ნემსის ნახვრეტი ერთ ადგილას
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	სადაც ობიექტები ერთმანეთზე ლაგდება, ერთ წერტილში იმდენი ნემსის ნახვრეტი ხვდება, რომ ქსოვილი იხევა ან ნემსი ტყდება. ამოჭერით დაფარული, შეამცირეთ სიმჭიდროვე ან წაშალეთ ერთი ფენა.
+	Many trims or jumps	ბევრი გაჭრა ან ნახტომი
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	ყოველი გაჭრა და ნახტომი ანელებს მანქანას და ძაფის ბოლოებს ტოვებს. იქარგეთ ძაფის მიხედვით, გადაალაგეთ ობიექტები ან შეაერთეთ ახლო ნაწილები.
+	Type too small	ზედმეტად პატარა ტექსტი
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Letters' holes (the inside of an o, a or e) under 1 mm across close up on fabric whatever the stitch, so a font with small holes needs larger type. Make the type larger, or use a running stitch.	უსაფრთხო ზომაზე პატარა წარწერები იხურება და ვერ იკითხება: ატლასის წარწერებს 4 მმ ან მეტი სჭირდება, შევსებულს — 6 მმ, სწორი ან ორმაგი ნაკერით — 2,5 მმ. ასოების ნახვრეტები (o, a ან e-ს შიგნით) 1 მმ-ზე ნაკლები ქსოვილზე იხურება ნებისმიერი ნაკერით, ამიტომ პატარა ნახვრეტებიან შრიფტს უფრო დიდი ტექსტი სჭირდება. გაადიდეთ ტექსტი, ან გამოიყენეთ სწორი ნაკერი.
+	Hoop:	საქარგავი რგოლი:
+	The hoop the design is sewn in: its sewing field, centred on the design, is checked and shown in Stitch Preview	საქარგავი რგოლი, რომელშიც დიზაინი იქარგება: მისი ქარგვის ველი, დიზაინზე ცენტრირებული, მოწმდება და ჩანს ნაკერების გადახედვაში
+	The design fits the hoop.	დიზაინი რგოლში ეტევა.
+	The design fits only turned a quarter turn.	დიზაინი ეტევა მხოლოდ მეოთხედი ბრუნით მობრუნებული.
+	The design is bigger than the hoop.	დიზაინი რგოლზე დიდია.
+	Hoops	საქარგავი რგოლები
+	Hoop	საქარგავი რგოლის არჩევა
+	Load Hoop…	საქარგავი რგოლის ჩატვირთვა…
+	Save Hoop…	საქარგავი რგოლის შენახვა…
+	Load Hoop	საქარგავი რგოლის ჩატვირთვა
+	Design bigger than the hoop	დიზაინი რგოლზე დიდია
+	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	დიზაინი რგოლის ქარგვის ველში უნდა ეტეოდეს. აირჩიეთ უფრო დიდი რგოლი, მოაბრუნეთ დიზაინი მეოთხედი ბრუნით, შეამცირეთ ის, ან დაყავით ერთმანეთის მიყოლებით ნაქარგ დიზაინებად.
+@msg	Hoop: {_1}	საქარგავი რგოლი: {_1}
+	Optimize	ოპტიმიზაცია
+	Group by thread and sew each thread's objects nearest first, cutting jumps and trims	დაჯგუფება ძაფის მიხედვით და თითოეული ძაფის ობიექტების ქარგვა უახლოესიდან, ნახტომებისა და გაჭრების შემცირებით
+	Optimize Sew Order	ქარგვის რიგის ოპტიმიზაცია
+	Start At:	დაწყება:
+	Where the needle starts: the path is entered at its point nearest it	სად იწყებს ნემსი: ტრაექტორიაში შესვლა ხდება მასთან უახლოეს წერტილში
+	Thread Chart:	ძაფების ცხრილი:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	დიზაინის თითოეული ძაფის ფერი ამ ცხრილის უახლოეს ძაფს იღებს. ჩატვირთეთ ცხრილები, რომელთა გამოყენების უფლებაც გაქვთ (.vcthreads).
+	Load a thread chart file (.vcthreads)	ძაფების ცხრილის ფაილის (.vcthreads) ჩატვირთვა
+	Thread Charts	ძაფების ცხრილები
+	Thread Chart	ძაფების ცხრილის არჩევა
+	Load Thread Chart…	ძაფების ცხრილის ჩატვირთვა…
+	Save Thread Chart…	ძაფების ცხრილის შენახვა…
+	Remove Thread Chart	ძაფების ცხრილის წაშლა
+	Match Threads	ძაფების შესაბამისობა
+	Load Thread Chart	ძაფების ცხრილის ჩატვირთვა
+@msg	Thread chart: {_1}	ძაფების ცხრილი: {_1}
+	Play	დაკვრა
+	Pause	პაუზა
+	Play the sewing stitch by stitch	ქარგვის დაკვრა ნაკერ-ნაკერ
+	Sewing Time	ქარგვის დრო
+	At the machine speed set below, with time for trims and thread changes	ქვემოთ დაყენებული მანქანის სიჩქარით, გაჭრებისა და ძაფის გამოცვლის დროის ჩათვლით
+	Machine Speed:	მანქანის სიჩქარე:
+	Stitches per minute, for the sewing time estimate	ნაკერები წუთში, ქარგვის დროის შესაფასებლად
+	Worksheet…	სამუშაო ფურცელი…
+	A printable sheet for whoever sews the design: picture, size, threads, time and notes	დასაბეჭდი ფურცელი მისთვის, ვინც დიზაინს ქარგავს: სურათი, ზომა, ძაფები, დრო და შენიშვნები
+	Production Worksheet	საწარმოო სამუშაო ფურცელი
+	Puff Foam:	მოცულობითი ქაფი:
+	Sew over 3D foam this thick: a stop to place the foam, dense satin with no underlay, capped ends, and a perforation all round so the excess foam tears away	ამ სისქის 3D ქაფზე ქარგვა: გაჩერება ქაფის დასადებად, მჭიდრო ატლასი საფენის გარეშე, დახურული ბოლოები და ირგვლივ პერფორაცია, რომ ზედმეტი ქაფი მოიხიოს
+	Puff that won't rise well	მოცულობა, რომელიც კარგად არ ამოიწევა
+	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	მოცულობას ქაფზე 3-დან 10 მმ-მდე სიგანის ატლასი სჭირდება: უფრო ვიწრო არ ამოიწევა, უფრო განიერის ნაკერები ქაფს ვერ იჭერს. ქაფის დადების შემდეგ ნაქარგი ბრტყელი ობიექტები მას გაივლის: იქარგეთ ისინი პირველად.
+	Puff	მოცულობა
+	Export {format}…	{format}-ად ექსპორტირება…
+	Machine Format:	მანქანის ფორმატი:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) or U01 (Barudan)	ფაილის ფორმატი, რომელსაც თქვენი მანქანა კითხულობს: DST (Tajima და მანქანების უმეტესობა), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) ან U01 (Barudan)
+	Hide Travel Under Fills	გადაადგილებების დამალვა შევსებების ქვეშ
+	Travel that a fill sewn later covers is sewn there as running stitches instead of jumped and trimmed	გადაადგილებები, რომლებსაც მოგვიანებით ნაქარგი შევსება ფარავს, იქვე სწორი ნაკერებით იქარგება, ნახტომისა და გაჭრის ნაცვლად
+	Stitch Start	ნაკერის დასაწყისი
+	Single	ერთმაგი
+	Stem	ღერო
+	Backstitch	უკუნაკერი
+	Sashiko	საშიკო
+	Run Styles	სწორი ნაკერის სტილები
+	How the line is sewn: single stitches or a hand-stitch look	როგორ იქარგება ხაზი: ცალკეული ნაკერებით ან ხელნაკერის იერით
+	The space between sashiko dashes	საშიკოს შტრიხებს შორის სივრცე
+	How wide the chain's loops or the stem's slant are	ჯაჭვის მარყუჟების ან ღეროს დახრის სიგანე
+	Slant the stem stitches the other way	ღეროს ნაკერების მეორე მხარეს დახრა
+	Single stitches along the path.	ცალკეული ნაკერები ტრაექტორიის გასწვრივ.
+	Linked loops, like a hand chain stitch.	ერთმანეთზე გადაბმული მარყუჟები, ხელის ჯაჭვური ნაკერივით.
+	Slanted stitches overlapping by half: a twisted cord.	დახრილი ნაკერები, ნახევრად გადაფარული: დაგრეხილი ზონარი.
+	Each stitch forward, then half a stitch back: a heavier, smooth line.	თითოეული ნაკერი წინ, შემდეგ ნახევარი ნაკერი უკან: უფრო მძიმე, გლუვი ხაზი.
+	Bold dashes with gaps between them.	მსხვილი შტრიხები მათ შორის ღრეჩოებით.
+	Split:	დაყოფა:
+	Split Wide Stitches	განიერი ნაკერების დაყოფა
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	„დაყოფა ზღვრიდან“-ზე განიერი ნაკერები უფრო მოკლე ნაწილებად იქარგება, რომ განიერი სვეტები არ ედებოდეს (30 მმ სიგანემდე)
+	Split At:	დაყოფა ზღვრიდან:
+	Split Length:	დაყოფის სიგრძე:
+	Split Pattern:	დაყოფის ორნამენტი:
+	Stagger	წანაცვლებული
+	Stitches longer than this are split	ამაზე გრძელი ნაკერები იყოფა
+	The longest piece of a split stitch	დაყოფილი ნაკერის უგრძესი ნაწილი
+	How the split points move from stitch to stitch, so they don't line up into a seam	როგორ გადაადგილდება დაყოფის წერტილები ნაკერიდან ნაკერამდე, რომ ნაკერის ხაზად არ დალაგდეს
+	Split Satin	დაყოფილი ატლასი
+	Compensation	კომპენსაცია
+	Sewn Width:	ნაქარგი სიგანე:
+	Sewn Length:	ნაქარგი სიგრძე:
+	Along the stitches, between the marks	ნაკერების გასწვრივ, ნიშნებს შორის
+	Across the stitches, between the marks	ნაკერების განივად, ნიშნებს შორის
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: შეკუმშვა {pull} მმ + {percent} %, გაწევა {push} მმ
+	{angle}: pull {pull} mm + {percent} %	{angle}: შეკუმშვა {pull} მმ + {percent} %
+	Use as Fabric	ქსოვილად გამოყენება
+	Make the fitted compensation the document's fabric	მორგებული კომპენსაციის დოკუმენტის ქსოვილად დაყენება
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	მორგებული ქსოვილის ფაილად შენახვა (.vcfabric), ამ ქსოვილზე ნაქარგ დიზაინებში ჩასატვირთად
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	მოსარგებად დააწკაპუნეთ კომპენსაციის ნიმუშზე და შეიყვანეთ მისი ნაქარგი ზომა.
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	კომპენსაციის ფურცელი: ნაქარგი კომპენსაციის გარეშე, რომ გაიზომოს, რამდენად იკუმშება ქსოვილი ნაკერის თითოეული მიმართულებით.

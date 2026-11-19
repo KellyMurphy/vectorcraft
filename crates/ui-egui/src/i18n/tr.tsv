@@ -10232,7 +10232,7 @@ breakText	Glyphs	Glifler
 	Close-Up	Yakın plan
 	Mockup…	Maket…
 	The design sewn on a T-shirt, polo shirt, hoodie, cap, tote bag or towel, at its real size	Tişört, polo, sweatshirt, şapka, çanta veya havlu üzerine işlenmiş tasarım, gerçek boyutunda
-	Real Size	Gerçek boyut
+	Real Size	Fiziksel Boyut
 	Calibrate Real Size…	Gerçek boyutu kalibre et…
 	Calibrate Real Size	Gerçek boyutu kalibre et
 	Screen Resolution for Real Size	Gerçek boyut için ekran çözünürlüğü
@@ -10495,3 +10495,442 @@ breakText	Glyphs	Glifler
 @msg	Other blanks not shown: {count}	Gösterilmeyen diğer açınımlar: {count}
 @msg	A joint does not close by {gap} pt.	Bir birleşim {gap} pt kadar kapanmıyor.
 @msg	Two panels pass through each other.	İki panel birbirinin içinden geçiyor.
+# Embroidery: stitches, sewing, hoops, fabrics, threads, fonts and checks. Drafted with AI assistance
+# from the English meaning; not yet reviewed by a native speaker (review welcome).
+@msg	select closed paths or compound paths to make appliqué from	aplike yapmak için kapalı yollar veya bileşik yollar seçin
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	aplike grupları veya kapalı şekiller seçin (belgede aplike grubu yok)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	bir logo seçin: bir görüntü, izlenmiş bir görüntü veya dolgulu şekillerden oluşan bir grup
+@msg	select one logo: group its shapes first	tek bir logo seçin: önce şekillerini gruplayın
+@msg	the selection has no filled shapes or image to digitize	seçimde dijitalleştirilecek dolgulu şekil veya görüntü yok
+@msg	select an opened design's manual stitches	açılmış bir tasarımın elle dikişlerini seçin
+	A satin border sewn over the shape's edges, after the fill	Dolgudan sonra şeklin kenarları üzerine dikilen saten bir kenarlık
+	After	Sonra
+	Bean Below:	Altta Fasulye Dikişi:
+	Before	Önce
+	Between Rails	Raylar Arasında
+	Border:	Kenarlık:
+	By Thread	İpliğe Göre
+	Center Walk	Orta Yürüyüş
+	Chain	Zincir
+	Choose a stitch to sew the selection with.	Seçimi dikmek için bir dikiş seçin.
+	Circles	Daireler
+	Cut the thread after this object	Bu nesneden sonra ipliği kes
+	Cut the thread before this object, however close it starts	Ne kadar yakında başlarsa başlasın, bu nesneden önce ipliği kes
+	Design	Tasarım
+	Distance between rows: smaller is denser	Sıralar arası mesafe: küçük olan daha sıktır
+	Distance between the points of the zigzag	Zikzak uçları arası mesafe
+	Distance between zigzags: smaller is denser	Zikzaklar arası mesafe: küçük olan daha sıktır
+	Drag a row to move it. Objects sewn later lie on top.	Taşımak için bir satırı sürükleyin. Sonra dikilen nesneler üstte kalır.
+	Each shape (or letter) is stitched by how wide its strokes are.	Her şekil (veya harf), konturlarının genişliğine göre dikilir.
+	Edge Walk	Kenar Yürüyüşü
+	Embroidery…	Nakış…
+	Export DST…	DST Dışa Aktar…
+	Extract Border Pattern	Kenarlık Desenini Çıkar
+	Fill Above:	Üstte Dolgu:
+	Fill Underlay	Dolgu Alt Dikişi
+	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	Yollara Nakış panelinde dikiş ayarları verin; bu sırayla dikilirler.
+	Group the sewing order by thread colour, for fewer thread changes	Dikiş sırasını iplik rengine göre grupla, daha az iplik değişimi için
+	Herringbone	Balıksırtı
+	How large one repeat of the motif is	Motifin bir tekrarının büyüklüğü
+	How long each stitch is	Her dikişin uzunluğu
+	How the needle holes line up from row to row, or a motif carved into the fill	İğne deliklerinin sıradan sıraya nasıl hizalandığı veya dolguya oyulmuş bir motif
+	How wide the border is: the pattern scales with it	Kenarlığın genişliği: desen onunla ölçeklenir
+	How wide the zigzag swings	Zikzakın salınım genişliği
+	Load a border pattern file (.vcborder) into the document	Belgeye bir kenarlık deseni dosyası (.vcborder) yükle
+	Load…	Yükle…
+	Mirror the pattern across the path	Deseni yol boyunca aynala
+	Motif Size:	Motif Boyutu:
+	Motif	Motif
+	No problems found.	Sorun bulunamadı.
+	Nothing is stitched yet.	Henüz hiçbir şey dikilmedi.
+	Object color	Nesne rengi
+	Only paths, compound paths and type can be stitched.	Yalnızca yollar, bileşik yollar ve yazı dikilebilir.
+	Only the first 30 are listed.	Yalnızca ilk 30 tanesi listelenir.
+	Only thread changes and objects set to trim cut the thread.	Yalnızca iplik değişimleri ve kesime ayarlı nesneler ipliği keser.
+	Open a document to see its sewing order.	Dikiş sırasını görmek için bir belge açın.
+	Reset Order	Sırayı Sıfırla
+	Passes:	Geçişler:
+	Pattern Border	Desenli Kenarlık
+	Pattern Size	Desen Boyutu
+	Pattern:	Desen:
+	Pull Compensation:	Çekme Telafisi:
+	Remove Stitches	Dikişleri Kaldır
+	Satin Column	Saten Sütun
+	Satin Shape	Saten Şekil
+	Satin follows the shape's strokes from edge to edge.	Saten, şeklin konturlarını kenardan kenara izler.
+	Save this border pattern as a file (.vcborder)	Bu kenarlık desenini dosya olarak kaydet (.vcborder)
+	Scales	Pullar
+	Select a straight stretch of a border with two or more repeats, or a shape drawn over it too.	Bir kenarlığın iki veya daha fazla tekrar içeren düz bir bölümünü veya üzerine çizilmiş bir şekli de seçin.
+	Select paths to stitch.	Dikilecek yolları seçin.
+	Sew Earlier	Daha Önce Dik
+	Sew First	İlk Dik
+	Sew Last	En Son Dik
+	Sew Later	Daha Sonra Dik
+	Stitch Moves Under:	Dikiş Altından Geçişler:
+	Sew Order…	Dikiş Sırası…
+	Sew in paint order again (bottom first)	Yeniden boyama sırasıyla dik (en alttaki önce)
+	Sews the column this much wider, since the thread pulls the fabric in	İplik kumaşı içeri çektiği için sütunu bu kadar geniş diker
+	Some selected objects aren't stitched: choose a stitch for all of them.	Seçili bazı nesneler dikilmiyor: hepsi için bir dikiş seçin.
+	Step through the design as it is sewn, and change the order	Tasarımı dikildiği gibi adım adım izleyin ve sırayı değiştirin
+	Step through the sewing	Dikişte adım adım ilerle
+	Stitch Length:	Dikiş Uzunluğu:
+	Stitch Preview	Dikiş Önizlemesi
+	Stitch	Dikiş
+	Stitches:	Dikişler:
+	Tatami	Tatami
+	Fill Style:	Dolgu Stili:
+	How the area is covered: straight rows, or rings following the outline	Alanın nasıl kaplandığı: düz sıralar veya dış hattı izleyen halkalar
+	Straight rows at the fill's angle, their needle holes staggered.	Dolgu açısında düz sıralar, iğne delikleri kaydırılmış.
+	Rings following the outline, sewn ring to ring: good for round and flowing shapes.	Dış hattı izleyen, halkadan halkaya dikilen halkalar: yuvarlak ve akışkan şekiller için iyi.
+	The rings blended into one continuous spiral, with no step between them: best on round shapes.	Halkalar aralarında hiçbir basamak olmadan tek bir sürekli spirale karışır: en iyisi yuvarlak şekillerde.
+	The needle goes down at every anchor point, as drawn.	İğne, çizildiği gibi her bağlantı noktasında aşağı iner.
+	The object's two paths are the column's edges; lines crossing both set the stitch direction	Nesnenin iki yolu sütunun kenarlarıdır; ikisini de kesen çizgiler dikiş yönünü belirler
+	The pattern repeats along the path, a whole number of times between corners.	Desen, köşeler arasında tam sayıda kez olmak üzere yol boyunca tekrarlanır.
+	The selected objects use different stitches.	Seçili nesneler farklı dikişler kullanıyor.
+	The selection is no longer stitched	Seçim artık dikilmiyor
+	The selection's stitch and its settings	Seçimin dikişi ve ayarları
+	The stroke's color for stitches along the path, the fill's for fills	Yol boyunca dikişler için konturun rengi, dolgular için dolgunun rengi
+	These stitch settings are from a newer VectorCraft: kept as they are, but not sewn. Choose a stitch to replace them.	Bu dikiş ayarları daha yeni bir VectorCraft’tan: olduğu gibi tutulur ama dikilmez. Değiştirmek için bir dikiş seçin.
+	Thinner strokes get a bean stitch round their outline	İnce konturların dış hattına fasulye dikişi yapılır
+	Thread	İplik
+	Thread:	İplik:
+	Threads:	İplikler:
+	Travel	Geçiş
+	Trim Jumps Over:	Atlamaları Kes, Şundan Uzun:
+	Trim:	Kesim:
+	Trims / Jumps:	Kesimler / Atlamalar:
+	Underlay:	Alt Dikiş:
+	Use Object Color	Nesne Rengini Kullan
+	Use Stroke	Konturu Kullan
+	Waves	Dalgalar
+	Wider strokes are filled, with a satin border; strokes in between get satin	Daha geniş konturlar saten kenarlıkla doldurulur; aradaki konturlar saten alır
+	Zigzag Stitch	Zikzak Dikiş
+	the pattern's size	desenin boyutu
+	the stroke width	kontur genişliği
+	A border pattern repeated along the path.	Yol boyunca tekrarlanan bir kenarlık deseni.
+	A dense zigzag column along the path, as wide as the stroke.	Yol boyunca, kontur kadar geniş, sık bir zikzak sütunu.
+	A motif carved into the fill	Dolguya oyulmuş bir motif
+	A stitched object that makes no stitches: empty, or too small for its stitch type.	Hiç dikiş üretmeyen dikişli bir nesne: boş ya da dikiş türü için çok küçük.
+	An open zigzag along the path: decorative lines, appliqué edges.	Yol boyunca açık bir zikzak: dekoratif çizgiler, aplike kenarları.
+	Art the stitch can't follow	Dikişin izleyemediği resim
+	Bean Stitch	Fasulye Dikişi
+	Border Patterns	Kenarlık Desenleri
+	Change Sew Order	Dikiş Sırasını Değiştir
+	Check Design	Tasarımı Denetle
+	Design cut short	Tasarım kısa kesildi
+	Distance between zigzags or rows: smaller is denser	Zikzaklar veya sıralar arası mesafe: küçük olan daha sıktır
+	Each stitch sewn three times: a bolder line.	Her dikiş üç kez dikilir: daha kalın bir çizgi.
+	Embroidery Info	Nakış Bilgisi
+	Embroidery Setup	Nakış Kurulumu
+	Embroidery Stitches	Nakış Dikişleri
+	Embroidery	Nakış
+	How many times each stitch is sewn	Her dikişin kaç kez dikildiği
+	How the object is stitched	Nesnenin nasıl dikildiği
+	How wide the column, zigzag or border is	Sütunun, zikzakın veya kenarlığın genişliği
+	Load Border Pattern…	Kenarlık Deseni Yükle…
+	Embroidery Libraries	Nakış Kitaplıkları
+	Add to Embroidery Library…	Nakış Kitaplığına Ekle…
+	Rescan Embroidery Libraries	Nakış Kitaplıklarını Yeniden Tara
+	A line of type below the letters, sewn from the font as it is now	Harflerin altında, yazı tipinden şu anki haliyle dikilen bir satır yazı
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	Harfleri, üzerinden izlemek için kilitli bir şablon katmanına konan yüklü bir yazı tipi (boş: yok)
+	Ascender:	Çıkıntı:
+	Cap Height:	Büyük Harf Yüksekliği:
+	Characters:	Karakterler:
+	Descender:	İnişli Kısım:
+	Edit Font…	Yazı Tipini Düzenle…
+	Font Editor	Yazı Tipi Düzenleyicisi
+	Kerning:	Harf Aralığı Çifti:
+	License:	Lisans:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	Bir nakış yazı tipi oluşturun: her harf için bir çalışma yüzeyi, sıradan dikişlerle dijitalleştirilmiş.
+	New Embroidery Font	Yeni Nakış Yazı Tipi
+	Save Font…	Yazı Tipini Kaydet…
+	Trace:	İzleme:
+	Two letters and font units: negative sets them closer	İki harf ve yazı tipi birimi: negatif değer onları yaklaştırır
+	Update Sample	Örneği Güncelle
+	x Height:	x Yüksekliği:
+	Embroidery Font Info	Nakış Yazı Tipi Bilgisi
+	Embroidery Font Kerning	Nakış Yazı Tipi Harf Aralığı
+	Embroidery Font Sample	Nakış Yazı Tipi Örneği
+	Embroidery Font Setup	Nakış Yazı Tipi Kurulumu
+	New Embroidery Font…	Yeni Nakış Yazı Tipi…
+	Open Embroidery Font…	Nakış Yazı Tipi Aç…
+	Trace Embroidery Font…	Nakış Yazı Tipi İzle…
+	Load Motif…	Motif Yükle…
+	Motif Fill	Motif Dolgu
+	A small stitched motif repeated across the shape, the fabric showing between.	Şekil boyunca tekrarlanan küçük dikişli bir motif, aralarda kumaş görünür.
+	How large one tile of the motif is	Motifin bir karosunun büyüklüğü
+	The motif sewn tile by tile across the shape	Şekil boyunca karo karo dikilen motif
+	Choose the thread's color	İpliğin rengini seçin
+	Load a motif file (.vcmotif) into the document	Belgeye bir motif dosyası (.vcmotif) yükle
+	Save this motif as a file (.vcmotif)	Bu motifi dosya olarak kaydet (.vcmotif)
+	Flowers	Çiçekler
+	Hearts	Kalpler
+	Motifs	Motifler
+	Remove Motif	Motifi Kaldır
+	Save Motif…	Motifi Kaydet…
+	Load Motif	Motif Yükle
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	{family} izlendi: {traced} harf saten sütun olarak, {kept} harf dış hat olarak tutuldu
+	Tracing Font	Yazı Tipi İzleniyor
+	Tracing {family}	{family} izleniyor
+	{done} of {total} letters	{done} / {total} harf
+	Frame:	Çerçeve:
+	Letters as live type placed by the layout, each still editable, with an optional frame	Yerleşimle konmuş canlı yazı olarak harfler, her biri düzenlenebilir, isteğe bağlı bir çerçeveyle
+	Letters:	Harfler:
+	Monogram	Monogram
+	No Frame	Çerçeve Yok
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	Seçili nokta yazısını bulunduğu yerden geçen bir daire yayına yerleştir: üstten veya alttan, soldan sağa okunacak şekilde
+	Satin Ring	Saten Halka
+	Type on an Arc	Yay Üzerinde Yazı
+	Update Monogram	Monogramı Güncelle
+	Monogram…	Monogram…
+	Type on an Arc…	Yay Üzerinde Yazı…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	Dikiş Açısı aracı: çizgi eklemek için satenin üzerinden sürükleyin, taşımak için çizginin ucunu sürükleyin, kaldırmak için çizgiye Alt ile tıklayın
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	Satenin üzerinden geçen ve kesiştikleri yerde dikişlerinin yönünü belirleyen çizgiler, aralarında yavaşça döner (Dikiş Açısı aracı bunları çizer)
+	Stitch Angle Tool	Dikiş Açısı Aracı
+	Stitch Angles:	Dikiş Açıları:
+	Stitch Angle	Dikiş Açısı
+	Three Equal	Üç Eşit
+	Two Letters	İki Harf
+	Trace Font	İzleme Yazı Tipi
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	İzleme yazı tipinin harflerini otomatik dijitalleştir, her kalem darbesi bir saten sütun (yalnızca lisansı türev eserlere izin veren yazı tipleri için)
+@msg	not a layer	katman değil
+@msg	the document has no layer	belgede katman yok
+	More Settings ({n})	Diğer Ayarlar ({n})
+@plural	{n} stitch|{n} stitches	{n} dikiş
+@plural	{n} thread|{n} threads	{n} iplik
+@plural	{n} path|{n} paths	{n} yol
+@plural	{n} compound path|{n} compound paths	{n} bileşik yol
+@plural	{n} type object|{n} type objects	{n} yazı nesnesi
+@plural	{n} object|{n} objects	{n} nesne
+@plural	{n} problem|{n} problems	{n} sorun
+	{m} min	{m} dk
+	Setup	Kurulum
+	Check & Export	Denetle ve Dışa Aktar
+	Sewing	Dikiş
+	Not stitched	Dikilmiyor
+	Mixed stitches	Karışık dikişler
+	The selection: what it is, its size, its stitch and the stitches it sews	Seçim: ne olduğu, boyutu, dikişi ve diktiği dikişler
+	Areas	Alanlar
+	Fold the stitches away	Dikişleri katla
+	Choose another stitch	Başka bir dikiş seç
+	The selection is open paths: this stitch closes each one with a straight line between its ends.	Seçim açık yollardan oluşuyor: bu dikiş her birini uçları arasında düz bir çizgiyle kapatır.
+	From Stitches	Dikişlerden
+	Font Editor…	Yazı Tipi Düzenleyicisi…
+	Make an embroidery font, or edit the one in this font document	Bir nakış yazı tipi oluşturun veya bu yazı tipi belgesindekini düzenleyin
+	Embroidery Font Editor	Nakış Yazı Tipi Düzenleyicisi
+	Embroidery Panel	Nakış Paneli
+	Export Stitch File…	Dikiş Dosyası Dışa Aktar…
+	Fabric and Hoop	Kumaş ve Kasnak
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	Kumaşı ve kasnağı seçin: kumaş, kendi ayarı olmayan her dikişin sıklığını, telafisini ve alt dikişini belirler.
+	Dismiss	Kapat
+	Don't show this again (Setup has both menus)	Bunu bir daha gösterme (Kurulum’da iki menü de var)
+	The stitched design: its stitches, size, threads and sewing time	Dikilen tasarım: dikişleri, boyutu, iplikleri ve dikiş süresi
+	What the design checker found: open its list	Tasarım denetleyicisinin bulduğu: listesini aç
+@msg	Loaded embroidery font {_1}	{_1} nakış yazı tipi yüklendi
+	Add Font Folder…	Yazı Tipi Klasörü Ekle…
+	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	Burada listelenecek nakış yazı tiplerinden oluşan bir klasör, örneğin yüklediğiniz Ink/Stitch yazı tipi klasörleri; bulundukları yerden okunurlar
+	Embroidery Font Folders…	Nakış Yazı Tipi Klasörleri…
+	Import Ink/Stitch Font…	Ink/Stitch Yazı Tipi İçe Aktar…
+	Import Ink/Stitch Font	Ink/Stitch Yazı Tipi İçe Aktar
+@msg	font.json is over {_1} MB	font.json {_1} MB’tan büyük
+@msg	{_1} embroidery fonts found	{_1} nakış yazı tipi bulundu
+	Embroidery Font:	Nakış Yazı Tipi:
+	Type only: sew the letters from this embroidery font's stitch objects instead of the outline font	Yalnızca yazı: harfleri dış hat yazı tipi yerine bu nakış yazı tipinin dikiş nesnelerinden dik
+	Embroidery Fonts	Nakış Yazı Tipleri
+	Load Embroidery Font…	Nakış Yazı Tipi Yükle…
+	Save Embroidery Font…	Nakış Yazı Tipini Kaydet…
+	Remove Embroidery Font	Nakış Yazı Tipini Kaldır
+	Load Embroidery Font	Nakış Yazı Tipi Yükle
+	Appliqué Cut File…	Aplike Kesim Dosyası…
+	Cut File…	Kesim Dosyası…
+	The appliqué pieces' outlines packed onto cutter mats, in a new document to export as SVG or DXF	Aplike parçalarının dış hatları kesici altlıklarına yerleştirilmiş, SVG veya DXF olarak dışa aktarmak için yeni bir belgede
+	Appliqué	Aplike
+	Make each selected closed shape an appliqué: placement line, stop, tack-down, stop, cover	Seçili her kapalı şekli aplike yap: yerleştirme çizgisi, durma, tutturma, durma, kaplama
+	Stop Before:	Önce Dur:
+	Place Fabric	Kumaşı Yerleştir
+	Trim Fabric	Kumaşı Kırp
+	Stop the machine before this object: to change something by hand, place appliqué fabric, or trim it	Makineyi bu nesneden önce durdur: elle bir şey değiştirmek, aplike kumaşı yerleştirmek veya kırpmak için
+	Save a copy in your embroidery library, for any design	Herhangi bir tasarım için nakış kitaplığınıza bir kopya kaydedin
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	Nakış kitaplığınız: herhangi bir tasarım için kenarlık desenleri, kumaşlar, kasnaklar ve iplik çizelgeleri
+@msg	no embroidery library folder here	burada nakış kitaplığı klasörü yok
+@msg	Added {_1} to the embroidery library	{_1} nakış kitaplığına eklendi
+@msg	nothing to add	eklenecek bir şey yok
+	Long stitches	Uzun dikişler
+	Makes no stitches	Dikiş üretmiyor
+	Manual Stitch	Elle Dikiş
+	Motif:	Motif:
+	Not sewn as set	Ayarlandığı gibi dikilmiyor
+	Objects that are stitched but can't be sewn (not a path, compound path or type; settings from a newer VectorCraft), or are sewn whole although a mask hides part of them.	Dikişli olup dikilemeyen nesneler (yol, bileşik yol veya yazı değil; daha yeni bir VectorCraft’tan ayarlar) ya da bir maske bir kısmını gizlese de tamamı dikilen nesneler.
+	Picks a stitch for each shape (each letter) by how wide its strokes are.	Her şekil (her harf) için konturlarının genişliğine göre bir dikiş seçer.
+	Remove Border Pattern	Kenarlık Desenini Kaldır
+	Render Stitch Preview	Dikiş Önizlemesi Oluştur
+	Rows before the needle holes line up again (2: brick, 3–8: tatami)	İğne delikleri yeniden hizalanmadan önceki sıra sayısı (2: tuğla, 3–8: tatami)
+	Rows of stitches covering the shape, with a pattern.	Şekli kaplayan, desenli dikiş sıraları.
+	Running Stitch	Düz Dikiş
+	Satin that follows a shape's strokes from edge to edge: lettering.	Bir şeklin konturlarını kenardan kenara izleyen saten: yazılar.
+	Save Border Pattern…	Kenarlık Desenini Kaydet…
+	Sew Order	Dikiş Sırası
+	Sew by Thread	İpliğe Göre Dik
+	Sew in Paint Order	Boyama Sırasıyla Dik
+	Single stitches along the path: outlines and details.	Yol boyunca tek dikişler: dış hatlar ve ayrıntılar.
+	Stitch Settings	Dikiş Ayarları
+	Stitch:	Dikiş:
+	Stitches longer than 7 mm snag and loosen with wear. Shorten the stitch length, narrow the satin, or fill a shape that wide.	7 mm’den uzun dikişler takılır ve kullanımla gevşer. Dikiş uzunluğunu kısaltın, sateni daraltın veya bu genişlikte bir şekli doldurun.
+	Stitches sewn first to hold the fabric and lift the top stitches	Kumaşı tutmak ve üst dikişleri kaldırmak için önce dikilen dikişler
+	The border pattern repeated along the path	Yol boyunca tekrarlanan kenarlık deseni
+	The design has more needle moves than a file can hold; the rest is left out. Split it into several designs.	Tasarımda bir dosyanın tutabileceğinden fazla iğne hareketi var; geri kalanı dışarıda bırakıldı. Birkaç tasarıma bölün.
+	The direction of the fill's rows	Dolgu sıralarının yönü
+	The needle goes down at every anchor, as drawn.	İğne, çizildiği gibi her bağlantıda aşağı iner.
+	The thread colour (unset: the object's stroke or fill colour)	İplik rengi (ayarlanmamışsa: nesnenin kontur veya dolgu rengi)
+	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	Dikiş türünün nesnenin şekli hakkında söyledikleri (konturu olmayan bir saten şekil, çok ince bir motif, eksik bir kenarlık deseni…).
+@msg	Extracted border pattern {_1}: a {_2} mm repeat	{_1} kenarlık deseni çıkarıldı: {_2} mm tekrar
+@msg	Loaded border pattern {_1}	{_1} kenarlık deseni yüklendi
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	Test sayfası, makinenizde ve kumaşınızda dikilecek bir dizi kalibrasyon örneğidir. Her bölüm 100 × 100 mm’lik bir tasarımdır; diktikten sonra her örneğin ne gösterdiğini burada işaretleyin.
+	Another test sheet, for another fabric or machine	Başka bir kumaş veya makine için başka bir test sayfası
+	Calibration swatches to sew, and a form for what they showed	Dikilecek kalibrasyon örnekleri ve ne gösterdiklerini yazmak için bir form
+	Click a swatch to select it and add a note.	Seçmek ve not eklemek için bir örneğe tıklayın.
+	Each section as a design of its own (one file per artboard)	Her bölüm kendi başına bir tasarım olarak (çalışma yüzeyi başına bir dosya)
+	Fabric:	Kumaş:
+	Fail	Başarısız
+	Lettering needs a type face; without one it is left out.	Yazı için bir yazı karakteri gerekir; yoksa dışarıda bırakılır.
+	Machine:	Makine:
+	New Test Sheet	Yeni Test Sayfası
+	New Test Sheet…	Yeni Test Sayfası…
+	Notes:	Notlar:
+	Pass	Başarılı
+	Sew-Out Test…	Dikiş Testi…
+	Test Sheet	Test Sayfası
+	To judge	Değerlendirilecek
+	Fill Angle	Dolgu Açısı
+	Fill Density	Dolgu Sıklığı
+	Lettering	Yazı
+	Pull Compensation	Çekme Telafisi
+	Record Sew-Out	Dikiş Testini Kaydet
+	Satin Density	Saten Sıklığı
+	Satin Width	Saten Genişliği
+	Sew-Out Test	Dikiş Testi
+	Underlay	Alt Dikiş
+	Pull Compensation (%):	Çekme Telafisi (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	Genişliğin (saten) veya sıra uzunluğunun (dolgu) payı olarak ek çekme telafisi
+	Push Compensation:	İtme Telafisi:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	Dikişler kumaşı dışarı ittiği için sütunları uçlarında bu kadar kısa diker, dolguları da sıraları boyunca
+	Denim	Kot
+	Fleece / Towel	Polar / Havlu
+	Knit	Örme
+	Leather	Deri
+	Load a fabric profile file (.vcfabric)	Bir kumaş profili dosyası (.vcfabric) yükle
+	Save the fabric as a file (.vcfabric)	Kumaşı dosya olarak kaydet (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	Tasarımın yapıldığı kumaş: sıklığı, telafisi ve alt dikişi nesnelerin ayarlamadığı değerleri tamamlar
+	Woven	Dokuma
+	Fabric	Kumaş
+	Fabric Profiles	Kumaş Profilleri
+	Load Fabric…	Kumaş Yükle…
+	Save Fabric…	Kumaşı Kaydet…
+	Load Fabric	Kumaş Yükle
+@msg	Fabric: {_1}	Kumaş: {_1}
+	Keep Covered Rows	Örtülü Sıraları Koru
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	Bu dolgunun sıralarını, üstüne sonradan dikilen nesnelerin altında da dik (normalde kesilip atılırlar)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	Bir dolgunun sıralarının, üstüne sonradan dikilen nesnelerin altına ne kadar uzandığı; örtülü sıraların geri kalanı kesilip atılır
+	Shortest Stitch:	En Kısa Dikiş:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	Bir öncekine bundan daha yakın iğne noktaları atlanır (kumaş daha uzununu isteyebilir)
+	Stitches too long to sew	Dikilemeyecek kadar uzun dikişler
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	12 mm’den uzun dikişler tek harekette dikilemez. Yol boyunca nokta ekleyin veya uzun dikişleri bölen bir dikiş türü kullanın.
+	Satin too narrow or too wide	Saten çok dar veya çok geniş
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	1 mm’den dar saten örtmez (düz veya fasulye dikişi kullanın); 10 mm’nin üzerinde dikişleri uzun ve gevşek olur (onun yerine şekli doldurun).
+	Too small to sew	Dikilemeyecek kadar küçük
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	Dikişleri 1 mm’lik bir kutuya sığan nesneler bir iplik düğümü olarak dikilir. Büyütün veya kaldırın.
+	Open shape set to fill	Dolguya ayarlı açık şekil
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	Dolgu, açık yolları düz bir çizgiyle kapatır; bu kastedilen şekil olmayabilir. Yolu kapatın veya yol boyunca bir dikiş kullanın.
+	Too many needle holes in one place	Tek bir yerde çok fazla iğne deliği
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	Nesnelerin üst üste bindiği yerlerde tek bir noktaya o kadar çok iğne deliği açılır ki kumaş yırtılır veya iğne kırılır. Örtüleni kesip atın, sıklığı azaltın veya bir katmanı kaldırın.
+	Many trims or jumps	Çok sayıda kesim veya atlama
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	Her kesim ve atlama makineyi yavaşlatır ve iplik uçları bırakır. İpliğe göre dikin, nesneleri yeniden sıralayın veya yakın parçaları birleştirin.
+	Type too small	Yazı çok küçük
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Letters' holes (the inside of an o, a or e) under 1 mm across close up on fabric whatever the stitch, so a font with small holes needs larger type. Make the type larger, or use a running stitch.	Güvenli boyutunun altındaki yazı kapanır ve okunamaz: saten yazı 4 mm veya daha fazla, dolgulu yazı 6 mm, düz veya fasulye dikişli yazı 2,5 mm gerektirir. Harflerin 1 mm’den küçük delikleri (o, a veya e’nin içi) dikiş ne olursa olsun kumaşta kapanır, bu yüzden delikleri küçük bir yazı tipi daha büyük yazı ister. Yazıyı büyütün veya düz dikiş kullanın.
+	Hoop:	Kasnak:
+	The hoop the design is sewn in: its sewing field, centred on the design, is checked and shown in Stitch Preview	Tasarımın dikildiği kasnak: tasarıma ortalanmış dikiş alanı denetlenir ve Dikiş Önizlemesi’nde gösterilir
+	The design fits the hoop.	Tasarım kasnağa sığıyor.
+	The design fits only turned a quarter turn.	Tasarım yalnızca çeyrek tur döndürülünce sığıyor.
+	The design is bigger than the hoop.	Tasarım kasnaktan büyük.
+	Hoops	Kasnaklar
+	Hoop	Kasnak Seç
+	Load Hoop…	Kasnak Yükle…
+	Save Hoop…	Kasnağı Kaydet…
+	Load Hoop	Kasnak Yükle
+	Design bigger than the hoop	Kasnaktan büyük tasarım
+	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	Tasarım kasnağın dikiş alanına sığmalıdır. Daha büyük bir kasnak seçin, tasarımı çeyrek tur döndürün, küçültün veya art arda dikilen tasarımlara bölün.
+@msg	Hoop: {_1}	Kasnak: {_1}
+	Optimize	En İyileştir
+	Group by thread and sew each thread's objects nearest first, cutting jumps and trims	İpliğe göre grupla ve her ipliğin nesnelerini en yakından başlayarak dik, atlamaları ve kesimleri azaltarak
+	Optimize Sew Order	Dikiş Sırasını En İyileştir
+	Start At:	Başlangıç:
+	Where the needle starts: the path is entered at its point nearest it	İğnenin başladığı yer: yola ona en yakın noktasından girilir
+	Thread Chart:	İplik Çizelgesi:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	Tasarımın her iplik rengi bu çizelgedeki en yakın ipliği alır. Kullanma hakkınız olan çizelgeleri yükleyin (.vcthreads).
+	Load a thread chart file (.vcthreads)	Bir iplik çizelgesi dosyası (.vcthreads) yükle
+	Thread Charts	İplik Çizelgeleri
+	Thread Chart	İplik Çizelgesi Seç
+	Load Thread Chart…	İplik Çizelgesi Yükle…
+	Save Thread Chart…	İplik Çizelgesini Kaydet…
+	Remove Thread Chart	İplik Çizelgesini Kaldır
+	Match Threads	İplikleri Eşleştir
+	Load Thread Chart	İplik Çizelgesi Yükle
+@msg	Thread chart: {_1}	İplik çizelgesi: {_1}
+	Play	Oynat
+	Pause	Duraklat
+	Play the sewing stitch by stitch	Dikişi dikiş dikiş oynat
+	Sewing Time	Dikiş Süresi
+	At the machine speed set below, with time for trims and thread changes	Aşağıda ayarlanan makine hızında, kesimler ve iplik değişimleri için süre dahil
+	Machine Speed:	Makine Hızı:
+	Stitches per minute, for the sewing time estimate	Dikiş süresi tahmini için dakikadaki dikiş sayısı
+	Worksheet…	Çalışma Sayfası…
+	A printable sheet for whoever sews the design: picture, size, threads, time and notes	Tasarımı dikecek kişi için yazdırılabilir bir sayfa: resim, boyut, iplikler, süre ve notlar
+	Production Worksheet	Üretim Çalışma Sayfası
+	Puff Foam:	Kabartma Köpüğü:
+	Sew over 3D foam this thick: a stop to place the foam, dense satin with no underlay, capped ends, and a perforation all round so the excess foam tears away	Bu kalınlıkta 3B köpük üzerine dik: köpüğü yerleştirmek için bir durma, alt dikişsiz sık saten, kapalı uçlar ve fazla köpüğün yırtılarak ayrılması için çepeçevre bir delik dizisi
+	Puff that won't rise well	İyi kabarmayacak kabartma
+	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	Kabartma, köpük üzerinde 3 ile 10 mm genişliğinde saten ister: daha dar olursa kabarmaz, daha geniş olursa dikişleri köpüğü tutmaz. Köpük konduktan sonra dikilen düz nesneler köpüğün içinden geçer: onları önce dikin.
+	Puff	Kabartma
+	Export {format}…	{format} Dışa Aktar…
+	Machine Format:	Makine Biçimi:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) or U01 (Barudan)	Makinenizin okuduğu dosya biçimi: DST (Tajima ve çoğu makine), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) veya U01 (Barudan)
+	Hide Travel Under Fills	Geçişleri Dolguların Altına Gizle
+	Travel that a fill sewn later covers is sewn there as running stitches instead of jumped and trimmed	Sonra dikilen bir dolgunun örttüğü geçişler, atlanıp kesilmek yerine orada düz dikiş olarak dikilir
+	Stitch Start	Dikiş Başlangıcı
+	Single	Tek
+	Stem	Sap
+	Backstitch	Geri Dikiş
+	Sashiko	Sashiko
+	Run Styles	Düz Dikiş Stilleri
+	How the line is sewn: single stitches or a hand-stitch look	Çizginin nasıl dikildiği: tek dikişler veya el dikişi görünümü
+	The space between sashiko dashes	Sashiko çizgileri arasındaki boşluk
+	How wide the chain's loops or the stem's slant are	Zincirin ilmeklerinin veya sap dikişinin eğiminin genişliği
+	Slant the stem stitches the other way	Sap dikişlerini diğer yöne eğ
+	Single stitches along the path.	Yol boyunca tek dikişler.
+	Linked loops, like a hand chain stitch.	El zincir dikişi gibi birbirine bağlı ilmekler.
+	Slanted stitches overlapping by half: a twisted cord.	Yarı yarıya örtüşen eğik dikişler: bükülmüş bir kordon.
+	Each stitch forward, then half a stitch back: a heavier, smooth line.	Her dikiş ileri, sonra yarım dikiş geri: daha kalın, düzgün bir çizgi.
+	Bold dashes with gaps between them.	Aralarında boşluk olan kalın çizgiler.
+	Split:	Bölme:
+	Split Wide Stitches	Geniş Dikişleri Böl
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	Bölme Eşiği’nden geniş dikişler daha kısa parçalar halinde dikilir, böylece geniş sütunlar takılmaz (30 mm genişliğe kadar)
+	Split At:	Bölme Eşiği:
+	Split Length:	Bölme Uzunluğu:
+	Split Pattern:	Bölme Deseni:
+	Stagger	Kaydırmalı
+	Stitches longer than this are split	Bundan uzun dikişler bölünür
+	The longest piece of a split stitch	Bölünmüş bir dikişin en uzun parçası
+	How the split points move from stitch to stitch, so they don't line up into a seam	Bölme noktalarının dikişten dikişe nasıl kaydığı, böylece bir dikiş izi oluşturacak şekilde hizalanmazlar
+	Split Satin	Bölünmüş Saten
+	Compensation	Telafi
+	Sewn Width:	Dikilmiş Genişlik:
+	Sewn Length:	Dikilmiş Uzunluk:
+	Along the stitches, between the marks	Dikişler boyunca, işaretler arasında
+	Across the stitches, between the marks	Dikişlere dik, işaretler arasında
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: çekme {pull} mm + %{percent}, itme {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: çekme {pull} mm + %{percent}
+	Use as Fabric	Kumaş Olarak Kullan
+	Make the fitted compensation the document's fabric	Uydurulan telafiyi belgenin kumaşı yap
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	Uydurulan kumaşı, bu kumaşa dikilen tasarımlar için yüklemek üzere dosya olarak kaydet (.vcfabric)
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	Telafiyi uydurmak için bir telafi örneğine tıklayın ve dikilmiş ölçüsünü girin.
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	Telafi sayfası: telafisiz dikilmiştir, kumaşın her dikiş yönünde ne kadar içeri çekildiğini ölçmek için.

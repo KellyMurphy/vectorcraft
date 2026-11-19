@@ -10059,3 +10059,526 @@ theme	Appearance	अपीयरेंस
 @msg	Other blanks not shown: {count}	दूसरे ब्लैंक नहीं दिखाए गए: {count}
 @msg	A joint does not close by {gap} pt.	एक जोड़ {gap} pt से बंद नहीं होता।
 @msg	Two panels pass through each other.	दो पैनल एक-दूसरे के आर-पार जाते हैं।
+# Embroidery: stitches, sewing, hoops, fabrics, threads, fonts and checks. Drafted with AI assistance
+# from the English meaning; not yet reviewed by a native speaker (review welcome).
+@msg	select closed paths or compound paths to make appliqué from	ऐप्लिके बनाने के लिए बंद पाथ या कंपाउंड पाथ सिलेक्ट करें
+@msg	select appliqué groups or closed shapes (the document has no appliqué groups)	ऐप्लिके समूह या बंद आकृतियाँ सिलेक्ट करें (डॉक्यूमेंट में कोई ऐप्लिके समूह नहीं है)
+@msg	select a logo: an image, a traced image, or a group of filled shapes	एक लोगो सिलेक्ट करें: एक इमेज, ट्रेस की गई इमेज, या भरी हुई आकृतियों का समूह
+@msg	select one logo: group its shapes first	एक ही लोगो सिलेक्ट करें: पहले उसकी आकृतियों को समूह में करें
+@msg	the selection has no filled shapes or image to digitize	सिलेक्शन में डिजिटाइज़ करने के लिए कोई भरी हुई आकृति या इमेज नहीं है
+@msg	select an opened design's manual stitches	खोले गए डिज़ाइन के मैन्युअल स्टिच सिलेक्ट करें
+	A satin border sewn over the shape's edges, after the fill	आकृति के किनारों पर, फ़िल के बाद सिली गई सैटिन बॉर्डर
+	After	बाद में
+	Bean Below:	नीचे बीन स्टिच:
+	Before	पहले
+	Between Rails	रेलों के बीच
+	Border:	बॉर्डर:
+	By Thread	धागे के अनुसार
+	Center Walk	बीच की चाल
+	Chain	चेन
+	Choose a stitch to sew the selection with.	सिलेक्शन सिलने के लिए एक स्टिच चुनें।
+	Circles	वृत्त
+	Cut the thread after this object	इस ऑब्जेक्ट के बाद धागा काटें
+	Cut the thread before this object, however close it starts	इस ऑब्जेक्ट से पहले धागा काटें, चाहे यह कितना भी पास शुरू हो
+	Design	डिज़ाइन
+	Distance between rows: smaller is denser	पंक्तियों के बीच दूरी: कम होने पर घना
+	Distance between the points of the zigzag	ज़िगज़ैग के सिरों के बीच दूरी
+	Distance between zigzags: smaller is denser	ज़िगज़ैग के बीच दूरी: कम होने पर घना
+	Drag a row to move it. Objects sewn later lie on top.	खिसकाने के लिए किसी पंक्ति को ड्रैग करें। बाद में सिले गए ऑब्जेक्ट ऊपर रहते हैं।
+	Each shape (or letter) is stitched by how wide its strokes are.	हर आकृति (या अक्षर) उसके स्ट्रोक की चौड़ाई के अनुसार सिली जाती है।
+	Edge Walk	किनारे की चाल
+	Embroidery…	कढ़ाई…
+	Export DST…	DST एक्सपोर्ट करें…
+	Extract Border Pattern	बॉर्डर पैटर्न निकालें
+	Fill Above:	ऊपर फ़िल:
+	Fill Underlay	फ़िल अंडरले
+	Give paths stitch settings in the Embroidery panel; they are sewn in this order.	कढ़ाई पैनल में पाथ को स्टिच सेटिंग्स दें; वे इसी क्रम में सिले जाते हैं।
+	Group the sewing order by thread colour, for fewer thread changes	सिलाई क्रम को धागे के रंग के अनुसार समूहित करें, कम धागा बदलने के लिए
+	Herringbone	हेरिंगबोन
+	How large one repeat of the motif is	मोटिफ़ की एक पुनरावृत्ति कितनी बड़ी है
+	How long each stitch is	हर स्टिच कितना लंबा है
+	How the needle holes line up from row to row, or a motif carved into the fill	सुई के छेद पंक्ति दर पंक्ति कैसे पंक्तिबद्ध होते हैं, या फ़िल में उकेरा गया मोटिफ़
+	How wide the border is: the pattern scales with it	बॉर्डर कितनी चौड़ी है: पैटर्न उसके साथ स्केल होता है
+	How wide the zigzag swings	ज़िगज़ैग कितना चौड़ा झूलता है
+	Load a border pattern file (.vcborder) into the document	डॉक्यूमेंट में बॉर्डर पैटर्न फ़ाइल (.vcborder) लोड करें
+	Load…	लोड करें…
+	Mirror the pattern across the path	पैटर्न को पाथ के आर-पार मिरर करें
+	Motif Size:	मोटिफ़ साइज़:
+	Motif	मोटिफ़
+	No problems found.	कोई समस्या नहीं मिली।
+	Nothing is stitched yet.	अभी तक कुछ भी सिला नहीं गया।
+	Object color	ऑब्जेक्ट का रंग
+	Only paths, compound paths and type can be stitched.	केवल पाथ, कंपाउंड पाथ और टाइप सिले जा सकते हैं।
+	Only the first 30 are listed.	केवल पहले 30 सूचीबद्ध हैं।
+	Only thread changes and objects set to trim cut the thread.	केवल धागा बदलना और ट्रिम पर सेट ऑब्जेक्ट ही धागा काटते हैं।
+	Open a document to see its sewing order.	सिलाई क्रम देखने के लिए एक डॉक्यूमेंट खोलें।
+	Reset Order	क्रम रीसेट करें
+	Passes:	पास:
+	Pattern Border	पैटर्न बॉर्डर
+	Pattern Size	पैटर्न साइज़
+	Pattern:	पैटर्न:
+	Pull Compensation:	पुल कंपेंसेशन:
+	Remove Stitches	स्टिच हटाएँ
+	Satin Column	सैटिन कॉलम
+	Satin Shape	सैटिन आकृति
+	Satin follows the shape's strokes from edge to edge.	सैटिन आकृति के स्ट्रोक को किनारे से किनारे तक फ़ॉलो करता है।
+	Save this border pattern as a file (.vcborder)	इस बॉर्डर पैटर्न को फ़ाइल के रूप में सेव करें (.vcborder)
+	Scales	शल्क
+	Select a straight stretch of a border with two or more repeats, or a shape drawn over it too.	बॉर्डर का दो या अधिक पुनरावृत्तियों वाला एक सीधा हिस्सा सिलेक्ट करें, या उस पर बनी आकृति भी।
+	Select paths to stitch.	सिलने के लिए पाथ सिलेक्ट करें।
+	Sew Earlier	पहले सिलें
+	Sew First	सबसे पहले सिलें
+	Sew Last	सबसे अंत में सिलें
+	Sew Later	बाद में सिलें
+	Stitch Moves Under:	स्टिच के नीचे से चालें:
+	Sew Order…	सिलाई क्रम…
+	Sew in paint order again (bottom first)	फिर से पेंट क्रम में सिलें (सबसे नीचे वाला पहले)
+	Sews the column this much wider, since the thread pulls the fabric in	कॉलम को इतना चौड़ा सिलता है, क्योंकि धागा फ़ैब्रिक को अंदर खींचता है
+	Some selected objects aren't stitched: choose a stitch for all of them.	कुछ सिलेक्ट किए गए ऑब्जेक्ट सिले नहीं जाते: उन सभी के लिए एक स्टिच चुनें।
+	Step through the design as it is sewn, and change the order	डिज़ाइन को सिलाई के क्रम में कदम दर कदम देखें, और क्रम बदलें
+	Step through the sewing	सिलाई को कदम दर कदम देखें
+	Stitch Length:	स्टिच लंबाई:
+	Stitch Preview	स्टिच प्रीव्यू
+	Stitch	स्टिच
+	Stitches:	स्टिच:
+	Tatami	टाटामी
+	Fill Style:	फ़िल स्टाइल:
+	How the area is covered: straight rows, or rings following the outline	क्षेत्र कैसे ढका जाता है: सीधी पंक्तियाँ, या आउटलाइन का अनुसरण करते छल्ले
+	Straight rows at the fill's angle, their needle holes staggered.	फ़िल के कोण पर सीधी पंक्तियाँ, सुई के छेद आगे-पीछे खिसके हुए।
+	Rings following the outline, sewn ring to ring: good for round and flowing shapes.	आउटलाइन का अनुसरण करते छल्ले, छल्ले से छल्ले तक सिले: गोल और बहती आकृतियों के लिए अच्छे।
+	The rings blended into one continuous spiral, with no step between them: best on round shapes.	छल्ले एक निरंतर सर्पिल में मिले हुए, उनके बीच कोई कदम नहीं: गोल आकृतियों पर सबसे अच्छा।
+	The needle goes down at every anchor point, as drawn.	सुई हर एंकर पॉइंट पर नीचे जाती है, जैसा बनाया गया है।
+	The object's two paths are the column's edges; lines crossing both set the stitch direction	ऑब्जेक्ट के दो पाथ कॉलम के किनारे हैं; दोनों को काटने वाली रेखाएँ स्टिच की दिशा तय करती हैं
+	The pattern repeats along the path, a whole number of times between corners.	पैटर्न पाथ के साथ दोहराया जाता है, कोनों के बीच पूरी संख्या में बार।
+	The selected objects use different stitches.	सिलेक्ट किए गए ऑब्जेक्ट अलग-अलग स्टिच इस्तेमाल करते हैं।
+	The selection is no longer stitched	सिलेक्शन अब सिला नहीं जाता
+	The selection's stitch and its settings	सिलेक्शन का स्टिच और उसकी सेटिंग्स
+	The stroke's color for stitches along the path, the fill's for fills	पाथ के साथ स्टिच के लिए स्ट्रोक का रंग, फ़िल के लिए फ़िल का रंग
+	These stitch settings are from a newer VectorCraft: kept as they are, but not sewn. Choose a stitch to replace them.	ये स्टिच सेटिंग्स नए VectorCraft से हैं: जैसी हैं वैसी रखी गई हैं, पर सिली नहीं जातीं। इन्हें बदलने के लिए एक स्टिच चुनें।
+	Thinner strokes get a bean stitch round their outline	पतले स्ट्रोक की आउटलाइन पर बीन स्टिच लगती है
+	Thread	धागा
+	Thread:	धागा:
+	Threads:	धागे:
+	Travel	चाल
+	Trim Jumps Over:	इससे लंबी जंप ट्रिम करें:
+	Trim:	ट्रिम:
+	Trims / Jumps:	ट्रिम / जंप:
+	Underlay:	अंडरले:
+	Use Object Color	ऑब्जेक्ट का रंग इस्तेमाल करें
+	Use Stroke	स्ट्रोक इस्तेमाल करें
+	Waves	लहरें
+	Wider strokes are filled, with a satin border; strokes in between get satin	चौड़े स्ट्रोक सैटिन बॉर्डर के साथ भरे जाते हैं; बीच वाले स्ट्रोक को सैटिन मिलता है
+	Zigzag Stitch	ज़िगज़ैग स्टिच
+	the pattern's size	पैटर्न का साइज़
+	the stroke width	स्ट्रोक की चौड़ाई
+	A border pattern repeated along the path.	पाथ के साथ दोहराया गया बॉर्डर पैटर्न।
+	A dense zigzag column along the path, as wide as the stroke.	पाथ के साथ एक घना ज़िगज़ैग कॉलम, स्ट्रोक जितना चौड़ा।
+	A motif carved into the fill	फ़िल में उकेरा गया मोटिफ़
+	A stitched object that makes no stitches: empty, or too small for its stitch type.	सिला गया ऑब्जेक्ट जो कोई स्टिच नहीं बनाता: खाली, या अपने स्टिच प्रकार के लिए बहुत छोटा।
+	An open zigzag along the path: decorative lines, appliqué edges.	पाथ के साथ खुला ज़िगज़ैग: सजावटी रेखाएँ, ऐप्लिके के किनारे।
+	Art the stitch can't follow	ऐसा आर्ट जिसे स्टिच फ़ॉलो नहीं कर सकता
+	Bean Stitch	बीन स्टिच
+	Border Patterns	बॉर्डर पैटर्न
+	Change Sew Order	सिलाई क्रम बदलें
+	Check Design	डिज़ाइन जाँचें
+	Design cut short	डिज़ाइन छोटा कर दिया गया
+	Distance between zigzags or rows: smaller is denser	ज़िगज़ैग या पंक्तियों के बीच दूरी: कम होने पर घना
+	Each stitch sewn three times: a bolder line.	हर स्टिच तीन बार सिला जाता है: एक मोटी रेखा।
+	Embroidery Info	कढ़ाई जानकारी
+	Embroidery Setup	कढ़ाई सेटअप
+	Embroidery Stitches	कढ़ाई स्टिच
+	Embroidery	कढ़ाई
+	How many times each stitch is sewn	हर स्टिच कितनी बार सिला जाता है
+	How the object is stitched	ऑब्जेक्ट कैसे सिला जाता है
+	How wide the column, zigzag or border is	कॉलम, ज़िगज़ैग या बॉर्डर कितना चौड़ा है
+	Load Border Pattern…	बॉर्डर पैटर्न लोड करें…
+	Embroidery Libraries	कढ़ाई लाइब्रेरी
+	Add to Embroidery Library…	कढ़ाई लाइब्रेरी में जोड़ें…
+	Rescan Embroidery Libraries	कढ़ाई लाइब्रेरी फिर से स्कैन करें
+	A line of type below the letters, sewn from the font as it is now	अक्षरों के नीचे टाइप की एक पंक्ति, फ़ॉन्ट से उसके मौजूदा रूप में सिली गई
+	An installed font whose letters go on a locked template layer to trace over (left empty: none)	एक इंस्टॉल किया गया फ़ॉन्ट जिसके अक्षर ट्रेस करने के लिए लॉक की गई टेम्पलेट लेयर पर जाते हैं (खाली: कोई नहीं)
+	Ascender:	एसेंडर:
+	Cap Height:	कैप ऊँचाई:
+	Characters:	अक्षर-चिह्न:
+	Descender:	डिसेंडर:
+	Edit Font…	फ़ॉन्ट एडिट करें…
+	Font Editor	फ़ॉन्ट एडिटर
+	Kerning:	कर्निंग:
+	License:	लाइसेंस:
+	Make an embroidery font: one artboard per letter, digitized with the ordinary stitches.	एक कढ़ाई फ़ॉन्ट बनाएँ: हर अक्षर के लिए एक आर्टबोर्ड, सामान्य स्टिच से डिजिटाइज़ किया गया।
+	New Embroidery Font	नया कढ़ाई फ़ॉन्ट
+	Save Font…	फ़ॉन्ट सेव करें…
+	Trace:	ट्रेस:
+	Two letters and font units: negative sets them closer	दो अक्षर और फ़ॉन्ट यूनिट: ऋणात्मक मान उन्हें पास लाता है
+	Update Sample	नमूना अपडेट करें
+	x Height:	x ऊँचाई:
+	Embroidery Font Info	कढ़ाई फ़ॉन्ट जानकारी
+	Embroidery Font Kerning	कढ़ाई फ़ॉन्ट कर्निंग
+	Embroidery Font Sample	कढ़ाई फ़ॉन्ट नमूना
+	Embroidery Font Setup	कढ़ाई फ़ॉन्ट सेटअप
+	New Embroidery Font…	नया कढ़ाई फ़ॉन्ट…
+	Open Embroidery Font…	कढ़ाई फ़ॉन्ट खोलें…
+	Trace Embroidery Font…	कढ़ाई फ़ॉन्ट ट्रेस करें…
+	Load Motif…	मोटिफ़ लोड करें…
+	Motif Fill	मोटिफ़ फ़िल
+	A small stitched motif repeated across the shape, the fabric showing between.	आकृति पर दोहराया गया एक छोटा सिला हुआ मोटिफ़, बीच में फ़ैब्रिक दिखता है।
+	How large one tile of the motif is	मोटिफ़ की एक टाइल कितनी बड़ी है
+	The motif sewn tile by tile across the shape	आकृति पर टाइल दर टाइल सिला गया मोटिफ़
+	Choose the thread's color	धागे का रंग चुनें
+	Load a motif file (.vcmotif) into the document	डॉक्यूमेंट में मोटिफ़ फ़ाइल (.vcmotif) लोड करें
+	Save this motif as a file (.vcmotif)	इस मोटिफ़ को फ़ाइल के रूप में सेव करें (.vcmotif)
+	Flowers	फूल
+	Hearts	दिल
+	Motifs	मोटिफ़ संग्रह
+	Remove Motif	मोटिफ़ हटाएँ
+	Save Motif…	मोटिफ़ सेव करें…
+	Load Motif	मोटिफ़ लोड करें
+	Traced {family}: {traced} letters as satin columns, {kept} kept as outlines	{family} ट्रेस किया गया: {traced} अक्षर सैटिन कॉलम के रूप में, {kept} आउटलाइन के रूप में रखे गए
+	Tracing Font	फ़ॉन्ट ट्रेस हो रहा है
+	Tracing {family}	{family} ट्रेस हो रहा है
+	{done} of {total} letters	{total} में से {done} अक्षर
+	Frame:	फ़्रेम:
+	Letters as live type placed by the layout, each still editable, with an optional frame	लेआउट द्वारा रखे गए लाइव टाइप के रूप में अक्षर, हर एक अब भी एडिट करने योग्य, वैकल्पिक फ़्रेम के साथ
+	Letters:	अक्षर:
+	Monogram	मोनोग्राम
+	No Frame	कोई फ़्रेम नहीं
+	Put the selected point type on a circle arc through where it is: over the top, or under the bottom reading left to right	सिलेक्ट किए गए पॉइंट टाइप को उसकी जगह से गुज़रते वृत्त-चाप पर रखें: ऊपर से, या नीचे से, बाएँ से दाएँ पढ़ा जाए
+	Satin Ring	सैटिन रिंग
+	Type on an Arc	चाप पर टाइप
+	Update Monogram	मोनोग्राम अपडेट करें
+	Monogram…	मोनोग्राम…
+	Type on an Arc…	चाप पर टाइप…
+	The Stitch Angle tool: drag across the satin to add a line, drag a line's end to move it, Alt-click a line to remove it	स्टिच कोण टूल: लाइन जोड़ने के लिए सैटिन के आर-पार ड्रैग करें, खिसकाने के लिए लाइन का सिरा ड्रैग करें, हटाने के लिए लाइन पर Alt-क्लिक करें
+	Lines across the satin setting its stitches' direction where they cross it, turning gradually between them (the Stitch Angle tool draws them)	सैटिन के आर-पार रेखाएँ जो जहाँ उसे काटती हैं वहाँ उसके स्टिच की दिशा तय करती हैं, उनके बीच धीरे-धीरे मुड़ती हैं (स्टिच कोण टूल इन्हें बनाता है)
+	Stitch Angle Tool	स्टिच कोण टूल
+	Stitch Angles:	स्टिच कोण:
+	Stitch Angle	स्टिच कोण
+	Three Equal	तीन बराबर
+	Two Letters	दो अक्षर
+	Trace Font	ट्रेस फ़ॉन्ट
+	Digitize the Trace font's letters automatically, each pen stroke a satin column (only for fonts whose licence allows derivatives)	ट्रेस फ़ॉन्ट के अक्षर अपने-आप डिजिटाइज़ करें, हर पेन स्ट्रोक एक सैटिन कॉलम (केवल उन फ़ॉन्ट के लिए जिनका लाइसेंस व्युत्पन्न कार्य की अनुमति देता है)
+@msg	not a layer	लेयर नहीं है
+@msg	the document has no layer	डॉक्यूमेंट में कोई लेयर नहीं है
+	More Settings ({n})	और सेटिंग्स ({n})
+@plural	{n} stitch|{n} stitches	{n} स्टिच|{n} स्टिच
+@plural	{n} thread|{n} threads	{n} धागा|{n} धागे
+@plural	{n} path|{n} paths	{n} पाथ|{n} पाथ
+@plural	{n} compound path|{n} compound paths	{n} कंपाउंड पाथ|{n} कंपाउंड पाथ
+@plural	{n} type object|{n} type objects	{n} टाइप ऑब्जेक्ट|{n} टाइप ऑब्जेक्ट
+@plural	{n} object|{n} objects	{n} ऑब्जेक्ट|{n} ऑब्जेक्ट
+@plural	{n} problem|{n} problems	{n} समस्या|{n} समस्याएँ
+	{m} min	{m} मिनट
+	Setup	सेटअप
+	Check & Export	जाँचें और एक्सपोर्ट करें
+	Sewing	सिलाई
+	Not stitched	सिला नहीं गया
+	Mixed stitches	मिले-जुले स्टिच
+	The selection: what it is, its size, its stitch and the stitches it sews	सिलेक्शन: यह क्या है, इसका साइज़, इसका स्टिच और यह कौन से स्टिच सिलता है
+	Areas	क्षेत्र
+	Fold the stitches away	स्टिच को समेटें
+	Choose another stitch	दूसरा स्टिच चुनें
+	The selection is open paths: this stitch closes each one with a straight line between its ends.	सिलेक्शन खुले पाथ हैं: यह स्टिच हर एक को उसके सिरों के बीच सीधी रेखा से बंद करता है।
+	From Stitches	स्टिच से
+	Font Editor…	फ़ॉन्ट एडिटर…
+	Make an embroidery font, or edit the one in this font document	एक कढ़ाई फ़ॉन्ट बनाएँ, या इस फ़ॉन्ट डॉक्यूमेंट वाला एडिट करें
+	Embroidery Font Editor	कढ़ाई फ़ॉन्ट एडिटर
+	Embroidery Panel	कढ़ाई पैनल
+	Export Stitch File…	स्टिच फ़ाइल एक्सपोर्ट करें…
+	Fabric and Hoop	फ़ैब्रिक और हूप
+	Choose the fabric and the hoop: the fabric sets the density, compensation and underlay of every stitch that doesn't set its own.	फ़ैब्रिक और हूप चुनें: फ़ैब्रिक उन सभी स्टिच का घनत्व, कंपेंसेशन और अंडरले तय करता है जो अपना तय नहीं करते।
+	Dismiss	खारिज करें
+	Don't show this again (Setup has both menus)	इसे फिर न दिखाएँ (सेटअप में दोनों मेनू हैं)
+	The stitched design: its stitches, size, threads and sewing time	सिला गया डिज़ाइन: उसके स्टिच, साइज़, धागे और सिलाई का समय
+	What the design checker found: open its list	डिज़ाइन चेकर को क्या मिला: उसकी सूची खोलें
+@msg	Loaded embroidery font {_1}	कढ़ाई फ़ॉन्ट {_1} लोड हुआ
+	Add Font Folder…	फ़ॉन्ट फ़ोल्डर जोड़ें…
+	A folder of embroidery fonts to list here, such as Ink/Stitch font folders you installed; they are read where they are	यहाँ सूचीबद्ध करने के लिए कढ़ाई फ़ॉन्ट का फ़ोल्डर, जैसे आपके इंस्टॉल किए गए Ink/Stitch फ़ॉन्ट फ़ोल्डर; वे जहाँ हैं वहीं से पढ़े जाते हैं
+	Embroidery Font Folders…	कढ़ाई फ़ॉन्ट फ़ोल्डर…
+	Import Ink/Stitch Font…	Ink/Stitch फ़ॉन्ट इम्पोर्ट करें…
+	Import Ink/Stitch Font	Ink/Stitch फ़ॉन्ट इम्पोर्ट करें
+@msg	font.json is over {_1} MB	font.json {_1} MB से बड़ी है
+@msg	{_1} embroidery fonts found	{_1} कढ़ाई फ़ॉन्ट मिले
+	Embroidery Font:	कढ़ाई फ़ॉन्ट:
+	Type only: sew the letters from this embroidery font's stitch objects instead of the outline font	केवल टाइप: अक्षरों को आउटलाइन फ़ॉन्ट के बजाय इस कढ़ाई फ़ॉन्ट के स्टिच ऑब्जेक्ट से सिलें
+	Embroidery Fonts	कढ़ाई फ़ॉन्ट
+	Load Embroidery Font…	कढ़ाई फ़ॉन्ट लोड करें…
+	Save Embroidery Font…	कढ़ाई फ़ॉन्ट सेव करें…
+	Remove Embroidery Font	कढ़ाई फ़ॉन्ट हटाएँ
+	Load Embroidery Font	कढ़ाई फ़ॉन्ट लोड करें
+	Appliqué Cut File…	ऐप्लिके कट फ़ाइल…
+	Cut File…	कट फ़ाइल…
+	The appliqué pieces' outlines packed onto cutter mats, in a new document to export as SVG or DXF	ऐप्लिके टुकड़ों की आउटलाइन कटर मैट पर रखी गईं, SVG या DXF के रूप में एक्सपोर्ट करने के लिए नए डॉक्यूमेंट में
+	Appliqué	ऐप्लिके
+	Make each selected closed shape an appliqué: placement line, stop, tack-down, stop, cover	हर सिलेक्ट की गई बंद आकृति को ऐप्लिके बनाएँ: प्लेसमेंट लाइन, रुकना, टैक-डाउन, रुकना, कवर
+	Stop Before:	पहले रुकें:
+	Place Fabric	फ़ैब्रिक रखें
+	Trim Fabric	फ़ैब्रिक ट्रिम करें
+	Stop the machine before this object: to change something by hand, place appliqué fabric, or trim it	इस ऑब्जेक्ट से पहले मशीन रोकें: हाथ से कुछ बदलने, ऐप्लिके फ़ैब्रिक रखने, या उसे ट्रिम करने के लिए
+	Save a copy in your embroidery library, for any design	किसी भी डिज़ाइन के लिए अपनी कढ़ाई लाइब्रेरी में एक कॉपी सेव करें
+	Your embroidery library: border patterns, fabrics, hoops and thread charts for any design	आपकी कढ़ाई लाइब्रेरी: किसी भी डिज़ाइन के लिए बॉर्डर पैटर्न, फ़ैब्रिक, हूप और धागा चार्ट
+@msg	no embroidery library folder here	यहाँ कोई कढ़ाई लाइब्रेरी फ़ोल्डर नहीं है
+@msg	Added {_1} to the embroidery library	{_1} कढ़ाई लाइब्रेरी में जोड़ा गया
+@msg	nothing to add	जोड़ने के लिए कुछ नहीं
+	Long stitches	लंबे स्टिच
+	Makes no stitches	कोई स्टिच नहीं बनाता
+	Manual Stitch	मैन्युअल स्टिच
+	Motif:	मोटिफ़:
+	Not sewn as set	सेट किए अनुसार नहीं सिला गया
+	Objects that are stitched but can't be sewn (not a path, compound path or type; settings from a newer VectorCraft), or are sewn whole although a mask hides part of them.	ऐसे ऑब्जेक्ट जिन पर स्टिच है पर सिले नहीं जा सकते (पाथ, कंपाउंड पाथ या टाइप नहीं; नए VectorCraft की सेटिंग्स), या पूरे सिले जाते हैं जबकि मास्क उनका एक हिस्सा छिपाता है।
+	Picks a stitch for each shape (each letter) by how wide its strokes are.	हर आकृति (हर अक्षर) के लिए उसके स्ट्रोक की चौड़ाई के अनुसार स्टिच चुनता है।
+	Remove Border Pattern	बॉर्डर पैटर्न हटाएँ
+	Render Stitch Preview	स्टिच प्रीव्यू रेंडर करें
+	Rows before the needle holes line up again (2: brick, 3–8: tatami)	सुई के छेद फिर से पंक्तिबद्ध होने से पहले की पंक्तियाँ (2: ईंट, 3–8: टाटामी)
+	Rows of stitches covering the shape, with a pattern.	आकृति को ढकने वाली स्टिच की पंक्तियाँ, एक पैटर्न के साथ।
+	Running Stitch	रनिंग स्टिच
+	Satin that follows a shape's strokes from edge to edge: lettering.	सैटिन जो आकृति के स्ट्रोक को किनारे से किनारे तक फ़ॉलो करता है: लेटरिंग।
+	Save Border Pattern…	बॉर्डर पैटर्न सेव करें…
+	Sew Order	सिलाई क्रम
+	Sew by Thread	धागे के अनुसार सिलें
+	Sew in Paint Order	पेंट क्रम में सिलें
+	Single stitches along the path: outlines and details.	पाथ के साथ एकल स्टिच: आउटलाइन और बारीकियाँ।
+	Stitch Settings	स्टिच सेटिंग्स
+	Stitch:	स्टिच प्रकार:
+	Stitches longer than 7 mm snag and loosen with wear. Shorten the stitch length, narrow the satin, or fill a shape that wide.	7 mm से लंबे स्टिच फँसते हैं और पहनने से ढीले होते हैं। स्टिच लंबाई कम करें, सैटिन को संकरा करें, या इतनी चौड़ी आकृति को फ़िल करें।
+	Stitches sewn first to hold the fabric and lift the top stitches	फ़ैब्रिक को थामने और ऊपर के स्टिच को उठाने के लिए पहले सिले गए स्टिच
+	The border pattern repeated along the path	पाथ के साथ दोहराया गया बॉर्डर पैटर्न
+	The design has more needle moves than a file can hold; the rest is left out. Split it into several designs.	डिज़ाइन में किसी फ़ाइल की क्षमता से अधिक सुई चालें हैं; बाकी छोड़ दी गईं। इसे कई डिज़ाइन में बाँटें।
+	The direction of the fill's rows	फ़िल की पंक्तियों की दिशा
+	The needle goes down at every anchor, as drawn.	सुई हर एंकर पर नीचे जाती है, जैसा बनाया गया है।
+	The thread colour (unset: the object's stroke or fill colour)	धागे का रंग (सेट नहीं: ऑब्जेक्ट के स्ट्रोक या फ़िल का रंग)
+	What the stitch type said about the object's shape (a satin shape with no strokes, a motif too fine, a border pattern that is missing…).	स्टिच प्रकार ने ऑब्जेक्ट की आकृति के बारे में क्या कहा (बिना स्ट्रोक की सैटिन आकृति, बहुत बारीक मोटिफ़, गायब बॉर्डर पैटर्न…)।
+@msg	Extracted border pattern {_1}: a {_2} mm repeat	बॉर्डर पैटर्न {_1} निकाला गया: {_2} mm की पुनरावृत्ति
+@msg	Loaded border pattern {_1}	बॉर्डर पैटर्न {_1} लोड हुआ
+	A test sheet is a set of calibration swatches to sew on your machine and fabric. Each section is a 100 × 100 mm design; after sewing, mark here what each swatch showed.	टेस्ट शीट आपकी मशीन और फ़ैब्रिक पर सिलने के लिए कैलिब्रेशन नमूनों का सेट है। हर खंड 100 × 100 mm का डिज़ाइन है; सिलने के बाद यहाँ चिह्नित करें कि हर नमूने ने क्या दिखाया।
+	Another test sheet, for another fabric or machine	किसी दूसरे फ़ैब्रिक या मशीन के लिए एक और टेस्ट शीट
+	Calibration swatches to sew, and a form for what they showed	सिलने के लिए कैलिब्रेशन नमूने, और उन्होंने क्या दिखाया उसके लिए एक फ़ॉर्म
+	Click a swatch to select it and add a note.	किसी नमूने को सिलेक्ट करने और नोट जोड़ने के लिए उस पर क्लिक करें।
+	Each section as a design of its own (one file per artboard)	हर खंड अपने-आप में एक डिज़ाइन (हर आर्टबोर्ड के लिए एक फ़ाइल)
+	Fabric:	फ़ैब्रिक:
+	Fail	असफल
+	Lettering needs a type face; without one it is left out.	लेटरिंग के लिए टाइपफ़ेस चाहिए; उसके बिना वह छोड़ दी जाती है।
+	Machine:	मशीन:
+	New Test Sheet	नई टेस्ट शीट
+	New Test Sheet…	नई टेस्ट शीट…
+	Notes:	नोट:
+	Pass	सफल
+	Sew-Out Test…	सिलाई टेस्ट…
+	Test Sheet	टेस्ट शीट
+	To judge	आँकना है
+	Fill Angle	फ़िल कोण
+	Fill Density	फ़िल घनत्व
+	Lettering	लेटरिंग
+	Pull Compensation	पुल कंपेंसेशन
+	Record Sew-Out	सिलाई टेस्ट दर्ज करें
+	Satin Density	सैटिन घनत्व
+	Satin Width	सैटिन चौड़ाई
+	Sew-Out Test	सिलाई टेस्ट
+	Underlay	अंडरले
+	Pull Compensation (%):	पुल कंपेंसेशन (%):
+	More pull compensation, as a share of the width (satin) or row length (fill)	अतिरिक्त पुल कंपेंसेशन, चौड़ाई (सैटिन) या पंक्ति लंबाई (फ़िल) के हिस्से के रूप में
+	Push Compensation:	पुश कंपेंसेशन:
+	Sews columns this much shorter at their ends, and fills across their rows, since the stitches push the fabric out	कॉलम को सिरों पर इतना छोटा सिलता है, और फ़िल को पंक्तियों के आर-पार, क्योंकि स्टिच फ़ैब्रिक को बाहर धकेलते हैं
+	Denim	डेनिम
+	Fleece / Towel	फ़्लीस / तौलिया
+	Knit	निट
+	Leather	चमड़ा
+	Load a fabric profile file (.vcfabric)	फ़ैब्रिक प्रोफ़ाइल फ़ाइल (.vcfabric) लोड करें
+	Save the fabric as a file (.vcfabric)	फ़ैब्रिक को फ़ाइल के रूप में सेव करें (.vcfabric)
+	The fabric the design is for: its density, compensation and underlay fill in what objects leave unset	वह फ़ैब्रिक जिसके लिए डिज़ाइन है: उसका घनत्व, कंपेंसेशन और अंडरले वह भरते हैं जो ऑब्जेक्ट सेट नहीं करते
+	Woven	बुना हुआ
+	Fabric	फ़ैब्रिक
+	Fabric Profiles	फ़ैब्रिक प्रोफ़ाइल
+	Load Fabric…	फ़ैब्रिक लोड करें…
+	Save Fabric…	फ़ैब्रिक सेव करें…
+	Load Fabric	फ़ैब्रिक लोड करें
+@msg	Fabric: {_1}	फ़ैब्रिक: {_1}
+	Keep Covered Rows	ढकी पंक्तियाँ रखें
+	Sew this fill's rows under objects sewn later on top of it too (normally they are cut away)	इस फ़िल की पंक्तियाँ उस पर बाद में सिले गए ऑब्जेक्ट के नीचे भी सिलें (आम तौर पर वे काट दी जाती हैं)
+	How far a fill's rows still reach under objects sewn later on top of it; the rest of the covered rows is cut away	किसी फ़िल की पंक्तियाँ उस पर बाद में सिले गए ऑब्जेक्ट के नीचे कितनी दूर तक जाती हैं; बाकी ढकी पंक्तियाँ काट दी जाती हैं
+	Shortest Stitch:	सबसे छोटा स्टिच:
+	Needle points closer than this to the one before are left out (the fabric may ask for longer)	पिछले से इससे ज़्यादा पास वाले सुई बिंदु छोड़ दिए जाते हैं (फ़ैब्रिक लंबा माँग सकता है)
+	Stitches too long to sew	सिलने के लिए बहुत लंबे स्टिच
+	Stitches longer than 12 mm can't be sewn in one move. Add points along the path, or use a stitch type that splits long stitches.	12 mm से लंबे स्टिच एक चाल में नहीं सिले जा सकते। पाथ के साथ पॉइंट जोड़ें, या ऐसा स्टिच प्रकार इस्तेमाल करें जो लंबे स्टिच को बाँटता है।
+	Satin too narrow or too wide	सैटिन बहुत संकरा या बहुत चौड़ा
+	Satin under 1 mm wide doesn't cover (use a running or bean stitch); over 10 mm its stitches are long and loose (fill the shape instead).	1 mm से संकरा सैटिन नहीं ढकता (रनिंग या बीन स्टिच इस्तेमाल करें); 10 mm से अधिक पर उसके स्टिच लंबे और ढीले होते हैं (इसके बजाय आकृति फ़िल करें)।
+	Too small to sew	सिलने के लिए बहुत छोटा
+	Objects whose stitches fit in a 1 mm box sew as a knot of thread. Make them larger or remove them.	जिन ऑब्जेक्ट के स्टिच 1 mm के बॉक्स में समा जाते हैं वे धागे की गाँठ बनकर सिलते हैं। उन्हें बड़ा करें या हटाएँ।
+	Open shape set to fill	फ़िल पर सेट खुली आकृति
+	A fill closes open paths with a straight line, which may not be the shape meant. Close the path, or use a stitch along it.	फ़िल खुले पाथ को सीधी रेखा से बंद करता है, जो शायद इच्छित आकृति न हो। पाथ बंद करें, या उसके साथ एक स्टिच इस्तेमाल करें।
+	Too many needle holes in one place	एक जगह पर बहुत ज़्यादा सुई के छेद
+	Where objects stack up, so many needle holes go into one spot that the fabric tears or the needle breaks. Cut away what is covered, lower the density, or remove a layer.	जहाँ ऑब्जेक्ट एक के ऊपर एक आते हैं, वहाँ एक बिंदु में इतने सुई के छेद होते हैं कि फ़ैब्रिक फट जाता है या सुई टूट जाती है। ढका हुआ काटें, घनत्व कम करें, या एक परत हटाएँ।
+	Many trims or jumps	बहुत सारे ट्रिम या जंप
+	Every trim and jump slows the machine and leaves thread ends. Sew by Thread, reorder objects, or join nearby parts.	हर ट्रिम और जंप मशीन को धीमा करता है और धागे के सिरे छोड़ता है। धागे के अनुसार सिलें, ऑब्जेक्ट का क्रम बदलें, या पास के हिस्से जोड़ें।
+	Type too small	टाइप बहुत छोटा
+	Lettering below its safe size closes up and can't be read: satin lettering needs 4 mm or more, filled lettering 6 mm, running or bean lettering 2.5 mm. Letters' holes (the inside of an o, a or e) under 1 mm across close up on fabric whatever the stitch, so a font with small holes needs larger type. Make the type larger, or use a running stitch.	सुरक्षित साइज़ से छोटी लेटरिंग बंद हो जाती है और पढ़ी नहीं जा सकती: सैटिन लेटरिंग को 4 mm या अधिक चाहिए, फ़िल लेटरिंग को 6 mm, रनिंग या बीन लेटरिंग को 2.5 mm। 1 mm से छोटे अक्षरों के छेद (o, a या e का अंदरूनी हिस्सा) किसी भी स्टिच से फ़ैब्रिक पर बंद हो जाते हैं, इसलिए छोटे छेदों वाले फ़ॉन्ट को बड़ा टाइप चाहिए। टाइप बड़ा करें, या रनिंग स्टिच इस्तेमाल करें।
+	Hoop:	हूप:
+	The hoop the design is sewn in: its sewing field, centred on the design, is checked and shown in Stitch Preview	वह हूप जिसमें डिज़ाइन सिला जाता है: उसका सिलाई क्षेत्र, डिज़ाइन पर केंद्रित, जाँचा जाता है और स्टिच प्रीव्यू में दिखाया जाता है
+	The design fits the hoop.	डिज़ाइन हूप में समा जाता है।
+	The design fits only turned a quarter turn.	डिज़ाइन केवल चौथाई घुमाने पर ही समाता है।
+	The design is bigger than the hoop.	डिज़ाइन हूप से बड़ा है।
+	Hoops	हूप
+	Hoop	हूप चुनें
+	Load Hoop…	हूप लोड करें…
+	Save Hoop…	हूप सेव करें…
+	Load Hoop	हूप लोड करें
+	Design bigger than the hoop	डिज़ाइन हूप से बड़ा
+	The design must fit the hoop's sewing field. Choose a larger hoop, turn the design a quarter turn, scale it down, or split it into designs sewn one after another.	डिज़ाइन हूप के सिलाई क्षेत्र में समाना चाहिए। बड़ा हूप चुनें, डिज़ाइन को चौथाई घुमाएँ, उसे छोटा करें, या एक के बाद एक सिले जाने वाले डिज़ाइन में बाँटें।
+@msg	Hoop: {_1}	हूप: {_1}
+	Optimize	ऑप्टिमाइज़ करें
+	Group by thread and sew each thread's objects nearest first, cutting jumps and trims	धागे के अनुसार समूहित करें और हर धागे के ऑब्जेक्ट सबसे पास वाले से सिलें, जंप और ट्रिम कम करते हुए
+	Optimize Sew Order	सिलाई क्रम ऑप्टिमाइज़ करें
+	Start At:	यहाँ से शुरू:
+	Where the needle starts: the path is entered at its point nearest it	सुई कहाँ से शुरू होती है: पाथ में उसके सबसे पास वाले बिंदु से प्रवेश होता है
+	Thread Chart:	धागा चार्ट:
+	Each thread colour of the design gets the nearest thread of this chart. Load charts you have the right to use (.vcthreads).	डिज़ाइन के हर धागे के रंग को इस चार्ट का सबसे पास वाला धागा मिलता है। वे चार्ट लोड करें जिन्हें इस्तेमाल करने का आपको अधिकार है (.vcthreads)।
+	Load a thread chart file (.vcthreads)	धागा चार्ट फ़ाइल (.vcthreads) लोड करें
+	Thread Charts	धागा चार्ट
+	Thread Chart	धागा चार्ट चुनें
+	Load Thread Chart…	धागा चार्ट लोड करें…
+	Save Thread Chart…	धागा चार्ट सेव करें…
+	Remove Thread Chart	धागा चार्ट हटाएँ
+	Match Threads	धागे मिलाएँ
+	Load Thread Chart	धागा चार्ट लोड करें
+@msg	Thread chart: {_1}	धागा चार्ट: {_1}
+	Play	चलाएँ
+	Pause	रोकें
+	Play the sewing stitch by stitch	सिलाई को स्टिच दर स्टिच चलाएँ
+	Sewing Time	सिलाई समय
+	At the machine speed set below, with time for trims and thread changes	नीचे सेट की गई मशीन गति पर, ट्रिम और धागा बदलने के समय सहित
+	Machine Speed:	मशीन गति:
+	Stitches per minute, for the sewing time estimate	प्रति मिनट स्टिच, सिलाई समय के अनुमान के लिए
+	Worksheet…	वर्कशीट…
+	A printable sheet for whoever sews the design: picture, size, threads, time and notes	डिज़ाइन सिलने वाले के लिए प्रिंट करने योग्य शीट: चित्र, साइज़, धागे, समय और नोट
+	Production Worksheet	प्रोडक्शन वर्कशीट
+	Puff Foam:	पफ़ फ़ोम:
+	Sew over 3D foam this thick: a stop to place the foam, dense satin with no underlay, capped ends, and a perforation all round so the excess foam tears away	इतने मोटे 3D फ़ोम पर सिलें: फ़ोम रखने के लिए एक रुकावट, बिना अंडरले का घना सैटिन, बंद सिरे, और चारों ओर छिद्र ताकि अतिरिक्त फ़ोम फाड़कर हटाया जा सके
+	Puff that won't rise well	पफ़ जो ठीक से नहीं उभरेगा
+	Puff needs satin 3 to 10 mm wide over foam: narrower it doesn't rise, wider its stitches don't hold the foam. Flat objects sewn after the foam is laid sew through it: sew them first.	पफ़ को फ़ोम पर 3 से 10 mm चौड़ा सैटिन चाहिए: संकरा होने पर वह नहीं उभरता, चौड़ा होने पर स्टिच फ़ोम को नहीं थामते। फ़ोम रखने के बाद सिले गए सपाट ऑब्जेक्ट उसके आर-पार सिलते हैं: उन्हें पहले सिलें।
+	Puff	पफ़
+	Export {format}…	{format} एक्सपोर्ट करें…
+	Machine Format:	मशीन फ़ॉर्मैट:
+	The file format your machine reads: DST (Tajima and most machines), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) or U01 (Barudan)	वह फ़ाइल फ़ॉर्मैट जो आपकी मशीन पढ़ती है: DST (Tajima और अधिकांश मशीनें), PES (Brother), JEF (Janome), EXP (Melco), VP3 (Pfaff, Husqvarna Viking) या U01 (Barudan)
+	Hide Travel Under Fills	फ़िल के नीचे चालें छिपाएँ
+	Travel that a fill sewn later covers is sewn there as running stitches instead of jumped and trimmed	बाद में सिला गया फ़िल जिन चालों को ढकता है, वे जंप और ट्रिम के बजाय वहीं रनिंग स्टिच के रूप में सिली जाती हैं
+	Stitch Start	स्टिच शुरुआत
+	Extract Motif	मोटिफ़ निकालें
+	For a fill repeating both ways: select an area with two or more repeats each way.	दोनों दिशाओं में दोहराए जाने वाले फ़िल के लिए: हर दिशा में दो या अधिक पुनरावृत्तियों वाला क्षेत्र सिलेक्ट करें।
+	Stitch Density	स्टिच घनत्व
+	Suggested Fixes	सुझाए गए सुधार
+	Fix	सुधारें
+	Fix…	सुधारें…
+	Needle holes per mm²	प्रति mm² सुई के छेद
+	over {n}: too dense	{n} से अधिक: बहुत घना
+	No one-click fix: change the design by hand (hover the finding for how).	एक-क्लिक सुधार नहीं: डिज़ाइन हाथ से बदलें (कैसे, यह जानने के लिए नतीजे पर होवर करें)।
+	Clears it	इसे हटाता है
+	Thins the spot to {n} needle holes; fix again to clear it	जगह को {n} सुई के छेद तक पतला करता है; हटाने के लिए फिर से सुधारें
+	Auto-Digitize	ऑटो-डिजिटाइज़
+	Select a logo (an image or a group of flat-colour shapes): it is traced and each area stitched in its colour.	एक लोगो सिलेक्ट करें (इमेज या सपाट रंग की आकृतियों का समूह): यह ट्रेस होता है और हर क्षेत्र अपने रंग में सिला जाता है।
+	Stitch Fill Tool	स्टिच फ़िल टूल
+	Stitch Fill	स्टिच फ़िल
+	Single	एकल
+	Stem	स्टेम
+	Backstitch	बैकस्टिच
+	Sashiko	साशिको
+	Run Styles	रन स्टाइल
+	How the line is sewn: single stitches or a hand-stitch look	रेखा कैसे सिली जाती है: एकल स्टिच या हाथ की सिलाई जैसा रूप
+	The space between sashiko dashes	साशिको डैश के बीच की जगह
+	How wide the chain's loops or the stem's slant are	चेन के लूप या स्टेम का झुकाव कितना चौड़ा है
+	Slant the stem stitches the other way	स्टेम स्टिच को दूसरी ओर झुकाएँ
+	Single stitches along the path.	पाथ के साथ एकल स्टिच।
+	Linked loops, like a hand chain stitch.	जुड़े हुए लूप, हाथ की चेन स्टिच जैसे।
+	Slanted stitches overlapping by half: a twisted cord.	आधे पर एक-दूसरे पर चढ़े तिरछे स्टिच: एक बटी हुई डोरी।
+	Each stitch forward, then half a stitch back: a heavier, smooth line.	हर स्टिच आगे, फिर आधा स्टिच पीछे: एक भारी, चिकनी रेखा।
+	Bold dashes with gaps between them.	बीच में खाली जगह वाले मोटे डैश।
+	Split:	विभाजन:
+	Split Wide Stitches	चौड़े स्टिच बाँटें
+	Stitches wider than Split At are sewn in shorter pieces, so wide columns don't snag (up to 30 mm wide)	"यहाँ से बाँटें" से चौड़े स्टिच छोटे टुकड़ों में सिले जाते हैं, ताकि चौड़े कॉलम न फँसें (30 mm चौड़ाई तक)
+	Split At:	यहाँ से बाँटें:
+	Split Length:	विभाजन लंबाई:
+	Split Pattern:	विभाजन पैटर्न:
+	Stagger	आगे-पीछे
+	Stitches longer than this are split	इससे लंबे स्टिच बाँटे जाते हैं
+	The longest piece of a split stitch	बाँटे गए स्टिच का सबसे लंबा टुकड़ा
+	How the split points move from stitch to stitch, so they don't line up into a seam	विभाजन बिंदु स्टिच दर स्टिच कैसे खिसकते हैं, ताकि वे एक सीवन जैसी रेखा में न आएँ
+	Split Satin	विभाजित सैटिन
+	Stitch Styles	स्टिच स्टाइल्स
+	Small Lettering	छोटी लेटरिंग
+	Type 5–10 mm tall: letters picked by stroke width, a little denser, with a little pull compensation.	5–10 mm ऊँचा टाइप: अक्षर स्ट्रोक चौड़ाई से चुने गए, थोड़ा घना, थोड़े पुल कंपेंसेशन के साथ।
+	Bold Border	मोटी बॉर्डर
+	A 4 mm satin border with automatic underlay, for outlining patches and shapes.	स्वचालित अंडरले वाली 4 mm सैटिन बॉर्डर, पैच और आकृतियों की आउटलाइन के लिए।
+	Light Background Fill	हल्का बैकग्राउंड फ़िल
+	An open fill for large backgrounds: fewer stitches, the fabric shows a little, no underlay.	बड़े बैकग्राउंड के लिए खुला फ़िल: कम स्टिच, फ़ैब्रिक थोड़ा दिखता है, कोई अंडरले नहीं।
+	Save Style	स्टाइल सेव करें
+	Stitch Style	स्टिच स्टाइल
+	Keep the selection's stitch settings in this document	सिलेक्शन की स्टिच सेटिंग्स इस डॉक्यूमेंट में रखें
+	Save to Library	लाइब्रेरी में सेव करें
+	Load Style File…	स्टाइल फ़ाइल लोड करें…
+	Named sets of stitch settings: apply one to the selection, or save the selection's as one	स्टिच सेटिंग्स के नामित सेट: सिलेक्शन पर एक लागू करें, या सिलेक्शन की सेटिंग्स को एक के रूप में सेव करें
+	Click inside any closed area to stitch it in its colour; Alt-click to outline it (Alt-Shift-click: a satin border); Shift-click to sew a thin line along its centre	किसी भी बंद क्षेत्र के अंदर क्लिक करें ताकि वह अपने रंग में सिले; आउटलाइन के लिए Alt-क्लिक (Alt-Shift-क्लिक: सैटिन बॉर्डर); उसके बीच से पतली रेखा सिलने के लिए Shift-क्लिक
+	Thin Lines as Centre Lines	पतली रेखाएँ सेंटर लाइन के रूप में
+	Sew parts narrower than 2 mm, such as traced lines and handwriting, as one line along their centre	2 mm से संकरे हिस्से, जैसे ट्रेस की गई रेखाएँ और हस्तलेख, उनके बीच से एक रेखा के रूप में सिलें
+	Also Export:	यह भी एक्सपोर्ट करें:
+	Rotate in Hoop:	हूप में घुमाएँ:
+	Turns the design clockwise as it is written to the machine: a quarter turn fits a tall design in a wide hoop	मशीन के लिए लिखते समय डिज़ाइन को घड़ी की दिशा में घुमाता है: चौथाई घुमाव लंबे डिज़ाइन को चौड़े हूप में बिठा देता है
+	Regenerate Stitches	स्टिच फिर से बनाएँ
+	While Editing	एडिट करते समय
+	When the Edit Ends	एडिट खत्म होने पर
+	Split into {n} hoopings that each fit the hoop.	{n} हूपिंग में बाँटें जो हर एक हूप में समाए।
+	Split into Hoopings	हूपिंग में बाँटें
+	Split the design into areas that each fit the hoop, sewn one after another with the fabric hooped again	डिज़ाइन को ऐसे क्षेत्रों में बाँटें जो हर एक हूप में समाएँ, फ़ैब्रिक को दोबारा हूप करके एक के बाद एक सिले जाएँ
+	Alignment Marks	संरेखण चिह्न
+	Running-stitch crosses on each seam, to line the next hooping up by	हर जोड़ पर रनिंग स्टिच के क्रॉस, अगली हूपिंग को मिलाने के लिए
+	Basting Box	बेस्टिंग बॉक्स
+	A running-stitch box round each hooping, sewn first, to hold the fabric to the stabilizer	हर हूपिंग के चारों ओर रनिंग स्टिच का बॉक्स, पहले सिला गया, फ़ैब्रिक को स्टेबलाइज़र से थामने के लिए
+	Join Hoopings	हूपिंग जोड़ें
+	Sew the design in one hooping again	डिज़ाइन को फिर से एक हूपिंग में सिलें
+	Realistic Stitches	वास्तविक स्टिच
+	Realistic	वास्तविक
+	Plain Weave	सादी बुनाई
+	Twill	ट्विल
+	Terry	टेरी
+	Felt	फ़ेल्ट
+	Preview Fabric:	प्रीव्यू फ़ैब्रिक:
+	As the Fabric	फ़ैब्रिक जैसा
+	The fabric's colour	फ़ैब्रिक का रंग
+	The texture's own colour	टेक्सचर का अपना रंग
+	How Realistic Stitches draws the fabric the design is sewn on	वास्तविक स्टिच उस फ़ैब्रिक को कैसे बनाता है जिस पर डिज़ाइन सिला जाता है
+	Garment Mockup…	गारमेंट मॉकअप…
+	Garment Mockup	गारमेंट मॉकअप
+	Garment:	गारमेंट:
+	T-Shirt	टी-शर्ट
+	Polo Shirt	पोलो शर्ट
+	Hoodie	हुडी
+	Baseball Cap	बेसबॉल कैप
+	Tote Bag	टोट बैग
+	Towel	तौलिया
+	Left Chest	बायाँ सीना
+	Right Chest	दायाँ सीना
+	Above the Border	बॉर्डर के ऊपर
+	Whole Garment	पूरा गारमेंट
+	Close-Up	क्लोज़-अप
+	Mockup…	मॉकअप…
+	The design sewn on a T-shirt, polo shirt, hoodie, cap, tote bag or towel, at its real size	टी-शर्ट, पोलो शर्ट, हुडी, कैप, टोट बैग या तौलिये पर उसके असली साइज़ में सिला गया डिज़ाइन
+	Real Size	भौतिक साइज़
+	Calibrate Real Size…	भौतिक साइज़ कैलिब्रेट करें…
+	Calibrate Real Size	भौतिक साइज़ कैलिब्रेट करें
+	Screen Resolution for Real Size	भौतिक साइज़ के लिए स्क्रीन रिज़ॉल्यूशन
+	Reference	संदर्भ
+	Bank Card Width (85.60 mm)	बैंक कार्ड की चौड़ाई (85.60 mm)
+	100 mm on a Ruler	रूलर पर 100 mm
+	Hold the card or ruler against the screen and drag the end of the bar until the bar is exactly as long.	कार्ड या रूलर को स्क्रीन से सटाकर रखें और बार का सिरा तब तक ड्रैग करें जब तक बार ठीक उतना ही लंबा न हो जाए।
+	The Bar Measures:	बार का माप:
+	Not calibrated: the system's display scale is assumed.	कैलिब्रेट नहीं किया गया: सिस्टम का डिस्प्ले स्केल माना जाता है।
+	Show the design at its true size on this screen (View › Calibrate Real Size… makes it exact)	इस स्क्रीन पर डिज़ाइन उसके असली साइज़ में दिखाएँ (व्यू › भौतिक साइज़ कैलिब्रेट करें… इसे सटीक बनाता है)
+	Compensation	कंपेंसेशन
+	Sewn Width:	सिली गई चौड़ाई:
+	Sewn Length:	सिली गई लंबाई:
+	Along the stitches, between the marks	स्टिच के साथ, चिह्नों के बीच
+	Across the stitches, between the marks	स्टिच के आर-पार, चिह्नों के बीच
+	{angle}: pull {pull} mm + {percent} %, push {push} mm	{angle}: पुल {pull} mm + {percent} %, पुश {push} mm
+	{angle}: pull {pull} mm + {percent} %	{angle}: पुल {pull} mm + {percent} %
+	Use as Fabric	फ़ैब्रिक के रूप में इस्तेमाल करें
+	Make the fitted compensation the document's fabric	फ़िट किए गए कंपेंसेशन को डॉक्यूमेंट का फ़ैब्रिक बनाएँ
+	Save the fitted fabric as a file (.vcfabric), to load for designs sewn on this fabric	फ़िट किए गए फ़ैब्रिक को फ़ाइल के रूप में सेव करें (.vcfabric), इस फ़ैब्रिक पर सिले जाने वाले डिज़ाइन में लोड करने के लिए
+	Click a compensation swatch and enter what it measures sewn, to fit the compensation.	कंपेंसेशन फ़िट करने के लिए किसी कंपेंसेशन नमूने पर क्लिक करें और दर्ज करें कि सिलने पर वह कितना मापता है।
+	Compensation sheet: sewn with no compensation, to measure how far the fabric draws in at each stitch direction.	कंपेंसेशन शीट: बिना कंपेंसेशन के सिली गई, यह मापने के लिए कि हर स्टिच दिशा में फ़ैब्रिक कितना सिकुड़ता है।
