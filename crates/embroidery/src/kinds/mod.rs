@@ -84,7 +84,7 @@ mod tests {
     /// not a blob).
     fn rect() -> PathData {
         let mm = |x: f64, y: f64| Anchor::corner(Point::new(x / crate::PT_MM, y / crate::PT_MM));
-        PathData::single(SubPath { anchors: vec![mm(0.0, 0.0), mm(40.0, 0.0), mm(40.0, 4.0), mm(0.0, 4.0)], closed: true })
+        PathData::single(SubPath { anchors: vec![mm(0.0, 0.0), mm(40.0, 0.0), mm(40.0, 4.0), mm(0.0, 4.0)].into(), closed: true })
     }
 
     #[test]

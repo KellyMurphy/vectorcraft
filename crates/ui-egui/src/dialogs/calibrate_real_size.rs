@@ -132,11 +132,12 @@ fn body(_app: &mut VectorcraftApp, ui: &mut egui::Ui, d: &mut Dialog) -> bool {
     false
 }
 
-fn reset(app: &VectorcraftApp, d: &mut Dialog) {
+fn reset(app: &VectorcraftApp, d: &mut Dialog) -> Result<(), String> {
     let (ppi, _) = crate::canvas::screen_ppi(0.0, app.canvas_density);
     d.fields.insert("ppi".into(), json!(round(ppi)));
     d.fields.insert("measured".into(), json!(""));
     d.fields.insert("auto".into(), json!(true));
+    Ok(())
 }
 
 fn confirm(app: &mut VectorcraftApp, d: &Dialog) -> DialogResult {
@@ -174,7 +175,7 @@ mod tests {
         let mut d = app.ui.dialog.clone().unwrap();
         assert_eq!((d.f64("ppi", 0.0), d.bool("auto")), (189.7, false));
         // Reset: back to not calibrated.
-        reset(&app, &mut d);
+        reset(&app, &mut d).unwrap();
         confirm(&mut app, &d).unwrap();
         assert_eq!(app.session.prefs.screen_ppi, 0.0);
     }

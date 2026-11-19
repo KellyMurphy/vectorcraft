@@ -632,7 +632,7 @@ fn dump_samples() {
     let leaf = PathData::new(vec![
         SubPath { anchors: curve(40.0).into_iter().map(|(x, y)| Anchor::corner(Point::new(x, y))).collect(), closed: false },
         SubPath { anchors: curve(-20.0).into_iter().map(|(x, y)| Anchor::corner(Point::new(x, y))).collect(), closed: false },
-        SubPath { anchors: vec![Anchor::corner(Point::new(80.0, 0.0)), Anchor::corner(Point::new(120.0, 120.0))], closed: false },
+        SubPath { anchors: vec![Anchor::corner(Point::new(80.0, 0.0)), Anchor::corner(Point::new(120.0, 120.0))].into(), closed: false },
     ]);
     let d = doc_with(|d| {
         let mut n = Node::path(d.alloc_id(), leaf, Appearance::basic(Paint::None, Paint::solid(Color::rgb8(40, 120, 40)), 1.0));
@@ -1272,8 +1272,8 @@ fn satin_shape_covers_a_sharp_turn_to_its_outer_corner() {
 /// (4 mm apart).
 fn two_rails(rails: bool) -> Plan {
     let path = PathData::new(vec![
-        SubPath { anchors: vec![Anchor::corner(Point::new(0.0, 0.0)), Anchor::corner(Point::new(100.0, 0.0))], closed: false },
-        SubPath { anchors: vec![Anchor::corner(Point::new(0.0, 4.0 / PT_MM)), Anchor::corner(Point::new(100.0, 4.0 / PT_MM))], closed: false },
+        SubPath { anchors: vec![Anchor::corner(Point::new(0.0, 0.0)), Anchor::corner(Point::new(100.0, 0.0))].into(), closed: false },
+        SubPath { anchors: vec![Anchor::corner(Point::new(0.0, 4.0 / PT_MM)), Anchor::corner(Point::new(100.0, 4.0 / PT_MM))].into(), closed: false },
     ]);
     plan_of(path, StitchSettings { rails, ..StitchSettings::new(StitchKind::Satin) })
 }

@@ -35,7 +35,7 @@ pub fn hoop_outline(c: Point, w: f64, h: f64, round: bool) -> PathData {
         let (hw, hh) = (w / 2.0, h / 2.0);
         vec![pt(c.x - hw, c.y - hh), pt(c.x + hw, c.y - hh), pt(c.x + hw, c.y + hh), pt(c.x - hw, c.y + hh)]
     };
-    PathData::single(SubPath { anchors, closed: true })
+    PathData::single(SubPath { anchors: anchors.into(), closed: true })
 }
 
 /// Where the hoop's field lies on the design `plan` of `doc`, as Stitch Preview draws it: its centre
@@ -120,7 +120,7 @@ mod tests {
         let mut n = Node::path(
             d.alloc_id(),
             PathData::single(SubPath {
-                anchors: vec![Anchor::corner(Point::new(10.0, 10.0)), Anchor::corner(Point::new(100.0, 10.0))],
+                anchors: vec![Anchor::corner(Point::new(10.0, 10.0)), Anchor::corner(Point::new(100.0, 10.0))].into(),
                 closed: false,
             }),
             Appearance::basic(Paint::None, Paint::solid(Color::rgb8(200, 0, 0)), 1.0),

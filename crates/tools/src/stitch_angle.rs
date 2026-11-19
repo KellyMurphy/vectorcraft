@@ -275,7 +275,7 @@ mod tests {
         let l = d.layers[0].id;
         let id = d.alloc_id();
         let path = PathData::single(SubPath {
-            anchors: vec![Anchor::corner(Point::new(100.0, 100.0)), Anchor::corner(Point::new(300.0, 100.0))],
+            anchors: vec![Anchor::corner(Point::new(100.0, 100.0)), Anchor::corner(Point::new(300.0, 100.0))].into(),
             closed: false,
         });
         let ap = Appearance::basic(vectorcraft_color::Paint::None, vectorcraft_color::Paint::solid(vectorcraft_color::Color::BLACK), 10.0);

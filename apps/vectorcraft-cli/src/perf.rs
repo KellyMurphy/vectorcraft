@@ -75,7 +75,7 @@ pub fn embroidery_design(n: usize) -> Result<Document, String> {
         let id = d.alloc_id();
         let line = |a: Point, b: Point| {
             vectorcraft_geom::PathData::single(vectorcraft_geom::SubPath {
-                anchors: vec![vectorcraft_geom::Anchor::corner(a), vectorcraft_geom::Anchor::corner(b)],
+                anchors: vec![vectorcraft_geom::Anchor::corner(a), vectorcraft_geom::Anchor::corner(b)].into(),
                 closed: false,
             })
         };
